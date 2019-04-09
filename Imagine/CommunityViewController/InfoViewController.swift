@@ -21,5 +21,10 @@ class InfoViewController: UIViewController {
     }
     
 
+    @IBAction func backPressed(_ sender: Any) {
+        if let parentVC = self.parent as? PageViewController {
+            parentVC.setViewControllers([parentVC.pages[0]], direction: .reverse, animated: true, completion: nil)
+        }
+    }
     
 }

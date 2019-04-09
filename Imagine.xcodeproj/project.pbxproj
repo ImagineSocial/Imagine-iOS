@@ -46,6 +46,10 @@
 		E9B79CEB225110B100166EED /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B79CEA225110B100166EED /* UserProfileViewController.swift */; };
 		E9B9445D2257C37D000145E2 /* DesignableImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B9445C2257C37D000145E2 /* DesignableImage.swift */; };
 		E9B9445F225800EE000145E2 /* UserFeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B9445E225800EE000145E2 /* UserFeedTableViewController.swift */; };
+		E9B9446122589C11000145E2 /* UserPostHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B9446022589C11000145E2 /* UserPostHelper.swift */; };
+		E9B944672258B674000145E2 /* RePostTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B944662258B674000145E2 /* RePostTableViewCell.xib */; };
+		E9B944692258C79E000145E2 /* ParentFeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B944682258C79E000145E2 /* ParentFeedViewController.swift */; };
+		E9B9446B2259E5EC000145E2 /* PostTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B9446A2259E5EC000145E2 /* PostTableViewCell.xib */; };
 		E9F9B68B223D584600100F51 /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F9B68A223D584600100F51 /* PageViewController.swift */; };
 		E9F9B68D223D6C9500100F51 /* voteCampaignTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F9B68C223D6C9500100F51 /* voteCampaignTableViewController.swift */; };
 		E9F9B68F223D6D7700100F51 /* VoteCampaignHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F9B68E223D6D7700100F51 /* VoteCampaignHelper.swift */; };
@@ -95,6 +99,10 @@
 		E9B79CEA225110B100166EED /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		E9B9445C2257C37D000145E2 /* DesignableImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignableImage.swift; sourceTree = "<group>"; };
 		E9B9445E225800EE000145E2 /* UserFeedTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFeedTableViewController.swift; sourceTree = "<group>"; };
+		E9B9446022589C11000145E2 /* UserPostHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPostHelper.swift; sourceTree = "<group>"; };
+		E9B944662258B674000145E2 /* RePostTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RePostTableViewCell.xib; sourceTree = "<group>"; };
+		E9B944682258C79E000145E2 /* ParentFeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentFeedViewController.swift; sourceTree = "<group>"; };
+		E9B9446A2259E5EC000145E2 /* PostTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PostTableViewCell.xib; sourceTree = "<group>"; };
 		E9F9B68A223D584600100F51 /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
 		E9F9B68C223D6C9500100F51 /* voteCampaignTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = voteCampaignTableViewController.swift; sourceTree = "<group>"; };
 		E9F9B68E223D6D7700100F51 /* VoteCampaignHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteCampaignHelper.swift; sourceTree = "<group>"; };
@@ -175,13 +183,13 @@
 				E962AC282224442000C6D6EF /* FeedTableViewController.swift */,
 				E9600E872235076B003E5A7A /* PostViewController.swift */,
 				E9B1872E222ECC4E00923037 /* NewPostViewController.swift */,
+				E9B79CE6224F88CD00166EED /* RepostViewController.swift */,
 				E9F9B68A223D584600100F51 /* PageViewController.swift */,
 				E962AC1A2224430400C6D6EF /* Main.storyboard */,
 				E962AC1D2224430600C6D6EF /* Assets.xcassets */,
 				E962AC1F2224430600C6D6EF /* LaunchScreen.storyboard */,
 				E962AC222224430600C6D6EF /* Info.plist */,
 				E962AC3122244C7B00C6D6EF /* GoogleService-Info.plist */,
-				E9B79CE6224F88CD00166EED /* RepostViewController.swift */,
 			);
 			path = Imagine;
 			sourceTree = "<group>";
@@ -211,6 +219,8 @@
 		E9B79CDD224EC66C00166EED /* TableViewCells */ = {
 			isa = PBXGroup;
 			children = (
+				E9B944662258B674000145E2 /* RePostTableViewCell.xib */,
+				E9B9446A2259E5EC000145E2 /* PostTableViewCell.xib */,
 				E9B79CDE224EC68500166EED /* PostCell.swift */,
 				E9B79CE0224EC6D200166EED /* RepostCell.swift */,
 				E9B79CE2224EC72000166EED /* JobOfferCell.swift */,
@@ -229,6 +239,7 @@
 				E9A360E42240FDCA008027CD /* SupportTheCommunityTableViewController.swift */,
 				E97E902722464B4700BA0295 /* JobOfferingViewController.swift */,
 				E9211ABA223FF9C700185A00 /* CampaignViewController.swift */,
+				E9B944682258C79E000145E2 /* ParentFeedViewController.swift */,
 			);
 			path = CommunityViewController;
 			sourceTree = "<group>";
@@ -237,6 +248,7 @@
 			isa = PBXGroup;
 			children = (
 				E962AC2A2224446100C6D6EF /* PostHelper.swift */,
+				E9B9446022589C11000145E2 /* UserPostHelper.swift */,
 				E9F9B68E223D6D7700100F51 /* VoteCampaignHelper.swift */,
 				E9A360E6224111B3008027CD /* DismissSegue.swift */,
 				E97E902922464F9900BA0295 /* JobOfferHelper.swift */,
@@ -305,12 +317,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				E9600E9B223C0782003E5A7A /* Kalam-Light.ttf in Resources */,
+				E9B9446B2259E5EC000145E2 /* PostTableViewCell.xib in Resources */,
 				E962AC212224430600C6D6EF /* LaunchScreen.storyboard in Resources */,
 				E9600E9A223C0782003E5A7A /* Kalam-Regular.ttf in Resources */,
 				E9600E9C223C0782003E5A7A /* Kalam-Bold.ttf in Resources */,
 				E962AC1E2224430600C6D6EF /* Assets.xcassets in Resources */,
 				E962AC1C2224430400C6D6EF /* Main.storyboard in Resources */,
 				E9600E9D223C0782003E5A7A /* OFL.txt in Resources */,
+				E9B944672258B674000145E2 /* RePostTableViewCell.xib in Resources */,
 				E962AC3222244C7B00C6D6EF /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -395,6 +409,7 @@
 				E962AC2F222448F800C6D6EF /* BounceButton.swift in Sources */,
 				E9B1872F222ECC4E00923037 /* NewPostViewController.swift in Sources */,
 				E9B79CE3224EC72000166EED /* JobOfferCell.swift in Sources */,
+				E9B9446122589C11000145E2 /* UserPostHelper.swift in Sources */,
 				E962AC292224442000C6D6EF /* FeedTableViewController.swift in Sources */,
 				E9B2F3AD223E5E17004F1F36 /* InfoViewController.swift in Sources */,
 				E9F9B68D223D6C9500100F51 /* voteCampaignTableViewController.swift in Sources */,
@@ -407,6 +422,7 @@
 				E962AC2D222448D400C6D6EF /* DesignableButton.swift in Sources */,
 				E9A360E52240FDCA008027CD /* SupportTheCommunityTableViewController.swift in Sources */,
 				E9B79CE7224F88CD00166EED /* RepostViewController.swift in Sources */,
+				E9B944692258C79E000145E2 /* ParentFeedViewController.swift in Sources */,
 				E97E902822464B4700BA0295 /* JobOfferingViewController.swift in Sources */,
 				E9B79CEB225110B100166EED /* UserProfileViewController.swift in Sources */,
 				E9211ABB223FF9C700185A00 /* CampaignViewController.swift in Sources */,

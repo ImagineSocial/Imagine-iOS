@@ -21,6 +21,7 @@ class FeedTableViewController: UITableViewController, PostCellDelegate {
     
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         getPosts()
@@ -28,13 +29,13 @@ class FeedTableViewController: UITableViewController, PostCellDelegate {
         tableViewSetup()
         
         tableView.estimatedRowHeight = 400
-        
     }
+    
     
     func tableViewSetup() {
         let refreshControl = UIRefreshControl()
         tableView.separatorStyle = .none
-        
+    
         if #available(iOS 10.0, *) {
             tableView.refreshControl = refreshControl
         }
@@ -49,6 +50,7 @@ class FeedTableViewController: UITableViewController, PostCellDelegate {
     @objc func getPosts() {
         PostHelper().getPosts { (posts) in
             self.posts = posts
+            
             self.tableView.reloadData()
             
             self.refreshControl?.endRefreshing()
@@ -69,7 +71,12 @@ class FeedTableViewController: UITableViewController, PostCellDelegate {
         let post = posts[indexPath.row]
         
         if post.type == "repost" {  // Wenn es ein Repost ist wird die RepostCell genommen
-            if let repostCell = tableView.dequeueReusableCell(withIdentifier: "RePostCell", for: indexPath) as? RePostCell {
+            let identifier = "NibRepostCell"
+            
+            //Vielleicht noch absichern?!! Weiß aber nicht wie!
+            tableView.register(UINib(nibName: "RePostTableViewCell", bundle: nil), forCellReuseIdentifier: identifier)
+            
+            if let repostCell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? RePostCell {
                 
                 repostCell.cellImageView.image = nil
                 repostCell.originalTitleLabel.text = nil
@@ -134,20 +141,26 @@ class FeedTableViewController: UITableViewController, PostCellDelegate {
                     }
                 } else {
                     repostCell.translatedTitleLabel.text = "Hier ist was schiefgelaufen!"
+                    print("Hier ist was schiefgelaufen: \(post.title)")
                 }
                 
                 return repostCell
             }
             
         } else {    // Wenn nicht Repost, dann die andere
+            let identifier = "NibPostCell"
             
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as? PostCell {
+            //Vielleicht noch absichern?!! Weiß aber nicht wie!
+            tableView.register(UINib(nibName: "PostTableViewCell", bundle: nil), forCellReuseIdentifier: identifier)
+            
+            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? PostCell {
                 
                 
                 cell.delegate = self
                 cell.setPost(post: post)
                 
                 cell.cellImageView.image = nil
+                cell.profilePictureImageView.image = UIImage(named: "default-user")
                 cell.titleLabel.text = nil
                 
                 
@@ -158,9 +171,20 @@ class FeedTableViewController: UITableViewController, PostCellDelegate {
                 //cell.titleLabel.lineBreakMode = .byClipping
                 
                 
+                cell.ogPosterLabel.text = post.originalPosterName
+                
+                let layer = cell.profilePictureImageView.layer
+                layer.masksToBounds = true
+                layer.cornerRadius = cell.profilePictureImageView.frame.width/2
+                layer.borderWidth = 0.1
+                layer.borderColor = UIColor.black.cgColor
+                
+                if let url = URL(string: post.originalPosterImageURL) {
+                    cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
+                }
                 
                 cell.cellCreateDateLabel.text = post.createTime
-                
+                                
                 let postType = post.type
                 
                 if postType == "thought" {

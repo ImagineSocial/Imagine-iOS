@@ -51,6 +51,12 @@ class TabBarViewController: UITabBarController {
                     print(error.localizedDescription)
                 }
                 
+            } else {    // Wenn noch kein Bild ausgewählt wurde!
+                //set image for button
+                button.setImage(UIImage(named: "default-user"), for: .normal)
+                button.widthAnchor.constraint(equalToConstant: 35).isActive = true
+                button.heightAnchor.constraint(equalToConstant: 35).isActive = true
+                button.layer.cornerRadius = button.frame.width/2
             }
             
         } else {    // Wenn niemand eingeloggt

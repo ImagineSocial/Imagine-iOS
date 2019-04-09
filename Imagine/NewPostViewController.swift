@@ -45,9 +45,15 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     override func viewWillAppear(_ animated: Bool) {
             if Auth.auth().currentUser != nil { // Eingeloggt
-                //hier war irgendwas falsch
+                if let headerLabel = headerLabel {  // Wenn ich das nicht überprüfe crasht er
+                    headerLabel.text = "Teile deine Erfahrungen"
+                    shareButton.isHidden = false
+                }
             } else {    // Nicht eingeloggt
-                
+                if let headerLabel = headerLabel {
+                    headerLabel.text = "Log dich ein um zu Posten! "
+                    shareButton.isHidden = true
+                }
             }
     }
     
@@ -158,10 +164,20 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     @IBAction func sharePressed(_ sender: Any) {
+        if let user = Auth.auth().currentUser {
+            
         let postRef = Firestore.firestore().collection("Posts")
+        let userID = user.uid
         
+            
+            
         let postRefDocumentID = postRef.document().documentID
-        var dataDictionary: [String: Any] = ["title": titleTextField.text, "description": textView.text, "documentID": postRefDocumentID, "createTime": getDate()]
+            
+        let userRef = Firestore.firestore().collection("Users").document(userID).collection("posts").document(postRefDocumentID)
+            
+            userRef.setData(["createTime": getDate()])      // Post zum User hinzufügen!
+            
+            var dataDictionary: [String: Any] = ["title": titleTextField.text, "description": textView.text, "documentID": postRefDocumentID, "createTime": getDate(), "originalPoster": userID]
         
         
         if linkTextField.text != "" {
@@ -214,6 +230,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             if let image = UIImage(named: "default") {
                 self.previewImageView.image = image
             }
+        }
         }
     }
     

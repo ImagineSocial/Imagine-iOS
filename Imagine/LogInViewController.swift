@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
 import FirebaseAuth
 
 class LogInViewController: UIViewController {
@@ -257,8 +258,11 @@ class LogInViewController: UIViewController {
                             print("changeRequest hat geklappt")
                         }
                     }
-                }
                 
+                
+                let userRef = Firestore.firestore().collection("Users").document(user.uid)
+                    userRef.setData(["name": self.name, "surname": self.surname])
+                }
                 // Erstmal
                 self.dismiss(animated: true, completion: nil)
             }

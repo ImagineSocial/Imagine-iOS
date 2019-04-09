@@ -19,7 +19,8 @@ class PostCell : UITableViewCell {
     @IBOutlet weak var reportView: DesignablePopUp!
     @IBOutlet weak var reportViewButtonInTop: DesignableButton!
     @IBOutlet weak var cellCreateDateLabel: UILabel!
-    
+    @IBOutlet weak var profilePictureImageView: UIImageView!
+    @IBOutlet weak var ogPosterLabel: UILabel!
     
     var postObject: Post!
     var delegate: PostCellDelegate?

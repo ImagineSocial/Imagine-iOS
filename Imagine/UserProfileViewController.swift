@@ -19,17 +19,37 @@ class UserProfileViewController: UIViewController, UIImagePickerControllerDelega
     @IBOutlet weak var profilePictureImageView: UIImageView!
     @IBOutlet weak var cameraButton: UIButton!
     @IBOutlet weak var pictureFolderButton: UIButton!
+    @IBOutlet weak var logOutButton: UIButton!
+    @IBOutlet weak var profilePictureButton: DesignableButton!
     
     var imagePicker = UIImagePickerController()
+    var posts = [Post]()
     var imageURL = ""
     var selectedImageFromPicker = UIImage(named: "default-user")
+    var userUID = ""
+    var yourOwnProfile = false
     
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        
+        if userUID == "" {
+            yourOwnProfile = true
+            profilePictureButton.isEnabled = true
+            if let user = Auth.auth().currentUser {
+                sendData(UserUID: user.uid)
+            }
+        } else {
+            logOutButton.isHidden = true
+            profilePictureButton.isEnabled = false
+            
+            sendData(UserUID: userUID)
+        }
         getUserDetails()
-
+        
+        
         imagePicker.delegate = self
         cameraButton.alpha = 0
         cameraButton.isEnabled = false
@@ -37,6 +57,15 @@ class UserProfileViewController: UIViewController, UIImagePickerControllerDelega
         pictureFolderButton.isEnabled = false
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        yourOwnProfile = false
+    }
+    
+    func sendData(UserUID : String) {
+        if let CVC = children.last as? UserFeedTableViewController {
+            CVC.setUID(UID: UserUID)
+        }
+    }
     
     func getUserDetails() {
         
@@ -46,14 +75,41 @@ class UserProfileViewController: UIViewController, UIImagePickerControllerDelega
         layer.borderWidth = 0.5
         layer.borderColor = UIColor.black.cgColor
         
-        let user = Auth.auth().currentUser
-        if let user = user {
-            if let displayName = user.displayName {
-                nameLabel.text = displayName
+        if yourOwnProfile { // Wenn du es bist
+            let user = Auth.auth().currentUser
+            if let user = user {
+                if let displayName = user.displayName {
+                    nameLabel.text = displayName
+                }
+                if let url = user.photoURL {
+                    profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                }
             }
-            if let url = user.photoURL {
-                profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
-            }
+        } else {    // Wenn du dir das Profil von jemand anderem ansiehst
+            let userRef = Firestore.firestore().collection("Users").document(userUID)
+            userRef.getDocument(completion: { (document, err) in
+                if let document = document {
+                    if let docData = document.data() {
+                        
+                        let name = docData["name"] as? String ?? ""
+                        let surname = docData["surname"] as? String ?? ""
+                        let profilePictureURL = docData["profilePictureURL"] as? String ?? ""
+                        
+                        self.nameLabel.text = "\(name) \(surname)"
+                        
+                        if profilePictureURL != "" {
+                            if let url = URL(string: profilePictureURL) {
+                                self.profilePictureImageView.sd_setImage(with: url, completed: nil)
+                            }
+                        }
+                    }
+                }
+                
+                if err != nil {
+                    print("Wir haben einen Error beim User: \(err?.localizedDescription)")
+                }
+            })
+            
         }
     }
     
@@ -104,6 +160,9 @@ class UserProfileViewController: UIViewController, UIImagePickerControllerDelega
                     print("changeRequest hat geklappt")
                 }
             }
+            let userRef = Firestore.firestore().collection("Users").document(user.uid)
+            //userRef.setData(["profilePictureURL": imageURL], merge: true)
+            userRef.setData(["profilePictureURL": imageURL], mergeFields:["profilePictureURL"]) // MergeFields damit die anderen nicht überschrieben werden
         }
         
     }
@@ -157,10 +216,10 @@ class UserProfileViewController: UIViewController, UIImagePickerControllerDelega
         } else {
             pictureFolderButton.isEnabled = true
             cameraButton.isEnabled = true
-        
+            
             UIView.animate(withDuration: 2, delay: 0.1, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveLinear, animations: {
-            self.cameraButton.alpha = 1
-            self.pictureFolderButton.alpha = 1
+                self.cameraButton.alpha = 1
+                self.pictureFolderButton.alpha = 1
             }, completion: nil)
         }
     }

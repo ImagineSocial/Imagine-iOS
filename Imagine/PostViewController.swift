@@ -8,15 +8,20 @@
 
 import UIKit
 import Kingfisher
+import SDWebImage
 
 
 class PostViewController: UIViewController {
     
-    @IBOutlet weak var aboveNavBarView: UIView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var postImageView: UIImageView!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var imageViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var profilePictureImageView: UIImageView!
+    @IBOutlet weak var OPNameLabel: UILabel!
+    @IBOutlet weak var postDateLabel: UILabel!
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var contentView: UIView!
     
     var post = Post()
     
@@ -24,17 +29,23 @@ class PostViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
         showPost()
-        
-        navigationController?.navigationBar.barTintColor = UIColor(red:0.95, green:1.00, blue:1.00, alpha:1.0)
-        aboveNavBarView.backgroundColor = UIColor(red:0.95, green:1.00, blue:1.00, alpha:1.0)
     }
     
     func showPost() {
         titleLabel.text = post.title
         descriptionLabel.text = post.description
+        postDateLabel.text = post.createTime
         
-        print(post.title)
+        profilePictureImageView.layer.masksToBounds = true
+        profilePictureImageView.layer.cornerRadius = profilePictureImageView.frame.width/2
+        if let url = URL(string: post.originalPosterImageURL) {
+            profilePictureImageView.sd_setImage(with: url, completed: nil)
+        }
+        OPNameLabel.text = post.originalPosterName
         
         let imageWidth = post.imageWidth
         let imageHeight = post.imageHeight
@@ -48,14 +59,36 @@ class PostViewController: UIViewController {
             let newHeight = self.view.frame.width / ratio
             
             imageViewHeightConstraint.constant = newHeight
+            
         } else {
              imageViewHeightConstraint.constant = 0
         }
         
+        contentView.heightAnchor.constraint(equalToConstant: 1000)
+        scrollView.heightAnchor.constraint(equalToConstant: 1000)
         
     }
-    @IBAction func backPressed(_ sender: Any) {
+    
+    @IBAction func dismissPressed(_ sender: Any) {
         dismiss(animated: true, completion: nil)
+    }
+    @IBAction func userTapped(_ sender: Any) {
+        
+        if post.originalPosterUID != "" {
+            performSegue(withIdentifier: "toUserSegue", sender: post.originalPosterUID)
+        } else {
+            print("Kein User zu finden!")
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let nextVC = segue.destination as? UserProfileViewController {
+            if let OPUID = sender as? String {
+                nextVC.userUID = OPUID
+            } else {
+                print("Irgendwas will der hier nicht übertragen")
+            }
+        }
     }
     
 }

@@ -21,8 +21,12 @@ class PostHelper {
         
         
         var posts = [Post]()
+        var name = ""
+        var surname = ""
+        var profilePictureURL = ""
         
-        db.collection("Posts").getDocuments { (querySnapshot, error) in
+        let postRef = db.collection("Posts").order(by: "createTime", descending: true)  
+        postRef.getDocuments { (querySnapshot, error) in
             
             for document in querySnapshot!.documents {
                 
@@ -38,7 +42,10 @@ class PostHelper {
                     guard let title = documentData["title"] as? String,
                         let description = documentData["description"] as? String,
                         let report = documentData["report"] as? String,
-                        let createTimestamp = documentData["createTime"] as? Timestamp
+                        let createTimestamp = documentData["createTime"] as? Timestamp,
+                        let originalPoster = documentData["originalPoster"] as? String
+                        
+                    
                         
                         else {
                             continue    // Falls er das nicht als (String) zuordnen kann
@@ -67,6 +74,7 @@ class PostHelper {
                         post.report = report
                         post.documentID = documentID
                         post.createTime = stringDate
+                        post.originalPosterUID = originalPoster
                 
                         posts.append(post)
                       
@@ -92,6 +100,7 @@ class PostHelper {
                         post.report = report
                         post.documentID = documentID
                         post.createTime = stringDate
+                        post.originalPosterUID = originalPoster
                         
                         posts.append(post)
                     
@@ -112,6 +121,7 @@ class PostHelper {
                         post.report = report
                         post.documentID = documentID
                         post.createTime = stringDate
+                        post.originalPosterUID = originalPoster
 
                         
                         posts.append(post)
@@ -131,12 +141,38 @@ class PostHelper {
                         post.description = description
                         post.createTime = stringDate
                         post.OGRepostDocumentID = postDocumentID     // Dann die Sachen zuordnen
+                        post.originalPosterUID = originalPoster
                         
                         posts.append(post)
                         
                     }
                 }
             }
+            
+            for post in posts {
+                // User Daten raussuchen
+                let userRef = db.collection("Users").document(post.originalPosterUID)
+                
+                userRef.getDocument(completion: { (document, err) in
+                    if let document = document {
+                        if let docData = document.data() {
+                            
+                            name = docData["name"] as? String ?? ""
+                            surname = docData["surname"] as? String ?? ""
+                            profilePictureURL = docData["profilePictureURL"] as? String ?? ""
+                            
+                            post.originalPosterName = "\(name) \(surname)"
+                            post.originalPosterImageURL = profilePictureURL
+                            
+                        }
+                    }
+                    
+                    if err != nil {
+                        print("Wir haben einen Error beim User: \(err?.localizedDescription)")
+                    }
+                })
+            }
+            
             returnPosts(posts)
         }
     }
@@ -154,6 +190,9 @@ class Post {
     var documentID = ""
     var createTime = ""
     var OGRepostDocumentID = ""
+    var originalPosterName = ""
+    var originalPosterImageURL = ""
+    var originalPosterUID = ""
 }
 
 class ReportOptions {
