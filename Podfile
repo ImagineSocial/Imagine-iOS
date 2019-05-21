@@ -12,6 +12,6 @@ target 'Imagine' do
  pod 'Firebase/Storage'
  pod 'Firebase/Auth'
  pod 'SDWebImage'
- pod 'Kingfisher'
+ pod 'SwiftLinkPreview'
  
 end

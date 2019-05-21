@@ -122,17 +122,13 @@ class RepostViewController: UIViewController {
         return Timestamp(date: date)
     }
     
-    
     @IBAction func sharePressed(_ sender: Any) {
         let postRef = Firestore.firestore().collection("Posts")
         
         let postRefDocumentID = postRef.document().documentID
-        let dataDictionary: [String: Any] = ["title": titleTranslationTextView.text, "description": descriptionTranslationTextView.text, "documentID": postRefDocumentID, "createTime": getDate(), "type": "repost", "OGpostDocumentID" : post.documentID, "report": "normal"]
-        // EIgentlich nicht nur repost!!!!!!
-        
+        let dataDictionary: [String: Any] = ["title": titleTranslationTextView.text, "description": descriptionTranslationTextView.text, "documentID": postRefDocumentID, "createTime": getDate(), "type": repost, "OGpostDocumentID" : post.documentID, "report": "normal"]
         
         postRef.document(postRefDocumentID).setData(dataDictionary) // Glaube macht keinen Unterschied
-        
         
         let alert = UIAlertController(title: "Done!", message: "Danke, dass du Wissen teilst!", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in

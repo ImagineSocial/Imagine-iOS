@@ -20,6 +20,11 @@ class RePostCell : UITableViewCell {
     @IBOutlet weak var reportViewLabel: UILabel!
     @IBOutlet weak var reportViewButton: DesignableButton!
     @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var profilePictureImageView: UIImageView!
+    @IBOutlet weak var ogPosterNameLabel: UILabel!
+    @IBOutlet weak var reposterNameLabel: UILabel!
+    @IBOutlet weak var repostDateLabel: UILabel!
+    @IBOutlet weak var reposterProfilePictureImageView: UIImageView!
     
     @IBAction func moreTapped(_ sender: Any) {
     }

@@ -8,13 +8,16 @@
 
 import UIKit
 
+protocol PostCellDelegate {
+    func reportTapped(post: Post)
+}
 
 class PostCell : UITableViewCell {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var cellImageView: UIImageView!
-    @IBOutlet weak var cellImageViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var reportButton: DesignableButton!
     @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var titleLabelHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var reportViewLabel: UILabel!
     @IBOutlet weak var reportView: DesignablePopUp!
     @IBOutlet weak var reportViewButtonInTop: DesignableButton!

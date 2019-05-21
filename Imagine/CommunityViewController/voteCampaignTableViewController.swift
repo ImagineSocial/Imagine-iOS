@@ -30,10 +30,15 @@ class voteCampaignTableViewController: UITableViewController, CampaignCellDelega
     
     @objc func getCampaigns() {
         
-        CampaignHelper().getCampaigns { (campaigns) in
-            self.campaigns = campaigns
+        DataHelper().getData(get: "campaign") { (campaigns) in
+            self.campaigns = campaigns as! [Campaign]
             self.tableView.reloadData()
         }
+        
+//        CampaignHelper().getCampaigns { (campaigns) in
+//            self.campaigns = campaigns
+//            self.tableView.reloadData()
+//        }
     }
     
     

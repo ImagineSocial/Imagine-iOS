@@ -24,10 +24,14 @@ class SupportTheCommunityTableViewController: UITableViewController, JobOfferCel
     
     
     func getJobOffers() {
-        JobOfferHelper().getJobOffers { (jobOffers) in
-            self.jobOffers = jobOffers
+        DataHelper().getData(get: "jobOffer") { (jobOffers) in
+            self.jobOffers = jobOffers as! [JobOffer]
             self.tableView.reloadData()
         }
+//        JobOfferHelper().getJobOffers { (jobOffers) in
+//            self.jobOffers = jobOffers
+//            self.tableView.reloadData()
+//        }
         
     }
     
@@ -42,6 +46,7 @@ class SupportTheCommunityTableViewController: UITableViewController, JobOfferCel
     
      override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "SupportTheCommunityCell", for: indexPath) as? SupportTheCommunityCell {
+            
             let supportField = jobOffers[indexPath.row]
             
             cell.delegate = self

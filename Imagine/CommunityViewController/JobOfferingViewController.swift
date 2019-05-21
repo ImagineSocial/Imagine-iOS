@@ -24,9 +24,15 @@ class JobOfferingViewController: UIViewController {
     }
     
     func setJobOffer() {
-        headerLabel.text = jobOffer.title
-        smallBodyLabel.text = jobOffer.cellText
-        interestedCountLabel.text = String(jobOffer.interested)
+        if jobOffer.documentID != "" {
+            headerLabel.text = jobOffer.title
+            smallBodyLabel.text = jobOffer.cellText
+            interestedCountLabel.text = String(jobOffer.interested)
+        } else {    // Also "Wir brauchen dich!"
+            headerLabel.text = "Wir brauchen dich!"
+            smallBodyLabel.text = "Wenn du glaubst, mit deinem Wissen kannst du uns helfen, aber es gibt keine passende Ausschreibung, gib uns Bescheid! Wir sind auf klüge Köpfe angewiesen!"
+        }
+        
     }
 
  // toJobOfferSegue

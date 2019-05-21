@@ -30,11 +30,8 @@ class PostHelper {
             
             for document in querySnapshot!.documents {
                 
-                
-                
                 let documentID = document.documentID
                 let documentData = document.data()
-                
                 
                 if let postType = documentData["type"] as? String {
                     
@@ -44,8 +41,6 @@ class PostHelper {
                         let report = documentData["report"] as? String,
                         let createTimestamp = documentData["createTime"] as? Timestamp,
                         let originalPoster = documentData["originalPoster"] as? String
-                        
-                    
                         
                         else {
                             continue    // Falls er das nicht als (String) zuordnen kann
@@ -127,7 +122,7 @@ class PostHelper {
                         posts.append(post)
                         
                         // Repost
-                    } else if postType == "repost" {
+                    } else if postType == "repost" || postType == "translation" {
                         
                         guard let postDocumentID = documentData["OGpostDocumentID"] as? String
                             
@@ -135,12 +130,13 @@ class PostHelper {
                                 continue    // Falls er das nicht als (String) zuordnen kann
                         }
                         
-                        let post = Post()       // Erst neuen Post erstellen
+                        let post = Post()
                         post.type = postType
                         post.title = title
+                        post.report = report
                         post.description = description
                         post.createTime = stringDate
-                        post.OGRepostDocumentID = postDocumentID     // Dann die Sachen zuordnen
+                        post.OGRepostDocumentID = postDocumentID     
                         post.originalPosterUID = originalPoster
                         
                         posts.append(post)
@@ -171,6 +167,7 @@ class PostHelper {
                         print("Wir haben einen Error beim User: \(err?.localizedDescription)")
                     }
                 })
+                
             }
             
             returnPosts(posts)
