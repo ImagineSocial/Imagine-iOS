@@ -13,16 +13,20 @@ import FirebaseFirestore
 class DataHelper {
     
     // Überall noch eine Wichtigkeitsvariable einfügen
+    var dataPath = ""
+    let db = Firestore.firestore()
+    
+    
     
     func getData(get: String, returnData: @escaping ([Any]) -> Void) {
+        // "get" Variable kann "campaign" für CommunityEntscheidungen, "jobOffer" für Hilfe der Community und "fact" für Fakten Dings sein
         
-        let db = Firestore.firestore()
         let settings = db.settings
         settings.areTimestampsInSnapshotsEnabled = true
         db.settings = settings
         
         var list = [Any]()
-        var dataPath = ""
+        
         
         if get == "campaign" {
             list = [Campaign]()
@@ -39,6 +43,9 @@ class DataHelper {
             jobOffer.interested = 10
             
             list.append(jobOffer)
+        } else if get == "facts" {
+            list = [Fact]()
+            dataPath = "Facts"
         }
         
         
@@ -100,10 +107,128 @@ class DataHelper {
                     jobOffer.interested = interestedCount
                     
                     list.append(jobOffer)
+                } else if get == "facts" {
+                    guard let name = documentData["name"] as? String,
+                    let createTimestamp = documentData["createDate"] as? Timestamp,
+                    let imageURL = documentData["imageURL"] as? String
+                    
+                        else {
+                            continue
+                    }
+                    
+                    // Datum vom Timestamp umwandeln
+                    let formatter = DateFormatter()
+                    let date:Date = createTimestamp.dateValue()
+                    formatter.dateFormat = "dd MM yyyy HH:mm"
+                    let stringDate = formatter.string(from: date)
+                    
+                    
+                    
+                    let fact = Fact()
+                    fact.title = name
+                    fact.createDate = stringDate
+                    fact.documentID = documentID
+                    fact.imageURL = imageURL
+
+                    list.append(fact)
+                    
                 }
             }
             returnData(list)
         }
+    }
+    
+    func getDeepData(get: String, documentID: String, returnData: @escaping ([Any]) -> Void) {
+        
+        var argumentList = [Argument]()
+        
+        print("Hier wird geaden mit ID:", documentID)
+        self.db.collection(get).document(documentID).collection("arguments").getDocuments(completion: { (snap, err) in
+            for document in snap!.documents {
+                
+                let docData = document.data()
+                let documentID = document.documentID
+                
+                guard let source = docData["source"] as? [String],
+                    let title = docData["title"] as? String,
+                    let proOrContra = docData["proOrContra"] as? String,
+                    let description = docData["description"] as? String
+                    else {
+                        continue    // Falls er das nicht als (String) zuordnen kann
+                }
+                
+                let argument = Argument()
+                argument.source = source
+                argument.title = title
+                argument.description = description
+                argument.proOrContra = proOrContra
+                argument.documentID = documentID
+                
+                argumentList.append(argument)
+            }
+            let argument = Argument()
+            argument.source = [""]
+            argument.title = "Füge ein Argument hinzu!"
+            argument.description = "Wenn du einen validen Punkt zu der Diskussion hinzufügen kannst würden wir uns sehr freuen!"
+            argument.proOrContra = "pro"
+            
+            argumentList.append(argument)
+            
+            let conArgument = Argument()
+            conArgument.source = [""]
+            conArgument.title = "Füge ein Argument hinzu!"
+            conArgument.description = "Wenn du einen validen Punkt zu der Diskussion hinzufügen kannst würden wir uns sehr freuen!"
+            conArgument.proOrContra = "contra"
+            
+            argumentList.append(conArgument)
+            
+            returnData(argumentList)
+        })
+    }
+    
+    func getDeepestArgument(factID: String, argumentID: String , returnData: @escaping ([Any]) -> Void) {
+        
+        var argumentList = [Argument]()
+        
+        let argumentPath = self.db.collection("Facts").document(factID).collection("arguments").document(argumentID).collection("arguments")
+            
+            argumentPath.getDocuments(completion: { (snap, err) in
+                
+                if err != nil {
+                    print("Wir haben einen Error bei den tiefen Argumenten: ", err?.localizedDescription)
+                }
+                
+            for document in snap!.documents {
+                
+                let docData = document.data()
+                
+                guard let source = docData["source"] as? [String],
+                    let title = docData["title"] as? String,
+                    let proOrContra = docData["proOrContra"] as? String,
+                    let description = docData["description"] as? String
+                    else {
+                        continue    // Falls er das nicht als (String) zuordnen kann
+                }
+                
+                let argument = Argument()
+                argument.source = source
+                argument.title = title
+                argument.description = description
+                argument.proOrContra = proOrContra
+                
+                argumentList.append(argument)
+            }
+            
+                let argument = Argument()
+                argument.source = [""]
+                argument.title = "Füge ein Argument hinzu!"
+                argument.description = "Wenn du einen validen Punkt zu der Diskussion hinzufügen kannst würden wir uns sehr freuen!"
+                argument.proOrContra = "pro"
+                
+                argumentList.append(argument)
+            
+            returnData(argumentList)
+        })
     }
 }
 
@@ -125,4 +250,22 @@ class Campaign {
     var createDate = ""
     var supporter = 0
     var opposition = 0
+}
+
+
+class Fact {
+    var title = ""
+    var createDate = ""
+    var documentID = ""
+    var imageURL = ""
+    var arguments: [Argument] = []
+}
+
+class Argument {
+    var source:[String] = []
+    var proOrContra = ""
+    var title = ""
+    var description = ""
+    var documentID = ""
+    var contraArguments: [Argument] = []
 }

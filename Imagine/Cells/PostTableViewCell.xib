@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="Kalam-Light.ttf">
+            <string>Kalam-Light</string>
+        </array>
+        <array key="Kalam-Regular.ttf">
+            <string>Kalam-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="NibPostCell" rowHeight="559" id="ZUo-e7-XZo" customClass="PostCell" customModule="Imagine">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="559"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ZUo-e7-XZo" id="S1H-Cn-Se8">
+                <rect key="frame" x="0.0" y="0.0" width="375" height="558.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MNU-VP-taA" userLabel="viewForOpticalBorderToNextPost">
+                        <rect key="frame" x="0.0" y="548.5" width="375" height="10"/>
+                        <color key="backgroundColor" white="0.90372160607821317" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="10" id="aI2-Sv-HE8"/>
+                        </constraints>
+                    </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Hier steht der Titel meines Posts. Wenn ich kein Bild Poste auch der ganze Post" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.59999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="dmS-xc-Exh">
+                        <rect key="frame" x="15" y="72" width="345" height="60"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="60" id="hfq-nC-vq2"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Kalam-Regular" family="Kalam" pointSize="20"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wga-Yj-hL1">
+                        <rect key="frame" x="65" y="54" width="43.5" height="16"/>
+                        <fontDescription key="fontDescription" name="Kalam-Light" family="Kalam Light" pointSize="10"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="MKy-RD-AEt">
+                        <rect key="frame" x="0.0" y="132" width="375" height="358.5"/>
+                        <constraints>
+                            <constraint firstAttribute="height" priority="250" id="Mj9-6P-Y8A"/>
+                        </constraints>
+                    </imageView>
+                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="69N-o1-EfT">
+                        <rect key="frame" x="15" y="498.5" width="345" height="40"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PMN-9b-1g1" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="75" height="40"/>
+                                <color key="backgroundColor" red="0.12549019610000001" green="0.30588235289999999" blue="0.37254901959999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="15"/>
+                                <state key="normal" title="Danke">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7Fx-vY-uNf" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                <rect key="frame" x="90" y="0.0" width="75" height="40"/>
+                                <color key="backgroundColor" red="1" green="0.77647058820000003" blue="0.6588235294" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="14"/>
+                                <state key="normal" title="Surprise">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2ku-8p-oae" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                <rect key="frame" x="180" y="0.0" width="75" height="40"/>
+                                <color key="backgroundColor" red="1" green="0.53725490200000003" blue="0.51764705879999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="15"/>
+                                <state key="normal" title="Funny">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="W55-Nt-60d" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                <rect key="frame" x="270" y="0.0" width="75" height="40"/>
+                                <color key="backgroundColor" red="0.71764705880000002" green="0.84313725490000002" blue="0.84705882349999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" name="Thonburi" family="Thonburi" pointSize="15"/>
+                                <state key="normal" title="Mehr">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="reportPressed:" destination="ZUo-e7-XZo" eventType="touchUpInside" id="uIo-0P-6W4"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="40" id="Y1M-bi-WWp"/>
+                        </constraints>
+                    </stackView>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1j9-xB-qIH" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="24"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RaD-5X-deS">
+                                <rect key="frame" x="15" y="0.0" width="328" height="24"/>
+                                <fontDescription key="fontDescription" name="Kalam-Regular" family="Kalam" pointSize="18"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iU9-bH-zHN" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                <rect key="frame" x="345" y="2" width="20" height="20"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="20" id="gfR-6M-fG4"/>
+                                </constraints>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="RaD-5X-deS" secondAttribute="bottom" id="Cg6-mh-dj3"/>
+                            <constraint firstItem="iU9-bH-zHN" firstAttribute="top" secondItem="1j9-xB-qIH" secondAttribute="top" priority="999" constant="2" id="Ve8-CB-Y1o"/>
+                            <constraint firstItem="iU9-bH-zHN" firstAttribute="leading" secondItem="RaD-5X-deS" secondAttribute="trailing" constant="2" id="ZAh-Oi-hTL"/>
+                            <constraint firstItem="RaD-5X-deS" firstAttribute="top" secondItem="1j9-xB-qIH" secondAttribute="top" id="dgT-mV-d0X"/>
+                            <constraint firstAttribute="bottom" secondItem="iU9-bH-zHN" secondAttribute="bottom" priority="999" constant="2" id="e13-gw-MZ2"/>
+                            <constraint firstItem="RaD-5X-deS" firstAttribute="leading" secondItem="1j9-xB-qIH" secondAttribute="leading" constant="15" id="iat-O4-xAd"/>
+                            <constraint firstAttribute="trailing" secondItem="iU9-bH-zHN" secondAttribute="trailing" constant="10" id="kdB-S1-ZPq"/>
+                            <constraint firstAttribute="height" constant="24" id="lwO-5w-xbA"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="1"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Owt-B3-XUV">
+                        <rect key="frame" x="21" y="492.5" width="333" height="1"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="1" id="1rt-ZR-E5j"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="default-user" translatesAutoresizingMaskIntoConstraints="NO" id="nHa-Ll-Wga">
+                        <rect key="frame" x="15" y="30" width="40" height="40"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="40" id="St3-sV-zCY"/>
+                            <constraint firstAttribute="width" constant="40" id="Y3g-dz-Dag"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="253" text="Name Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4sj-iy-eAd">
+                        <rect key="frame" x="65" y="30" width="78" height="24"/>
+                        <fontDescription key="fontDescription" name="Kalam-Regular" family="Kalam" pointSize="15"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="Owt-B3-XUV" firstAttribute="top" secondItem="MKy-RD-AEt" secondAttribute="bottom" constant="2" id="6Fw-mR-a9n"/>
+                    <constraint firstItem="nHa-Ll-Wga" firstAttribute="leading" secondItem="dmS-xc-Exh" secondAttribute="leading" id="BWM-sO-cAr"/>
+                    <constraint firstItem="wga-Yj-hL1" firstAttribute="bottom" secondItem="nHa-Ll-Wga" secondAttribute="bottom" id="C0b-QT-UwR"/>
+                    <constraint firstItem="4sj-iy-eAd" firstAttribute="top" secondItem="nHa-Ll-Wga" secondAttribute="top" id="EwS-5c-4iS"/>
+                    <constraint firstItem="69N-o1-EfT" firstAttribute="leading" secondItem="S1H-Cn-Se8" secondAttribute="leading" constant="15" id="FDK-L3-CKa"/>
+                    <constraint firstAttribute="trailing" secondItem="1j9-xB-qIH" secondAttribute="trailing" id="GAd-c9-EbD"/>
+                    <constraint firstAttribute="trailing" secondItem="MNU-VP-taA" secondAttribute="trailing" id="MsY-L0-ZxU"/>
+                    <constraint firstAttribute="trailing" secondItem="MKy-RD-AEt" secondAttribute="trailing" id="Qpb-HE-cc8"/>
+                    <constraint firstItem="1j9-xB-qIH" firstAttribute="leading" secondItem="S1H-Cn-Se8" secondAttribute="leading" id="SKE-Fe-r1t"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="Owt-B3-XUV" secondAttribute="trailing" constant="5" id="Wl0-aO-G8G"/>
+                    <constraint firstAttribute="trailing" secondItem="dmS-xc-Exh" secondAttribute="trailing" constant="15" id="aw7-ks-jm8"/>
+                    <constraint firstItem="MKy-RD-AEt" firstAttribute="top" secondItem="dmS-xc-Exh" secondAttribute="bottom" id="bsD-Co-hTY"/>
+                    <constraint firstItem="wga-Yj-hL1" firstAttribute="leading" secondItem="nHa-Ll-Wga" secondAttribute="trailing" constant="10" id="d8G-5t-Ddp"/>
+                    <constraint firstItem="4sj-iy-eAd" firstAttribute="leading" secondItem="nHa-Ll-Wga" secondAttribute="trailing" constant="10" id="gSo-zk-b4m"/>
+                    <constraint firstItem="69N-o1-EfT" firstAttribute="top" secondItem="Owt-B3-XUV" secondAttribute="bottom" constant="5" id="gcV-hk-GmA"/>
+                    <constraint firstItem="1j9-xB-qIH" firstAttribute="top" secondItem="S1H-Cn-Se8" secondAttribute="top" id="hK0-z8-cAl"/>
+                    <constraint firstItem="dmS-xc-Exh" firstAttribute="top" secondItem="nHa-Ll-Wga" secondAttribute="bottom" constant="2" id="iCp-Hu-k84"/>
+                    <constraint firstAttribute="trailing" secondItem="69N-o1-EfT" secondAttribute="trailing" constant="15" id="iG2-Td-6GE"/>
+                    <constraint firstItem="MKy-RD-AEt" firstAttribute="leading" secondItem="S1H-Cn-Se8" secondAttribute="leading" id="iez-v1-Zi5"/>
+                    <constraint firstItem="Owt-B3-XUV" firstAttribute="leading" secondItem="S1H-Cn-Se8" secondAttribute="leadingMargin" constant="5" id="jHQ-zW-pTU"/>
+                    <constraint firstItem="MNU-VP-taA" firstAttribute="top" secondItem="69N-o1-EfT" secondAttribute="bottom" constant="10" id="maG-hY-V6p"/>
+                    <constraint firstAttribute="bottom" secondItem="MNU-VP-taA" secondAttribute="bottom" id="o86-D2-J3l"/>
+                    <constraint firstItem="dmS-xc-Exh" firstAttribute="leading" secondItem="S1H-Cn-Se8" secondAttribute="leading" constant="15" id="psP-J2-qxE"/>
+                    <constraint firstItem="MNU-VP-taA" firstAttribute="leading" secondItem="S1H-Cn-Se8" secondAttribute="leading" id="vYE-EQ-xO5"/>
+                    <constraint firstItem="nHa-Ll-Wga" firstAttribute="top" secondItem="1j9-xB-qIH" secondAttribute="bottom" constant="6" id="vdM-UN-Gc0"/>
+                    <constraint firstItem="Owt-B3-XUV" firstAttribute="centerX" secondItem="S1H-Cn-Se8" secondAttribute="centerX" id="zhc-KW-2Rh"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="cellCreateDateLabel" destination="wga-Yj-hL1" id="6ay-zB-PQf"/>
+                <outlet property="cellImageView" destination="MKy-RD-AEt" id="HkA-jQ-Uo0"/>
+                <outlet property="ogPosterLabel" destination="4sj-iy-eAd" id="0tf-XB-uEx"/>
+                <outlet property="profilePictureImageView" destination="nHa-Ll-Wga" id="ysh-BX-rqv"/>
+                <outlet property="reportButton" destination="W55-Nt-60d" id="9X8-mj-Wzk"/>
+                <outlet property="reportView" destination="1j9-xB-qIH" id="vmO-0b-TQy"/>
+                <outlet property="reportViewButtonInTop" destination="iU9-bH-zHN" id="w4J-RG-roC"/>
+                <outlet property="reportViewHeightConstraint" destination="lwO-5w-xbA" id="DBr-wU-oty"/>
+                <outlet property="reportViewLabel" destination="RaD-5X-deS" id="x3X-PE-JlC"/>
+                <outlet property="titleLabel" destination="dmS-xc-Exh" id="ByC-OQ-ZGt"/>
+                <outlet property="titleLabelHeightConstraint" destination="hfq-nC-vq2" id="WWp-iP-XQ8"/>
+            </connections>
+            <point key="canvasLocation" x="-143.19999999999999" y="-81.409295352323838"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="default-user" width="415" height="415"/>
+    </resources>
+</document>
