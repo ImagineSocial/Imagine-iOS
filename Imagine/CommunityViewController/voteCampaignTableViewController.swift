@@ -20,7 +20,7 @@ class voteCampaignTableViewController: UITableViewController, CampaignCellDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+        tableView.separatorStyle = .none
     }
     
     
@@ -35,10 +35,6 @@ class voteCampaignTableViewController: UITableViewController, CampaignCellDelega
             self.tableView.reloadData()
         }
         
-//        CampaignHelper().getCampaigns { (campaigns) in
-//            self.campaigns = campaigns
-//            self.tableView.reloadData()
-//        }
     }
     
     

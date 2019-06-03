@@ -58,6 +58,8 @@ class UserProfileViewController: UIViewController, UIImagePickerControllerDelega
         pictureFolderButton.isEnabled = false
     }
     
+    
+    
     override func viewWillDisappear(_ animated: Bool) {
         yourOwnProfile = false
     }
@@ -230,7 +232,7 @@ class UserProfileViewController: UIViewController, UIImagePickerControllerDelega
     }
     
     @IBAction func logOutPressed(_ sender: Any) {
-        let alert = UIAlertController(title: "Done!", message: "Danke für deine Weisheiten.", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Ausloggen", message: "Wir sehen uns bald wieder!", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Abmelden", style: .destructive, handler: { (_) in
             // abmelden
             do {

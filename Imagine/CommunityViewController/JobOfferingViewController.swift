@@ -23,11 +23,14 @@ class JobOfferingViewController: UIViewController {
         setJobOffer()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        interestedCountLabel.text = String(jobOffer.interested)     // Damit er nach dem Bewerben updatet
+    }
+    
     func setJobOffer() {
         if jobOffer.documentID != "" {
             headerLabel.text = jobOffer.title
             smallBodyLabel.text = jobOffer.cellText
-            interestedCountLabel.text = String(jobOffer.interested)
         } else {    // Also "Wir brauchen dich!"
             headerLabel.text = "Wir brauchen dich!"
             smallBodyLabel.text = "Wenn du glaubst, mit deinem Wissen kannst du uns helfen, aber es gibt keine passende Ausschreibung, gib uns Bescheid! Wir sind auf klüge Köpfe angewiesen!"
@@ -35,13 +38,24 @@ class JobOfferingViewController: UIViewController {
         
     }
 
- // toJobOfferSegue
+ 
     @IBAction func interestedPressed(_ sender: Any) {
+        performSegue(withIdentifier: "toSurveySegue", sender: jobOffer)
     }
     @IBAction func moreInfosPressed(_ sender: Any) {
     }
     @IBAction func backPressed(_ sender: Any) {
         dismiss(animated: true, completion: nil)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toSurveySegue" {
+            if let job = sender as? JobOffer {
+                if let surveyVC = segue.destination as? JobSurveyViewController {
+                    surveyVC.jobOffer = job
+                }
+            }
+        }
     }
     
 }

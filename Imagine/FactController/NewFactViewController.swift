@@ -12,6 +12,7 @@ import FirebaseFirestore
 
 class NewFactViewController: UIViewController {
 
+    @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var descriptionTextField: UITextField!
     @IBOutlet weak var sourceTextField: UITextField!
@@ -21,16 +22,35 @@ class NewFactViewController: UIViewController {
     var fact = Fact()
     var proOrContra = "pro"
     var source = ""
+    var new = ""
+    var deepArgument = Argument()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setUI()
         ProContraLabel.text = proOrContra
         ProContraLabel.textColor = .green
         
+        
         print("Das ist die ID des Faktes: \(fact.documentID)")
         // Do any additional setup after loading the view.
+    }
+    
+    func setUI() {
+        switch new {
+        case "deepArgument":
+            headerLabel.text = "Teile dein Argument mit uns!"
+        case "argument":
+            headerLabel.text = "Teile dein Argument mit uns!"
+        case "source":
+            titleTextField.placeholder = "Nicht nötig"
+            descriptionTextField.placeholder = "Nicht nötig"
+            headerLabel.text = "Teile deine Quelle mit uns!"
+        default:
+            headerLabel.text = "Teile deine Weisheit mit uns!"
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

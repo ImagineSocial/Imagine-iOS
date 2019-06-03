@@ -13,5 +13,7 @@ target 'Imagine' do
  pod 'Firebase/Auth'
  pod 'SDWebImage'
  pod 'SwiftLinkPreview'
+ pod 'MessengerKit', :git => 'https://github.com/steve228uk/MessengerKit.git'
+ pod 'PusherChatkit'
  
 end

@@ -9,21 +9,20 @@
 import Foundation
 import Firebase
 import FirebaseFirestore
+import SDWebImage
 
 class PostHelper {
     
+    var posts = [Post]()
+    let db = Firestore.firestore()
+    
     func getPosts(returnPosts: @escaping ([Post]) -> Void) {
         
-    let db = Firestore.firestore()
+    
         let settings = db.settings
         settings.areTimestampsInSnapshotsEnabled = true
         db.settings = settings
         
-        
-        var posts = [Post]()
-        var name = ""
-        var surname = ""
-        var profilePictureURL = ""
         
         let postRef = db.collection("Posts").order(by: "createTime", descending: true)  
         postRef.getDocuments { (querySnapshot, error) in
@@ -40,17 +39,24 @@ class PostHelper {
                         let description = documentData["description"] as? String,
                         let report = documentData["report"] as? String,
                         let createTimestamp = documentData["createTime"] as? Timestamp,
-                        let originalPoster = documentData["originalPoster"] as? String
+                        let originalPoster = documentData["originalPoster"] as? String,
+                        let thanksCount = documentData["thanksCount"] as? Int,
+                        let wowCount = documentData["wowCount"] as? Int,
+                        let haCount = documentData["haCount"] as? Int,
+                        let niceCount = documentData["niceCount"] as? Int
                         
                         else {
                             continue    // Falls er das nicht als (String) zuordnen kann
                     }
                     
-                    // Timestamp umwandeln
-                    let formatter = DateFormatter()
-                    let date:Date = createTimestamp.dateValue()
-                    formatter.dateFormat = "dd MM yyyy HH:mm"
-                    let stringDate = formatter.string(from: date)
+                    let stringDate = HandyHelper().getStringDate(timestamp: createTimestamp)
+                    
+                    let poster = self.getUser(userUID: originalPoster)
+                    
+                    
+//                    self.getUser(userUID: originalPoster, completion: { (fetchedUser) in
+//                        poster = fetchedUser
+//                    })
                     
                     // Thought
                     if postType == "thought" {
@@ -70,8 +76,15 @@ class PostHelper {
                         post.documentID = documentID
                         post.createTime = stringDate
                         post.originalPosterUID = originalPoster
+                        post.votes.thanks = thanksCount
+                        post.votes.wow = wowCount
+                        post.votes.ha = haCount
+                        post.votes.nice = niceCount
+                        post.user = poster
+                    
+                        
                 
-                        posts.append(post)
+                        self.posts.append(post)
                       
                         
                     // Picture
@@ -96,8 +109,13 @@ class PostHelper {
                         post.documentID = documentID
                         post.createTime = stringDate
                         post.originalPosterUID = originalPoster
+                        post.votes.thanks = thanksCount
+                        post.votes.wow = wowCount
+                        post.votes.ha = haCount
+                        post.votes.nice = niceCount
+                        post.user = poster
                         
-                        posts.append(post)
+                        self.posts.append(post)
                     
                     //Link
                     } else if postType == "link" {
@@ -117,9 +135,14 @@ class PostHelper {
                         post.documentID = documentID
                         post.createTime = stringDate
                         post.originalPosterUID = originalPoster
+                        post.votes.thanks = thanksCount
+                        post.votes.wow = wowCount
+                        post.votes.ha = haCount
+                        post.votes.nice = niceCount
+                        post.user = poster
 
                         
-                        posts.append(post)
+                        self.posts.append(post)
                         
                         // Repost
                     } else if postType == "repost" || postType == "translation" {
@@ -136,42 +159,177 @@ class PostHelper {
                         post.report = report
                         post.description = description
                         post.createTime = stringDate
-                        post.OGRepostDocumentID = postDocumentID     
+                        post.OGRepostDocumentID = postDocumentID
+                        post.documentID = documentID
                         post.originalPosterUID = originalPoster
+                        post.votes.thanks = thanksCount
+                        post.votes.wow = wowCount
+                        post.votes.ha = haCount
+                        post.votes.nice = niceCount
+                        post.user = poster
                         
-                        posts.append(post)
+                        
+                        self.posts.append(post)
                         
                     }
                 }
             }
+            self.getCommentCount(post: self.posts, completion: {
+            })
+            returnPosts(self.posts)
             
-            for post in posts {
-                // User Daten raussuchen
-                let userRef = db.collection("Users").document(post.originalPosterUID)
+//            self.getUsers(postList: self.posts, completion: { (posts) in
+//
+//
+//                    print("Return Posts")
+//                    returnPosts(posts)
+//
+//            })
+            
+        }
+    }
+    
+    func getUsers(postList: [Post], completion: ([Post]) -> Void) {
+        //Wenn die Funktion fertig ist soll returnPosts bei der anderen losgehen
+        for post in postList {
+            // Vorläufig Daten hinzufügen
+//              print("postID::::::" , post.documentID)
+//            if post.type == "repost" || post.type == "translation" {
+//                let postRef = db.collection("Posts").document(post.documentID)
+//                let documentData : [String:Any] = ["thanksCount": 8, "wowCount": 4, "haCount": 3, "niceCount": 2]
+//
+//                postRef.setData(documentData, merge: true)
+//            }
+            
+            
+            // User Daten raussuchen
+            let userRef = db.collection("Users").document(post.originalPosterUID)
+            
+            userRef.getDocument(completion: { (document, err) in
+                if let document = document {
+                    if let docData = document.data() {
+                        let user = User()
+                        
+                        user.name = docData["name"] as? String ?? ""
+                        user.surname = docData["surname"] as? String ?? ""
+                        user.imageURL = docData["profilePictureURL"] as? String ?? ""
+                        user.userUID = post.originalPosterUID
+                        
+                        post.user = user
+                    }
+                }
                 
-                userRef.getDocument(completion: { (document, err) in
-                    if let document = document {
-                        if let docData = document.data() {
-                            
-                            name = docData["name"] as? String ?? ""
-                            surname = docData["surname"] as? String ?? ""
-                            profilePictureURL = docData["profilePictureURL"] as? String ?? ""
-                            
-                            post.originalPosterName = "\(name) \(surname)"
-                            post.originalPosterImageURL = profilePictureURL
-                            
-                        }
+                if err != nil {
+                    print("Wir haben einen Error beim User: \(err?.localizedDescription)")
+                }
+            })
+            
+        }
+            completion(postList)
+            print("Return User")
+    }
+    
+    func getUser(userUID: String) -> User {
+        //Wenn die Funktion fertig ist soll returnPosts bei der anderen losgehen
+        
+            // User Daten raussuchen
+            let userRef = db.collection("Users").document(userUID)
+        
+            let user = User()
+        
+            userRef.getDocument(completion: { (document, err) in
+                if let document = document {
+                    if let docData = document.data() {
+                        
+                        user.name = docData["name"] as? String ?? ""
+                        user.surname = docData["surname"] as? String ?? ""
+                        user.imageURL = docData["profilePictureURL"] as? String ?? ""
+                        user.userUID = userUID
+                        
+                    }
+                }
+                
+                if err != nil {
+                    print("Wir haben einen Error beim User: \(err?.localizedDescription)")
+                }
+            })
+        
+        print("Der User wird returned: \(user.userUID)")
+            return user
+        }
+    
+    func getCommentCount(post: [Post], completion: () -> Void) {
+        //Wenn die Funktion fertig ist soll returnPosts bei der anderen losgehen
+        
+        for post in posts {
+            // User Daten raussuchen
+            let commentRef = db.collection("Comments").document(post.documentID).collection("threads")
+            
+            commentRef.getDocuments { (snapshot, err) in
+                if err != nil {
+                    print("Wir haben einen Error beim User: \(err?.localizedDescription)")
+                }
+                if let snapshot = snapshot {
+                    let number = snapshot.count
+                    post.commentCount = number
+                }
+            }
+        }
+        
+        completion()
+    }
+    
+    
+    
+    
+    
+    func getChatUser(uid: String, sender: Bool, user: @escaping (ChatUser) -> Void) {
+        
+        let userRef = db.collection("Users").document(uid)
+        
+        var chatUser : ChatUser?
+        
+        userRef.getDocument(completion: { (document, err) in
+            if let document = document {
+                if let docData = document.data() {
+                    
+                    guard let name = docData["name"] as? String,
+                        let surname = docData["surname"] as? String,
+                        let imageURL = docData["profilePictureURL"] as? String
+                        else {
+                            return
                     }
                     
-                    if err != nil {
-                        print("Wir haben einen Error beim User: \(err?.localizedDescription)")
+                    // Hier Avatar als UIImage einführen
+                    
+                    if let url = URL(string: imageURL) {
+                        let defchatUser = ChatUser(displayName: "\(name) \(surname)", avatar: nil, avatarURL: url, isSender: sender)
+                        
+//                        let imageView = UIImageView()
+//                        var image = UIImage()
+//                        imageView.sd_setImage(with: url, completed: { (newImage, _, _, _) in
+//                        
+//                        })
+//                        if let data = try? Data(contentsOf: url) {
+//                            let image:UIImage = UIImage.sd_image(with: data)
+//                        }
+                        
+                        chatUser = defchatUser
+                    } else {
+                        
+                        let defchatUser = ChatUser(displayName: "\(name) \(surname)", avatar: nil, avatarURL: nil, isSender: sender)
+                        chatUser = defchatUser
                     }
-                })
-                
+                }
+            }
+            if err != nil {
+                print("Wir haben einen Error beim User: \(err?.localizedDescription)")
             }
             
-            returnPosts(posts)
-        }
+            if let daChatUser = chatUser{
+                user(daChatUser)
+            }
+        })
     }
 }
 
@@ -187,14 +345,29 @@ class Post {
     var documentID = ""
     var createTime = ""
     var OGRepostDocumentID = ""
-    var originalPosterName = ""
-    var originalPosterImageURL = ""
     var originalPosterUID = ""
+    var commentCount = 0
+    var user = User()
+    var votes = Votes()
+}
+
+class User {
+    var name = ""
+    var surname = ""
+    var imageURL = ""
+    var userUID = ""
+}
+
+class Votes {
+    var thanks = 0
+    var wow = 0
+    var ha = 0
+    var nice = 0
 }
 
 class ReportOptions {
     // Optisch Markieren
-    let opticOptionArray = ["Meinung, kein Fakt", "Sensationalismus", "Circlejerk", "Angeberisch", "Bildbearbeitung", "Schwarz-Weiß-Denken"]
+    let opticOptionArray = ["Spoiler", "Meinung, kein Fakt", "Sensationalismus", "Circlejerk", "Angeberisch", "Bildbearbeitung", "Schwarz-Weiß-Denken"]
     // Schlechte Absichten
     let badIntentionArray = ["Hass gegen ...","Respektlos", "Beleidigend", "(sexuell) Belästigend", "Rassistisch", "Homophob", "Gewaltunterstüztend", "Verharmlosung von Suizid", "Glauben nicht respektieren"]
     // Lüge/Täuschung

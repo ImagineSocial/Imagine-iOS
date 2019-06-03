@@ -1,4 +1,5 @@
 PODS:
+  - BeamsChatkit (1.2.4)
   - BoringSSL (10.0.6):
     - BoringSSL/Implementation (= 10.0.6)
     - BoringSSL/Interface (= 10.0.6)
@@ -122,12 +123,17 @@ PODS:
     - gRPC-RxLibrary (= 1.14.0)
   - GTMSessionFetcher/Core (1.2.0)
   - leveldb-library (1.20)
+  - MessengerKit (1.0.4)
   - nanopb (0.3.8):
     - nanopb/decode (= 0.3.8)
     - nanopb/encode (= 0.3.8)
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
   - Protobuf (3.6.1)
+  - PusherChatkit (1.4.0):
+    - BeamsChatkit (~> 1.2)
+    - PusherPlatform (~> 0.7.1)
+  - PusherPlatform (0.7.1)
   - SDWebImage (4.4.2):
     - SDWebImage/Core (= 4.4.2)
   - SDWebImage/Core (4.4.2)
@@ -139,11 +145,14 @@ DEPENDENCIES:
   - Firebase/Database
   - Firebase/Firestore
   - Firebase/Storage
+  - MessengerKit (from `https://github.com/steve228uk/MessengerKit.git`)
+  - PusherChatkit
   - SDWebImage
   - SwiftLinkPreview
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - BeamsChatkit
     - BoringSSL
     - Firebase
     - FirebaseAnalytics
@@ -165,10 +174,22 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - Protobuf
+    - PusherChatkit
+    - PusherPlatform
     - SDWebImage
     - SwiftLinkPreview
 
+EXTERNAL SOURCES:
+  MessengerKit:
+    :git: https://github.com/steve228uk/MessengerKit.git
+
+CHECKOUT OPTIONS:
+  MessengerKit:
+    :commit: 6917ef22129d0e9cae417b796509158505eac4d1
+    :git: https://github.com/steve228uk/MessengerKit.git
+
 SPEC CHECKSUMS:
+  BeamsChatkit: 8d6da00ded34ee11116e9e38427a20e04301d796
   BoringSSL: e10f92a27043805c01071fe815a5cd98ae8212e7
   Firebase: 6691d47562a780c26281ce8464518faafc90c610
   FirebaseAnalytics: 831f1f127f4a75698e9875a87bf7e2668730d953
@@ -188,11 +209,14 @@ SPEC CHECKSUMS:
   gRPC-RxLibrary: 3c305f32155024b116b780f389323c73a28197e6
   GTMSessionFetcher: 0c4baf0a73acd0041bf9f71ea018deedab5ea84e
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
+  MessengerKit: f010a86c1c2f9db3be53b4077a65fcf02944bab1
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
+  PusherChatkit: 058bc78b360f2970e2f4001e07c824ed9eab47d2
+  PusherPlatform: 243a8c0b018663831eafc8bef39fa196257de1f2
   SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
   SwiftLinkPreview: 062de89fe2c1bd2103b1d60f57c864ae54c324e1
 
-PODFILE CHECKSUM: 0e0ce212c3665507624bae567d412f6bd9650fb9
+PODFILE CHECKSUM: 99f11a28e0e6d95a17b85ae3ecb0a1a4d3f62b8a
 
 COCOAPODS: 1.5.3

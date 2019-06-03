@@ -97,7 +97,7 @@ class UserFeedTableViewController: UITableViewController, PostCellDelegate {
                 layer.borderWidth = 0.1
                 layer.borderColor = UIColor.black.cgColor
                 
-                if let url = URL(string: post.originalPosterImageURL) {
+                if let url = URL(string: post.user.imageURL) {
                     repostCell.reposterProfilePictureImageView.sd_setImage(with: url, completed: nil)
                 }
                 
@@ -108,7 +108,7 @@ class UserFeedTableViewController: UITableViewController, PostCellDelegate {
                     repostCell.originalTitleLabel.font = UIFont(name: "Kalam-Regular", size: 20.0)
                     repostCell.originalTitleLabel.text = repost.title
                     repostCell.originalCreateDateLabel.text = repost.createTime
-                    repostCell.ogPosterNameLabel.text = repost.originalPosterName
+                    repostCell.ogPosterNameLabel.text = "\(repost.user.name) \(repost.user.surname)"
                     
                     // Profile Picture
                     let layer = repostCell.profilePictureImageView.layer
@@ -117,7 +117,7 @@ class UserFeedTableViewController: UITableViewController, PostCellDelegate {
                     layer.borderWidth = 0.1
                     layer.borderColor = UIColor.black.cgColor
                     
-                    if let url = URL(string: repost.originalPosterImageURL) {
+                    if let url = URL(string: repost.user.imageURL) {
                         repostCell.profilePictureImageView.sd_setImage(with: url, completed: nil)
                     }
                     
@@ -168,11 +168,11 @@ class UserFeedTableViewController: UITableViewController, PostCellDelegate {
                 layer.borderWidth = 0.1
                 layer.borderColor = UIColor.black.cgColor
                 
-                if let url = URL(string: post.originalPosterImageURL) {
+                if let url = URL(string: post.user.imageURL) {
                     cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
                 }
                 cell.createDateLabel.text = post.createTime
-                cell.ogPosterNameLabel.text = post.originalPosterName
+                cell.ogPosterNameLabel.text = "\(post.user.name) \(post.user.surname)"
                 
                 cell.titleLabel.lineBreakMode = .byWordWrapping
                 cell.titleLabel.text = post.title
@@ -218,7 +218,7 @@ class UserFeedTableViewController: UITableViewController, PostCellDelegate {
                 cell.titleLabel.sizeToFit()
                 
                 cell.createDateLabel.text = post.createTime
-                cell.ogPosterLabel.text = post.originalPosterName
+                cell.ogPosterLabel.text = "\(post.user.name) \(post.user.surname)"
                 
                 // Profile Picture
                 let layer = cell.profilePictureImageView.layer
@@ -227,7 +227,7 @@ class UserFeedTableViewController: UITableViewController, PostCellDelegate {
                 layer.borderWidth = 0.1
                 layer.borderColor = UIColor.black.cgColor
                 
-                if let url = URL(string: post.originalPosterImageURL) {
+                if let url = URL(string: post.user.imageURL) {
                     cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
                 }
                 
@@ -261,7 +261,7 @@ class UserFeedTableViewController: UITableViewController, PostCellDelegate {
                 cell.titleLabel.numberOfLines = 0
                 cell.titleLabel.adjustsFontSizeToFitWidth = true
                 cell.titleLabel.minimumScaleFactor = 0.5
-                cell.ogPosterLabel.text = post.originalPosterName
+                cell.ogPosterLabel.text = "\(post.user.name) \(post.user.surname)"
                 cell.cellCreateDateLabel.text = post.createTime
                 
                 let letterCount = post.title.count
@@ -285,7 +285,7 @@ class UserFeedTableViewController: UITableViewController, PostCellDelegate {
                 layer.borderWidth = 0.1
                 layer.borderColor = UIColor.black.cgColor
                 
-                if let url = URL(string: post.originalPosterImageURL) {
+                if let url = URL(string: post.user.imageURL) {
                     cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
                 }
                 
@@ -326,6 +326,22 @@ class UserFeedTableViewController: UITableViewController, PostCellDelegate {
     
     func reportTapped(post: Post) {
         performSegue(withIdentifier: "meldenSegue", sender: post)
+    }
+    
+    func thanksTapped(post: Post) {
+        
+    }
+    
+    func wowTapped(post: Post) {
+        
+    }
+    
+    func haTapped(post: Post) {
+        
+    }
+    
+    func niceTapped(post: Post) {
+        
     }
     
     func setReportView(post: Post) -> (heightConstant:CGFloat, buttonHidden: Bool, labelText: String, backgroundColor: UIColor) {

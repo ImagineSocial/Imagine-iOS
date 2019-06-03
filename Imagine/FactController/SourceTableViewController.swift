@@ -12,10 +12,11 @@ class SourceTableViewController: UITableViewController {
     
     var argument = Argument()
     var sourceList = [String]()
-
+    var fact = Fact()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         tableView.layer.cornerRadius = 5
         
         sourceList = argument.source
@@ -23,7 +24,7 @@ class SourceTableViewController: UITableViewController {
         
         
     }
-
+    
     
     func setSources() {
         
@@ -34,37 +35,72 @@ class SourceTableViewController: UITableViewController {
     }
     
     // MARK: - Table view data source
-
     
-
+    
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return sourceList.count
     }
-
+    
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
         
         let source = sourceList[indexPath.row]
         
         if source == "Füge eine Quelle hinzu" {
-            cell.textLabel?.font = UIFont.italicSystemFont(ofSize: 14)
+            
+            let cell = UITableViewCell()
+            
+            cell.textLabel?.textAlignment = .center
+            cell.textLabel?.text = source
+            cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 15)
+            
+            return cell
+            
         } else {
-            cell.textLabel?.font = UIFont.systemFont(ofSize: 17)
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "sourceCell", for: indexPath) as? sourceCell {
+                
+                cell.sourceLabel.text = source
+                cell.upvoteLabel.text = "▲ 34"
+                cell.downvoteLabel.text = "▼ 12"
+                
+                return cell
+            }
         }
         
-        cell.textLabel?.textAlignment = .center
-        cell.textLabel?.text = source
-
-
-        return cell
+        return UITableViewCell()
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "toSourceDetail", sender: nil)
+        let source = sourceList[indexPath.row]
+        
+        if source != "Füge eine Quelle hinzu" {
+            performSegue(withIdentifier: "toSourceDetail", sender: nil)
+        } else {
+            performSegue(withIdentifier: "toNewSourceSegue", sender: nil)
+        }
     }
     
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        return 40
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? NewFactViewController {
+            if segue.identifier == "toNewArgumentSegue" {
+                    vc.fact = self.fact
+                    vc.new = "source"
+            }
+        }
+    }
+    
+}
 
-
+class sourceCell: UITableViewCell {
+    @IBOutlet weak var sourceLabel: UILabel!
+    @IBOutlet weak var downvoteLabel: UILabel!
+    @IBOutlet weak var upvoteLabel: UILabel!
+    
 }

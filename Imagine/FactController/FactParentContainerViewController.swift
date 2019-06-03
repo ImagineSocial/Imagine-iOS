@@ -11,6 +11,8 @@ import UIKit
 class FactParentContainerViewController: UIViewController {
     
     @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var contraArgumentCountLabel: UILabel!
+    @IBOutlet weak var proArgumentCountLabel: UILabel!
     
     
     var fact = Fact()
@@ -39,9 +41,18 @@ class FactParentContainerViewController: UIViewController {
                         }
                     }
                     self.sendData(ProArguments: self.proArgumentList, ContraArguments: self.contraArgumentList) // Send to ContainerViews
+                    self.setLabels()
                 }
             }
         }
+    }
+    
+    func setLabels() {
+        let nmbOfPro = proArgumentList.count-1
+        let nmbOfCon = contraArgumentList.count-1
+        
+        proArgumentCountLabel.text = "(\(nmbOfPro))"
+        contraArgumentCountLabel.text = "(\(nmbOfCon))"
     }
     
     func sendData(ProArguments : [Argument], ContraArguments: [Argument]) {     // Send to ContainerViews (TableViews)

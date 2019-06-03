@@ -22,8 +22,6 @@ class FactDetailViewController: UIViewController {
         titleLabel.text = argument.title
         descriptionLabel.text = argument.description
         
-        print(fact.title)
-        
     }
     
 
@@ -35,6 +33,7 @@ class FactDetailViewController: UIViewController {
         if let vc = segue.destination as? SourceTableViewController {
             if segue.identifier == "toSourceTableView" {
                 vc.argument = self.argument
+                vc.fact = self.fact
             }
         }
         if let argumentVC = segue.destination as? ArgumentTableViewController {

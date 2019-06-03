@@ -20,6 +20,7 @@ class SupportTheCommunityTableViewController: UITableViewController, JobOfferCel
         super.viewDidLoad()
         
         getJobOffers()
+        tableView.separatorStyle = .none
     }
     
     
@@ -28,10 +29,6 @@ class SupportTheCommunityTableViewController: UITableViewController, JobOfferCel
             self.jobOffers = jobOffers as! [JobOffer]
             self.tableView.reloadData()
         }
-//        JobOfferHelper().getJobOffers { (jobOffers) in
-//            self.jobOffers = jobOffers
-//            self.tableView.reloadData()
-//        }
         
     }
     
@@ -78,7 +75,7 @@ class SupportTheCommunityTableViewController: UITableViewController, JobOfferCel
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 200
+        return 195
     }
     
 }

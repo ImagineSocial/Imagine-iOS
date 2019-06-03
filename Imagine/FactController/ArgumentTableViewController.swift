@@ -18,6 +18,7 @@ class ArgumentTableViewController: UITableViewController {
         super.viewDidLoad()
 
         getArguments()
+        tableView.layer.cornerRadius = 5
         
     }
     
@@ -94,6 +95,29 @@ class ArgumentTableViewController: UITableViewController {
         }
         
         return rowHeight
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let argument = argumentList[indexPath.row]
+        
+        if argument.title != "Füge ein Argument hinzu!" {
+            performSegue(withIdentifier: "toArgumentDetail", sender: nil)
+        } else {
+            performSegue(withIdentifier: "toNewArgumentSegue", sender: argument)
+        }
+        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let vc = segue.destination as? NewFactViewController {
+            if segue.identifier == "toNewArgumentSegue" {
+                if let argument = sender as? Argument {
+                    vc.deepArgument = argument
+                    vc.fact = self.fact
+                    vc.new = "deepArgument"
+                }
+            }
+        }
     }
 
 }

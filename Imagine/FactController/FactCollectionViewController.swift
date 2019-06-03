@@ -22,6 +22,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
 
         getFacts()
         
+        
     }
 
    
@@ -29,6 +30,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         DataHelper().getData(get: "facts") { (facts) in
             self.facts = facts as! [Fact]
             self.collectionView.reloadData()
+            
         }
     }
 
