@@ -100,9 +100,6 @@ class RepostViewController: UIViewController {
         titleTranslationTextView.text = post.title
     }
     
-    @IBAction func dismissPressed(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
-    }
     
     func getDate() -> Timestamp {
         
@@ -137,4 +134,9 @@ class RepostViewController: UIViewController {
         present(alert, animated: true) {
         }
     }
+    
+    @IBAction func backTapped(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
+    }
+    
 }

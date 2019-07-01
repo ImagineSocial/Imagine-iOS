@@ -165,9 +165,7 @@ class JobSurveyViewController: UIViewController, MFMailComposeViewControllerDele
         controller.dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func backTapped(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
-    }
+    
     
     override func viewWillAppear(_ animated: Bool) {    // Um zu bestätigen dass die Mail gesendet wurde
         if send {

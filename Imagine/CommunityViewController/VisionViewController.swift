@@ -10,6 +10,7 @@ import UIKit
 
 class VisionViewController: UIViewController {
 
+    @IBOutlet weak var cobraButton: UIButton!
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var moreInfoButton: DesignableButton!
     
@@ -27,6 +28,25 @@ class VisionViewController: UIViewController {
         moreInfoButton.layer.masksToBounds = true
         moreInfoButton.layer.borderWidth = 0.1
         moreInfoButton.layer.borderColor = UIColor.black.cgColor
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(doubleTapped))
+        tap.numberOfTapsRequired = 3
+        view.addGestureRecognizer(tap)
+        cobraButton.isEnabled = false
+        cobraButton.alpha = 0
+    }
+    
+    @objc func doubleTapped() {
+        
+        
+        
+            UIView.animate(withDuration: 4, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
+                self.headerLabel.alpha = 0
+                self.cobraButton.alpha = 1
+            }, completion: { (_) in
+                self.headerLabel.isHidden = true
+                self.cobraButton.isEnabled = true
+            })
         
         
     }

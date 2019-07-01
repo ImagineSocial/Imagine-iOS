@@ -22,6 +22,7 @@ class UserProfileViewController: UIViewController, UIImagePickerControllerDelega
     @IBOutlet weak var pictureFolderButton: UIButton!
     @IBOutlet weak var logOutButton: UIButton!
     @IBOutlet weak var profilePictureButton: DesignableButton!
+    @IBOutlet weak var blogPostButton: DesignableButton!
     
     var imagePicker = UIImagePickerController()
     var posts = [Post]()
@@ -34,19 +35,24 @@ class UserProfileViewController: UIViewController, UIImagePickerControllerDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
+        blogPostButton.isHidden = true
         
         if userUID == "" {
             yourOwnProfile = true
             profilePictureButton.isEnabled = true
             if let user = Auth.auth().currentUser {
-                sendData(UserUID: user.uid)
+                sendData(UserUID: user.uid)     // Für den ContainerView
+                
+                if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" { // That means its me, Malte
+                    blogPostButton.isHidden = false
+                }
             }
         } else {
             logOutButton.isHidden = true
             profilePictureButton.isEnabled = false
             
-            sendData(UserUID: userUID)
+            sendData(UserUID: userUID)      // Send Data to the tableView for the post History of the user
+            
         }
         getUserDetails()
         
@@ -64,7 +70,7 @@ class UserProfileViewController: UIViewController, UIImagePickerControllerDelega
         yourOwnProfile = false
     }
     
-    func sendData(UserUID : String) {
+    func sendData(UserUID : String) {   // Send Data to the tableView for the post History of the user
         if let CVC = children.last as? UserFeedTableViewController {
             CVC.setUID(UID: UserUID)
         }
@@ -86,6 +92,8 @@ class UserProfileViewController: UIViewController, UIImagePickerControllerDelega
                 }
                 if let url = user.photoURL {
                     profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                    
+                    self.imageURL = url.absoluteString
                 }
             }
         } else {    // Wenn du dir das Profil von jemand anderem ansiehst
@@ -180,9 +188,19 @@ class UserProfileViewController: UIViewController, UIImagePickerControllerDelega
         
         profilePictureImageView.image = selectedImageFromPicker
         
-        savePicture()
+        if imageURL != "" {
+            deletePicture()
+            savePicture()
+        } else {    // If the user got no profile picture
+            savePicture()
+        }
+         // and delete old picture!!!
         
         imagePicker.dismiss(animated: true, completion: nil)
+    }
+    
+    func deletePicture() {
+        // Muss noch bei Firebase gelöscht werden
     }
     
     
@@ -227,9 +245,6 @@ class UserProfileViewController: UIViewController, UIImagePickerControllerDelega
         }
     }
     
-    @IBAction func dismissPressed(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
-    }
     
     @IBAction func logOutPressed(_ sender: Any) {
         let alert = UIAlertController(title: "Ausloggen", message: "Wir sehen uns bald wieder!", preferredStyle: .alert)
@@ -247,5 +262,10 @@ class UserProfileViewController: UIViewController, UIImagePickerControllerDelega
         }))
         present(alert, animated: true)
     }
+    
+    @IBAction func blogPostTapped(_ sender: Any) {
+        performSegue(withIdentifier: "toBlogPost", sender: nil)
+    }
+    
     
 }

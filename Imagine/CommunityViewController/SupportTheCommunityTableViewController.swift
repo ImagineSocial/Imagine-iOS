@@ -8,11 +8,8 @@
 
 import UIKit
 
-protocol JobOfferCellDelegate {
-    func MoreTapped(jobOffer: JobOffer)
-}
 
-class SupportTheCommunityTableViewController: UITableViewController, JobOfferCellDelegate {
+class SupportTheCommunityTableViewController: UITableViewController {
     
     var jobOffers = [JobOffer]()
     
@@ -46,13 +43,26 @@ class SupportTheCommunityTableViewController: UITableViewController, JobOfferCel
             
             let supportField = jobOffers[indexPath.row]
             
-            cell.delegate = self
-            cell.setJobOffer(jobOffer: supportField)
             
             cell.headerLabel.text = supportField.title
             cell.cellBodyLabel.text = supportField.cellText
             cell.createDateLabel.text = supportField.createDate
             cell.interestedCountLabel.text = "\(supportField.interested) Interessenten"
+            cell.categoryLabel.text = supportField.category
+            
+            let category = supportField.category
+            switch category {
+            case "IT":
+                cell.categoryLabel.textColor = UIColor.blue
+            case "Management":
+                cell.categoryLabel.textColor = .red
+            case "Sprache":
+                cell.categoryLabel.textColor = .green
+            case "Allgemein":
+                cell.categoryLabel.textColor = .purple
+            default:
+                cell.categoryLabel.textColor = .yellow
+            }
             
             
             return cell
@@ -60,9 +70,14 @@ class SupportTheCommunityTableViewController: UITableViewController, JobOfferCel
      return UITableViewCell()
      }
     
-    func MoreTapped(jobOffer: JobOffer) {
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let jobOffer = jobOffers[indexPath.row]
         performSegue(withIdentifier: "toJobOfferSegue", sender: jobOffer)
+        
+        tableView.deselectRow(at: indexPath, animated: true)
     }
+    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toJobOfferSegue" {
@@ -75,7 +90,7 @@ class SupportTheCommunityTableViewController: UITableViewController, JobOfferCel
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 195
+        return 225
     }
     
 }

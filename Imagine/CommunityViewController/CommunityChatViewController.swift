@@ -1,60 +1,45 @@
 //
-//  PostCommentChatViewController.swift
+//  CommunityChatViewController.swift
 //  Imagine
 //
-//  Created by Malte Schoppe on 29.05.19.
+//  Created by Malte Schoppe on 08.06.19.
 //  Copyright © 2019 Malte Schoppe. All rights reserved.
 //
 
 import UIKit
-import Photos
+import MessengerKit
 import Firebase
 import FirebaseFirestore
-import MessengerKit
 
-class PostCommentChatViewController: MSGMessengerViewController {
-    
-    
-    private let db = Firestore.firestore()
-    var post = Post()
-    var currentUser :MSGUser?
-    var currentUserUid = ""
-    var commentCount = 0
-    
-    let tim = ChatUser(displayName: "Tim", avatar: UIImage(named: "default-user"), avatarURL: nil, isSender: false)
-    
-    var id = 0
-    
+class CommunityChatViewController: MSGMessengerViewController {
 
-    // Messages
-    
+    let malte = ChatUser(displayName: "Malte", avatar: UIImage(named: "default-user"), avatarURL: nil, isSender: false)
     lazy var messages: [[MSGMessage]] = {
         return [ [// INdex out of range
-                MSGMessage(id: 1, body: .text("Was hast du zu diesem interessanten Post zu sagen?"), user: tim, sentAt: Date()),
-                ] ]
+            MSGMessage(id: 1, body: .text("Möchtest du uns etwas fragen?"), user: malte, sentAt: Date()),
+            ] ]
     }()
+    var fetchedMessages: [MSGMessage] = { return [] }()
     
-    var fetchedMessages: [MSGMessage] = { return [] }() // ZwischenMessages damit ich die sortieren kann, macht Firebase nicht richti
+    private let db = Firestore.firestore()
+    var currentUserUid = ""
+    var currentUser :MSGUser?
+    var commentCount = 0
+    var id = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         // MSGMessenger
         dataSource = self
         delegate = self
-        
-        firebaseListener()
+
         setCurrentUser()
+        firebaseListener()
+
     }
     
-    init(post: Post) {
-        self.post = post
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     func setCurrentUser() {
         if let uid = Auth.auth().currentUser?.uid {
@@ -66,10 +51,10 @@ class PostCommentChatViewController: MSGMessengerViewController {
     }
     
     
-    // Firebase Listener
+    
     func firebaseListener() {
         
-        let reference = db.collection("Comments").document(post.documentID).collection("threads").order(by: "sentAt", descending: false)
+        let reference = db.collection("Comments").document("CommunityChat").collection("threads").order(by: "sentAt", descending: false)
         
         // Guckt ob sich was verändert
         reference.addSnapshotListener { querySnapshot, error in
@@ -91,7 +76,7 @@ class PostCommentChatViewController: MSGMessengerViewController {
     
     
     func handlingChanges(incomingChanges: Int, change: DocumentChange) {
-       
+        
         let doc = change.document
         let docData = doc.data()
         var sender = false
@@ -126,18 +111,17 @@ class PostCommentChatViewController: MSGMessengerViewController {
                 self.insert(self.fetchedMessages)
                 self.fetchedMessages.removeAll()    // Alle Löschen, sind dann ja in messages
                 
-                self.post.commentCount = self.commentCount  // Das Post Objekt updaten
             }
         })
     }
     
-        
+    
     
     
     func saveInFirebase(bodyString: String, message: MSGMessage) {
         
-        let reference = db.collection("Comments").document(post.documentID).collection("threads")
-    
+        let reference = db.collection("Comments").document("CommunityChat").collection("threads")
+        
         
         let data : [String: Any] = ["body": bodyString, "id": message.id, "sentAt": getDate(), "userID": currentUserUid]
         
@@ -150,7 +134,6 @@ class PostCommentChatViewController: MSGMessengerViewController {
     }
     
     
-    // Habe ich schonmal, kann ich mir sparen irgendwie
     func getDate() -> Timestamp {
         
         let date = Date()
@@ -158,14 +141,7 @@ class PostCommentChatViewController: MSGMessengerViewController {
         return Timestamp(date: date)
     }
     
-    
-    // MSGMessengerStuff
-    
-//    override var style: MSGMessengerStyle {
-//        let style = MessengerKit.Styles.iMessage
-//        return style
-//    }
-    
+
     override func inputViewPrimaryActionTriggered(inputView: MSGInputView) {    // Wenn jemand send gedrückt hat
         
         
@@ -177,6 +153,8 @@ class PostCommentChatViewController: MSGMessengerViewController {
             
             if currentUserUid != "" {   // Falls man nur Gast ist
                 saveInFirebase(bodyString: inputView.message, message: message)
+            } else {
+                print("Keine UserUID gefunden")
             }
             
             // Brauche ich nicht, weil Firebase Listener das macht!! insert(message)
@@ -250,28 +228,30 @@ class PostCommentChatViewController: MSGMessengerViewController {
     }
 }
 
+
+
 // MARK: - MSGDataSource
 
-extension PostCommentChatViewController: MSGDataSource {
+extension CommunityChatViewController: MSGDataSource {
     
     func numberOfSections() -> Int {        // Section ist ein Batzen an Nachrichten
-//        print("1")
+        //        print("1")
         return messages.count
     }
     
     func numberOfMessages(in section: Int) -> Int {
-//        print("2")
+        //        print("2")
         return messages[section].count
     }
     
     func message(for indexPath: IndexPath) -> MSGMessage {
-//        print("3")
-//        print(indexPath.section, indexPath.item)
+        //        print("3")
+        //        print(indexPath.section, indexPath.item)
         return messages[indexPath.section][indexPath.item]  // DIe einzelnen Nachrichten in einem Batzen
     }
     
     func footerTitle(for section: Int) -> String? {
-//        print("4")
+        //        print("4")
         var stringDate = ""
         if let date = messages[section].first?.sentAt {
             
@@ -285,14 +265,14 @@ extension PostCommentChatViewController: MSGDataSource {
     }
     
     func headerTitle(for section: Int) -> String? {
-//        print("5")
+        //        print("5")
         return messages[section].first?.user.displayName
     }
     
 }
 
 // MARK: - MSGDelegate
-extension PostCommentChatViewController: MSGDelegate {
+extension CommunityChatViewController: MSGDelegate {
     
     /// Called when a link is tapped in a message
     func linkTapped(url: URL) {
@@ -327,4 +307,5 @@ extension PostCommentChatViewController: MSGDelegate {
     }
     
 }
+
 

@@ -44,9 +44,7 @@ class JobOfferingViewController: UIViewController {
     }
     @IBAction func moreInfosPressed(_ sender: Any) {
     }
-    @IBAction func backPressed(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
-    }
+    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toSurveySegue" {

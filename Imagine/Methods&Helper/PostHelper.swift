@@ -11,6 +11,9 @@ import Firebase
 import FirebaseFirestore
 import SDWebImage
 
+public var lastSnap: QueryDocumentSnapshot?     // public for the next fetch cycle
+public var lastEventSnap: QueryDocumentSnapshot?
+
 class PostHelper {
     
     var posts = [Post]()
@@ -18,19 +21,27 @@ class PostHelper {
     
     func getPosts(returnPosts: @escaping ([Post]) -> Void) {
         
-    
         let settings = db.settings
         settings.areTimestampsInSnapshotsEnabled = true
         db.settings = settings
         
+        var postRef = db.collection("Posts").order(by: "createTime", descending: true).limit(to: 20)
         
-        let postRef = db.collection("Posts").order(by: "createTime", descending: true)  
+        if let lastSnap = lastSnap {        // For the next loading batch of 20, that will start after this snapshot
+            postRef = postRef.start(afterDocument: lastSnap)
+        }
+        
+        
         postRef.getDocuments { (querySnapshot, error) in
+            
+            lastSnap = querySnapshot?.documents.last    // Last document for the next fetch cycle
             
             for document in querySnapshot!.documents {
                 
+                
                 let documentID = document.documentID
                 let documentData = document.data()
+                
                 
                 if let postType = documentData["type"] as? String {
                     
@@ -51,22 +62,9 @@ class PostHelper {
                     
                     let stringDate = HandyHelper().getStringDate(timestamp: createTimestamp)
                     
-                    let poster = self.getUser(userUID: originalPoster)
-                    
-                    
-//                    self.getUser(userUID: originalPoster, completion: { (fetchedUser) in
-//                        poster = fetchedUser
-//                    })
-                    
                     // Thought
                     if postType == "thought" {
-                        
-                        
-                        guard let description = documentData["description"] as? String,
-                        let report = documentData["report"] as? String
-                            else {
-                                continue    // Falls er das nicht als (String) zuordnen kann
-                        }
+                            
                         
                         let post = Post()       // Erst neuen Post erstellen
                         post.title = title      // Dann die Sachen zuordnen
@@ -80,7 +78,6 @@ class PostHelper {
                         post.votes.wow = wowCount
                         post.votes.ha = haCount
                         post.votes.nice = niceCount
-                        post.user = poster
                     
                         
                 
@@ -113,7 +110,6 @@ class PostHelper {
                         post.votes.wow = wowCount
                         post.votes.ha = haCount
                         post.votes.nice = niceCount
-                        post.user = poster
                         
                         self.posts.append(post)
                     
@@ -139,7 +135,6 @@ class PostHelper {
                         post.votes.wow = wowCount
                         post.votes.ha = haCount
                         post.votes.nice = niceCount
-                        post.user = poster
 
                         
                         self.posts.append(post)
@@ -166,30 +161,91 @@ class PostHelper {
                         post.votes.wow = wowCount
                         post.votes.ha = haCount
                         post.votes.nice = niceCount
-                        post.user = poster
                         
+                        post.getRepost(returnRepost: { (repost) in
+                            post.repost = repost
+                        })
                         
                         self.posts.append(post)
                         
                     }
                 }
             }
-            self.getCommentCount(post: self.posts, completion: {
-            })
-            returnPosts(self.posts)
+            self.getCommentCount(post: self.posts, completion: {})
             
-//            self.getUsers(postList: self.posts, completion: { (posts) in
-//
-//
-//                    print("Return Posts")
-//                    returnPosts(posts)
-//
-//            })
+            self.getUsers(postList: self.posts, completion: { (postsWithUser) in
+                
+                    returnPosts(postsWithUser)
+                
+            })
+            
             
         }
     }
     
-    func getUsers(postList: [Post], completion: ([Post]) -> Void) {
+    func getEvent(completion: @escaping (Post) -> Void) {
+        
+        var eventRef = db.collection("Events").limit(to: 1)
+        
+        if let lastEventSnap = lastEventSnap {        // For the next loading batch of 20, there will be one event
+            eventRef = eventRef.start(afterDocument: lastEventSnap)
+        }
+        
+        eventRef.getDocuments { (eventSnap, err) in
+            if err != nil {
+                print("Wir haben einen Error beim Event: \(err?.localizedDescription)")
+            }
+            
+            for event in eventSnap!.documents {
+                
+                let documentID = event.documentID
+                let documentData = event.data()
+                
+                guard let title = documentData["title"] as? String,
+                let description = documentData["description"] as? String,
+                let location = documentData["location"] as? String,
+                let type = documentData["type"] as? String,
+                let imageURL = documentData["imageURL"] as? String,
+                let imageHeight = documentData["imageHeight"] as? CGFloat,
+                let imageWidth = documentData["imageWidth"] as? CGFloat,
+                let participants = documentData["participants"] as? [String],
+                let admin = documentData["admin"] as? String,
+                let createDate = documentData["createDate"] as? Timestamp
+                
+                else {
+                    continue
+                }
+                
+                let stringDate = HandyHelper().getStringDate(timestamp: createDate)
+                
+                let post = Post()
+                let event = Event()
+            
+                event.title = title
+                event.description = description
+                event.location = location
+                event.type = type
+                event.imageURL = imageURL
+                event.imageWidth = imageWidth
+                event.imageHeight = imageHeight
+                event.participants = participants
+                event.createDate = stringDate
+                
+                post.originalPosterUID = admin
+                post.documentID = documentID
+                post.type = "event"
+                
+                post.event = event
+                
+                completion(post)
+                
+            }
+            
+        }
+        
+    }
+    
+    func getUsers(postList: [Post], completion: @escaping ([Post]) -> Void) {
         //Wenn die Funktion fertig ist soll returnPosts bei der anderen losgehen
         for post in postList {
             // Vorläufig Daten hinzufügen
@@ -225,44 +281,21 @@ class PostHelper {
             })
             
         }
+//        DispatchQueue.main.async {
             completion(postList)
-            print("Return User")
+//        }
+        
     }
     
-    func getUser(userUID: String) -> User {
-        //Wenn die Funktion fertig ist soll returnPosts bei der anderen losgehen
-        
-            // User Daten raussuchen
-            let userRef = db.collection("Users").document(userUID)
-        
-            let user = User()
-        
-            userRef.getDocument(completion: { (document, err) in
-                if let document = document {
-                    if let docData = document.data() {
-                        
-                        user.name = docData["name"] as? String ?? ""
-                        user.surname = docData["surname"] as? String ?? ""
-                        user.imageURL = docData["profilePictureURL"] as? String ?? ""
-                        user.userUID = userUID
-                        
-                    }
-                }
-                
-                if err != nil {
-                    print("Wir haben einen Error beim User: \(err?.localizedDescription)")
-                }
-            })
-        
-        print("Der User wird returned: \(user.userUID)")
-            return user
-        }
     
     func getCommentCount(post: [Post], completion: () -> Void) {
         //Wenn die Funktion fertig ist soll returnPosts bei der anderen losgehen
         
         for post in posts {
-            // User Daten raussuchen
+            // Comment Count raussuchen wenn Post
+            
+            if post.type != "event" { // Wenn kein Event 
+                
             let commentRef = db.collection("Comments").document(post.documentID).collection("threads")
             
             commentRef.getDocuments { (snapshot, err) in
@@ -274,6 +307,7 @@ class PostHelper {
                     post.commentCount = number
                 }
             }
+        }
         }
         
         completion()
@@ -333,30 +367,9 @@ class PostHelper {
     }
 }
 
-class Post {
-    var title = ""
-    var imageURL = ""
-    var description = ""
-    var linkURL = ""
-    var type = ""
-    var imageHeight: CGFloat = 0.0
-    var imageWidth: CGFloat = 0.0
-    var report = ""
-    var documentID = ""
-    var createTime = ""
-    var OGRepostDocumentID = ""
-    var originalPosterUID = ""
-    var commentCount = 0
-    var user = User()
-    var votes = Votes()
-}
 
-class User {
-    var name = ""
-    var surname = ""
-    var imageURL = ""
-    var userUID = ""
-}
+
+
 
 class Votes {
     var thanks = 0

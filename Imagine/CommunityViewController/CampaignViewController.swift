@@ -88,8 +88,5 @@ class CampaignViewController: UIViewController {
     @IBAction func reportPressed(_ sender: Any) {
     }
     
-    @IBAction func backPressed(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
-    }
     
 }

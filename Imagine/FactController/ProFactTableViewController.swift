@@ -53,8 +53,10 @@ class ProFactTableViewController: UITableViewController {
                 
                 cell.headerLabel.text = argument.title
                 cell.bodyLabel.text = argument.description
-                cell.proCountLabel.text = "Zustimmen: \(upvotes)"
-                cell.contraCountLabel.text = "Zweifel: \(downVotes)"
+                let upString = NSLocalizedString("consent: %d", comment: "How many people agree with the fact")
+                cell.proCountLabel.text = String.localizedStringWithFormat(upString, upvotes)
+                let downString = NSLocalizedString("doubt: %d", comment: "How many people disagree with the given fact")
+                cell.contraCountLabel.text = String.localizedStringWithFormat(downString, downVotes)
                 
                 if argument.source.isEmpty {    // For now, später muss wahrheitswert der Quellen überprüft werden
                     // Keine Quelle

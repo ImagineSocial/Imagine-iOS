@@ -41,11 +41,15 @@ class DataHelper {
             jobOffer.documentID = ""
             jobOffer.createDate = "15.05.2019"
             jobOffer.interested = 10
+            jobOffer.category = "Allgemein"
             
             list.append(jobOffer)
         } else if get == "facts" {
             list = [Fact]()
             dataPath = "Facts"
+        } else if get == "blogPosts" {
+            list = [BlogPost]()
+            dataPath = "BlogPosts"
         }
         
         
@@ -65,7 +69,8 @@ class DataHelper {
                                 let shortBody = documentData["campaignShortBody"] as? String,
                                 let createTimestamp = documentData["campaignCreateTime"] as? Timestamp,
                                 let supporter = documentData["campaignSupporter"] as? Int,
-                                let opposition = documentData["campaignOpposition"] as? Int
+                                let opposition = documentData["campaignOpposition"] as? Int,
+                                let category = documentData["category"] as? String
                                 else {
                                     continue    // Falls er das nicht als (String) zuordnen kann
                             }
@@ -83,6 +88,7 @@ class DataHelper {
                             campaign.createDate = stringDate
                             campaign.supporter = supporter
                             campaign.opposition = opposition
+                            campaign.category = category
                             
                             
                             list.append(campaign)
@@ -93,7 +99,8 @@ class DataHelper {
                     guard let title = documentData["jobTitle"] as? String,
                         let shortBody = documentData["jobShortBody"] as? String,
                         let createTime = documentData["jobCreateTime"] as? String,
-                        let interestedCount = documentData["interestedInJob"] as? Int
+                        let interestedCount = documentData["interestedInJob"] as? Int,
+                        let category = documentData["category"] as? String
                         else {
                             continue    // Falls er das nicht als (String) zuordnen kann
                     }
@@ -105,8 +112,10 @@ class DataHelper {
                     jobOffer.documentID = documentID
                     jobOffer.createDate = createTime
                     jobOffer.interested = interestedCount
+                    jobOffer.category = category
                     
                     list.append(jobOffer)
+                    
                 } else if get == "facts" {
                     guard let name = documentData["name"] as? String,
                     let createTimestamp = documentData["createDate"] as? Timestamp,
@@ -132,6 +141,36 @@ class DataHelper {
 
                     list.append(fact)
                     
+                } else if get == "blogPosts" {
+                    guard let title = documentData["title"] as? String,
+                        let createTimestamp = documentData["createDate"] as? Timestamp,
+                        let subtitle = documentData["subtitle"] as? String,
+                        let poster = documentData["poster"] as? String,
+                        let profileImageURL = documentData["profileImageURL"] as? String,
+                        let category = documentData["category"] as? String,
+                        let description = documentData["description"] as? String
+                        
+                        else {
+                            continue
+                    }
+                    
+                    // Datum vom Timestamp umwandeln
+                    let formatter = DateFormatter()
+                    let date:Date = createTimestamp.dateValue()
+                    formatter.dateFormat = "dd MM yyyy HH:mm"
+                    let stringDate = formatter.string(from: date)
+                    
+                    
+                    let blogPost = BlogPost()
+                    blogPost.title = title
+                    blogPost.subtitle = subtitle
+                    blogPost.createDate = stringDate
+                    blogPost.poster = poster
+                    blogPost.profileImageURL = profileImageURL
+                    blogPost.category = category
+                    blogPost.description = description
+                    
+                    list.append(blogPost)
                 }
             }
             returnData(list)
@@ -240,6 +279,7 @@ class JobOffer {
     var documentID = ""
     var createDate = ""
     var interested = 0
+    var category = ""
 }
 
 class Campaign {
@@ -250,6 +290,7 @@ class Campaign {
     var createDate = ""
     var supporter = 0
     var opposition = 0
+    var category = ""
 }
 
 
@@ -268,4 +309,28 @@ class Argument {
     var description = ""
     var documentID = ""
     var contraArguments: [Argument] = []
+}
+
+class BlogPost {
+    var title = ""
+    var subtitle = ""
+    var description = ""
+    var createDate = ""
+    var category = ""
+    var poster = ""
+    var profileImageURL = ""
+}
+
+class Event {
+    var title = ""
+    var description = ""
+    var location = ""
+    var type = ""
+    var imageURL = ""
+    var createDate = ""
+    var imageHeight:CGFloat = 0
+    var imageWidth:CGFloat = 0
+    var participants = [String]()
+    var admin = User()
+    
 }

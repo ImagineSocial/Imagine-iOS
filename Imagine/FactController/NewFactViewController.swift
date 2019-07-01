@@ -71,9 +71,7 @@ class NewFactViewController: UIViewController {
         ProContraLabel.textColor = .green
     }
     
-    @IBAction func backTapped(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
-    }
+   
     @IBAction func sendButtonTapped(_ sender: Any) {
         
         if titleTextField.text != nil && descriptionTextField.text != nil {

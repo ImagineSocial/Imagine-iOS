@@ -8,11 +8,8 @@
 
 import UIKit
 
-protocol CampaignCellDelegate {
-    func MoreTapped(campaign: Campaign)
-}
 
-class voteCampaignTableViewController: UITableViewController, CampaignCellDelegate {
+class voteCampaignTableViewController: UITableViewController {
     
     
     var campaigns = [Campaign]()
@@ -48,8 +45,6 @@ class voteCampaignTableViewController: UITableViewController, CampaignCellDelega
         if let cell = tableView.dequeueReusableCell(withIdentifier: "campaignCell", for: indexPath) as? VoteCampaignCell {
             let campaign = campaigns[indexPath.row]
             
-            cell.delegate = self
-            cell.setCampaign(campaign: campaign)
             
             cell.CellHeaderLabel.text = campaign.title
             cell.cellBodyLabel.text = campaign.cellText
@@ -58,6 +53,25 @@ class voteCampaignTableViewController: UITableViewController, CampaignCellDelega
             cell.progressView.setProgress(progress, animated: true)
             cell.supporterLabel.text = "\(campaign.supporter) Supporter"
             cell.vetoLabel.text = "\(campaign.opposition) Vetos"
+            cell.categoryLabel.text = campaign.category
+            
+            let category = campaign.category
+            var labelColor: UIColor?
+            
+            switch category {
+            case "Management":
+                labelColor = .red
+            case "Finanzen":
+                labelColor = .green
+            case "Kommunikation":
+                labelColor = .blue
+            case "Inhalt":
+                labelColor = .purple
+            default:
+                labelColor = .yellow
+            }
+            
+            cell.categoryLabel.textColor = labelColor
             
             return cell
         }
@@ -71,7 +85,15 @@ class voteCampaignTableViewController: UITableViewController, CampaignCellDelega
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 140
+        return 160
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let campaign = campaigns[indexPath.row]
+        
+        performSegue(withIdentifier: "toCampaignSegue", sender: campaign)
+        
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

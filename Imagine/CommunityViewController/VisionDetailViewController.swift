@@ -29,7 +29,11 @@ class VisionDetailViewController: UIViewController {
         setupViews()
         setupTexts()
         setVision()
+        
+        
     }
+    
+    
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()

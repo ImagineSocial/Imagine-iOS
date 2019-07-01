@@ -9,7 +9,6 @@
 import UIKit
 
 class VoteCampaignCell: UITableViewCell {
-    var delegate: CampaignCellDelegate?
     
     @IBOutlet weak var CellHeaderLabel: UILabel!
     @IBOutlet weak var cellBodyLabel: UILabel!
@@ -17,16 +16,8 @@ class VoteCampaignCell: UITableViewCell {
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet weak var supporterLabel: UILabel!
     @IBOutlet weak var vetoLabel: UILabel!
+    @IBOutlet weak var categoryLabel: UILabel!
     
-    var campaignObject: Campaign!
-    
-    func setCampaign(campaign: Campaign) {
-        campaignObject = campaign
-    }
-    
-    @IBAction func cellButtonPressed(_ sender: Any) {
-        
-        delegate?.MoreTapped(campaign: campaignObject)
-    }
+  
     
 }

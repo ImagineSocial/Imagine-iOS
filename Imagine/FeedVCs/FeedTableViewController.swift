@@ -12,33 +12,58 @@ import FirebaseFirestore
 import SDWebImage
 import SwiftLinkPreview
 
-/*
- let lastCell = photos.count - 1
- if indexPath.row == lastCell {
- self.loadMore()
- Wenn ich das Schrittweise Laden möchte
- 
- Cachen muss ich das auch noch
- */
-
 
 
 class FeedTableViewController: UITableViewController, PostCellDelegate, LinkCellDelegate, RepostCellDelegate, ThoughtCellDelegate {
     
     var posts = [Post]()
     let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: DisabledCache.instance)
+    let imageCache = NSCache<NSString, UIImage>()
+    
+    var actInd: UIActivityIndicatorView = UIActivityIndicatorView()
+    let container: UIView = UIView()
+    
+    lazy var postHelper = PostHelper()      // Lazy or it calls Firestore before AppDelegate.swift
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
+        imageCache.removeAllObjects()
+        
         getPosts()
+        showActivityIndicatory(uiView: self.view)
         
         tableViewSetup()
         
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 400
     }
+    
+    
+    func showActivityIndicatory(uiView: UIView) {
+        container.frame = uiView.frame
+        container.center = uiView.center
+        container.backgroundColor = UIColor(red:1.00, green:1.00, blue:1.00, alpha:0.3)
+        
+        let loadingView: UIView = UIView()
+        loadingView.frame = CGRect(x: 0, y: 0, width: 80, height: 80)
+        loadingView.center = uiView.center
+        loadingView.backgroundColor = UIColor(red:0.27, green:0.27, blue:0.27, alpha:0.7)
+        loadingView.clipsToBounds = true
+        loadingView.layer.cornerRadius = 10
+        
+        
+        actInd.frame = CGRect(x: 0.0, y: 0.0, width: 40.0, height: 40.0);
+        actInd.style = .whiteLarge
+        actInd.center = CGPoint(x: loadingView.frame.size.width / 2,
+                                y: loadingView.frame.size.height / 2);
+        loadingView.addSubview(actInd)
+        container.addSubview(loadingView)
+        uiView.addSubview(container)
+        actInd.startAnimating()
+    }
+    
     
     
     func tableViewSetup() {
@@ -57,16 +82,28 @@ class FeedTableViewController: UITableViewController, PostCellDelegate, LinkCell
     
     
     @objc func getPosts() {
-        PostHelper().getPosts { (posts) in
-            self.posts = posts
-            
-            for post in posts {
+        
+        
+            postHelper.getPosts { (posts) in
+                
+                print("Jetzt haben wir \(posts.count) posts")
+                self.posts = posts
+                self.tableView.reloadData()
+                
+                self.postHelper.getEvent(completion: { (post) in
+                    self.posts.insert(post, at: posts.count-12)
+                    self.tableView.reloadData()
+                })
+                
+                // remove ActivityIndicator incl. backgroundView
+                self.actInd.stopAnimating()
+                self.container.isHidden = true
+                
+                self.refreshControl?.endRefreshing()
             }
-            self.tableView.reloadData()
-            
-            self.refreshControl?.endRefreshing()
-        }
     }
+    
+    
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return posts.count
@@ -81,8 +118,8 @@ class FeedTableViewController: UITableViewController, PostCellDelegate, LinkCell
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let post = posts[indexPath.row]
         
+        let post = posts[indexPath.row]
         
         if post.type == "repost" || post.type == "translation" {  // Wenn es ein Repost ist wird die RepostCell genommen
             let identifier = "NibRepostCell"
@@ -127,8 +164,7 @@ class FeedTableViewController: UITableViewController, PostCellDelegate, LinkCell
                 
                 
                 // Repost Sachen einstellen
-                let repostDocumentID = post.OGRepostDocumentID
-                if let repost = posts.first(where: {$0.documentID == repostDocumentID}) {
+                if let repost = post.repost {
                     repostCell.originalTitleLabel.font = UIFont(name: "Kalam-Regular", size: 20.0)
                     repostCell.originalTitleLabel.text = repost.title
                     repostCell.originalCreateDateLabel.text = repost.createTime
@@ -164,6 +200,8 @@ class FeedTableViewController: UITableViewController, PostCellDelegate, LinkCell
                     repostCell.reportView.backgroundColor = reportViewOptions.backgroundColor
                     
                 } else {
+                    
+                    // Das klappt nicht, weil der das in den 20 runtergeladenen Posts sucht und nicht in der Database in Firebase!!!!
                     repostCell.translatedTitleLabel.text = "Hier ist was schiefgelaufen!"
                     print("Hier ist was schiefgelaufen: \(post.title)")
                 }
@@ -280,7 +318,56 @@ class FeedTableViewController: UITableViewController, PostCellDelegate, LinkCell
                 
                 return cell
             }
-        } else { // Wenn Picture
+        } else if post.type == "event" {     // Veranstaltun
+            let identifier = "NibEventCell"
+            
+            //Vielleicht noch absichern?!! Weiß aber nicht wie!
+            tableView.register(UINib(nibName: "EventCell", bundle: nil), forCellReuseIdentifier: identifier)
+            
+            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? EventCell {
+                
+                cell.eventImageView.image = nil
+                cell.headerLabel.text = nil
+                
+                cell.headerLabel.text = post.event.title
+                
+                cell.descriptionLabel.layer.cornerRadius = 5
+                cell.descriptionLabel.clipsToBounds = true
+                cell.descriptionLabel.text = post.event.description
+                
+                cell.locationLabel.text = post.event.location
+                cell.timeLabel.text = "29.06.2019, 19:00 Uhr"
+                cell.participantCountLabel.text = "15 Teilnehmer"
+                
+                switch post.event.type {
+                case "project":
+                    cell.typeLabel.text = "Ein interessantes Projekt für dich"
+                case "event":
+                    cell.typeLabel.text = "Ein interessantes Event für dich"
+                case "activity":
+                    cell.typeLabel.text = "Eine interessante Veranstaltung für dich"
+                default:
+                    cell.typeLabel.text = "Eine interessante Veranstaltung für dich"
+                }
+                
+                
+                
+                if let url = URL(string: post.event.imageURL) {
+                    if let cellImageView = cell.eventImageView {
+                        
+                        cellImageView.isHidden = false      // Check ich nicht, aber geht!
+                        cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+                        cellImageView.layer.cornerRadius = 1
+                        cellImageView.clipsToBounds = true
+                        
+                    }
+                }
+                
+                return cell
+                
+            }
+            
+        } else {// Wenn Picture
             let identifier = "NibPostCell"
             
             //Vielleicht noch absichern?!! Weiß aber nicht wie!
@@ -307,6 +394,7 @@ class FeedTableViewController: UITableViewController, PostCellDelegate, LinkCell
                 cell.niceCountLabel.text = "nice"
                 cell.commentCountLabel.text = String(post.commentCount)
                 
+                
                 cell.ogPosterLabel.text = "\(post.user.name) \(post.user.surname)"
                 cell.cellCreateDateLabel.text = post.createTime
                 
@@ -320,22 +408,48 @@ class FeedTableViewController: UITableViewController, PostCellDelegate, LinkCell
                 layer.borderWidth = 0.1
                 layer.borderColor = UIColor.black.cgColor
                 
-                
                 if let url = URL(string: post.user.imageURL) {
-                    cell.profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                    cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
                 }
                 
-                
-                if let url = URL(string: post.imageURL) {
-                    if let cellImageView = cell.cellImageView {
-                        
-                        cellImageView.isHidden = false      // Check ich nicht, aber geht!
-                        cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
-                        cellImageView.layer.cornerRadius = 1
-                        cellImageView.clipsToBounds = true
-                        
+                if let cachedImage = imageCache.object(forKey: post.imageURL as NSString) {
+                    cell.cellImageView.image = cachedImage  // Using cached Image
+                } else {
+                        if let url = URL(string: post.imageURL) {   // Load and Cache Image
+                        if let cellImageView = cell.cellImageView {
+                            
+                            cellImageView.isHidden = false      // Check ich nicht, aber geht!
+                            cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: []) { (image, err, _, _) in
+                                if let image = image {
+                                    self.imageCache.setObject(image, forKey: post.imageURL as NSString)
+                                }
+                            }
+                            cellImageView.layer.cornerRadius = 1
+                            cellImageView.clipsToBounds = true
+                            
+                        }
                     }
+
+                    
+//                    if let url = URL(string: post.user.imageURL) {
+//                        cell.profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: []) { (image, err, _, _) in
+//                            if let image = image {
+//                                self.imageCache.setObject(image, forKey: post.user.imageURL as NSString)
+//                            }
+//                        }
+//                    }
                 }
+                
+//                if let url = URL(string: post.imageURL) {
+//                    if let cellImageView = cell.cellImageView {
+//
+//                        cellImageView.isHidden = false      // Check ich nicht, aber geht!
+//                        cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+//                        cellImageView.layer.cornerRadius = 1
+//                        cellImageView.clipsToBounds = true
+//
+//                    }
+//                }
                 
                 // ReportView einstellen
                 let reportViewOptions = setReportView(post: post)
@@ -352,13 +466,23 @@ class FeedTableViewController: UITableViewController, PostCellDelegate, LinkCell
     }
     
     
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.section == tableView.numberOfSections - 1 &&
+            indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 3 {
+            print("Ende fast erreicht!")
+            
+            self.getPosts()
+            // Wenn ich wirklich beim letzten bin habe ich noch keine Lösung
+        }
+    }
+    
+    
     
     func reportTapped(post: Post) {
         performSegue(withIdentifier: "meldenSegue", sender: post)
     }
     
     func thanksTapped(post: Post) {
-        print("Post wird geupdatet!")
         updatePost(button: "thanks", post: post)
     }
     
@@ -508,8 +632,11 @@ class FeedTableViewController: UITableViewController, PostCellDelegate, LinkCell
         case "link":
             //return UITableView.automaticDimension klappt nicht
             heightForRow = 225
+        case "event": // veranstaltung
+            
+            return 469
         case "repost":
-            if let repost = posts.first(where: {$0.documentID == repostDocumentID}) {
+            if let repost = post.repost {
                 let imageHeight = repost.imageHeight
                 let imageWidth = repost.imageWidth
                 
@@ -550,6 +677,34 @@ class FeedTableViewController: UITableViewController, PostCellDelegate, LinkCell
                     webVC.post = chosenPost
                     
                 }
+            }
+        }
+    }
+    
+}
+
+extension FeedTableViewController: UITableViewDataSourcePrefetching {
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        for indexPath in indexPaths {
+            let post = posts[indexPath.row]
+
+            if let _ = imageCache.object(forKey: post.imageURL as NSString) {
+                print("Wurde schon gecached")
+            } else {
+                if let url = URL(string: post.imageURL) {
+                    print("Prefetchen neues Bild: \(post.title)")
+                    DispatchQueue.global().async {
+                        let data = try? Data(contentsOf: url)
+
+                        DispatchQueue.main.async {
+                            if let data = data {
+                                if let image = UIImage(data: data) {
+                                    self.imageCache.setObject(image, forKey: post.imageURL as NSString)
+                            }
+                        }
+                    }
+                }
+            }
             }
         }
     }
