@@ -59,13 +59,14 @@ class RepostViewController: UIViewController {
                 originalDescriptionLabel.text = post.description
             }
             
-            if post.type == "picture" {
+            switch post.type {
+            case .picture:
                 postImageView.isHidden = false
                 
                 if let url = URL(string: post.imageURL) {
                     postImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
                 }
-            } else {
+            default:
                 postImageView.isHidden = true
             }
         } else {    // Also Repost
@@ -84,13 +85,15 @@ class RepostViewController: UIViewController {
                 originalDescriptionLabel.text = post.description
             }
             
-            if post.type == "picture" {
+            
+            switch post.type {
+            case .picture:
                 postImageView.isHidden = false
                 
                 if let url = URL(string: post.imageURL) {
                     postImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
                 }
-            } else {
+            default:
                 postImageView.isHidden = true
             }
         }

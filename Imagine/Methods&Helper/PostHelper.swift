@@ -11,15 +11,23 @@ import Firebase
 import FirebaseFirestore
 import SDWebImage
 
-public var lastSnap: QueryDocumentSnapshot?     // public for the next fetch cycle
+public var lastSnap: QueryDocumentSnapshot?     // public for the next fetch cycle, I think it is unnötig, because i solved it by keeping just one instance of posthelper instead of initiating it over and over again, that is why the posts stay the same and so on
 public var lastEventSnap: QueryDocumentSnapshot?
+
+enum PostType {
+    case picture
+    case link
+    case thought
+    case repost
+    case event
+}
 
 class PostHelper {
     
     var posts = [Post]()
     let db = Firestore.firestore()
     
-    func getPosts(returnPosts: @escaping ([Post]) -> Void) {
+    func getPosts(getMore:Bool, returnPosts: @escaping ([Post]) -> Void) {
         
         let settings = db.settings
         settings.areTimestampsInSnapshotsEnabled = true
@@ -27,10 +35,13 @@ class PostHelper {
         
         var postRef = db.collection("Posts").order(by: "createTime", descending: true).limit(to: 20)
         
-        if let lastSnap = lastSnap {        // For the next loading batch of 20, that will start after this snapshot
-            postRef = postRef.start(afterDocument: lastSnap)
+        if getMore {    // If you want to get More Posts
+            if let lastSnap = lastSnap {        // For the next loading batch of 20, that will start after this snapshot
+                postRef = postRef.start(afterDocument: lastSnap)
+            }
+        } else { // Else you want to refresh the feed
+            self.posts.removeAll()
         }
-        
         
         postRef.getDocuments { (querySnapshot, error) in
             
@@ -69,7 +80,7 @@ class PostHelper {
                         let post = Post()       // Erst neuen Post erstellen
                         post.title = title      // Dann die Sachen zuordnen
                         post.description = description
-                        post.type = postType
+                        post.type = .thought
                         post.report = report
                         post.documentID = documentID
                         post.createTime = stringDate
@@ -101,7 +112,7 @@ class PostHelper {
                         post.imageHeight = CGFloat(picHeight)
                         post.imageWidth = CGFloat(picWidth)
                         post.description = description
-                        post.type = postType
+                        post.type = .picture
                         post.report = report
                         post.documentID = documentID
                         post.createTime = stringDate
@@ -126,7 +137,7 @@ class PostHelper {
                         post.title = title      // Dann die Sachen zuordnen
                         post.linkURL = linkURL
                         post.description = description
-                        post.type = postType
+                        post.type = .link
                         post.report = report
                         post.documentID = documentID
                         post.createTime = stringDate
@@ -149,7 +160,7 @@ class PostHelper {
                         }
                         
                         let post = Post()
-                        post.type = postType
+                        post.type = .repost
                         post.title = title
                         post.report = report
                         post.description = description
@@ -192,8 +203,8 @@ class PostHelper {
         }
         
         eventRef.getDocuments { (eventSnap, err) in
-            if err != nil {
-                print("Wir haben einen Error beim Event: \(err?.localizedDescription)")
+            if let err = err {
+                print("Wir haben einen Error beim Event: \(err.localizedDescription)")
             }
             
             for event in eventSnap!.documents {
@@ -233,7 +244,7 @@ class PostHelper {
                 
                 post.originalPosterUID = admin
                 post.documentID = documentID
-                post.type = "event"
+                post.type = .event
                 
                 post.event = event
                 
@@ -275,8 +286,8 @@ class PostHelper {
                     }
                 }
                 
-                if err != nil {
-                    print("Wir haben einen Error beim User: \(err?.localizedDescription)")
+                if let err = err {
+                    print("Wir haben einen Error beim User: \(err.localizedDescription)")
                 }
             })
             
@@ -294,13 +305,13 @@ class PostHelper {
         for post in posts {
             // Comment Count raussuchen wenn Post
             
-            if post.type != "event" { // Wenn kein Event 
+            if post.type != .event { // Wenn kein Event
                 
             let commentRef = db.collection("Comments").document(post.documentID).collection("threads")
             
             commentRef.getDocuments { (snapshot, err) in
-                if err != nil {
-                    print("Wir haben einen Error beim User: \(err?.localizedDescription)")
+                if let err = err {
+                    print("Wir haben einen Error beim User: \(err.localizedDescription)")
                 }
                 if let snapshot = snapshot {
                     let number = snapshot.count
@@ -356,8 +367,8 @@ class PostHelper {
                     }
                 }
             }
-            if err != nil {
-                print("Wir haben einen Error beim User: \(err?.localizedDescription)")
+            if let err = err {
+                print("Wir haben einen Error beim User: \(err.localizedDescription)")
             }
             
             if let daChatUser = chatUser{

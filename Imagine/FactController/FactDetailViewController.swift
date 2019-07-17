@@ -22,6 +22,8 @@ class FactDetailViewController: UIViewController {
         titleLabel.text = argument.title
         descriptionLabel.text = argument.description
         
+        self.navigationItem.title = fact.title
+        
     }
     
 

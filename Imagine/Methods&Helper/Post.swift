@@ -15,7 +15,7 @@ class Post {
     var imageURL = ""
     var description = ""
     var linkURL = ""
-    var type = ""
+    var type: PostType = .picture
     var imageHeight: CGFloat = 0.0
     var imageWidth: CGFloat = 0.0
     var report = ""
@@ -68,7 +68,6 @@ class Post {
                         post.imageHeight = CGFloat(picHeight)
                         post.imageWidth = CGFloat(picWidth)
                         post.description = description
-                        post.type = postType
                         post.report = report
                         post.documentID = document.documentID
                         post.createTime = stringDate
@@ -79,6 +78,10 @@ class Post {
                         post.votes.nice = niceCount
                         post.linkURL = linkURL
                         
+                        if let postType = HandyHelper().setPostType(fetchedString: postType) {
+                            post.type = postType
+                        }
+                        
                         post.getUser(returnUser: { (user) in
                             post.user = user
                             
@@ -88,7 +91,7 @@ class Post {
                 }
                 
                 if err != nil {
-                    print("Wir haben einen Error beim User: \(err?.localizedDescription)")
+                    print("Wir haben einen Error beim User: \(err?.localizedDescription ?? "")")
                 }
             })
         }
@@ -116,7 +119,7 @@ class Post {
             }
             
             if err != nil {
-                print("Wir haben einen Error beim User: \(err?.localizedDescription)")
+                print("Wir haben einen Error beim User: \(err?.localizedDescription ?? "")")
             }
         })
         returnUser(user)
@@ -125,9 +128,10 @@ class Post {
 
 
 
-class User {
-    var name = ""
-    var surname = ""
-    var imageURL = ""
-    var userUID = ""
+public class User {
+    public var name = ""
+    public var surname = ""
+    public var imageURL = ""
+    public var userUID = ""
+    public var image = UIImage(named: "default-user")
 }

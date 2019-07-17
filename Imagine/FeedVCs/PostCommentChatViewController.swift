@@ -39,6 +39,8 @@ class PostCommentChatViewController: MSGMessengerViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        print("Jetzt im PostCommentChatViewController")
         // MSGMessenger
         dataSource = self
         delegate = self

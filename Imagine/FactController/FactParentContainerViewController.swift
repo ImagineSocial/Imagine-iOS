@@ -24,6 +24,8 @@ class FactParentContainerViewController: UIViewController {
 
         titleLabel.text = fact.title
         getArguments()      // In viewDidLoad da er es sonst zu oft called
+        
+        
     }
     
     

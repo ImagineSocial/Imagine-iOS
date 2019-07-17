@@ -14,12 +14,13 @@ import SDWebImage
 
 
 class TabBarViewController: UITabBarController {
-
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-    }
+        
+        }
 
     override func viewWillAppear(_ animated: Bool) {
         //create a new button
@@ -73,17 +74,15 @@ class TabBarViewController: UITabBarController {
         }
         
         let barButton = UIBarButtonItem(customView: button)
-        self.navigationItem.rightBarButtonItem = barButton
+        self.navigationItem.leftBarButtonItem = barButton
     }
     
     
+    
     @objc func BarButtonItemTapped() {
-        // If not eingeloggt...
-        if Auth.auth().currentUser == nil {
-            performSegue(withIdentifier: "logInSegue", sender: nil)
-        } else {
-            performSegue(withIdentifier: "toProfileSegue", sender: nil)
-        }
+        
+        let notificationName = Notification.Name(rawValue: "toggleMenu")
+        NotificationCenter.default.post(name: notificationName, object: nil)
     }
     
     

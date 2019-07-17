@@ -181,7 +181,7 @@ class DataHelper {
         
         var argumentList = [Argument]()
         
-        print("Hier wird geaden mit ID:", documentID)
+        print("Hier wird geladen mit ID:", documentID)
         self.db.collection(get).document(documentID).collection("arguments").getDocuments(completion: { (snap, err) in
             for document in snap!.documents {
                 

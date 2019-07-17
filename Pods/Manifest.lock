@@ -6,6 +6,7 @@ PODS:
   - BoringSSL/Implementation (10.0.6):
     - BoringSSL/Interface (= 10.0.6)
   - BoringSSL/Interface (10.0.6)
+  - DateToolsSwift (4.0.0)
   - Firebase/Auth (5.10.0):
     - Firebase/CoreOnly
     - FirebaseAuth (= 5.0.4)
@@ -140,6 +141,7 @@ PODS:
   - SwiftLinkPreview (3.0.0)
 
 DEPENDENCIES:
+  - DateToolsSwift
   - Firebase/Auth
   - Firebase/Core
   - Firebase/Database
@@ -154,6 +156,7 @@ SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - BeamsChatkit
     - BoringSSL
+    - DateToolsSwift
     - Firebase
     - FirebaseAnalytics
     - FirebaseAuth
@@ -191,6 +194,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   BeamsChatkit: 8d6da00ded34ee11116e9e38427a20e04301d796
   BoringSSL: e10f92a27043805c01071fe815a5cd98ae8212e7
+  DateToolsSwift: 875d97ff9e3a5d54abdd67a269b3f51c757b71ab
   Firebase: 6691d47562a780c26281ce8464518faafc90c610
   FirebaseAnalytics: 831f1f127f4a75698e9875a87bf7e2668730d953
   FirebaseAuth: 504b198ceb3472dca5c65bb95544ea44cfc9439e
@@ -217,6 +221,6 @@ SPEC CHECKSUMS:
   SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
   SwiftLinkPreview: 062de89fe2c1bd2103b1d60f57c864ae54c324e1
 
-PODFILE CHECKSUM: 99f11a28e0e6d95a17b85ae3ecb0a1a4d3f62b8a
+PODFILE CHECKSUM: a8c25cdbae7a1eed9f44a2dc75d8626fbdc90d7d
 
 COCOAPODS: 1.5.3

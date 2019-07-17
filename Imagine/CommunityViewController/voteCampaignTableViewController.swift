@@ -18,6 +18,16 @@ class voteCampaignTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.separatorStyle = .none
+        
+        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.view.backgroundColor = .white
+        
+        let imageView = UIImageView(image: UIImage(named: "peace-sign"))
+        imageView.contentMode = .scaleAspectFit
+        imageView.alpha = 0.3
+        
+        self.tableView.backgroundView = imageView
+        
     }
     
     

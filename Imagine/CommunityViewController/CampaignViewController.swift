@@ -28,6 +28,7 @@ class CampaignViewController: UIViewController {
 
         
         showCampaign()
+        self.navigationItem.title = campaign.category
     }
     
     func showCampaign() {

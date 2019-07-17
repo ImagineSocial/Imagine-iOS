@@ -261,7 +261,7 @@ class LogInViewController: UIViewController {
                 
                 
                 let userRef = Firestore.firestore().collection("Users").document(user.uid)
-                    userRef.setData(["name": self.name, "surname": self.surname])
+                    userRef.setData(["name": self.name, "surname": self.surname, "full_name": fullName])
                 }
                 // Erstmal
                 self.dismiss(animated: true, completion: nil)

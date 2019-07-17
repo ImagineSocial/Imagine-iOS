@@ -7,18 +7,31 @@
 //
 
 import UIKit
+import Firebase
 
 
 class MeldenViewController: UIViewController {
 
+    @IBOutlet weak var savePostButtonIcon: UIImageView!
+    
     var post = Post()
     var reportCategory = ""
     var repost = "repost"
     
+    let db = Firestore.firestore()
+    
+    let handyHelper = HandyHelper()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
+            if alreadySaved {
+                self.savePostButtonIcon.tintColor = .green
+            } else {
+                self.savePostButtonIcon.tintColor = .black
+            }
+        }
     }
     
 
@@ -51,6 +64,28 @@ class MeldenViewController: UIViewController {
         repost = "translation"
         performSegue(withIdentifier: "toRepostSegue", sender: post)
     }
+    
+    @IBAction func savePostTapped(_ sender: Any) {
+        if let user = Auth.auth().currentUser {
+            let ref = db.collection("Users").document(user.uid).collection("saved").document()
+            
+            let data: [String:Any] = ["createTime": Timestamp(date: Date()), "documentID": post.documentID]
+            
+            ref.setData(data) { (err) in
+                if let error = err {
+                    print("We have an error saving this post: \(error.localizedDescription)")
+                } else {
+                    print("Successfully saved")
+                    self.savePostButtonIcon.tintColor = .green
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                        self.dismiss(animated: true, completion: nil)
+                    }
+                }
+            }
+        }
+    }
+    
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
