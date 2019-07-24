@@ -49,15 +49,15 @@ class HandyHelper {
     let db = Firestore.firestore()
     
     func getDateAsTimestamp() -> Timestamp {
-                let date = Date()
+        let date = Date()
         let timestamp = Timestamp(date: date)
-//        let formatter = DateFormatter()
-//        formatter.dateFormat = "dd MM yyyy HH:mm"
-//        let stringDate = formatter.string(from: date)
-//        if let result = formatter.date(from: stringDate) {
-//            let dateTimestamp :Timestamp = Timestamp(date: result)  // Hat keine Nanoseconds
-//            return dateTimestamp
-//        }
+        //        let formatter = DateFormatter()
+        //        formatter.dateFormat = "dd MM yyyy HH:mm"
+        //        let stringDate = formatter.string(from: date)
+        //        if let result = formatter.date(from: stringDate) {
+        //            let dateTimestamp :Timestamp = Timestamp(date: result)  // Hat keine Nanoseconds
+        //            return dateTimestamp
+        //        }
         return timestamp
     }
     
@@ -263,6 +263,87 @@ class HandyHelper {
                 }
             }
         }
+    }
+    
+    
+    
+    func getChats(chatList: @escaping ([Chat]) -> Void ) {
+        var chatsList = [Chat]()
         
+        if let user = Auth.auth().currentUser {
+            let chatsRef = db.collection("Users").document(user.uid).collection("chats")
+            
+            chatsRef.getDocuments { (snapshot, error) in
+                if error == nil {
+                    
+                    for document in snapshot!.documents {
+                        let documentData = document.data()
+                        
+                        guard let participant = documentData["participant"] as? String else { return }
+                        
+                        let chat = Chat()
+                        chat.documentID = document.documentID
+                        chat.participant.userUID = participant
+                        if let lastMessageID = documentData["lastReadMessage"] as? String {
+                            chat.lastReadMessageUID = lastMessageID
+                        }
+                        
+                        chatsList.append(chat)
+                    }
+                    chatList(chatsList)
+                } else {
+                    print("We have an error within the chats: \(error?.localizedDescription ?? "")")
+                }
+            }
+            
+        } else {
+            // Nobody logged In
+        }
+    }
+    
+    func getCountOfUnreadMessages(chatList: [Chat], unreadMessages: @escaping (Int) -> Void ) {
+        var count = 0
+        
+        for chat in chatList {
+            let chatsRef = self.db.collection("Chats").document(chat.documentID).collection("threads").order(by: "sentAt", descending: true)
+            
+            // Already been in this chat at least once
+            if let lastReadMessage = chat.lastReadMessageUID {
+                
+                let lastReadMessageDoc = db.collection("Chats").document(chat.documentID).collection("threads").document(lastReadMessage)
+                
+                lastReadMessageDoc.getDocument { (document, error) in
+                    if let error = error {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        let endingChatsRef = chatsRef.end(beforeDocument: document!)
+                        endingChatsRef.getDocuments(completion: { (snap, error) in
+                            
+                            if let error = error {
+                                print("We have an error: \(error.localizedDescription)")
+                            } else {
+                                let unreadMessageCount = snap!.documents.count
+                                
+                                count = count+unreadMessageCount
+                                
+                                unreadMessages(count)
+                            }
+                        })
+                    }
+                }
+            } else {
+                // New chat, not a lastReadMessageUID set
+                chatsRef.getDocuments { (snap, error) in
+                    if let error = error {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        let unreadMessageCount = snap!.documents.count
+                        count = count+unreadMessageCount
+                        unreadMessages(count)
+                        }
+                }
+            }
+            // Here was unreadMessages(count) but it finished too early
+        }
     }
 }

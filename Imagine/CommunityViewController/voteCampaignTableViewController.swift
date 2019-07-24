@@ -8,11 +8,27 @@
 
 import UIKit
 
+enum suggestionMode {
+    case vote
+    case campaign
+}
+
+enum Impact {
+    case light
+    case medium
+    case strong
+}
 
 class voteCampaignTableViewController: UITableViewController {
     
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
+    @IBOutlet weak var headerLabel: UILabel!
+    @IBOutlet weak var subHeaderLabel: UILabel!
+    @IBOutlet weak var shareIdeaButton: DesignableButton!
+    @IBOutlet weak var descriptionLabel: UILabel!
     
     var campaigns = [Campaign]()
+    var mode: suggestionMode = .vote
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,13 +38,38 @@ class voteCampaignTableViewController: UITableViewController {
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.view.backgroundColor = .white
         
+        setBarButtonItem()
+        setVoteModeUI()
         let imageView = UIImageView(image: UIImage(named: "peace-sign"))
         imageView.contentMode = .scaleAspectFit
         imageView.alpha = 0.3
-        
+
         self.tableView.backgroundView = imageView
         
     }
+    
+    lazy var infoScreen: InfoScreen = {
+        let infoScreen = InfoScreen()
+        infoScreen.voteCampaignVC = self
+        return infoScreen
+    }()
+    
+    func setBarButtonItem() {
+        let infoButton = DesignableButton(type: .custom)
+        infoButton.setImage(UIImage(named: "help"), for: .normal)
+        infoButton.addTarget(self, action: #selector(self.infoBarButtonTapped), for: .touchUpInside)
+        infoButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        infoButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        
+        let infoBarButton = UIBarButtonItem(customView: infoButton)
+        self.navigationItem.rightBarButtonItem = infoBarButton
+    }
+    
+    
+    @objc func infoBarButtonTapped() {
+        infoScreen.showInfoScreen()
+    }
+    
     
     
     override func viewWillAppear(_ animated: Bool) {
@@ -46,44 +87,57 @@ class voteCampaignTableViewController: UITableViewController {
     
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return campaigns.count
+
+        switch mode {
+        case .campaign:
+            return campaigns.count
+        case .vote:
+            return 1
+        }
     }
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: "campaignCell", for: indexPath) as? VoteCampaignCell {
-            let campaign = campaigns[indexPath.row]
-            
-            
-            cell.CellHeaderLabel.text = campaign.title
-            cell.cellBodyLabel.text = campaign.cellText
-            cell.cellCreateCampaignLabel.text = campaign.createDate
-            let progress: Float = Float(campaign.supporter) / (Float(campaign.opposition) + Float(campaign.supporter))
-            cell.progressView.setProgress(progress, animated: true)
-            cell.supporterLabel.text = "\(campaign.supporter) Supporter"
-            cell.vetoLabel.text = "\(campaign.opposition) Vetos"
-            cell.categoryLabel.text = campaign.category
-            
-            let category = campaign.category
-            var labelColor: UIColor?
-            
-            switch category {
-            case "Management":
-                labelColor = .red
-            case "Finanzen":
-                labelColor = .green
-            case "Kommunikation":
-                labelColor = .blue
-            case "Inhalt":
-                labelColor = .purple
-            default:
-                labelColor = .yellow
+        
+        switch mode {
+        case .campaign:
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "campaignCell", for: indexPath) as? CampaignCell {
+
+                let campaign = campaigns[indexPath.row]
+                
+                cell.campaign = campaign
+                
+                return cell
             }
-            
-            cell.categoryLabel.textColor = labelColor
-            
-            return cell
+        case .vote:
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "VoteCell", for: indexPath) as? VoteCell {
+                
+                cell.headerLabel.text = "Ein Privates Netzwerk"
+                cell.bodyLabel.text = "Ein Netzwerk in Imagine-Optik, welches man nur mit seinen Freunden als Gruppenchat-Ersatz nutzen kann"
+                cell.voteTillDateLabel.text = "Abstimmung bis: 30.09.2019 12:00"
+                cell.costLabel.text = "15.000€"
+                cell.timePeriodLabel.text = "6 Wochen"
+                cell.commentCountLabel.text = "17"
+                
+                cell.voteTillDateLabel.layer.cornerRadius = 5
+                cell.impactLabel.layer.cornerRadius = 3
+                
+                let impact = Impact.medium
+                
+                switch impact {
+                case .light:
+                    cell.impactLabel.text = "Auswirkung: Leicht"
+                    cell.impactLabel.backgroundColor = .green
+                case .medium:
+                    cell.impactLabel.text = "Auswirkung: Medium"
+                    cell.impactLabel.backgroundColor = .orange
+                case .strong:
+                    cell.impactLabel.text = "Auswirkung: Stark"
+                    cell.impactLabel.backgroundColor = .red
+                }
+                
+                return cell
+            }
         }
         
         return UITableViewCell()
@@ -95,7 +149,13 @@ class voteCampaignTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 160
+        
+        switch mode {
+        case .campaign:
+            return 170
+        case .vote:
+            return 190
+        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -115,6 +175,49 @@ class voteCampaignTableViewController: UITableViewController {
             }
         }
     }
+    
+    func setCampaignUI() {
+        headerLabel.text = "Eure Vorschläge für Imagine"
+        subHeaderLabel.text = "Teile uns deine Ideen für ein besseres Erlebnis mit!"
+        descriptionLabel.text = "Aktuelle Kampagnen:"
+        shareIdeaButton.isHidden = false
+        
+        
+        UIView.animate(withDuration: 0.5) {
+            self.view.layoutIfNeeded()
+            self.tableView.tableHeaderView?.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 235)
+            self.shareIdeaButton.alpha = 1
+        }
+    }
+    
+    func setVoteModeUI() {
+        headerLabel.text = "Deine Stimme für Imagine"
+        subHeaderLabel.text = "Du entscheidest mit, wie sich dein Netzwerk verändert!"
+        descriptionLabel.text = "Aktuelle Abstimmungen:"
+        shareIdeaButton.alpha = 0
+        
+        UIView.animate(withDuration: 0.5, animations: {
+            self.view.layoutIfNeeded()
+            self.tableView.tableHeaderView?.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 200)
+        }, completion: { (_) in
+            self.shareIdeaButton.isHidden = true
+        })
+        
+    }
+    
+    @IBAction func segmentControlChannged(_ sender: Any) {
+        if segmentedControl.selectedSegmentIndex == 0 {
+            mode = .campaign
+            setCampaignUI()
+            tableView.reloadData()
+        }
+        if segmentedControl.selectedSegmentIndex == 1 {
+            mode = .vote
+            setVoteModeUI()
+            tableView.reloadData()
+        }
+    }
+    
     
 }
 

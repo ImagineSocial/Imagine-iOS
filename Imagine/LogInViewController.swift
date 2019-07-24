@@ -13,7 +13,6 @@ import FirebaseAuth
 
 class LogInViewController: UIViewController {
     
-    @IBOutlet weak var LogInNavigationBar: UINavigationBar!
     @IBOutlet weak var initialStackView: UIStackView!
     @IBOutlet weak var initialLabel: UILabel!
     @IBOutlet weak var initialLabelConstraint: NSLayoutConstraint!
@@ -350,7 +349,7 @@ class LogInViewController: UIViewController {
                 self.initialStackView.alpha = 0
                 self.peaceSignView.alpha = 0.3
                 self.topDismissButton.alpha = 1
-                self.LogInNavigationBar.alpha = 0
+                self.navigationController?.navigationBar.alpha = 0.0
                 
                 if let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as? UIView{
                     statusBar.alpha = 0
@@ -380,14 +379,14 @@ class LogInViewController: UIViewController {
         } else {
             // Erster Schritt
             UIView.animate(withDuration: 3, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveLinear, animations: {
-                self.LogInNavigationBar.alpha = 0
+                self.navigationController?.navigationBar.alpha = 0.0
                 self.initialStackView.alpha = 0
                 self.peaceSignView.alpha = 0.5
                 self.signUp = true  // Button verändern sich
                 
             }, completion: { (_) in
                 self.initialButton2.backgroundColor = UIColor(red:1.00, green:0.54, blue:0.52, alpha:1.0)
-                self.LogInNavigationBar.isHidden = true
+                self.navigationController?.navigationBar.isHidden = true
                 self.initialLabel.text = "Das ist nicht irgendein Service! Du wirst in unsere Mitte aufgenommen, wenn du dich als würdig erweist! Nimm dir Zeit dafür. Sei ehrlich und du selbst!"
                 self.initialButton1.setTitle("Ich bin bereit!", for: .normal)
                 self.initialButton2.setTitle("Lieber Später!", for: .normal)

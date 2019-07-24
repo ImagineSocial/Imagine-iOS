@@ -12,7 +12,8 @@ import Firebase
 
 // LogOutButton
 // UserUID abscihern
-class UserFeedTableViewController: UITableViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+// Set getMore in UserPostHelper!
+class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     @IBOutlet weak var addAsFriendButton: DesignableButton!
     @IBOutlet weak var nameLabel: UILabel!
@@ -23,11 +24,8 @@ class UserFeedTableViewController: UITableViewController, UIImagePickerControlle
     @IBOutlet weak var chatWithUserButton: DesignableButton!
     
     
-    var posts = [Post]()
-    let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: DisabledCache.instance)
     var userUID = ""    // Noch absichern
     lazy var postHelper = UserPostHelper()
-    lazy var handyHelper = HandyHelper()
     
     var imagePicker = UIImagePickerController()
     var imageURL = ""
@@ -54,7 +52,7 @@ class UserFeedTableViewController: UITableViewController, UIImagePickerControlle
             if let user = Auth.auth().currentUser {
                 
                 self.userUID = user.uid
-                getPosts()
+                getPosts(getMore: false)
                 
                 if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" { // That means its me, Malte
                     blogPostButton.isHidden = false
@@ -70,7 +68,7 @@ class UserFeedTableViewController: UITableViewController, UIImagePickerControlle
                 }
             }
             
-            getPosts()
+            getPosts(getMore: true)
             // Kein Add as Friend Button Kein Chat oder Danke Button
             
         }
@@ -78,10 +76,6 @@ class UserFeedTableViewController: UITableViewController, UIImagePickerControlle
         
         
         imagePicker.delegate = self
-        
-        tableViewSetup()
-        tableView.estimatedRowHeight = 400
-        
     }
     
     
@@ -198,164 +192,33 @@ class UserFeedTableViewController: UITableViewController, UIImagePickerControlle
     
     //MARK: - TableView
     
-    func tableViewSetup() {
-        let refreshControl = UIRefreshControl()
-        tableView.separatorStyle = .none
-        
-        if #available(iOS 10.0, *) {
-            tableView.refreshControl = refreshControl
-        }
-        
-        refreshControl.addTarget(self, action: #selector(getPosts), for: .valueChanged)
-        refreshControl.attributedTitle = NSAttributedString(string: "Moment!")
-        
-        self.tableView.addSubview(refreshControl)
-    }
     
-    
-    @objc func getPosts() {
+    override func getPosts(getMore: Bool) {
         postHelper.getPosts(whichPostList: .postsFromUser, userUID: userUID) { (posts) in
             
             self.posts = posts
+            self.posts.sort(by: { $0.createTime.compare($1.createTime) == .orderedAscending })
             self.tableView.reloadData()
             
             PostHelper().getEvent(completion: { (event) in
                 // Lade das eigentlich nur, damit der die Profilbilder und so richtig lädt
                 self.tableView.reloadData()
             })
+            
+            // remove ActivityIndicator incl. backgroundView
+            self.actInd.stopAnimating()
+            self.container.isHidden = true
+            
             self.refreshControl?.endRefreshing()
         }
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return posts.count
-    }
+    
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let post = posts[indexPath.row]
         
         performSegue(withIdentifier: "showPost", sender: post)
-    }
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let post = posts[indexPath.row]
-        
-        
-        switch post.type {
-        case .repost:
-            let identifier = "NibRepostCell"
-            
-            //Vielleicht noch absichern?!! Weiß aber nicht wie!
-            tableView.register(UINib(nibName: "RePostTableViewCell", bundle: nil), forCellReuseIdentifier: identifier)
-            
-            if let repostCell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? RePostCell {
-                
-                repostCell.delegate = self
-                repostCell.post = post
-                
-                return repostCell
-            }
-        case .picture:
-            let identifier = "NibPostCell"
-            
-            //Vielleicht noch absichern?!! Weiß aber nicht wie!
-            tableView.register(UINib(nibName: "PostTableViewCell", bundle: nil), forCellReuseIdentifier: identifier)
-            
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? PostCell {
-                
-                cell.delegate = self
-                cell.post = post
-                
-                return cell
-            }
-        case .thought:
-            let identifier = "NibThoughtCell"
-            
-            //Vielleicht noch absichern?!! Weiß aber nicht wie!
-            tableView.register(UINib(nibName: "ThoughtPostCell", bundle: nil), forCellReuseIdentifier: identifier)
-            
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? ThoughtCell {
-                
-                cell.delegate = self
-                cell.post = post
-                
-                return cell
-            }
-        case .link:
-            let identifier = "NibLinkCell"
-            
-            //Vielleicht noch absichern?!! Weiß aber nicht wie!
-            tableView.register(UINib(nibName: "LinkCell", bundle: nil), forCellReuseIdentifier: identifier)
-            
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? LinkCell {
-                
-                cell.delegate = self
-                cell.post = post
-                
-                return cell
-            }
-        case .event:
-            print("Hier kommt noch ein Event hin")
-        
-        }
-        
-        
-        return UITableViewCell()
-    }
-    
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        
-        var extraHeightForReportView:CGFloat = 0
-        
-        var heightForRow:CGFloat = 150
-        
-        let post = posts[indexPath.row]
-        let postType = post.type
-        
-        if post.report != "normal" {
-            extraHeightForReportView = 24
-        }
-        
-        let repostDocumentID = post.OGRepostDocumentID
-        
-        switch postType {
-        case .thought:
-            return UITableView.automaticDimension
-        case .picture:
-            
-            // Label vergrößern
-            let titleLabelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
-            
-            let imageHeight = post.imageHeight
-            let imageWidth = post.imageWidth
-            
-            let ratio = imageWidth / imageHeight
-            let newHeight = self.view.frame.width / ratio
-            
-            heightForRow = newHeight+100+extraHeightForReportView+titleLabelHeight // 100 weil Höhe von StackView & Rest
-            
-            return heightForRow
-        case .link:
-            //return UITableView.automaticDimension klappt nicht
-            heightForRow = 225
-        case .repost:
-            if let repost = posts.first(where: {$0.documentID == repostDocumentID}) {
-                let imageHeight = repost.imageHeight
-                let imageWidth = repost.imageWidth
-                
-                let ratio = imageWidth / imageHeight
-                let newHeight = self.view.frame.width / ratio
-                
-                heightForRow = newHeight+125        // 125 weil das die Höhe von dem ganzen Zeugs sein soll
-                
-                return heightForRow
-            }
-        default:
-            heightForRow = 150
-        }
-        
-        return heightForRow
     }
     
     
@@ -613,34 +476,4 @@ class UserFeedTableViewController: UITableViewController, UIImagePickerControlle
             }
         }
     }
-}
-
-extension UserFeedTableViewController: PostCellDelegate, LinkCellDelegate, RepostCellDelegate, ThoughtCellDelegate  {
-    
-    //MARK: -Cell Button Tapped
-    
-    func reportTapped(post: Post) {
-        performSegue(withIdentifier: "meldenSegue", sender: post)
-    }
-    
-    func thanksTapped(post: Post) {
-        handyHelper.updatePost(button: .thanks, post: post)
-    }
-    
-    func wowTapped(post: Post) {
-        handyHelper.updatePost(button: .wow, post: post)
-    }
-    
-    func haTapped(post: Post) {
-        handyHelper.updatePost(button: .ha, post: post)
-    }
-    
-    func niceTapped(post: Post) {
-        handyHelper.updatePost(button: .nice, post: post)
-    }
-    
-    func linkTapped(post: Post) {
-        performSegue(withIdentifier: "toLinkSegue", sender: post)
-    }
-    
 }

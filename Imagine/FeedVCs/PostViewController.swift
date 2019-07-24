@@ -11,6 +11,7 @@ import SDWebImage
 import SwiftLinkPreview
 import Firebase
 import FirebaseFirestore
+import YoutubePlayer_in_WKWebView
 
 extension UIScrollView {
     
@@ -61,6 +62,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         savePostButton.tintColor = .black
         instantiateContainerView()
         
+        scrollView.delegate = self
         
         handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
             if alreadySaved {
@@ -71,6 +73,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         
     }
+    
     
     func checkIfAlreadySaved() {
         if let user = Auth.auth().currentUser {
@@ -219,7 +222,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         switch post.type {
         case.event:
             
-            setUpEventUI()
+            setUpEventUI()  // No UserUI Setup in an Event
         default:
             
             setUpUserUI()
@@ -242,6 +245,10 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
                 descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
                 descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 15).isActive = true
+                
+                setUpCommentaryAndVoteUI()
+            case .youTubeVideo:
+                setUpYouTubeVideoUI()
                 
                 setUpCommentaryAndVoteUI()
             default:
@@ -343,7 +350,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0).isActive = true
         postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0).isActive = true
         postImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
-        postImageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+        postImageView.heightAnchor.constraint(equalToConstant: 180).isActive = true
         postImageView.layoutIfNeeded() //?
         
         contentView.addSubview(linkLabel)
@@ -363,6 +370,20 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
         descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
         descriptionLabel.topAnchor.constraint(equalTo: postImageView.bottomAnchor, constant: 15).isActive = true
+    }
+    
+    func setUpYouTubeVideoUI() {
+        contentView.addSubview(youTubeView)
+        youTubeView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 0).isActive = true
+        youTubeView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0).isActive = true
+        youTubeView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
+        youTubeView.heightAnchor.constraint(equalToConstant: 240).isActive = true
+        youTubeView.layoutIfNeeded() //?
+        
+        contentView.addSubview(descriptionLabel)
+        descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
+        descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        descriptionLabel.topAnchor.constraint(equalTo: youTubeView.bottomAnchor, constant: 15).isActive = true
     }
     
     func setUpRepostUI() {
@@ -578,6 +599,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         return imageView
     }()
     
+    let youTubeView: WKYTPlayerView = {
+        let ytv = WKYTPlayerView()
+        ytv.translatesAutoresizingMaskIntoConstraints = false
+        
+        return ytv
+    }()
+    
     let linkLabel : UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -756,8 +784,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
     }
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {     // When scrollView is at the Bottom
-        
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView.isAtTop {
             UIView.animate(withDuration: 2, delay: 0.5, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
                 
@@ -926,6 +953,18 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             locationLabel.text = post.event.location
             descriptionLabel.text = post.event.description
             
+        case .youTubeVideo:
+            titleLabel.text = post.title
+            descriptionLabel.text = post.description
+            createDateLabel.text = post.createTime
+            nameLabel.text = "\(post.user.name) \(post.user.surname)"
+            if let youTubeID = post.linkURL.youtubeID {
+                youTubeView.load(withVideoId: youTubeID)
+            }
+            
+            if let url = URL(string: post.user.imageURL) {
+                profilePictureImageView.sd_setImage(with: url, completed: nil)
+            }
         default:
             titleLabel.text = post.title
             descriptionLabel.text = post.description

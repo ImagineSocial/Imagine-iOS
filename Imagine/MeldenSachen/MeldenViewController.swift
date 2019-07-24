@@ -86,6 +86,20 @@ class MeldenViewController: UIViewController {
         }
     }
     
+    @IBAction func sharePostTapped(_ sender: Any) {
+        //Set the default sharing message.
+        let message = "Message goes here."
+        //Set the link to share.
+        if let link = NSURL(string: "http://yoururl.com")
+        {
+            let objectsToShare = [message,link] as [Any]
+            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+            activityVC.excludedActivityTypes = [UIActivity.ActivityType.airDrop, UIActivity.ActivityType.addToReadingList]
+            self.present(activityVC, animated: true, completion: nil)
+        }
+    }
+    
+    
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

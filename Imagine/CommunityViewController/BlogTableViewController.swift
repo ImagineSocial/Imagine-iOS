@@ -27,30 +27,21 @@ class BlogTableViewController: UITableViewController {
     }
 
     // MARK: - Table view data source
-
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
+
         return postList.count
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: "BlogCell", for: indexPath) as? BlogCell {
-            let post = postList[indexPath.row]
+        let identifier = "NibBlogPostCell"
+        
+        tableView.register(UINib(nibName: "BlogPostCell", bundle: nil), forCellReuseIdentifier: identifier)
+        
+        if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? BlogCell {
+            let blogPost = postList[indexPath.row]
             
-            cell.headerLabel.text = post.title
-            cell.bodyLabel.text = post.subtitle
-            cell.createDateLabel.text = post.createDate
-            cell.categoryLabel.text = "Thema: \(post.category)"
-            cell.nameLabel.text = post.poster
-            
-            if let url = URL(string: post.profileImageURL) {
-                cell.profileImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
-            }
-            
-            cell.profileImageView.layer.cornerRadius = cell.profileImageView.frame.width/2
-            cell.profileImageView.clipsToBounds = true
+            cell.post = blogPost
             
             return cell
         }
@@ -75,5 +66,23 @@ class BlogCell : UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var categoryLabel: UILabel!
     
+    var post:BlogPost? {
+        didSet {
+            if let post = post {
+                headerLabel.text = post.title
+                bodyLabel.text = post.subtitle
+                createDateLabel.text = post.createDate
+                categoryLabel.text = "Thema: \(post.category)"
+                nameLabel.text = post.poster
+                
+                if let url = URL(string: post.profileImageURL) {
+                    profileImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                }
+                
+                profileImageView.layer.cornerRadius = profileImageView.frame.width/2
+                profileImageView.clipsToBounds = true
+            }
+        }
+    }
     
 }

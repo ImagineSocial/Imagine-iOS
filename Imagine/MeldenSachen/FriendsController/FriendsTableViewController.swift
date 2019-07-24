@@ -205,10 +205,8 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
             print("Kommt noch!!")
         default:
             print("Nichts")
-//            let dummySettingsViewController = UIViewController()
-//            dummySettingsViewController.view.backgroundColor = UIColor.white
+
 //            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
-//            navigationController?.pushViewController(dummySettingsViewController, animated: true)
         }
         
     }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class VoteCampaignCell: UITableViewCell {
+class CampaignCell: UITableViewCell {
     
     @IBOutlet weak var CellHeaderLabel: UILabel!
     @IBOutlet weak var cellBodyLabel: UILabel!
@@ -18,6 +18,39 @@ class VoteCampaignCell: UITableViewCell {
     @IBOutlet weak var vetoLabel: UILabel!
     @IBOutlet weak var categoryLabel: UILabel!
     
-  
+    var campaign:Campaign? {
+        didSet {
+            if let campaign = campaign {
+                
+                CellHeaderLabel.text = campaign.title
+                cellBodyLabel.text = campaign.cellText
+                cellCreateCampaignLabel.text = campaign.createDate
+                
+                let progress: Float = Float(campaign.supporter) / (Float(campaign.opposition) + Float(campaign.supporter))
+                progressView.setProgress(progress, animated: true)
+                supporterLabel.text = "\(campaign.supporter) Supporter"
+                vetoLabel.text = "\(campaign.opposition) Vetos"
+                categoryLabel.text = campaign.category
+                
+                let category = campaign.category
+                var labelColor: UIColor?
+                
+                switch category {
+                case "Management":
+                    labelColor = .red
+                case "Finanzen":
+                    labelColor = .green
+                case "Kommunikation":
+                    labelColor = .blue
+                case "Inhalt":
+                    labelColor = .purple
+                default:
+                    labelColor = .black
+                }
+                
+                categoryLabel.textColor = labelColor
+            }
+        }
+    }
     
 }

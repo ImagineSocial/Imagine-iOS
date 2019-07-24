@@ -34,21 +34,6 @@ class SideMenu: NSObject {
         return vc
     }()
     
-//    override init() {
-//        super.init()
-//
-//        if let window = UIApplication.shared.keyWindow {
-//        window.addSubview(blackView)
-//        window.addSubview(sideMenuView)
-//        sideMenuView.addSubview(profileButton)
-//
-//        verticalStackView.addArrangedSubview(friendsStackView)
-//        verticalStackView.addArrangedSubview(votingStackView)
-//        verticalStackView.addArrangedSubview(savedPostsStackView)
-//        sideMenuView.addSubview(verticalStackView)
-//        }
-//        }
-    
     
     
     @objc func toUserProfileTapped() {
@@ -75,27 +60,33 @@ class SideMenu: NSObject {
         handleDismiss(sideMenuButton: .cancel)
     }
     
-    let cellId = "cellId"
-    let settingCellHeight: CGFloat = 60
     
-//    let settings: [Setting] = {
-//        return [Setting(name: "Chat with User", imageName: "chat", type: .other), Setting(name: "Blockieren", imageName: "collaboration", type: .other), Setting(name: "Cancel", imageName: "camera", type: .cancel)]
-//    }()
+    func checkInvitations(invites: Int) {
+        if invites != 0 {
+            smallNumberLabel.text = String(invites)
+            smallNumberLabel.isHidden = false
+        } else {
+            smallNumberLabel.isHidden = true
+        }
+    }
     
     func showSettings() {
         //show menu
         
         if let window = UIApplication.shared.keyWindow {
+            window.addSubview(blackView)
             
             blackView.backgroundColor = UIColor(white: 0, alpha: 0.5)
-            
             blackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(sideMenuDismissed)))
+            blackView.frame = window.frame
+            blackView.alpha = 0
             
-            window.addSubview(blackView)
+            
             window.addSubview(sideMenuView)
             sideMenuView.addSubview(profileButton)
             sideMenuView.addSubview(profilePictureImageView)
             sideMenuView.addSubview(nameLabel)
+            sideMenuView.addSubview(smallNumberLabel)
             
             profilePictureImageView.centerXAnchor.constraint(equalTo: sideMenuView.centerXAnchor).isActive = true
             profilePictureImageView.topAnchor.constraint(equalTo: sideMenuView.topAnchor, constant: 50).isActive = true
@@ -126,11 +117,19 @@ class SideMenu: NSObject {
             verticalStackView.addArrangedSubview(savedPostsStackView)
             sideMenuView.addSubview(verticalStackView)
             
-            verticalStackView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor, constant: 25).isActive = true
-            verticalStackView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 50).isActive = true
-            verticalStackView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor, constant: 25).isActive = true
-            verticalStackView.heightAnchor.constraint(equalToConstant: 125).isActive = true
+            let heightWidthOfSmallNumber:CGFloat = 22
             
+            smallNumberLabel.trailingAnchor.constraint(equalTo: friendsStackView.trailingAnchor).isActive = true
+            smallNumberLabel.centerYAnchor.constraint(equalTo: friendsStackView.centerYAnchor).isActive = true
+            smallNumberLabel.heightAnchor.constraint(equalToConstant: heightWidthOfSmallNumber).isActive = true
+            smallNumberLabel.widthAnchor.constraint(equalToConstant: heightWidthOfSmallNumber).isActive = true
+            smallNumberLabel.layer.cornerRadius = heightWidthOfSmallNumber/2
+            smallNumberLabel.layoutIfNeeded()
+            
+            verticalStackView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor, constant: 20).isActive = true
+            verticalStackView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 50).isActive = true
+            verticalStackView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor, constant: -10).isActive = true
+            verticalStackView.heightAnchor.constraint(equalToConstant: 125).isActive = true
             
             
             
@@ -139,9 +138,10 @@ class SideMenu: NSObject {
             sideMenuView.frame = CGRect(x: -window.frame.width, y: 0, width: sideMenuWidth, height: y)
             sideMenuView.layer.cornerRadius = 4
             
+            let slideLeft = UISwipeGestureRecognizer(target: self, action: #selector(sideMenuDismissed))
+            slideLeft.direction = .left
+            window.addGestureRecognizer(slideLeft)
             
-            blackView.frame = window.frame
-            blackView.alpha = 0
             
             sideMenuView.layoutIfNeeded()
             
@@ -150,7 +150,10 @@ class SideMenu: NSObject {
                 self.blackView.alpha = 1
                 self.sideMenuView.frame = CGRect(x:0, y: 0, width: self.sideMenuView.frame.width, height: self.sideMenuView.frame.height)
                 
-            }, completion: nil)
+            }, completion: { (_) in
+                
+                self.sideMenuView.layoutSubviews()
+            })
         }
     }
     
@@ -239,6 +242,17 @@ class SideMenu: NSObject {
         stackView.addArrangedSubview(iconImageView)
         
         return stackView
+    }()
+    
+    let smallNumberLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.backgroundColor = .red
+        label.textAlignment = .center
+        label.textColor = .white
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.clipsToBounds = true
+        return label
     }()
     
     let voteButton: DesignableButton = {

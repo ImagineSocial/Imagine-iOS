@@ -61,7 +61,7 @@ class SupportTheCommunityTableViewController: UITableViewController {
             let category = supportField.category
             switch category {
             case "IT":
-                cell.categoryLabel.textColor = UIColor.blue
+                cell.categoryLabel.textColor = .blue
             case "Management":
                 cell.categoryLabel.textColor = .red
             case "Sprache":
@@ -69,7 +69,8 @@ class SupportTheCommunityTableViewController: UITableViewController {
             case "Allgemein":
                 cell.categoryLabel.textColor = .purple
             default:
-                cell.categoryLabel.textColor = .yellow
+                cell.categoryLabel.textColor = .black
+                
             }
             
             

@@ -56,7 +56,7 @@ class NewCampaignViewController: UIViewController {
             let campaignRef = Firestore.firestore().collection("Campaigns")
             
             let campaignRefDocumentID = campaignRef.document().documentID
-            var dataDictionary: [String: Any] = ["campaignTitle": titleTextField.text, "campaignShortBody": shortBodyTextField.text, "campaignType" : "normal", "campaignCategory" : categoryTextField.text, "campaignExplanation": longBodyTextField.text, "campaignID": campaignRefDocumentID, "campaignCreateTime": getDate(), "campaignSupporter": 0, "campaignOpposition": 0]
+            var dataDictionary: [String: Any] = ["campaignTitle": titleTextField.text, "campaignShortBody": shortBodyTextField.text, "campaignType" : "normal", "category" : categoryTextField.text, "campaignExplanation": longBodyTextField.text, "campaignID": campaignRefDocumentID, "campaignCreateTime": getDate(), "campaignSupporter": 0, "campaignOpposition": 0]
             
             
             

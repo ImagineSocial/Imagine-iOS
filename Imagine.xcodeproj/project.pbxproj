@@ -16,6 +16,8 @@
 		E9211AB9223FCBB100185A00 /* NewCampaignViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9211AB8223FCBB100185A00 /* NewCampaignViewController.swift */; };
 		E9211ABB223FF9C700185A00 /* CampaignViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9211ABA223FF9C700185A00 /* CampaignViewController.swift */; };
 		E93043B12293F06E00DC66D5 /* DataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93043B02293F06E00DC66D5 /* DataHelper.swift */; };
+		E938104E22E707A90086F199 /* YouTubeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E938104D22E707A90086F199 /* YouTubeCell.xib */; };
+		E938105022E708510086F199 /* YouTubeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E938104F22E708510086F199 /* YouTubeCell.swift */; };
 		E948AC5222C77BA400DB9E69 /* Repost.swift in Sources */ = {isa = PBXBuildFile; fileRef = E948AC5122C77BA400DB9E69 /* Repost.swift */; };
 		E94F29BE22B2F7E60015A8CC /* EventCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E94F29BD22B2F7E60015A8CC /* EventCell.xib */; };
 		E94F29C022B375610015A8CC /* EventCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94F29BF22B375610015A8CC /* EventCell.swift */; };
@@ -89,6 +91,11 @@
 		E9E531FE229EA242004D0654 /* ChatModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E531FD229EA242004D0654 /* ChatModels.swift */; };
 		E9E53200229EC8C8004D0654 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E531FF229EC8C8004D0654 /* Message.swift */; };
 		E9EA2CFA22AFCA0800207702 /* NewBlogPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EA2CF922AFCA0800207702 /* NewBlogPostViewController.swift */; };
+		E9EA7C9322E1DA210015C0EC /* BaseFeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EA7C9222E1DA210015C0EC /* BaseFeedTableViewController.swift */; };
+		E9EA7C9522E1ED870015C0EC /* NewsOverviewMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EA7C9422E1ED870015C0EC /* NewsOverviewMenu.swift */; };
+		E9EA7C9722E20DEB0015C0EC /* BlogPostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9EA7C9622E20DEB0015C0EC /* BlogPostCell.xib */; };
+		E9EA7C9922E5BC320015C0EC /* InfoScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EA7C9822E5BC310015C0EC /* InfoScreen.swift */; };
+		E9EA7C9B22E5F47C0015C0EC /* VoteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EA7C9A22E5F47C0015C0EC /* VoteCell.swift */; };
 		E9EE0E3122D21C0E0039F32C /* SwipeCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EE0E3022D21C0E0039F32C /* SwipeCollectionViewController.swift */; };
 		E9EE0E3522D234DA0039F32C /* VisionPitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EE0E3422D234DA0039F32C /* VisionPitchCell.swift */; };
 		E9F9B68B223D584600100F51 /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F9B68A223D584600100F51 /* PageViewController.swift */; };
@@ -108,6 +115,8 @@
 		E9211AB8223FCBB100185A00 /* NewCampaignViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCampaignViewController.swift; sourceTree = "<group>"; };
 		E9211ABA223FF9C700185A00 /* CampaignViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignViewController.swift; sourceTree = "<group>"; };
 		E93043B02293F06E00DC66D5 /* DataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHelper.swift; sourceTree = "<group>"; };
+		E938104D22E707A90086F199 /* YouTubeCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = YouTubeCell.xib; sourceTree = "<group>"; };
+		E938104F22E708510086F199 /* YouTubeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeCell.swift; sourceTree = "<group>"; };
 		E948AC5122C77BA400DB9E69 /* Repost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repost.swift; sourceTree = "<group>"; };
 		E94F29BD22B2F7E60015A8CC /* EventCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EventCell.xib; sourceTree = "<group>"; };
 		E94F29BF22B375610015A8CC /* EventCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCell.swift; sourceTree = "<group>"; };
@@ -185,6 +194,11 @@
 		E9E531FD229EA242004D0654 /* ChatModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModels.swift; sourceTree = "<group>"; };
 		E9E531FF229EC8C8004D0654 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		E9EA2CF922AFCA0800207702 /* NewBlogPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewBlogPostViewController.swift; sourceTree = "<group>"; };
+		E9EA7C9222E1DA210015C0EC /* BaseFeedTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseFeedTableViewController.swift; sourceTree = "<group>"; };
+		E9EA7C9422E1ED870015C0EC /* NewsOverviewMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsOverviewMenu.swift; sourceTree = "<group>"; };
+		E9EA7C9622E20DEB0015C0EC /* BlogPostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BlogPostCell.xib; sourceTree = "<group>"; };
+		E9EA7C9822E5BC310015C0EC /* InfoScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoScreen.swift; sourceTree = "<group>"; };
+		E9EA7C9A22E5F47C0015C0EC /* VoteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteCell.swift; sourceTree = "<group>"; };
 		E9EE0E3022D21C0E0039F32C /* SwipeCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeCollectionViewController.swift; sourceTree = "<group>"; };
 		E9EE0E3422D234DA0039F32C /* VisionPitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionPitchCell.swift; sourceTree = "<group>"; };
 		E9F9B68A223D584600100F51 /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
@@ -233,14 +247,14 @@
 			path = VisionVCs;
 			sourceTree = "<group>";
 		};
-		E9530C5122DDE8D9007D6A00 /* New Group */ = {
+		E9530C5122DDE8D9007D6A00 /* User */ = {
 			isa = PBXGroup;
 			children = (
 				E9B9445E225800EE000145E2 /* UserFeedTableViewController.swift */,
 				E98B22F522CB5F26000F965F /* FriendsTableViewController.swift */,
 				E9530C5222DDE94D007D6A00 /* SavedPostTableViewController.swift */,
 			);
-			path = "New Group";
+			path = User;
 			sourceTree = "<group>";
 		};
 		E9600E95223C0781003E5A7A /* Kalam */ = {
@@ -285,7 +299,7 @@
 				E9F9B690223D6D8500100F51 /* Methods&Helper */,
 				E98B22EC22CA3936000F965F /* ChatController */,
 				E9B1872D222ECC2C00923037 /* MeldenSachen */,
-				E9530C5122DDE8D9007D6A00 /* New Group */,
+				E9530C5122DDE8D9007D6A00 /* User */,
 				E96CE88E229419D700BACD3B /* FactController */,
 				E9530C4C22DB9FBB007D6A00 /* VisionVCs */,
 				E9B79CEC225110D800166EED /* CommunityViewController */,
@@ -377,16 +391,20 @@
 				E991CCD92273474F00940834 /* ThoughtPostCell.xib */,
 				E96CE89522959E6D00BACD3B /* ArgumentCell.xib */,
 				E94F29BD22B2F7E60015A8CC /* EventCell.xib */,
+				E9EA7C9622E20DEB0015C0EC /* BlogPostCell.xib */,
+				E938104D22E707A90086F199 /* YouTubeCell.xib */,
 				E9B79CDE224EC68500166EED /* PostCell.swift */,
 				E9B79CE0224EC6D200166EED /* RepostCell.swift */,
 				E9A9934E226C7ACD00448932 /* LinkCell.swift */,
 				E991CCDB2273476C00940834 /* ThoughtCell.swift */,
 				E9B79CE2224EC72000166EED /* JobOfferCell.swift */,
 				E9B79CE4224EC78900166EED /* CampaignCell.swift */,
+				E9EA7C9A22E5F47C0015C0EC /* VoteCell.swift */,
 				E96CE8972295A13B00BACD3B /* ArgumentCell.swift */,
 				E94F29BF22B375610015A8CC /* EventCell.swift */,
 				E9EE0E3422D234DA0039F32C /* VisionPitchCell.swift */,
 				E911EEF122DB173E00EDD056 /* SettingCell.swift */,
+				E938104F22E708510086F199 /* YouTubeCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -411,12 +429,14 @@
 			isa = PBXGroup;
 			children = (
 				E962AC282224442000C6D6EF /* FeedTableViewController.swift */,
+				E9EA7C9222E1DA210015C0EC /* BaseFeedTableViewController.swift */,
 				E9600E872235076B003E5A7A /* PostViewController.swift */,
 				E9530C4D22DCBF20007D6A00 /* PinchToZoomViewController.swift */,
 				E991CCD72270972F00940834 /* WebViewController.swift */,
 				E9B1872E222ECC4E00923037 /* NewPostViewController.swift */,
 				E9B79CE6224F88CD00166EED /* RepostViewController.swift */,
 				E9E531FB229E9298004D0654 /* PostCommentChatViewController.swift */,
+				E9EA7C9422E1ED870015C0EC /* NewsOverviewMenu.swift */,
 			);
 			path = FeedVCs;
 			sourceTree = "<group>";
@@ -433,6 +453,7 @@
 				E9FE65D522A2A42800FA4E68 /* HandyHelper.swift */,
 				E911EEEF22DB157500EDD056 /* SettingsLauncher.swift */,
 				E911EEF322DB630300EDD056 /* SideMenu.swift */,
+				E9EA7C9822E5BC310015C0EC /* InfoScreen.swift */,
 			);
 			path = "Methods&Helper";
 			sourceTree = "<group>";
@@ -507,8 +528,10 @@
 				E9A9934D226C7A8200448932 /* LinkCell.xib in Resources */,
 				E9600E9A223C0782003E5A7A /* Kalam-Regular.ttf in Resources */,
 				E9600E9C223C0782003E5A7A /* Kalam-Bold.ttf in Resources */,
+				E938104E22E707A90086F199 /* YouTubeCell.xib in Resources */,
 				E962AC1E2224430600C6D6EF /* Assets.xcassets in Resources */,
 				E962AC1C2224430400C6D6EF /* Main.storyboard in Resources */,
+				E9EA7C9722E20DEB0015C0EC /* BlogPostCell.xib in Resources */,
 				E9600E9D223C0782003E5A7A /* OFL.txt in Resources */,
 				E9B944672258B674000145E2 /* RePostTableViewCell.xib in Resources */,
 				E94F29BE22B2F7E60015A8CC /* EventCell.xib in Resources */,
@@ -537,6 +560,7 @@
 				"${BUILT_PRODUCTS_DIR}/PusherPlatform/PusherPlatform.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftLinkPreview/SwiftLinkPreview.framework",
+				"${BUILT_PRODUCTS_DIR}/YoutubePlayer-in-WKWebView/YoutubePlayer_in_WKWebView.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC/GRPCClient.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-C++/grpcpp.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
@@ -558,6 +582,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PusherPlatform.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftLinkPreview.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YoutubePlayer_in_WKWebView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRPCClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpcpp.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
@@ -601,20 +626,24 @@
 				E9C6C2392296BEED003F0F16 /* FactDetailViewController.swift in Sources */,
 				E9A9934F226C7ACD00448932 /* LinkCell.swift in Sources */,
 				E96CE89422941C5C00BACD3B /* FactParentContainerViewController.swift in Sources */,
+				E938105022E708510086F199 /* YouTubeCell.swift in Sources */,
 				E9211AB9223FCBB100185A00 /* NewCampaignViewController.swift in Sources */,
 				E97DBED722ACF6E1007100E1 /* BlogTableViewController.swift in Sources */,
 				E9600E882235076C003E5A7A /* PostViewController.swift in Sources */,
 				E962AC172224430400C6D6EF /* AppDelegate.swift in Sources */,
 				E962AC38222DB46400C6D6EF /* MeldeOptionViewController.swift in Sources */,
 				E962AC34222DA04E00C6D6EF /* MeldenViewController.swift in Sources */,
+				E9EA7C9522E1ED870015C0EC /* NewsOverviewMenu.swift in Sources */,
 				E9E53200229EC8C8004D0654 /* Message.swift in Sources */,
 				E9530C4E22DCBF20007D6A00 /* PinchToZoomViewController.swift in Sources */,
 				E9EE0E3522D234DA0039F32C /* VisionPitchCell.swift in Sources */,
+				E9EA7C9322E1DA210015C0EC /* BaseFeedTableViewController.swift in Sources */,
 				E962AC2F222448F800C6D6EF /* BounceButton.swift in Sources */,
 				E9C6C23F2298441E003F0F16 /* ArgumentDetailViewController.swift in Sources */,
 				E9B1872F222ECC4E00923037 /* NewPostViewController.swift in Sources */,
 				E9B79CE3224EC72000166EED /* JobOfferCell.swift in Sources */,
 				E9B5B25222D7592A004155DA /* SearchTableViewController.swift in Sources */,
+				E9EA7C9922E5BC320015C0EC /* InfoScreen.swift in Sources */,
 				E9C6C23D22981C0B003F0F16 /* ArgumentTableViewController.swift in Sources */,
 				E96CE89022941A1F00BACD3B /* ProFactTableViewController.swift in Sources */,
 				E9B9446122589C11000145E2 /* UserPostHelper.swift in Sources */,
@@ -632,6 +661,7 @@
 				E96CE88D22940A9F00BACD3B /* FactCollectionViewController.swift in Sources */,
 				E911EEF422DB630300EDD056 /* SideMenu.swift in Sources */,
 				E9A360E7224111B3008027CD /* DismissSegue.swift in Sources */,
+				E9EA7C9B22E5F47C0015C0EC /* VoteCell.swift in Sources */,
 				E9B79CE5224EC78900166EED /* CampaignCell.swift in Sources */,
 				E9B79CE1224EC6D200166EED /* RepostCell.swift in Sources */,
 				E962AC3A222DB5DB00C6D6EF /* MeldeTableViewController.swift in Sources */,

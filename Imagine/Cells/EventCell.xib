@@ -84,7 +84,7 @@
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Hier geht einiges, unter anderem...." textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="tB0-AD-Z4Z">
+                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" keyboardDismissMode="onDrag" editable="NO" text="Hier geht einiges, unter anderem...." textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="tB0-AD-Z4Z">
                         <rect key="frame" x="10" y="345.5" width="394" height="75"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>

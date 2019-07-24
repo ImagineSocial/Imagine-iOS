@@ -350,7 +350,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 var dataDictionary: [String: Any] = ["title": titleTextField.text, "description": textView.text, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0,]
                 // DocumentID gelöscht 13.06
                 
-                if linkTextField.text != "" {
+                if let _ = linkTextField.text?.youtubeID {  // YouTubeVideo
+                    dataDictionary["type"] = "youTubeVideo"
+                    dataDictionary["link"] = linkTextField.text
+                    
+                    print("YouTubeVideo Postet")
+                    
+                } else if linkTextField.text != "" {    // Normal Link
                     dataDictionary["type"] = "link"
                     dataDictionary["link"] = linkTextField.text
                     
@@ -382,7 +388,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     dataDictionary["report"] = "normal"
                 }
                 
-                postRef.document(postRefDocumentID).setData(dataDictionary) // Glaube macht keinen Unterschied
+                postRef.document(postRefDocumentID).setData(dataDictionary)
                 
                 if camPic { // Um es auf in dem Handy-Photo Ordner zu speichern Geht besser :/
                     if let selectedImage = selectedImageFromPicker {

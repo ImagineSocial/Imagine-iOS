@@ -11,23 +11,41 @@ import Firebase
 import FirebaseFirestore
 import SDWebImage
 
-// HeightForRowAt auslagern da ich das in 3 TabelViews habe!
-// Maybe create an BaseTableViewController for the basic functions that i have in feedTableVC, UserFeedTableVC and SavedPostsTableVC
-class FeedTableViewController: UITableViewController, UISearchControllerDelegate {
+class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDelegate {
     
-    var posts = [Post]()
-    let imageCache = NSCache<NSString, UIImage>()
+
     let db = Firestore.firestore()
-    
-    var actInd: UIActivityIndicatorView = UIActivityIndicatorView()
-    let container: UIView = UIView()
-    
     lazy var postHelper = PostHelper()      // Lazy or it calls Firestore before AppDelegate.swift
-    lazy var handyHelper = HandyHelper()
     
     let searchController = UISearchController(searchResultsController: SearchTableViewController())
-    
     var screenEdgeRecognizer: UIScreenEdgePanGestureRecognizer!
+    
+    private var invitationCount = 0
+    
+    let smallNumberForImagineBlogButton: UILabel = {
+        let label = UILabel.init(frame: CGRect.init(x: 20, y: 0, width: 12, height: 12))
+        label.backgroundColor = .red
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 6
+        label.textColor = UIColor.white
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 10)
+        label.text = String(1)
+        
+        return label
+    }()
+    
+    let smallNumberForInvitationRequest: UILabel = {
+        let label = UILabel.init(frame: CGRect.init(x: 25, y: 0, width: 14, height: 14))
+        label.backgroundColor = .red
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 7
+        label.textColor = UIColor.white
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 10)
+        
+        return label
+    }()
     
     
     override func viewDidLoad() {
@@ -65,14 +83,10 @@ class FeedTableViewController: UITableViewController, UISearchControllerDelegate
         loadBarButtonItem()
         
         getPosts(getMore: true)
-        showActivityIndicatory(uiView: self.view)
-        
-        tableViewSetup()
-        
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 400
     }
+    
     override func viewWillAppear(_ animated: Bool) {
+        
 //        // Restore the searchController's active state.
 //        if restoredState.wasActive {
 //            searchController.isActive = restoredState.wasActive
@@ -85,53 +99,55 @@ class FeedTableViewController: UITableViewController, UISearchControllerDelegate
 //        } Aus dem apple tutorial
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        checkForInvitations()
+        
+        handyHelper.getChats { (chatList) in
+            self.handyHelper.getCountOfUnreadMessages(chatList: chatList, unreadMessages: { (count) in
+                if let items = self.tabBarController?.tabBar.items {
+                    let tabItem = items[1]
+                    if count != 0 {
+                        tabItem.badgeValue = String(count)
+                    }
+                }
+            })
+        }
+    }
+    
     lazy var sideMenu: SideMenu = {
         let sideMenu = SideMenu()
         sideMenu.FeedTableView = self
         return sideMenu
     }()
     
-    func showActivityIndicatory(uiView: UIView) {
-        container.frame = uiView.frame
-        container.center = uiView.center
-        container.backgroundColor = UIColor(red:1.00, green:1.00, blue:1.00, alpha:0.3)
-        
-        let loadingView: UIView = UIView()
-        loadingView.frame = CGRect(x: 0, y: 0, width: 80, height: 80)
-        loadingView.center = uiView.center
-        loadingView.backgroundColor = UIColor(red:0.27, green:0.27, blue:0.27, alpha:0.7)
-        loadingView.clipsToBounds = true
-        loadingView.layer.cornerRadius = 10
-        
-        
-        actInd.frame = CGRect(x: 0.0, y: 0.0, width: 40.0, height: 40.0);
-        actInd.style = .whiteLarge
-        actInd.center = CGPoint(x: loadingView.frame.size.width / 2,
-                                y: loadingView.frame.size.height / 2);
-        loadingView.addSubview(actInd)
-        container.addSubview(loadingView)
-        uiView.addSubview(container)
-        actInd.startAnimating()
-    }
+    lazy var newsMenu: NewsOverviewMenu = {
+        let nM = NewsOverviewMenu()
+        nM.feedTableVC = self
+        return nM
+    }()
     
-    
-    
-    func tableViewSetup() {
-        let refreshControl = UIRefreshControl()
-        tableView.separatorStyle = .none
-        
-        if #available(iOS 10.0, *) {
-            tableView.refreshControl = refreshControl
+    func checkForInvitations() {
+        if let user = Auth.auth().currentUser {
+            let friendsRef = db.collection("Users").document(user.uid).collection("friends").whereField("accepted", isEqualTo: false)
+            
+            friendsRef.getDocuments { (snap, err) in
+                if let err = err {
+                    print("We have an error: \(err.localizedDescription)")
+                } else {
+                    self.invitationCount = snap!.documents.count
+                    
+                    if self.invitationCount != 0 {
+                        self.smallNumberForInvitationRequest.text = String(self.invitationCount)
+                        self.smallNumberForInvitationRequest.isHidden = false
+                    } else {
+                        self.smallNumberForInvitationRequest.isHidden = true
+                    }
+                }
+            }
         }
-        
-        refreshControl.addTarget(self, action: #selector(getPosts(getMore:)), for: .valueChanged)
-        refreshControl.attributedTitle = NSAttributedString(string: "Moment")
-        
-        self.tableView.addSubview(refreshControl)
     }
     
-    
-    @objc func getPosts(getMore:Bool) {
+    @objc override func getPosts(getMore:Bool) {
         /*
          If "getMore" is true, you want to get more Posts, or the initial batch of 20 Posts, if not you want to refresh the current feed
          */
@@ -158,10 +174,6 @@ class FeedTableViewController: UITableViewController, UISearchControllerDelegate
     
     // MARK: - TableViewStuff
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return posts.count
-    }
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         var post = Post()
@@ -185,81 +197,6 @@ class FeedTableViewController: UITableViewController, UISearchControllerDelegate
     }
     
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let post = posts[indexPath.row]
-        
-        switch post.type {
-        case .repost:
-            let identifier = "NibRepostCell"
-            
-            //Vielleicht noch absichern?!! Weiß aber nicht wie!
-            tableView.register(UINib(nibName: "RePostTableViewCell", bundle: nil), forCellReuseIdentifier: identifier)
-            
-            if let repostCell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? RePostCell {
-                
-                repostCell.delegate = self
-                repostCell.post = post
-                
-                return repostCell
-            }
-        case .picture:
-            let identifier = "NibPostCell"
-            
-            //Vielleicht noch absichern?!! Weiß aber nicht wie!
-            tableView.register(UINib(nibName: "PostTableViewCell", bundle: nil), forCellReuseIdentifier: identifier)
-            
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? PostCell {
-                
-                cell.delegate = self
-                cell.post = post
-                
-                return cell
-            }
-        case .thought:
-            let identifier = "NibThoughtCell"
-            
-            //Vielleicht noch absichern?!! Weiß aber nicht wie!
-            tableView.register(UINib(nibName: "ThoughtPostCell", bundle: nil), forCellReuseIdentifier: identifier)
-            
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? ThoughtCell {
-                
-                cell.delegate = self
-                cell.post = post
-                
-                return cell
-            }
-        case .link:
-            let identifier = "NibLinkCell"
-            
-            //Vielleicht noch absichern?!! Weiß aber nicht wie!
-            tableView.register(UINib(nibName: "LinkCell", bundle: nil), forCellReuseIdentifier: identifier)
-            
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? LinkCell {
-                
-                cell.delegate = self
-                cell.post = post
-                
-                return cell
-            }
-        case .event:
-            let identifier = "NibEventCell"
-            
-            //Vielleicht noch absichern?!! Weiß aber nicht wie!
-            tableView.register(UINib(nibName: "EventCell", bundle: nil), forCellReuseIdentifier: identifier)
-            
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? EventCell {
-                
-                cell.post = post
-                
-                return cell
-            }
-        }
-        
-        return UITableViewCell()    // Falls das "if let" oben nicht zieht
-    }
-    
-    
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.section == tableView.numberOfSections - 1 &&
             indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 3 {
@@ -269,65 +206,7 @@ class FeedTableViewController: UITableViewController, UISearchControllerDelegate
             // Wenn ich wirklich beim letzten bin habe ich noch keine Lösung
         }
     }
-    
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        
-        var extraHeightForReportView:CGFloat = 0
-        
-        var heightForRow:CGFloat = 150
-        
-        let post = posts[indexPath.row]
-        let postType = post.type
-        
-        if post.report != "normal" {
-            extraHeightForReportView = 24
-        }
-        
-        //        let repostDocumentID = post.OGRepostDocumentID 12.07.19
-        
-        switch postType {
-        case .thought:
-            return UITableView.automaticDimension
-        case .picture:
-            
-            // Label vergrößern
-            let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
-            
-            let imageHeight = post.imageHeight
-            let imageWidth = post.imageWidth
-            
-            let ratio = imageWidth / imageHeight
-            let newHeight = self.view.frame.width / ratio
-            
-            heightForRow = newHeight+100+extraHeightForReportView+labelHeight // 100 weil Höhe von StackView & Rest
-            
-            return heightForRow
-        case .link:
-            //return UITableView.automaticDimension klappt nicht
-            heightForRow = 225
-        case .event: // veranstaltung
-            
-            return 469
-        case .repost:
-            if let repost = post.repost {
-                let imageHeight = repost.imageHeight
-                let imageWidth = repost.imageWidth
-                
-                let ratio = imageWidth / imageHeight
-                let newHeight = self.view.frame.width / ratio
-                
-                heightForRow = newHeight+125        // 125 weil das die Höhe von dem ganzen Zeugs sein soll
-                
-                return heightForRow
-            }
-        default:
-            heightForRow = 150
-        }
-        
-        return heightForRow
-        
-    }
+ 
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -368,6 +247,15 @@ class FeedTableViewController: UITableViewController, UISearchControllerDelegate
         })
     }
     
+    
+    @objc func imagineSignTapped() {
+        
+        let navigationBarHeight: CGFloat = self.navigationController!.navigationBar.frame.height
+        
+        self.newsMenu.showView(navBarHeight: navigationBarHeight)
+        self.smallNumberForImagineBlogButton.isHidden = true
+    }
+    
     // MARK: - NavigationBarItem
     
     func loadBarButtonItem() {
@@ -379,16 +267,33 @@ class FeedTableViewController: UITableViewController, UISearchControllerDelegate
             searchButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
             searchButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
             
-            //create a new button
+            let imagineButton = DesignableButton(type: .custom)
+            imagineButton.setImage(UIImage(named: "peace-sign"), for: .normal)
+            imagineButton.addTarget(self, action: #selector(self.imagineSignTapped), for: .touchUpInside)
+            imagineButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+            imagineButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+            
+            imagineButton.addSubview(self.smallNumberForImagineBlogButton)
+            
+            let searchBarButton = UIBarButtonItem(customView: searchButton)
+            let imagineBarButton = UIBarButtonItem(customView: imagineButton)
+            self.navigationItem.rightBarButtonItems = [searchBarButton, imagineBarButton]
+            
+            
+            let view = UIView()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.heightAnchor.constraint(equalToConstant: 35).isActive = true
+            view.widthAnchor.constraint(equalToConstant: 35).isActive = true
+
+            //create new Button for the profilePictureButton
             let button = DesignableButton(type: .custom)
             button.frame = CGRect(x: 0, y: 0, width: 35, height: 35)
             button.addTarget(self, action: #selector(self.BarButtonItemTapped), for: .touchUpInside)
-            
             button.layer.masksToBounds = true
             button.translatesAutoresizingMaskIntoConstraints = false
-            
             button.layer.borderWidth =  0.1
             button.layer.borderColor = UIColor.black.cgColor
+            
             
             // Wenn jemand eingeloggt ist:
             if let user = Auth.auth().currentUser {
@@ -401,6 +306,7 @@ class FeedTableViewController: UITableViewController, UISearchControllerDelegate
                             
                             //set image for button
                             button.setImage(image, for: .normal)
+                            button.imageView?.contentMode = .scaleAspectFill
                             button.widthAnchor.constraint(equalToConstant: 35).isActive = true
                             button.heightAnchor.constraint(equalToConstant: 35).isActive = true
                             button.layer.cornerRadius = button.frame.width/2
@@ -417,6 +323,10 @@ class FeedTableViewController: UITableViewController, UISearchControllerDelegate
                     button.layer.cornerRadius = button.frame.width/2
                 }
                 
+                view.addSubview(button)
+                view.addSubview(self.smallNumberForInvitationRequest)
+                self.smallNumberForInvitationRequest.isHidden = true
+                
             } else {    // Wenn niemand eingeloggt
                 
                 button.widthAnchor.constraint(equalToConstant: 50).isActive = true
@@ -427,11 +337,11 @@ class FeedTableViewController: UITableViewController, UISearchControllerDelegate
                 button.setTitle("Log-In", for: .normal)
                 button.backgroundColor = UIColor(red:0.68, green:0.77, blue:0.90, alpha:1.0)
             }
-            let searchBarButton = UIBarButtonItem(customView: searchButton)
-            self.navigationItem.rightBarButtonItem = searchBarButton
             
-            let barButton = UIBarButtonItem(customView: button)
+            let barButton = UIBarButtonItem(customView: view)
             self.navigationItem.leftBarButtonItem = barButton
+            
+            self.checkForInvitations()
         }
     }
     
@@ -464,9 +374,7 @@ class FeedTableViewController: UITableViewController, UISearchControllerDelegate
     
     @objc func BarButtonItemTapped() {
         sideMenu.showSettings()
-        
-//        let notificationName = Notification.Name(rawValue: "toggleMenu")
-//        NotificationCenter.default.post(name: notificationName, object: nil)
+        sideMenu.checkInvitations(invites: self.invitationCount)
     }
     
 }
@@ -692,34 +600,4 @@ extension FeedTableViewController: UISearchBarDelegate {
             searchTheDatabase(searchText: text, searchScope: selectedScope)
         }
     }
-}
-
-extension FeedTableViewController: PostCellDelegate, LinkCellDelegate, RepostCellDelegate, ThoughtCellDelegate  {
-    
-    // MARK: Cell Button Tapped
-    
-    func reportTapped(post: Post) {
-        performSegue(withIdentifier: "meldenSegue", sender: post)
-    }
-    
-    func thanksTapped(post: Post) {
-        handyHelper.updatePost(button: .thanks, post: post)
-    }
-    
-    func wowTapped(post: Post) {
-        handyHelper.updatePost(button: .wow, post: post)
-    }
-    
-    func haTapped(post: Post) {
-        handyHelper.updatePost(button: .ha, post: post)
-    }
-    
-    func niceTapped(post: Post) {
-        handyHelper.updatePost(button: .nice, post: post)
-    }
-    
-    func linkTapped(post: Post) {
-        performSegue(withIdentifier: "goToLink", sender: post)
-    }
-    
 }

@@ -20,6 +20,7 @@ enum PostType {
     case thought
     case repost
     case event
+    case youTubeVideo
 }
 
 class PostHelper {
@@ -124,7 +125,29 @@ class PostHelper {
                         
                         self.posts.append(post)
                     
-                    //Link
+                    // YouTubeVideo
+                    } else if postType == "youTubeVideo" {
+                        
+                        guard let linkURL = documentData["link"] as? String else { continue }
+                        
+                        let post = Post()
+                        post.title = title
+                        post.linkURL = linkURL
+                        post.description = description
+                        post.type = .youTubeVideo
+                        post.report = report
+                        post.documentID = documentID
+                        post.createTime = stringDate
+                        post.originalPosterUID = originalPoster
+                        post.votes.thanks = thanksCount
+                        post.votes.wow = wowCount
+                        post.votes.ha = haCount
+                        post.votes.nice = niceCount
+                        
+                        
+                        self.posts.append(post)
+                        
+                      //Link
                     } else if postType == "link" {
                         
                         guard let linkURL = documentData["link"] as? String

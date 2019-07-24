@@ -9,9 +9,7 @@
 import UIKit
 
 class DismissSegue: UIStoryboardSegue {
-    
-    // Für den Containerview der Herausforderungen und die Regeln
-    
+        
     override func perform() {
         if let p = source.presentingViewController {
             p.dismiss(animated: true, completion: nil)

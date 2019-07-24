@@ -139,6 +139,7 @@ PODS:
     - SDWebImage/Core (= 4.4.2)
   - SDWebImage/Core (4.4.2)
   - SwiftLinkPreview (3.0.0)
+  - YoutubePlayer-in-WKWebView (0.2.5)
 
 DEPENDENCIES:
   - DateToolsSwift
@@ -151,6 +152,7 @@ DEPENDENCIES:
   - PusherChatkit
   - SDWebImage
   - SwiftLinkPreview
+  - YoutubePlayer-in-WKWebView
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -181,6 +183,7 @@ SPEC REPOS:
     - PusherPlatform
     - SDWebImage
     - SwiftLinkPreview
+    - YoutubePlayer-in-WKWebView
 
 EXTERNAL SOURCES:
   MessengerKit:
@@ -220,7 +223,8 @@ SPEC CHECKSUMS:
   PusherPlatform: 243a8c0b018663831eafc8bef39fa196257de1f2
   SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
   SwiftLinkPreview: 062de89fe2c1bd2103b1d60f57c864ae54c324e1
+  YoutubePlayer-in-WKWebView: 4dad12b3ece938a6456fa4374df78942f88b485a
 
-PODFILE CHECKSUM: a8c25cdbae7a1eed9f44a2dc75d8626fbdc90d7d
+PODFILE CHECKSUM: 7ca40163408d2597d6b48d5354d220377c885f15
 
 COCOAPODS: 1.5.3
