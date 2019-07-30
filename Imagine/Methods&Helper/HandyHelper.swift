@@ -150,43 +150,37 @@ class HandyHelper {
     
     func setReportView(post: Post) -> (heightConstant:CGFloat, buttonHidden: Bool, labelText: String, backgroundColor: UIColor) {
         
-        var reportViewHeightConstraint:CGFloat = 0
+        var reportViewHeightConstraint:CGFloat = 24
         var reportViewButtonInTopBoolean = false
         var reportViewLabelText = ""
         var reportViewBackgroundColor = UIColor.white
         
-        if post.report == "normal" {
+        switch post.report {
+        case .normal:
             reportViewHeightConstraint = 0
             reportViewButtonInTopBoolean = true
-        } else {
-            reportViewHeightConstraint = 24
-            reportViewButtonInTopBoolean = false
-            
-            switch post.report {
-                
-            case "opinion":
-                reportViewLabelText = "Meinung, kein Fakt"
-                reportViewBackgroundColor = UIColor(red:0.27, green:0.00, blue:0.01, alpha:1.0)
-            case "sensationalism":
-                reportViewLabelText = "Sensationalismus"
-                reportViewBackgroundColor = UIColor(red:0.36, green:0.00, blue:0.01, alpha:1.0)
-            case "circlejerk":
-                reportViewLabelText = "Circlejerk"
-                reportViewBackgroundColor = UIColor(red:0.58, green:0.04, blue:0.05, alpha:1.0)
-            case "pretentious":
-                reportViewLabelText = "Angeberisch"
-                reportViewBackgroundColor = UIColor(red:0.83, green:0.05, blue:0.07, alpha:1.0)
-            case "edited":
-                reportViewLabelText = "Nachbearbeitet"
-                reportViewBackgroundColor = UIColor(red:1.00, green:0.40, blue:0.36, alpha:1.0)
-            case "ignorant":
-                reportViewLabelText = "Schwarz-Weiß-Denken"
-                reportViewBackgroundColor = UIColor(red:1.00, green:0.46, blue:0.30, alpha:1.0)
-            default:
-                reportViewHeightConstraint = 24
-            }
+        case .spoiler:
+            reportViewLabelText = "Achtung Spoiler"
+            reportViewBackgroundColor = .red
+        case .opinion:
+            reportViewLabelText = "Meinung, kein Fakt"
+            reportViewBackgroundColor = UIColor(red:0.27, green:0.00, blue:0.01, alpha:1.0)
+        case .sensationalism:
+            reportViewLabelText = "Sensationalismus"
+            reportViewBackgroundColor = UIColor(red:0.36, green:0.00, blue:0.01, alpha:1.0)
+        case .circlejerk:
+            reportViewLabelText = "Circlejerk"
+            reportViewBackgroundColor = UIColor(red:0.58, green:0.04, blue:0.05, alpha:1.0)
+        case .pretentious:
+            reportViewLabelText = "Angeberisch"
+            reportViewBackgroundColor = UIColor(red:0.83, green:0.05, blue:0.07, alpha:1.0)
+        case .ignorant:
+            reportViewLabelText = "Schwarz-Weiß-Denken"
+            reportViewBackgroundColor = UIColor(red:1.00, green:0.46, blue:0.30, alpha:1.0)
+        case .edited:
+            reportViewLabelText = "Nachbearbeitet"
+            reportViewBackgroundColor = UIColor(red:1.00, green:0.40, blue:0.36, alpha:1.0)
         }
-        
         
         return (heightConstant: reportViewHeightConstraint, buttonHidden: reportViewButtonInTopBoolean, labelText: reportViewLabelText, backgroundColor: reportViewBackgroundColor)
     }
@@ -242,6 +236,41 @@ class HandyHelper {
         default:
             print("Hier stimmt was nicht")
             return PostType.picture
+        }
+    }
+    
+    
+    func setReportType(fetchedString: String) -> ReportType? {
+        let report :ReportType?
+        
+        switch fetchedString {
+        case "opinion":
+            report = .opinion
+            return report
+        case "sensationalism":
+            report = .sensationalism
+            return report
+        case "circlejerk":
+            report = .circlejerk
+            return report
+        case "pretentious":
+            report = .pretentious
+            return report
+        case "edited":
+            report = .edited
+            return report
+        case "ignorant":
+            report = .ignorant
+            return report
+        case "normal":
+            report = .normal
+            return report
+        case "spoiler":
+            report = .spoiler
+            return report
+        default:
+            print("Hier stimmt was nicht")
+            return ReportType.normal
         }
     }
     
@@ -346,4 +375,5 @@ class HandyHelper {
             // Here was unreadMessages(count) but it finished too early
         }
     }
+    
 }

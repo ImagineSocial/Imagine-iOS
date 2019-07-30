@@ -90,5 +90,5 @@ class MeldeAgreeViewController: UIViewController {
         // Hier fehlen die Auswirkungen auf die Posts also überprüfen und dann löschen usw.
     }
     
-
+    
 }

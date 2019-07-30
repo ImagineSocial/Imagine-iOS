@@ -23,6 +23,9 @@ class ChatsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
         getChats()
     }
     
@@ -211,11 +214,33 @@ class ChatsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return chatsList.count
+        
+        if chatsList.count == 0 {
+            print("EInen")
+            return 1
+        } else {
+            return chatsList.count
+        }
+        
     }
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        if chatsList.count == 0 {
+            let cell = UITableViewCell()
+            
+            if let _ = Auth.auth().currentUser {
+                cell.textLabel?.text = "Du hast noch keinen Chat"
+            } else {
+                cell.textLabel?.text = "Hier kannst du mit neuen und alten Bekannten chatten"
+            }
+            
+            cell.textLabel?.textAlignment = .center
+            cell.textLabel?.adjustsFontSizeToFitWidth = true
+            
+            return cell
+        } else {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "ChatCell", for: indexPath) as? ChatCell {
             
             let chat = chatsList[indexPath.row]
@@ -253,7 +278,7 @@ class ChatsTableViewController: UITableViewController {
             self.setTabBarBadge()
             return cell
         }
-        
+        }
         // Configure the cell...
         
         return UITableViewCell()
@@ -261,19 +286,31 @@ class ChatsTableViewController: UITableViewController {
     
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let chat = chatsList[indexPath.row]
-        performSegue(withIdentifier: "toChatSegue", sender: chat)
+        if chatsList.count == 0 {
+            tableView.deselectRow(at: indexPath, animated: true)
+        } else {
+            let chat = chatsList[indexPath.row]
+            performSegue(withIdentifier: "toChatSegue", sender: chat)
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
+        if chatsList.count == 0 {
+            return 40
+        } else {
+            return 80
+        }
     }
     
     
     
     
     @IBAction func newMessage(_ sender: Any) {
-        performSegue(withIdentifier: "toFriendsSegue", sender: nil)
+        if let _ = Auth.auth().currentUser {
+            performSegue(withIdentifier: "toFriendsSegue", sender: nil)
+        } else {
+            self.notLoggedInAlert()
+        }
     }
     
     

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class ContraFactTableViewController: UITableViewController {
 
@@ -104,7 +105,11 @@ class ContraFactTableViewController: UITableViewController {
         if argument.title != addArgumentString {
             performSegue(withIdentifier: "toDetailFactSegue", sender: argument)
         } else {
-            performSegue(withIdentifier: "toNewArgumentSegue", sender: fact)
+            if let _ = Auth.auth().currentUser {
+                performSegue(withIdentifier: "toNewArgumentSegue", sender: fact)
+            } else {
+                self.notLoggedInAlert()
+            }
         }
     }
     

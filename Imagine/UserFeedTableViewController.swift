@@ -10,76 +10,48 @@ import UIKit
 import SwiftLinkPreview
 import Firebase
 
-// LogOutButton
-// UserUID abscihern
-// Set getMore in UserPostHelper!
-class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+// This enum represents the different states, when accessing the UserFeedTableVC
+enum AccessState{
+    case ownProfileWithEditing
+    case ownProfile
+    case otherUser
+    case friendOfCurrentUser
+    case blockedToInteract
+}
+
+
+class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate {
     
     @IBOutlet weak var addAsFriendButton: DesignableButton!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var profilePictureImageView: UIImageView!
-    @IBOutlet weak var logOutButton: UIBarButtonItem!
     @IBOutlet weak var profilePictureButton: DesignableButton!
     @IBOutlet weak var blogPostButton: DesignableButton!
     @IBOutlet weak var chatWithUserButton: DesignableButton!
+    @IBOutlet weak var statusTextView: UITextView!
     
     
-    var userUID = ""    // Noch absichern
-    lazy var postHelper = UserPostHelper()
+    /* You have to set currentState and userOfProfile when you call this VC - Couldnt get the init to work */
+    
+    lazy var postHelper = PostHelper()
+    
     
     var imagePicker = UIImagePickerController()
     var imageURL = ""
     var selectedImageFromPicker = UIImage(named: "default-user")
     var userOfProfile:User?
-    var yourOwnProfile = false
-    var alreadyFriends = false
     
     let db = Firestore.firestore()
+    
+    var currentState:AccessState?
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         blogPostButton.isHidden = true
-        
-        if userUID == "" { // If you come from the side Menu Profile Button
-            yourOwnProfile = true
-            
-            self.chatWithUserButton.isHidden = true // Not possible to message yourself
-            self.addAsFriendButton.isHidden = true
-            
-            profilePictureButton.isEnabled = true
-            if let user = Auth.auth().currentUser {
-                
-                self.userUID = user.uid
-                getPosts(getMore: false)
-                
-                if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" { // That means its me, Malte
-                    blogPostButton.isHidden = false
-                }
-            }
-        } else {
-            self.navigationItem.rightBarButtonItem = nil
-            
-            if let user = Auth.auth().currentUser {
-                if user.uid == userUID {    // Your profile but you view it as a stranger, the people want to see a difference, like: "Well this is how other people see my profile..."
-                    self.addAsFriendButton.isHidden = true
-                    self.chatWithUserButton.isHidden = true
-                }
-            }
-            
-            getPosts(getMore: true)
-            // Kein Add as Friend Button Kein Chat oder Danke Button
-            
-        }
-        getUserDetails()
-        
-        
-        imagePicker.delegate = self
-    }
-    
-    
-    func getUserDetails() {
+        statusTextView.isEditable = false
+        statusTextView.delegate = self
         
         let layer = profilePictureImageView.layer
         layer.masksToBounds = true
@@ -87,83 +59,259 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         layer.borderWidth = 0.5
         layer.borderColor = UIColor.black.cgColor
         
-        if yourOwnProfile { // If it is your profile
-            if let user = Auth.auth().currentUser {
-                if let displayName = user.displayName {
-                    nameLabel.text = displayName
-                }
-                if let url = user.photoURL {
-                    profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+        getUserDetails()
+        setBarButtonItem()
+        
+        imagePicker.delegate = self
+    }
+    
+    override func getPosts(getMore: Bool) {
+        
+        if let user = userOfProfile {
+            postHelper.getTheSavedPosts(getMore: getMore, whichPostList: .postsFromUser, userUID: user.userUID) { (posts, initialFetch)  in
+                
+                if initialFetch {   // Get the first batch of posts
+                    self.posts = posts
+                    self.tableView.reloadData()
                     
-                    self.imageURL = url.absoluteString
+                    // I just load it for the first profilepicture and name
+                    self.postHelper.getEvent(completion: { (post) in
+                        self.tableView.reloadData()
+                    })
+                    
+                    // remove ActivityIndicator incl. backgroundView
+                    self.actInd.stopAnimating()
+                    self.container.isHidden = true
+                    
+                    self.refreshControl?.endRefreshing()
+                    
+                } else {    // Append the next batch to the existing
+                    var indexes : [IndexPath] = [IndexPath]()
+                    
+                    for result in posts {
+                        let row = self.posts.count
+                        indexes.append(IndexPath(row: row, section: 0))
+                        self.posts.append(result)
+                    }
+                    
+                    if #available(iOS 11.0, *) {
+                        self.tableView.performBatchUpdates({
+                            self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                            self.tableView.insertRows(at: indexes, with: .bottom)
+                        }, completion: { (_) in
+                            self.fetchesPosts = false
+                        })
+                    } else {
+                        // Fallback on earlier versions
+                        self.tableView.beginUpdates()
+                        self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                        self.tableView.insertRows(at: indexes, with: .right)
+                        self.tableView.endUpdates()
+                        self.fetchesPosts = false
+                    }
+                }
+                print("Jetzt haben wir \(self.posts.count)")
+            }
+        }
+    }
+    
+    
+    
+    // MARK: - SetUI
+    
+    func setBarButtonItem() {
+        
+        guard let state = currentState else { return }
+        
+        
+        switch state {
+        case .ownProfileWithEditing:
+            let LogOutButton = DesignableButton(type: .custom)
+            LogOutButton.setTitle("Log-Out", for: .normal)
+            LogOutButton.setTitleColor(.blue, for: .normal)
+            LogOutButton.addTarget(self, action: #selector(self.logOutTapped), for: .touchUpInside)
+            LogOutButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
+            LogOutButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+            
+            let rightBarButton = UIBarButtonItem(customView: LogOutButton)
+            self.navigationItem.rightBarButtonItem = rightBarButton
+        case .ownProfile:
+            print("Here will nothing happen")
+            
+        // You can block someone who blocked you for now
+        default:
+            let moreButton = DesignableButton(type: .custom)
+            moreButton.setTitle("...", for: .normal)
+            moreButton.setTitleColor(.blue, for: .normal)
+            moreButton.addTarget(self, action: #selector(self.moreTapped), for: .touchUpInside)
+            moreButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+            moreButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+            
+            let rightBarButton = UIBarButtonItem(customView: moreButton)
+            self.navigationItem.rightBarButtonItem = rightBarButton
+        }
+        
+    }
+    
+    @objc func moreTapped() {
+        settingForOptions.showSettings(for: nil)
+    }
+    
+    func getUserDetails() {
+        
+        guard let state = currentState else {
+            
+            print("Hier ist kein State")
+            self.navigationController?.popViewController(animated: true)
+            return
+        }
+        
+        switch state {
+        case .ownProfile:
+            self.setOwnProfile()
+            self.noPostsString = "Dieser User hat noch keine Posts"
+        case .ownProfileWithEditing:
+            self.statusTextView.isEditable = true
+            self.noPostsString = "Du hast noch keine Posts. Teile jetzt deine interessanten Themen!"
+            self.setOwnProfile()
+        case .otherUser:
+            self.checkIfAlreadyFriends()
+            self.setCurrentProfile()
+            self.noPostsString = "Dieser User hat noch keine Posts"
+        case .friendOfCurrentUser:
+            self.addAsFriendButton.setTitle("Unfollow", for: .normal)
+            self.setCurrentProfile()
+            self.noPostsString = "Dieser User hat noch keine Posts"
+        default:
+            print("Maybe something is wrong")
+        }
+    }
+    
+    func setOwnProfile() {
+        
+        chatWithUserButton.isHidden = true // Not possible to message yourself
+        addAsFriendButton.isHidden = true
+        profilePictureButton.isEnabled = true
+        
+        if let user = Auth.auth().currentUser {
+            
+            let ref = db.collection("Users").document(user.uid)
+            ref.getDocument { (doc, err) in
+                if let err = err {
+                    print("We have an error: \(err.localizedDescription)")
+                } else {
+                    if let doc = doc {
+                        if let docData = doc.data() {
+                            if let statusQuote = docData["statusText"] as? String {
+                                if statusQuote != "" {
+                                    self.statusTextView.text = statusQuote
+                                } else {
+                                   self.statusTextView.text = "Hier steht dein Status"
+                                }
+                            } else {
+                               self.statusTextView.text = "Hier steht dein Status"
+                            }
+                        }
+                    }
+                    
                 }
             }
-        } else {    // If you are looking at another user
-            let userRef = db.collection("Users").document(userUID)
-            userRef.getDocument(completion: { (document, err) in
-                if let document = document {
-                    if let docData = document.data() {
-                        
-                        let name = docData["name"] as? String ?? ""
-                        let surname = docData["surname"] as? String ?? ""
-                        let profilePictureURL = docData["profilePictureURL"] as? String ?? ""
-                        
-                        self.nameLabel.text = "\(name) \(surname)"
-                        let user = User()
-                        user.name = name
-                        user.surname = surname
-                        user.imageURL = profilePictureURL
-                        self.imageURL = profilePictureURL
-                        user.userUID = self.userUID
-                        
-                        self.userOfProfile = user
-                        
-                        if profilePictureURL != "" {
-                            if let url = URL(string: profilePictureURL) {
-                                self.profilePictureImageView.sd_setImage(with: url, completed: nil)
-                            }
-                        }
-                    }
-                }
-                
-                if err != nil {
-                    print("Wir haben einen Error beim User: \(err?.localizedDescription ?? "No error")")
-                }
-            })
             
-            // Check if you are already friends or you have requested it
-            if let user = Auth.auth().currentUser {
-                let friendsRef = db.collection("Users").document(user.uid).collection("friends").whereField("userUID", isEqualTo: userUID).limit(to: 1)
+            let currentUser = User()
+            currentUser.userUID = user.uid
+            
+            self.userOfProfile = currentUser
+            
+            self.getPosts(getMore: true)
+            
+            if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" { // That means its me, Malte
+                blogPostButton.isHidden = false
+            }
+            
+            if let displayName = user.displayName {
+                nameLabel.text = displayName
+                currentUser.name = displayName
+            }
+            if let url = user.photoURL {
+                profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
                 
-                friendsRef.getDocuments { (querySnap, err) in
-                    if let err = err {
-                        print("We have an error getting the friends of our user: \(err.localizedDescription)")
-                    } else {
-                        for document in querySnap!.documents {
-                            let docData = document.data()
-                            
-                            if let accepted = docData["accepted"] as? Bool {
-                                if accepted {
-                                    self.alreadyFriends = true
-                                    self.addAsFriendButton.setTitle("Unfollow", for: .normal)
-                                } else {
-                                    self.addAsFriendButton.setTitle("Angefragt", for: .normal)
-                                    self.addAsFriendButton.isEnabled = false
+                currentUser.imageURL = url.absoluteString
+                self.imageURL = url.absoluteString
+            }
+        }
+    }
+    
+    
+    func setCurrentProfile() {
+        
+        //        self.userOfProfile = user
+        if let currentUser = userOfProfile {
+            self.nameLabel.text = "\(currentUser.name) \(currentUser.surname)"
+            self.imageURL = currentUser.imageURL
+            self.statusTextView.text = currentUser.statusQuote
+            
+            if let url = URL(string: currentUser.imageURL) {
+                self.profilePictureImageView.sd_setImage(with: url, completed: nil)
+            } else {
+                self.profilePictureImageView.image = UIImage(named: "default-user")
+            }
+            
+            getPosts(getMore: true)
+        }
+    }
+    
+    func checkIfAlreadyFriends() {
+        if let user = Auth.auth().currentUser {
+            if let currentProfile = userOfProfile {
+                
+                if user.uid == currentProfile.userUID {    // Your profile but you view it as a stranger, the people want to see a difference, like: "Well this is how other people see my profile..."
+                    self.addAsFriendButton.isHidden = true
+                    self.chatWithUserButton.isHidden = true
+                    
+                    self.currentState = .ownProfile
+                } else { // Check if you are already friends or you have requested it
+                    let friendsRef = db.collection("Users").document(user.uid).collection("friends").document(currentProfile.userUID)
+                    
+                    friendsRef.getDocument { (document, err) in
+                        if let err = err {
+                            print("We have an error getting the friends of our user: \(err.localizedDescription)")
+                        } else {
+                            if let document = document {
+                                // Got a document with this uid
+                                if let docData = document.data() {
+                                    
+                                    if let accepted = docData["accepted"] as? Bool {
+                                        if accepted {
+                                            self.currentState = .friendOfCurrentUser
+                                            self.addAsFriendButton.setTitle("Unfollow", for: .normal)
+                                        } else {
+                                            self.addAsFriendButton.setTitle("Angefragt", for: .normal)
+                                            self.addAsFriendButton.isEnabled = false
+                                        }
+                                    }
                                 }
+                                
+                            } else {
+                                // not yet befriended
                             }
+                            
                         }
                     }
                 }
-                
-                
             }
         }
     }
     
     //MARK: - SettingsLauncher
     
-    lazy var settingsLauncher: SettingsLauncher = {
+    lazy var settingsForPicture: SettingsLauncher = {
         let launcher = SettingsLauncher(type: .profilePicture)
+        launcher.userFeedVC = self
+        return launcher
+    }()
+    
+    lazy var settingForOptions: SettingsLauncher = {
+        let launcher = SettingsLauncher(type: .userProfileOptions)
         launcher.userFeedVC = self
         return launcher
     }()
@@ -171,10 +319,12 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     func profilePictureSettingTapped(setting: Setting) {
         switch setting.settingType {
         case .viewPicture:
-            let pinchVC = PinchToZoomViewController()
-            
-            pinchVC.imageURL = self.imageURL
-            self.navigationController?.pushViewController(pinchVC, animated: true)
+            if self.imageURL != "" {
+                let pinchVC = PinchToZoomViewController()
+                pinchVC.imageURL = self.imageURL
+                
+                self.navigationController?.pushViewController(pinchVC, animated: true)
+            }
         case .camera:
             imagePicker.sourceType = .camera
             imagePicker.cameraCaptureMode = .photo
@@ -185,6 +335,30 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             imagePicker.sourceType = .photoLibrary
             
             present(imagePicker, animated: true, completion: nil)
+        case .blockUser:
+            if let _ = Auth.auth().currentUser {
+                if let currentUser = userOfProfile {
+                    let alert = UIAlertController(title: "Blocken", message: "Der User wird aus deiner Freundesliste gelöscht und darf dich nicht mehr kontaktieren. Fortfahren? ", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
+                        // block User
+                        
+                        if let user = Auth.auth().currentUser {
+                            let blockRef = self.db.collection("Users").document(user.uid)
+                            blockRef.updateData([
+                                "blocked": FieldValue.arrayUnion([currentUser.userUID]) // Add the person as blocked
+                                ])
+                            
+                            self.deleteAsFriend()
+                        }
+                    }))
+                    alert.addAction(UIAlertAction(title: "Doch nicht!", style: .cancel, handler: { (_) in
+                        alert.dismiss(animated: true, completion: nil)
+                    }))
+                    present(alert, animated: true)
+                }
+            } else {
+                self.notLoggedInAlert()
+            }
         default:
             print("Das soll nicht passieren")
         }
@@ -192,33 +366,16 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     //MARK: - TableView
     
-    
-    override func getPosts(getMore: Bool) {
-        postHelper.getPosts(whichPostList: .postsFromUser, userUID: userUID) { (posts) in
-            
-            self.posts = posts
-            self.posts.sort(by: { $0.createTime.compare($1.createTime) == .orderedAscending })
-            self.tableView.reloadData()
-            
-            PostHelper().getEvent(completion: { (event) in
-                // Lade das eigentlich nur, damit der die Profilbilder und so richtig lädt
-                self.tableView.reloadData()
-            })
-            
-            // remove ActivityIndicator incl. backgroundView
-            self.actInd.stopAnimating()
-            self.container.isHidden = true
-            
-            self.refreshControl?.endRefreshing()
-        }
-    }
-    
-    
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let post = posts[indexPath.row]
         
-        performSegue(withIdentifier: "showPost", sender: post)
+        switch post.type {
+        case .nothingPostedYet:
+            print("Nothing will happen")
+            tableView.deselectRow(at: indexPath, animated: true)
+        default:
+            performSegue(withIdentifier: "showPost", sender: post)
+        }
     }
     
     
@@ -291,8 +448,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 }
             }
             let userRef = Firestore.firestore().collection("Users").document(user.uid)
-            //userRef.setData(["profilePictureURL": imageURL], merge: true)
-            userRef.setData(["profilePictureURL": imageURL], mergeFields:["profilePictureURL"]) // MergeFields damit die anderen nicht überschrieben werden
+            userRef.setData(["profilePictureURL": imageURL], mergeFields:["profilePictureURL"]) // MergeFields, so the other data wont be overridden
         }
         
     }
@@ -325,38 +481,58 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     //MARK: - Buttons
     
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if let text = textView.text {
+            if let user = Auth.auth().currentUser {
+                let ref = db.collection("Users").document(user.uid)
+                
+                let data = ["statusText": text]
+                ref.setData(data, mergeFields: ["statusText"])
+            }
+        }
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            textView.resignFirstResponder()
+            return false
+        }
+        return textView.text.count + (text.count - range.length) <= 45  // Text no longer than 45 characters
+    }
+    
     @IBAction func profilePicturePressed(_ sender: Any) {
+        guard let state = currentState else { return }
         
-        if yourOwnProfile {
-            settingsLauncher.showSettings(for: nil)
-        } else {
+        switch state {
+        case .ownProfileWithEditing:
+            settingsForPicture.showSettings(for: nil)
+        default:
             // Just show the Image
             let pinchVC = PinchToZoomViewController()
             
             pinchVC.imageURL = self.imageURL
             self.navigationController?.pushViewController(pinchVC, animated: true)
         }
-        
-        
     }
     
-    
-    @IBAction func logOutPressed(_ sender: Any) {
+    @objc func logOutTapped() {
         let alert = UIAlertController(title: "Ausloggen", message: "Wir sehen uns bald wieder!", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Abmelden", style: .default, handler: { (_) in
+        alert.addAction(UIAlertAction(title: "Abmelden", style: .destructive , handler: { (_) in
             // abmelden
             do {
                 try Auth.auth().signOut()
-                self.dismiss(animated: true, completion: nil)
+                print("Log Out successful")
+                self.navigationController?.popViewController(animated: true)
             } catch {
-                print("Ausloggen hat nicht funktioniert")
+                print("Log Out not successfull")
             }
         }))
-        alert.addAction(UIAlertAction(title: "Doch nicht!", style: .destructive, handler: { (_) in
+        alert.addAction(UIAlertAction(title: "Doch nicht!", style: .cancel, handler: { (_) in
             alert.dismiss(animated: true, completion: nil)
         }))
         present(alert, animated: true)
     }
+    
     
     @IBAction func blogPostTapped(_ sender: Any) {
         performSegue(withIdentifier: "toBlogPost", sender: nil)
@@ -364,29 +540,99 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     @IBAction func addAsFriendTapped(_ sender: Any) {
         
-        if alreadyFriends {
-            // Unfollow this person
+        guard let state = currentState else { return }
+        
+        if let _ = Auth.auth().currentUser {
+            switch state {
+            case .friendOfCurrentUser:
+                // Unfollow this person
+                self.deleteAsFriend()
+                
+            case .otherUser:
+                // Follow/Befriend this person
+                self.sendInvitation()
+                
+            case .blockedToInteract:
+                print("not allowed to send invitation because blocked")
+            default:
+                print("Here should nothing happen")
+            }
         } else {
-            if let user = Auth.auth().currentUser {
+            self.notLoggedInAlert()
+        }
+        
+    }
+    
+    func sendInvitation() {
+        if let user = Auth.auth().currentUser {
+            if let currentProfile = userOfProfile {
                 
-                let data: [String:Any] = ["accepted": false, "requestedAt" : Timestamp(date: Date()), "userUID": user.uid]
-                
-                let friendsRef = db.collection("Users").document(userUID).collection("friends").document()
+                let friendsRef = db.collection("Users").document(currentProfile.userUID).collection("friends").document(user.uid)
+                let data: [String:Any] = ["accepted": false, "requestedAt" : Timestamp(date: Date())]
                 
                 friendsRef.setData(data) { (error) in
                     if error != nil {
                         print("We couldnt add as Friend: Error \(error?.localizedDescription ?? "No error")")
                     } else {
-                        print("Added as Friend")
-                        self.addAsFriendButton.setTitle("Angefragt", for: .normal)
                         // Notify User
+                        let alert = UIAlertController(title: "Freundschaft angefragt", message: "Die Freundschaftsanfrage wurde erfolgreich verschickt", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
+                            
+                        }))
+                        self.present(alert, animated: true) {
+                            self.addAsFriendButton.setTitle("Angefragt", for: .normal)
+                        }
                     }
                 }
             }
         }
     }
     
+    func deleteAsFriend() {
+        if let user = Auth.auth().currentUser {
+            if let currentProfile = userOfProfile {
+                
+                let friendsRefOfCurrentProfile = db.collection("Users").document(currentProfile.userUID).collection("friends").document(user.uid)
+                friendsRefOfCurrentProfile.delete()
+                
+                let friendsRefOfLoggedInUser = db.collection("Users").document(user.uid).collection("friends").document(currentProfile.userUID)
+                friendsRefOfLoggedInUser.delete()
+                
+                
+                // Notify User
+                let alert = UIAlertController(title: "Freundschaft gelöscht", message: "Die Freundschaft wurde erfolgreich gelöscht", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
+                    
+                }))
+                self.present(alert, animated: true) {
+                    self.addAsFriendButton.setTitle("Gelöscht", for: .normal)
+                    self.currentState = .otherUser
+                    self.addAsFriendButton.isEnabled = false
+                }
+                
+            }
+        }
+    }
+    
     @IBAction func chatWithUserTapped(_ sender: Any) {
+        
+        guard let state = currentState else { return }
+        
+        if let _ = Auth.auth().currentUser {
+            switch state {
+            case .blockedToInteract:
+                print("Not allowed to send message because blocked")
+            default:
+                self.checkIfThereIsAlreadyAChat()
+            }
+        } else {
+            self.notLoggedInAlert()
+        }
+    }
+    
+    
+    
+    func checkIfThereIsAlreadyAChat() {
         if let profileUser = userOfProfile {
             if let currentUser = Auth.auth().currentUser {
                 
@@ -394,62 +640,68 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 let chatRef = db.collection("Users").document(currentUser.uid).collection("chats").whereField("participant", isEqualTo: profileUser.userUID).limit(to: 1)
                 
                 chatRef.getDocuments { (querySnapshot, error) in
-                    if error != nil {
-                        print("We have an error downloading the chat: \(error?.localizedDescription ?? "no error")")
+                    if let error = error {
+                        print("We have an error downloading the chat: \(error.localizedDescription)")
                     } else {
                         if querySnapshot!.isEmpty { // Create a new chat
-                            
-                            let chat = Chat()
-                            chat.participant = profileUser
-                            
-                            let newChatRef = self.db.collection("Chats").document()
-                            chat.documentID = newChatRef.documentID
-                            
-                            // Create Chat Reference for the current User
-                            let dataForCurrentUsersDatabase = ["participant": chat.participant.userUID, "documentID": chat.documentID]
-                            let currentUsersDatabaseRef = self.db.collection("Users").document(currentUser.uid).collection("chats").document()
-                            
-                            currentUsersDatabaseRef.setData(dataForCurrentUsersDatabase) { (error) in
-                                if error != nil {
-                                    print("We have an error when saving chat for current User: \(error?.localizedDescription ?? "No error")")
-                                }
-                            }
-                            
-                            // Create Chat Reference for the User of the profile
-                            let dataForProfileUsersDatabase = ["participant": currentUser.uid, "documentID": chat.documentID]
-                            let profileUsersDatabaseRef = self.db.collection("Users").document(profileUser.userUID).collection("chats").document()
-                            
-                            profileUsersDatabaseRef.setData(dataForProfileUsersDatabase) { (error) in
-                                if error != nil {
-                                    print("We have an error when saving chat for profile User: \(error?.localizedDescription ?? "No error")")
-                                }
-                            }
-                            
-                            self.performSegue(withIdentifier: "toChatSegue", sender: chat)
-                            
-                        } else {    // Go to the existing chat
+                            self.createNewChat()
+                        } else {
                             if let document = querySnapshot?.documents.last {
-                                let chat = Chat()
-                                
-                                let documentData = document.data()
-                                
-                                if let documentID = documentData["documentID"] as? String {
-                                    
-                                    chat.documentID = documentID
-                                    chat.participant = profileUser
-                                    
-                                    self.performSegue(withIdentifier: "toChatSegue", sender: chat)
-                                }
+                                self.goToExistingChat(participant: profileUser, document: document)
+                            } else {
+                                self.createNewChat()
                             }
                         }
                     }
                 }
-                
-                
             }
         }
     }
     
+    func createNewChat() {
+        if let profileUser = userOfProfile {
+            if let loggedInUser = Auth.auth().currentUser {
+                let chat = Chat()
+                let newChatRef = self.db.collection("Chats").document()
+                let newDocumentID = newChatRef.documentID
+                
+                chat.participant = profileUser
+                chat.documentID = newDocumentID
+                
+                // Create Chat Reference for the current User
+                let dataForCurrentUsersDatabase = ["participant": chat.participant.userUID]
+                let currentUsersDatabaseRef = self.db.collection("Users").document(loggedInUser.uid).collection("chats").document(newDocumentID)
+                
+                currentUsersDatabaseRef.setData(dataForCurrentUsersDatabase) { (error) in
+                    if error != nil {
+                        print("We have an error when saving chat for current User: \(error?.localizedDescription ?? "No error")")
+                    }
+                }
+                
+                // Create Chat Reference for the User of the profile
+                let dataForProfileUsersDatabase = ["participant": loggedInUser.uid]
+                let profileUsersDatabaseRef = self.db.collection("Users").document(profileUser.userUID).collection("chats").document(newDocumentID)
+                
+                profileUsersDatabaseRef.setData(dataForProfileUsersDatabase) { (error) in
+                    if error != nil {
+                        print("We have an error when saving chat for profile User: \(error?.localizedDescription ?? "No error")")
+                    }
+                }
+                
+                self.performSegue(withIdentifier: "toChatSegue", sender: chat)
+            }
+        }
+    }
+    
+    func goToExistingChat(participant:User, document:DocumentSnapshot) {
+        let chat = Chat()
+        let documentID = document.documentID
+        
+        chat.documentID = documentID
+        chat.participant = participant
+        
+        self.performSegue(withIdentifier: "toChatSegue", sender: chat)
+    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toChatSegue" {
@@ -471,9 +723,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             if let chosenPost = sender as? Post {
                 if let reportVC = segue.destination as? MeldenViewController {
                     reportVC.post = chosenPost
-                    
                 }
             }
         }
     }
 }
+
+

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class ArgumentTableViewController: UITableViewController {
     
@@ -103,7 +104,11 @@ class ArgumentTableViewController: UITableViewController {
         if argument.title != "Füge ein Argument hinzu!" {
             performSegue(withIdentifier: "toArgumentDetail", sender: nil)
         } else {
-            performSegue(withIdentifier: "toNewArgumentSegue", sender: argument)
+            if let _ = Auth.auth().currentUser {
+                performSegue(withIdentifier: "toNewSourceSegue", sender: nil)
+            } else {
+                self.notLoggedInAlert()
+            }
         }
         
     }

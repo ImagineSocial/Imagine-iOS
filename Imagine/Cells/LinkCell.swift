@@ -11,6 +11,7 @@ import SwiftLinkPreview
 
 
 protocol LinkCellDelegate {
+    func userTapped(post: Post)
     func linkTapped(post: Post)
     func reportTapped(post: Post)
     func thanksTapped(post: Post)
@@ -41,16 +42,25 @@ class LinkCell : UITableViewCell {
     let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: DisabledCache.instance)
     
     let handyHelper = HandyHelper()
-    
     var delegate: LinkCellDelegate?
+    
+    override func awakeFromNib() {
+        linkThumbNailImageView.layer.cornerRadius = 3
+
+        // Profile Picture
+        let layer = profilePictureImageView.layer
+        layer.cornerRadius = profilePictureImageView.frame.width/2
+        layer.borderWidth = 0.1
+        layer.borderColor = UIColor.black.cgColor
+        
+        titleLabel.layoutIfNeeded()
+    }
     
     var post :Post? {
         didSet {
             if let post = post {
                 
                 linkThumbNailImageView.image = UIImage(named: "default")
-                linkThumbNailImageView.layer.cornerRadius = 3
-                
                 thanksCountLabel.text = "thanks"
                 wowCountLabel.text = "wow"
                 haCountLabel.text = "ha"
@@ -58,19 +68,14 @@ class LinkCell : UITableViewCell {
                 commentCountLabel.text = String(post.commentCount)
                 
                 // Profile Picture
-                let layer = profilePictureImageView.layer
-                layer.cornerRadius = profilePictureImageView.frame.width/2
-                layer.borderWidth = 0.1
-                layer.borderColor = UIColor.black.cgColor
-                
                 if let url = URL(string: post.user.imageURL) {
                     profilePictureImageView.sd_setImage(with: url, completed: nil)
                 }
+                
                 createDateLabel.text = post.createTime
                 ogPosterNameLabel.text = "\(post.user.name) \(post.user.surname)"
                 
                 titleLabel.text = post.title
-                titleLabel.layoutIfNeeded()
                 
                 // Preview des Links anzeigen
                 slp.preview(post.linkURL, onSuccess: { (result) in
@@ -92,8 +97,6 @@ class LinkCell : UITableViewCell {
                 reportViewButtonInTop.isHidden = reportViewOptions.buttonHidden
                 reportViewLabel.text = reportViewOptions.labelText
                 reportView.backgroundColor = reportViewOptions.backgroundColor
-                
-                
             }
         }
     }
@@ -140,6 +143,12 @@ class LinkCell : UITableViewCell {
     @IBAction func reportTapped(_ sender: Any) {
         if let post = post {
             delegate?.reportTapped(post: post)
+        }
+    }
+    
+    @IBAction func userButtonTapped(_ sender: Any) {
+        if let post = post {
+            delegate?.userTapped(post: post)
         }
     }
     

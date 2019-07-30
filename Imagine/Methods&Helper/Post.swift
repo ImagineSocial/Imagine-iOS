@@ -10,6 +10,29 @@ import Foundation
 import Firebase
 import FirebaseFirestore
 
+// This enum declares the type of the post
+enum PostType {
+    case picture
+    case link
+    case thought
+    case repost
+    case event
+    case youTubeVideo
+    case nothingPostedYet
+}
+
+// This enum declares how a post was marked or reported
+enum ReportType {
+    case normal
+    case spoiler
+    case opinion
+    case sensationalism
+    case circlejerk
+    case pretentious
+    case edited
+    case ignorant
+}
+
 class Post {
     var title = ""
     var imageURL = ""
@@ -18,7 +41,7 @@ class Post {
     var type: PostType = .picture
     var imageHeight: CGFloat = 0.0
     var imageWidth: CGFloat = 0.0
-    var report = ""
+    var report:ReportType = .normal
     var documentID = ""
     var createTime = ""
     var OGRepostDocumentID: String?
@@ -28,6 +51,8 @@ class Post {
     var votes = Votes()
     var event = Event()
     var repost: Post?
+    
+    let handyHelper = HandyHelper()
     
     
     func getRepost(returnRepost: @escaping (Post) -> Void) {
@@ -61,14 +86,13 @@ class Post {
                         let picHeight = docData["imageHeight"] as? Double ?? 0
                         let picWidth = docData["imageWidth"] as? Double ?? 0
                         
-                        let stringDate = HandyHelper().getStringDate(timestamp: createTimestamp)
+                        let stringDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
                         
                         post.title = title      // Sachen zuordnen
                         post.imageURL = imageURL
                         post.imageHeight = CGFloat(picHeight)
                         post.imageWidth = CGFloat(picWidth)
                         post.description = description
-                        post.report = report
                         post.documentID = document.documentID
                         post.createTime = stringDate
                         post.originalPosterUID = originalPoster
@@ -78,15 +102,18 @@ class Post {
                         post.votes.nice = niceCount
                         post.linkURL = linkURL
                         
-                        if let postType = HandyHelper().setPostType(fetchedString: postType) {
+                        if let reportType = self.handyHelper.setReportType(fetchedString: report) {
+                            post.report = reportType
+                        }
+                        
+                        if let postType = self.handyHelper.setPostType(fetchedString: postType) {
                             post.type = postType
                         }
                         
-                        post.getUser(returnUser: { (user) in
-                            post.user = user
+                        post.getUser()
                             
-                            returnRepost(post)
-                        })
+                        returnRepost(post)
+            
                     }
                 }
                 
@@ -97,7 +124,7 @@ class Post {
         }
     }
     
-    func getUser(returnUser: @escaping (User) -> Void) {
+    func getUser() {
         
         
         let db = Firestore.firestore()
@@ -114,7 +141,9 @@ class Post {
                     user.surname = docData["surname"] as? String ?? ""
                     user.imageURL = docData["profilePictureURL"] as? String ?? ""
                     user.userUID = self.originalPosterUID
+                    user.statusQuote = docData["statusText"] as? String ?? ""
                     
+                    self.user = user
                 }
             }
             
@@ -122,7 +151,6 @@ class Post {
                 print("Wir haben einen Error beim User: \(err?.localizedDescription ?? "")")
             }
         })
-        returnUser(user)
     }
 }
 
@@ -134,4 +162,6 @@ public class User {
     public var imageURL = ""
     public var userUID = ""
     public var image = UIImage(named: "default-user")
+    public var blocked: [String]?
+    public var statusQuote = ""
 }

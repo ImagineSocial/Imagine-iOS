@@ -19,6 +19,12 @@ class EventCell :UITableViewCell {
     @IBOutlet weak var participantCountLabel: UILabel!
     @IBOutlet weak var typeLabel: UILabel!
     
+    override func awakeFromNib() {
+        descriptionLabel.layer.cornerRadius = 5
+        
+        
+    }
+    
     var post:Post? {
         didSet {
             
@@ -28,7 +34,6 @@ class EventCell :UITableViewCell {
                 
                 headerLabel.text = post.event.title
                 
-                descriptionLabel.layer.cornerRadius = 5
                 descriptionLabel.text = post.event.description
                 
                 locationLabel.text = post.event.location

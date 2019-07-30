@@ -11,6 +11,30 @@ import Firebase
 import FirebaseFirestore
 import FirebaseAuth
 
+enum LogInFrame {
+    case enterEmail
+    case enterPassword
+    case wrongPassword
+    case wrongEmail
+}
+
+enum SignInFrame {
+    case enterFirstName
+    case enterLastName
+    case enterEmail
+    case invalidEmail
+    case EmailAlreadyInUse
+    case enterPassword
+    case repeatPassword
+    case wrongRepeatedPassword
+    case weakPassword
+    case respectYourFellowMan
+    case keepCalm
+    case supportImagine
+    case ready
+    case error
+}
+
 class LogInViewController: UIViewController {
     
     @IBOutlet weak var initialStackView: UIStackView!
@@ -19,28 +43,24 @@ class LogInViewController: UIViewController {
     @IBOutlet weak var initialButton1: DesignableButton!
     @IBOutlet weak var initialButton2: DesignableButton!
     @IBOutlet weak var peaceSignView: UIImageView!
-    @IBOutlet weak var topDismissButton: DesignableButton!
     
     let attentionLabel = UILabel()
-    let questionLabel = UILabel()
-    let answerTextfield = UITextField()
-    let nextButton = DesignableButton()
     
     var signUp = false
     var name = ""
     var surname = ""
-    var signUpFrame = 0
-    var logInFrame = 0
     var signUpAnswers:[String:String] = ["":""]
     var email = ""
     var password = ""
-    
+    var logInFrame: LogInFrame = .enterEmail
+    var signUpFrame: SignInFrame = .enterFirstName
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        topDismissButton.alpha = 0
-        topDismissButton.isHidden = true
+        
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
         
     }
     
@@ -55,45 +75,48 @@ class LogInViewController: UIViewController {
         answerTextfield.addTarget(self, action: #selector(textGetsWritten), for: .editingChanged)
         
         switch signUpFrame {
-        case 0:
-            questionLabel.text = "Kind der Erde, welcher Name wurde dir zugewiesen?"
-            nextButton.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
-        case 1:
+        case .enterFirstName:
+            answerTextfield.textContentType = .givenName
+            questionLabel.text = "Kind der Erde, wie ruft man dich auf der Straße?"
+        case .enterLastName:
+            answerTextfield.textContentType = .familyName
             questionLabel.text = "Freut mich dich kennenzulernen \(name). Welchen Namen führt deine Familie?"
-            nextButton.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
-        case 2:
+        case .enterEmail:
+            answerTextfield.textContentType = .emailAddress
             questionLabel.text = "Wie ist deine Email-Adresse?"
-            nextButton.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
-        case 3:
-            if password != "" { // Also schon versucht
-                questionLabel.text = "Dein Passwort muss mindestens 6 Buchstaben haben!"
-            } else {
-                questionLabel.text = "Wie soll dein Passwort sein?"
-            }
-            nextButton.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
-        case 4:
-            questionLabel.text = "Nun... Stelle dir eine kleine friedliche Stadt vor, direkt am Meer, schöne Architektur... Dort leben einsam ein junger Fischer und ein junger Bänker und gehen ihren Geschäften nach... OK?"
-            nextButton.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
-        case 5:
-            questionLabel.text = "Gut... Der Fischer hat viel Zeit in seinem ärmlichen Haus. Der Bänker wenig in seinem Reichen. Wer wärst du lieber?"
-            nextButton.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
-        case 6:
-            questionLabel.text = "Der Bänker kann sich jederzeit die modernsten und edelsten Kleider kaufen. Glaubst du er schaut auf den Fischer herab?"
-            nextButton.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
-        case 7:
-            questionLabel.text = "Der Fischer näht seine Kleidung selber. Glaubst du er ist eifersüchtig auf den Bänker?"
-            nextButton.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
-        case 8:
-            questionLabel.text = "Nehmen wir an vor 75 Jahren hat das Volk des Fischers, das Volk des Bänkers verraten und hintergangen. Nimmst du es dem Fischer übel?"
-            nextButton.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
-        case 9:
-            questionLabel.text = "Wirst du den Glauben, jeden Glauben deiner Mit-User akzeptieren?"
-            nextButton.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
-        default:
-            questionLabel.text = "Hier ist was schiefgegangen!"
+        case .invalidEmail:
+            answerTextfield.textContentType = .emailAddress
+            questionLabel.text = "Die angegebene Email-Adresse scheint nicht korrekt zu sein. Gib sie noch einmal ein:"
+        case .EmailAlreadyInUse:
+            answerTextfield.textContentType = .emailAddress
+            questionLabel.text = "Die Email-Adresse wird bereits bei uns verwendet. Bitte nutze eine andere:"
+        case .enterPassword:
+            answerTextfield.textContentType = .newPassword
+            questionLabel.text = "Wie soll dein Passwort sein?"
+        case .weakPassword:
+            answerTextfield.textContentType = .newPassword
+            questionLabel.text = "Dein Passwort ist zu schwach. Es muss mindestens 6 Buchstaben haben und schon ein bisschen sicher sein"
+        case .repeatPassword:
+            answerTextfield.textContentType = .newPassword
+            questionLabel.text = "Wiederhole zur Sicherheit dein Passwort"
+        case .wrongRepeatedPassword:
+            answerTextfield.textContentType = .newPassword
+            questionLabel.text = "Deine beiden Passwörter stimmen nicht überein. Versuch es bitte noch einmal:"
+        case .keepCalm: // Is set in "tryTOSignUp
+            answerTextfield.textContentType = nil
+            questionLabel.text = "Wirst du Ruhe bewahren wenn dich etwas oder jemand bei Imagine aufregt und keine verletzenden Begriffe nutzen?"
+        case .respectYourFellowMan:
+            questionLabel.text = "Wirst du die Ansichten und Meinungen deiner Mit-User respektieren?"
+        case .supportImagine:
+            questionLabel.text = "Würdest du Imagine als Netzwerk unterstützen und melden, upvoten und schlichten wenn es angebracht ist? "
+        case .ready:
+            questionLabel.text = "Wir freuen uns dich bei uns zu begrüßen! Schau dich doch ein wenig um"
+            nextButton.setTitle("Zu Imagine", for: .normal)
+        case .error:
+            questionLabel.text = "Irgendwas ist hier kaputt, versuch es bitte später nochmal!"
         }
         
-        UIView.animate(withDuration: 2, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: 1.3, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
             self.answerTextfield.alpha = 1
             self.questionLabel.alpha = 1
         })
@@ -103,20 +126,27 @@ class LogInViewController: UIViewController {
     func startLogIn() {
         answerTextfield.text = ""
         nextButton.isEnabled = true
-        answerTextfield.addTarget(self, action: #selector(textGetsWritten), for: .editingChanged)
         
         switch logInFrame {
-        case 0:
+        case .enterEmail:
             questionLabel.text = "Kind der Erde, wie lautet deine Email-Adresse?"
-            nextButton.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
-        case 1:
-            questionLabel.text = "Alles klar, dann gib nun bitte dein Kennwort ein und wir können loslegen!"
-            nextButton.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
-        default:
-            questionLabel.text = "Hier ist was schiefgegangen!"
+            answerTextfield.textContentType = .emailAddress
+            answerTextfield.isSecureTextEntry = false
+        case .enterPassword:
+            questionLabel.text = "Nun noch dein Kennwort und wir können loslegen!"
+            answerTextfield.textContentType = .password
+            answerTextfield.isSecureTextEntry = true
+        case .wrongEmail:
+            self.questionLabel.text = "Deine eingegebene Email-Adresse ist nicht korrekt"
+            answerTextfield.textContentType = .emailAddress
+            answerTextfield.isSecureTextEntry = false
+        case .wrongPassword:
+            self.questionLabel.text = "Dein Passwort oder deine Email-Adresse ist nicht korrekt"
+            answerTextfield.textContentType = .password
+            answerTextfield.isSecureTextEntry = true
         }
         
-        UIView.animate(withDuration: 2, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: 1.3, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
             self.answerTextfield.alpha = 1
             self.questionLabel.alpha = 1
         })
@@ -124,126 +154,148 @@ class LogInViewController: UIViewController {
     }
     
     @objc func textGetsWritten() {
-        UIView.animate(withDuration: 1.2, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveLinear, animations: {
+        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveLinear, animations: {
             self.nextButton.alpha = 1
         })
     }
     
     @objc func nextButtonPushed(sender: DesignableButton!) {
-        let nextButtonSender: UIButton = sender
         nextButton.isEnabled = false
         answerTextfield.resignFirstResponder()
         
         if signUp {
-            if let answer = answerTextfield.text {
-                switch nextButtonSender.tag {
-                case 0:
+            if let input = answerTextfield.text {
+                
+                let answer = input.trimmingCharacters(in: .whitespaces)
+                
+                switch signUpFrame{
+                case .enterFirstName:
                     name = answer
-                    signUpFrame = signUpFrame+1
-                    nextButton.tag = 1
-                case 1:
+                    signUpFrame = .enterLastName
+                case .enterLastName:
                     surname = answer
-                    signUpFrame = signUpFrame+1
-                    nextButton.tag = 2
-                    
-                case 2:
+                    signUpFrame = .enterEmail
+                case .enterEmail:
+//                    replace spaces
                     email = answer
-                    signUpFrame = signUpFrame+1
-                    nextButton.tag = 3
-                    
-                case 3:
-                    password = answer
-                    
-                    if password.count >= 6 {
-                        nextButton.tag = 4
-                        signUpFrame = signUpFrame+1
-                        tryToSignUp()
+                    signUpFrame = .enterPassword
+                case .enterPassword:
+                    if answer.count >= 6 {
+                        password = answer
+                        signUpFrame = .repeatPassword
+                    } else {
+                        signUpFrame = .weakPassword
                     }
-                    
-                    
-                case 4:
-                    signUpAnswers["Herangehensweise Besser"] = answer
-                    signUpFrame = signUpFrame+1
-                    nextButton.tag = 5
-                    
-                case 5:
-                    signUpAnswers["Herangehensweise Besser"] = answer
-                    signUpFrame = signUpFrame+1
-                    nextButton.tag = 6
-                    
-                case 6:
-                    signUpAnswers["Herangehensweise Besser"] = answer
-                    signUpFrame = signUpFrame+1
-                    nextButton.tag = 7
-                    
-                case 7:
-                    signUpAnswers["Herangehensweise Besser"] = answer
-                    signUpFrame = signUpFrame+1
-                    nextButton.tag = 8
-                case 8:
-                    signUpAnswers["Herangehensweise Besser"] = answer
-                    signUpFrame = signUpFrame+1
-                    nextButton.tag = 9
-                case 9:
-                    signUpAnswers["Herangehensweise Besser"] = answer
-                    signUpFrame = signUpFrame+1
-                    nextButton.tag = 10
-                    
-                default:
-                    questionLabel.text = "Irgendwas ist hier falsch!"
+                case .weakPassword:
+                    if answer.count >= 6 {
+                        password = answer
+                        signUpFrame = .repeatPassword
+                    } else {
+                        signUpFrame = .weakPassword
+                    }
+                case .repeatPassword:
+                    if password == answer {
+                        self.tryToSignUp()
+                    } else {
+                        self.signUpFrame = .wrongRepeatedPassword
+                    }
+                case .wrongRepeatedPassword:
+                    password = answer
+                    signUpFrame = .repeatPassword
+                case .EmailAlreadyInUse:
+                    email = answer
+                    signUpFrame = .enterPassword
+                case .invalidEmail:
+                    email = answer
+                    signUpFrame = .enterPassword
+                case .keepCalm:
+                    signUpFrame = .respectYourFellowMan
+                // ToDo: Save the Answer
+                case .respectYourFellowMan:
+                    signUpFrame = .supportImagine
+                // ToDo: Save the Answer
+                case .supportImagine:
+                    signUpFrame = .ready
+                // ToDo: Save the Answer
+                case .ready:
+                    self.navigationController?.popViewController(animated: true)
+                case .error:
+                    self.navigationController?.popViewController(animated: true)
                 }
                 
-                UIView.animate(withDuration: 2, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
+                UIView.animate(withDuration: 1.3, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
                     self.answerTextfield.alpha = 0
                     self.nextButton.alpha = 0
                     self.questionLabel.alpha = 0
                 }, completion: { (_) in
+        
                     self.startSignUpSession()
+                    
                 })
                 
             }
         } else {    // Wenn es Log-In ist
             print("else")
             
-            if let answer = answerTextfield.text {
-                print(answer)
-                switch nextButtonSender.tag {
-                case 0:
-                    
+            if let input = answerTextfield.text {
+
+                let answer = input.trimmingCharacters(in: .whitespaces)
+                
+                switch logInFrame {
+                case .enterEmail:
                     email = answer
-                    logInFrame = logInFrame+1
-                    nextButton.tag = 1
-                case 1:
-                    
+                    logInFrame = .enterPassword
+                case .enterPassword:
                     password = answer
-                    
                     tryToLogIn()
-                    
-                default:
-                    questionLabel.text = "Irgendwas ist hier falsch!"
+                case .wrongEmail:
+                    email = answer
+                    logInFrame = .enterPassword
+                case .wrongPassword:
+                    password = answer
+                    tryToLogIn()
                 }
             }
             
-            UIView.animate(withDuration: 2, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
+            UIView.animate(withDuration: 1.3, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
                 self.answerTextfield.alpha = 0
                 self.nextButton.alpha = 0
                 self.questionLabel.alpha = 0
             }, completion: { (_) in
+                
                 self.startLogIn()
+                
             })
         }
         print(signUpAnswers)
     }
     
     func tryToSignUp() {
-        print("// Hier zum registrieren")
+        print("Hier zum registrieren")
         Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
-            if (error != nil) {
-                print("Wir haben einen error: \(String(describing: error?.localizedDescription))")
-            } else {
+            if let error = error {
+                print("We have an error: \(error.localizedDescription)")
+                
+                if let errCode = AuthErrorCode(rawValue: error._code) {
+                    
+                    switch errCode {
+                    case .emailAlreadyInUse:
+                        self.signUpFrame = .EmailAlreadyInUse
+                    case .invalidEmail:
+                        self.signUpFrame = .invalidEmail
+                    case .weakPassword:
+                        self.signUpFrame = .weakPassword
+                    default:
+                        self.signUpFrame = .error
+                    }
+                    
+                    self.startSignUpSession()
+                    
+                }
+            } else  {
                 print("User wurde erfolgreich erstellt.")
-                let user = Auth.auth().currentUser
-                if let user = user {
+                
+                if let user = Auth.auth().currentUser {
                     let changeRequest = user.createProfileChangeRequest()
                     let fullName = "\(self.name) \(self.surname)"
                     
@@ -258,55 +310,95 @@ class LogInViewController: UIViewController {
                         }
                     }
                 
-                
-                let userRef = Firestore.firestore().collection("Users").document(user.uid)
-                    userRef.setData(["name": self.name, "surname": self.surname, "full_name": fullName])
+                    let userRef = Firestore.firestore().collection("Users").document(user.uid)
+                    let data = ["name": self.name, "surname": self.surname, "full_name": fullName]
+                    
+                    userRef.setData(data, completion: { (error) in
+                        if let error = error {
+                            print("We have an error: \(error.localizedDescription)")
+                        } else {
+                            print("User wurde in Datenbank übertragen")
+                            self.signUpFrame = .keepCalm
+                        }
+                    })
                 }
-                // Erstmal
-                self.dismiss(animated: true, completion: nil)
             }
         }
         
     }
     
     func tryToLogIn() {
-        print(")// Hier zum einloggen")
-        // Passwort= MalteS
+        print(" Hier zum einloggen")
+
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
+            
+            if let error = error {
+                if let errCode = AuthErrorCode(rawValue: error._code) {
+                    
+                    switch errCode {
+                    case .wrongPassword:
+                        self.logInFrame = .wrongPassword
+                    case .invalidEmail:
+                        self.logInFrame = .wrongEmail
+                        print("invalid email")
+                    default:
+                        print("Other error!")
+                    }
+                    
+                    self.startLogIn()
+                    
+                }
+            }
             if (error != nil) {
+                
                 print("Wir haben einen error: \(String(describing: error?.localizedDescription))")
             } else {
                 print("User wurde erfolgreich eingeloggt.")
                 
-                // Erstmal
-                self.dismiss(animated: true, completion: nil)
+                self.navigationController?.popViewController(animated: true)
             }
         }
     }
     
     
+    
+    let questionLabel: UILabel = {
+       let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 27)
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.5
+        label.numberOfLines = 0
+        label.lineBreakMode = .byClipping
+        label.textAlignment = .center
+        label.alpha = 0     // Erstmal unsichtbar
+        return label
+    }()
+    
+    let answerTextfield: UITextField = {
+        let textField = UITextField()
+        textField.textAlignment = .center
+        textField.font = UIFont.systemFont(ofSize: 18)
+        textField.placeholder = "..."
+        textField.autocorrectionType = .no
+        textField.alpha = 0
+        textField.addTarget(self, action: #selector(textGetsWritten), for: .editingChanged)
+
+        return textField
+    }()
+    
+    let nextButton: DesignableButton = {
+       let button = DesignableButton()
+        button.layer.cornerRadius = 5
+        button.backgroundColor = UIColor(red:0.19, green:0.82, blue:1.00, alpha:1.0)
+        button.tag = 0
+        button.setTitle("Weiter", for: .normal)
+        button.titleLabel?.font = UIFont(name: "Kalam", size: 22)
+        button.alpha = 0
+        button.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
+        return button
+    }()
+    
     func setUpUI() {
-        questionLabel.font = UIFont(name: "Kalam", size: 27)
-        questionLabel.adjustsFontSizeToFitWidth = true
-        questionLabel.minimumScaleFactor = 0.5
-        questionLabel.numberOfLines = 0
-        questionLabel.lineBreakMode = .byClipping
-        questionLabel.textAlignment = .center
-        questionLabel.alpha = 0     // Erstmal unsichtbar
-        
-        nextButton.layer.cornerRadius = 5
-        nextButton.backgroundColor = UIColor(red:0.19, green:0.82, blue:1.00, alpha:1.0)
-        nextButton.tag = 0
-        nextButton.setTitle("Weiter", for: .normal)
-        nextButton.titleLabel?.font = UIFont(name: "Kalam", size: 22)
-        nextButton.alpha = 0
-        
-        answerTextfield.textAlignment = .center
-        answerTextfield.font = UIFont(name: "Kalam", size: 18)
-        answerTextfield.placeholder = "..."
-        answerTextfield.autocorrectionType = .no
-        answerTextfield.alpha = 0
-        
         
         let newStackView = UIStackView(arrangedSubviews: [questionLabel,answerTextfield,nextButton])
         newStackView.axis = .vertical
@@ -329,7 +421,7 @@ class LogInViewController: UIViewController {
             UIView.animate(withDuration: 2, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 self.initialStackView.alpha = 0
                 self.attentionLabel.alpha = 0
-                self.peaceSignView.alpha = 0
+                self.peaceSignView.alpha = 0.3
                 
                 if let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as? UIView{
                     statusBar.alpha = 0
@@ -343,13 +435,10 @@ class LogInViewController: UIViewController {
             })
         } else {
             //Start Log-In
-            topDismissButton.isHidden = false
             
             UIView.animate(withDuration: 2, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 self.initialStackView.alpha = 0
                 self.peaceSignView.alpha = 0.3
-                self.topDismissButton.alpha = 1
-                self.navigationController?.navigationBar.alpha = 0.0
                 
                 if let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as? UIView{
                     statusBar.alpha = 0
@@ -374,20 +463,18 @@ class LogInViewController: UIViewController {
                 
                 
             }, completion: { (_) in
-                self.dismiss(animated: true, completion: nil)
+                self.navigationController?.popViewController(animated: true)
             })
         } else {
             // Erster Schritt
             UIView.animate(withDuration: 3, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveLinear, animations: {
-                self.navigationController?.navigationBar.alpha = 0.0
                 self.initialStackView.alpha = 0
                 self.peaceSignView.alpha = 0.5
                 self.signUp = true  // Button verändern sich
                 
             }, completion: { (_) in
                 self.initialButton2.backgroundColor = UIColor(red:1.00, green:0.54, blue:0.52, alpha:1.0)
-                self.navigationController?.navigationBar.isHidden = true
-                self.initialLabel.text = "Das ist nicht irgendein Service! Du wirst in unsere Mitte aufgenommen, wenn du dich als würdig erweist! Nimm dir Zeit dafür. Sei ehrlich und du selbst!"
+                self.initialLabel.text = "Das ist Imagine. Erweise dich als würdig und wir nehmen dich gerne bei uns auf! Nimm dir Zeit dafür. Sei ehrlich und du selbst!"
                 self.initialButton1.setTitle("Ich bin bereit!", for: .normal)
                 self.initialButton2.setTitle("Lieber Später!", for: .normal)
                 self.initialButton2.backgroundColor = UIColor(red:1.00, green:0.54, blue:0.52, alpha:1.0)
@@ -405,12 +492,12 @@ class LogInViewController: UIViewController {
                 self.initialLabelConstraint.constant = 150
                 
                 // Zweiter Schritt
-                UIView.animate(withDuration: 2, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+                UIView.animate(withDuration: 1.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                     self.attentionLabel.alpha = 1
                     self.view.layoutIfNeeded()
                 }, completion: { (_) in
                     //Dritter Schritt
-                    UIView.animate(withDuration: 2, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveLinear, animations: {
+                    UIView.animate(withDuration: 1.3, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveLinear, animations: {
                         self.initialStackView.alpha = 1
                     })
                 })
@@ -418,17 +505,9 @@ class LogInViewController: UIViewController {
         }
     }
     
-    
-    @IBAction func backTouched(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
-    }
-    
     override func viewWillDisappear(_ animated: Bool) {
-        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
-        statusBar.alpha = 1
-    }
-    
-    @IBAction func topDismissButtonPressed(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
+        if let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as? UIView{
+            statusBar.alpha = 1
+        }
     }
 }

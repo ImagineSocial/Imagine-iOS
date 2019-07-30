@@ -74,7 +74,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="zDH-d6-BQf"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" name="Kalam-Regular" family="Kalam" pointSize="22"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -131,7 +131,7 @@
                         <constraints>
                             <constraint firstAttribute="height" constant="50" id="h4y-37-BHb"/>
                         </constraints>
-                        <fontDescription key="fontDescription" name="Kalam-Regular" family="Kalam" pointSize="22"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
@@ -167,8 +167,8 @@
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RRe-IJ-Hz8">
-                        <rect key="frame" x="50" y="29" width="72.5" height="15.5"/>
-                        <fontDescription key="fontDescription" name="Kalam-Regular" family="Kalam" pointSize="13"/>
+                        <rect key="frame" x="50" y="29" width="78.5" height="16.5"/>
+                        <fontDescription key="fontDescription" name="Kalam-Regular" family="Kalam" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>

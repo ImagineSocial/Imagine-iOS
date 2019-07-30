@@ -30,7 +30,8 @@ class SettingCell: BaseCell {
     let photoLibraryText = "Photo Library"
     let viewPicText = "Profilbild ansehen"
     let cancelText = "Abbrechen"
-    let chatWithUser = "Chatten"
+    let chatWithUserText = "Chatten"
+    let deleteFriendText = "Als Freund löschen"
     
     let settingCellHeight: CGFloat = 60
     fileprivate var nameLabelLeadingConstraint: NSLayoutConstraint?
@@ -100,7 +101,15 @@ class SettingCell: BaseCell {
                     nameLabel.textAlignment = .left
                     nameLabelLeadingConstraint?.constant = settingCellHeight+10
                     iconImageView.image = UIImage(named: "chat")?.withRenderingMode(.alwaysTemplate)
-                    nameLabel.text = chatWithUser
+                    nameLabel.text = chatWithUserText
+                case .deleteFriend:
+                    backgroundColor = .white
+                    iconImageView.isHidden = false
+                    nameLabel.textColor = .black
+                    nameLabel.textAlignment = .left
+                    nameLabelLeadingConstraint?.constant = settingCellHeight+10
+                    iconImageView.image = UIImage(named: "man-woman")?.withRenderingMode(.alwaysTemplate)
+                    nameLabel.text = deleteFriendText
                 default:
                     backgroundColor = .white
                 }

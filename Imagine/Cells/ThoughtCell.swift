@@ -9,6 +9,7 @@
 import UIKit
 
 protocol ThoughtCellDelegate {
+    func userTapped(post: Post)
     func reportTapped(post: Post)
     func thanksTapped(post: Post)
     func wowTapped(post: Post)
@@ -37,6 +38,17 @@ class ThoughtCell : UITableViewCell {
     var delegate: ThoughtCellDelegate?
     let handyHelper = HandyHelper()
     
+    override func awakeFromNib() {
+        titleLabel.sizeToFit()
+        
+        //Profile Picture
+        let layer = profilePictureImageView.layer
+        layer.masksToBounds = true
+        layer.cornerRadius = profilePictureImageView.frame.width/2
+        layer.borderWidth = 0.1
+        layer.borderColor = UIColor.black.cgColor
+    }
+    
     var post:Post? {
         didSet {
             if let post = post {
@@ -45,8 +57,6 @@ class ThoughtCell : UITableViewCell {
                 profilePictureImageView.image = UIImage(named: "default-user")
                 
                 titleLabel.text = post.title
-                titleLabel.font = UIFont(name: "Kalam-Regular", size: 22.0)
-                titleLabel.sizeToFit()
                 
                 
                 thanksCountLabel.text = "thanks"
@@ -59,12 +69,6 @@ class ThoughtCell : UITableViewCell {
                 ogPosterLabel.text = "\(post.user.name) \(post.user.surname)"
                 
                 // Profile Picture
-                let layer = profilePictureImageView.layer
-                layer.masksToBounds = true
-                layer.cornerRadius = profilePictureImageView.frame.width/2
-                layer.borderWidth = 0.1
-                layer.borderColor = UIColor.black.cgColor
-                
                 if let url = URL(string: post.user.imageURL) {
                     profilePictureImageView.sd_setImage(with: url, completed: nil)
                 }
@@ -117,5 +121,12 @@ class ThoughtCell : UITableViewCell {
             delegate?.reportTapped(post: post)
         }
     }
+    
+    @IBAction func userButtonTapped(_ sender: Any) {
+        if let post = post {
+            delegate?.userTapped(post: post)
+        }
+    }
+    
     
 }

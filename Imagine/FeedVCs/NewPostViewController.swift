@@ -85,12 +85,17 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func setPostUI() {
-        headerLabel.text = "Teile deine Erfahrungen"
+        if let _ = Auth.auth().currentUser {
+            headerLabel.text = "Teile deine Erfahrungen"
+        } else {
+            headerLabel.text = "Zum Posten bitte anmelden"
+        }
         titleTextFieldLabel.text = "Titel:"
         titleTextField.placeholder = "Titel..."
         linkTextFieldLabel.text = "Link:"
         linkTextField.placeholder = "Link..."
         pictureViewLabel.text = "Füge ein Bild zu deinem Post hinzu:"
+        
         
         self.timeLabel.isHidden = true
         self.timeButton.isHidden = true
@@ -119,7 +124,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func setEventUI() {
-        headerLabel.text = "Erstelle eine neue Veranstaltung"
+        if let _ = Auth.auth().currentUser {
+            headerLabel.text = "Erstelle eine neue Veranstaltung"
+        } else {
+            headerLabel.text = "Zum Posten bitte anmelden"
+        }
+        
         titleTextFieldLabel.text = "Titel:"
         titleTextField.placeholder = "Titel..."
         linkTextFieldLabel.text = "Ort:"
@@ -155,22 +165,37 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         textView.resignFirstResponder()
         linkTextField.resignFirstResponder()
         titleTextField.resignFirstResponder()
+        
+        if let _ = Auth.auth().currentUser {
+            
+        } else {
+            self.notLoggedInAlert()
+        }
+        
     }
     
     
     @IBAction func camPressed(_ sender: Any) {
-        imagePicker.sourceType = .camera
-        imagePicker.cameraCaptureMode = .photo
-        imagePicker.cameraDevice = .rear
-        //imagePicker.allowsEditing = true
-        
-        present(imagePicker, animated: true, completion: nil)
+        if let _ = Auth.auth().currentUser {
+            imagePicker.sourceType = .camera
+            imagePicker.cameraCaptureMode = .photo
+            imagePicker.cameraDevice = .rear
+            //imagePicker.allowsEditing = true
+            
+            present(imagePicker, animated: true, completion: nil)
+        } else {
+            self.notLoggedInAlert()
+        }
     }
     @IBAction func CamRollPressed(_ sender: Any) {
-        imagePicker.sourceType = .photoLibrary
-        //imagePicker.allowsEditing = true
+        if let _ = Auth.auth().currentUser {
+            imagePicker.sourceType = .photoLibrary
+            //imagePicker.allowsEditing = true
         
-        present(imagePicker, animated: true, completion: nil)
+            present(imagePicker, animated: true, completion: nil)
+        } else {
+            self.notLoggedInAlert()
+        }
     }
     
     

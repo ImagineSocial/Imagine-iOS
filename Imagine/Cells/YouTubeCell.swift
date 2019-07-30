@@ -44,6 +44,17 @@ class YouTubeCell: UITableViewCell {
     @IBOutlet weak var reportViewLabel: UILabel!
     @IBOutlet weak var reportViewButtonInTop: DesignableButton!
     
+    override func awakeFromNib() {
+        // Profile Picture
+        let layer = profilePictureImageView.layer
+        layer.cornerRadius = profilePictureImageView.frame.width/2
+        layer.borderWidth = 0.1
+        layer.borderColor = UIColor.black.cgColor
+        
+        titleLabel.adjustsFontSizeToFitWidth = true
+
+    }
+    
     var post: Post? {
         didSet {
             profilePictureImageView.image = UIImage(named: "default-user")
@@ -51,14 +62,11 @@ class YouTubeCell: UITableViewCell {
             
             if let post = post {
                 if let youtubeID = post.linkURL.youtubeID {
+                    // Not an actual solution because we cant cache the loading process, needs time everytime you see a youtubecell
                     playerView.load(withVideoId: youtubeID)
                 }
                 
-                // Profile Picture
-                let layer = profilePictureImageView.layer
-                layer.cornerRadius = profilePictureImageView.frame.width/2
-                layer.borderWidth = 0.1
-                layer.borderColor = UIColor.black.cgColor
+                
                 if let url = URL(string: post.user.imageURL) {
                     profilePictureImageView.sd_setImage(with: url, completed: nil)
                 }
@@ -66,7 +74,6 @@ class YouTubeCell: UITableViewCell {
                 createDateLabel.text = post.createTime
                 
                 titleLabel.text = post.title
-                titleLabel.adjustsFontSizeToFitWidth = true
                 
                 commentCountLabel.text = String(post.commentCount)
                 thanksCountLabel.text = "thanks"
@@ -101,4 +108,6 @@ class YouTubeCell: UITableViewCell {
     @IBAction func niceButtonTapped(_ sender: Any) {
     }
     
+    @IBAction func userButtonTapped(_ sender: Any) {
+    }
 }

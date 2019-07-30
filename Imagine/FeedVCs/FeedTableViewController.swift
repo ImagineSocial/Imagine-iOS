@@ -13,7 +13,7 @@ import SDWebImage
 
 class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDelegate {
     
-
+    
     let db = Firestore.firestore()
     lazy var postHelper = PostHelper()      // Lazy or it calls Firestore before AppDelegate.swift
     
@@ -63,7 +63,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         
         searchController.searchBar.scopeButtonTitles = ["Posts", "User", "Events"]
         searchController.searchBar.delegate = self
-
+        
         if #available(iOS 11.0, *) {
             // For iOS 11 and later, place the search bar in the navigation bar.
             self.navigationItem.searchController = searchController
@@ -87,16 +87,21 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     
     override func viewWillAppear(_ animated: Bool) {
         
-//        // Restore the searchController's active state.
-//        if restoredState.wasActive {
-//            searchController.isActive = restoredState.wasActive
-//            restoredState.wasActive = false
-//
-//            if restoredState.wasFirstResponder {
-//                searchController.searchBar.becomeFirstResponder()
-//                restoredState.wasFirstResponder = false
-//            }
-//        } Aus dem apple tutorial
+        checkForLoggedInUser()
+        self.navigationController?.navigationBar.isTranslucent = false
+        
+        
+        
+        //        // Restore the searchController's active state.
+        //        if restoredState.wasActive {
+        //            searchController.isActive = restoredState.wasActive
+        //            restoredState.wasActive = false
+        //
+        //            if restoredState.wasFirstResponder {
+        //                searchController.searchBar.becomeFirstResponder()
+        //                restoredState.wasFirstResponder = false
+        //            }
+        //        } Aus dem apple tutorial für die suche
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -147,20 +152,36 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         }
     }
     
+    func checkForLoggedInUser() {
+        print("check")
+        if let _ = Auth.auth().currentUser {
+            //Still logged in
+            self.loadBarButtonItem()
+            self.screenEdgeRecognizer.isEnabled = true
+        } else {
+            if let items = self.tabBarController?.tabBar.items {
+                let tabItem = items[1]
+                tabItem.badgeValue = nil
+            }
+            self.screenEdgeRecognizer.isEnabled = false
+            self.loadBarButtonItem()
+        }
+    }
+    
     @objc override func getPosts(getMore:Bool) {
         /*
          If "getMore" is true, you want to get more Posts, or the initial batch of 20 Posts, if not you want to refresh the current feed
          */
-        
-        postHelper.getPosts(getMore: getMore) { (posts) in
+            postHelper.getPostsForMainFeed(getMore: getMore) { (posts,initialFetch)  in
             
+                print("\(posts.count) neue dazu")
                 
-                print("Jetzt haben wir \(posts.count) posts")
+            if initialFetch {   // Get the first batch of posts
                 self.posts = posts
                 self.tableView.reloadData()
                 
                 self.postHelper.getEvent(completion: { (post) in
-                    self.posts.insert(post, at: posts.count-12)
+                    self.posts.insert(post, at: 8)
                     self.tableView.reloadData()
                 })
                 
@@ -169,7 +190,32 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                 self.container.isHidden = true
                 
                 self.refreshControl?.endRefreshing()
+            } else {    // Append the next batch to the existing
+                var indexes : [IndexPath] = [IndexPath]()
+                
+                for result in posts {
+                    let row = self.posts.count
+                    indexes.append(IndexPath(row: row, section: 0))
+                    self.posts.append(result)
+                }
+                
+                if #available(iOS 11.0, *) {
+                    self.tableView.performBatchUpdates({
+                        self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                        self.tableView.insertRows(at: indexes, with: .bottom)
+                    }, completion: { (_) in
+                        self.fetchesPosts = false
+                    })
+                } else {
+                    // Fallback on earlier versions
+                    self.tableView.beginUpdates()
+                    self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                    self.tableView.insertRows(at: indexes, with: .right)
+                    self.tableView.endUpdates()
+                }
+                print("Jetzt haben wir \(self.posts.count)")
             }
+        }
     }
     
     // MARK: - TableViewStuff
@@ -184,10 +230,8 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             post = posts[indexPath.row]
         } else {
             if let searchVC = self.searchController.searchResultsController as? SearchTableViewController {
-                print("Immerhin hier")
-
+                
                 if let postResults = searchVC.postResults {
-                    print("Hier vielleicht")
                     post = postResults[indexPath.row]
                 }
             }
@@ -195,18 +239,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         performSegue(withIdentifier: "showPost", sender: post)
         tableView.deselectRow(at: indexPath, animated: true)
     }
-    
-    
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.section == tableView.numberOfSections - 1 &&
-            indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 3 {
-            print("Ende fast erreicht!")
-            
-            self.getPosts(getMore: true)
-            // Wenn ich wirklich beim letzten bin habe ich noch keine Lösung
-        }
-    }
- 
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -231,6 +263,17 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                 if let webVC = segue.destination as? WebViewController {
                     webVC.post = chosenPost
                     
+                }
+            }
+        }
+        if segue.identifier == "toUserSegue" {
+            if let userVC = segue.destination as? UserFeedTableViewController {
+                if let chosenUser = sender as? User {   // Another User
+                    userVC.userOfProfile = chosenUser
+                    userVC.currentState = .otherUser
+                } else { // The CurrentUser
+                    userVC.currentState = .ownProfileWithEditing
+                    print("Hier wird der currentstate eingestellt")
                 }
             }
         }
@@ -261,12 +304,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     func loadBarButtonItem() {
         DispatchQueue.main.async {
             
-            let searchButton = DesignableButton(type: .custom)
-            searchButton.setImage(UIImage(named: "search"), for: .normal)
-            searchButton.addTarget(self, action: #selector(self.searchBarTapped), for: .touchUpInside)
-            searchButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
-            searchButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
-            
             let imagineButton = DesignableButton(type: .custom)
             imagineButton.setImage(UIImage(named: "peace-sign"), for: .normal)
             imagineButton.addTarget(self, action: #selector(self.imagineSignTapped), for: .touchUpInside)
@@ -275,7 +312,8 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             
             imagineButton.addSubview(self.smallNumberForImagineBlogButton)
             
-            let searchBarButton = UIBarButtonItem(customView: searchButton)
+            
+            let searchBarButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(self.searchBarTapped))
             let imagineBarButton = UIBarButtonItem(customView: imagineButton)
             self.navigationItem.rightBarButtonItems = [searchBarButton, imagineBarButton]
             
@@ -284,43 +322,40 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             view.translatesAutoresizingMaskIntoConstraints = false
             view.heightAnchor.constraint(equalToConstant: 35).isActive = true
             view.widthAnchor.constraint(equalToConstant: 35).isActive = true
-
+            
             //create new Button for the profilePictureButton
             let button = DesignableButton(type: .custom)
             button.frame = CGRect(x: 0, y: 0, width: 35, height: 35)
-            button.addTarget(self, action: #selector(self.BarButtonItemTapped), for: .touchUpInside)
             button.layer.masksToBounds = true
             button.translatesAutoresizingMaskIntoConstraints = false
-            button.layer.borderWidth =  0.1
-            button.layer.borderColor = UIColor.black.cgColor
+            
             
             
             // Wenn jemand eingeloggt ist:
             if let user = Auth.auth().currentUser {
-                if let url = user.photoURL{
+                button.widthAnchor.constraint(equalToConstant: 35).isActive = true
+                button.heightAnchor.constraint(equalToConstant: 35).isActive = true
+                button.imageView?.contentMode = .scaleAspectFill
+                button.layer.cornerRadius = button.frame.width/2
+                button.addTarget(self, action: #selector(self.BarButtonItemTapped), for: .touchUpInside)
+                button.layer.borderWidth =  0.1
+                button.layer.borderColor = UIColor.black.cgColor
+                
+                if let url = user.photoURL{ // Set Photo
                     do {
                         let data = try Data(contentsOf: url)
                         
                         if let image = UIImage(data: data) {
                             
-                            
                             //set image for button
                             button.setImage(image, for: .normal)
-                            button.imageView?.contentMode = .scaleAspectFill
-                            button.widthAnchor.constraint(equalToConstant: 35).isActive = true
-                            button.heightAnchor.constraint(equalToConstant: 35).isActive = true
-                            button.layer.cornerRadius = button.frame.width/2
                         }
                     } catch {
                         print(error.localizedDescription)
                     }
                     
-                } else {    // Wenn noch kein Bild ausgewählt wurde!
-                    //set image for button
+                } else {    // If no profile picture is set
                     button.setImage(UIImage(named: "default-user"), for: .normal)
-                    button.widthAnchor.constraint(equalToConstant: 35).isActive = true
-                    button.heightAnchor.constraint(equalToConstant: 35).isActive = true
-                    button.layer.cornerRadius = button.frame.width/2
                 }
                 
                 view.addSubview(button)
@@ -330,12 +365,16 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             } else {    // Wenn niemand eingeloggt
                 
                 button.widthAnchor.constraint(equalToConstant: 50).isActive = true
-                button.heightAnchor.constraint(equalToConstant: 25).isActive = true
+                button.heightAnchor.constraint(equalToConstant: 35).isActive = true
                 button.layer.cornerRadius = 5
                 
+                button.addTarget(self, action: #selector(self.logInButtonTapped), for: .touchUpInside)
                 button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
                 button.setTitle("Log-In", for: .normal)
-                button.backgroundColor = UIColor(red:0.68, green:0.77, blue:0.90, alpha:1.0)
+                button.setTitleColor(.blue, for: .normal)
+//                self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+                
+                view.addSubview(button)
             }
             
             let barButton = UIBarButtonItem(customView: view)
@@ -349,12 +388,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         
         switch whichButton {
         case .toUser:
-            //If not logged in...
-            if Auth.auth().currentUser == nil {
-                performSegue(withIdentifier: "toLogInSegue", sender: nil)
-            } else {
-                performSegue(withIdentifier: "toUserSegue", sender: nil)
-            }
+            self.performSegue(withIdentifier: "toUserSegue", sender: nil)
         case .toFriends:
             performSegue(withIdentifier: "toFriendsSegue", sender: nil)
         case .toSavedPosts:
@@ -368,8 +402,8 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     @objc func searchBarTapped() {
         // Show search bar
         self.searchController.isActive = true   // Not perfekt but works
-//        navigationItem.hidesSearchBarWhenScrolling = false
-//        navigationItem.hidesSearchBarWhenScrolling = true
+        //        navigationItem.hidesSearchBarWhenScrolling = false
+        //        navigationItem.hidesSearchBarWhenScrolling = true
     }
     
     @objc func BarButtonItemTapped() {
@@ -377,35 +411,43 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         sideMenu.checkInvitations(invites: self.invitationCount)
     }
     
-}
-
-
-extension FeedTableViewController: UITableViewDataSourcePrefetching {
-    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-        for indexPath in indexPaths {
-            let post = posts[indexPath.row]
-
-            if let _ = imageCache.object(forKey: post.imageURL as NSString) {
-                print("Wurde schon gecached")
-            } else {
-                if let url = URL(string: post.imageURL) {
-                    print("Prefetchen neues Bild: \(post.title)")
-                    DispatchQueue.global().async {
-                        let data = try? Data(contentsOf: url)
-
-                        DispatchQueue.main.async {
-                            if let data = data {
-                                if let image = UIImage(data: data) {
-                                    self.imageCache.setObject(image, forKey: post.imageURL as NSString)
-                            }
-                        }
-                    }
-                }
-            }
-            }
-        }
+    @objc func logInButtonTapped() {
+        performSegue(withIdentifier: "toLogInSegue", sender: nil)
     }
+    
+    override func userTapped(post: Post) {
+        performSegue(withIdentifier: "toUserSegue", sender: post.user)
+    }
+    
 }
+
+// Maybe load whole cells?
+//extension FeedTableViewController: UITableViewDataSourcePrefetching {
+//    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+//        for indexPath in indexPaths {
+//            let post = posts[indexPath.row]
+//
+//            if let _ = imageCache.object(forKey: post.imageURL as NSString) {
+//                print("Wurde schon gecached")
+//            } else {
+//                if let url = URL(string: post.imageURL) {
+//                    print("Prefetchen neues Bild: \(post.title)")
+//                    DispatchQueue.global().async {
+//                        let data = try? Data(contentsOf: url)
+//
+//                        DispatchQueue.main.async {
+//                            if let data = data {
+//                                if let image = UIImage(data: data) {
+//                                    self.imageCache.setObject(image, forKey: post.imageURL as NSString)
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
 
 
@@ -462,8 +504,8 @@ extension FeedTableViewController: UISearchResultsUpdating {
                             postResults.append(post)
                             
                             
-                            }
                         }
+                    }
                     if let resultsController = self.searchController.searchResultsController as? SearchTableViewController {
                         resultsController.postResults = nil
                         resultsController.postResults = postResults
@@ -585,11 +627,7 @@ extension FeedTableViewController: UISearchResultsUpdating {
         default:
             return
         }
-        
-        
     }
-    
-    
 }
 
 extension FeedTableViewController: UISearchBarDelegate {

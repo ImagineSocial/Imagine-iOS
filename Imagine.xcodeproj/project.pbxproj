@@ -62,7 +62,6 @@
 		E991CCDA2273474F00940834 /* ThoughtPostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E991CCD92273474F00940834 /* ThoughtPostCell.xib */; };
 		E991CCDC2273476C00940834 /* ThoughtCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E991CCDB2273476C00940834 /* ThoughtCell.swift */; };
 		E9A360E52240FDCA008027CD /* SupportTheCommunityTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A360E42240FDCA008027CD /* SupportTheCommunityTableViewController.swift */; };
-		E9A360E7224111B3008027CD /* DismissSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A360E6224111B3008027CD /* DismissSegue.swift */; };
 		E9A9934D226C7A8200448932 /* LinkCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9A9934C226C7A8200448932 /* LinkCell.xib */; };
 		E9A9934F226C7ACD00448932 /* LinkCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A9934E226C7ACD00448932 /* LinkCell.swift */; };
 		E9A9FAE122A50ED90088BD37 /* CobraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A9FAE022A50ED90088BD37 /* CobraViewController.swift */; };
@@ -79,7 +78,6 @@
 		E9B79CE922510F1900166EED /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B79CE822510F1900166EED /* TabBarViewController.swift */; };
 		E9B9445D2257C37D000145E2 /* DesignableImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B9445C2257C37D000145E2 /* DesignableImage.swift */; };
 		E9B9445F225800EE000145E2 /* UserFeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B9445E225800EE000145E2 /* UserFeedTableViewController.swift */; };
-		E9B9446122589C11000145E2 /* UserPostHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B9446022589C11000145E2 /* UserPostHelper.swift */; };
 		E9B944672258B674000145E2 /* RePostTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B944662258B674000145E2 /* RePostTableViewCell.xib */; };
 		E9B9446B2259E5EC000145E2 /* PostTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B9446A2259E5EC000145E2 /* PostTableViewCell.xib */; };
 		E9C6C237229601D8003F0F16 /* NewFactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C6C236229601D8003F0F16 /* NewFactViewController.swift */; };
@@ -89,7 +87,6 @@
 		E9C6C23F2298441E003F0F16 /* ArgumentDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C6C23E2298441E003F0F16 /* ArgumentDetailViewController.swift */; };
 		E9E531FC229E9298004D0654 /* PostCommentChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E531FB229E9298004D0654 /* PostCommentChatViewController.swift */; };
 		E9E531FE229EA242004D0654 /* ChatModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E531FD229EA242004D0654 /* ChatModels.swift */; };
-		E9E53200229EC8C8004D0654 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E531FF229EC8C8004D0654 /* Message.swift */; };
 		E9EA2CFA22AFCA0800207702 /* NewBlogPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EA2CF922AFCA0800207702 /* NewBlogPostViewController.swift */; };
 		E9EA7C9322E1DA210015C0EC /* BaseFeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EA7C9222E1DA210015C0EC /* BaseFeedTableViewController.swift */; };
 		E9EA7C9522E1ED870015C0EC /* NewsOverviewMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EA7C9422E1ED870015C0EC /* NewsOverviewMenu.swift */; };
@@ -165,7 +162,6 @@
 		E991CCD92273474F00940834 /* ThoughtPostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ThoughtPostCell.xib; sourceTree = "<group>"; };
 		E991CCDB2273476C00940834 /* ThoughtCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThoughtCell.swift; sourceTree = "<group>"; };
 		E9A360E42240FDCA008027CD /* SupportTheCommunityTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportTheCommunityTableViewController.swift; sourceTree = "<group>"; };
-		E9A360E6224111B3008027CD /* DismissSegue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissSegue.swift; sourceTree = "<group>"; };
 		E9A9934C226C7A8200448932 /* LinkCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LinkCell.xib; sourceTree = "<group>"; };
 		E9A9934E226C7ACD00448932 /* LinkCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkCell.swift; sourceTree = "<group>"; };
 		E9A9FAE022A50ED90088BD37 /* CobraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CobraViewController.swift; sourceTree = "<group>"; };
@@ -173,7 +169,7 @@
 		E9B1872E222ECC4E00923037 /* NewPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostViewController.swift; sourceTree = "<group>"; };
 		E9B2F3A8223E5414004F1F36 /* VisionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionViewController.swift; sourceTree = "<group>"; };
 		E9B2F3AC223E5E17004F1F36 /* InfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoViewController.swift; sourceTree = "<group>"; };
-		E9B5B25122D7592A004155DA /* SearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTableViewController.swift; sourceTree = "<group>"; };
+		E9B5B25122D7592A004155DA /* SearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchTableViewController.swift; path = ../SearchTableViewController.swift; sourceTree = "<group>"; };
 		E9B79CDE224EC68500166EED /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
 		E9B79CE0224EC6D200166EED /* RepostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepostCell.swift; sourceTree = "<group>"; };
 		E9B79CE2224EC72000166EED /* JobOfferCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobOfferCell.swift; sourceTree = "<group>"; };
@@ -182,7 +178,6 @@
 		E9B79CE822510F1900166EED /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		E9B9445C2257C37D000145E2 /* DesignableImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignableImage.swift; sourceTree = "<group>"; };
 		E9B9445E225800EE000145E2 /* UserFeedTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserFeedTableViewController.swift; path = ../UserFeedTableViewController.swift; sourceTree = "<group>"; };
-		E9B9446022589C11000145E2 /* UserPostHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPostHelper.swift; sourceTree = "<group>"; };
 		E9B944662258B674000145E2 /* RePostTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RePostTableViewCell.xib; sourceTree = "<group>"; };
 		E9B9446A2259E5EC000145E2 /* PostTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PostTableViewCell.xib; sourceTree = "<group>"; };
 		E9C6C236229601D8003F0F16 /* NewFactViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFactViewController.swift; sourceTree = "<group>"; };
@@ -192,7 +187,6 @@
 		E9C6C23E2298441E003F0F16 /* ArgumentDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArgumentDetailViewController.swift; sourceTree = "<group>"; };
 		E9E531FB229E9298004D0654 /* PostCommentChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCommentChatViewController.swift; sourceTree = "<group>"; };
 		E9E531FD229EA242004D0654 /* ChatModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModels.swift; sourceTree = "<group>"; };
-		E9E531FF229EC8C8004D0654 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		E9EA2CF922AFCA0800207702 /* NewBlogPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewBlogPostViewController.swift; sourceTree = "<group>"; };
 		E9EA7C9222E1DA210015C0EC /* BaseFeedTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseFeedTableViewController.swift; sourceTree = "<group>"; };
 		E9EA7C9422E1ED870015C0EC /* NewsOverviewMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsOverviewMenu.swift; sourceTree = "<group>"; };
@@ -305,9 +299,9 @@
 				E9B79CEC225110D800166EED /* CommunityViewController */,
 				E9E531FA229E9191004D0654 /* FeedVCs */,
 				E971B8DB2247A48C001BBC1E /* LogInViewController.swift */,
+				E9EA7C9222E1DA210015C0EC /* BaseFeedTableViewController.swift */,
 				E9B79CE822510F1900166EED /* TabBarViewController.swift */,
 				E9F9B68A223D584600100F51 /* PageViewController.swift */,
-				E9B5B25122D7592A004155DA /* SearchTableViewController.swift */,
 				E962AC1A2224430400C6D6EF /* Main.storyboard */,
 				E962AC1D2224430600C6D6EF /* Assets.xcassets */,
 				E962AC1F2224430600C6D6EF /* LaunchScreen.storyboard */,
@@ -389,22 +383,22 @@
 				E9B9446A2259E5EC000145E2 /* PostTableViewCell.xib */,
 				E9A9934C226C7A8200448932 /* LinkCell.xib */,
 				E991CCD92273474F00940834 /* ThoughtPostCell.xib */,
-				E96CE89522959E6D00BACD3B /* ArgumentCell.xib */,
-				E94F29BD22B2F7E60015A8CC /* EventCell.xib */,
-				E9EA7C9622E20DEB0015C0EC /* BlogPostCell.xib */,
 				E938104D22E707A90086F199 /* YouTubeCell.xib */,
+				E94F29BD22B2F7E60015A8CC /* EventCell.xib */,
+				E96CE89522959E6D00BACD3B /* ArgumentCell.xib */,
+				E9EA7C9622E20DEB0015C0EC /* BlogPostCell.xib */,
 				E9B79CDE224EC68500166EED /* PostCell.swift */,
 				E9B79CE0224EC6D200166EED /* RepostCell.swift */,
 				E9A9934E226C7ACD00448932 /* LinkCell.swift */,
 				E991CCDB2273476C00940834 /* ThoughtCell.swift */,
+				E938104F22E708510086F199 /* YouTubeCell.swift */,
+				E94F29BF22B375610015A8CC /* EventCell.swift */,
 				E9B79CE2224EC72000166EED /* JobOfferCell.swift */,
 				E9B79CE4224EC78900166EED /* CampaignCell.swift */,
 				E9EA7C9A22E5F47C0015C0EC /* VoteCell.swift */,
 				E96CE8972295A13B00BACD3B /* ArgumentCell.swift */,
-				E94F29BF22B375610015A8CC /* EventCell.swift */,
 				E9EE0E3422D234DA0039F32C /* VisionPitchCell.swift */,
 				E911EEF122DB173E00EDD056 /* SettingCell.swift */,
-				E938104F22E708510086F199 /* YouTubeCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -429,7 +423,7 @@
 			isa = PBXGroup;
 			children = (
 				E962AC282224442000C6D6EF /* FeedTableViewController.swift */,
-				E9EA7C9222E1DA210015C0EC /* BaseFeedTableViewController.swift */,
+				E9B5B25122D7592A004155DA /* SearchTableViewController.swift */,
 				E9600E872235076B003E5A7A /* PostViewController.swift */,
 				E9530C4D22DCBF20007D6A00 /* PinchToZoomViewController.swift */,
 				E991CCD72270972F00940834 /* WebViewController.swift */,
@@ -445,11 +439,8 @@
 			isa = PBXGroup;
 			children = (
 				E962AC2A2224446100C6D6EF /* PostHelper.swift */,
-				E9B9446022589C11000145E2 /* UserPostHelper.swift */,
 				E93043B02293F06E00DC66D5 /* DataHelper.swift */,
-				E9A360E6224111B3008027CD /* DismissSegue.swift */,
 				E9E531FD229EA242004D0654 /* ChatModels.swift */,
-				E9E531FF229EC8C8004D0654 /* Message.swift */,
 				E9FE65D522A2A42800FA4E68 /* HandyHelper.swift */,
 				E911EEEF22DB157500EDD056 /* SettingsLauncher.swift */,
 				E911EEF322DB630300EDD056 /* SideMenu.swift */,
@@ -634,7 +625,6 @@
 				E962AC38222DB46400C6D6EF /* MeldeOptionViewController.swift in Sources */,
 				E962AC34222DA04E00C6D6EF /* MeldenViewController.swift in Sources */,
 				E9EA7C9522E1ED870015C0EC /* NewsOverviewMenu.swift in Sources */,
-				E9E53200229EC8C8004D0654 /* Message.swift in Sources */,
 				E9530C4E22DCBF20007D6A00 /* PinchToZoomViewController.swift in Sources */,
 				E9EE0E3522D234DA0039F32C /* VisionPitchCell.swift in Sources */,
 				E9EA7C9322E1DA210015C0EC /* BaseFeedTableViewController.swift in Sources */,
@@ -646,7 +636,6 @@
 				E9EA7C9922E5BC320015C0EC /* InfoScreen.swift in Sources */,
 				E9C6C23D22981C0B003F0F16 /* ArgumentTableViewController.swift in Sources */,
 				E96CE89022941A1F00BACD3B /* ProFactTableViewController.swift in Sources */,
-				E9B9446122589C11000145E2 /* UserPostHelper.swift in Sources */,
 				E911EEF022DB157500EDD056 /* SettingsLauncher.swift in Sources */,
 				E96CE8982295A13B00BACD3B /* ArgumentCell.swift in Sources */,
 				E98B22EE22CA396B000F965F /* ChatsTableViewController.swift in Sources */,
@@ -660,7 +649,6 @@
 				E9F9B68D223D6C9500100F51 /* voteCampaignTableViewController.swift in Sources */,
 				E96CE88D22940A9F00BACD3B /* FactCollectionViewController.swift in Sources */,
 				E911EEF422DB630300EDD056 /* SideMenu.swift in Sources */,
-				E9A360E7224111B3008027CD /* DismissSegue.swift in Sources */,
 				E9EA7C9B22E5F47C0015C0EC /* VoteCell.swift in Sources */,
 				E9B79CE5224EC78900166EED /* CampaignCell.swift in Sources */,
 				E9B79CE1224EC6D200166EED /* RepostCell.swift in Sources */,

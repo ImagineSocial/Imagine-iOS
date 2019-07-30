@@ -18,8 +18,6 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         super.viewDidLoad()
         
         getFacts()
-        
-        
     }
 
    

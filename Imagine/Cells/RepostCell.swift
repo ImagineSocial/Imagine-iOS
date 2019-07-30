@@ -43,6 +43,25 @@ class RePostCell : UITableViewCell {
     var delegate: RepostCellDelegate?
     let handyHelper = HandyHelper()
     
+    override func awakeFromNib() {
+        OGPostView.layer.borderWidth = 1
+        OGPostView.layer.borderColor = UIColor.black.cgColor
+        
+        //Profile Picture
+        let repostLayer = reposterProfilePictureImageView.layer
+        repostLayer.cornerRadius = reposterProfilePictureImageView.frame.width/2
+        repostLayer.borderWidth = 0.1
+        repostLayer.borderColor = UIColor.black.cgColor
+        
+        // Profile Picture
+        let layer = profilePictureImageView.layer
+        layer.cornerRadius = profilePictureImageView.frame.width/2
+        layer.borderWidth = 0.1
+        layer.borderColor = UIColor.black.cgColor
+        
+        cellImageView.layer.cornerRadius = 5
+    }
+    
     var post: Post? {
         didSet {
             if let post = post {
@@ -50,9 +69,6 @@ class RePostCell : UITableViewCell {
                 profilePictureImageView.image = UIImage(named: "default-user")
                 originalTitleLabel.text = nil
                 translatedTitleLabel.text = nil
-                
-                OGPostView.layer.borderWidth = 1
-                OGPostView.layer.borderColor = UIColor.black.cgColor
                 
                 // Post Sachen einstellen
                 translatedTitleLabel.text = post.title
@@ -66,11 +82,6 @@ class RePostCell : UITableViewCell {
                 commentCountLabel.text = String(post.commentCount)
                 
                 // Profile Picture
-                let layer = reposterProfilePictureImageView.layer
-                layer.cornerRadius = reposterProfilePictureImageView.frame.width/2
-                layer.borderWidth = 0.1
-                layer.borderColor = UIColor.black.cgColor
-                
                 if let url = URL(string: post.user.imageURL) {
                     reposterProfilePictureImageView.sd_setImage(with: url, completed: nil)
                 }
@@ -78,28 +89,18 @@ class RePostCell : UITableViewCell {
                 
                 // Repost Sachen einstellen
                 if let repost = post.repost {
-                    originalTitleLabel.font = UIFont(name: "Kalam-Regular", size: 20.0)
                     originalTitleLabel.text = repost.title
                     originalCreateDateLabel.text = repost.createTime
                     ogPosterNameLabel.text = "\(post.user.name) \(post.user.surname)"
                     
                     // Profile Picture
-                    let layer = profilePictureImageView.layer
-                    layer.cornerRadius = profilePictureImageView.frame.width/2
-                    layer.borderWidth = 0.1
-                    layer.borderColor = UIColor.black.cgColor
-                    
                     if let url = URL(string: repost.user.imageURL) {
                         profilePictureImageView.sd_setImage(with: url, completed: nil)
                     }
                     
                     if let url = URL(string: repost.imageURL) {
-                        if let repostCellImageView = cellImageView {
-                            
-                            repostCellImageView.isHidden = false      // Check ich nicht, aber geht!
-                            repostCellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
-                            repostCellImageView.layer.cornerRadius = 5
-                        }
+                        cellImageView.isHidden = false      // Check ich nicht, aber geht!
+                        cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
                     }
                     
                     // ReportView einstellen

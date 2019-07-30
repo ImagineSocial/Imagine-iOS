@@ -79,7 +79,6 @@ class PostCommentChatViewController: MSGMessengerViewController {
                 print("Error listening for channel updates: \(error?.localizedDescription ?? "No error")")
                 return      // Wenn squerySnapshot nicht snapshot ist
             }
-            print("Error:", error?.localizedDescription)
             
             let snapCount = snapshot.documentChanges.count
             
@@ -180,8 +179,8 @@ class PostCommentChatViewController: MSGMessengerViewController {
             if currentUserUid != "" {   // Falls man nur Gast ist
                 saveInFirebase(bodyString: inputView.message, message: message)
             }
-            
-            // Brauche ich nicht, weil Firebase Listener das macht!! insert(message)
+        } else {
+            self.notLoggedInAlert()
         }
         inputView.resignFirstResponder()
     }

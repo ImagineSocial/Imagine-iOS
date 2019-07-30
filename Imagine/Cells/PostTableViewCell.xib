@@ -34,12 +34,12 @@
                             <constraint firstAttribute="height" constant="10" id="aI2-Sv-HE8"/>
                         </constraints>
                     </view>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Hier steht der Titel meines Posts. Wenn ich kein Bild Poste auch der ganze Post" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.59999999999999998" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dmS-xc-Exh">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Hier steht der Titel meines Posts. Wenn ich kein Bild Poste auch der ganze Post" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999999999999996" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dmS-xc-Exh">
                         <rect key="frame" x="15" y="72" width="345" height="60"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="60" id="hfq-nC-vq2"/>
                         </constraints>
-                        <fontDescription key="fontDescription" name="Kalam-Regular" family="Kalam" pointSize="20"/>
+                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
@@ -314,9 +314,16 @@
                             <action selector="reportPressed:" destination="ZUo-e7-XZo" eventType="touchUpInside" id="uIo-0P-6W4"/>
                         </connections>
                     </button>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="81d-az-FW4" userLabel="userButton">
+                        <rect key="frame" x="15" y="30" width="134" height="40"/>
+                        <connections>
+                            <action selector="userButtonTapped:" destination="ZUo-e7-XZo" eventType="touchUpInside" id="M2u-Kr-wZJ"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="Owt-B3-XUV" firstAttribute="top" secondItem="MKy-RD-AEt" secondAttribute="bottom" constant="2" id="6Fw-mR-a9n"/>
+                    <constraint firstItem="81d-az-FW4" firstAttribute="top" secondItem="nHa-Ll-Wga" secondAttribute="top" id="9WY-8w-UQe"/>
                     <constraint firstItem="nHa-Ll-Wga" firstAttribute="leading" secondItem="dmS-xc-Exh" secondAttribute="leading" id="BWM-sO-cAr"/>
                     <constraint firstItem="wga-Yj-hL1" firstAttribute="bottom" secondItem="nHa-Ll-Wga" secondAttribute="bottom" id="C0b-QT-UwR"/>
                     <constraint firstItem="4sj-iy-eAd" firstAttribute="top" secondItem="nHa-Ll-Wga" secondAttribute="top" id="EwS-5c-4iS"/>
@@ -327,6 +334,7 @@
                     <constraint firstItem="W55-Nt-60d" firstAttribute="trailing" secondItem="dmS-xc-Exh" secondAttribute="trailing" id="RBu-0L-uQ0"/>
                     <constraint firstItem="1j9-xB-qIH" firstAttribute="leading" secondItem="S1H-Cn-Se8" secondAttribute="leading" id="SKE-Fe-r1t"/>
                     <constraint firstAttribute="trailingMargin" secondItem="Owt-B3-XUV" secondAttribute="trailing" constant="5" id="Wl0-aO-G8G"/>
+                    <constraint firstItem="81d-az-FW4" firstAttribute="leading" secondItem="nHa-Ll-Wga" secondAttribute="leading" id="ZkK-fN-7dc"/>
                     <constraint firstAttribute="trailing" secondItem="dmS-xc-Exh" secondAttribute="trailing" constant="15" id="aw7-ks-jm8"/>
                     <constraint firstItem="MKy-RD-AEt" firstAttribute="top" secondItem="dmS-xc-Exh" secondAttribute="bottom" id="bsD-Co-hTY"/>
                     <constraint firstItem="wga-Yj-hL1" firstAttribute="leading" secondItem="nHa-Ll-Wga" secondAttribute="trailing" constant="10" id="d8G-5t-Ddp"/>
@@ -343,6 +351,8 @@
                     <constraint firstItem="dmS-xc-Exh" firstAttribute="leading" secondItem="S1H-Cn-Se8" secondAttribute="leading" constant="15" id="psP-J2-qxE"/>
                     <constraint firstItem="MNU-VP-taA" firstAttribute="leading" secondItem="S1H-Cn-Se8" secondAttribute="leading" id="vYE-EQ-xO5"/>
                     <constraint firstItem="nHa-Ll-Wga" firstAttribute="top" secondItem="1j9-xB-qIH" secondAttribute="bottom" constant="6" id="vdM-UN-Gc0"/>
+                    <constraint firstItem="81d-az-FW4" firstAttribute="height" secondItem="nHa-Ll-Wga" secondAttribute="height" id="wrT-F1-sTM"/>
+                    <constraint firstItem="81d-az-FW4" firstAttribute="trailing" secondItem="4sj-iy-eAd" secondAttribute="trailing" id="xqY-Ua-vEF"/>
                     <constraint firstItem="Owt-B3-XUV" firstAttribute="centerX" secondItem="S1H-Cn-Se8" secondAttribute="centerX" id="zhc-KW-2Rh"/>
                 </constraints>
             </tableViewCellContentView>

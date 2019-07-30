@@ -18,10 +18,8 @@ enum SideMenuButton {
     case cancel
 }
 
-class SideMenuButtons {
-    
-}
 
+//Maybe create the currentUser here and pass it to the userfeedProfile
 class SideMenu: NSObject {
     
     var FeedTableView:FeedTableViewController?
@@ -192,9 +190,9 @@ class SideMenu: NSObject {
         if let user = Auth.auth().currentUser {
             if let url = user.photoURL {
                 imgView.sd_setImage(with: url, completed: nil)
+            } else {
+                imgView.image = UIImage(named: "default-user")
             }
-        } else {
-            imgView.image = UIImage(named: "default-user")
         }
         imgView.contentMode = .scaleAspectFill
         imgView.layer.cornerRadius = imgView.frame.height/2

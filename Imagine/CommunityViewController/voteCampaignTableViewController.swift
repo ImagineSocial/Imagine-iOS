@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 enum suggestionMode {
     case vote
@@ -218,6 +219,13 @@ class voteCampaignTableViewController: UITableViewController {
         }
     }
     
+    @IBAction func shareIdeaTapped(_ sender: Any) {
+        if let _ = Auth.auth().currentUser {
+            performSegue(withIdentifier: "toNewCampaignSegue", sender: nil)
+        } else {
+            self.notLoggedInAlert()
+        }
+    }
     
 }
 

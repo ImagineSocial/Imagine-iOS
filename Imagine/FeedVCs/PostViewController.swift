@@ -266,17 +266,16 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         profilePictureImageView.heightAnchor.constraint(equalToConstant: 46).isActive = true
         profilePictureImageView.layoutIfNeeded() // Damit er auch rund wird
         
-        contentView.addSubview(userButton)
-        userButton.leadingAnchor.constraint(equalTo: profilePictureImageView.leadingAnchor).isActive = true
-        userButton.topAnchor.constraint(equalTo: profilePictureImageView.topAnchor).isActive = true
-        userButton.widthAnchor.constraint(equalToConstant: profilePictureImageView.frame.width).isActive = true
-        userButton.heightAnchor.constraint(equalToConstant: profilePictureImageView.frame.height).isActive = true
-        userButton.layoutIfNeeded()
-        
         contentView.addSubview(nameLabel)
         nameLabel.leadingAnchor.constraint(equalTo: profilePictureImageView.trailingAnchor, constant: 10).isActive = true
         nameLabel.topAnchor.constraint(equalTo: profilePictureImageView.topAnchor).isActive = true
         
+        contentView.addSubview(userButton)
+        userButton.leadingAnchor.constraint(equalTo: profilePictureImageView.leadingAnchor).isActive = true
+        userButton.topAnchor.constraint(equalTo: profilePictureImageView.topAnchor).isActive = true
+        userButton.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor).isActive = true
+        userButton.heightAnchor.constraint(equalToConstant: profilePictureImageView.frame.height).isActive = true
+        userButton.layoutIfNeeded()
         
         contentView.addSubview(createDateLabel)
         createDateLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor).isActive = true
@@ -940,6 +939,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                     self.savePostButton.tintColor = .green
                 }
             }
+        } else {
+            self.notLoggedInAlert()
         }
     }
     
@@ -999,12 +1000,12 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func eventUserTapped(user: User) {
-        performSegue(withIdentifier: "toUserSegue", sender: user.userUID)
+        performSegue(withIdentifier: "toUserSegue", sender: user)
     }
     
     @objc func userTapped() {
         if post.originalPosterUID != "" {
-            performSegue(withIdentifier: "toUserSegue", sender: post.originalPosterUID)
+            performSegue(withIdentifier: "toUserSegue", sender: post.user)
         } else {
             print("Kein User zu finden!")
         }
@@ -1021,11 +1022,14 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let nextVC = segue.destination as? UserFeedTableViewController {
-            if let OPUID = sender as? String {
-                nextVC.userUID = OPUID
-            } else {
-                print("Irgendwas will der hier nicht übertragen")
+        
+        if segue.identifier == "toUserSegue" {
+            if let chosenUser = sender as? User {
+                if let userVC = segue.destination as? UserFeedTableViewController {
+                    userVC.userOfProfile = chosenUser
+                    userVC.currentState = .otherUser
+                    
+                }
             }
         }
         if segue.identifier == "goToLink" {

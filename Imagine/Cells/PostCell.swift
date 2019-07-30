@@ -9,6 +9,7 @@
 import UIKit
 
 protocol PostCellDelegate {
+    func userTapped(post: Post)
     func reportTapped(post: Post)
     func thanksTapped(post: Post)
     func wowTapped(post: Post)
@@ -39,10 +40,24 @@ class PostCell : UITableViewCell {
     
     var delegate: PostCellDelegate?
     
-    // Maybe awake from nib for the UI Layout????
+    
+    override func awakeFromNib() {
+        let layer = profilePictureImageView.layer
+        layer.cornerRadius = profilePictureImageView.frame.width/2
+        layer.borderWidth = 0.1
+        layer.borderColor = UIColor.black.cgColor
+        
+        titleLabel.adjustsFontSizeToFitWidth = true
+        
+        cellImageView.layer.cornerRadius = 1
+    }
+    
+    
     
     var post:Post? {
         didSet {
+            
+            // Erneut nach post.user gucken und wenn er geladen ist, ist stop und das Profil wird geladen 
             
             // Set to nil in case of non existing stuff
             cellImageView.image = nil
@@ -52,7 +67,6 @@ class PostCell : UITableViewCell {
             if let post = post {
                 
                 titleLabel.text = post.title
-                titleLabel.adjustsFontSizeToFitWidth = true
                 
                 thanksCountLabel.text = "thanks"
                 wowCountLabel.text = "wow"
@@ -65,41 +79,45 @@ class PostCell : UITableViewCell {
                 cellCreateDateLabel.text = post.createTime
                 
                 // LabelHeight calculated by the number of letters
+                
+                // Maybe call this when I fetch the Posts and put it into the object? ReportView also
                 let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
                 titleLabelHeightConstraint.constant = labelHeight
                 
                 // Profile Picture
-                let layer = profilePictureImageView.layer
-                layer.cornerRadius = profilePictureImageView.frame.width/2
-                layer.borderWidth = 0.1
-                layer.borderColor = UIColor.black.cgColor
-                
                 if let url = URL(string: post.user.imageURL) {
                     profilePictureImageView.sd_setImage(with: url, completed: nil)
                 }
                 
-                if let cachedImage = imageCache.object(forKey: post.imageURL as NSString) {
-                    cellImageView.image = cachedImage  // Using cached Image
-                } else {
-                    if let url = URL(string: post.imageURL) {   // Load and Cache Image
-                        if let cellImageView = cellImageView {
-                            
-                            cellImageView.isHidden = false      // Check ich nicht, aber geht!
-                            cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: []) { (image, err, _, _) in
-                                if let image = image {
-                                    self.imageCache.setObject(image, forKey: post.imageURL as NSString)
-                                }
-                            }
-                            cellImageView.layer.cornerRadius = 1
-                        }
+                if let url = URL(string: post.imageURL) {
+                    if let cellImageView = cellImageView {
+                        cellImageView.sd_setShowActivityIndicatorView(true)
+                        cellImageView.sd_setIndicatorStyle(.whiteLarge)
+                        cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
                     }
-                    
-                    
                 }
+                    
+//                if let cachedImage = imageCache.object(forKey: post.imageURL as NSString) {
+//                    cellImageView.image = cachedImage  // Using cached Image
+//                } else {
+//                    if let url = URL(string: post.imageURL) {   // Load and Cache Image
+//                        if let cellImageView = cellImageView {
+//
+//                            cellImageView.isHidden = false      // Check ich nicht, aber geht!
+//                            cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: []) { (image, err, _, _) in
+//                                if let image = image {
+//                                    self.imageCache.setObject(image, forKey: post.imageURL as NSString)
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//
+//                }
                 
                 // Set ReportView
                 let reportViewOptions = handyHelper.setReportView(post: post)
-                
+
                 reportViewHeightConstraint.constant = reportViewOptions.heightConstant
                 reportViewButtonInTop.isHidden = reportViewOptions.buttonHidden
                 reportViewLabel.text = reportViewOptions.labelText
@@ -144,6 +162,13 @@ class PostCell : UITableViewCell {
     @IBAction func reportPressed(_ sender: Any) {
         if let post = post {
             delegate?.reportTapped(post: post)
+        }
+    }
+    
+    
+    @IBAction func userButtonTapped(_ sender: Any) {
+        if let post = post {
+            delegate?.userTapped(post: post)
         }
     }
     

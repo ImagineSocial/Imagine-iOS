@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class SourceTableViewController: UITableViewController {
     
@@ -78,7 +79,11 @@ class SourceTableViewController: UITableViewController {
         if source != "Füge eine Quelle hinzu" {
             performSegue(withIdentifier: "toSourceDetail", sender: nil)
         } else {
-            performSegue(withIdentifier: "toNewSourceSegue", sender: nil)
+            if let _ = Auth.auth().currentUser {
+                performSegue(withIdentifier: "toNewSourceSegue", sender: nil)
+            } else {
+                self.notLoggedInAlert()
+            }
         }
     }
     

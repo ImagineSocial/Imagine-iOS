@@ -32,6 +32,7 @@ class MeldeOptionViewController: UIViewController {
         performSegue(withIdentifier: "reportConfirmSegue", sender: post)
     }
     
+        
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let embededVC = segue.destination as? MeldeTableViewController {
             embededVC.reportCategory = self.reportCategory

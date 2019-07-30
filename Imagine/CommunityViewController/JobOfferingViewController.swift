@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class JobOfferingViewController: UIViewController {
 
@@ -40,7 +41,11 @@ class JobOfferingViewController: UIViewController {
 
  
     @IBAction func interestedPressed(_ sender: Any) {
-        performSegue(withIdentifier: "toSurveySegue", sender: jobOffer)
+        if let _ = Auth.auth().currentUser {
+            performSegue(withIdentifier: "toSurveySegue", sender: jobOffer)
+        } else {
+            self.notLoggedInAlert()
+        }
     }
     @IBAction func moreInfosPressed(_ sender: Any) {
     }

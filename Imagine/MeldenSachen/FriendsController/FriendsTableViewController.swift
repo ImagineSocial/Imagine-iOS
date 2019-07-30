@@ -11,12 +11,17 @@ import Firebase
 import FirebaseAuth
 import FirebaseFirestore
 
+struct Category {
+    let name: String
+    var friends: [Friend]
+}
 
-// Combine the two different friend cells
 class FriendsTableViewController: UITableViewController, RequestDelegate {
     
+    var sections = [Category]()
+    var alreadyFriends = [Friend]()
+    var requestedFriends = [Friend]()
     
-    var friendsList = [Friend]()
     let db = Firestore.firestore()
     var isNewMessage = false
     
@@ -25,10 +30,12 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
         super.viewDidLoad()
         
         getFriends()
-        
     }
     
     func getFriends() {
+        alreadyFriends.removeAll()
+        requestedFriends.removeAll()
+        sections.removeAll()
         
         if let user = Auth.auth().currentUser {
             let friendsRef = db.collection("Users").document(user.uid).collection("friends")
@@ -46,95 +53,136 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                     let documentID = document.documentID
                     let documentData = document.data()
                     
-                    guard let userUID = documentData["userUID"] as? String,
-                        let requestedAt = documentData["requestedAt"] as? Timestamp,
+                    guard let requestedAt = documentData["requestedAt"] as? Timestamp,
                         let accepted = documentData["accepted"] as? Bool
                         else {
                             return
                     }
                     let friend = Friend()
                     
-                    friend.user.userUID = userUID
+                    friend.user.userUID = documentID
                     friend.accepted = accepted
                     friend.requestedAt = HandyHelper().getStringDate(timestamp: requestedAt)
-                    friend.documentID = documentID
                     
-                    self.friendsList.append(friend)
+                    if accepted {
+                        self.alreadyFriends.append(friend)
+                    } else {
+                        // not accepted
+                        self.requestedFriends.append(friend)
+                    }
                 }
-                self.loadUsers()
                 
+                self.sections = [Category(name: "Freundschaftsanfragen", friends: self.requestedFriends),
+                                 Category(name: "Freunde", friends: self.alreadyFriends)]
+                self.loadUsers()
             }
         }
     }
     
+    
     func loadUsers() {
-        for friend in friendsList {
-            // User Daten raussuchen
-            let userRef = db.collection("Users").document(friend.user.userUID)
-            userRef.getDocument(completion: { (document, err) in
-                if let document = document {
-                    if let docData = document.data() {
-                        
-                        friend.user.name = docData["name"] as? String ?? ""
-                        friend.user.surname = docData["surname"] as? String ?? ""
-                        friend.user.imageURL = docData["profilePictureURL"] as? String ?? ""
-                        
-                        
-                        self.tableView.reloadData()
-                    }
-                }
-                if err != nil {
-                    print("Wir haben einen Error beim User: \(err?.localizedDescription ?? "No error")")
-                }
-            })
+        
+        for section in sections {
+            for friend in section.friends {
+                getUserDetails(friend: friend)
+            }
         }
+        self.tableView.reloadData()
     }
     
+    func getUserDetails(friend: Friend) {
+        let userRef = db.collection("Users").document(friend.user.userUID)
+        userRef.getDocument(completion: { (document, err) in
+            if let document = document {
+                if let docData = document.data() {
+                    
+                    friend.user.name = docData["name"] as? String ?? ""
+                    friend.user.surname = docData["surname"] as? String ?? ""
+                    friend.user.imageURL = docData["profilePictureURL"] as? String ?? ""
+                    friend.user.statusQuote = docData["statusText"] as? String ?? ""
+                    
+                    self.tableView.reloadData()
+                }
+            }
+            if err != nil {
+                print("Wir haben einen Error beim User: \(err?.localizedDescription ?? "No error")")
+            }
+        })
+    }
     
     // MARK: - Table view data source
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // 2 Sections later: One for requested, one for friends
-        return 1
+        
+        return sections.count
+    }
+    
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+        case 0:
+            if self.tableView(tableView, numberOfRowsInSection: section) > 0 {
+                return sections[0].name
+            }
+        case 1:
+            return sections[1].name
+        default:
+            return nil // when return nil no header will be shown
+        }
+        return nil
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return friendsList.count
+        
+        if section == 1 && sections[1].friends.count == 0 { // No friends yet
+            return 1
+        } else {
+            let friends = sections[section].friends
+            
+            return friends.count
+        }
+        
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let friend = friendsList[indexPath.row]
-        
-        if let cell = tableView.dequeueReusableCell(withIdentifier: "FriendRequestCell", for: indexPath) as? FriendRequestCell {
-            
-            cell.delegate = self
-            cell.setFriend(friend: friend)
-            
-            cell.acceptLabel.isHidden = true
-            cell.nameLabel.text = "\(friend.user.name) \(friend.user.surname)"
-            
-            
-            cell.profilePictureImageView.layer.cornerRadius = 2
-            if let url = URL(string: friend.user.imageURL) {
-                cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
-            }
-            
-            if friend.accepted {
-                cell.editButton.isHidden = false
-                cell.stackView.isHidden = true
-            } else {    // not accepted Invitation
-                cell.editButton.isHidden = true
-                cell.stackView.isHidden = false
-            }
-            
-            if isNewMessage {
-                cell.editButton.isHidden = true
-                cell.stackView.isHidden = true
-            }
+        if indexPath.section == 1 && sections[1].friends.count == 0 {   // No friends yet
+            let cell = UITableViewCell()
+            cell.textLabel?.text = "Lade jetzt deine Freunde ein"
+            cell.textLabel?.textAlignment = .center
+            cell.isUserInteractionEnabled = true
             return cell
+        } else {
+            let friends = sections[indexPath.section].friends
+            let friend = friends[indexPath.row]
+            
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "FriendRequestCell", for: indexPath) as? FriendRequestCell {
+                
+                cell.delegate = self
+                cell.setFriend(friend: friend)
+                
+                cell.acceptLabel.isHidden = true
+                cell.nameLabel.text = "\(friend.user.name) \(friend.user.surname)"
+                
+                
+                cell.profilePictureImageView.layer.cornerRadius = 2
+                if let url = URL(string: friend.user.imageURL) {
+                    cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
+                }
+                
+                if friend.accepted {
+                    cell.editButton.isHidden = false
+                    cell.stackView.isHidden = true
+                } else {    // not accepted Invitation
+                    cell.editButton.isHidden = true
+                    cell.stackView.isHidden = false
+                }
+                
+                if isNewMessage {
+                    cell.editButton.isHidden = true
+                    cell.stackView.isHidden = true
+                }
+                return cell
+            }
         }
-        
         return UITableViewCell()
     }
     
@@ -144,27 +192,32 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
     
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let friend = friendsList[indexPath.row]
-        
-        if isNewMessage {
-            goToChatTapped(friend: friend)
+        if sections[0].friends.count == 0 && sections[1].friends.count == 0 {
+            tableView.deselectRow(at: indexPath, animated: true)
         } else {
-            performSegue(withIdentifier: "toUserSegue", sender: friend.user.userUID)
+            let friends = sections[indexPath.section].friends
+            let friend = friends[indexPath.row]
+            
+            if isNewMessage {
+                goToChatTapped(friend: friend)
+            } else {
+                performSegue(withIdentifier: "toUserSegue", sender: friend.user)
+            }
         }
     }
     
     
     func acceptInvitation(friend: Friend) {
         if let user = Auth.auth().currentUser {
-            let requestRef = db.collection("Users").document(user.uid).collection("friends").document(friend.documentID)
+            let requestRef = db.collection("Users").document(user.uid).collection("friends").document(friend.user.userUID)
             
             requestRef.updateData(["accepted": true])   // Accept and change the database of the current User
             
             friend.accepted = true
             
-            let data: [String:Any] = ["accepted": true, "requestedAt" : Timestamp(date: Date()), "userUID": user.uid]
+            let data: [String:Any] = ["accepted": true, "requestedAt" : Timestamp(date: Date())]
             
-            let friendRef = db.collection("Users").document(friend.user.userUID).collection("friends").document()
+            let friendRef = db.collection("Users").document(friend.user.userUID).collection("friends").document(user.uid)
             
             friendRef.setData(data) { (error) in    // Change Database of the inviter
                 if error != nil {
@@ -172,22 +225,18 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                 }
             }
             
-//            self.tableView.reloadData()
         }
     }
     
     func declineInvitation(friend: Friend) {
         if let user = Auth.auth().currentUser {
-            let requestRef = db.collection("Users").document(user.uid).collection("friends").document(friend.documentID)
+            let requestRef = db.collection("Users").document(user.uid).collection("friends").document(friend.user.userUID)
             //            requestRef.setData(["declined": true], mergeFields:["declined"])
             requestRef.delete()
             
+            // Delete inviters request
             
-//            if let index = friendsList.index(where: {$0.documentID == friend.documentID}) {
-//                self.friendsList.remove(at: index)
-//
-//                self.tableView.reloadData()
-//            }
+            
         }
     }
     
@@ -202,13 +251,54 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
         case .chatWithUser:
             goToChatTapped(friend: friend)
         case .blockUser:
-            print("Kommt noch!!")
+            let alert = UIAlertController(title: "Blocken", message: "Der User wird aus deiner Freundesliste gelöscht und darf dich nicht mehr kontaktieren. Fortfahren? ", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
+                // block User
+                
+                if let user = Auth.auth().currentUser {
+                    let blockRef = self.db.collection("Users").document(user.uid)
+                    blockRef.updateData([
+                        "blocked": FieldValue.arrayUnion([friend.user.userUID]) // Add the person as blocked
+                        ])
+                    
+                    self.deleteFriend(friend: friend)
+                }
+            }))
+            alert.addAction(UIAlertAction(title: "Doch nicht!", style: .cancel, handler: { (_) in
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            present(alert, animated: true)
+        case .deleteFriend:
+            self.deleteFriend(friend: friend)
         default:
             print("Nichts")
-
-//            navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+            //            
         }
         
+    }
+    
+    func deleteFriend(friend: Friend) {
+        // Unfollow this person
+        if let user = Auth.auth().currentUser {
+            let friendsUID = friend.user.userUID
+            
+            let friendsRefOfCurrentProfile = db.collection("Users").document(friendsUID).collection("friends").document(user.uid)
+            friendsRefOfCurrentProfile.delete()
+            
+            let friendsRefOfLoggedInUser = db.collection("Users").document(user.uid).collection("friends").document(friendsUID)
+            friendsRefOfLoggedInUser.delete()
+            
+            
+            // Notify User
+            let alert = UIAlertController(title: "Freundschaft gelöscht", message: "Die Freundschaft wurde erfolgreich gelöscht", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
+                
+            }))
+            self.present(alert, animated: true) {
+                self.getFriends()
+            }
+            
+        }
     }
     
     func editButtonTapped(friend: Friend) {
@@ -229,16 +319,16 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                     print("We have an error downloading the chat: \(error?.localizedDescription ?? "no error")")
                 } else {
                     if querySnapshot!.isEmpty { // Create a new chat
+                        let newChatRef = self.db.collection("Chats").document()
+                        let newDocumentID = newChatRef.documentID
                         
                         let chat = Chat()
                         chat.participant = user
-                        
-                        let newChatRef = self.db.collection("Chats").document()
-                        chat.documentID = newChatRef.documentID
+                        chat.documentID = newDocumentID
                         
                         // Create Chat Reference for the current User
-                        let dataForCurrentUsersDatabase = ["participant": chat.participant.userUID, "documentID": chat.documentID]
-                        let currentUsersDatabaseRef = self.db.collection("Users").document(currentUser.uid).collection("chats").document()
+                        let dataForCurrentUsersDatabase = ["participant": chat.participant.userUID]
+                        let currentUsersDatabaseRef = self.db.collection("Users").document(currentUser.uid).collection("chats").document(newDocumentID)
                         
                         currentUsersDatabaseRef.setData(dataForCurrentUsersDatabase) { (error) in
                             if error != nil {
@@ -247,8 +337,8 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                         }
                         
                         // Create Chat Reference for the User of the profile
-                        let dataForProfileUsersDatabase = ["participant": currentUser.uid, "documentID": chat.documentID]
-                        let profileUsersDatabaseRef = self.db.collection("Users").document(user.userUID).collection("chats").document()
+                        let dataForProfileUsersDatabase = ["participant": currentUser.uid]
+                        let profileUsersDatabaseRef = self.db.collection("Users").document(user.userUID).collection("chats").document(newDocumentID)
                         
                         profileUsersDatabaseRef.setData(dataForProfileUsersDatabase) { (error) in
                             if error != nil {
@@ -259,18 +349,16 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                         self.performSegue(withIdentifier: "toNewMessage", sender: chat)
                         
                     } else {    // Go to the existing chat
+                        print("hier auch")
                         if let document = querySnapshot?.documents.last {
+                            
                             let chat = Chat()
+                            let documentID = document.documentID
                             
-                            let documentData = document.data()
+                            chat.documentID = documentID
+                            chat.participant = user
                             
-                            if let documentID = documentData["documentID"] as? String {
-                                
-                                chat.documentID = documentID
-                                chat.participant = user
-                                
-                                self.performSegue(withIdentifier: "toNewMessage", sender: chat)
-                            }
+                            self.performSegue(withIdentifier: "toNewMessage", sender: chat)
                         }
                     }
                 }
@@ -279,13 +367,16 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let nextVC = segue.destination as? UserFeedTableViewController {
-            if let OPUID = sender as? String {
-                nextVC.userUID = OPUID
-            } else {
-                print("Irgendwas will der hier nicht übertragen")
+        
+        if segue.identifier == "toUserSegue" {
+            if let choosenUser = sender as? User {
+                if let nextVC = segue.destination as? UserFeedTableViewController{
+                    nextVC.userOfProfile = choosenUser
+                    nextVC.currentState = .friendOfCurrentUser
+                }
             }
         }
+        
         if segue.identifier == "toNewMessage" {
             if let chosenChat = sender as? Chat {
                 if let chatVC = segue.destination as? ChatViewController {

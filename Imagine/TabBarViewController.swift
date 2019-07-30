@@ -15,10 +15,11 @@ import SDWebImage
 
 class TabBarViewController: UITabBarController {
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.tabBar.isTranslucent = false   //Prevents a bug/glitch where the items jump when going back from antother ViewController
+        
         
         }
 
