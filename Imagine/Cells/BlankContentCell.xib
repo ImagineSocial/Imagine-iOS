@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSans-Medium.ttf">
+            <string>IBMPlexSans-Medium</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="NibBlankCell" rowHeight="1148" id="1sn-aN-hf7" customClass="BlankContentCell" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="652"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="1sn-aN-hf7" id="bfe-gQ-9hC">
+                <rect key="frame" x="0.0" y="0.0" width="414" height="651.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="meetNewPeople" translatesAutoresizingMaskIntoConstraints="NO" id="PSc-aT-Wzs">
+                        <rect key="frame" x="0.0" y="201" width="414" height="250"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="250" id="R2f-jv-gKQ"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Speicher jetzt deine Lieblingssachen!" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="lW0-Zc-OVx">
+                        <rect key="frame" x="10" y="456" width="394" height="40"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="40" id="vOc-t1-ruk"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="20"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="PSc-aT-Wzs" firstAttribute="leading" secondItem="bfe-gQ-9hC" secondAttribute="leading" id="2ed-gb-MqZ"/>
+                    <constraint firstItem="PSc-aT-Wzs" firstAttribute="centerY" secondItem="bfe-gQ-9hC" secondAttribute="centerY" id="OYe-Ee-Y8s"/>
+                    <constraint firstAttribute="trailing" secondItem="PSc-aT-Wzs" secondAttribute="trailing" id="WvA-Bt-xEJ"/>
+                    <constraint firstItem="lW0-Zc-OVx" firstAttribute="leading" secondItem="bfe-gQ-9hC" secondAttribute="leading" constant="10" id="rYg-ZA-hxD"/>
+                    <constraint firstItem="lW0-Zc-OVx" firstAttribute="top" secondItem="PSc-aT-Wzs" secondAttribute="bottom" constant="5" id="w8R-9T-rER"/>
+                    <constraint firstAttribute="trailing" secondItem="lW0-Zc-OVx" secondAttribute="trailing" constant="10" id="wcd-OI-xkr"/>
+                    <constraint firstItem="PSc-aT-Wzs" firstAttribute="centerX" secondItem="bfe-gQ-9hC" secondAttribute="centerX" id="zjU-cV-hsL"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="descriptionLabel" destination="lW0-Zc-OVx" id="9fR-ms-Iy6"/>
+                <outlet property="pictureView" destination="PSc-aT-Wzs" id="vXg-9g-Wwn"/>
+            </connections>
+            <point key="canvasLocation" x="15.942028985507248" y="200.89285714285714"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="meetNewPeople" width="974" height="543"/>
+    </resources>
+</document>

@@ -18,42 +18,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class FSTMaybeDocument;
-@class FSTTransaction;
-
-/**
- * FSTVoidBlock is a block that's called when a specific event happens but that otherwise has
- * no information associated with it.
- */
-typedef void (^FSTVoidBlock)(void);
-
 /**
  * FSTVoidErrorBlock is a block that gets an error, if one occurred.
  *
  * @param error The error if it occurred, or nil.
  */
 typedef void (^FSTVoidErrorBlock)(NSError *_Nullable error);
-
-/** FSTVoidIDErrorBlock is a block that takes an optional value and error. */
-typedef void (^FSTVoidIDErrorBlock)(id _Nullable, NSError *_Nullable);
-
-/**
- * FSTVoidMaybeDocumentErrorBlock is a block that gets either a list of documents or an error.
- *
- * @param documents The documents, if no error occurred, or nil.
- * @param error The error, if one occurred, or nil.
- */
-typedef void (^FSTVoidMaybeDocumentArrayErrorBlock)(
-    NSArray<FSTMaybeDocument *> *_Nullable documents, NSError *_Nullable error);
-
-/**
- * FSTTransactionBlock is a block that wraps a user's transaction update block internally.
- *
- * @param transaction An object with methods for performing reads and writes within the
- *                    transaction.
- * @param completion To be called by the block once the user's code is finished.
- */
-typedef void (^FSTTransactionBlock)(FSTTransaction *transaction,
-                                    void (^completion)(id _Nullable, NSError *_Nullable));
 
 NS_ASSUME_NONNULL_END

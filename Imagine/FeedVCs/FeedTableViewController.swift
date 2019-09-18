@@ -8,70 +8,25 @@
 
 import UIKit
 import Firebase
+import FirebaseAuth
 import FirebaseFirestore
 import SDWebImage
+import Reachability
 
-class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDelegate {
+class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDelegate, DismissDelegate {
     
+    let searchTableVC = SearchTableViewController()
     
-    let db = Firestore.firestore()
-    lazy var postHelper = PostHelper()      // Lazy or it calls Firestore before AppDelegate.swift
-    
-    let searchController = UISearchController(searchResultsController: SearchTableViewController())
+    var searchController = UISearchController()
     var screenEdgeRecognizer: UIScreenEdgePanGestureRecognizer!
     
     private var invitationCount = 0
-    
-    let smallNumberForImagineBlogButton: UILabel = {
-        let label = UILabel.init(frame: CGRect.init(x: 20, y: 0, width: 12, height: 12))
-        label.backgroundColor = .red
-        label.clipsToBounds = true
-        label.layer.cornerRadius = 6
-        label.textColor = UIColor.white
-        label.textAlignment = .center
-        label.font = .systemFont(ofSize: 10)
-        label.text = String(1)
-        
-        return label
-    }()
-    
-    let smallNumberForInvitationRequest: UILabel = {
-        let label = UILabel.init(frame: CGRect.init(x: 25, y: 0, width: 14, height: 14))
-        label.backgroundColor = .red
-        label.clipsToBounds = true
-        label.layer.cornerRadius = 7
-        label.textColor = UIColor.white
-        label.textAlignment = .center
-        label.font = .systemFont(ofSize: 10)
-        
-        return label
-    }()
-    
+    var loggedIn = false    // For the barButtonItem
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let searchTableVC = SearchTableViewController()
-        searchTableVC.tableView.delegate = self
-        
-        // Setup the Search Controller
-        searchController.searchResultsUpdater = self
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Durchsuche Imagine"
-        searchController.delegate = self
-        searchController.dimsBackgroundDuringPresentation = false
-        
-        searchController.searchBar.scopeButtonTitles = ["Posts", "User", "Events"]
-        searchController.searchBar.delegate = self
-        
-        if #available(iOS 11.0, *) {
-            // For iOS 11 and later, place the search bar in the navigation bar.
-            self.navigationItem.searchController = searchController
-        } else {
-            // For iOS 10 and earlier, place the search controller's search bar in the table view's header.
-            tableView.tableHeaderView = searchController.searchBar
-        }
-        definesPresentationContext = true
+        setUpSearchController()
         
         // Initiliaze ScreenEdgePanRecognizer
         screenEdgeRecognizer = UIScreenEdgePanGestureRecognizer(target: self,
@@ -87,10 +42,12 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     
     override func viewWillAppear(_ animated: Bool) {
         
-        checkForLoggedInUser()
+        DispatchQueue.main.async {
+            self.checkForLoggedInUser()
+        }
+        
         self.navigationController?.navigationBar.isTranslucent = false
-        
-        
+        self.navigationController?.view.backgroundColor = .white
         
         //        // Restore the searchController's active state.
         //        if restoredState.wasActive {
@@ -104,10 +61,11 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         //        } Aus dem apple tutorial für die suche
     }
     
+    
     override func viewDidAppear(_ animated: Bool) {
-        checkForInvitations()
         
-        handyHelper.getChats { (chatList) in
+        // Change getchats to listener who cantacts me
+        self.handyHelper.getChats { (chatList) in
             self.handyHelper.getCountOfUnreadMessages(chatList: chatList, unreadMessages: { (count) in
                 if let items = self.tabBarController?.tabBar.items {
                     let tabItem = items[1]
@@ -119,38 +77,113 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         }
     }
     
-    lazy var sideMenu: SideMenu = {
-        let sideMenu = SideMenu()
-        sideMenu.FeedTableView = self
-        return sideMenu
-    }()
+    override func didReceiveMemoryWarning() {
+        print("Memory Pressure triggered")
+        SDImageCache.shared.clearMemory()
+        
+    }
     
-    lazy var newsMenu: NewsOverviewMenu = {
-        let nM = NewsOverviewMenu()
-        nM.feedTableVC = self
-        return nM
-    }()
+    // MARK: - Methods
+    @objc override func getPosts(getMore:Bool) {
+        /*
+         If "getMore" is true, you want to get more Posts, or the initial batch of 20 Posts, if not you want to refresh the current feed
+         */
+        print("Get Posts")
+        
+        if isConnected() {
+        
+            self.view.activityStartAnimating()
+            
+            postHelper.getPostsForMainFeed(getMore: getMore) { (posts,initialFetch)  in
+                
+                print("\(posts.count) neue dazu")
+                if initialFetch {   // Get the first batch of posts
+                    self.posts = posts
+                    self.tableView.reloadData()
+                    
+                    self.postHelper.getEvent(completion: { (post) in
+                        self.posts.insert(post, at: 8)
+                        self.tableView.reloadData()
+                        
+                    })
+                    
+                    // remove ActivityIndicator incl. backgroundView
+                    self.view.activityStopAnimating()
+                    
+                    self.refreshControl?.endRefreshing()
+                } else {    // Append the next batch to the existing
+                    var indexes : [IndexPath] = [IndexPath]()
+                    
+                    for result in posts {
+                        let row = self.posts.count
+                        
+                        indexes.append(IndexPath(row: row, section: 0))
+                        self.posts.append(result)
+                    }
+                    
+                    if #available(iOS 11.0, *) {
+                        self.tableView.performBatchUpdates({
+                            self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                            self.tableView.insertRows(at: indexes, with: .bottom)
+                        }, completion: { (_) in
+                            self.fetchesPosts = false
+                        })
+                    } else {
+                        // Fallback on earlier versions
+                        self.tableView.beginUpdates()
+                        self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                        self.tableView.insertRows(at: indexes, with: .right)
+                        self.tableView.endUpdates()
+                        
+                        self.fetchesPosts = false
+                    }
+                    
+                    self.view.activityStopAnimating()
+                    print("Jetzt haben wir \(self.posts.count)")
+                }
+            }
+        } else {
+            fetchRequested = true
+        }
+    }
+    
+    
+    // After dismissal of the logInViewController
+    func loadUser() {
+        print("Loaded")
+        self.checkForLoggedInUser()
+    }
+    
     
     func checkForInvitations() {
-        if let user = Auth.auth().currentUser {
-            let friendsRef = db.collection("Users").document(user.uid).collection("friends").whereField("accepted", isEqualTo: false)
+        
+        DispatchQueue.main.async {
             
-            friendsRef.getDocuments { (snap, err) in
-                if let err = err {
-                    print("We have an error: \(err.localizedDescription)")
-                } else {
-                    self.invitationCount = snap!.documents.count
-                    
-                    if self.invitationCount != 0 {
-                        self.smallNumberForInvitationRequest.text = String(self.invitationCount)
-                        self.smallNumberForInvitationRequest.isHidden = false
+            if let user = Auth.auth().currentUser {
+                let friendsRef = self.db.collection("Users").document(user.uid).collection("friends").whereField("accepted", isEqualTo: false)
+                
+                friendsRef.getDocuments { (snap, err) in
+                    if let err = err {
+                        print("We have an error: \(err.localizedDescription)")
                     } else {
-                        self.smallNumberForInvitationRequest.isHidden = true
+                        if self.invitationCount != snap!.documents.count {
+                            self.invitationCount = snap!.documents.count
+                            
+                            if self.invitationCount != 0 {
+                                self.smallNumberForInvitationRequest.text = String(self.invitationCount)
+                                self.smallNumberForInvitationRequest.isHidden = false
+                            } else {
+                                self.smallNumberForInvitationRequest.isHidden = true
+                            }
+                        } else if snap!.documents.count == 0 {
+                            self.smallNumberForInvitationRequest.isHidden = true
+                        }
                     }
                 }
             }
         }
     }
+    
     
     func checkForLoggedInUser() {
         print("check")
@@ -167,76 +200,35 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             self.loadBarButtonItem()
         }
     }
-    
-    @objc override func getPosts(getMore:Bool) {
-        /*
-         If "getMore" is true, you want to get more Posts, or the initial batch of 20 Posts, if not you want to refresh the current feed
-         */
-            postHelper.getPostsForMainFeed(getMore: getMore) { (posts,initialFetch)  in
-            
-                print("\(posts.count) neue dazu")
-                
-            if initialFetch {   // Get the first batch of posts
-                self.posts = posts
-                self.tableView.reloadData()
-                
-                self.postHelper.getEvent(completion: { (post) in
-                    self.posts.insert(post, at: 8)
-                    self.tableView.reloadData()
-                })
-                
-                // remove ActivityIndicator incl. backgroundView
-                self.actInd.stopAnimating()
-                self.container.isHidden = true
-                
-                self.refreshControl?.endRefreshing()
-            } else {    // Append the next batch to the existing
-                var indexes : [IndexPath] = [IndexPath]()
-                
-                for result in posts {
-                    let row = self.posts.count
-                    indexes.append(IndexPath(row: row, section: 0))
-                    self.posts.append(result)
-                }
-                
-                if #available(iOS 11.0, *) {
-                    self.tableView.performBatchUpdates({
-                        self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                        self.tableView.insertRows(at: indexes, with: .bottom)
-                    }, completion: { (_) in
-                        self.fetchesPosts = false
-                    })
-                } else {
-                    // Fallback on earlier versions
-                    self.tableView.beginUpdates()
-                    self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                    self.tableView.insertRows(at: indexes, with: .right)
-                    self.tableView.endUpdates()
-                }
-                print("Jetzt haben wir \(self.posts.count)")
-            }
-        }
-    }
+
     
     // MARK: - TableViewStuff
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         var post = Post()
-        
+        var user = User()
+
         // Check to see which table view cell was selected.
         if tableView === self.tableView {
-            
             post = posts[indexPath.row]
+            
+            performSegue(withIdentifier: "showPost", sender: post)
         } else {
             if let searchVC = self.searchController.searchResultsController as? SearchTableViewController {
                 
                 if let postResults = searchVC.postResults {
                     post = postResults[indexPath.row]
+                    performSegue(withIdentifier: "showPost", sender: post)
+
+                } else if let userResult = searchVC.userResults {
+                    user = userResult[indexPath.row]
+                    performSegue(withIdentifier: "toUserSegue", sender: user)
                 }
+                
             }
         }
-        performSegue(withIdentifier: "showPost", sender: post)
+        
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -245,8 +237,19 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         if segue.identifier == "showPost" {
             if let chosenPost = sender as? Post {
                 if let postVC = segue.destination as? PostViewController {
-                    print("Der Post wird übergeben in prepare: \(chosenPost.documentID)")
                     postVC.post = chosenPost
+                }
+            }
+        }
+        
+        if segue.identifier == "toUserCollection" {
+            if let userVC = segue.destination as? UserFeedCollectionViewController {
+                if let chosenUser = sender as? User {   // Another User
+                    userVC.userOfProfile = chosenUser
+                    userVC.currentState = .otherUser
+                } else { // The CurrentUser
+                    userVC.currentState = .ownProfileWithEditing
+                    print("Hier wird der currentstate eingestellt")
                 }
             }
         }
@@ -277,134 +280,197 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                 }
             }
         }
-    }
-    
-    func goToUser(user: User) {
-        searchController.isActive = false
-    }
-    
-    func goToPost(post:Post) {
-        searchController.isActive = false
-        searchController.searchResultsController?.dismiss(animated: true, completion: {
-            self.performSegue(withIdentifier: "showPost", sender: post)
-        })
-    }
-    
-    
-    @objc func imagineSignTapped() {
-        
-        let navigationBarHeight: CGFloat = self.navigationController!.navigationBar.frame.height
-        
-        self.newsMenu.showView(navBarHeight: navigationBarHeight)
-        self.smallNumberForImagineBlogButton.isHidden = true
-    }
-    
-    // MARK: - NavigationBarItem
-    
-    func loadBarButtonItem() {
-        DispatchQueue.main.async {
-            
-            let imagineButton = DesignableButton(type: .custom)
-            imagineButton.setImage(UIImage(named: "peace-sign"), for: .normal)
-            imagineButton.addTarget(self, action: #selector(self.imagineSignTapped), for: .touchUpInside)
-            imagineButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
-            imagineButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
-            
-            imagineButton.addSubview(self.smallNumberForImagineBlogButton)
-            
-            
-            let searchBarButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(self.searchBarTapped))
-            let imagineBarButton = UIBarButtonItem(customView: imagineButton)
-            self.navigationItem.rightBarButtonItems = [searchBarButton, imagineBarButton]
-            
-            
-            let view = UIView()
-            view.translatesAutoresizingMaskIntoConstraints = false
-            view.heightAnchor.constraint(equalToConstant: 35).isActive = true
-            view.widthAnchor.constraint(equalToConstant: 35).isActive = true
-            
-            //create new Button for the profilePictureButton
-            let button = DesignableButton(type: .custom)
-            button.frame = CGRect(x: 0, y: 0, width: 35, height: 35)
-            button.layer.masksToBounds = true
-            button.translatesAutoresizingMaskIntoConstraints = false
-            
-            
-            
-            // Wenn jemand eingeloggt ist:
-            if let user = Auth.auth().currentUser {
-                button.widthAnchor.constraint(equalToConstant: 35).isActive = true
-                button.heightAnchor.constraint(equalToConstant: 35).isActive = true
-                button.imageView?.contentMode = .scaleAspectFill
-                button.layer.cornerRadius = button.frame.width/2
-                button.addTarget(self, action: #selector(self.BarButtonItemTapped), for: .touchUpInside)
-                button.layer.borderWidth =  0.1
-                button.layer.borderColor = UIColor.black.cgColor
-                
-                if let url = user.photoURL{ // Set Photo
-                    do {
-                        let data = try Data(contentsOf: url)
-                        
-                        if let image = UIImage(data: data) {
-                            
-                            //set image for button
-                            button.setImage(image, for: .normal)
-                        }
-                    } catch {
-                        print(error.localizedDescription)
-                    }
-                    
-                } else {    // If no profile picture is set
-                    button.setImage(UIImage(named: "default-user"), for: .normal)
+        if segue.identifier == "toBlogPost" {
+            if let chosenPost = sender as? BlogPost {
+                if let blogVC = segue.destination as? BlogPostViewController {
+                    blogVC.blogPost = chosenPost
                 }
-                
-                view.addSubview(button)
-                view.addSubview(self.smallNumberForInvitationRequest)
-                self.smallNumberForInvitationRequest.isHidden = true
-                
-            } else {    // Wenn niemand eingeloggt
-                
-                button.widthAnchor.constraint(equalToConstant: 50).isActive = true
-                button.heightAnchor.constraint(equalToConstant: 35).isActive = true
-                button.layer.cornerRadius = 5
-                
-                button.addTarget(self, action: #selector(self.logInButtonTapped), for: .touchUpInside)
-                button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
-                button.setTitle("Log-In", for: .normal)
-                button.setTitleColor(.blue, for: .normal)
-//                self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
-                
-                view.addSubview(button)
             }
-            
-            let barButton = UIBarButtonItem(customView: view)
-            self.navigationItem.leftBarButtonItem = barButton
-            
-            self.checkForInvitations()
+        }
+        if segue.identifier == "toLogInSegue" {
+            if let vc = segue.destination as? LogInViewController {
+                vc.delegate = self
+            }
         }
     }
     
-    func sideMenuButtonTapped(whichButton: SideMenuButton) {
+    // MARK: - SearchBar
+    
+    func setUpSearchController() {
+        searchTableVC.tableView.delegate = self
         
-        switch whichButton {
-        case .toUser:
-            self.performSegue(withIdentifier: "toUserSegue", sender: nil)
-        case .toFriends:
-            performSegue(withIdentifier: "toFriendsSegue", sender: nil)
-        case .toSavedPosts:
-            performSegue(withIdentifier: "toSavedPosts", sender: nil)
-        default:
-            print("nothing happens")
+        searchController = UISearchController(searchResultsController: searchTableVC)
+        
+        // Setup the Search Controller
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = true
+        searchController.searchBar.placeholder = "Durchsuche Imagine"
+        searchController.delegate = self
+        searchController.dimsBackgroundDuringPresentation = false
+        
+        searchController.searchBar.scopeButtonTitles = ["Posts", "User"]
+        searchController.searchBar.delegate = self
+        
+        if #available(iOS 11.0, *) {
+            // For iOS 11 and later, place the search bar in the navigation bar.
+            self.navigationItem.searchController = searchController
+        } else {
+            // For iOS 10 and earlier, place the search controller's search bar in the table view's header.
+            tableView.tableHeaderView = searchController.searchBar
         }
-        
+        definesPresentationContext = true
     }
     
     @objc func searchBarTapped() {
         // Show search bar
-        self.searchController.isActive = true   // Not perfekt but works
-        //        navigationItem.hidesSearchBarWhenScrolling = false
-        //        navigationItem.hidesSearchBarWhenScrolling = true
+        self.fetchesPosts = true // Otherwise the view thinks it scrolled to the button via the function scrollViewDidScroll in BaseFeedTableViewController, could figure a better way
+
+        //        self.searchController.isActive = true   // Not perfekt but works
+        self.searchController.searchBar.becomeFirstResponder()
     }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        self.fetchesPosts = true // Otherwise the view thinks it scrolled to the button via the function scrollViewDidScroll in BaseFeedTableViewController, could figure a better way
+    }
+    
+    func didDismissSearchController(_ searchController: UISearchController) {
+        self.fetchesPosts = false   // Otherwise the view thinks it scrolled to the button via the function scrollViewDidScroll in BaseFeedTableViewController, could figure a better way
+    }
+    
+    
+    // MARK: - Navigation Items
+    
+    func loadBarButtonItem() {
+        
+        if self.navigationItem.rightBarButtonItems == nil {
+            self.createRightBarButtons()
+        }
+        
+        if isConnected() {
+            
+            // needs Internet to check if User is logged in and/or profilePicture
+            
+            if self.navigationItem.leftBarButtonItem == nil {
+                
+                self.createBarButton()
+                
+                self.checkForInvitations()
+            } else {    // Already got barButtons
+                
+                if let _ = Auth.auth().currentUser {
+                    if self.loggedIn == false { // Logged in but no profileButton
+                        self.createBarButton()
+                    }
+                } else {
+                    if self.loggedIn {
+                        self.createBarButton()  // Not logged in but still proileButton
+                    }
+                }
+            }
+        }
+    }
+    
+    func createRightBarButtons() {
+        // Set Blog and Search Button
+        let imagineButton = DesignableButton(type: .custom)
+        imagineButton.setImage(UIImage(named: "HippySign"), for: .normal)
+        imagineButton.addTarget(self, action: #selector(self.imagineSignTapped), for: .touchUpInside)
+        imagineButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        imagineButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        
+        imagineButton.addSubview(self.smallNumberForImagineBlogButton)
+        
+        
+        let searchBarButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(self.searchBarTapped))
+        let imagineBarButton = UIBarButtonItem(customView: imagineButton)
+        self.navigationItem.rightBarButtonItems = [searchBarButton, imagineBarButton]
+    }
+    
+    func createBarButton() {
+        // View so I there can be a small number for Invitations
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 35).isActive = true
+        
+        //create new Button for the profilePictureButton
+        let button = DesignableButton(type: .custom)
+        button.frame = CGRect(x: 0, y: 0, width: 35, height: 35)
+        button.layer.masksToBounds = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        
+        // Wenn jemand eingeloggt ist:
+        if let user = Auth.auth().currentUser {
+            self.loggedIn = true
+            
+            button.widthAnchor.constraint(equalToConstant: 35).isActive = true
+            button.heightAnchor.constraint(equalToConstant: 35).isActive = true
+            button.imageView?.contentMode = .scaleAspectFill
+            button.layer.cornerRadius = button.frame.width/2
+            button.addTarget(self, action: #selector(self.BarButtonItemTapped), for: .touchUpInside)
+            button.addTarget(self, action: #selector(self.BarButtonItemTapped), for: .touchUpInside)
+            button.layer.borderWidth =  0.1
+            button.layer.borderColor = UIColor.black.cgColor
+            
+            if let url = user.photoURL{ // Set Photo
+                
+                do {
+                    let data = try Data(contentsOf: url)
+                    
+                    if let image = UIImage(data: data) {
+                        
+                        //set image for button
+                        button.setImage(image, for: .normal)
+                    }
+                } catch {
+                    print(error.localizedDescription)
+                }
+                
+            } else {    // If no profile picture is set
+                button.setImage(UIImage(named: "default-user"), for: .normal)
+            }
+            
+            view.addSubview(button)
+            view.addSubview(self.smallNumberForInvitationRequest)
+            
+        } else {    // Wenn niemand eingeloggt
+            self.loggedIn = false
+            
+            self.smallNumberForInvitationRequest.isHidden = true
+            
+            button.widthAnchor.constraint(equalToConstant: 50).isActive = true
+            button.heightAnchor.constraint(equalToConstant: 35).isActive = true
+            button.layer.cornerRadius = 5
+            
+            button.addTarget(self, action: #selector(self.logInButtonTapped), for: .touchUpInside)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+            button.setTitle("Log-In", for: .normal)
+            button.setTitleColor(.blue, for: .normal)
+            //                self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+            
+            view.addSubview(button)
+        }
+        
+        let barButton = UIBarButtonItem(customView: view)
+        self.navigationItem.leftBarButtonItem = barButton
+    }
+    
+    
+    
+    let smallNumberForInvitationRequest: UILabel = {
+        let label = UILabel.init(frame: CGRect.init(x: 25, y: 0, width: 14, height: 14))
+        label.backgroundColor = .red
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 7
+        label.textColor = UIColor.white
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 10)
+        
+        return label
+    }()
+    
     
     @objc func BarButtonItemTapped() {
         sideMenu.showSettings()
@@ -418,7 +484,98 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     override func userTapped(post: Post) {
         performSegue(withIdentifier: "toUserSegue", sender: post.user)
     }
+    // MARK: - Reachability
     
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        
+        print("Observer activated")
+        addReachabilityObserver()
+    }
+    
+    deinit {
+        removeReachabilityObserver()
+    }
+    
+    override func reachabilityChanged(_ isReachable: Bool) {
+        print("changed! Connection reachable: ", isReachable, "fetch requested: ", fetchRequested)
+        
+        if isReachable {
+            if fetchRequested { // To automatically redo the requested task
+                self.getPosts(getMore: true)
+            }
+            
+            if self.navigationItem.leftBarButtonItem == nil {
+                self.loadBarButtonItem()
+            }
+            
+            self.view.removeNoConncectionView()
+        } else {
+            self.view.showNoInternetConnectionView()
+            // Tell User no Connection
+        }
+    }
+    
+    // MARK: - ImagineBlogButton
+    
+    lazy var newsMenu: NewsOverviewMenu = {
+        let nM = NewsOverviewMenu()
+        nM.feedTableVC = self
+        return nM
+    }()
+    
+    @objc func imagineSignTapped() {
+        
+        let navigationBarHeight: CGFloat = self.navigationController!.navigationBar.frame.height
+        
+        self.newsMenu.showView(navBarHeight: navigationBarHeight)
+        self.smallNumberForImagineBlogButton.isHidden = true
+    }
+    
+    let smallNumberForImagineBlogButton: UILabel = {
+        let label = UILabel.init(frame: CGRect.init(x: 20, y: 0, width: 12, height: 12))
+        label.backgroundColor = .red
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 6
+        label.textColor = UIColor.white
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 10)
+        label.text = String(1)
+        
+        return label
+    }()
+    
+    func blogPostSelected(blogPost: BlogPost) {
+        self.newsMenu.handleDismiss()
+        
+        self.performSegue(withIdentifier: "toBlogPost", sender: blogPost)
+    }
+    
+    // MARK: - Side Menu
+    
+    lazy var sideMenu: SideMenu = {
+        let sideMenu = SideMenu()
+        sideMenu.FeedTableView = self
+        return sideMenu
+    }()
+    
+    
+    
+    func sideMenuButtonTapped(whichButton: SideMenuButton) {
+        
+        switch whichButton {
+        case .toUser:
+            self.performSegue(withIdentifier: "toUserSegue", sender: nil)
+        //            self.performSegue(withIdentifier: "toUserCollection", sender: nil)    // For test Zwecke
+        case .toFriends:
+            performSegue(withIdentifier: "toFriendsSegue", sender: nil)
+        case .toSavedPosts:
+            performSegue(withIdentifier: "toSavedPosts", sender: nil)
+        default:
+            print("nothing happens")
+        }
+        
+    }
 }
 
 // Maybe load whole cells?
@@ -453,7 +610,11 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
 
 extension FeedTableViewController: UISearchResultsUpdating {
     // MARK: - UISearchResultsUpdating Delegate
+    
     func updateSearchResults(for searchController: UISearchController) {
+        
+        searchController.searchResultsController?.view.isHidden = false
+        
         let searchBar = searchController.searchBar
         let scope = searchBar.selectedScopeButtonIndex
         
@@ -485,26 +646,28 @@ extension FeedTableViewController: UISearchResultsUpdating {
                 } else {
                     for document in querySnap!.documents {
                         
-                        let post = Post()
-                        let docData = document.data()
+                        addPost(document: document)
+                    }
+                    if let resultsController = self.searchController.searchResultsController as? SearchTableViewController {
+                        resultsController.postResults = nil
+                        resultsController.postResults = postResults
+                        resultsController.userResults = nil
                         
-                        if let title = docData["title"] as? String, let type = docData["type"] as? String {
-                            let imageURL = docData["imageURL"] as? String
-                            let imageHeight = docData["imageHeight"] as? Double
-                            let imageWidth = docData["imageWidth"] as? Double
-                            post.title = title
-                            post.documentID = document.documentID
-                            post.imageURL = imageURL ?? ""
-                            if let postType = self.handyHelper.setPostType(fetchedString: type) {
-                                post.type = postType
-                            }
-                            post.imageWidth = CGFloat(imageWidth ?? 0)
-                            post.imageHeight = CGFloat(imageHeight ?? 0)
-                            
-                            postResults.append(post)
-                            
-                            
-                        }
+                        resultsController.tableView.reloadData()
+                    }
+                }
+            }
+            
+            // You have to write the whole noun
+            let tagRef = db.collection("Posts").whereField("tags", arrayContains: searchText).limit(to: 10)
+            
+            tagRef.getDocuments { (querySnap, error) in
+                if let err = error {
+                    print("We have an error searching for titles: \(err.localizedDescription)")
+                } else {
+                    for document in querySnap!.documents {
+                        
+                        addPost(document: document)
                     }
                     if let resultsController = self.searchController.searchResultsController as? SearchTableViewController {
                         resultsController.postResults = nil
@@ -518,31 +681,14 @@ extension FeedTableViewController: UISearchResultsUpdating {
             
             
         case 1: // Search Users
-            let fullNameRef = db.collection("Users").whereField("full_name", isGreaterThan: searchText).whereField("full_name", isLessThan: "\(searchText)z").limit(to: 2)
+            let fullNameRef = db.collection("Users").whereField("full_name", isGreaterThan: searchText).whereField("full_name", isLessThan: "\(searchText)z").limit(to: 3)
             
             fullNameRef.getDocuments { (querySnap, error) in
                 if let err = error {
                     print("We have an error searching for Users: \(err.localizedDescription)")
                 } else {
                     for document in querySnap!.documents {
-                        
-                        let userIsAlreadyFetched = userResults.contains { $0.userUID == document.documentID }
-                        if userIsAlreadyFetched {   // Check if we got the user in on of the other queries
-                            continue
-                        }
-                        
-                        let user = User()
-                        let docData = document.data()
-                        
-                        if let name = docData["name"] as? String, let surname = docData["surname"] as? String, let imageURL = docData["profilePictureURL"] as? String {
-                            user.name = name
-                            user.surname = surname
-                            user.userUID = document.documentID
-                            user.imageURL = imageURL
-                            
-                            userResults.append(user)
-                            
-                        }
+                        addUser(document: document)
                     }
                     if let resultsController = self.searchController.searchResultsController as? SearchTableViewController {
                         resultsController.userResults = userResults
@@ -553,7 +699,7 @@ extension FeedTableViewController: UISearchResultsUpdating {
                 }
             }
             
-            let nameRef = db.collection("Users").whereField("name", isGreaterThan: searchText).whereField("name", isLessThan: "\(searchText)z").limit(to: 2)
+            let nameRef = db.collection("Users").whereField("name", isGreaterThan: searchText).whereField("name", isLessThan: "\(searchText)z").limit(to: 3)
             
             nameRef.getDocuments { (querySnap, error) in
                 if let err = error {
@@ -561,23 +707,7 @@ extension FeedTableViewController: UISearchResultsUpdating {
                 } else {
                     for document in querySnap!.documents {
                         
-                        let userIsAlreadyFetched = userResults.contains { $0.userUID == document.documentID }
-                        if userIsAlreadyFetched { // Check if we got the user in on of the other queries
-                            continue
-                        }
-                        
-                        let user = User()
-                        let docData = document.data()
-                        
-                        if let name = docData["name"] as? String, let surname = docData["surname"] as? String, let imageURL = docData["profilePictureURL"] as? String {
-                            user.name = name
-                            user.surname = surname
-                            user.userUID = document.documentID
-                            user.imageURL = imageURL
-                            
-                            userResults.append(user)
-                            
-                        }
+                        addUser(document: document)
                     }
                     if let resultsController = self.searchController.searchResultsController as? SearchTableViewController {
                         resultsController.userResults = userResults
@@ -588,7 +718,7 @@ extension FeedTableViewController: UISearchResultsUpdating {
                 }
             }
             
-            let surnameRef = db.collection("Users").whereField("surname", isGreaterThan: searchText).whereField("surname", isLessThan: "\(searchText)z").limit(to: 2)
+            let surnameRef = db.collection("Users").whereField("surname", isGreaterThan: searchText).whereField("surname", isLessThan: "\(searchText)z").limit(to: 3)
             
             surnameRef.getDocuments { (querySnap, error) in
                 if let err = error {
@@ -596,23 +726,7 @@ extension FeedTableViewController: UISearchResultsUpdating {
                 } else {
                     for document in querySnap!.documents {
                         
-                        let userIsAlreadyFetched = userResults.contains { $0.userUID == document.documentID }
-                        if userIsAlreadyFetched { // Check if we got the user in on of the other queries
-                            continue
-                        }
-                        
-                        let user = User()
-                        let docData = document.data()
-                        
-                        if let name = docData["name"] as? String, let surname = docData["surname"] as? String, let imageURL = docData["profilePictureURL"] as? String {
-                            user.name = name
-                            user.surname = surname
-                            user.userUID = document.documentID
-                            user.imageURL = imageURL
-                            
-                            userResults.append(user)
-                            
-                        }
+                        addUser(document: document)
                     }
                     if let resultsController = self.searchController.searchResultsController as? SearchTableViewController {
                         resultsController.userResults = userResults
@@ -622,12 +736,69 @@ extension FeedTableViewController: UISearchResultsUpdating {
                     }
                 }
             }
-        case 2: // Search Topics
-            print("Looking for Topics")
         default:
             return
         }
+        
+        
+        func addUser(document: DocumentSnapshot) {
+            
+            let userIsAlreadyFetched = userResults.contains { $0.userUID == document.documentID }
+            if userIsAlreadyFetched {   // Check if we got the user in on of the other queries
+                return
+            }
+            
+            let user = User()
+            if let docData = document.data() {
+                
+                if let name = docData["name"] as? String, let surname = docData["surname"] as? String, let imageURL = docData["profilePictureURL"] as? String {
+                    user.name = name
+                    user.surname = surname
+                    user.userUID = document.documentID
+                    user.imageURL = imageURL
+                    if let status = docData["statusText"] as? String {
+                        user.statusQuote = status
+                    }
+                    user.blocked = docData["blocked"] as? [String] ?? nil
+                    
+                    userResults.append(user)
+                }
+            }
+        }
+        
+        func addPost(document: DocumentSnapshot) {
+            
+            let postIsAlreadyFetched = postResults.contains { $0.documentID == document.documentID }
+            if postIsAlreadyFetched {   // Check if we got the user in on of the other queries
+                return
+            }
+            let post = Post()
+            if let docData = document.data() {
+                
+                if let title = docData["title"] as? String, let type = docData["type"] as? String, let op = docData["originalPoster"] as? String {
+                    let imageURL = docData["imageURL"] as? String
+                    let imageHeight = docData["imageHeight"] as? Double
+                    let imageWidth = docData["imageWidth"] as? Double
+                    post.title = title
+                    post.documentID = document.documentID
+                    post.imageURL = imageURL ?? ""
+                    if let postType = self.handyHelper.setPostType(fetchedString: type) {
+                        post.type = postType
+                    }
+                    post.imageWidth = CGFloat(imageWidth ?? 0)
+                    post.imageHeight = CGFloat(imageHeight ?? 0)
+                    post.documentID = document.documentID
+                    post.originalPosterUID = op
+                    
+                    postResults.append(post)
+                    
+                }
+            }
+        }
     }
+
+
+    
 }
 
 extension FeedTableViewController: UISearchBarDelegate {

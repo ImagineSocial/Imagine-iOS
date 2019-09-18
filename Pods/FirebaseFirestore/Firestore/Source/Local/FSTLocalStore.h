@@ -16,23 +16,42 @@
 
 #import <Foundation/Foundation.h>
 
-#import "Firestore/Source/Model/FSTDocumentDictionary.h"
+#include <vector>
 
 #include "Firestore/core/src/firebase/firestore/auth/user.h"
+#include "Firestore/core/src/firebase/firestore/local/local_view_changes.h"
+#include "Firestore/core/src/firebase/firestore/local/local_write_result.h"
+#include "Firestore/core/src/firebase/firestore/local/lru_garbage_collector.h"
+#include "Firestore/core/src/firebase/firestore/local/query_data.h"
 #include "Firestore/core/src/firebase/firestore/model/document_key.h"
 #include "Firestore/core/src/firebase/firestore/model/document_key_set.h"
+#include "Firestore/core/src/firebase/firestore/model/document_map.h"
+#include "Firestore/core/src/firebase/firestore/model/mutation.h"
+#include "Firestore/core/src/firebase/firestore/model/mutation_batch.h"
 #include "Firestore/core/src/firebase/firestore/model/snapshot_version.h"
 #include "Firestore/core/src/firebase/firestore/model/types.h"
+#include "Firestore/core/src/firebase/firestore/nanopb/byte_string.h"
+
+namespace firebase {
+namespace firestore {
+namespace remote {
+
+class RemoteEvent;
+
+}  // namespace remote
+}  // namespace firestore
+}  // namespace firebase
 
 @class FSTLocalViewChanges;
 @class FSTLocalWriteResult;
-@class FSTMutation;
-@class FSTMutationBatch;
-@class FSTMutationBatchResult;
-@class FSTQuery;
-@class FSTQueryData;
-@class FSTRemoteEvent;
 @protocol FSTPersistence;
+
+namespace auth = firebase::firestore::auth;
+namespace core = firebase::firestore::core;
+namespace local = firebase::firestore::local;
+namespace model = firebase::firestore::model;
+namespace nanopb = firebase::firestore::nanopb;
+namespace remote = firebase::firestore::remote;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -75,8 +94,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** Creates a new instance of the FSTLocalStore with its required dependencies as parameters. */
 - (instancetype)initWithPersistence:(id<FSTPersistence>)persistence
-                        initialUser:(const firebase::firestore::auth::User &)initialUser
-    NS_DESIGNATED_INITIALIZER;
+                        initialUser:(const auth::User &)initialUser NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)init NS_UNAVAILABLE;
 
@@ -89,13 +107,13 @@ NS_ASSUME_NONNULL_BEGIN
  * In response the local store switches the mutation queue to the new user and returns any
  * resulting document changes.
  */
-- (FSTMaybeDocumentDictionary *)userDidChange:(const firebase::firestore::auth::User &)user;
+- (model::MaybeDocumentMap)userDidChange:(const auth::User &)user;
 
 /** Accepts locally generated Mutations and commits them to storage. */
-- (FSTLocalWriteResult *)locallyWriteMutations:(NSArray<FSTMutation *> *)mutations;
+- (local::LocalWriteResult)locallyWriteMutations:(std::vector<model::Mutation> &&)mutations;
 
 /** Returns the current value of a document with a given key, or nil if not found. */
-- (nullable FSTMaybeDocument *)readDocument:(const firebase::firestore::model::DocumentKey &)key;
+- (absl::optional<model::MaybeDocument>)readDocument:(const model::DocumentKey &)key;
 
 /**
  * Acknowledges the given batch.
@@ -110,7 +128,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return The resulting (modified) documents.
  */
-- (FSTMaybeDocumentDictionary *)acknowledgeBatchWithResult:(FSTMutationBatchResult *)batchResult;
+- (model::MaybeDocumentMap)acknowledgeBatchWithResult:
+    (const model::MutationBatchResult &)batchResult;
 
 /**
  * Removes mutations from the MutationQueue for the specified batch. LocalDocuments will be
@@ -118,23 +137,23 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return The resulting (modified) documents.
  */
-- (FSTMaybeDocumentDictionary *)rejectBatchID:(firebase::firestore::model::BatchId)batchID;
+- (model::MaybeDocumentMap)rejectBatchID:(model::BatchId)batchID;
 
 /** Returns the last recorded stream token for the current user. */
-- (nullable NSData *)lastStreamToken;
+- (nanopb::ByteString)lastStreamToken;
 
 /**
  * Sets the stream token for the current user without acknowledging any mutation batch. This is
  * usually only useful after a stream handshake or in response to an error that requires clearing
  * the stream token.
  */
-- (void)setLastStreamToken:(nullable NSData *)streamToken;
+- (void)setLastStreamToken:(const nanopb::ByteString &)streamToken;
 
 /**
  * Returns the last consistent snapshot processed (used by the RemoteStore to determine whether to
  * buffer incoming snapshots from the backend).
  */
-- (const firebase::firestore::model::SnapshotVersion &)lastRemoteSnapshotVersion;
+- (const model::SnapshotVersion &)lastRemoteSnapshotVersion;
 
 /**
  * Updates the "ground-state" (remote) documents. We assume that the remote event reflects any
@@ -143,29 +162,28 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * LocalDocuments are re-calculated if there are remaining mutations in the queue.
  */
-- (FSTMaybeDocumentDictionary *)applyRemoteEvent:(FSTRemoteEvent *)remoteEvent;
+- (model::MaybeDocumentMap)applyRemoteEvent:(const remote::RemoteEvent &)remoteEvent;
 
 /**
  * Returns the keys of the documents that are associated with the given targetID in the remote
  * table.
  */
-- (firebase::firestore::model::DocumentKeySet)remoteDocumentKeysForTarget:
-    (firebase::firestore::model::TargetId)targetID;
+- (model::DocumentKeySet)remoteDocumentKeysForTarget:(model::TargetId)targetID;
 
 /**
  * Assigns @a query an internal ID so that its results can be pinned so they don't get GC'd.
  * A query must be allocated in the local store before the store can be used to manage its view.
  */
-- (FSTQueryData *)allocateQuery:(FSTQuery *)query;
+- (local::QueryData)allocateQuery:(core::Query)query;
 
 /** Unpin all the documents associated with @a query. */
-- (void)releaseQuery:(FSTQuery *)query;
+- (void)releaseQuery:(const core::Query &)query;
 
 /** Runs @a query against all the documents in the local store and returns the results. */
-- (FSTDocumentDictionary *)executeQuery:(FSTQuery *)query;
+- (model::DocumentMap)executeQuery:(const core::Query &)query;
 
 /** Notify the local store of the changed views to locally pin / unpin documents. */
-- (void)notifyLocalViewChanges:(NSArray<FSTLocalViewChanges *> *)viewChanges;
+- (void)notifyLocalViewChanges:(const std::vector<local::LocalViewChanges> &)viewChanges;
 
 /**
  * Gets the mutation batch after the passed in batchId in the mutation queue or nil if empty.
@@ -173,8 +191,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @param batchID The batch to search after, or -1 for the first mutation in the queue.
  * @return the next mutation or nil if there wasn't one.
  */
-- (nullable FSTMutationBatch *)nextMutationBatchAfterBatchID:
-    (firebase::firestore::model::BatchId)batchID;
+- (absl::optional<model::MutationBatch>)nextMutationBatchAfterBatchID:(model::BatchId)batchID;
+
+/**
+ * Returns the largest (latest) batch id in mutation queue that is pending server response.
+ * Returns `kBatchIdUnknown` if the queue is empty.
+ */
+- (model::BatchId)getHighestUnacknowledgedBatchId;
+
+- (local::LruResults)collectGarbage:(local::LruGarbageCollector *)garbageCollector;
 
 @end
 

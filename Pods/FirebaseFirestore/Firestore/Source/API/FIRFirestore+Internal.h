@@ -19,15 +19,28 @@
 #include <memory>
 #include <string>
 
+#include "Firestore/core/src/firebase/firestore/api/firestore.h"
 #include "Firestore/core/src/firebase/firestore/auth/credentials_provider.h"
-#include "Firestore/core/src/firebase/firestore/model/database_id.h"
-#include "absl/strings/string_view.h"
+#include "Firestore/core/src/firebase/firestore/util/async_queue.h"
+
+@class FIRApp;
+@class FSTFirestoreClient;
+@class FSTUserDataConverter;
+
+namespace api = firebase::firestore::api;
+namespace auth = firebase::firestore::auth;
+namespace model = firebase::firestore::model;
+namespace util = firebase::firestore::util;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class FSTDispatchQueue;
-@class FSTFirestoreClient;
-@class FSTUserDataConverter;
+/** Provides a registry management interface for FIRFirestore instances. */
+@protocol FSTFirestoreInstanceRegistry
+
+/** Removes the FIRFirestore instance with given database name from registry. */
+- (void)removeInstanceWithDatabase:(NSString *)database;
+
+@end
 
 @interface FIRFirestore (/* Init */)
 
@@ -35,14 +48,12 @@ NS_ASSUME_NONNULL_BEGIN
  * Initializes a Firestore object with all the required parameters directly. This exists so that
  * tests can create FIRFirestore objects without needing FIRApp.
  */
-- (instancetype)initWithProjectID:(std::string)projectID
-                         database:(std::string)database
-                   persistenceKey:(NSString *)persistenceKey
-              credentialsProvider:(std::unique_ptr<firebase::firestore::auth::CredentialsProvider>)
-                                      credentialsProvider
-              workerDispatchQueue:(FSTDispatchQueue *)workerDispatchQueue
-                      firebaseApp:(FIRApp *)app;
-
+- (instancetype)initWithDatabaseID:(model::DatabaseId)databaseID
+                    persistenceKey:(std::string)persistenceKey
+               credentialsProvider:(std::shared_ptr<auth::CredentialsProvider>)credentialsProvider
+                       workerQueue:(std::shared_ptr<util::AsyncQueue>)workerQueue
+                       firebaseApp:(FIRApp *)app
+                  instanceRegistry:(nullable id<FSTFirestoreInstanceRegistry>)registry;
 @end
 
 /** Internal FIRFirestore API we don't want exposed in our public header files. */
@@ -51,18 +62,15 @@ NS_ASSUME_NONNULL_BEGIN
 /** Checks to see if logging is is globally enabled for the Firestore client. */
 + (BOOL)isLoggingEnabled;
 
-/**
- * Shutdown this `FIRFirestore`, releasing all resources (abandoning any outstanding writes,
- * removing all listens, closing all network connections, etc.).
- *
- * @param completion A block to execute once everything has shut down.
- */
-- (void)shutdownWithCompletion:(nullable void (^)(NSError *_Nullable error))completion
-    NS_SWIFT_NAME(shutdown(completion:));
++ (FIRFirestore *)recoverFromFirestore:(std::shared_ptr<api::Firestore>)firestore;
 
-// FIRFirestore ownes the DatabaseId instance.
-@property(nonatomic, assign, readonly) const firebase::firestore::model::DatabaseId *databaseID;
-@property(nonatomic, strong, readonly) FSTFirestoreClient *client;
+- (void)terminateInternalWithCompletion:(nullable void (^)(NSError *_Nullable error))completion;
+
+- (const std::shared_ptr<util::AsyncQueue> &)workerQueue;
+
+@property(nonatomic, assign, readonly) std::shared_ptr<api::Firestore> wrapped;
+
+@property(nonatomic, assign, readonly) const model::DatabaseId &databaseID;
 @property(nonatomic, strong, readonly) FSTUserDataConverter *dataConverter;
 
 @end

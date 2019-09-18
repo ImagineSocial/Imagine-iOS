@@ -47,6 +47,7 @@ class Post {
     var OGRepostDocumentID: String?
     var originalPosterUID = ""      // kann eigentlich weg weil in User Objekt
     var commentCount = 0
+    var createDate: Date?
     var user = User()
     var votes = Votes()
     var event = Event()
@@ -86,7 +87,7 @@ class Post {
                         let picHeight = docData["imageHeight"] as? Double ?? 0
                         let picWidth = docData["imageWidth"] as? Double ?? 0
                         
-                        let stringDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
+                        let stringDate = createTimestamp.dateValue().formatRelativeString()
                         
                         post.title = title      // Sachen zuordnen
                         post.imageURL = imageURL
@@ -113,10 +114,8 @@ class Post {
                         post.getUser()
                             
                         returnRepost(post)
-            
                     }
                 }
-                
                 if err != nil {
                     print("Wir haben einen Error beim User: \(err?.localizedDescription ?? "")")
                 }
@@ -125,7 +124,6 @@ class Post {
     }
     
     func getUser() {
-        
         
         let db = Firestore.firestore()
         // User Daten raussuchen
@@ -142,6 +140,7 @@ class Post {
                     user.imageURL = docData["profilePictureURL"] as? String ?? ""
                     user.userUID = self.originalPosterUID
                     user.statusQuote = docData["statusText"] as? String ?? ""
+                    user.blocked = docData["blocked"] as? [String] ?? nil
                     
                     self.user = user
                 }

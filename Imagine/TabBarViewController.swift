@@ -11,7 +11,22 @@ import Firebase
 import FirebaseAuth
 import SDWebImage
 
-
+extension UITabBar {
+    static let height: CGFloat = 48
+    
+    override open func sizeThatFits(_ size: CGSize) -> CGSize {
+        guard let window = UIApplication.shared.keyWindow else {
+            return super.sizeThatFits(size)
+        }
+        var sizeThatFits = super.sizeThatFits(size)
+        if #available(iOS 11.0, *) {
+            sizeThatFits.height = UITabBar.height + window.safeAreaInsets.bottom
+        } else {
+            sizeThatFits.height = UITabBar.height
+        }
+        return sizeThatFits
+    }
+}
 
 class TabBarViewController: UITabBarController {
     
@@ -19,72 +34,12 @@ class TabBarViewController: UITabBarController {
         super.viewDidLoad()
         
         self.tabBar.isTranslucent = false   //Prevents a bug/glitch where the items jump when going back from antother ViewController
-        
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: Constants.imagineColor], for: .selected)
         
         }
 
     override func viewWillAppear(_ animated: Bool) {
-        //create a new button
-        let button = DesignableButton(type: .custom)
-        //set frame
-        button.frame = CGRect(x: 0, y: 0, width: 35, height: 35)
-        //add function for button
-        button.addTarget(self, action: #selector(BarButtonItemTapped), for: .touchUpInside)
-        
-        button.layer.masksToBounds = true
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        button.layer.borderWidth =  0.1
-        button.layer.borderColor = UIColor.black.cgColor
-        
-        // Wenn jemand eingeloggt ist:
-        if let user = Auth.auth().currentUser {
-            if let url = user.photoURL{
-                do {
-                    let data = try Data(contentsOf: url)
-                    
-                    if let image = UIImage(data: data) {
-                        
-                        //set image for button
-                        button.setImage(image, for: .normal)
-                        button.widthAnchor.constraint(equalToConstant: 35).isActive = true
-                        button.heightAnchor.constraint(equalToConstant: 35).isActive = true
-                        button.layer.cornerRadius = button.frame.width/2
-                    }
-                } catch {
-                    print(error.localizedDescription)
-                }
-                
-            } else {    // Wenn noch kein Bild ausgewählt wurde!
-                //set image for button
-                button.setImage(UIImage(named: "default-user"), for: .normal)
-                button.widthAnchor.constraint(equalToConstant: 35).isActive = true
-                button.heightAnchor.constraint(equalToConstant: 35).isActive = true
-                button.layer.cornerRadius = button.frame.width/2
-            }
-            
-        } else {    // Wenn niemand eingeloggt
-            
-            button.widthAnchor.constraint(equalToConstant: 50).isActive = true
-            button.heightAnchor.constraint(equalToConstant: 25).isActive = true
-            button.layer.cornerRadius = 5
-            
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
-            button.setTitle("Log-In", for: .normal)
-            button.backgroundColor = UIColor(red:0.68, green:0.77, blue:0.90, alpha:1.0)
-        }
-        
-        let barButton = UIBarButtonItem(customView: button)
-        self.navigationItem.leftBarButtonItem = barButton
+
     }
-    
-    
-    
-    @objc func BarButtonItemTapped() {
-        
-        let notificationName = Notification.Name(rawValue: "toggleMenu")
-        NotificationCenter.default.post(name: notificationName, object: nil)
-    }
-    
     
 }

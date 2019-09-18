@@ -21,11 +21,12 @@
 
 #include "Firestore/core/src/firebase/firestore/immutable/array_sorted_map.h"
 #include "Firestore/core/src/firebase/firestore/immutable/keys_view.h"
-#include "Firestore/core/src/firebase/firestore/immutable/sorted_map_base.h"
+#include "Firestore/core/src/firebase/firestore/immutable/sorted_container.h"
 #include "Firestore/core/src/firebase/firestore/immutable/sorted_map_iterator.h"
 #include "Firestore/core/src/firebase/firestore/immutable/tree_sorted_map.h"
 #include "Firestore/core/src/firebase/firestore/util/comparison.h"
 #include "absl/base/attributes.h"
+#include "absl/types/optional.h"
 
 namespace firebase {
 namespace firestore {
@@ -36,8 +37,10 @@ namespace immutable {
  * has methods to efficiently create new maps that are mutations of it.
  */
 template <typename K, typename V, typename C = util::Comparator<K>>
-class SortedMap : public impl::SortedMapBase {
+class SortedMap : public SortedMapBase {
  public:
+  using key_type = K;
+  using mapped_type = V;
   /** The type of the entries stored in the map. */
   using value_type = std::pair<K, V>;
   using array_type = impl::ArraySortedMap<K, V, C>;
@@ -159,6 +162,16 @@ class SortedMap : public impl::SortedMapBase {
     UNREACHABLE();
   }
 
+  const C& comparator() const {
+    switch (tag_) {
+      case Tag::Array:
+        return array_.comparator();
+      case Tag::Tree:
+        return tree_.comparator();
+    }
+    UNREACHABLE();
+  }
+
   /**
    * Creates a new map identical to this one, but with a key-value pair added or
    * updated.
@@ -202,7 +215,7 @@ class SortedMap : public impl::SortedMapBase {
         tree_type result = tree_.erase(key);
         if (result.empty()) {
           // Flip back to the array representation for empty arrays.
-          return SortedMap{};
+          return SortedMap{comparator()};
         }
         return SortedMap{std::move(result)};
     }
@@ -250,6 +263,15 @@ class SortedMap : public impl::SortedMapBase {
         return tree_.find_index(key);
     }
     UNREACHABLE();
+  }
+
+  absl::optional<V> get(const K& key) const {
+    auto found = find(key);
+    if (found != end()) {
+      return found->second;
+    } else {
+      return absl::nullopt;
+    }
   }
 
   /**
@@ -351,16 +373,6 @@ class SortedMap : public impl::SortedMapBase {
 
   explicit SortedMap(tree_type&& tree)
       : tag_{Tag::Tree}, tree_{std::move(tree)} {
-  }
-
-  const C& comparator() const {
-    switch (tag_) {
-      case Tag::Array:
-        return array_.comparator();
-      case Tag::Tree:
-        return tree_.comparator();
-    }
-    UNREACHABLE();
   }
 
   enum class Tag {

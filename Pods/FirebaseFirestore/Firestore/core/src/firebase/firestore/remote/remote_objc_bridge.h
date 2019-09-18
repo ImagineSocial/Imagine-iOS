@@ -23,21 +23,23 @@
 
 #import <Foundation/Foundation.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "Firestore/core/src/firebase/firestore/core/database_info.h"
+#include "Firestore/core/src/firebase/firestore/local/query_data.h"
 #include "Firestore/core/src/firebase/firestore/model/snapshot_version.h"
 #include "Firestore/core/src/firebase/firestore/model/types.h"
+#include "Firestore/core/src/firebase/firestore/nanopb/byte_string.h"
+#include "Firestore/core/src/firebase/firestore/remote/watch_change.h"
 #include "Firestore/core/src/firebase/firestore/util/status.h"
+#include "absl/types/optional.h"
 #include "grpcpp/support/byte_buffer.h"
 
-#import "Firestore/Protos/objc/google/firestore/v1beta1/Firestore.pbobjc.h"
+#import "Firestore/Protos/objc/google/firestore/v1/Firestore.pbobjc.h"
 #import "Firestore/Source/Core/FSTTypes.h"
-#import "Firestore/Source/Local/FSTQueryData.h"
-#import "Firestore/Source/Model/FSTMutation.h"
 #import "Firestore/Source/Remote/FSTSerializerBeta.h"
-#import "Firestore/Source/Remote/FSTStream.h"
-#import "Firestore/Source/Remote/FSTWatchChange.h"
 
 namespace firebase {
 namespace firestore {
@@ -67,7 +69,7 @@ class WatchStreamSerializer {
       : serializer_{serializer} {
   }
 
-  GCFSListenRequest* CreateWatchRequest(FSTQueryData* query) const;
+  GCFSListenRequest* CreateWatchRequest(const local::QueryData& query) const;
   GCFSListenRequest* CreateUnwatchRequest(model::TargetId target_id) const;
   static grpc::ByteBuffer ToByteBuffer(GCFSListenRequest* request);
 
@@ -78,7 +80,7 @@ class WatchStreamSerializer {
    */
   GCFSListenResponse* ParseResponse(const grpc::ByteBuffer& message,
                                     util::Status* out_status) const;
-  FSTWatchChange* ToWatchChange(GCFSListenResponse* proto) const;
+  std::unique_ptr<WatchChange> ToWatchChange(GCFSListenResponse* proto) const;
   model::SnapshotVersion ToSnapshotVersion(GCFSListenResponse* proto) const;
 
   /** Creates a pretty-printed description of the proto for debugging. */
@@ -100,18 +102,18 @@ class WriteStreamSerializer {
   }
 
   void UpdateLastStreamToken(GCFSWriteResponse* proto);
-  void SetLastStreamToken(NSData* token) {
+  void SetLastStreamToken(const nanopb::ByteString& token) {
     last_stream_token_ = token;
   }
-  NSData* GetLastStreamToken() const {
+  nanopb::ByteString GetLastStreamToken() const {
     return last_stream_token_;
   }
 
   GCFSWriteRequest* CreateHandshake() const;
   GCFSWriteRequest* CreateWriteMutationsRequest(
-      NSArray<FSTMutation*>* mutations) const;
+      const std::vector<model::Mutation>& mutations) const;
   GCFSWriteRequest* CreateEmptyMutationsList() {
-    return CreateWriteMutationsRequest(@[]);
+    return CreateWriteMutationsRequest({});
   }
   static grpc::ByteBuffer ToByteBuffer(GCFSWriteRequest* request);
 
@@ -123,7 +125,7 @@ class WriteStreamSerializer {
   GCFSWriteResponse* ParseResponse(const grpc::ByteBuffer& message,
                                    util::Status* out_status) const;
   model::SnapshotVersion ToCommitVersion(GCFSWriteResponse* proto) const;
-  NSArray<FSTMutationResult*>* ToMutationResults(
+  std::vector<model::MutationResult> ToMutationResults(
       GCFSWriteResponse* proto) const;
 
   /** Creates a pretty-printed description of the proto for debugging. */
@@ -132,7 +134,7 @@ class WriteStreamSerializer {
 
  private:
   FSTSerializerBeta* serializer_;
-  NSData* last_stream_token_;
+  nanopb::ByteString last_stream_token_;
 };
 
 /**
@@ -142,9 +144,11 @@ class WriteStreamSerializer {
  */
 class DatastoreSerializer {
  public:
-  explicit DatastoreSerializer(FSTSerializerBeta* serializer)
-      : serializer_{serializer} {
-  }
+  explicit DatastoreSerializer(const core::DatabaseInfo& database_info);
+
+  GCFSCommitRequest* CreateCommitRequest(
+      const std::vector<model::Mutation>& mutations) const;
+  static grpc::ByteBuffer ToByteBuffer(GCFSCommitRequest* request);
 
   GCFSBatchGetDocumentsRequest* CreateLookupRequest(
       const std::vector<model::DocumentKey>& keys) const;
@@ -154,10 +158,11 @@ class DatastoreSerializer {
    * Merges results of the streaming read together. The array is sorted by the
    * document key.
    */
-  NSArray<FSTMaybeDocument*>* MergeLookupResponses(
+  std::vector<model::MaybeDocument> MergeLookupResponses(
       const std::vector<grpc::ByteBuffer>& responses,
       util::Status* out_status) const;
-  FSTMaybeDocument* ToMaybeDocument(GCFSBatchGetDocumentsResponse*) const;
+  model::MaybeDocument ToMaybeDocument(
+      GCFSBatchGetDocumentsResponse* response) const;
 
   FSTSerializerBeta* GetSerializer() {
     return serializer_;
@@ -165,39 +170,6 @@ class DatastoreSerializer {
 
  private:
   FSTSerializerBeta* serializer_;
-};
-
-/** A C++ bridge that invokes methods on an `FSTWatchStreamDelegate`. */
-class WatchStreamDelegate {
- public:
-  explicit WatchStreamDelegate(id<FSTWatchStreamDelegate> delegate)
-      : delegate_{delegate} {
-  }
-
-  void NotifyDelegateOnOpen();
-  void NotifyDelegateOnChange(FSTWatchChange* change,
-                              const model::SnapshotVersion& snapshot_version);
-  void NotifyDelegateOnClose(const util::Status& status);
-
- private:
-  id<FSTWatchStreamDelegate> delegate_;
-};
-
-/** A C++ bridge that invokes methods on an `FSTWriteStreamDelegate`. */
-class WriteStreamDelegate {
- public:
-  explicit WriteStreamDelegate(id<FSTWriteStreamDelegate> delegate)
-      : delegate_{delegate} {
-  }
-
-  void NotifyDelegateOnOpen();
-  void NotifyDelegateOnHandshakeComplete();
-  void NotifyDelegateOnCommit(const model::SnapshotVersion& commit_version,
-                              NSArray<FSTMutationResult*>* results);
-  void NotifyDelegateOnClose(const util::Status& status);
-
- private:
-  id<FSTWriteStreamDelegate> delegate_;
 };
 
 }  // namespace bridge

@@ -25,6 +25,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * A block type used to handle snapshot updates.
+ */
 typedef void (^FIRDocumentSnapshotBlock)(FIRDocumentSnapshot *_Nullable snapshot,
                                          NSError *_Nullable error);
 
@@ -37,7 +40,7 @@ typedef void (^FIRDocumentSnapshotBlock)(FIRDocumentSnapshot *_Nullable snapshot
 NS_SWIFT_NAME(DocumentReference)
 @interface FIRDocumentReference : NSObject
 
-/**   */
+/** :nodoc: */
 - (instancetype)init
     __attribute__((unavailable("FIRDocumentReference cannot be created directly.")));
 

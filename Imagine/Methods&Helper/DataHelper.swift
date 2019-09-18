@@ -10,30 +10,78 @@ import Foundation
 import Firebase
 import FirebaseFirestore
 
+enum DataType {
+    case jobOffer
+    case facts
+    case blogPosts
+    case vote
+    case campaign
+}
+
+enum DeepDataType {
+    case arguments
+    case sources
+}
+
 class DataHelper {
+    
+    /*  Every data from firebase which are not posts are fetched through this class
+     */
     
     // Überall noch eine Wichtigkeitsvariable einfügen
     var dataPath = ""
     let db = Firestore.firestore()
+    let handyHelper = HandyHelper()
     
     
     
-    func getData(get: String, returnData: @escaping ([Any]) -> Void) {
+    
+    
+    func getData(get: DataType, returnData: @escaping ([Any]) -> Void) {
         // "get" Variable kann "campaign" für CommunityEntscheidungen, "jobOffer" für Hilfe der Community und "fact" für Fakten Dings sein
+        
+        var list = [Any]()
         
         let settings = db.settings
         settings.areTimestampsInSnapshotsEnabled = true
         db.settings = settings
         
-        var list = [Any]()
+        var orderString = ""
+        var descending = false
         
         
-        if get == "campaign" {
+        switch get {
+        case .blogPosts:
+            list = [BlogPost]()
+            dataPath = "BlogPosts"
+            
+            orderString = "createDate"
+            
+        case .campaign:
             list = [Campaign]()
             dataPath = "Campaigns"
-        } else if get == "jobOffer" {
+            
+            orderString = "campaignSupporter"
+            descending = true
+            
+        case .vote:
+            list = [Vote]()
+            dataPath = "Votes"
+            
+            orderString = "endOfVoteDate"
+            
+        case .facts:
+            list = [Fact]()
+            dataPath = "Facts"
+            
+            orderString = "createDate"
+            
+        case .jobOffer:
             list = [JobOffer]()
             dataPath = "JobOffers"
+            
+            orderString = "interestedInJob"
+            descending = true
             
             let jobOffer = JobOffer()   // Der erste Eintrag
             jobOffer.title = "Wir brauchen dich!"
@@ -44,24 +92,49 @@ class DataHelper {
             jobOffer.category = "Allgemein"
             
             list.append(jobOffer)
-        } else if get == "facts" {
-            list = [Fact]()
-            dataPath = "Facts"
-        } else if get == "blogPosts" {
-            list = [BlogPost]()
-            dataPath = "BlogPosts"
         }
         
-        
-        
-        db.collection(dataPath).getDocuments { (querySnapshot, error) in
+        let ref = db.collection(dataPath).order(by: orderString, descending: descending)
+            
+            ref.getDocuments { (querySnapshot, error) in
             
             for document in querySnapshot!.documents {
                 
                 let documentID = document.documentID
                 let documentData = document.data()
                 
-                if get == "campaign" {
+                switch get {
+                case .blogPosts:
+                    guard let title = documentData["title"] as? String,
+                        let createTimestamp = documentData["createDate"] as? Timestamp,
+                        let subtitle = documentData["subtitle"] as? String,
+                        let poster = documentData["poster"] as? String,
+                        let profileImageURL = documentData["profileImageURL"] as? String,
+                        let category = documentData["category"] as? String,
+                        let description = documentData["description"] as? String
+                        
+                        else {
+                            continue
+                    }
+                    
+                    let date = createTimestamp.dateValue()
+                    let stringDate = date.formatRelativeString()
+                    
+                    let blogPost = BlogPost()
+                    blogPost.title = title
+                    blogPost.subtitle = subtitle
+                    blogPost.createDate = stringDate
+                    blogPost.poster = poster
+                    blogPost.profileImageURL = profileImageURL
+                    blogPost.category = category
+                    blogPost.description = description
+                    
+                    if let imageURL = documentData["imageURL"] as? String {
+                        blogPost.imageURL = imageURL
+                    }
+                    
+                    list.append(blogPost)
+                case .campaign:
                     if let campaignType = documentData["campaignType"] as? String {
                         if campaignType == "normal" {
                             
@@ -75,11 +148,8 @@ class DataHelper {
                                     continue    // Falls er das nicht als (String) zuordnen kann
                             }
                             
-                            // Datum vom Timestamp umwandeln
-                            let formatter = DateFormatter()
-                            let date:Date = createTimestamp.dateValue()
-                            formatter.dateFormat = "dd MM yyyy HH:mm"
-                            let stringDate = formatter.string(from: date)
+                            let date = createTimestamp.dateValue()
+                            let stringDate = date.formatRelativeString()
                             
                             let campaign = Campaign()       // Erst neue Campaign erstellen
                             campaign.title = title      // Dann die Sachen zuordnen
@@ -90,99 +160,110 @@ class DataHelper {
                             campaign.opposition = opposition
                             campaign.category = category
                             
-                            
-                            list.append(campaign)
-                            
+                           list.append(campaign)
                         }
                     }
-                } else if get == "jobOffer" {
+                case .vote:
+                    guard let title = documentData["title"] as? String,
+                        let subtitle = documentData["subtitle"] as? String,
+                        let description = documentData["description"] as? String,
+                        let createTimestamp = documentData["createDate"] as? Timestamp,
+                        let voteTillDateTimestamp = documentData["endOfVoteDate"] as? Timestamp,
+                        let cost = documentData["cost"] as? Double,
+                        let impactString = documentData["impact"] as? String,
+                        let timeToRealization = documentData["timeToRealization"] as? Int,
+                        let costDescription = documentData["costDescription"] as? String,
+                        let impactDescription = documentData["impactDescription"] as? String,
+                        let realizationTimeDescription = documentData["realizationTimeDescription"] as? String
+                        else {
+                            continue
+                    }
+                    
+                    let createDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
+                    let endDate = voteTillDateTimestamp.dateValue()
+                    let endOfVoteDate = endDate.formatRelativeString()
+                    let costString = self.handyHelper.getLocaleCurrencyString(number: cost)
+                    
+                    var impact:Impact = .light
+                    
+                    switch impactString {
+                    case "medium":
+                        impact = .medium
+                    case "strong":
+                        impact = .strong
+                    default:
+                        impact = .light
+                    }
+                    
+                    let vote = Vote()
+                    vote.title = title
+                    vote.subtitle = subtitle
+                    vote.description = description
+                    vote.createDate = createDate
+                    vote.endOfVoteDate = endOfVoteDate
+                    vote.cost = costString
+                    vote.impact = impact
+                    vote.timeToRealization = timeToRealization
+                    vote.costDescription = costDescription
+                    vote.impactDescription = impactDescription
+                    vote.realizationTimeDescription = realizationTimeDescription
+                    vote.documentID = documentID
+                    
+                    list.append(vote)
+                    
+                case .facts:
+                    guard let name = documentData["name"] as? String,
+                        let createTimestamp = documentData["createDate"] as? Timestamp,
+                        let imageURL = documentData["imageURL"] as? String
+                        
+                        else {
+                            continue
+                    }
+                    
+                    let stringDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
+                    
+                    let fact = Fact(addMoreDataCell: false)
+                    fact.title = name
+                    fact.createDate = stringDate
+                    fact.documentID = documentID
+                    fact.imageURL = imageURL
+                    
+                    list.append(fact)
+                case .jobOffer:
                     guard let title = documentData["jobTitle"] as? String,
                         let shortBody = documentData["jobShortBody"] as? String,
-                        let createTime = documentData["jobCreateTime"] as? String,
+                        let createTime = documentData["jobCreateTime"] as? Timestamp,
                         let interestedCount = documentData["interestedInJob"] as? Int,
                         let category = documentData["category"] as? String
                         else {
                             continue    // Falls er das nicht als (String) zuordnen kann
                     }
                     
+                    let date = createTime.dateValue()
+                    let stringDate = date.formatRelativeString()
                     
                     let jobOffer = JobOffer()       // Erst neue Campaign erstellen
                     jobOffer.title = title      // Dann die Sachen zuordnen
                     jobOffer.cellText = shortBody
                     jobOffer.documentID = documentID
-                    jobOffer.createDate = createTime
+                    jobOffer.createDate = stringDate
                     jobOffer.interested = interestedCount
                     jobOffer.category = category
                     
                     list.append(jobOffer)
-                    
-                } else if get == "facts" {
-                    guard let name = documentData["name"] as? String,
-                    let createTimestamp = documentData["createDate"] as? Timestamp,
-                    let imageURL = documentData["imageURL"] as? String
-                    
-                        else {
-                            continue
-                    }
-                    
-                    // Datum vom Timestamp umwandeln
-                    let formatter = DateFormatter()
-                    let date:Date = createTimestamp.dateValue()
-                    formatter.dateFormat = "dd MM yyyy HH:mm"
-                    let stringDate = formatter.string(from: date)
-                    
-                    
-                    
-                    let fact = Fact()
-                    fact.title = name
-                    fact.createDate = stringDate
-                    fact.documentID = documentID
-                    fact.imageURL = imageURL
-
-                    list.append(fact)
-                    
-                } else if get == "blogPosts" {
-                    guard let title = documentData["title"] as? String,
-                        let createTimestamp = documentData["createDate"] as? Timestamp,
-                        let subtitle = documentData["subtitle"] as? String,
-                        let poster = documentData["poster"] as? String,
-                        let profileImageURL = documentData["profileImageURL"] as? String,
-                        let category = documentData["category"] as? String,
-                        let description = documentData["description"] as? String
-                        
-                        else {
-                            continue
-                    }
-                    
-                    // Datum vom Timestamp umwandeln
-                    let formatter = DateFormatter()
-                    let date:Date = createTimestamp.dateValue()
-                    formatter.dateFormat = "dd MM yyyy HH:mm"
-                    let stringDate = formatter.string(from: date)
-                    
-                    
-                    let blogPost = BlogPost()
-                    blogPost.title = title
-                    blogPost.subtitle = subtitle
-                    blogPost.createDate = stringDate
-                    blogPost.poster = poster
-                    blogPost.profileImageURL = profileImageURL
-                    blogPost.category = category
-                    blogPost.description = description
-                    
-                    list.append(blogPost)
                 }
             }
             returnData(list)
         }
     }
     
-    func getDeepData(get: String, documentID: String, returnData: @escaping ([Any]) -> Void) {
+    func getDeepData(documentID: String, returnData: @escaping ([Any]) -> Void) {
         
         var argumentList = [Argument]()
         
-        print("Hier wird geladen mit ID:", documentID)
-        self.db.collection(get).document(documentID).collection("arguments").getDocuments(completion: { (snap, err) in
+        let ref = self.db.collection("Facts").document(documentID).collection("arguments").order(by: "upvotes", descending: true)
+        
+            ref.getDocuments(completion: { (snap, err) in
             for document in snap!.documents {
                 
                 let docData = document.data()
@@ -196,27 +277,26 @@ class DataHelper {
                         continue    // Falls er das nicht als (String) zuordnen kann
                 }
                 
-                let argument = Argument()
+                let upvotes = docData["upvotes"] as? Int ?? 0
+                let downvotes = docData["downvotes"] as? Int ?? 0
+                
+                let argument = Argument(addMoreDataCell: false)
                 argument.source = source
                 argument.title = title
                 argument.description = description
                 argument.proOrContra = proOrContra
                 argument.documentID = documentID
+                argument.upvotes = upvotes
+                argument.downvotes = downvotes
                 
                 argumentList.append(argument)
             }
-            let argument = Argument()
-            argument.source = [""]
-            argument.title = "Füge ein Argument hinzu!"
-            argument.description = "Wenn du einen validen Punkt zu der Diskussion hinzufügen kannst würden wir uns sehr freuen!"
+            let argument = Argument(addMoreDataCell: true)
             argument.proOrContra = "pro"
             
             argumentList.append(argument)
             
-            let conArgument = Argument()
-            conArgument.source = [""]
-            conArgument.title = "Füge ein Argument hinzu!"
-            conArgument.description = "Wenn du einen validen Punkt zu der Diskussion hinzufügen kannst würden wir uns sehr freuen!"
+            let conArgument = Argument(addMoreDataCell: true)
             conArgument.proOrContra = "contra"
             
             argumentList.append(conArgument)
@@ -225,48 +305,78 @@ class DataHelper {
         })
     }
     
-    func getDeepestArgument(factID: String, argumentID: String , returnData: @escaping ([Any]) -> Void) {
+    func getDeepestArgument(factID: String, argumentID: String, deepDataType: DeepDataType , returnData: @escaping ([Any]) -> Void) {
         
-        var argumentList = [Argument]()
+        var list = [Any]()
         
-        let argumentPath = self.db.collection("Facts").document(factID).collection("arguments").document(argumentID).collection("arguments")
+        switch deepDataType {
+        case .sources:
+            list = [Source]()
+            dataPath = "sources"
+        case .arguments:
+            list = [Argument]()
+            dataPath = "arguments"
+        }
+        
+        let argumentPath = self.db.collection("Facts").document(factID).collection("arguments").document(argumentID).collection(dataPath)
             
             argumentPath.getDocuments(completion: { (snap, err) in
                 
-                if err != nil {
-                    print("Wir haben einen Error bei den tiefen Argumenten: ", err?.localizedDescription)
+                if let err = err {
+                    print("Wir haben einen Error bei den tiefen Argumenten: ", err.localizedDescription)
                 }
                 
             for document in snap!.documents {
                 
                 let docData = document.data()
+                let documentID = document.documentID
                 
-                guard let source = docData["source"] as? [String],
-                    let title = docData["title"] as? String,
-                    let proOrContra = docData["proOrContra"] as? String,
-                    let description = docData["description"] as? String
-                    else {
-                        continue    // Falls er das nicht als (String) zuordnen kann
+                switch deepDataType {
+                case .arguments:
+                    guard let title = docData["title"] as? String,
+                        //                    let proOrContra = docData["proOrContra"] as? String,  // Not necessary?
+                        let description = docData["description"] as? String
+                        else {
+                            continue    // Falls er das nicht als (String) zuordnen kann
+                    }
+                    
+                    let argument = Argument(addMoreDataCell: false)
+//                    argument.source = source
+                    argument.title = title
+                    argument.description = description
+                    argument.documentID = documentID
+                    //                argument.proOrContra = proOrContra
+                    
+                    list.append(argument)
+                case .sources:
+                    guard let title = docData["title"] as? String,
+                    let description = docData["description"] as? String,
+                    let sourceLink = docData["source"] as? String
+                        else {
+                            continue
+                    }
+                    
+                    let source = Source(addMoreDataCell: false)
+                    source.title = title
+                    source.description = description
+                    source.source = sourceLink
+                    source.documentID = documentID
+                    
+                    list.append(source)
                 }
-                
-                let argument = Argument()
-                argument.source = source
-                argument.title = title
-                argument.description = description
-                argument.proOrContra = proOrContra
-                
-                argumentList.append(argument)
             }
+                switch deepDataType {
+                case .arguments:
+                    let argument = Argument(addMoreDataCell: true)
+                    
+                    list.append(argument)
+                case .sources:
+                    let source = Source(addMoreDataCell: true)
+                    
+                    list.append(source)
+                }
             
-                let argument = Argument()
-                argument.source = [""]
-                argument.title = "Füge ein Argument hinzu!"
-                argument.description = "Wenn du einen validen Punkt zu der Diskussion hinzufügen kannst würden wir uns sehr freuen!"
-                argument.proOrContra = "pro"
-                
-                argumentList.append(argument)
-            
-            returnData(argumentList)
+            returnData(list)
         })
     }
 }
@@ -293,22 +403,20 @@ class Campaign {
     var category = ""
 }
 
-
-class Fact {
+class Vote {
     var title = ""
-    var createDate = ""
-    var documentID = ""
-    var imageURL = ""
-    var arguments: [Argument] = []
-}
-
-class Argument {
-    var source:[String] = []
-    var proOrContra = ""
-    var title = ""
+    var subtitle = ""
     var description = ""
+    var createDate = ""
+    var endOfVoteDate = ""
+    var cost = ""
+    var costDescription = ""
+    var impact = Impact.light
+    var impactDescription = ""
+    var timeToRealization = 0   // In month
+    var realizationTimeDescription = ""
+    var commentCount = 0
     var documentID = ""
-    var contraArguments: [Argument] = []
 }
 
 class BlogPost {
@@ -319,18 +427,7 @@ class BlogPost {
     var category = ""
     var poster = ""
     var profileImageURL = ""
+    var imageURL = ""
 }
 
-class Event {
-    var title = ""
-    var description = ""
-    var location = ""
-    var type = ""
-    var imageURL = ""
-    var createDate = ""
-    var imageHeight:CGFloat = 0
-    var imageWidth:CGFloat = 0
-    var participants = [String]()
-    var admin = User()
-    
-}
+

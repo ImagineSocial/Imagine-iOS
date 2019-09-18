@@ -11,19 +11,24 @@ import Firebase
 
 class SavedPostTableViewController: BaseFeedTableViewController {
     
-    lazy var postHelper = PostHelper()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         getPosts(getMore: true)
         
-        self.noPostsString = "Speicher die deine Lieblingsposts um sie hier zu finden!"
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        
+        self.noPostsType = .savedPicture
         // navigationItem.rightBarButtonItem = editButtonItem
     }
     
     override func getPosts(getMore: Bool) {
-        if let user = Auth.auth().currentUser {
+        
+        if isConnected() {
+            
+            if let user = Auth.auth().currentUser {
                 postHelper.getTheSavedPosts(getMore: getMore, whichPostList: .savedPosts, userUID: user.uid) { (posts, initialFetch)  in
                     
                     print("\(posts.count) neue dazu .InitialFetch: ",initialFetch)
@@ -33,13 +38,7 @@ class SavedPostTableViewController: BaseFeedTableViewController {
                         self.tableView.reloadData()
                         
                         // I just load it for the first profilepicture and name
-                        self.postHelper.getEvent(completion: { (post) in
-                            self.tableView.reloadData()
-                        })
-                        
-                        // remove ActivityIndicator incl. backgroundView
-                        self.actInd.stopAnimating()
-                        self.container.isHidden = true
+//                        self.getName()
                         
                         self.refreshControl?.endRefreshing()
                         
@@ -69,7 +68,13 @@ class SavedPostTableViewController: BaseFeedTableViewController {
                         }
                     }
                     print("Jetzt haben wir \(self.posts.count)")
+                    
+                    // remove ActivityIndicator incl. backgroundView
+                    self.view.activityStopAnimating()
                 }
+            }
+        } else {
+            fetchRequested = true
         }
     }
     

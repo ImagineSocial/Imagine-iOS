@@ -26,7 +26,6 @@ class MeldeTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.separatorStyle = .none
         tableView.visibleCells.forEach { (cell) in
             if let cell = cell as? ReportCell {
                 cell.ReportReasonLabel.text = ""

@@ -18,7 +18,10 @@
 #define FIRESTORE_CORE_SRC_FIREBASE_FIRESTORE_MODEL_MAYBE_DOCUMENT_H_
 
 #include <functional>
+#include <iosfwd>
 #include <memory>
+#include <string>
+#include <utility>
 
 #include "Firestore/core/src/firebase/firestore/model/document_key.h"
 #include "Firestore/core/src/firebase/firestore/model/snapshot_version.h"
@@ -30,32 +33,66 @@ namespace model {
 /**
  * The result of a lookup for a given path may be an existing document or a
  * tombstone that marks the path deleted.
+ *
+ * Note: MaybeDocument and its subclasses are specially designed to avoid
+ * slicing. You can assign a subclass of MaybeDocument to an instance of
+ * MaybeDocument and the full value is preserved, unsliced. Each subclass
+ * declares an explicit constructor that can recover the derived type. This
+ * means that code like this will work:
+ *
+ *     Document doc(...);
+ *     MaybeDocument maybe_doc = doc;
+ *     Document recovered(maybe_doc);
+ *
+ * The final line results in an explicit check that will fail if the type of
+ * the underlying data is not actually Type::Document.
  */
 class MaybeDocument {
  public:
   /**
    * All the different kinds of documents, including MaybeDocument and its
-   * subclasses. This is used to provide RTTI for documents.
+   * subclasses. This is used to provide RTTI for documents. See the docstrings
+   * of the subclasses for details.
    */
   enum class Type {
-    Unknown,
+    // An unknown subclass of MaybeDocument. This should never happen.
+    //
+    // TODO(rsgowman): Since it's no longer possible to directly create
+    // MaybeDocument's, we can likely remove this value entirely. But
+    // investigate impact on the serializers first.
+    Invalid,
+
     Document,
     NoDocument,
+    UnknownDocument,
   };
 
-  MaybeDocument(DocumentKey key, SnapshotVersion version);
+  MaybeDocument() = default;
 
-  virtual ~MaybeDocument() {
+  bool is_valid() const {
+    return rep_ != nullptr;
   }
 
   /** The runtime type of this document. */
   Type type() const {
-    return type_;
+    return rep_ ? rep_->type() : Type::Invalid;
+  }
+
+  bool is_document() const {
+    return type() == Type::Document;
+  }
+
+  bool is_no_document() const {
+    return type() == Type::NoDocument;
+  }
+
+  bool is_unknown_document() const {
+    return type() == Type::UnknownDocument;
   }
 
   /** The key for this document. */
   const DocumentKey& key() const {
-    return key_;
+    return rep_->key();
   }
 
   /**
@@ -63,35 +100,81 @@ class MaybeDocument {
    * this document was guaranteed to not exist.
    */
   const SnapshotVersion& version() const {
-    return version_;
+    return rep_->version();
   }
+
+  /**
+   * Whether this document has a local mutation applied that has not yet been
+   * acknowledged by Watch.
+   */
+  bool has_pending_writes() const {
+    return rep_->has_pending_writes();
+  }
+
+  size_t Hash() const {
+    return rep_->Hash();
+  }
+
+  std::string ToString() const {
+    return rep_->ToString();
+  }
+
+  friend std::ostream& operator<<(std::ostream& os, const MaybeDocument& doc);
 
  protected:
-  // Only allow subclass to set their types.
-  void set_type(Type type) {
-    type_ = type;
+  class Rep {
+   public:
+    Rep(Type type, DocumentKey&& key, SnapshotVersion version)
+        : type_(type), key_(std::move(key)), version_(version) {
+    }
+
+    virtual ~Rep() = default;
+
+    Type type() const {
+      return type_;
+    }
+
+    const DocumentKey& key() const {
+      return key_;
+    }
+
+    const SnapshotVersion& version() const {
+      return version_;
+    }
+
+    virtual bool has_pending_writes() const = 0;
+
+    virtual bool Equals(const Rep& other) const;
+
+    virtual size_t Hash() const;
+
+    virtual std::string ToString() const = 0;
+
+   private:
+    Type type_ = Type::Invalid;
+    DocumentKey key_;
+    SnapshotVersion version_;
+  };
+
+  explicit MaybeDocument(std::shared_ptr<Rep> rep) : rep_(std::move(rep)) {
   }
 
-  virtual bool Equals(const MaybeDocument& other) const;
+  const Rep& rep() const {
+    return *rep_;
+  }
 
   friend bool operator==(const MaybeDocument& lhs, const MaybeDocument& rhs);
 
  private:
-  Type type_ = Type::Unknown;
-  DocumentKey key_;
-  SnapshotVersion version_;
+  std::shared_ptr<const Rep> rep_;
 };
-
-inline bool operator==(const MaybeDocument& lhs, const MaybeDocument& rhs) {
-  return lhs.Equals(rhs);
-}
 
 inline bool operator!=(const MaybeDocument& lhs, const MaybeDocument& rhs) {
   return !(lhs == rhs);
 }
 
 /** Compares against another MaybeDocument by keys only. */
-struct DocumentKeyComparator : public std::less<MaybeDocument> {
+struct DocumentKeyComparator {
   bool operator()(const MaybeDocument& lhs, const MaybeDocument& rhs) const {
     return lhs.key() < rhs.key();
   }

@@ -14,11 +14,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
+    // Only portrait mode
+    var myOrientation: UIInterfaceOrientationMask = .portrait
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        return myOrientation
+    }
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
         FirebaseApp.configure()
+        
+//        let imagineColor = UIColor(red:0.33, green:0.47, blue:0.65, alpha:1.0)
+        
+        // CHange Color of navigationItem and Barbutton
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: Constants.imagineColor, NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 18)], for: .normal)
+        UINavigationBar.appearance().tintColor = Constants.imagineColor
+//        UINavigationBar.appearance().barTintColor = Constants.imagineColor
+        
         
         // Initiate rootviewcontroller here because otherwise the app would crash because a child of TabBarViewController would call Firebase before FirebaseApp.configure would be called here in AppDelegate
         self.window = UIWindow(frame: UIScreen.main.bounds)

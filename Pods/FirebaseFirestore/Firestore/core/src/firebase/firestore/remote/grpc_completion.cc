@@ -16,6 +16,7 @@
 
 #include "Firestore/core/src/firebase/firestore/remote/grpc_completion.h"
 
+#include <memory>
 #include <utility>
 
 namespace firebase {
@@ -24,8 +25,11 @@ namespace remote {
 
 using util::AsyncQueue;
 
-GrpcCompletion::GrpcCompletion(AsyncQueue* worker_queue, Callback&& callback)
-    : worker_queue_{worker_queue}, callback_{std::move(callback)} {
+GrpcCompletion::GrpcCompletion(
+    Type type,
+    const std::shared_ptr<util::AsyncQueue>& worker_queue,
+    Callback&& callback)
+    : worker_queue_{worker_queue}, callback_{std::move(callback)}, type_{type} {
 }
 
 void GrpcCompletion::Cancel() {

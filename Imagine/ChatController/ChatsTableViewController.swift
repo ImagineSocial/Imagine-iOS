@@ -19,10 +19,15 @@ class ChatsTableViewController: UITableViewController {
     var currentUserUid:String?
     
     var badgeValue = 0
+    var badgeIndex = 0  // Without it, the number is wrong if you are scrolling
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        
+        tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: "NibBlankCell")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -41,33 +46,42 @@ class ChatsTableViewController: UITableViewController {
     
     func getChats() {
         if let user = Auth.auth().currentUser {
+            if chatsList.count == 0 {
+                self.view.activityStartAnimating()
+            }
             currentUserUid = user.uid
             let chatsRef = db.collection("Users").document(user.uid).collection("chats")
             chatsRef.getDocuments { (snapshot, error) in
                 if let error = error {
                     print("We have an error within the chats: \(error.localizedDescription)")
                 } else {
-                
-                    for document in snapshot!.documents {
-                        let documentData = document.data()
+                    if snapshot!.documents.count != self.chatsList.count {  // New message or first time
+                        self.chatsList.removeAll()
                         
-                        guard let participant = documentData["participant"] as? String else { continue }
-
-                        let chat = Chat()
-                        chat.documentID = document.documentID
-                        chat.participant.userUID = participant
-                        if let lastMessageID = documentData["lastReadMessage"] as? String {
-                            chat.lastReadMessageUID = lastMessageID
+                        for document in snapshot!.documents {
+                            let documentData = document.data()
+                            
+                            guard let participant = documentData["participant"] as? String else { continue }
+                            
+                            let chat = Chat()
+                            chat.documentID = document.documentID
+                            chat.participant.userUID = participant
+                            if let lastMessageID = documentData["lastReadMessage"] as? String {
+                                chat.lastReadMessageUID = lastMessageID
+                            }
+                            
+                            self.chatsList.append(chat)
                         }
-                        
-                        self.chatsList.append(chat)
+                        self.firebaseListener()
+                    } else {
+                        print("No new Chats")
+                        self.view.activityStopAnimating()
                     }
-                    self.firebaseListener()
                 }
             }
-            
         } else {
-            // Nobody logged In
+            self.chatsList.removeAll()
+            self.tableView.reloadData()
         }
     }
     
@@ -80,6 +94,7 @@ class ChatsTableViewController: UITableViewController {
                 if let error = error {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
+                    //To-Do: Differentiate between new message and initial fetch, than send a notification to badge value and notification on your phone
                     
                     // Delete an empty Chat : Empty Chats happen when you start a new chat but dont send anything
                     if snapshot!.documentChanges.count == 0 {
@@ -87,15 +102,14 @@ class ChatsTableViewController: UITableViewController {
                         self.chatsList.removeAll{$0.documentID == chat.documentID}
                         
                         if let currentUserUid = self.currentUserUid {
-                            let emptyChatRef = self.db.collection("Users").document(currentUserUid).collection("chats").whereField("documentID", isEqualTo: chat.documentID).limit(to: 1)
+                            let emptyChatRef = self.db.collection("Users").document(currentUserUid).collection("chats").document(chat.documentID)
                             
-                            emptyChatRef.getDocuments(completion: { (querySnap, err) in
+                            emptyChatRef.getDocument(completion: { (doc, err) in
                                 if let err = err {
                                     print("We hava an error getting Documents: \(err.localizedDescription)")
                                 } else {
-                                    for document in querySnap!.documents {
+                                    if let document = doc {
                                         document.reference.delete()
-                                        
                                         print("Delete empty Chat")
                                     }
                                 }
@@ -149,10 +163,11 @@ class ChatsTableViewController: UITableViewController {
                             print("We have an error: \(error.localizedDescription)")
                         } else {
                             let unreadMessageCount = snap!.documents.count
-                           
+                            
                             
                             chat.unreadMessages = unreadMessageCount
                             self.badgeValue = 0
+                            self.badgeIndex = 0
                             self.tableView.reloadData()
                         }
                     })
@@ -169,15 +184,15 @@ class ChatsTableViewController: UITableViewController {
                     chat.unreadMessages = unreadMessageCount
                     
                     self.badgeValue = 0
+                    self.badgeIndex = 0
                     self.tableView.reloadData()
-                    
                 }
             }
         }
     }
     
     
-  
+    
     
     func loadUsers() {
         
@@ -191,14 +206,14 @@ class ChatsTableViewController: UITableViewController {
                 if let document = document {
                     if let docData = document.data() {
                         
-                        
                         chat.participant.name = docData["name"] as? String ?? ""
                         chat.participant.surname = docData["surname"] as? String ?? ""
                         chat.participant.imageURL = docData["profilePictureURL"] as? String ?? ""
                         
                         self.badgeValue = 0
+                        self.badgeIndex = 0
                         self.tableView.reloadData()
-                        
+                        self.view.activityStopAnimating()
                     }
                 }
                 if err != nil {
@@ -216,7 +231,6 @@ class ChatsTableViewController: UITableViewController {
         // #warning Incomplete implementation, return the number of rows
         
         if chatsList.count == 0 {
-            print("EInen")
             return 1
         } else {
             return chatsList.count
@@ -228,58 +242,64 @@ class ChatsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if chatsList.count == 0 {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "NibBlankCell", for: indexPath) as? BlankContentCell {
+                
+                cell.type = BlankCellType.chat
+                
+                return cell
+            }
+            
             let cell = UITableViewCell()
             
-            if let _ = Auth.auth().currentUser {
-                cell.textLabel?.text = "Du hast noch keinen Chat"
-            } else {
-                cell.textLabel?.text = "Hier kannst du mit neuen und alten Bekannten chatten"
-            }
+            
             
             cell.textLabel?.textAlignment = .center
             cell.textLabel?.adjustsFontSizeToFitWidth = true
             
             return cell
         } else {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: "ChatCell", for: indexPath) as? ChatCell {
-            
-            let chat = chatsList[indexPath.row]
-            
-            if chat.unreadMessages != 0 {
-                self.badgeValue = badgeValue+chat.unreadMessages
-                cell.unreadMessages.text = String(chat.unreadMessages)
-                cell.unreadMessages.isHidden = false
-                cell.unreadMessageView.isHidden = false
-            } else {
-                cell.unreadMessages.isHidden = true
-                cell.unreadMessageView.isHidden = true
-            }
-            
-            
-            cell.nameLabel.text = "\(chat.participant.name) \(chat.participant.surname)"
-            
-            if let currentUserUid = currentUserUid {
-                if currentUserUid == chat.lastMessageSender {
-                    cell.lastMessage.text = "Du: \(chat.lastMessage)"
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "ChatCell", for: indexPath) as? ChatCell {
+                
+                let chat = chatsList[indexPath.row]
+                
+                if chat.unreadMessages != 0 {
+                    self.badgeValue = badgeValue+chat.unreadMessages
+                    cell.unreadMessages.text = String(chat.unreadMessages)
+                    cell.unreadMessages.isHidden = false
+                    cell.unreadMessageView.isHidden = false
                 } else {
-                    cell.lastMessage.text = "\(chat.participant.name): \(chat.lastMessage)"
+                    cell.unreadMessages.isHidden = true
+                    cell.unreadMessageView.isHidden = true
                 }
+                
+                
+                cell.nameLabel.text = "\(chat.participant.name) \(chat.participant.surname)"
+                
+                if let currentUserUid = currentUserUid {
+                    if currentUserUid == chat.lastMessageSender {
+                        cell.lastMessage.text = "Du: \(chat.lastMessage)"
+                    } else {
+                        cell.lastMessage.text = "\(chat.participant.name): \(chat.lastMessage)"
+                    }
+                }
+                
+                cell.lastMessageDateLabel.text = chat.lastMessageSentAt
+                
+                cell.profilePictureImageView.layer.cornerRadius = cell.profilePictureImageView.frame.width/2
+                cell.profilePictureImageView.layoutIfNeeded()
+                
+                if let url = URL(string: chat.participant.imageURL) {
+                    cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
+                }
+                
+                if self.badgeIndex <= self.chatsList.count {
+                    self.setTabBarBadge()
+                    self.badgeIndex+=1
+                }
+                
+                return cell
             }
-            
-            cell.lastMessageDateLabel.text = chat.lastMessageSentAt
-            
-            cell.profilePictureImageView.layer.cornerRadius = cell.profilePictureImageView.frame.width/2
-            cell.profilePictureImageView.layoutIfNeeded()
-            
-            if let url = URL(string: chat.participant.imageURL) {
-                cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
-            }
-            
-            self.setTabBarBadge()
-            return cell
         }
-        }
-        // Configure the cell...
         
         return UITableViewCell()
     }
@@ -291,12 +311,13 @@ class ChatsTableViewController: UITableViewController {
         } else {
             let chat = chatsList[indexPath.row]
             performSegue(withIdentifier: "toChatSegue", sender: chat)
+            tableView.deselectRow(at: indexPath, animated: true)
         }
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if chatsList.count == 0 {
-            return 40
+        if chatsList.count == 0 {   //
+            return self.view.frame.height-100
         } else {
             return 80
         }
@@ -335,6 +356,8 @@ class ChatsTableViewController: UITableViewController {
     
 }
 
+//MARK: - ChatCell
+
 class ChatCell : UITableViewCell {
     
     @IBOutlet weak var profilePictureImageView: UIImageView!
@@ -345,6 +368,9 @@ class ChatCell : UITableViewCell {
     @IBOutlet weak var lastMessageDateLabel: UILabel!
     
 }
+
+
+//MARK: - Chat Class Declaration
 
 class Chat {
     var participant = User()

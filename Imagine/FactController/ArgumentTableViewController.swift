@@ -11,33 +11,41 @@ import Firebase
 
 class ArgumentTableViewController: UITableViewController {
     
-    var argument = Argument()
-    var fact = Fact()
+    var argument: Argument?
+    var fact: Fact?
     var argumentList = [Argument]()
+    
+    let identifier = "NibArgumentCell"
+    let reuseIdentifier = "addCell"
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         getArguments()
-        tableView.layer.cornerRadius = 5
+        tableView.layer.cornerRadius = 1
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = Constants.backgroundColorForTableViews
+        
+        tableView.register(UINib(nibName: "ArgumentCell", bundle: nil), forCellReuseIdentifier: identifier)
+        tableView.register(AddFactCell.self, forCellReuseIdentifier: reuseIdentifier)
         
     }
     
     func getArguments() {
-        
-        if fact.documentID != "" {
-            DataHelper().getDeepestArgument(factID: fact.documentID, argumentID: argument.documentID) { (deepestData) in
+        if let argument = argument, let fact = fact {
+            DataHelper().getDeepestArgument(factID: fact.documentID, argumentID: argument.documentID, deepDataType: .arguments) { (deepestData) in
                 if let arguments = deepestData as? [Argument] {
                     self.argumentList = arguments
                     self.tableView.reloadData()
                 }
             }
+        } else {
+            print("No Argument or Fact")
+            navigationController?.popViewController(animated: true)
         }
     }
 
     // MARK: - Table view data source
-
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return argumentList.count
@@ -45,42 +53,22 @@ class ArgumentTableViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let identifier = "NibArgumentCell"
+        
         let argument = argumentList[indexPath.row]
         
-        //Vielleicht noch absichern?!! Weiß aber nicht wie!
-        tableView.register(UINib(nibName: "ArgumentCell", bundle: nil), forCellReuseIdentifier: identifier)
-        
-        if argument.title != "Füge ein Argument hinzu!" {
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? ArgumentCell {
-                
-                
-                cell.headerLabel.text = argument.title
-                cell.bodyLabel.text = argument.description
-                cell.proCountLabel.text = "Zustimmen: 150"
-                cell.contraCountLabel.text = "Zweifel: 78"
-                
-                if argument.source.isEmpty {    // For now, später muss wahrheitswert der Quellen überprüft werden
-                    // Keine Quelle
-                    cell.sourceLabel.text = "Quelle: 🚫"
-                } else {
-                    cell.sourceLabel.text = "Quelle: ✅"
-                }
+        if argument.addMoreData {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as? AddFactCell {
                 
                 return cell
             }
         } else {
-            let cell = UITableViewCell()
-            
-            cell.textLabel?.text = argument.title
-            cell.textLabel?.numberOfLines = 0
-            cell.textLabel?.lineBreakMode = .byWordWrapping
-            cell.textLabel?.textAlignment = .center
-            cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 15)
-            
-            return cell
+            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? ArgumentCell {
+                
+                cell.argument = argument
+                
+                return cell
+            }
         }
-        
         
         return UITableViewCell()
     }
@@ -88,41 +76,47 @@ class ArgumentTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        var rowHeight:CGFloat = 50
         let argument = argumentList[indexPath.row]
         
-        if argument.title != "Füge ein Argument hinzu!" {
-            rowHeight = 203
+        if argument.addMoreData {
+            return 50
+        } else {
+            return 203
         }
-        
-        return rowHeight
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let argument = argumentList[indexPath.row]
         
-        if argument.title != "Füge ein Argument hinzu!" {
-            performSegue(withIdentifier: "toArgumentDetail", sender: nil)
-        } else {
+        if argument.addMoreData {
             if let _ = Auth.auth().currentUser {
-                performSegue(withIdentifier: "toNewSourceSegue", sender: nil)
+                performSegue(withIdentifier: "toNewArgumentSegue", sender: nil)
             } else {
                 self.notLoggedInAlert()
             }
+        } else {
+            performSegue(withIdentifier: "toArgumentDetail", sender: argument)
         }
-        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? NewFactViewController {
-            if segue.identifier == "toNewArgumentSegue" {
-                if let argument = sender as? Argument {
-                    vc.deepArgument = argument
+        if segue.identifier == "toNewArgumentSegue" {
+            if let nav = segue.destination as? UINavigationController {
+                if let vc = nav.topViewController as? NewFactViewController {
                     vc.fact = self.fact
-                    vc.new = "deepArgument"
+                    vc.argument = self.argument
+                    vc.new = .deepArgument
+                }
+            }
+        }
+        if segue.identifier == "toArgumentDetail" {
+            if let vc = segue.destination as? ArgumentDetailViewController {
+                if let argument = sender as? Argument {
+                    vc.argument = argument
                 }
             }
         }
     }
 
 }
+

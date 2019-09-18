@@ -29,7 +29,13 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        
+        tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: "NibBlankCell")
+        
         getFriends()
+        self.view.activityStartAnimating()
     }
     
     func getFriends() {
@@ -76,6 +82,8 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                                  Category(name: "Freunde", friends: self.alreadyFriends)]
                 self.loadUsers()
             }
+        } else {
+            self.view.activityStopAnimating()
         }
     }
     
@@ -88,6 +96,7 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
             }
         }
         self.tableView.reloadData()
+        self.view.activityStopAnimating()
     }
     
     func getUserDetails(friend: Friend) {
@@ -100,6 +109,7 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                     friend.user.surname = docData["surname"] as? String ?? ""
                     friend.user.imageURL = docData["profilePictureURL"] as? String ?? ""
                     friend.user.statusQuote = docData["statusText"] as? String ?? ""
+                    friend.user.blocked = docData["blocked"] as? [String] ?? nil
                     
                     self.tableView.reloadData()
                 }
@@ -145,11 +155,12 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 1 && sections[1].friends.count == 0 {   // No friends yet
-            let cell = UITableViewCell()
-            cell.textLabel?.text = "Lade jetzt deine Freunde ein"
-            cell.textLabel?.textAlignment = .center
-            cell.isUserInteractionEnabled = true
-            return cell
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "NibBlankCell", for: indexPath) as? BlankContentCell {
+                
+                cell.type = BlankCellType.friends
+                
+                return cell
+            }
         } else {
             let friends = sections[indexPath.section].friends
             let friend = friends[indexPath.row]
@@ -187,7 +198,11 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 88
+        if sections[0].friends.count == 0 && sections[1].friends.count == 0 {
+            return self.view.frame.height-100
+        } else {
+            return 88
+        }
     }
     
     

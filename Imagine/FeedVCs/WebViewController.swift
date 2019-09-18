@@ -11,7 +11,8 @@ import WebKit
 
 class WebViewController: UIViewController {
 
-    var post = Post()
+    var post: Post?
+    var link: String?
     
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var progressView: UIProgressView!
@@ -22,10 +23,29 @@ class WebViewController: UIViewController {
         webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
         webView.addObserver(self, forKeyPath: #keyPath(WKWebView.title), options: .new, context: nil)
         
-        if let url = URL(string: post.linkURL) {
-            webView.load(URLRequest(url: url))
+        setUpLink()
+    }
+    
+    func setUpLink() {
+        if let post = post {
+            let urlString = post.linkURL
+            let validUrlString = urlString.hasPrefix("http") ? urlString : "http://\(urlString)"
+            
+            print(urlString, "Posturl: ", validUrlString)
+            if let url = URL(string: validUrlString) {
+                webView.load(URLRequest(url: url))
+            } else {
+                print("No url")
+            }
+        } else if let link = link {
+            let validUrlString = link.hasPrefix("http") ? link : "http://\(link)"
+            
+            if let url = URL(string: validUrlString) {
+                webView.load(URLRequest(url: url))
+            } else {
+                print("No url")
+            }
         }
-
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -35,7 +55,7 @@ class WebViewController: UIViewController {
                 progressView.isHidden = true
             }
         } else if keyPath == "title" {
-            if let title = webView.title {
+            if let _ = webView.title {
                 progressView.isHidden = false
             }
         }

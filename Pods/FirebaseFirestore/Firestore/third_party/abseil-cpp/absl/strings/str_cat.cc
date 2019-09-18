@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -78,9 +78,9 @@ AlphaNum::AlphaNum(Dec dec) {
 
 // ----------------------------------------------------------------------
 // StrCat()
-//    This merges the given strings or integers, with no delimiter.  This
-//    is designed to be the fastest possible way to construct a std::string out
-//    of a mix of raw C strings, StringPieces, strings, and integer values.
+//    This merges the given strings or integers, with no delimiter. This
+//    is designed to be the fastest possible way to construct a string out
+//    of a mix of raw C strings, string_views, strings, and integer values.
 // ----------------------------------------------------------------------
 
 // Append is merely a version of memcpy that returns the address of the byte
@@ -119,7 +119,7 @@ std::string StrCat(const AlphaNum& a, const AlphaNum& b, const AlphaNum& c) {
 }
 
 std::string StrCat(const AlphaNum& a, const AlphaNum& b, const AlphaNum& c,
-              const AlphaNum& d) {
+                   const AlphaNum& d) {
   std::string result;
   strings_internal::STLStringResizeUninitialized(
       &result, a.size() + b.size() + c.size() + d.size());
@@ -154,10 +154,10 @@ std::string CatPieces(std::initializer_list<absl::string_view> pieces) {
 }
 
 // It's possible to call StrAppend with an absl::string_view that is itself a
-// fragment of the std::string we're appending to.  However the results of this are
+// fragment of the string we're appending to.  However the results of this are
 // random. Therefore, check for this in debug mode.  Use unsigned math so we
 // only have to do one comparison. Note, there's an exception case: appending an
-// empty std::string is always allowed.
+// empty string is always allowed.
 #define ASSERT_NO_OVERLAP(dest, src) \
   assert(((src).size() == 0) ||      \
          (uintptr_t((src).data() - (dest).data()) > uintptr_t((dest).size())))

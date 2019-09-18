@@ -19,8 +19,13 @@
 #import "Firestore/Source/Local/FSTLRUGarbageCollector.h"
 #import "Firestore/Source/Local/FSTLocalSerializer.h"
 #import "Firestore/Source/Local/FSTPersistence.h"
+
+#include "Firestore/core/src/firebase/firestore/local/lru_garbage_collector.h"
 #include "Firestore/core/src/firebase/firestore/model/document_key.h"
 #include "Firestore/core/src/firebase/firestore/model/types.h"
+
+namespace local = firebase::firestore::local;
+namespace model = firebase::firestore::model;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -32,7 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)persistenceWithEagerGC;
 
-+ (instancetype)persistenceWithLRUGCAndSerializer:(FSTLocalSerializer *)serializer;
++ (instancetype)persistenceWithLruParams:(local::LruParams)lruParams
+                              serializer:(FSTLocalSerializer *)serializer;
 
 @end
 
@@ -52,10 +58,11 @@ NS_ASSUME_NONNULL_BEGIN
     : NSObject <FSTReferenceDelegate, FSTLRUDelegate, FSTTransactional>
 
 - (instancetype)initWithPersistence:(FSTMemoryPersistence *)persistence
-                         serializer:(FSTLocalSerializer *)serializer;
+                         serializer:(FSTLocalSerializer *)serializer
+                          lruParams:(local::LruParams)lruParams;
 
-- (BOOL)isPinnedAtSequenceNumber:(firebase::firestore::model::ListenSequenceNumber)upperBound
-                        document:(const firebase::firestore::model::DocumentKey &)key;
+- (BOOL)isPinnedAtSequenceNumber:(model::ListenSequenceNumber)upperBound
+                        document:(const model::DocumentKey &)key;
 
 @end
 

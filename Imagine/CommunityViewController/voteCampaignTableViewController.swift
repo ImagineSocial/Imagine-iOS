@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseAuth
 
 enum suggestionMode {
     case vote
@@ -22,6 +23,7 @@ enum Impact {
 
 class voteCampaignTableViewController: UITableViewController {
     
+    @IBOutlet weak var spaceBetweenSubheaderAndDescriptionLabel: NSLayoutConstraint!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var subHeaderLabel: UILabel!
@@ -29,24 +31,36 @@ class voteCampaignTableViewController: UITableViewController {
     @IBOutlet weak var descriptionLabel: UILabel!
     
     var campaigns = [Campaign]()
+    var votes = [Vote]()
     var mode: suggestionMode = .vote
+    let dataHelper = DataHelper()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.view.activityStartAnimating()
         
         tableView.separatorStyle = .none
         
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.view.backgroundColor = .white
         
-        setBarButtonItem()
-        setVoteModeUI()
-        let imageView = UIImageView(image: UIImage(named: "peace-sign"))
-        imageView.contentMode = .scaleAspectFit
-        imageView.alpha = 0.3
-
-        self.tableView.backgroundView = imageView
+        let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(setCampaignUI))
+        rightSwipe.direction = .right
         
+        self.view.addGestureRecognizer(rightSwipe)
+        
+        let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(setVoteModeUI))
+        leftSwipe.direction = .left
+        self.view.addGestureRecognizer(leftSwipe)
+        
+        setVoteModeUI()
+        
+        
+        let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15) as Any]
+        segmentedControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
+        segmentedControl.tintColor = Constants.imagineColor
+        shareIdeaButton.backgroundColor = Constants.imagineColor
     }
     
     lazy var infoScreen: InfoScreen = {
@@ -55,35 +69,29 @@ class voteCampaignTableViewController: UITableViewController {
         return infoScreen
     }()
     
-    func setBarButtonItem() {
-        let infoButton = DesignableButton(type: .custom)
-        infoButton.setImage(UIImage(named: "help"), for: .normal)
-        infoButton.addTarget(self, action: #selector(self.infoBarButtonTapped), for: .touchUpInside)
-        infoButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        infoButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        
-        let infoBarButton = UIBarButtonItem(customView: infoButton)
-        self.navigationItem.rightBarButtonItem = infoBarButton
-    }
-    
-    
-    @objc func infoBarButtonTapped() {
-        infoScreen.showInfoScreen()
-    }
-    
-    
     
     override func viewWillAppear(_ animated: Bool) {
         getCampaigns()
     }
     
-    @objc func getCampaigns() {
-        
-        DataHelper().getData(get: "campaign") { (campaigns) in
-            self.campaigns = campaigns as! [Campaign]
-            self.tableView.reloadData()
+    func getCampaigns() {
+        dataHelper.getData(get: .vote) { (votes) in
+            if let votez = votes as? [Vote] {
+                self.votes = votez
+                self.tableView.reloadData()
+                self.view.activityStopAnimating()
+            } else {
+                print("Couldnt get the votes: \(votes)")
+                self.view.activityStopAnimating()
+                self.descriptionLabel.text = "Hier ist etwas schief gelaufen"
+            }
         }
         
+        dataHelper.getData(get: .campaign) { (campaigns) in
+            if let campaignz = campaigns as? [Campaign] {
+                self.campaigns = campaignz
+            }
+        }
     }
     
     
@@ -93,7 +101,7 @@ class voteCampaignTableViewController: UITableViewController {
         case .campaign:
             return campaigns.count
         case .vote:
-            return 1
+            return votes.count
         }
     }
     
@@ -113,28 +121,29 @@ class voteCampaignTableViewController: UITableViewController {
         case .vote:
             if let cell = tableView.dequeueReusableCell(withIdentifier: "VoteCell", for: indexPath) as? VoteCell {
                 
-                cell.headerLabel.text = "Ein Privates Netzwerk"
-                cell.bodyLabel.text = "Ein Netzwerk in Imagine-Optik, welches man nur mit seinen Freunden als Gruppenchat-Ersatz nutzen kann"
-                cell.voteTillDateLabel.text = "Abstimmung bis: 30.09.2019 12:00"
-                cell.costLabel.text = "15.000€"
-                cell.timePeriodLabel.text = "6 Wochen"
-                cell.commentCountLabel.text = "17"
+                let vote = votes[indexPath.row]
                 
-                cell.voteTillDateLabel.layer.cornerRadius = 5
-                cell.impactLabel.layer.cornerRadius = 3
+                cell.headerLabel.text = vote.title
+                cell.bodyLabel.text = vote.subtitle
+                cell.voteTillDateLabel.text = "Abstimmung bis: \(vote.endOfVoteDate)"
+                cell.voteTillDateLabel.backgroundColor = Constants.imagineColor
+                cell.costLabel.text = vote.cost
+                cell.timePeriodLabel.text = "\(vote.timeToRealization) Monat"
+                cell.commentCountLabel.text = "7"
                 
-                let impact = Impact.medium
+                cell.voteTillDateLabel.layer.cornerRadius = 4
+                cell.impactLabel.layer.cornerRadius = 4
                 
-                switch impact {
+                switch vote.impact {
                 case .light:
                     cell.impactLabel.text = "Auswirkung: Leicht"
-                    cell.impactLabel.backgroundColor = .green
+                    cell.impactLabel.backgroundColor = Constants.green
                 case .medium:
                     cell.impactLabel.text = "Auswirkung: Medium"
                     cell.impactLabel.backgroundColor = .orange
                 case .strong:
                     cell.impactLabel.text = "Auswirkung: Stark"
-                    cell.impactLabel.backgroundColor = .red
+                    cell.impactLabel.backgroundColor = Constants.red
                 }
                 
                 return cell
@@ -160,9 +169,18 @@ class voteCampaignTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let campaign = campaigns[indexPath.row]
         
-        performSegue(withIdentifier: "toCampaignSegue", sender: campaign)
+        switch mode {
+        case .campaign:
+            let campaign = campaigns[indexPath.row]
+            
+            performSegue(withIdentifier: "toCampaignSegue", sender: campaign)
+        case .vote:
+            let vote = votes[indexPath.row]
+            
+            performSegue(withIdentifier: "toVoteSegue", sender: vote)
+        }
+        
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -175,47 +193,84 @@ class voteCampaignTableViewController: UITableViewController {
                 }
             }
         }
-    }
-    
-    func setCampaignUI() {
-        headerLabel.text = "Eure Vorschläge für Imagine"
-        subHeaderLabel.text = "Teile uns deine Ideen für ein besseres Erlebnis mit!"
-        descriptionLabel.text = "Aktuelle Kampagnen:"
-        shareIdeaButton.isHidden = false
-        
-        
-        UIView.animate(withDuration: 0.5) {
-            self.view.layoutIfNeeded()
-            self.tableView.tableHeaderView?.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 235)
-            self.shareIdeaButton.alpha = 1
+        if segue.identifier == "toVoteSegue" {
+            if let choosenVote = sender as? Vote {
+                if let nextVC = segue.destination as? VoteViewController {
+                    nextVC.vote = choosenVote
+                }
+            }
         }
     }
     
-    func setVoteModeUI() {
-        headerLabel.text = "Deine Stimme für Imagine"
-        subHeaderLabel.text = "Du entscheidest mit, wie sich dein Netzwerk verändert!"
-        descriptionLabel.text = "Aktuelle Abstimmungen:"
-        shareIdeaButton.alpha = 0
+    @objc func setCampaignUI() {
+        switch mode {
+        case .vote:
+            mode = .campaign
+            
+            let option = UIView.AnimationOptions.transitionFlipFromLeft
+            
+            UIView.transition(with: self.view, duration: 0.6, options: option, animations: {
+                self.tableView.tableHeaderView?.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 235)
+                
+                self.shareIdeaButton.alpha = 1
+                
+                self.spaceBetweenSubheaderAndDescriptionLabel.constant = 70
+                
+                self.segmentedControl.selectedSegmentIndex = 0
+                self.headerLabel.fadeTransition(0.5)
+                self.headerLabel.text = "Gemeinsam errichten"
+                self.subHeaderLabel.fadeTransition(0.5)
+                self.subHeaderLabel.text = "Teile uns deine Ideen für ein besseres Erlebnis mit!"
+                self.descriptionLabel.fadeTransition(0.5)
+                self.descriptionLabel.text = "Aktuelle Kampagnen:"
+                self.tableView.reloadData()
+                
+            }) { (_) in
+                
+            }
+        default:
+            print("Nothing will happen")
+        }
+    }
+    
+    @objc func setVoteModeUI() {
         
-        UIView.animate(withDuration: 0.5, animations: {
-            self.view.layoutIfNeeded()
-            self.tableView.tableHeaderView?.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 200)
-        }, completion: { (_) in
-            self.shareIdeaButton.isHidden = true
-        })
-        
+        switch mode {
+        case .campaign:
+            mode = .vote
+            
+            let option = UIView.AnimationOptions.transitionFlipFromRight
+            
+            UIView.transition(with: self.view, duration: 0.7, options: option, animations: {
+                self.shareIdeaButton.alpha = 0
+                self.tableView.tableHeaderView?.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 190)
+                
+                self.segmentedControl.selectedSegmentIndex = 1
+                self.spaceBetweenSubheaderAndDescriptionLabel.constant = 10
+                self.headerLabel.fadeTransition(0.5)
+                self.headerLabel.text = "Gemeinsam entscheiden"
+                self.subHeaderLabel.fadeTransition(0.5)
+                self.subHeaderLabel.text = "Du entscheidest mit, wie sich dein Netzwerk verändert!"
+                self.descriptionLabel.fadeTransition(0.5)
+                self.descriptionLabel.text = "Aktuelle Abstimmungen:"
+                self.tableView.reloadData()
+                
+            }) { (_) in
+                
+            }
+        default:
+            print("Nothing will happen")
+        }
     }
     
     @IBAction func segmentControlChannged(_ sender: Any) {
         if segmentedControl.selectedSegmentIndex == 0 {
-            mode = .campaign
+            
             setCampaignUI()
-            tableView.reloadData()
         }
         if segmentedControl.selectedSegmentIndex == 1 {
-            mode = .vote
+            
             setVoteModeUI()
-            tableView.reloadData()
         }
     }
     
@@ -225,6 +280,9 @@ class voteCampaignTableViewController: UITableViewController {
         } else {
             self.notLoggedInAlert()
         }
+    }
+    @IBAction func infoButtonTapped(_ sender: Any) {
+        infoScreen.showInfoScreen()
     }
     
 }

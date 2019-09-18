@@ -102,5 +102,8 @@ class CobraViewController: UIViewController {
         middleProgress.angle = middleProgressNumber
         innerProgress.angle = innerProgressNumber
     }
+    @IBAction func dismissTapped(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
     
 }

@@ -26,6 +26,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * A block type used to handle failable snapshot method callbacks.
+ */
 typedef void (^FIRQuerySnapshotBlock)(FIRQuerySnapshot *_Nullable snapshot,
                                       NSError *_Nullable error);
 
@@ -35,7 +38,7 @@ typedef void (^FIRQuerySnapshotBlock)(FIRQuerySnapshot *_Nullable snapshot,
  */
 NS_SWIFT_NAME(Query)
 @interface FIRQuery : NSObject
-/**   */
+/** :nodoc: */
 - (id)init __attribute__((unavailable("FIRQuery cannot be created directly.")));
 
 /** The `FIRFirestore` for the Firestore database (useful for performing transactions, etc.). */

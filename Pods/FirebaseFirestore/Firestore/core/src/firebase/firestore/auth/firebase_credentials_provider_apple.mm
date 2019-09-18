@@ -22,12 +22,9 @@
 #import <FirebaseCore/FIRComponentContainer.h>
 #import <FirebaseCore/FIROptionsInternal.h>
 
+#include "Firestore/core/src/firebase/firestore/util/error_apple.h"
 #include "Firestore/core/src/firebase/firestore/util/hard_assert.h"
 #include "Firestore/core/src/firebase/firestore/util/string_apple.h"
-
-// NB: This is also defined in Firestore/Source/Public/FIRFirestoreErrors.h
-// NOLINTNEXTLINE: public constant
-NSString* const FIRFirestoreErrorDomain = @"FIRFirestoreErrorDomain";
 
 namespace firebase {
 namespace firestore {
@@ -100,7 +97,7 @@ void FirebaseCredentialsProvider::GetToken(TokenListener completion) {
       // Cancel the request since the user changed while the request was
       // outstanding so the response is likely for a previous user (which
       // user, we can't be sure).
-      completion(util::Status(FirestoreErrorCode::Aborted,
+      completion(util::Status(Error::Aborted,
                               "getToken aborted due to token change."));
     } else {
       if (error == nil) {
@@ -110,9 +107,9 @@ void FirebaseCredentialsProvider::GetToken(TokenListener completion) {
           completion(Token::Unauthenticated());
         }
       } else {
-        FirestoreErrorCode error_code = FirestoreErrorCode::Unknown;
+        Error error_code = Error::Unknown;
         if (error.domain == FIRFirestoreErrorDomain) {
-          error_code = static_cast<FirestoreErrorCode>(error.code);
+          error_code = static_cast<Error>(error.code);
         }
         completion(util::Status(error_code,
                                 util::MakeString(error.localizedDescription)));

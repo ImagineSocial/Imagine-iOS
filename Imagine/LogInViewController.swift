@@ -35,6 +35,10 @@ enum SignInFrame {
     case error
 }
 
+protocol DismissDelegate {
+    func loadUser()
+}
+
 class LogInViewController: UIViewController {
     
     @IBOutlet weak var initialStackView: UIStackView!
@@ -54,15 +58,17 @@ class LogInViewController: UIViewController {
     var password = ""
     var logInFrame: LogInFrame = .enterEmail
     var signUpFrame: SignInFrame = .enterFirstName
+    var signUpInProgress = false
     
+    var delegate:DismissDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        
     }
+  
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         answerTextfield.resignFirstResponder()
@@ -70,6 +76,7 @@ class LogInViewController: UIViewController {
     
     
     func startSignUpSession() {
+        signUpInProgress = true
         answerTextfield.text = ""
         nextButton.isEnabled = true
         answerTextfield.addTarget(self, action: #selector(textGetsWritten), for: .editingChanged)
@@ -77,35 +84,46 @@ class LogInViewController: UIViewController {
         switch signUpFrame {
         case .enterFirstName:
             answerTextfield.textContentType = .givenName
-            questionLabel.text = "Kind der Erde, wie ruft man dich auf der Straße?"
+            questionLabel.text = NSLocalizedString("Child of earth, what is your name?", comment: "Enter your name (with a 'too much' touch)")
         case .enterLastName:
             answerTextfield.textContentType = .familyName
-            questionLabel.text = "Freut mich dich kennenzulernen \(name). Welchen Namen führt deine Familie?"
+                let surnameText = NSLocalizedString("Glad to meet you %@. What is the name of your family?", comment: "Enter your surname (with a 'too much' touch)")
+            print("name:", name)
+            questionLabel.text = String.localizedStringWithFormat(surnameText, name)
         case .enterEmail:
             answerTextfield.textContentType = .emailAddress
+            answerTextfield.isSecureTextEntry = false
             questionLabel.text = "Wie ist deine Email-Adresse?"
         case .invalidEmail:
             answerTextfield.textContentType = .emailAddress
+            answerTextfield.isSecureTextEntry = false
             questionLabel.text = "Die angegebene Email-Adresse scheint nicht korrekt zu sein. Gib sie noch einmal ein:"
         case .EmailAlreadyInUse:
             answerTextfield.textContentType = .emailAddress
+            answerTextfield.isSecureTextEntry = false
             questionLabel.text = "Die Email-Adresse wird bereits bei uns verwendet. Bitte nutze eine andere:"
         case .enterPassword:
             answerTextfield.textContentType = .newPassword
+            answerTextfield.isSecureTextEntry = true
             questionLabel.text = "Wie soll dein Passwort sein?"
         case .weakPassword:
             answerTextfield.textContentType = .newPassword
+            answerTextfield.isSecureTextEntry = true
             questionLabel.text = "Dein Passwort ist zu schwach. Es muss mindestens 6 Buchstaben haben und schon ein bisschen sicher sein"
         case .repeatPassword:
             answerTextfield.textContentType = .newPassword
+            answerTextfield.isSecureTextEntry = true
             questionLabel.text = "Wiederhole zur Sicherheit dein Passwort"
         case .wrongRepeatedPassword:
             answerTextfield.textContentType = .newPassword
+            answerTextfield.isSecureTextEntry = true
             questionLabel.text = "Deine beiden Passwörter stimmen nicht überein. Versuch es bitte noch einmal:"
         case .keepCalm: // Is set in "tryTOSignUp
-            answerTextfield.textContentType = nil
+            answerTextfield.textContentType = .none
+            answerTextfield.isSecureTextEntry = false
             questionLabel.text = "Wirst du Ruhe bewahren wenn dich etwas oder jemand bei Imagine aufregt und keine verletzenden Begriffe nutzen?"
         case .respectYourFellowMan:
+            answerTextfield.isSecureTextEntry = false
             questionLabel.text = "Wirst du die Ansichten und Meinungen deiner Mit-User respektieren?"
         case .supportImagine:
             questionLabel.text = "Würdest du Imagine als Netzwerk unterstützen und melden, upvoten und schlichten wenn es angebracht ist? "
@@ -218,9 +236,10 @@ class LogInViewController: UIViewController {
                     signUpFrame = .ready
                 // ToDo: Save the Answer
                 case .ready:
-                    self.navigationController?.popViewController(animated: true)
+                    self.delegate?.loadUser()
+                    self.dismiss(animated: true, completion: nil)
                 case .error:
-                    self.navigationController?.popViewController(animated: true)
+                    self.dismiss(animated: true, completion: nil)
                 }
                 
                 UIView.animate(withDuration: 1.3, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
@@ -288,11 +307,9 @@ class LogInViewController: UIViewController {
                     default:
                         self.signUpFrame = .error
                     }
-                    
                     self.startSignUpSession()
-                    
                 }
-            } else  {
+            } else {
                 print("User wurde erfolgreich erstellt.")
                 
                 if let user = Auth.auth().currentUser {
@@ -319,6 +336,7 @@ class LogInViewController: UIViewController {
                         } else {
                             print("User wurde in Datenbank übertragen")
                             self.signUpFrame = .keepCalm
+                            self.startSignUpSession()
                         }
                     })
                 }
@@ -348,14 +366,10 @@ class LogInViewController: UIViewController {
                     self.startLogIn()
                     
                 }
-            }
-            if (error != nil) {
-                
-                print("Wir haben einen error: \(String(describing: error?.localizedDescription))")
             } else {
                 print("User wurde erfolgreich eingeloggt.")
-                
-                self.navigationController?.popViewController(animated: true)
+                self.delegate?.loadUser()
+                self.dismiss(animated: true, completion: nil)
             }
         }
     }
@@ -364,7 +378,7 @@ class LogInViewController: UIViewController {
     
     let questionLabel: UILabel = {
        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 27)
+        label.font = UIFont(name: "IBMPlexSans", size: 26)
         label.adjustsFontSizeToFitWidth = true
         label.minimumScaleFactor = 0.5
         label.numberOfLines = 0
@@ -377,7 +391,8 @@ class LogInViewController: UIViewController {
     let answerTextfield: UITextField = {
         let textField = UITextField()
         textField.textAlignment = .center
-        textField.font = UIFont.systemFont(ofSize: 18)
+        textField.borderStyle = UITextField.BorderStyle.roundedRect
+        textField.font = UIFont(name: "IBMPlexSans", size: 18)
         textField.placeholder = "..."
         textField.autocorrectionType = .no
         textField.alpha = 0
@@ -392,7 +407,7 @@ class LogInViewController: UIViewController {
         button.backgroundColor = UIColor(red:0.19, green:0.82, blue:1.00, alpha:1.0)
         button.tag = 0
         button.setTitle("Weiter", for: .normal)
-        button.titleLabel?.font = UIFont(name: "Kalam", size: 22)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 22)
         button.alpha = 0
         button.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
         return button
@@ -408,10 +423,10 @@ class LogInViewController: UIViewController {
         view.addSubview(newStackView)
         newStackView.translatesAutoresizingMaskIntoConstraints = false  // Enables AutoLayout
         newStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        newStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -75).isActive = true
+        newStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -100).isActive = true
         newStackView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -75).isActive = true
         //nextButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        questionLabel.heightAnchor.constraint(equalToConstant: 250).isActive = true
+        questionLabel.heightAnchor.constraint(equalToConstant: 200).isActive = true
         
     }
     
@@ -463,7 +478,7 @@ class LogInViewController: UIViewController {
                 
                 
             }, completion: { (_) in
-                self.navigationController?.popViewController(animated: true)
+                self.dismiss(animated: true, completion: nil)
             })
         } else {
             // Erster Schritt
@@ -485,7 +500,7 @@ class LogInViewController: UIViewController {
                 self.attentionLabel.centerXAnchor.constraint(equalTo: self.initialStackView.centerXAnchor, constant: 0).isActive = true
                 self.attentionLabel.topAnchor.constraint(equalTo: self.initialStackView.topAnchor, constant: -55).isActive = true
                 self.attentionLabel.text = "Achtung!"
-                self.attentionLabel.font = UIFont(name: "Kalam", size: 30)
+                self.attentionLabel.font = UIFont(name: "IBMPlexSans", size: 30)
                 self.attentionLabel.shadowColor = UIColor.white
                 self.attentionLabel.shadowOffset = CGSize(width: 3, height: -1)
                 
@@ -510,4 +525,22 @@ class LogInViewController: UIViewController {
             statusBar.alpha = 1
         }
     }
+    
+    @IBAction func cancelTapped(_ sender: Any) {
+        if signUpInProgress {
+            let alertController = UIAlertController(title: "Anmeldung abbrechen?", message: "Möchtest du die Anmeldung abbrechen? Die aktuellen Eingaben gehen verloren.", preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Anmeldung abbrechen", style: .destructive, handler: { (_) in
+                self.dismiss(animated: true, completion: nil)
+            })
+            let stayAction = UIAlertAction(title: "Hier bleiben", style: .cancel) { (_) in
+                alertController.dismiss(animated: true, completion: nil)
+            }
+            alertController.addAction(cancelAction)
+            alertController.addAction(stayAction)
+            self.present(alertController, animated: true, completion: nil)
+        } else {
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+    
 }

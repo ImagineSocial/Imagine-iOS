@@ -12,15 +12,18 @@ import Firebase
 class ContraFactTableViewController: UITableViewController {
 
     var argumentList = [Argument]()
-    var fact = Fact()
-    let addArgumentString = "Füge ein Argument hinzu!"
+    var fact: Fact?
     var downVotes = 90
     var upvotes = 140
+    
+    let identifier = "NibArgumentCell"
+    let reuseIdentifier = "AddCell"
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         
+        tableView.register(UINib(nibName: "ArgumentCell", bundle: nil), forCellReuseIdentifier: identifier)
+        tableView.register(AddFactCell.self, forCellReuseIdentifier: reuseIdentifier)
     }
     
     func setArguments(arguments: [Argument]) {
@@ -29,9 +32,8 @@ class ContraFactTableViewController: UITableViewController {
         tableView.reloadData()
         
     }
+    
     // MARK: - Table view data source
-    
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return argumentList.count
@@ -39,48 +41,21 @@ class ContraFactTableViewController: UITableViewController {
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let identifier = "NibArgumentCell"
+        
         let argument = argumentList[indexPath.row]
         
-        //Vielleicht noch absichern?!! Weiß aber nicht wie!
-        tableView.register(UINib(nibName: "ArgumentCell", bundle: nil), forCellReuseIdentifier: identifier)
-        
-        if argument.title != addArgumentString {
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? ArgumentCell {
-                
-                let row = indexPath.row
-                if row % 2 != 0 {
-                    cell.backgroundColor = UIColor(red:0.96, green:0.96, blue:0.96, alpha:1.0)
-                }
-                
-                
-                cell.headerLabel.text = argument.title
-                cell.bodyLabel.text = argument.description
-                cell.proCountLabel.text = "Zustimmen: \(upvotes)"
-                cell.contraCountLabel.text = "Zweifel: \(downVotes)"
-                
-                if argument.source.isEmpty {    // For now, später muss wahrheitswert der Quellen überprüft werden
-                    // Keine Quelle
-                    cell.sourceLabel.text = "Quelle: 🚫"
-                } else {
-                    cell.sourceLabel.text = " Quelle: ✅ | ▼ \(downVotes/3)  ▲ \(upvotes/3)"
-                }
-                
-                upvotes = upvotes-17
-                downVotes = downVotes-17
+        if argument.addMoreData {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as? AddFactCell {
                 
                 return cell
             }
         } else {
-            let cell = UITableViewCell()
-            
-            cell.textLabel?.text = argument.title
-            cell.textLabel?.numberOfLines = 0
-            cell.textLabel?.lineBreakMode = .byWordWrapping
-            cell.textLabel?.textAlignment = .center
-            cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 14)
-            
-            return cell
+            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? ArgumentCell {
+                
+                cell.argument = argument
+                
+                return cell
+            }
         }
         
         return UITableViewCell()
@@ -89,35 +64,37 @@ class ContraFactTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        var rowHeight:CGFloat = 50
         let argument = argumentList[indexPath.row]
         
-        if argument.title != addArgumentString {
-            rowHeight = 200
+        if argument.addMoreData {
+            return 50
+        } else {
+            return 203
         }
-        
-        return rowHeight
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let argument = argumentList[indexPath.row]
         
-        if argument.title != addArgumentString {
-            performSegue(withIdentifier: "toDetailFactSegue", sender: argument)
-        } else {
+        if argument.addMoreData {
             if let _ = Auth.auth().currentUser {
                 performSegue(withIdentifier: "toNewArgumentSegue", sender: fact)
             } else {
                 self.notLoggedInAlert()
             }
+        } else {
+            performSegue(withIdentifier: "toDetailFactSegue", sender: argument)
         }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? NewFactViewController {
-            if segue.identifier == "toNewArgumentSegue" {
-                vc.fact = self.fact
-                vc.new = "argument"
+        if segue.identifier == "toNewArgumentSegue" {
+            if let nav = segue.destination as? UINavigationController {
+                if let vc = nav.topViewController as? NewFactViewController {
+                    vc.fact = self.fact
+                    vc.new = .argument
+                    vc.proOrContra = .contra
+                }
             }
         }
         

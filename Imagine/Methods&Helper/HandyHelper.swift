@@ -42,6 +42,33 @@ extension Date {
         
         return dateFormatter.string(from: self)
     }
+    
+    func formatForFeed() -> String {
+        let dateFormatter = DateFormatter()
+        
+        let calendar = Calendar(identifier: .gregorian)
+        dateFormatter.doesRelativeDateFormatting = true
+        
+        var feedString = ""
+        let date = Date()
+        
+        // To-do: the date variable is not in the correct time zone??
+        if calendar.isDateInToday(self) {
+            let hoursAgoString = NSLocalizedString("%d hours ago", comment: "How many hours is the post old")
+            
+            feedString = String.localizedStringWithFormat(hoursAgoString, date.hoursLater(than: self))
+        } else if calendar.isDateInYesterday(self){
+            dateFormatter.timeStyle = .none
+            dateFormatter.dateStyle = .medium
+            feedString = dateFormatter.string(from: self)
+        } else {
+            let daysAgoString = NSLocalizedString("%d days ago", comment: "How many days is the post old")
+            
+            feedString = String.localizedStringWithFormat(daysAgoString, self.daysAgo)
+        }
+        
+        return feedString
+    }
 }
 
 class HandyHelper {
@@ -51,13 +78,7 @@ class HandyHelper {
     func getDateAsTimestamp() -> Timestamp {
         let date = Date()
         let timestamp = Timestamp(date: date)
-        //        let formatter = DateFormatter()
-        //        formatter.dateFormat = "dd MM yyyy HH:mm"
-        //        let stringDate = formatter.string(from: date)
-        //        if let result = formatter.date(from: stringDate) {
-        //            let dateTimestamp :Timestamp = Timestamp(date: result)  // Hat keine Nanoseconds
-        //            return dateTimestamp
-        //        }
+
         return timestamp
     }
     
@@ -65,7 +86,7 @@ class HandyHelper {
         // Timestamp umwandeln
         let formatter = DateFormatter()
         let date:Date = timestamp.dateValue()
-        formatter.dateFormat = "dd MM yyyy HH:mm"
+        formatter.dateFormat = "dd.MM.yyyy HH:mm"
         let stringDate = formatter.string(from: date)
         
         return stringDate
@@ -79,7 +100,9 @@ class HandyHelper {
         let user = User()
         
         userRef.getDocument(completion: { (document, err) in
-            if let document = document {
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else if let document = document {
                 if let docData = document.data() {
                     
                     user.name = docData["name"] as? String ?? ""
@@ -88,10 +111,6 @@ class HandyHelper {
                     user.userUID = userUID
                     
                 }
-            }
-            
-            if err != nil {
-                print("Wir haben einen Error beim User: \(err?.localizedDescription)")
             }
         })
         
@@ -131,18 +150,18 @@ class HandyHelper {
     
     func setLabelHeight(titleCount: Int) -> CGFloat {
         // Stellt die Höhe für das TitleLabel ein bei cellForRow und HeightForRow
-        var labelHeight : CGFloat = 10
+        var labelHeight : CGFloat = 20  // One line
         
-        if titleCount <= 40 {
+        if titleCount <= 40 {           // Two Lines
             labelHeight = 40
-        } else if titleCount <= 100 {
-            labelHeight = 80
-        } else if titleCount <= 150 {
-            labelHeight = 100
-        } else if titleCount <= 200 {
-            labelHeight = 120
-        } else if titleCount > 200 {
-            labelHeight = 140
+        } else if titleCount <= 80 {    // Three Lines
+            labelHeight = 60
+        } else if titleCount <= 120 {   // Four Lines
+            labelHeight = 105
+        } else if titleCount <= 160 {   //  5 Lines
+            labelHeight = 130
+        } else if titleCount <= 200 {   // 6 Lines
+            labelHeight = 160
         }
         
         return labelHeight
@@ -160,25 +179,25 @@ class HandyHelper {
             reportViewHeightConstraint = 0
             reportViewButtonInTopBoolean = true
         case .spoiler:
-            reportViewLabelText = "Achtung Spoiler"
+            reportViewLabelText = "Spoiler" // I think always the same excet arabic or whatever
             reportViewBackgroundColor = .red
         case .opinion:
-            reportViewLabelText = "Meinung, kein Fakt"
+            reportViewLabelText = NSLocalizedString("Opinion, not a fact", comment: "When it seems like the post is presenting a fact, but is just an opinion")
             reportViewBackgroundColor = UIColor(red:0.27, green:0.00, blue:0.01, alpha:1.0)
         case .sensationalism:
-            reportViewLabelText = "Sensationalismus"
+            reportViewLabelText = NSLocalizedString("Sensationalism", comment: "When the given facts are presented more important, than they are in reality")
             reportViewBackgroundColor = UIColor(red:0.36, green:0.00, blue:0.01, alpha:1.0)
         case .circlejerk:
             reportViewLabelText = "Circlejerk"
             reportViewBackgroundColor = UIColor(red:0.58, green:0.04, blue:0.05, alpha:1.0)
         case .pretentious:
-            reportViewLabelText = "Angeberisch"
+            reportViewLabelText = NSLocalizedString("Pretentious", comment: "When the poster is just posting to sell themself")
             reportViewBackgroundColor = UIColor(red:0.83, green:0.05, blue:0.07, alpha:1.0)
         case .ignorant:
-            reportViewLabelText = "Schwarz-Weiß-Denken"
+            reportViewLabelText = NSLocalizedString("Ignorant Thinking", comment: "If the poster is just looking at one side of the matter or problem")
             reportViewBackgroundColor = UIColor(red:1.00, green:0.46, blue:0.30, alpha:1.0)
         case .edited:
-            reportViewLabelText = "Nachbearbeitet"
+            reportViewLabelText = NSLocalizedString("Edited Content", comment: "If the person shares something that is corrected or changed with photoshop or whatever")
             reportViewBackgroundColor = UIColor(red:1.00, green:0.40, blue:0.36, alpha:1.0)
         }
         
@@ -210,7 +229,7 @@ class HandyHelper {
             //db.setValue(valueForFirestore, forKey: keyForFirestore)
             db.updateData([keyForFirestore:valueForFirestore])
         } else {
-            print("konnte nicht geupdatet werden")
+            print("Could not update")
         }
     }
     
@@ -220,23 +239,24 @@ class HandyHelper {
         switch fetchedString {
         case "picture":
             postType = .picture
-            return postType
         case "thought":
             postType = .thought
-            return postType
         case "link":
             postType = .link
-            return postType
         case "event":
             postType = .event
-            return postType
         case "repost":
             postType = .repost
-            return postType
+        case "youTubeVideo":
+            postType = .youTubeVideo
+        case "translation":
+            postType = .repost  // Has to be changed
         default:
-            print("Hier stimmt was nicht")
+            print("Something Wrong")
             return PostType.picture
         }
+        
+        return postType
     }
     
     
@@ -279,7 +299,6 @@ class HandyHelper {
         
         if let user = Auth.auth().currentUser {
             let savedRef = db.collection("Users").document(user.uid).collection("saved").whereField("documentID", isEqualTo: post.documentID)
-            
             savedRef.getDocuments { (snap, err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
@@ -299,81 +318,101 @@ class HandyHelper {
     func getChats(chatList: @escaping ([Chat]) -> Void ) {
         var chatsList = [Chat]()
         
-        if let user = Auth.auth().currentUser {
-            let chatsRef = db.collection("Users").document(user.uid).collection("chats")
+        DispatchQueue.main.async {
             
-            chatsRef.getDocuments { (snapshot, error) in
-                if error == nil {
-                    
-                    for document in snapshot!.documents {
-                        let documentData = document.data()
+            if let user = Auth.auth().currentUser {
+                let chatsRef = self.db.collection("Users").document(user.uid).collection("chats")
+                
+                chatsRef.getDocuments { (snapshot, error) in
+                    if error == nil {
                         
-                        guard let participant = documentData["participant"] as? String else { return }
-                        
-                        let chat = Chat()
-                        chat.documentID = document.documentID
-                        chat.participant.userUID = participant
-                        if let lastMessageID = documentData["lastReadMessage"] as? String {
-                            chat.lastReadMessageUID = lastMessageID
+                        for document in snapshot!.documents {
+                            let documentData = document.data()
+                            
+                            guard let participant = documentData["participant"] as? String else { return }
+                            
+                            let chat = Chat()
+                            chat.documentID = document.documentID
+                            chat.participant.userUID = participant
+                            if let lastMessageID = documentData["lastReadMessage"] as? String {
+                                chat.lastReadMessageUID = lastMessageID
+                            }
+                            
+                            chatsList.append(chat)
                         }
-                        
-                        chatsList.append(chat)
+                        chatList(chatsList)
+                    } else {
+                        print("We have an error within the chats: \(error?.localizedDescription ?? "")")
                     }
-                    chatList(chatsList)
-                } else {
-                    print("We have an error within the chats: \(error?.localizedDescription ?? "")")
                 }
+                
+            } else {
+                // Nobody logged In
             }
-            
-        } else {
-            // Nobody logged In
         }
     }
     
     func getCountOfUnreadMessages(chatList: [Chat], unreadMessages: @escaping (Int) -> Void ) {
         var count = 0
         
-        for chat in chatList {
-            let chatsRef = self.db.collection("Chats").document(chat.documentID).collection("threads").order(by: "sentAt", descending: true)
+        DispatchQueue.main.async {
             
-            // Already been in this chat at least once
-            if let lastReadMessage = chat.lastReadMessageUID {
+            for chat in chatList {
+                let chatsRef = self.db.collection("Chats").document(chat.documentID).collection("threads").order(by: "sentAt", descending: true)
                 
-                let lastReadMessageDoc = db.collection("Chats").document(chat.documentID).collection("threads").document(lastReadMessage)
-                
-                lastReadMessageDoc.getDocument { (document, error) in
-                    if let error = error {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        let endingChatsRef = chatsRef.end(beforeDocument: document!)
-                        endingChatsRef.getDocuments(completion: { (snap, error) in
-                            
-                            if let error = error {
-                                print("We have an error: \(error.localizedDescription)")
-                            } else {
-                                let unreadMessageCount = snap!.documents.count
+                // Already been in this chat at least once
+                if let lastReadMessage = chat.lastReadMessageUID {
+                    
+                    let lastReadMessageDoc = self.db.collection("Chats").document(chat.documentID).collection("threads").document(lastReadMessage)
+                    
+                    lastReadMessageDoc.getDocument { (document, error) in
+                        if let error = error {
+                            print("We have an error: \(error.localizedDescription)")
+                        } else {
+                            let endingChatsRef = chatsRef.end(beforeDocument: document!)
+                            endingChatsRef.getDocuments(completion: { (snap, error) in
                                 
-                                count = count+unreadMessageCount
-                                
-                                unreadMessages(count)
-                            }
-                        })
+                                if let error = error {
+                                    print("We have an error: \(error.localizedDescription)")
+                                } else {
+                                    let unreadMessageCount = snap!.documents.count
+                                    
+                                    count = count+unreadMessageCount
+                                    
+                                    unreadMessages(count)
+                                }
+                            })
+                        }
+                    }
+                } else {
+                    // New chat, not a lastReadMessageUID set
+                    chatsRef.getDocuments { (snap, error) in
+                        if let error = error {
+                            print("We have an error: \(error.localizedDescription)")
+                        } else {
+                            let unreadMessageCount = snap!.documents.count
+                            count = count+unreadMessageCount
+                            unreadMessages(count)
+                        }
                     }
                 }
-            } else {
-                // New chat, not a lastReadMessageUID set
-                chatsRef.getDocuments { (snap, error) in
-                    if let error = error {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        let unreadMessageCount = snap!.documents.count
-                        count = count+unreadMessageCount
-                        unreadMessages(count)
-                        }
-                }
+                // Here was unreadMessages(count) but it finished too early
             }
-            // Here was unreadMessages(count) but it finished too early
         }
+    }
+    
+    func getLocaleCurrencyString(number: Double) -> String {
+        let currencyFormatter = NumberFormatter()
+        currencyFormatter.usesGroupingSeparator = true
+        currencyFormatter.numberStyle = .currency
+        currencyFormatter.locale = Locale.current
+        
+        if let priceString = currencyFormatter.string(from: NSNumber(value: number)) {
+            return priceString
+        } else {
+            return String(number)
+        }
+        
     }
     
 }

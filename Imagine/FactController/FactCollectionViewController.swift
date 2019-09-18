@@ -13,24 +13,36 @@ private let reuseIdentifier = "FactCell"
 class FactCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
     var facts = [Fact]()
+    
+    let collectionViewSpacing:CGFloat = 30
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         getFacts()
+        
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.view.backgroundColor = UIColor.clear
+        
+        self.view.activityStartAnimating()
     }
 
    
     func getFacts() {
-        DataHelper().getData(get: "facts") { (facts) in
+        DataHelper().getData(get: .facts) { (facts) in
             self.facts = facts as! [Fact]
-            self.collectionView.reloadData()
             
+            let fact = Fact(addMoreDataCell: true)
+            self.facts.append(fact)
+            
+            self.collectionView.reloadData()
+            self.view.activityStopAnimating()
         }
     }
 
     // MARK: UICollectionViewDataSource
-
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
@@ -42,11 +54,12 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         return facts.count
+        
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
-        if kind == UICollectionView.elementKindSectionHeader {
+        if kind == UICollectionView.elementKindSectionHeader {  // View above CollectionView
             let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "collectionViewView", for: indexPath)
             
             return view
@@ -56,37 +69,67 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? FactCell {
-            
-            let fact = facts[indexPath.row]
-            cell.factCellLabel.text = fact.title
-            
-            if let url = URL(string: fact.imageURL) {
-                cell.factCellImageView.sd_setImage(with: url, completed: nil)
-                cell.factCellImageView.contentMode = .scaleAspectFill
-                cell.factCellImageView.alpha = 0.9
+        
+        let fact = facts[indexPath.row]
+        
+        if fact.addMoreCell {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddTopicCell", for: indexPath) as? AddTopicCell {
+                
+                let layer = cell.layer
+                layer.cornerRadius = 4
+                layer.masksToBounds = true
+                layer.borderColor = Constants.imagineColor.cgColor
+                layer.borderWidth = 2
+                
+                return cell
             }
-            
-            
-            return cell
+        } else {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? FactCell {
+                
+                
+                cell.factCellLabel.text = fact.title
+                
+                if let url = URL(string: fact.imageURL) {
+                    cell.factCellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+                    cell.factCellImageView.contentMode = .scaleAspectFill
+                }
+                
+                let gradient = CAGradientLayer()
+                gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
+                gradient.endPoint = CGPoint(x: 0.5, y: 0.6)
+                let whiteColor = UIColor.white
+                gradient.colors = [whiteColor.withAlphaComponent(0.0).cgColor, whiteColor.withAlphaComponent(0.5).cgColor, whiteColor.withAlphaComponent(0.7).cgColor]
+                gradient.locations = [0.0, 0.7, 1]
+                gradient.frame = cell.gradientView.bounds
+                cell.gradientView.layer.mask = gradient
+                
+                cell.layer.cornerRadius = 4
+                cell.layer.masksToBounds = true
+                
+                return cell
+            }
         }
     
         return UICollectionViewCell()
     }
 
     // MARK: UICollectionViewDelegate
-
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        
-        let newSize = CGSize(width: (collectionView.frame.size.width/2)-3, height: (collectionView.frame.size.width/2)-3)
+        let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: (collectionView.frame.size.width/2)-collectionViewSpacing)
         
         return newSize
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "goToArguments", sender: facts[indexPath.row])
+        let fact = facts[indexPath.row]
+        
+        if fact.addMoreCell {
+            performSegue(withIdentifier: "toNewArgumentSegue", sender: nil)
+        } else {
+            performSegue(withIdentifier: "goToArguments", sender: fact)
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -98,11 +141,26 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                 
             }
         }
+        
+        if segue.identifier == "toNewArgumentSegue" {
+            if let navCon = segue.destination as? UINavigationController {
+                if let newFactVC = navCon.topViewController as? NewFactViewController {
+                    newFactVC.new = .fact
+                }
+            }
+        }
     }
 
+    @IBAction func infoButtonTapped(_ sender: Any) {
+    }
 }
 
 class FactCell:UICollectionViewCell {
     @IBOutlet weak var factCellLabel: UILabel!
     @IBOutlet weak var factCellImageView: UIImageView!
+    @IBOutlet weak var gradientView: UIView!
+}
+
+class AddTopicCell: UICollectionViewCell {
+    
 }

@@ -16,6 +16,9 @@
 
 #include "Firestore/core/src/firebase/firestore/util/status.h"
 
+#include <ostream>
+#include <utility>
+
 #include "Firestore/core/src/firebase/firestore/util/string_format.h"
 #include "absl/memory/memory.h"
 
@@ -23,8 +26,8 @@ namespace firebase {
 namespace firestore {
 namespace util {
 
-Status::Status(FirestoreErrorCode code, absl::string_view msg) {
-  HARD_ASSERT(code != FirestoreErrorCode::Ok);
+Status::Status(Error code, absl::string_view msg) {
+  HARD_ASSERT(code != Error::Ok);
   state_ = absl::make_unique<State>();
   state_->code = code;
   state_->msg = static_cast<std::string>(msg);
@@ -47,6 +50,22 @@ Status& Status::CausedBy(const Status& cause) {
   }
 
   absl::StrAppend(&state_->msg, ": ", cause.error_message());
+
+  // If this Status has no accompanying PlatformError but the cause does, create
+  // a PlatformError for this Status ahead of time to preserve the causal chain
+  // that Status doesn't otherwise support.
+  if (state_->platform_error == nullptr &&
+      cause.state_->platform_error != nullptr) {
+    state_->platform_error =
+        cause.state_->platform_error->WrapWith(code(), error_message());
+  }
+
+  return *this;
+}
+
+Status& Status::WithPlatformError(std::unique_ptr<PlatformError> error) {
+  HARD_ASSERT(!ok(), "Platform errors should not be applied to Status::OK()");
+  state_->platform_error = std::move(error);
   return *this;
 }
 
@@ -69,52 +88,52 @@ std::string Status::ToString() const {
   } else {
     std::string result;
     switch (code()) {
-      case FirestoreErrorCode::Cancelled:
+      case Error::Cancelled:
         result = "Cancelled";
         break;
-      case FirestoreErrorCode::Unknown:
+      case Error::Unknown:
         result = "Unknown";
         break;
-      case FirestoreErrorCode::InvalidArgument:
+      case Error::InvalidArgument:
         result = "Invalid argument";
         break;
-      case FirestoreErrorCode::DeadlineExceeded:
+      case Error::DeadlineExceeded:
         result = "Deadline exceeded";
         break;
-      case FirestoreErrorCode::NotFound:
+      case Error::NotFound:
         result = "Not found";
         break;
-      case FirestoreErrorCode::AlreadyExists:
+      case Error::AlreadyExists:
         result = "Already exists";
         break;
-      case FirestoreErrorCode::PermissionDenied:
+      case Error::PermissionDenied:
         result = "Permission denied";
         break;
-      case FirestoreErrorCode::Unauthenticated:
+      case Error::Unauthenticated:
         result = "Unauthenticated";
         break;
-      case FirestoreErrorCode::ResourceExhausted:
+      case Error::ResourceExhausted:
         result = "Resource exhausted";
         break;
-      case FirestoreErrorCode::FailedPrecondition:
+      case Error::FailedPrecondition:
         result = "Failed precondition";
         break;
-      case FirestoreErrorCode::Aborted:
+      case Error::Aborted:
         result = "Aborted";
         break;
-      case FirestoreErrorCode::OutOfRange:
+      case Error::OutOfRange:
         result = "Out of range";
         break;
-      case FirestoreErrorCode::Unimplemented:
+      case Error::Unimplemented:
         result = "Unimplemented";
         break;
-      case FirestoreErrorCode::Internal:
+      case Error::Internal:
         result = "Internal";
         break;
-      case FirestoreErrorCode::Unavailable:
+      case Error::Unavailable:
         result = "Unavailable";
         break;
-      case FirestoreErrorCode::DataLoss:
+      case Error::DataLoss:
         result = "Data loss";
         break;
       default:
@@ -125,6 +144,11 @@ std::string Status::ToString() const {
     result += state_->msg;
     return result;
   }
+}
+
+std::ostream& operator<<(std::ostream& out, const Status& status) {
+  out << status.ToString();
+  return out;
 }
 
 void Status::IgnoreError() const {

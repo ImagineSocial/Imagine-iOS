@@ -20,6 +20,7 @@
 #include <chrono>  // NOLINT(build/c++11)
 #include <functional>
 #include <future>  // NOLINT(build/c++11)
+#include <memory>
 #include <utility>
 
 #include "Firestore/core/src/firebase/firestore/util/async_queue.h"
@@ -48,8 +49,7 @@ namespace remote {
  * gRPC operation.
  *
  * `GrpcCompletion` is "self-owned"; `GrpcCompletion` deletes itself in its
- * `Complete`
- * method.
+ * `Complete` method.
  *
  * `GrpcCompletion` expects all gRPC objects pertaining to the current stream to
  * remain valid until the `GrpcCompletion` comes back from the gRPC completion
@@ -58,6 +58,12 @@ namespace remote {
 class GrpcCompletion {
  public:
   /**
+   * This is only to aid debugging and testing; type allows easily
+   * distinguishing between pending completions of a gRPC call.
+   */
+  enum class Type { Start, Read, Write, Finish };
+
+  /**
    * The boolean parameter is used to indicate whether the corresponding gRPC
    * operation finished successfully or not.
    *
@@ -65,7 +71,9 @@ class GrpcCompletion {
    */
   using Callback = std::function<void(bool, const GrpcCompletion*)>;
 
-  GrpcCompletion(util::AsyncQueue* firestore_queue, Callback&& callback);
+  GrpcCompletion(Type type,
+                 const std::shared_ptr<util::AsyncQueue>& worker_queue,
+                 Callback&& callback);
 
   /**
    * Marks the `GrpcCompletion` as having come back from the gRPC completion
@@ -102,8 +110,12 @@ class GrpcCompletion {
     return &status_;
   }
 
+  Type type() const {
+    return type_;
+  }
+
  private:
-  util::AsyncQueue* worker_queue_ = nullptr;
+  std::shared_ptr<util::AsyncQueue> worker_queue_;
   Callback callback_;
 
   void EnsureValidFuture();
@@ -118,6 +130,8 @@ class GrpcCompletion {
 
   std::promise<void> off_queue_;
   std::future<void> off_queue_future_;
+
+  Type type_{};
 };
 
 }  // namespace remote

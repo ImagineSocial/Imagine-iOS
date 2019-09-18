@@ -136,10 +136,10 @@ class PostHelper {
                             documentIDsOfPosts.append(documentID)
                         }
                         
-                        self.getPostsFromDocumentIDs(documentIDs: documentIDsOfPosts, done: { (done) in
-                            if done {
-                                returnPosts(self.posts, self.initialFetch)
-                            }
+                        self.getPostsFromDocumentIDs(documentIDs: documentIDsOfPosts, done: { (_) in
+                            // Needs to be sorted because the posts are fetched without the date that they were added
+                            self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                            returnPosts(self.posts, self.initialFetch)
                         })
                     case .savedPosts:
                         for document in querySnapshot!.documents {
@@ -151,12 +151,12 @@ class PostHelper {
                             }
                         }
                         
-                        self.getCommentCount(completion: { })
                         
-                        self.getPostsFromDocumentIDs(documentIDs: documentIDsOfPosts, done: { (done) in
-                            if done {
-                                returnPosts(self.posts, self.initialFetch)
-                            }
+                        
+                        self.getPostsFromDocumentIDs(documentIDs: documentIDsOfPosts, done: { (_) in
+                            // Needs to be sorted because the posts are fetched without the date that they were added
+                            self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                            returnPosts(self.posts, self.initialFetch)
                         })
                     }
                 }
@@ -183,25 +183,27 @@ class PostHelper {
         
     }
     
-    func getPostsFromDocumentIDs(documentIDs: [String], done: @escaping (Bool) -> Void) {
-        
+    func getPostsFromDocumentIDs(documentIDs: [String], done: @escaping ([Post]?) -> Void) {
+        print("Get posts")
         let endIndex = documentIDs.count
         var startIndex = 0
         
         // The function has to be here for the right order
         for documentIDofPost in documentIDs {
             self.db.collection("Posts").document(documentIDofPost).getDocument{ (document, err) in
-                if err != nil {
-                    print("Wir haben einen Error: \(err?.localizedDescription ?? "no error")")
+                if let error =  err {
+                    print("We have an error: \(error.localizedDescription)")
                 } else {
                     if let document = document {
                         self.addThePost(document: document)
                         
                         startIndex = startIndex+1
                         
-                        print("StartIndex: \(startIndex) | EndIndex: \(endIndex)")
+//                        print("StartIndex: \(startIndex) | EndIndex: \(endIndex)")
                         if startIndex == endIndex {
-                            done(true)
+                            self.getCommentCount(completion: {
+                              done(self.posts)
+                            })
                         }
                     }
                 }
@@ -236,8 +238,8 @@ class PostHelper {
                 }
                 
                 
-                
-                let stringDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
+                let dateToSort = createTimestamp.dateValue()
+                let stringDate = createTimestamp.dateValue().formatForFeed()
                 
                 // Thought
                 if postType == "thought" {
@@ -254,6 +256,7 @@ class PostHelper {
                     post.votes.wow = wowCount
                     post.votes.ha = haCount
                     post.votes.nice = niceCount
+                    post.createDate = dateToSort
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
@@ -271,11 +274,11 @@ class PostHelper {
                         let picWidth = documentData["imageWidth"] as? Double
                         
                         else {
-                            return     // Falls er das nicht als (String) zuordnen kann
+                            return
                     }
-                    
-                    let post = Post()       // Erst neuen Post erstellen
-                    post.title = title      // Dann die Sachen zuordnen
+
+                    let post = Post()
+                    post.title = title
                     post.imageURL = imageURL
                     post.imageHeight = CGFloat(picHeight)
                     post.imageWidth = CGFloat(picWidth)
@@ -288,6 +291,7 @@ class PostHelper {
                     post.votes.wow = wowCount
                     post.votes.ha = haCount
                     post.votes.nice = niceCount
+                    post.createDate = dateToSort
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
@@ -298,7 +302,6 @@ class PostHelper {
                     
                     // YouTubeVideo
                 } else if postType == "youTubeVideo" {
-                    
                     
                     guard let linkURL = documentData["link"] as? String else { return  }
                     
@@ -314,6 +317,7 @@ class PostHelper {
                     post.votes.wow = wowCount
                     post.votes.ha = haCount
                     post.votes.nice = niceCount
+                    post.createDate = dateToSort
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
@@ -343,6 +347,7 @@ class PostHelper {
                     post.votes.wow = wowCount
                     post.votes.ha = haCount
                     post.votes.nice = niceCount
+                    post.createDate = dateToSort
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
@@ -372,18 +377,16 @@ class PostHelper {
                     post.votes.wow = wowCount
                     post.votes.ha = haCount
                     post.votes.nice = niceCount
+                    post.createDate = dateToSort
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
                     }
+                    post.getUser()
                     
                     post.getRepost(returnRepost: { (repost) in
                         post.repost = repost
                     })
-                    
-                    post.getUser()
-                    
-                    
                     self.posts.append(post)
                 }
             }
@@ -417,13 +420,15 @@ class PostHelper {
                     let imageWidth = documentData["imageWidth"] as? CGFloat,
                     let participants = documentData["participants"] as? [String],
                     let admin = documentData["admin"] as? String,
-                    let createDate = documentData["createDate"] as? Timestamp
+                    let createDate = documentData["createDate"] as? Timestamp,
+                    let eventDate = documentData["time"] as? Timestamp
                     
                     else {
                         continue
                 }
                 
-                let stringDate = HandyHelper().getStringDate(timestamp: createDate)
+                let eventTime = self.handyHelper.getStringDate(timestamp: eventDate)
+                let createDateString = self.handyHelper.getStringDate(timestamp: createDate)
                 
                 let post = Post()
                 let event = Event()
@@ -436,7 +441,8 @@ class PostHelper {
                 event.imageWidth = imageWidth
                 event.imageHeight = imageHeight
                 event.participants = participants
-                event.createDate = stringDate
+                event.createDate = createDateString
+                event.time = eventTime
                 
                 post.originalPosterUID = admin
                 post.documentID = documentID
@@ -477,6 +483,7 @@ class PostHelper {
                         user.surname = docData["surname"] as? String ?? ""
                         user.imageURL = docData["profilePictureURL"] as? String ?? ""
                         user.userUID = post.originalPosterUID
+                        user.blocked = docData["blocked"] as? [String] ?? nil
                         
                         post.user = user
                     }
@@ -513,7 +520,6 @@ class PostHelper {
                 }
             }
         }
-        
         completion()
     }
     
@@ -532,29 +538,30 @@ class PostHelper {
                 if let docData = document.data() {
                     
                     guard let name = docData["name"] as? String,
-                        let surname = docData["surname"] as? String,
-                        let imageURL = docData["profilePictureURL"] as? String
+                        let surname = docData["surname"] as? String
                         else {
                             return
                     }
                     
                     // Hier Avatar als UIImage einführen
                     
-                    if let url = URL(string: imageURL) {
-                        let defchatUser = ChatUser(displayName: "\(name) \(surname)", avatar: nil, avatarURL: url, isSender: sender)
+                    if let imageURL = docData["profilePictureURL"] as? String {
                         
-                        //                        let imageView = UIImageView()
-                        //                        var image = UIImage()
-                        //                        imageView.sd_setImage(with: url, completed: { (newImage, _, _, _) in
-                        //
-                        //                        })
-                        //                        if let data = try? Data(contentsOf: url) {
-                        //                            let image:UIImage = UIImage.sd_image(with: data)
-                        //                        }
-                        
-                        chatUser = defchatUser
+                        if let url = URL(string: imageURL) {
+                            let defchatUser = ChatUser(displayName: "\(name) \(surname)", avatar: nil, avatarURL: url, isSender: sender)
+                            
+                            //                        let imageView = UIImageView()
+                            //                        var image = UIImage()
+                            //                        imageView.sd_setImage(with: url, completed: { (newImage, _, _, _) in
+                            //
+                            //                        })
+                            //                        if let data = try? Data(contentsOf: url) {
+                            //                            let image:UIImage = UIImage.sd_image(with: data)
+                            //                        }
+                            
+                            chatUser = defchatUser
+                        }
                     } else {
-                        
                         let defchatUser = ChatUser(displayName: "\(name) \(surname)", avatar: nil, avatarURL: nil, isSender: sender)
                         chatUser = defchatUser
                     }
@@ -565,7 +572,7 @@ class PostHelper {
             }
             
             if let daChatUser = chatUser{
-                user(daChatUser)
+                user(daChatUser)    // Return User
             }
         })
     }
@@ -580,12 +587,28 @@ class Votes {
 }
 
 class ReportOptions {
-    // Optisch Markieren
-    let opticOptionArray = ["Spoiler", "Meinung, kein Fakt", "Sensationalismus", "Circlejerk", "Angeberisch", "Bildbearbeitung", "Schwarz-Weiß-Denken"]
-    // Schlechte Absichten
-    let badIntentionArray = ["Hass gegen ...","Respektlos", "Beleidigend", "(sexuell) Belästigend", "Rassistisch", "Homophob", "Gewaltunterstüztend", "Verharmlosung von Suizid", "Glauben nicht respektieren"]
-    // Lüge/Täuschung
-    let lieDeceptionArray = ["Fake News","Beweise verneinen", "Verschwörungstheorie"]
-    // Inhalt
-    let contentArray = ["Pornografie","Pedophilie", "Gewaltdarstellung", "Vorurteil"]
+    // Optical change
+    let opticOptionArray = ["Spoiler", NSLocalizedString("Opinion, not a fact", comment: "When it seems like the post is presenting a fact, but is just an opinion"), NSLocalizedString("Sensationalism", comment: "When the given facts are presented more important, than they are in reality"), "Circlejerk", NSLocalizedString("Pretentious", comment: "When the poster is just posting to sell themself"), NSLocalizedString("Edited Content", comment: "If the person shares something that is corrected or changed with photoshop or whatever"), NSLocalizedString("Ignorant Thinking", comment: "If the poster is just looking at one side of the matter or problem"), NSLocalizedString("Not listed", comment: "Something besides the given options")]
+    // Bad Intentions
+    let badIntentionArray = [NSLocalizedString("Hate against...", comment: "Expressing hat against a certain type of people"),NSLocalizedString("Disrespectful", comment: "If a person thinks he shouldnt care about another person's opinion"), NSLocalizedString("Offensive", comment: "Using slurs"), NSLocalizedString("Harassment", comment: "Keep on asking for something, even if the other person is knowingly annoyed"), NSLocalizedString("Racist", comment: "Not accepting another persons heritage"), NSLocalizedString("Homophobic", comment: "Not accepting another persons gender or sexual preferences"), NSLocalizedString("Violance Supporting", comment: "support the use of violance"), NSLocalizedString("Belittlement of suicide", comment: "Tough topic, no belittlement of suicide or joking about it"), NSLocalizedString("Disrespectful against religions", comment: "Disrespectful against religions"), NSLocalizedString("Not listed", comment: "Something besides the given options")]
+    // Lie & Deception
+    let lieDeceptionArray = ["Fake News",NSLocalizedString("Denying of facts", comment: "Ignore proven facts and live with the lie"), NSLocalizedString("Conspiracy theory", comment: "Conspiracy theory"), NSLocalizedString("Not listed", comment: "Something besides the given options")]
+    // Content
+    let contentArray = [NSLocalizedString("Pornography", comment: "You know what it means"),NSLocalizedString("Pedophilia", comment: "sexual display of minors"), NSLocalizedString("Presentation of violance", comment: "Presentation of violance"), NSLocalizedString("Not listed", comment: "Something besides the given options")]
+}
+
+
+class Event {
+    var title = ""
+    var description = ""
+    var time = ""
+    var location = ""
+    var type = ""
+    var imageURL = ""
+    var createDate = ""
+    var imageHeight:CGFloat = 0
+    var imageWidth:CGFloat = 0
+    var participants = [String]()
+    var admin = User()
+    
 }

@@ -52,14 +52,14 @@ const AsyncQueue::Milliseconds kIdleTimeout{std::chrono::seconds(60)};
 
 }  // namespace
 
-Stream::Stream(AsyncQueue* worker_queue,
-               CredentialsProvider* credentials_provider,
+Stream::Stream(const std::shared_ptr<AsyncQueue>& worker_queue,
+               std::shared_ptr<CredentialsProvider> credentials_provider,
                GrpcConnection* grpc_connection,
                TimerId backoff_timer_id,
                TimerId idle_timer_id)
     : backoff_{worker_queue, backoff_timer_id, kBackoffFactor,
                kBackoffInitialDelay, kBackoffMaxDelay},
-      credentials_provider_{credentials_provider},
+      credentials_provider_{std::move(credentials_provider)},
       worker_queue_{worker_queue},
       grpc_connection_{grpc_connection},
       idle_timer_id_{idle_timer_id} {
@@ -207,7 +207,7 @@ void Stream::OnStreamRead(const grpc::ByteBuffer& message) {
 
   Status read_status = NotifyStreamResponse(message);
   if (!read_status.ok()) {
-    grpc_stream_->Finish();
+    grpc_stream_->FinishImmediately();
     // Don't expect gRPC to produce status -- since the error happened on the
     // client, we have all the information we need.
     OnStreamFinish(read_status);
@@ -278,12 +278,12 @@ void Stream::Close(const Status& status) {
 }
 
 void Stream::HandleErrorStatus(const Status& status) {
-  if (status.code() == FirestoreErrorCode::ResourceExhausted) {
+  if (status.code() == Error::ResourceExhausted) {
     LOG_DEBUG(
         "%s Using maximum backoff delay to prevent overloading the backend.",
         GetDebugDescription());
     backoff_.ResetToMax();
-  } else if (status.code() == FirestoreErrorCode::Unauthenticated) {
+  } else if (status.code() == Error::Unauthenticated) {
     // "unauthenticated" error means the token was rejected. Try force
     // refreshing it in case it just expired.
     credentials_provider_->InvalidateToken();

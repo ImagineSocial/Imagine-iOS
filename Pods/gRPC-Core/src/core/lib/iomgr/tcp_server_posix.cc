@@ -217,16 +217,29 @@ static void on_read(void* arg, grpc_error* err) {
       }
     }
 
+    /* For UNIX sockets, the accept call might not fill up the member sun_path
+     * of sockaddr_un, so explicitly call getsockname to get it. */
+    if (grpc_is_unix_socket(&addr)) {
+      memset(&addr, 0, sizeof(addr));
+      addr.len = static_cast<socklen_t>(sizeof(struct sockaddr_storage));
+      if (getsockname(fd, reinterpret_cast<struct sockaddr*>(addr.addr),
+                      &(addr.len)) < 0) {
+        gpr_log(GPR_ERROR, "Failed getsockname: %s", strerror(errno));
+        close(fd);
+        goto error;
+      }
+    }
+
     grpc_set_socket_no_sigpipe_if_possible(fd);
 
     addr_str = grpc_sockaddr_to_uri(&addr);
     gpr_asprintf(&name, "tcp-server-connection:%s", addr_str);
 
-    if (grpc_tcp_trace.enabled()) {
+    if (GRPC_TRACE_FLAG_ENABLED(grpc_tcp_trace)) {
       gpr_log(GPR_INFO, "SERVER_CONNECT: incoming connection: %s", addr_str);
     }
 
-    grpc_fd* fdobj = grpc_fd_create(fd, name, false);
+    grpc_fd* fdobj = grpc_fd_create(fd, name, true);
 
     read_notifier_pollset =
         sp->server->pollsets[static_cast<size_t>(gpr_atm_no_barrier_fetch_add(
@@ -362,7 +375,7 @@ static grpc_error* clone_port(grpc_tcp_listener* listener, unsigned count) {
     listener->sibling = sp;
     sp->server = listener->server;
     sp->fd = fd;
-    sp->emfd = grpc_fd_create(fd, name, false);
+    sp->emfd = grpc_fd_create(fd, name, true);
     memcpy(&sp->addr, &listener->addr, sizeof(grpc_resolved_address));
     sp->port = port;
     sp->port_index = listener->port_index;

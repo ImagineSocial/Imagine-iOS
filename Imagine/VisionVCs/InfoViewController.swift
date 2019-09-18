@@ -10,13 +10,14 @@ import UIKit
 
 class InfoViewController: UIViewController {
     
-    @IBOutlet weak var headerLabel: UILabel!
+    @IBOutlet weak var dismissButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-      headerLabel.layer.masksToBounds = true
-        headerLabel.layer.cornerRadius = 15
+        
+        if let _ = navigationController {
+            self.dismissButton.isHidden = true
+        }
         
     }
     
@@ -26,5 +27,9 @@ class InfoViewController: UIViewController {
             parentVC.setViewControllers([parentVC.pages[0]], direction: .reverse, animated: true, completion: nil)
         }
     }
+    @IBAction func dismissButtonTapped(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
     
 }
+

@@ -18,12 +18,14 @@ class NewCampaignViewController: UIViewController {
     @IBOutlet weak var categoryTextField: UITextField!
     @IBOutlet weak var shareButton: DesignableButton!
     
-    
+    var up = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationController?.title = "Erstelle eine neue Kampagne"
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -35,20 +37,33 @@ class NewCampaignViewController: UIViewController {
     
     func getDate() -> Timestamp {
         
-        let formatter = DateFormatter()
-        let date = Date()
+        return Timestamp(date: Date())
+    }
+    
+    @objc func keyboardWillChange(notification: NSNotification) {
         
-        formatter.dateFormat = "dd MM yyyy HH:mm"
-        
-        let stringDate = formatter.string(from: date)
-        
-        if let result = formatter.date(from: stringDate) {
-            
-            let dateTimestamp :Timestamp = Timestamp(date: result)  // Hat keine Nanoseconds
-            
-            return dateTimestamp
+        if self.up == false {
+            if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+                if categoryTextField.isFirstResponder {
+                    self.view.frame.origin.y -= 150
+                    self.up = true
+                }
+            }
         }
-        return Timestamp(date: date)
+    }
+    
+    @objc func keyboardWillHide() {
+        if up {
+            self.view.frame.origin.y += 150
+            self.up = false
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     @IBAction func shareButtonTapped(_ sender: Any) {
@@ -56,7 +71,7 @@ class NewCampaignViewController: UIViewController {
             let campaignRef = Firestore.firestore().collection("Campaigns")
             
             let campaignRefDocumentID = campaignRef.document().documentID
-            var dataDictionary: [String: Any] = ["campaignTitle": titleTextField.text, "campaignShortBody": shortBodyTextField.text, "campaignType" : "normal", "category" : categoryTextField.text, "campaignExplanation": longBodyTextField.text, "campaignID": campaignRefDocumentID, "campaignCreateTime": getDate(), "campaignSupporter": 0, "campaignOpposition": 0]
+            var dataDictionary: [String: Any] = ["campaignTitle": titleTextField.text, "campaignShortBody": shortBodyTextField.text, "campaignType" : "normal", "category" : categoryTextField.text, "campaignExplanation": longBodyTextField.text, "campaignID": campaignRefDocumentID, "campaignCreateTime": getDate(), "campaignSupporter": 0, "campaignOpposition": 0, "voters": [""]]
             
             
             
@@ -78,4 +93,11 @@ class NewCampaignViewController: UIViewController {
         }
     }
     
+    @IBAction func dismissTapped(_ sender: Any) {
+        self.dismiss(animated: true
+            , completion: nil)
+    }
+    
+    @IBAction func infoButtonTapped(_ sender: Any) {
+    }
 }

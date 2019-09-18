@@ -41,9 +41,7 @@ class SearchTableViewController: UITableViewController {
             let post = posts[indexPath.row]
             if let cell = tableView.dequeueReusableCell(withIdentifier: "SearchPostCell", for: indexPath) as? SearchPostCell {
 
-                
                 cell.post = post
-                
                 
                 return cell
             }
@@ -62,41 +60,6 @@ class SearchTableViewController: UITableViewController {
         
         return UITableViewCell()
     }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
-    }
-    
-//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        if let posts = postResults {
-//            let post = posts[indexPath.row]
-//
-//            let feedVC = FeedTableViewController()
-//            feedVC.goToPost(post: post)
-////            if let viewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PostVC") as? PostViewController {
-////                print("Post: jojo)")
-////                viewController.post = post
-////
-////                present(viewController, animated: true, completion: nil)
-////                if let navigator = navigationController {
-////                    print("Post: jaja")
-////                    navigator.pushViewController(viewController, animated: true)
-////                }
-////            }
-//        }
-//        if let users = userResults {
-//            let user = users[indexPath.row]
-//
-//            let feedVC = FeedTableViewController()
-//            feedVC.goToUser(user: user)
-////            if let viewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "UserVC") as? UserFeedTableViewController {
-////                viewController.userUID = user.userUID
-////                if let navigator = navigationController {
-////                    navigator.pushViewController(viewController, animated: true)
-////                }
-////            }
-//        }
-//    }
     
 
     deinit {

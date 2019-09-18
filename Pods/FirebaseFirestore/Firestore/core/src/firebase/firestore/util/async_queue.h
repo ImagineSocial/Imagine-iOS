@@ -21,6 +21,8 @@
 #include <chrono>  // NOLINT(build/c++11)
 #include <functional>
 #include <memory>
+#include <mutex>  // NOLINT(build/c++11)
+#include <vector>
 
 #include "Firestore/core/src/firebase/firestore/util/executor.h"
 
@@ -34,7 +36,7 @@ namespace util {
  * presence of delayed operations or to run them early.
  */
 enum class TimerId {
-  /** All can be used with `RunDelayedOperationsUntil` to run all timers. */
+  /** All can be used with `RunScheduledOperationsUntil` to run all timers. */
   All,
 
   /**
@@ -54,6 +56,17 @@ enum class TimerId {
    * indefinitely for success or failure.
    */
   OnlineStateTimeout,
+
+  /**
+   * A timer used to periodically attempt LRU Garbage collection
+   */
+  GarbageCollectionDelay,
+
+  /**
+   * A timer used to retry transactions. Since there can be multiple concurrent
+   * transactions, multiple of these may be in the queue at a given time.
+   */
+  RetryTransaction
 };
 
 // A serial queue that executes given operations asynchronously, one at a time.
@@ -73,10 +86,10 @@ enum class TimerId {
 // and must *not* be used in regular code.
 class AsyncQueue {
  public:
-  using Operation = internal::Executor::Operation;
-  using Milliseconds = internal::Executor::Milliseconds;
+  using Operation = Executor::Operation;
+  using Milliseconds = Executor::Milliseconds;
 
-  explicit AsyncQueue(std::unique_ptr<internal::Executor> executor);
+  explicit AsyncQueue(std::unique_ptr<Executor> executor);
 
   // Asserts for the caller that it is being invoked as part of an operation on
   // the `AsyncQueue`.
@@ -91,10 +104,27 @@ class AsyncQueue {
   // be called by a previously enqueued operation when it is run (as a special
   // case, destructors invoked when an enqueued operation has run and is being
   // destroyed may invoke `Enqueue`).
+  //
+  // After the shutdown process has initiated (`is_shutting_down()` is true),
+  // calling `Enqueue` is a no-op.
   void Enqueue(const Operation& operation);
+
+  // Like `Enqueue`, but also starts the shutdown process. Once the shutdown
+  // process has started, calling any Enqueue* methods becomes a no-op
+  //
+  // The exception is `EnqueueEvenAfterShutdown`, operations requsted via
+  // this will still be scheduled.
+  void EnqueueAndInitiateShutdown(const Operation& operation);
+
+  // Like `Enqueue`, but it will proceed scheduling the requested operation
+  // regardless of whether the queue is shut down or not.
+  void EnqueueEvenAfterShutdown(const Operation& operation);
 
   // Like `Enqueue`, but without applying any prerequisite checks.
   void EnqueueRelaxed(const Operation& operation);
+
+  // Whether the queue has initiated its shutdown process.
+  bool is_shutting_down() const;
 
   // Puts the `operation` on the queue to be executed `delay` milliseconds from
   // now, and returns a handle that allows to cancel the operation (provided it
@@ -128,7 +158,7 @@ class AsyncQueue {
   void ExecuteBlocking(const Operation& operation);
 
   // Returns the underlying platform-dependent executor.
-  internal::Executor* executor() {
+  Executor* executor() {
     return executor_.get();
   }
 
@@ -151,6 +181,10 @@ class AsyncQueue {
   // queue.
   void RunScheduledOperationsUntil(TimerId last_timer_id);
 
+  // For tests: Skip all subsequent delays for a specific TimerId.
+  // NOTE: This does not work with TimerId::All.
+  void SkipDelaysForTimerId(TimerId timer_id);
+
  private:
   Operation Wrap(const Operation& operation);
 
@@ -159,7 +193,12 @@ class AsyncQueue {
   void VerifySequentialOrder() const;
 
   std::atomic<bool> is_operation_in_progress_;
-  std::unique_ptr<internal::Executor> executor_;
+  std::unique_ptr<Executor> executor_;
+
+  bool is_shutting_down_ = false;
+  mutable std::mutex shut_down_mutex_;
+
+  std::vector<TimerId> timer_ids_to_skip_;
 };
 
 }  // namespace util

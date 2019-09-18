@@ -62,7 +62,7 @@ class NewsOverviewMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
     
     @objc func handleDismiss() {
-        UIView.animate(withDuration: 0.5, animations: {
+        UIView.animate(withDuration: 0.3, animations: {
             
             self.blackView.alpha = 0
             self.tableView.alpha = 0
@@ -100,6 +100,10 @@ class NewsOverviewMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let blogPost = posts[indexPath.row]
+        
+        self.feedTableVC?.blogPostSelected(blogPost: blogPost)
+        
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -112,11 +116,13 @@ class NewsOverviewMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         
         tableView.register(BlogCell.self, forCellReuseIdentifier: "BlogCell")
         
-        DataHelper().getData(get: "blogPosts") { (posts) in
+        self.tableView.activityStartAnimating()
+        
+        DataHelper().getData(get: .blogPosts) { (posts) in
             self.posts = posts as! [BlogPost]
             self.tableView.reloadData()
+            self.tableView.activityStopAnimating()
         }
-//        collectionView.register(SettingCell.self, forCellWithReuseIdentifier: cellId)
     }
     
 }

@@ -8,23 +8,69 @@
 
 import UIKit
 
-class ArgumentDetailViewController: UIViewController {
+class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
 
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
-    @IBOutlet weak var commentaryView: UIView!
-    @IBOutlet weak var commentaryView2: UIView!
-    @IBOutlet weak var commentaryView3: UIView!
+    @IBOutlet weak var sourceTextView: UITextView!
+    @IBOutlet weak var sourceTextViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var showSourceButton: DesignableButton!
     
+    var source: Source?
+    var argument: Argument?
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        commentaryView.layer.cornerRadius = 5
-        commentaryView2.layer.cornerRadius = 5
-        commentaryView3.layer.cornerRadius = 5
-        
+        sourceTextView.delegate = self
+
+        setUpView()
     }
     
-
+    func setUpView() {
+        if let source = source {
+            
+            let length = source.title.count
+            
+            let attributedString = NSMutableAttributedString(string: "Gehe zur Quelle: \(source.title)")
+            attributedString.addAttribute(.link, value: source.source, range: NSRange(location: 16, length: length))
+            
+            sourceTextView.attributedText = attributedString
+            
+            self.titleLabel.text = source.title
+            self.descriptionLabel.text = source.description
+        } else if let argument = argument {
+            self.sourceTextViewHeightConstraint.constant = 0
+            self.showSourceButton.isHidden = true
+            self.titleLabel.text = argument.title
+            self.descriptionLabel.text = argument.description
+        }
+    }
+    
+    // To open the link
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        
+        
+        
+        UIApplication.shared.open(URL)
+        return false
+    }
+    @IBAction func showSourceButtonTapped(_ sender: Any) {
+        if let source = source {
+            performSegue(withIdentifier: "goToLink", sender: source.source)
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToLink" {
+            if let webVC = segue.destination as? WebViewController {
+                if let link = sender as? String {
+                    webVC.link = link
+                }
+            }
+        }
+    }
+    
+    @IBAction func infoButtonTapped(_ sender: Any) {
+    }
 }

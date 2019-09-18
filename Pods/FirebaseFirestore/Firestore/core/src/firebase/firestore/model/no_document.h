@@ -17,6 +17,8 @@
 #ifndef FIRESTORE_CORE_SRC_FIREBASE_FIRESTORE_MODEL_NO_DOCUMENT_H_
 #define FIRESTORE_CORE_SRC_FIREBASE_FIRESTORE_MODEL_NO_DOCUMENT_H_
 
+#include <memory>
+
 #include "Firestore/core/src/firebase/firestore/model/maybe_document.h"
 
 namespace firebase {
@@ -26,7 +28,26 @@ namespace model {
 /** Represents that no documents exists for the key at the given version. */
 class NoDocument : public MaybeDocument {
  public:
-  NoDocument(DocumentKey key, SnapshotVersion version);
+  NoDocument(DocumentKey key,
+             SnapshotVersion version,
+             bool has_committed_mutations);
+
+  /**
+   * Casts a MaybeDocument to a NoDocument. This is a checked operation that
+   * will assert if the type of the MaybeDocument isn't actually
+   * Type::NoDocument.
+   */
+  explicit NoDocument(const MaybeDocument& document);
+
+  /** Creates an invalid NoDocument instance. */
+  NoDocument() = default;
+
+  bool has_committed_mutations() const;
+
+ private:
+  class Rep;
+
+  const Rep& doc_rep() const;
 };
 
 }  // namespace model

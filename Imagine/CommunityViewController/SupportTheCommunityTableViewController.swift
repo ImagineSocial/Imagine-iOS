@@ -7,32 +7,32 @@
 //
 
 import UIKit
-
+import Firebase
 
 class SupportTheCommunityTableViewController: UITableViewController {
+    
+    
     
     var jobOffers = [JobOffer]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.view.activityStartAnimating()
+        
         getJobOffers()
         
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.view.backgroundColor = .white
         
-        let imageView = UIImageView(image: UIImage(named: "peace-sign"))
-        imageView.contentMode = .scaleAspectFit
-        imageView.alpha = 0.3
-        self.tableView.backgroundView = imageView
-        
     }
     
     
     func getJobOffers() {
-        DataHelper().getData(get: "jobOffer") { (jobOffers) in
+        DataHelper().getData(get: .jobOffer) { (jobOffers) in
             self.jobOffers = jobOffers as! [JobOffer]
             self.tableView.reloadData()
+            self.view.activityStopAnimating()
         }
         
     }
@@ -61,11 +61,11 @@ class SupportTheCommunityTableViewController: UITableViewController {
             let category = supportField.category
             switch category {
             case "IT":
-                cell.categoryLabel.textColor = .blue
+                cell.categoryLabel.textColor = Constants.imagineColor
             case "Management":
-                cell.categoryLabel.textColor = .red
+                cell.categoryLabel.textColor = Constants.red
             case "Sprache":
-                cell.categoryLabel.textColor = .green
+                cell.categoryLabel.textColor = Constants.green
             case "Allgemein":
                 cell.categoryLabel.textColor = .purple
             default:
@@ -96,12 +96,37 @@ class SupportTheCommunityTableViewController: UITableViewController {
                 }
             }
         }
+        if segue.identifier == "toBugReportSegue" {
+            if let bug = sender as? BugType {
+                if let nextVC = segue.destination as? ReportABugViewController {
+                    nextVC.type = bug
+                }
+            }
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 225
     }
     
+    @IBAction func bugReportTapped(_ sender: Any) {
+        if let _ = Auth.auth().currentUser {
+            performSegue(withIdentifier: "toBugReportSegue", sender: BugType.bug)
+        } else {
+            self.notLoggedInAlert()
+        }
+    }
+    
+    @IBAction func languageReportTapped(_ sender: Any) {
+        if let _ = Auth.auth().currentUser {
+            performSegue(withIdentifier: "toBugReportSegue", sender: BugType.language)
+        } else {
+            self.notLoggedInAlert()
+        }
+    }
+    
+    @IBAction func infoButtonTapped(_ sender: Any) {
+    }
 }
 
 

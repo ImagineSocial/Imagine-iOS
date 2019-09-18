@@ -37,11 +37,11 @@ class CampaignCell: UITableViewCell {
                 
                 switch category {
                 case "Management":
-                    labelColor = .red
+                    labelColor = Constants.red
                 case "Finanzen":
-                    labelColor = .green
+                    labelColor = Constants.green
                 case "Kommunikation":
-                    labelColor = .blue
+                    labelColor = Constants.imagineColor
                 case "Inhalt":
                     labelColor = .purple
                 default:
@@ -51,6 +51,26 @@ class CampaignCell: UITableViewCell {
                 categoryLabel.textColor = labelColor
             }
         }
+    }
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        progressView.layer.cornerRadius = 2
+        progressView.clipsToBounds = true
+        
+        // add corner radius on `contentView`
+        contentView.backgroundColor = .white
+        contentView.layer.cornerRadius = 5
+        contentView.clipsToBounds = true
+        backgroundColor =  Constants.backgroundColorForTableViews
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        //set the values for top,left,bottom,right margins
+        let margins = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        contentView.frame = contentView.frame.inset(by: margins)
     }
     
 }

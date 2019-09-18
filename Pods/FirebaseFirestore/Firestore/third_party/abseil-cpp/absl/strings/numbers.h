@@ -5,7 +5,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,32 +41,41 @@ namespace absl {
 
 // SimpleAtoi()
 //
-// Converts the given std::string into an integer value, returning `true` if
-// successful. The std::string must reflect a base-10 integer (optionally followed or
+// Converts the given string into an integer value, returning `true` if
+// successful. The string must reflect a base-10 integer (optionally followed or
 // preceded by ASCII whitespace) whose value falls within the range of the
-// integer type,
+// integer type. If any errors are encountered, this function returns `false`,
+// leaving `out` in an unspecified state.
 template <typename int_type>
 ABSL_MUST_USE_RESULT bool SimpleAtoi(absl::string_view s, int_type* out);
 
 // SimpleAtof()
 //
-// Converts the given std::string (optionally followed or preceded by ASCII
+// Converts the given string (optionally followed or preceded by ASCII
 // whitespace) into a float, which may be rounded on overflow or underflow.
-ABSL_MUST_USE_RESULT bool SimpleAtof(absl::string_view str, float* value);
+// See https://en.cppreference.com/w/c/string/byte/strtof for details about the
+// allowed formats for `str`. If any errors are encountered, this function
+// returns `false`, leaving `out` in an unspecified state.
+ABSL_MUST_USE_RESULT bool SimpleAtof(absl::string_view str, float* out);
 
 // SimpleAtod()
 //
-// Converts the given std::string (optionally followed or preceded by ASCII
+// Converts the given string (optionally followed or preceded by ASCII
 // whitespace) into a double, which may be rounded on overflow or underflow.
-ABSL_MUST_USE_RESULT bool SimpleAtod(absl::string_view str, double* value);
+// See https://en.cppreference.com/w/c/string/byte/strtof for details about the
+// allowed formats for `str`. If any errors are encountered, this function
+// returns `false`, leaving `out` in an unspecified state.
+ABSL_MUST_USE_RESULT bool SimpleAtod(absl::string_view str, double* out);
 
 // SimpleAtob()
 //
-// Converts the given std::string into a boolean, returning `true` if successful.
+// Converts the given string into a boolean, returning `true` if successful.
 // The following case-insensitive strings are interpreted as boolean `true`:
 // "true", "t", "yes", "y", "1". The following case-insensitive strings
-// are interpreted as boolean `false`: "false", "f", "no", "n", "0".
-ABSL_MUST_USE_RESULT bool SimpleAtob(absl::string_view str, bool* value);
+// are interpreted as boolean `false`: "false", "f", "no", "n", "0". If any
+// errors are encountered, this function returns `false`, leaving `out` in an
+// unspecified state.
+ABSL_MUST_USE_RESULT bool SimpleAtob(absl::string_view str, bool* out);
 
 }  // namespace absl
 
@@ -124,17 +133,11 @@ char* FastIntToBuffer(int_type i, char* buffer) {
   }
 }
 
-}  // namespace numbers_internal
-
-// SimpleAtoi()
-//
-// Converts a std::string to an integer, using `safe_strto?()` functions for actual
-// parsing, returning `true` if successful. The `safe_strto?()` functions apply
-// strict checking; the std::string must be a base-10 integer, optionally followed or
-// preceded by ASCII whitespace, with a value in the range of the corresponding
-// integer type.
+// Implementation of SimpleAtoi, generalized to support arbitrary base (used
+// with base different from 10 elsewhere in Abseil implementation).
 template <typename int_type>
-ABSL_MUST_USE_RESULT bool SimpleAtoi(absl::string_view s, int_type* out) {
+ABSL_MUST_USE_RESULT bool safe_strtoi_base(absl::string_view s, int_type* out,
+                                           int base) {
   static_assert(sizeof(*out) == 4 || sizeof(*out) == 8,
                 "SimpleAtoi works only with 32-bit or 64-bit integers.");
   static_assert(!std::is_floating_point<int_type>::value,
@@ -146,25 +149,39 @@ ABSL_MUST_USE_RESULT bool SimpleAtoi(absl::string_view s, int_type* out) {
   if (static_cast<int_type>(1) - 2 < 0) {  // Signed
     if (sizeof(*out) == 64 / 8) {       // 64-bit
       int64_t val;
-      parsed = numbers_internal::safe_strto64_base(s, &val, 10);
+      parsed = numbers_internal::safe_strto64_base(s, &val, base);
       *out = static_cast<int_type>(val);
     } else {  // 32-bit
       int32_t val;
-      parsed = numbers_internal::safe_strto32_base(s, &val, 10);
+      parsed = numbers_internal::safe_strto32_base(s, &val, base);
       *out = static_cast<int_type>(val);
     }
   } else {                         // Unsigned
     if (sizeof(*out) == 64 / 8) {  // 64-bit
       uint64_t val;
-      parsed = numbers_internal::safe_strtou64_base(s, &val, 10);
+      parsed = numbers_internal::safe_strtou64_base(s, &val, base);
       *out = static_cast<int_type>(val);
     } else {  // 32-bit
       uint32_t val;
-      parsed = numbers_internal::safe_strtou32_base(s, &val, 10);
+      parsed = numbers_internal::safe_strtou32_base(s, &val, base);
       *out = static_cast<int_type>(val);
     }
   }
   return parsed;
+}
+
+}  // namespace numbers_internal
+
+// SimpleAtoi()
+//
+// Converts a string to an integer, using `safe_strto?()` functions for actual
+// parsing, returning `true` if successful. The `safe_strto?()` functions apply
+// strict checking; the string must be a base-10 integer, optionally followed or
+// preceded by ASCII whitespace, with a value in the range of the corresponding
+// integer type.
+template <typename int_type>
+ABSL_MUST_USE_RESULT bool SimpleAtoi(absl::string_view s, int_type* out) {
+  return numbers_internal::safe_strtoi_base(s, out, 10);
 }
 
 }  // namespace absl

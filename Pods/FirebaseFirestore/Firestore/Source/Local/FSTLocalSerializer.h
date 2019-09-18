@@ -16,11 +16,11 @@
 
 #import <Foundation/Foundation.h>
 
+#include "Firestore/core/src/firebase/firestore/local/query_data.h"
+#include "Firestore/core/src/firebase/firestore/model/maybe_document.h"
+#include "Firestore/core/src/firebase/firestore/model/mutation_batch.h"
 #include "Firestore/core/src/firebase/firestore/model/snapshot_version.h"
 
-@class FSTMaybeDocument;
-@class FSTMutationBatch;
-@class FSTQueryData;
 @class FSTSerializerBeta;
 
 @class FSTPBMaybeDocument;
@@ -29,12 +29,15 @@
 
 @class GPBTimestamp;
 
+namespace local = firebase::firestore::local;
+namespace model = firebase::firestore::model;
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Serializer for values stored in the LocalStore.
  *
- * Note that FSTLocalSerializer currently delegates to the serializer for the Firestore v1beta1 RPC
+ * Note that FSTLocalSerializer currently delegates to the serializer for the Firestore v1 RPC
  * protocol to save implementation time and code duplication. We'll need to revisit this when the
  * RPC protocol we use diverges from local storage.
  */
@@ -44,29 +47,29 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init NS_UNAVAILABLE;
 
-/** Encodes an FSTMaybeDocument model to the equivalent protocol buffer for local storage. */
-- (FSTPBMaybeDocument *)encodedMaybeDocument:(FSTMaybeDocument *)document;
+/** Encodes a MaybeDocument model to the equivalent protocol buffer for local storage. */
+- (FSTPBMaybeDocument *)encodedMaybeDocument:(const model::MaybeDocument &)document;
 
 /** Decodes an FSTPBMaybeDocument proto to the equivalent model. */
-- (FSTMaybeDocument *)decodedMaybeDocument:(FSTPBMaybeDocument *)proto;
+- (model::MaybeDocument)decodedMaybeDocument:(FSTPBMaybeDocument *)proto;
 
-/** Encodes an FSTMutationBatch model for local storage in the mutation queue. */
-- (FSTPBWriteBatch *)encodedMutationBatch:(FSTMutationBatch *)batch;
+/** Encodes an MutationBatch model for local storage in the mutation queue. */
+- (FSTPBWriteBatch *)encodedMutationBatch:(const model::MutationBatch &)batch;
 
 /** Decodes an FSTPBWriteBatch proto into a MutationBatch model. */
-- (FSTMutationBatch *)decodedMutationBatch:(FSTPBWriteBatch *)batch;
+- (model::MutationBatch)decodedMutationBatch:(FSTPBWriteBatch *)batch;
 
-/** Encodes an FSTQueryData model for local storage in the query cache. */
-- (FSTPBTarget *)encodedQueryData:(FSTQueryData *)queryData;
+/** Encodes a QueryData model for local storage in the query cache. */
+- (FSTPBTarget *)encodedQueryData:(const local::QueryData &)queryData;
 
-/** Decodes an FSTPBTarget proto from local storage into an FSTQueryData model. */
-- (FSTQueryData *)decodedQueryData:(FSTPBTarget *)target;
+/** Decodes an FSTPBTarget proto from local storage into a QueryData model. */
+- (local::QueryData)decodedQueryData:(FSTPBTarget *)target;
 
 /** Encodes a SnapshotVersion model into a GPBTimestamp proto. */
-- (GPBTimestamp *)encodedVersion:(const firebase::firestore::model::SnapshotVersion &)version;
+- (GPBTimestamp *)encodedVersion:(const model::SnapshotVersion &)version;
 
 /** Decodes a GPBTimestamp proto into a SnapshotVersion model. */
-- (firebase::firestore::model::SnapshotVersion)decodedVersion:(GPBTimestamp *)version;
+- (model::SnapshotVersion)decodedVersion:(GPBTimestamp *)version;
 
 @end
 

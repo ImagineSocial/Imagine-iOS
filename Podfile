@@ -14,8 +14,9 @@ target 'Imagine' do
  pod 'SDWebImage'
  pod 'SwiftLinkPreview'
  pod 'MessengerKit', :git => 'https://github.com/steve228uk/MessengerKit.git'
- pod 'PusherChatkit'
  pod 'DateToolsSwift'
  pod 'YoutubePlayer-in-WKWebView'
+ pod 'ReachabilitySwift'
+ pod 'EasyTipView'
  
 end

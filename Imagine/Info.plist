@@ -2,31 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
-	<key>CFBundleDisplayName</key>
-	<string></string>
-	<key>LSApplicationCategoryType</key>
-	<string></string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Dürfen wir die Photos auch auf deinem Handy speichern?</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Wir würden gerne auch deine Ordner nutzen zum Photo auswählen!</string>
-	<key>UIAppFonts</key>
-	<array>
-		<string>Kalam-Regular.ttf</string>
-		<string>Kalam-Light.ttf</string>
-		<string>Kalam-Bold.ttf</string>
-	</array>
-	<key>NSCameraUsageDescription</key>
-	<string>Wir wollen nur Fotos machen!</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string></string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -41,8 +20,35 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Wir wollen nur Fotos machen!</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Dürfen wir die Photos auch auf deinem Handy speichern?</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Wir würden gerne auch deine Ordner nutzen zum Photo auswählen!</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Kalam-Regular.ttf</string>
+		<string>Kalam-Light.ttf</string>
+		<string>Kalam-Bold.ttf</string>
+		<string>IBMPlexSans-Bold.ttf</string>
+		<string>IBMPlexSans-ExtraLight.ttf</string>
+		<string>IBMPlexSans-Light.ttf</string>
+		<string>IBMPlexSans-Medium.ttf</string>
+		<string>IBMPlexSans-Regular.ttf</string>
+		<string>IBMPlexSans-SemiBold.ttf</string>
+		<string>IBMPlexSans-Thin.ttf</string>
+		<string>IBMPlexSans-SemiBold.ttf</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -54,8 +60,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
@@ -64,5 +68,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
 </dict>
 </plist>

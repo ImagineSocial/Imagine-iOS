@@ -18,4 +18,19 @@ class VoteCell: UITableViewCell {
     @IBOutlet weak var commentCountLabel: UILabel!
     
     
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        // add corner radius on `contentView`
+        contentView.backgroundColor = .white
+        contentView.layer.cornerRadius = 5
+        backgroundColor =  Constants.backgroundColorForTableViews
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        //set the values for top,left,bottom,right margins
+        let margins = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        contentView.frame = contentView.frame.inset(by: margins)
+    }
 }

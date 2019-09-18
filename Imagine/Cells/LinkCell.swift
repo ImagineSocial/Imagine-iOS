@@ -9,18 +9,19 @@
 import UIKit
 import SwiftLinkPreview
 
-
-protocol LinkCellDelegate {
-    func userTapped(post: Post)
-    func linkTapped(post: Post)
-    func reportTapped(post: Post)
-    func thanksTapped(post: Post)
-    func wowTapped(post: Post)
-    func haTapped(post: Post)
-    func niceTapped(post: Post)
+extension String {
+    var isValidURL: Bool {
+        let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+        if let match = detector.firstMatch(in: self, options: [], range: NSRange(location: 0, length: self.utf16.count)) {
+            // it is a link, if the match covers the whole string
+            return match.range.length == self.utf16.count
+        } else {
+            return false
+        }
+    }
 }
 
-class LinkCell : UITableViewCell {
+class LinkCell : BaseFeedCell {
     
     
     @IBOutlet weak var profilePictureImageView: UIImageView!
@@ -33,75 +34,144 @@ class LinkCell : UITableViewCell {
     @IBOutlet weak var reportView: DesignablePopUp!
     @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var urlLabel: UILabel!
-    @IBOutlet weak var thanksCountLabel: UILabel!
-    @IBOutlet weak var wowCountLabel: UILabel!
-    @IBOutlet weak var haCountLabel: UILabel!
-    @IBOutlet weak var niceCountLabel: UILabel!
     @IBOutlet weak var commentCountLabel: UILabel!
     
     let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: DisabledCache.instance)
     
-    let handyHelper = HandyHelper()
-    var delegate: LinkCellDelegate?
+    var delegate: PostCellDelegate?
     
     override func awakeFromNib() {
+        self.addSubview(buttonLabel)
+        buttonLabel.textColor = .black
+        
+        thanksButton.layer.borderWidth = 1.5
+        thanksButton.layer.borderColor = thanksColor.cgColor
+        wowButton.layer.borderWidth = 1.5
+        wowButton.layer.borderColor = wowColor.cgColor
+        haButton.layer.borderWidth = 1.5
+        haButton.layer.borderColor = haColor.cgColor
+        niceButton.layer.borderWidth = 1.5
+        niceButton.layer.borderColor = niceColor.cgColor
+        
+        thanksButton.setImage(nil, for: .normal)
+        wowButton.setImage(nil, for: .normal)
+        haButton.setImage(nil, for: .normal)
+        niceButton.setImage(nil, for: .normal)
+        
         linkThumbNailImageView.layer.cornerRadius = 3
+        
 
         // Profile Picture
         let layer = profilePictureImageView.layer
         layer.cornerRadius = profilePictureImageView.frame.width/2
-        layer.borderWidth = 0.1
-        layer.borderColor = UIColor.black.cgColor
         
         titleLabel.layoutIfNeeded()
+        
+        // add corner radius on `contentView`
+        contentView.backgroundColor = .white
+        contentView.layer.cornerRadius = 8
+        backgroundColor =  Constants.backgroundColorForTableViews
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        urlLabel.text = nil
+        linkThumbNailImageView.sd_cancelCurrentImageLoad()
+        linkThumbNailImageView.image = nil
+        
+        profilePictureImageView.sd_cancelCurrentImageLoad()
+        profilePictureImageView.image = nil
     }
     
     var post :Post? {
         didSet {
-            if let post = post {
+            setCell()
+        }
+    }
+    
+    func setCell() {
+        if let post = post {
+            
+            print("Set 'Link' Post")
+            if ownProfile {
+                thanksButton.setTitle(String(post.votes.thanks), for: .normal)
+                wowButton.setTitle(String(post.votes.wow), for: .normal)
+                haButton.setTitle(String(post.votes.ha), for: .normal)
+                niceButton.setTitle(String(post.votes.nice), for: .normal)
                 
-                linkThumbNailImageView.image = UIImage(named: "default")
-                thanksCountLabel.text = "thanks"
-                wowCountLabel.text = "wow"
-                haCountLabel.text = "ha"
-                niceCountLabel.text = "nice"
-                commentCountLabel.text = String(post.commentCount)
-                
-                // Profile Picture
-                if let url = URL(string: post.user.imageURL) {
-                    profilePictureImageView.sd_setImage(with: url, completed: nil)
+                if let _ = cellStyle {
+                    print("Already Set")
+                } else {
+                    cellStyle = .ownCell
+                    setOwnCell()
                 }
-                
-                createDateLabel.text = post.createTime
-                ogPosterNameLabel.text = "\(post.user.name) \(post.user.surname)"
-                
-                titleLabel.text = post.title
-                
-                // Preview des Links anzeigen
-                slp.preview(post.linkURL, onSuccess: { (result) in
-                    if let imageURL = result.image {
-                        self.linkThumbNailImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "default"), options: [], completed: nil)
-                    }
-                    if let linkSource = result.canonicalUrl {
-                        self.urlLabel.text = linkSource
-                    }
-                }) { (error) in
-                    print("We have an error: \(error.localizedDescription)")
-                }
-                
-                
-                // ReportView einstellen
-                let reportViewOptions = handyHelper.setReportView(post: post)
-                
-                reportViewHeightConstraint.constant = reportViewOptions.heightConstant
-                reportViewButtonInTop.isHidden = reportViewOptions.buttonHidden
-                reportViewLabel.text = reportViewOptions.labelText
-                reportView.backgroundColor = reportViewOptions.backgroundColor
+            } else {
+                thanksButton.setImage(UIImage(named: "thanks"), for: .normal)
+                wowButton.setImage(UIImage(named: "wow"), for: .normal)
+                haButton.setImage(UIImage(named: "ha"), for: .normal)
+                niceButton.setImage(UIImage(named: "nice"), for: .normal)
             }
+            
+            commentCountLabel.text = String(post.commentCount)
+            
+            // Profile Picture
+            if let url = URL(string: post.user.imageURL) {
+                profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+            }
+            
+            if post.user.name == "" {
+                self.getName()
+            }
+            
+            createDateLabel.text = post.createTime
+            ogPosterNameLabel.text = "\(post.user.name) \(post.user.surname)"
+            
+            titleLabel.text = post.title
+            
+            // Preview des Links anzeigen
+            slp.preview(post.linkURL, onSuccess: { (result) in
+                
+                // Hat sogar ne Cache, wäre cool für die Dauer der Ladezeiten:
+                //https://github.com/LeonardoCardoso/SwiftLinkPreview
+                
+                if let imageURL = result.image {
+                    self.linkThumbNailImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+                }
+                if let linkSource = result.canonicalUrl {
+                    self.urlLabel.text = linkSource
+                }
+            }) { (error) in
+                print("We have an error: \(error.localizedDescription)")
+            }
+            
+            
+            // ReportView einstellen
+            let reportViewOptions = handyHelper.setReportView(post: post)
+            
+            reportViewHeightConstraint.constant = reportViewOptions.heightConstant
+            reportViewButtonInTop.isHidden = reportViewOptions.buttonHidden
+            reportViewLabel.text = reportViewOptions.labelText
+            reportView.backgroundColor = reportViewOptions.backgroundColor
         }
     }
     
     
+    var index = 0
+    func getName() {
+        if index < 20 {
+            if let post = self.post {
+                if post.user.name == "" {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        self.getName()
+                        self.index+=1
+                    }
+                } else {
+                    setCell()
+                }
+            }
+        }
+    }
     
     @IBAction func linkTapped(_ sender: Any) {
         if let post = post {
@@ -112,7 +182,7 @@ class LinkCell : UITableViewCell {
         if let post = post {
             delegate?.thanksTapped(post: post)
             post.votes.thanks = post.votes.thanks+1
-            thanksCountLabel.text = String(post.votes.thanks)
+            showButtonText(post: post, button: thanksButton)
         }
     }
     
@@ -120,7 +190,7 @@ class LinkCell : UITableViewCell {
         if let post = post {
             delegate?.wowTapped(post: post)
             post.votes.wow = post.votes.wow+1
-            wowCountLabel.text = String(post.votes.wow)
+            showButtonText(post: post, button: wowButton)
         }
     }
     
@@ -128,7 +198,7 @@ class LinkCell : UITableViewCell {
         if let post = post {
             delegate?.haTapped(post: post)
             post.votes.ha = post.votes.ha+1
-            haCountLabel.text = String(post.votes.ha)
+            showButtonText(post: post, button: haButton)
         }
     }
     
@@ -136,7 +206,7 @@ class LinkCell : UITableViewCell {
         if let post = post {
             delegate?.niceTapped(post: post)
             post.votes.nice = post.votes.nice+1
-            niceCountLabel.text = String(post.votes.nice)
+            showButtonText(post: post, button: niceButton)
         }
     }
     

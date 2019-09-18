@@ -28,7 +28,7 @@
 #include "Firestore/core/src/firebase/firestore/util/filesystem_detail.h"
 #include "Firestore/core/src/firebase/firestore/util/path.h"
 #include "Firestore/core/src/firebase/firestore/util/string_format.h"
-#include "Firestore/third_party/abseil-cpp/absl/memory/memory.h"
+#include "absl/memory/memory.h"
 
 namespace firebase {
 namespace firestore {
@@ -39,7 +39,7 @@ Status IsDirectory(const Path& path) {
   if (::stat(path.c_str(), &buffer)) {
     if (errno == ENOENT) {
       // Expected common error case.
-      return Status{FirestoreErrorCode::NotFound, path.ToUtf8String()};
+      return Status{Error::NotFound, path.ToUtf8String()};
 
     } else if (errno == ENOTDIR) {
       // This is a case where POSIX and Windows differ in behavior in a way
@@ -55,14 +55,14 @@ Status IsDirectory(const Path& path) {
       //
       // Since we really don't care about this distinction it's easier to
       // resolve this by returning NotFound here.
-      return Status{FirestoreErrorCode::NotFound, path.ToUtf8String()};
+      return Status{Error::NotFound, path.ToUtf8String()};
     } else {
       return Status::FromErrno(errno, path.ToUtf8String());
     }
   }
 
   if (!S_ISDIR(buffer.st_mode)) {
-    return Status{FirestoreErrorCode::FailedPrecondition,
+    return Status{Error::FailedPrecondition,
                   StringFormat("Path %s exists but is not a directory",
                                path.ToUtf8String())};
   }
@@ -95,13 +95,13 @@ Path TempDir() {
 }
 #endif  // !defined(__APPLE__)
 
-StatusOr<off_t> FileSize(const Path& path) {
+StatusOr<int64_t> FileSize(const Path& path) {
   struct stat st {};
   if (stat(path.c_str(), &st) == 0) {
-    return StatusOr<off_t>(st.st_size);
+    return st.st_size;
   } else {
-    return StatusOr<off_t>(Status::FromErrno(
-        errno, StringFormat("Failed to stat file: %s", path.ToUtf8String())));
+    return Status::FromErrno(
+        errno, StringFormat("Failed to stat file: %s", path.ToUtf8String()));
   }
 }
 

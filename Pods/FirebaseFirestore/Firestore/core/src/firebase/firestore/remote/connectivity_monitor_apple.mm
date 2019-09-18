@@ -37,7 +37,7 @@ namespace {
 
 using NetworkStatus = ConnectivityMonitor::NetworkStatus;
 using util::AsyncQueue;
-using util::internal::ExecutorLibdispatch;
+using util::ExecutorLibdispatch;
 
 NetworkStatus ToNetworkStatus(SCNetworkReachabilityFlags flags) {
   if (!(flags & kSCNetworkReachabilityFlagsReachable)) {
@@ -76,8 +76,15 @@ void OnReachabilityChangedCallback(SCNetworkReachabilityRef /*unused*/,
  */
 class ConnectivityMonitorApple : public ConnectivityMonitor {
  public:
-  explicit ConnectivityMonitorApple(AsyncQueue* worker_queue)
-      : ConnectivityMonitor{worker_queue}, reachability_{CreateReachability()} {
+  explicit ConnectivityMonitorApple(
+      const std::shared_ptr<AsyncQueue>& worker_queue)
+      : ConnectivityMonitor{worker_queue} {
+    reachability_ = CreateReachability();
+    if (!reachability_) {
+      LOG_DEBUG("Failed to create reachability monitor.");
+      return;
+    }
+
     SCNetworkReachabilityFlags flags;
     if (SCNetworkReachabilityGetFlags(reachability_, &flags)) {
       SetInitialStatus(ToNetworkStatus(flags));
@@ -92,15 +99,12 @@ class ConnectivityMonitorApple : public ConnectivityMonitor {
       return;
     }
 
-    // TODO(varconst): 1. Make this at least more robust by adding an enum to
-    // `Executor` that allows asserting on the actual type before casting.
-    // 2. This is an unfortunate, brittle mechanism, see if better alternatives
-    //    come up.
-    // On Apple platforms, the executor implementation must be the
-    // libdispatch-based one.
-    auto executor = static_cast<ExecutorLibdispatch*>(queue()->executor());
+    // It's okay to use the main queue for reachability events because they are
+    // fairly infrequent, and there's no good way to get the underlying dispatch
+    // queue out of the worker queue. The callback itself is still executed on
+    // the worker queue.
     success = SCNetworkReachabilitySetDispatchQueue(reachability_,
-                                                    executor->dispatch_queue());
+                                                    dispatch_get_main_queue());
     if (!success) {
       LOG_DEBUG("Couldn't set reachability queue");
       return;
@@ -108,20 +112,24 @@ class ConnectivityMonitorApple : public ConnectivityMonitor {
   }
 
   ~ConnectivityMonitorApple() {
-    bool success =
-        SCNetworkReachabilitySetDispatchQueue(reachability_, nullptr);
-    if (!success) {
-      LOG_DEBUG("Couldn't unset reachability queue");
+    if (reachability_) {
+      bool success =
+          SCNetworkReachabilitySetDispatchQueue(reachability_, nullptr);
+      if (!success) {
+        LOG_DEBUG("Couldn't unset reachability queue");
+      }
+
+      CFRelease(reachability_);
     }
   }
 
   void OnReachabilityChanged(SCNetworkReachabilityFlags flags) {
-    queue()->ExecuteBlocking(
+    queue()->Enqueue(
         [this, flags] { MaybeInvokeCallbacks(ToNetworkStatus(flags)); });
   }
 
  private:
-  SCNetworkReachabilityRef reachability_;
+  SCNetworkReachabilityRef reachability_ = nil;
 };
 
 namespace {
@@ -137,7 +145,7 @@ void OnReachabilityChangedCallback(SCNetworkReachabilityRef /*unused*/,
 }  // namespace
 
 std::unique_ptr<ConnectivityMonitor> ConnectivityMonitor::Create(
-    AsyncQueue* worker_queue) {
+    const std::shared_ptr<AsyncQueue>& worker_queue) {
   return absl::make_unique<ConnectivityMonitorApple>(worker_queue);
 }
 

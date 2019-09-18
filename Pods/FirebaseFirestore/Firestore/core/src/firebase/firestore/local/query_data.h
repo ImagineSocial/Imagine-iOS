@@ -17,12 +17,14 @@
 #ifndef FIRESTORE_CORE_SRC_FIREBASE_FIRESTORE_LOCAL_QUERY_DATA_H_
 #define FIRESTORE_CORE_SRC_FIREBASE_FIRESTORE_LOCAL_QUERY_DATA_H_
 
-#include <cstdint>
+#include <iosfwd>
+#include <string>
 #include <vector>
 
 #include "Firestore/core/src/firebase/firestore/core/query.h"
 #include "Firestore/core/src/firebase/firestore/model/snapshot_version.h"
 #include "Firestore/core/src/firebase/firestore/model/types.h"
+#include "Firestore/core/src/firebase/firestore/nanopb/byte_string.h"
 
 namespace firebase {
 namespace firestore {
@@ -31,16 +33,18 @@ namespace local {
 /** An enumeration for the different purposes we have for queries. */
 enum class QueryPurpose {
   /** A regular, normal query. */
-  kListen,
+  Listen,
 
   /**
    * The query was used to refill a query after an existence filter mismatch.
    */
-  kExistenceFilterMismatch,
+  ExistenceFilterMismatch,
 
   /** The query was used to resolve a limbo document. */
-  kLimboResolution,
+  LimboResolution,
 };
+
+std::ostream& operator<<(std::ostream& os, QueryPurpose purpose);
 
 /**
  * An immutable set of metadata that the store will need to keep track of for
@@ -61,18 +65,26 @@ class QueryData {
    *     data that matches the query. The resume token essentially identifies a
    *     point in time from which the server should resume sending results.
    */
-  QueryData(core::Query&& query,
+  QueryData(core::Query query,
             model::TargetId target_id,
+            model::ListenSequenceNumber sequence_number,
             QueryPurpose purpose,
-            model::SnapshotVersion&& snapshot_version,
-            std::vector<uint8_t>&& resume_token);
+            model::SnapshotVersion snapshot_version,
+            nanopb::ByteString resume_token);
 
   /**
    * Convenience constructor for use when creating a QueryData for the first
    * time.
    */
-  // TODO(rsgowman): Define once WatchStream::EmptyResumeToken exists.
-  // QueryData(const core::Query& query, int target_id, QueryPurpose purpose);
+  QueryData(core::Query query,
+            int target_id,
+            model::ListenSequenceNumber sequence_number,
+            QueryPurpose purpose);
+
+  /**
+   * Creates an invalid QueryData. Prefer QueryData::Invalid() for readability.
+   */
+  QueryData() = default;
 
   /**
    * Constructs an invalid QueryData. Reading any properties of the returned
@@ -80,43 +92,63 @@ class QueryData {
    */
   static QueryData Invalid();
 
+  /** The query being listened to. */
   const core::Query& query() const {
     return query_;
   }
 
+  /**
+   * The TargetId to which the query corresponds, assigned by the FSTLocalStore
+   * for user queries or the FSTSyncEngine for limbo queries.
+   */
   model::TargetId target_id() const {
     return target_id_;
   }
 
+  model::ListenSequenceNumber sequence_number() const {
+    return sequence_number_;
+  }
+
+  /** The purpose of the query. */
   QueryPurpose purpose() const {
     return purpose_;
   }
 
+  /** The latest snapshot version seen for this target. */
   const model::SnapshotVersion& snapshot_version() const {
     return snapshot_version_;
   }
 
-  const std::vector<uint8_t>& resume_token() const {
+  /**
+   * An opaque, server-assigned token that allows watching a query to be resumed
+   * after disconnecting without retransmitting all the data that matches the
+   * query. The resume token essentially identifies a point in time from which
+   * the server should resume sending results.
+   */
+  const nanopb::ByteString& resume_token() const {
     return resume_token_;
   }
 
-  QueryData Copy(model::SnapshotVersion&& snapshot_version,
-                 std::vector<uint8_t>&& resume_token) const;
+  QueryData Copy(model::SnapshotVersion snapshot_version,
+                 nanopb::ByteString resume_token,
+                 model::ListenSequenceNumber sequence_number) const;
+
+  friend bool operator==(const QueryData& lhs, const QueryData& rhs);
+
+  size_t Hash() const;
+
+  std::string ToString() const;
+
+  friend std::ostream& operator<<(std::ostream& os, const QueryData& value);
 
  private:
-  const core::Query query_;
+  core::Query query_;
   model::TargetId target_id_;
+  model::ListenSequenceNumber sequence_number_;
   QueryPurpose purpose_;
-  const model::SnapshotVersion snapshot_version_;
-  const std::vector<uint8_t> resume_token_;
+  model::SnapshotVersion snapshot_version_;
+  nanopb::ByteString resume_token_;
 };
-
-inline bool operator==(const QueryData& lhs, const QueryData& rhs) {
-  return lhs.query() == rhs.query() && lhs.target_id() == rhs.target_id() &&
-         lhs.purpose() == rhs.purpose() &&
-         lhs.snapshot_version() == rhs.snapshot_version() &&
-         lhs.resume_token() == rhs.resume_token();
-}
 
 inline bool operator!=(const QueryData& lhs, const QueryData& rhs) {
   return !(lhs == rhs);

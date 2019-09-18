@@ -8,7 +8,7 @@
 
 import UIKit
 import Firebase
-
+import FirebaseAuth
 
 enum SideMenuButton {
     case toFriends
@@ -17,7 +17,6 @@ enum SideMenuButton {
     case toUser
     case cancel
 }
-
 
 //Maybe create the currentUser here and pass it to the userfeedProfile
 class SideMenu: NSObject {
@@ -31,7 +30,6 @@ class SideMenu: NSObject {
         vc.backgroundColor = UIColor.white
         return vc
     }()
-    
     
     
     @objc func toUserProfileTapped() {
@@ -85,51 +83,9 @@ class SideMenu: NSObject {
             sideMenuView.addSubview(profilePictureImageView)
             sideMenuView.addSubview(nameLabel)
             sideMenuView.addSubview(smallNumberLabel)
+            sideMenuView.addSubview(disclaimerView)
             
-            profilePictureImageView.centerXAnchor.constraint(equalTo: sideMenuView.centerXAnchor).isActive = true
-            profilePictureImageView.topAnchor.constraint(equalTo: sideMenuView.topAnchor, constant: 50).isActive = true
-            profilePictureImageView.widthAnchor.constraint(equalToConstant: 80).isActive = true
-            profilePictureImageView.heightAnchor.constraint(equalToConstant: 80).isActive = true
-            profilePictureImageView.layer.cornerRadius = profilePictureImageView.frame.height/2
-            profilePictureImageView.layoutIfNeeded()
-            
-            profileButton.leadingAnchor.constraint(equalTo: profilePictureImageView.leadingAnchor).isActive = true
-            profileButton.topAnchor.constraint(equalTo: profilePictureImageView.topAnchor).isActive = true
-            profileButton.widthAnchor.constraint(equalTo: profilePictureImageView.widthAnchor).isActive = true
-            profileButton.heightAnchor.constraint(equalTo: profilePictureImageView.heightAnchor).isActive = true
-            
-            nameLabel.topAnchor.constraint(equalTo: profilePictureImageView.bottomAnchor, constant: 15).isActive = true
-            nameLabel.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor).isActive = true
-            
-            profileButton.addTarget(self, action: #selector(toUserProfileTapped), for: .touchUpInside)
-            friendsButton.addTarget(self, action: #selector(toFriendsTapped), for: .touchUpInside)
-            voteButton.addTarget(self, action: #selector(toVotingTapped), for: .touchUpInside)
-            savedButton.addTarget(self, action: #selector(toSavedPostsTapped), for: .touchUpInside)
-            
-            
-            friendsStackView.addArrangedSubview(friendsButton)
-            verticalStackView.addArrangedSubview(friendsStackView)
-            votingStackView.addArrangedSubview(voteButton)
-            verticalStackView.addArrangedSubview(votingStackView)
-            savedPostsStackView.addArrangedSubview(savedButton)
-            verticalStackView.addArrangedSubview(savedPostsStackView)
-            sideMenuView.addSubview(verticalStackView)
-            
-            let heightWidthOfSmallNumber:CGFloat = 22
-            
-            smallNumberLabel.trailingAnchor.constraint(equalTo: friendsStackView.trailingAnchor).isActive = true
-            smallNumberLabel.centerYAnchor.constraint(equalTo: friendsStackView.centerYAnchor).isActive = true
-            smallNumberLabel.heightAnchor.constraint(equalToConstant: heightWidthOfSmallNumber).isActive = true
-            smallNumberLabel.widthAnchor.constraint(equalToConstant: heightWidthOfSmallNumber).isActive = true
-            smallNumberLabel.layer.cornerRadius = heightWidthOfSmallNumber/2
-            smallNumberLabel.layoutIfNeeded()
-            
-            verticalStackView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor, constant: 20).isActive = true
-            verticalStackView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 50).isActive = true
-            verticalStackView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor, constant: -10).isActive = true
-            verticalStackView.heightAnchor.constraint(equalToConstant: 125).isActive = true
-            
-            
+            addConstraints()
             
             let y = window.frame.height
             let sideMenuWidth : CGFloat = 260
@@ -170,11 +126,75 @@ class SideMenu: NSObject {
             default:
                 self.FeedTableView?.sideMenuButtonTapped(whichButton: sideMenuButton)
             }
-            
-            
         })
     }
-
+    
+    func addConstraints() {
+        profilePictureImageView.centerXAnchor.constraint(equalTo: sideMenuView.centerXAnchor).isActive = true
+        profilePictureImageView.topAnchor.constraint(equalTo: sideMenuView.topAnchor, constant: 50).isActive = true
+        profilePictureImageView.widthAnchor.constraint(equalToConstant: 110).isActive = true
+        profilePictureImageView.heightAnchor.constraint(equalToConstant: 110).isActive = true
+        profilePictureImageView.layer.cornerRadius = profilePictureImageView.frame.height/2
+        profilePictureImageView.layoutIfNeeded()
+        
+        profileButton.leadingAnchor.constraint(equalTo: profilePictureImageView.leadingAnchor).isActive = true
+        profileButton.topAnchor.constraint(equalTo: profilePictureImageView.topAnchor).isActive = true
+        profileButton.widthAnchor.constraint(equalTo: profilePictureImageView.widthAnchor).isActive = true
+        profileButton.heightAnchor.constraint(equalTo: profilePictureImageView.heightAnchor).isActive = true
+        
+        nameLabel.topAnchor.constraint(equalTo: profilePictureImageView.bottomAnchor, constant: 15).isActive = true
+        nameLabel.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor).isActive = true
+        
+        profileButton.addTarget(self, action: #selector(toUserProfileTapped), for: .touchUpInside)
+        friendsButton.addTarget(self, action: #selector(toFriendsTapped), for: .touchUpInside)
+//        voteButton.addTarget(self, action: #selector(toVotingTapped), for: .touchUpInside)
+        savedButton.addTarget(self, action: #selector(toSavedPostsTapped), for: .touchUpInside)
+        
+        
+        friendsStackView.addArrangedSubview(friendsButton)
+        verticalStackView.addArrangedSubview(friendsStackView)
+//        votingStackView.addArrangedSubview(voteButton)
+//        verticalStackView.addArrangedSubview(votingStackView)
+        savedPostsStackView.addArrangedSubview(savedButton)
+        verticalStackView.addArrangedSubview(savedPostsStackView)
+        sideMenuView.addSubview(verticalStackView)
+        
+        let heightWidthOfSmallNumber:CGFloat = 22
+        
+        smallNumberLabel.trailingAnchor.constraint(equalTo: friendsStackView.trailingAnchor).isActive = true
+        smallNumberLabel.centerYAnchor.constraint(equalTo: friendsStackView.centerYAnchor).isActive = true
+        smallNumberLabel.heightAnchor.constraint(equalToConstant: heightWidthOfSmallNumber).isActive = true
+        smallNumberLabel.widthAnchor.constraint(equalToConstant: heightWidthOfSmallNumber).isActive = true
+        smallNumberLabel.layer.cornerRadius = heightWidthOfSmallNumber/2
+        smallNumberLabel.layoutIfNeeded()
+        
+        verticalStackView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor, constant: 20).isActive = true
+        verticalStackView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 50).isActive = true
+        verticalStackView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor, constant: -10).isActive = true
+        verticalStackView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+        
+        disclaimerView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor, constant: 30).isActive = true
+        disclaimerView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor, constant: -30).isActive = true
+        disclaimerView.bottomAnchor.constraint(equalTo: sideMenuView.bottomAnchor, constant: -15).isActive = true
+        disclaimerView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        
+        self.sideMenuView.layoutSubviews()
+        self.sideMenuView.layoutIfNeeded()
+        
+        self.showUser()
+    }
+    
+    func showUser() {
+        if let user = Auth.auth().currentUser {
+            if let url = user.photoURL {
+                profilePictureImageView.sd_setImage(with: url, completed: nil)
+                nameLabel.text = user.displayName
+                
+                profilePictureImageView.layer.cornerRadius = profilePictureImageView.frame.height/2
+                profilePictureImageView.layoutIfNeeded()
+            }
+        }
+    }
     
     
     let profileButton: DesignableButton = {
@@ -186,19 +206,10 @@ class SideMenu: NSObject {
     let profilePictureImageView: UIImageView = {
         let imgView = UIImageView()
         imgView.translatesAutoresizingMaskIntoConstraints = false
-        
-        if let user = Auth.auth().currentUser {
-            if let url = user.photoURL {
-                imgView.sd_setImage(with: url, completed: nil)
-            } else {
-                imgView.image = UIImage(named: "default-user")
-            }
-        }
         imgView.contentMode = .scaleAspectFill
         imgView.layer.cornerRadius = imgView.frame.height/2
         imgView.layoutIfNeeded()
         imgView.clipsToBounds = true
-        
         
         return imgView
     }()
@@ -206,12 +217,7 @@ class SideMenu: NSObject {
     let nameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        if let user = Auth.auth().currentUser {
-            label.text = user.displayName
-        } else {
-            label.text = "Mein Name"
-        }
-        label.font = UIFont.systemFont(ofSize: 18)
+        label.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
         return label
     }()
     
@@ -219,6 +225,7 @@ class SideMenu: NSObject {
         let btn = DesignableButton()
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.setTitle("Freunde", for: .normal)
+        btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
         btn.setTitleColor(.black, for: .normal)
         return btn
     }()
@@ -248,41 +255,44 @@ class SideMenu: NSObject {
         label.backgroundColor = .red
         label.textAlignment = .center
         label.textColor = .white
-        label.font = UIFont.systemFont(ofSize: 16)
+        label.font = UIFont(name: "IBMPlexSans", size: 16)
         label.clipsToBounds = true
         return label
     }()
     
-    let voteButton: DesignableButton = {
-        let btn = DesignableButton()
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.setTitle("Abstimmungen", for: .normal)
-        btn.setTitleColor(.black, for: .normal)
-        return btn
-    }()
-    
-    let votingStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis  = .horizontal
-        stackView.spacing   = 5
-        stackView.sizeToFit()
-        
-        let iconImageView = UIImageView()
-        iconImageView.translatesAutoresizingMaskIntoConstraints = false
-        iconImageView.image = UIImage(named: "handshake")
-        iconImageView.contentMode = .scaleAspectFit
-        iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        
-        stackView.addArrangedSubview(iconImageView)
-        
-        return stackView
-    }()
+//    let voteButton: DesignableButton = {
+//        let btn = DesignableButton()
+//        btn.translatesAutoresizingMaskIntoConstraints = false
+//        btn.setTitle("Abstimmungen", for: .normal)
+//        btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
+//        btn.setTitleColor(.lightGray, for: .normal)
+//        return btn
+//    }()
+//
+//    let votingStackView: UIStackView = {
+//        let stackView = UIStackView()
+//        stackView.translatesAutoresizingMaskIntoConstraints = false
+//        stackView.axis  = .horizontal
+//        stackView.spacing   = 5
+//        stackView.sizeToFit()
+//
+//        let iconImageView = UIImageView()
+//        iconImageView.translatesAutoresizingMaskIntoConstraints = false
+//        iconImageView.image = UIImage(named: "handshake")
+//        iconImageView.contentMode = .scaleAspectFit
+//        iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+//        iconImageView.alpha = 0.5
+//
+//        stackView.addArrangedSubview(iconImageView)
+//
+//        return stackView
+//    }()
     
     let savedButton: DesignableButton = {
         let btn = DesignableButton()
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.setTitle("Saved", for: .normal)
+        btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
         btn.setTitleColor(.black, for: .normal)
         return btn
     }()
@@ -317,6 +327,36 @@ class SideMenu: NSObject {
         stackView.sizeToFit()
         
         return stackView
+    }()
+    
+    let disclaimerView : UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Nutzungsbedingungen", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 12)
+        
+        let logo = UIImageView()
+        logo.translatesAutoresizingMaskIntoConstraints = false
+        logo.image = UIImage(named: "settings")
+        logo.contentMode = .center
+        
+        view.addSubview(logo)
+        logo.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        logo.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        logo.widthAnchor.constraint(equalToConstant: 15).isActive = true
+        logo.heightAnchor.constraint(equalToConstant: 15).isActive = true
+        
+        view.addSubview(button)
+        button.leadingAnchor.constraint(equalTo: logo.trailingAnchor).isActive = true
+        button.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        button.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        button.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
+        
+        return view
     }()
 }
 

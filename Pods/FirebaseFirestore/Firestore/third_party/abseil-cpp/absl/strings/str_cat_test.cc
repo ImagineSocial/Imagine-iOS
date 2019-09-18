@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//      https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,16 @@
 
 #include "gtest/gtest.h"
 #include "absl/strings/substitute.h"
+
+#ifdef __ANDROID__
+// Android assert messages only go to system log, so death tests cannot inspect
+// the message for matching.
+#define ABSL_EXPECT_DEBUG_DEATH(statement, regex) \
+  EXPECT_DEBUG_DEATH(statement, ".*")
+#else
+#define ABSL_EXPECT_DEBUG_DEATH(statement, regex) \
+  EXPECT_DEBUG_DEATH(statement, regex)
+#endif
 
 namespace {
 
@@ -96,11 +106,7 @@ TEST(StrCat, Enums) {
 TEST(StrCat, Basics) {
   std::string result;
 
-  std::string strs[] = {
-    "Hello",
-    "Cruel",
-    "World"
-  };
+  std::string strs[] = {"Hello", "Cruel", "World"};
 
   std::string stdstrs[] = {
     "std::Hello",
@@ -154,9 +160,10 @@ TEST(StrCat, Basics) {
   result = absl::StrCat(ui64s[0], ", ", ui64s[1], "!");
   EXPECT_EQ(result, "12345678910, 10987654321!");
 
-  std::string one = "1";  // Actually, it's the size of this std::string that we want; a
-                     // 64-bit build distinguishes between size_t and uint64_t,
-                     // even though they're both unsigned 64-bit values.
+  std::string one =
+      "1";  // Actually, it's the size of this std::string that we want; a
+            // 64-bit build distinguishes between size_t and uint64_t,
+            // even though they're both unsigned 64-bit values.
   result = absl::StrCat("And a ", one.size(), " and a ",
                         &result[2] - &result[0], " and a ", one, " 2 3 4", "!");
   EXPECT_EQ(result, "And a 1 and a 2 and a 1 2 3 4!");
@@ -206,6 +213,8 @@ struct Mallocator {
     typedef Mallocator<U> other;
   };
   Mallocator() = default;
+  template <class U>
+  Mallocator(const Mallocator<U>&) {}  // NOLINT(runtime/explicit)
 
   T* allocate(size_t n) { return static_cast<T*>(std::malloc(n * sizeof(T))); }
   void deallocate(T* p, size_t) { std::free(p); }
@@ -294,11 +303,7 @@ TEST(StrCat, MaxArgs) {
 TEST(StrAppend, Basics) {
   std::string result = "existing text";
 
-  std::string strs[] = {
-    "Hello",
-    "Cruel",
-    "World"
-  };
+  std::string strs[] = {"Hello", "Cruel", "World"};
 
   std::string stdstrs[] = {
     "std::Hello",
@@ -353,9 +358,10 @@ TEST(StrAppend, Basics) {
   absl::StrAppend(&result, ui64s[0], ", ", ui64s[1], "!");
   EXPECT_EQ(result.substr(old_size), "12345678910, 10987654321!");
 
-  std::string one = "1";  // Actually, it's the size of this std::string that we want; a
-                     // 64-bit build distinguishes between size_t and uint64_t,
-                     // even though they're both unsigned 64-bit values.
+  std::string one =
+      "1";  // Actually, it's the size of this std::string that we want; a
+            // 64-bit build distinguishes between size_t and uint64_t,
+            // even though they're both unsigned 64-bit values.
   old_size = result.size();
   absl::StrAppend(&result, "And a ", one.size(), " and a ",
                   &result[2] - &result[0], " and a ", one, " 2 3 4", "!");
@@ -394,8 +400,9 @@ TEST(StrAppend, Death) {
   std::string s = "self";
   // on linux it's "assertion", on mac it's "Assertion",
   // on chromiumos it's "Assertion ... failed".
-  EXPECT_DEBUG_DEATH(absl::StrAppend(&s, s.c_str() + 1), "ssertion.*failed");
-  EXPECT_DEBUG_DEATH(absl::StrAppend(&s, s), "ssertion.*failed");
+  ABSL_EXPECT_DEBUG_DEATH(absl::StrAppend(&s, s.c_str() + 1),
+                          "ssertion.*failed");
+  ABSL_EXPECT_DEBUG_DEATH(absl::StrAppend(&s, s), "ssertion.*failed");
 }
 #endif  // GTEST_HAS_DEATH_TEST
 
@@ -414,7 +421,7 @@ void CheckHex(IntType v, const char* nopad_format, const char* zeropad_format,
   snprintf(expected, sizeof(expected), nopad_format, v);
   EXPECT_EQ(expected, actual) << " decimal value " << v;
 
-  for (int spec = absl::kZeroPad2; spec <= absl::kZeroPad16; ++spec) {
+  for (int spec = absl::kZeroPad2; spec <= absl::kZeroPad20; ++spec) {
     std::string actual =
         absl::StrCat(absl::Hex(v, static_cast<absl::PadSpec>(spec)));
     snprintf(expected, sizeof(expected), zeropad_format,
@@ -422,7 +429,7 @@ void CheckHex(IntType v, const char* nopad_format, const char* zeropad_format,
     EXPECT_EQ(expected, actual) << " decimal value " << v;
   }
 
-  for (int spec = absl::kSpacePad2; spec <= absl::kSpacePad16; ++spec) {
+  for (int spec = absl::kSpacePad2; spec <= absl::kSpacePad20; ++spec) {
     std::string actual =
         absl::StrCat(absl::Hex(v, static_cast<absl::PadSpec>(spec)));
     snprintf(expected, sizeof(expected), spacepad_format,
@@ -440,7 +447,7 @@ void CheckDec(IntType v, const char* nopad_format, const char* zeropad_format,
   snprintf(expected, sizeof(expected), nopad_format, v);
   EXPECT_EQ(expected, actual) << " decimal value " << v;
 
-  for (int spec = absl::kZeroPad2; spec <= absl::kZeroPad16; ++spec) {
+  for (int spec = absl::kZeroPad2; spec <= absl::kZeroPad20; ++spec) {
     std::string actual =
         absl::StrCat(absl::Dec(v, static_cast<absl::PadSpec>(spec)));
     snprintf(expected, sizeof(expected), zeropad_format,
@@ -450,7 +457,7 @@ void CheckDec(IntType v, const char* nopad_format, const char* zeropad_format,
         << "' digits " << (spec - absl::kZeroPad2 + 2);
   }
 
-  for (int spec = absl::kSpacePad2; spec <= absl::kSpacePad16; ++spec) {
+  for (int spec = absl::kSpacePad2; spec <= absl::kSpacePad20; ++spec) {
     std::string actual =
         absl::StrCat(absl::Dec(v, static_cast<absl::PadSpec>(spec)));
     snprintf(expected, sizeof(expected), spacepad_format,

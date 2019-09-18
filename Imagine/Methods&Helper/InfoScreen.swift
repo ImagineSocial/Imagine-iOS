@@ -9,17 +9,20 @@
 import UIKit
 
 enum infoType {
-    case suggestion
+    case campaignVote
+    case voteDetail
+    case campaignDetail
+    case buildUp
+    case factsOverview
+    case argumentsOverview
+    case argumentDetail
+    case sourceConterArgumentDetail
+    case markPost
 }
 
 class InfoScreen: NSObject {
     
     let blackView = UIView()
-//    let imageView: UIImageView = {
-//        let imageView = UIImageView()
-//        imageView.contentMode = .scaleAspectFill
-//        imageView.tr
-//    }()
     let imageView = UIImageView()
     var voteCampaignVC: voteCampaignTableViewController?
     

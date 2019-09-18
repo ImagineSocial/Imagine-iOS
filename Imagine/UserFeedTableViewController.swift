@@ -9,6 +9,9 @@
 import UIKit
 import SwiftLinkPreview
 import Firebase
+import FirebaseFirestore
+import FirebaseAuth
+import FirebaseStorage
 
 // This enum represents the different states, when accessing the UserFeedTableVC
 enum AccessState{
@@ -29,19 +32,16 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     @IBOutlet weak var blogPostButton: DesignableButton!
     @IBOutlet weak var chatWithUserButton: DesignableButton!
     @IBOutlet weak var statusTextView: UITextView!
+    @IBOutlet weak var cameraView: UIView!
+    @IBOutlet weak var moreButton: DesignableButton!
     
     
     /* You have to set currentState and userOfProfile when you call this VC - Couldnt get the init to work */
-    
-    lazy var postHelper = PostHelper()
-    
     
     var imagePicker = UIImagePickerController()
     var imageURL = ""
     var selectedImageFromPicker = UIImage(named: "default-user")
     var userOfProfile:User?
-    
-    let db = Firestore.firestore()
     
     var currentState:AccessState?
     
@@ -49,6 +49,11 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        
+        self.moreButton.isHidden = true
+        cameraView.isHidden = true
         blogPostButton.isHidden = true
         statusTextView.isEditable = false
         statusTextView.delegate = self
@@ -56,66 +61,100 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         let layer = profilePictureImageView.layer
         layer.masksToBounds = true
         layer.cornerRadius = profilePictureImageView.frame.width/2
-        layer.borderWidth = 0.5
-        layer.borderColor = UIColor.black.cgColor
         
-        getUserDetails()
+        checkIfBlocked()
         setBarButtonItem()
         
         imagePicker.delegate = self
     }
     
-    override func getPosts(getMore: Bool) {
-        
-        if let user = userOfProfile {
-            postHelper.getTheSavedPosts(getMore: getMore, whichPostList: .postsFromUser, userUID: user.userUID) { (posts, initialFetch)  in
-                
-                if initialFetch {   // Get the first batch of posts
-                    self.posts = posts
-                    self.tableView.reloadData()
-                    
-                    // I just load it for the first profilepicture and name
-                    self.postHelper.getEvent(completion: { (post) in
-                        self.tableView.reloadData()
-                    })
-                    
-                    // remove ActivityIndicator incl. backgroundView
-                    self.actInd.stopAnimating()
-                    self.container.isHidden = true
-                    
-                    self.refreshControl?.endRefreshing()
-                    
-                } else {    // Append the next batch to the existing
-                    var indexes : [IndexPath] = [IndexPath]()
-                    
-                    for result in posts {
-                        let row = self.posts.count
-                        indexes.append(IndexPath(row: row, section: 0))
-                        self.posts.append(result)
-                    }
-                    
-                    if #available(iOS 11.0, *) {
-                        self.tableView.performBatchUpdates({
-                            self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                            self.tableView.insertRows(at: indexes, with: .bottom)
-                        }, completion: { (_) in
-                            self.fetchesPosts = false
-                        })
-                    } else {
-                        // Fallback on earlier versions
-                        self.tableView.beginUpdates()
-                        self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                        self.tableView.insertRows(at: indexes, with: .right)
-                        self.tableView.endUpdates()
-                        self.fetchesPosts = false
-                    }
+    func checkIfBlocked() {
+        if let user = Auth.auth().currentUser {
+            if let profileUser = userOfProfile {
+                if let blocked = profileUser.blocked {
+                    for id in blocked {
+                        if id == user.uid {
+                            self.currentState = .blockedToInteract
+                            
+                            // remove ActivityIndicator
+                            self.view.activityStopAnimating()
+                            
+                            print("blocked")
+                        }
+                    }   // Get User after checked
+                    self.getUserDetails()
+                } else {    // Nobody blocked yet
+                    self.getUserDetails()
                 }
-                print("Jetzt haben wir \(self.posts.count)")
+                
+            } else {    // From side menu
+               getUserDetails()
             }
+        } else {    // Nobody logged in
+            getUserDetails()
         }
     }
     
-    
+    override func getPosts(getMore: Bool) {
+        
+        guard let currentState = currentState else { return }
+        
+        switch currentState {
+        case .blockedToInteract:
+            self.refreshControl?.endRefreshing()
+            print("no posts will get fetched cause blocked")
+        default:
+            if isConnected() {
+                
+                if let user = userOfProfile {
+                    
+                    self.view.activityStartAnimating()
+                    
+                    postHelper.getTheSavedPosts(getMore: getMore, whichPostList: .postsFromUser, userUID: user.userUID) { (posts, initialFetch)  in
+                        
+                        if initialFetch {   // Get the first batch of posts
+                            self.posts = posts
+                            self.tableView.reloadData()
+                            
+//                            self.getName()   // Just for now
+                            
+                            self.refreshControl?.endRefreshing()
+                        } else {    // Append the next batch to the existing
+                            var indexes : [IndexPath] = [IndexPath]()
+                            
+                            for result in posts {
+                                let row = self.posts.count
+                                indexes.append(IndexPath(row: row, section: 0))
+                                self.posts.append(result)
+                            }
+                            
+                            if #available(iOS 11.0, *) {
+                                self.tableView.performBatchUpdates({
+                                    self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                                    self.tableView.insertRows(at: indexes, with: .bottom)
+                                }, completion: { (_) in
+                                    self.fetchesPosts = false
+                                })
+                            } else {
+                                // Fallback on earlier versions
+                                self.tableView.beginUpdates()
+                                self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                                self.tableView.insertRows(at: indexes, with: .right)
+                                self.tableView.endUpdates()
+                                self.fetchesPosts = false
+                            }
+                        }
+                        
+                        // remove ActivityIndicator incl. backgroundView
+                        self.view.activityStopAnimating()
+                        print("Jetzt haben wir \(self.posts.count)")
+                    }
+                }
+            } else {
+                fetchRequested = true
+            }
+        }
+    }
     
     // MARK: - SetUI
     
@@ -123,38 +162,30 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         
         guard let state = currentState else { return }
         
-        
         switch state {
         case .ownProfileWithEditing:
             let LogOutButton = DesignableButton(type: .custom)
             LogOutButton.setTitle("Log-Out", for: .normal)
-            LogOutButton.setTitleColor(.blue, for: .normal)
+            LogOutButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 18)
+            LogOutButton.setTitleColor(UIColor(red:0.33, green:0.47, blue:0.65, alpha:1.0), for: .normal)
             LogOutButton.addTarget(self, action: #selector(self.logOutTapped), for: .touchUpInside)
             LogOutButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
             LogOutButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
             
             let rightBarButton = UIBarButtonItem(customView: LogOutButton)
             self.navigationItem.rightBarButtonItem = rightBarButton
+            
+            cameraView.clipsToBounds = true
+            cameraView.layer.cornerRadius = cameraView.frame.width/2
+            
+            self.cameraView.isHidden = false
         case .ownProfile:
             print("Here will nothing happen")
             
         // You can block someone who blocked you for now
         default:
-            let moreButton = DesignableButton(type: .custom)
-            moreButton.setTitle("...", for: .normal)
-            moreButton.setTitleColor(.blue, for: .normal)
-            moreButton.addTarget(self, action: #selector(self.moreTapped), for: .touchUpInside)
-            moreButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
-            moreButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
-            
-            let rightBarButton = UIBarButtonItem(customView: moreButton)
-            self.navigationItem.rightBarButtonItem = rightBarButton
+            self.moreButton.isHidden = false
         }
-        
-    }
-    
-    @objc func moreTapped() {
-        settingForOptions.showSettings(for: nil)
     }
     
     func getUserDetails() {
@@ -169,21 +200,24 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         switch state {
         case .ownProfile:
             self.setOwnProfile()
-            self.noPostsString = "Dieser User hat noch keine Posts"
+            self.noPostsType = .userProfile
         case .ownProfileWithEditing:
             self.statusTextView.isEditable = true
-            self.noPostsString = "Du hast noch keine Posts. Teile jetzt deine interessanten Themen!"
+            self.noPostsType = .ownProfile
             self.setOwnProfile()
         case .otherUser:
             self.checkIfAlreadyFriends()
             self.setCurrentProfile()
-            self.noPostsString = "Dieser User hat noch keine Posts"
+            self.noPostsType = .userProfile
         case .friendOfCurrentUser:
             self.addAsFriendButton.setTitle("Unfollow", for: .normal)
             self.setCurrentProfile()
-            self.noPostsString = "Dieser User hat noch keine Posts"
-        default:
-            print("Maybe something is wrong")
+            self.noPostsType = .userProfile
+        case .blockedToInteract:
+            self.profilePictureImageView.image = UIImage(named: "default-user")
+            if let currentUser = userOfProfile {
+                self.nameLabel.text = currentUser.name
+            }
         }
     }
     
@@ -206,10 +240,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                                 if statusQuote != "" {
                                     self.statusTextView.text = statusQuote
                                 } else {
-                                   self.statusTextView.text = "Hier steht dein Status"
+                                   self.statusTextView.text = "Schreibe jetzt einen Status"
                                 }
                             } else {
-                               self.statusTextView.text = "Hier steht dein Status"
+                               self.statusTextView.text = "Schreibe jetzt einen Status"
                             }
                         }
                     }
@@ -336,35 +370,141 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             
             present(imagePicker, animated: true, completion: nil)
         case .blockUser:
-            if let _ = Auth.auth().currentUser {
-                if let currentUser = userOfProfile {
-                    let alert = UIAlertController(title: "Blocken", message: "Der User wird aus deiner Freundesliste gelöscht und darf dich nicht mehr kontaktieren. Fortfahren? ", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
-                        // block User
-                        
-                        if let user = Auth.auth().currentUser {
-                            let blockRef = self.db.collection("Users").document(user.uid)
-                            blockRef.updateData([
-                                "blocked": FieldValue.arrayUnion([currentUser.userUID]) // Add the person as blocked
-                                ])
-                            
-                            self.deleteAsFriend()
-                        }
-                    }))
-                    alert.addAction(UIAlertAction(title: "Doch nicht!", style: .cancel, handler: { (_) in
-                        alert.dismiss(animated: true, completion: nil)
-                    }))
-                    present(alert, animated: true)
-                }
-            } else {
-                self.notLoggedInAlert()
-            }
+            blockUserTapped()
         default:
             print("Das soll nicht passieren")
         }
     }
     
+    func blockUserTapped() {
+        if let _ = Auth.auth().currentUser {
+            if let currentUser = userOfProfile {
+                let alert = UIAlertController(title: "Blocken", message: "Der User wird aus deiner Freundesliste gelöscht und darf dich nicht mehr kontaktieren. Fortfahren? ", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
+                    // block User
+                    
+                    if let user = Auth.auth().currentUser {
+                        let blockRef = self.db.collection("Users").document(user.uid)
+                        blockRef.updateData([
+                            "blocked": FieldValue.arrayUnion([currentUser.userUID]) // Add the person as blocked
+                            ])
+                        
+                        self.deleteAsFriend()
+                    }
+                }))
+                alert.addAction(UIAlertAction(title: "Doch nicht!", style: .cancel, handler: { (_) in
+                    alert.dismiss(animated: true, completion: nil)
+                }))
+                present(alert, animated: true)
+            }
+        } else {
+            self.notLoggedInAlert()
+        }
+    }
+    
     //MARK: - TableView
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        var ownProfile = false
+        
+        
+        switch currentState! {
+        case .ownProfileWithEditing:
+            ownProfile = true
+        default:
+            ownProfile = false
+        }
+        
+        let post = posts[indexPath.row]
+        
+        switch post.type {
+        case .repost:
+            let identifier = "NibRepostCell"
+            
+            if let repostCell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? RePostCell {
+                
+                repostCell.ownProfile = ownProfile
+                
+                repostCell.delegate = self
+                repostCell.post = post
+                
+                return repostCell
+            }
+        case .picture:
+            let identifier = "NibPostCell"
+            
+            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? PostCell {
+                
+                cell.ownProfile = ownProfile
+                
+                cell.delegate = self
+                cell.post = post
+
+                
+                return cell
+            }
+        case .thought:
+            let identifier = "NibThoughtCell"
+            
+            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? ThoughtCell {
+                
+                cell.ownProfile = ownProfile
+                
+                cell.delegate = self
+                cell.post = post
+
+                
+                return cell
+            }
+        case .link:
+            let identifier = "NibLinkCell"
+            
+            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? LinkCell {
+                
+                cell.ownProfile = ownProfile
+                
+                cell.delegate = self
+                cell.post = post
+
+                
+                return cell
+            }
+        case .event:
+            let identifier = "NibEventCell"
+            
+            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? EventCell {
+                
+                cell.post = post
+                
+                return cell
+            }
+        case .youTubeVideo:
+            let identifier = "NibYouTubeCell"
+            
+            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? YouTubeCell {
+                
+                cell.ownProfile = ownProfile
+                
+                cell.delegate = self
+                cell.post = post
+
+                
+                return cell
+            }
+        case .nothingPostedYet:
+            
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "NibBlankCell", for: indexPath) as? BlankContentCell {
+                
+                cell.type = noPostsType
+                
+                return cell
+            }
+        }
+        
+        
+        return UITableViewCell()    // Falls das "if let" oben nicht zieht
+        
+    }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let post = posts[indexPath.row]
@@ -469,7 +609,6 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         } else {    // If the user got no profile picture
             savePicture()
         }
-        // and delete old picture!!!
         
         imagePicker.dismiss(animated: true, completion: nil)
     }
@@ -498,6 +637,12 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             return false
         }
         return textView.text.count + (text.count - range.length) <= 45  // Text no longer than 45 characters
+    }
+    
+    
+    @IBAction func moreButtonTapped(_ sender: Any) {
+        //Show blockOptions settings
+        settingForOptions.showSettings(for: nil)
     }
     
     @IBAction func profilePicturePressed(_ sender: Any) {
@@ -555,7 +700,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             case .blockedToInteract:
                 print("not allowed to send invitation because blocked")
             default:
-                print("Here should nothing happen")
+                print("nothing should happen here")
             }
         } else {
             self.notLoggedInAlert()
@@ -726,6 +871,12 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 }
             }
         }
+    }
+}
+
+extension UIImagePickerController {
+    override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .all
     }
 }
 

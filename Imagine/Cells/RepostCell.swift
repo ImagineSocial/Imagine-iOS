@@ -8,15 +8,7 @@
 
 import UIKit
 
-protocol RepostCellDelegate {
-    func reportTapped(post: Post)
-    func thanksTapped(post: Post)
-    func wowTapped(post: Post)
-    func haTapped(post: Post)
-    func niceTapped(post: Post)
-}
-
-class RePostCell : UITableViewCell {
+class RePostCell : BaseFeedCell {
     
     
     @IBOutlet weak var translatedTitleLabel: UILabel!
@@ -24,7 +16,7 @@ class RePostCell : UITableViewCell {
     @IBOutlet weak var originalCreateDateLabel: UILabel!
     @IBOutlet weak var originalTitleLabel: UILabel!
     @IBOutlet weak var cellImageView: UIImageView!
-    @IBOutlet weak var cellImageViewHeightConstraint: NSLayoutConstraint!
+//    @IBOutlet weak var cellImageViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var reportView: DesignablePopUp!
     @IBOutlet weak var reportViewLabel: UILabel!
     @IBOutlet weak var reportViewButton: DesignableButton!
@@ -34,24 +26,32 @@ class RePostCell : UITableViewCell {
     @IBOutlet weak var reposterNameLabel: UILabel!
     @IBOutlet weak var repostDateLabel: UILabel!
     @IBOutlet weak var reposterProfilePictureImageView: UIImageView!
-    @IBOutlet weak var thanksCountLabel: UILabel!
-    @IBOutlet weak var wowCountLabel: UILabel!
-    @IBOutlet weak var haCountLabel: UILabel!
-    @IBOutlet weak var niceCountLabel: UILabel!
     @IBOutlet weak var commentCountLabel: UILabel!
     
-    var delegate: RepostCellDelegate?
-    let handyHelper = HandyHelper()
+    var delegate: PostCellDelegate?
     
     override func awakeFromNib() {
-        OGPostView.layer.borderWidth = 1
-        OGPostView.layer.borderColor = UIColor.black.cgColor
+        self.addSubview(buttonLabel)
+        
+        thanksButton.setImage(nil, for: .normal)
+        wowButton.setImage(nil, for: .normal)
+        haButton.setImage(nil, for: .normal)
+        niceButton.setImage(nil, for: .normal)
+        
+        buttonLabel.textColor = .black
+        
+        thanksButton.layer.borderWidth = 1.5
+        thanksButton.layer.borderColor = thanksColor.cgColor
+        wowButton.layer.borderWidth = 1.5
+        wowButton.layer.borderColor = wowColor.cgColor
+        haButton.layer.borderWidth = 1.5
+        haButton.layer.borderColor = haColor.cgColor
+        niceButton.layer.borderWidth = 1.5
+        niceButton.layer.borderColor = niceColor.cgColor
         
         //Profile Picture
         let repostLayer = reposterProfilePictureImageView.layer
         repostLayer.cornerRadius = reposterProfilePictureImageView.frame.width/2
-        repostLayer.borderWidth = 0.1
-        repostLayer.borderColor = UIColor.black.cgColor
         
         // Profile Picture
         let layer = profilePictureImageView.layer
@@ -60,60 +60,134 @@ class RePostCell : UITableViewCell {
         layer.borderColor = UIColor.black.cgColor
         
         cellImageView.layer.cornerRadius = 5
+        
+        // add corner radius on `contentView`
+        contentView.backgroundColor = .white
+        contentView.layer.cornerRadius = 8
+        backgroundColor =  Constants.backgroundColorForTableViews
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        cellImageView.sd_cancelCurrentImageLoad()
+        cellImageView.image = nil
+        
+        profilePictureImageView.sd_cancelCurrentImageLoad()
+        profilePictureImageView.image = nil
+        
+        originalTitleLabel.text = nil
+        translatedTitleLabel.text = nil
     }
     
     var post: Post? {
         didSet {
-            if let post = post {
-                cellImageView.image = nil
-                profilePictureImageView.image = UIImage(named: "default-user")
-                originalTitleLabel.text = nil
-                translatedTitleLabel.text = nil
+            setCell()
+        }
+    }
+    
+    func setCell(){
+        if let post = post {
+            
+            print("Set 'Repost' Post")
+            
+            if ownProfile {
+                thanksButton.setTitle(String(post.votes.thanks), for: .normal)
+                wowButton.setTitle(String(post.votes.wow), for: .normal)
+                haButton.setTitle(String(post.votes.ha), for: .normal)
+                niceButton.setTitle(String(post.votes.nice), for: .normal)
                 
-                // Post Sachen einstellen
-                translatedTitleLabel.text = post.title
-                reposterNameLabel.text = "\(post.user.name) \(post.user.surname)"
-                repostDateLabel.text = post.createTime
-                
-                thanksCountLabel.text = "thanks"
-                wowCountLabel.text = "wow"
-                haCountLabel.text = "ha"
-                niceCountLabel.text = "nice"
-                commentCountLabel.text = String(post.commentCount)
+                if let _ = cellStyle {
+                    print("Already Set")
+                } else {
+                    cellStyle = .ownCell
+                    setOwnCell()
+                }
+            } else {
+                thanksButton.setImage(UIImage(named: "thanks"), for: .normal)
+                wowButton.setImage(UIImage(named: "wow"), for: .normal)
+                haButton.setImage(UIImage(named: "ha"), for: .normal)
+                niceButton.setImage(UIImage(named: "nice"), for: .normal)
+            }
+            
+            if post.user.name == "" {
+                self.getName()
+            }
+            
+            // Post Sachen einstellen
+            translatedTitleLabel.text = post.title
+            reposterNameLabel.text = "\(post.user.name) \(post.user.surname)"
+            repostDateLabel.text = post.createTime
+            
+            commentCountLabel.text = String(post.commentCount)
+            
+            // Profile Picture
+            if let url = URL(string: post.user.imageURL) {
+                reposterProfilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+            }
+            
+            
+            // Repost Sachen einstellen
+            if let repost = post.repost {
+                originalTitleLabel.text = repost.title
+                originalCreateDateLabel.text = repost.createTime
+                ogPosterNameLabel.text = "\(post.user.name) \(post.user.surname)"
                 
                 // Profile Picture
-                if let url = URL(string: post.user.imageURL) {
-                    reposterProfilePictureImageView.sd_setImage(with: url, completed: nil)
+                if let url = URL(string: repost.user.imageURL) {
+                    profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
                 }
                 
+                if let url = URL(string: repost.imageURL) {
+                    cellImageView.isHidden = false      // Check ich nicht, aber geht!
+                    cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+                }
                 
-                // Repost Sachen einstellen
-                if let repost = post.repost {
-                    originalTitleLabel.text = repost.title
-                    originalCreateDateLabel.text = repost.createTime
-                    ogPosterNameLabel.text = "\(post.user.name) \(post.user.surname)"
-                    
-                    // Profile Picture
-                    if let url = URL(string: repost.user.imageURL) {
-                        profilePictureImageView.sd_setImage(with: url, completed: nil)
+                // ReportView einstellen
+                let reportViewOptions = handyHelper.setReportView(post: post)
+                
+                reportViewHeightConstraint.constant = reportViewOptions.heightConstant
+                reportViewButton.isHidden = reportViewOptions.buttonHidden
+                reportViewLabel.text = reportViewOptions.labelText
+                reportView.backgroundColor = reportViewOptions.backgroundColor
+                
+            } else {
+                
+                originalTitleLabel.text = "One Moment"
+                originalCreateDateLabel.text = ""
+                ogPosterNameLabel.text = ""
+                
+                // Profile Picture
+               
+                profilePictureImageView.image = UIImage(named: "default-user")
+                
+                cellImageView.isHidden = false      // Check ich nicht, aber geht!
+                cellImageView.image = UIImage(named: "default")
+                
+                reportViewHeightConstraint.constant = 0
+                reportViewButton.isHidden = true
+                reportViewLabel.text = ""
+                reportView.backgroundColor = .white
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.setCell()
+                }
+            }
+        }
+    }
+    
+    
+    var index = 0
+    func getName() {
+        if index < 20 {
+            if let post = self.post {
+                if post.user.name == "" {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        self.getName()
+                        self.index+=1
                     }
-                    
-                    if let url = URL(string: repost.imageURL) {
-                        cellImageView.isHidden = false      // Check ich nicht, aber geht!
-                        cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
-                    }
-                    
-                    // ReportView einstellen
-                    let reportViewOptions = handyHelper.setReportView(post: post)
-                    
-                    reportViewHeightConstraint.constant = reportViewOptions.heightConstant
-                    reportViewButton.isHidden = reportViewOptions.buttonHidden
-                    reportViewLabel.text = reportViewOptions.labelText
-                    reportView.backgroundColor = reportViewOptions.backgroundColor
-                    
                 } else {
-                    translatedTitleLabel.text = "Hier ist was schiefgelaufen!"
-                    print("Hier ist was schiefgelaufen: \(post.title)")
+                    setCell()
                 }
             }
         }
@@ -128,14 +202,14 @@ class RePostCell : UITableViewCell {
         if let post = post {
             delegate?.thanksTapped(post: post)
             post.votes.thanks = post.votes.thanks+1
-            thanksCountLabel.text = String(post.votes.thanks)
+            showButtonText(post: post, button: thanksButton)
         }
     }
     @IBAction func wowButtonTapped(_ sender: Any) {
         if let post = post {
             delegate?.wowTapped(post: post)
             post.votes.wow = post.votes.wow+1
-            wowCountLabel.text = String(post.votes.wow)
+            showButtonText(post: post, button: wowButton)
         }
     }
     
@@ -143,7 +217,7 @@ class RePostCell : UITableViewCell {
         if let post = post {
             delegate?.haTapped(post: post)
             post.votes.ha = post.votes.ha+1
-            haCountLabel.text = String(post.votes.ha)
+            showButtonText(post: post, button: haButton)
         }
     }
     
@@ -151,12 +225,9 @@ class RePostCell : UITableViewCell {
         if let post = post {
             delegate?.niceTapped(post: post)
             post.votes.nice = post.votes.nice+1
-            niceCountLabel.text = String(post.votes.nice)
+            showButtonText(post: post, button: niceButton)
         }
     }
-    
-    
-    
 }
 
 

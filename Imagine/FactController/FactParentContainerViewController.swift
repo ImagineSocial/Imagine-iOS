@@ -13,27 +13,32 @@ class FactParentContainerViewController: UIViewController {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var contraArgumentCountLabel: UILabel!
     @IBOutlet weak var proArgumentCountLabel: UILabel!
+    @IBOutlet weak var backgroundView: UIView!
     
     
-    var fact = Fact()
+    var fact:Fact?
     var proArgumentList = [Argument]()
     var contraArgumentList = [Argument]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        titleLabel.text = fact.title
-        getArguments()      // In viewDidLoad da er es sonst zu oft called
+        getArguments()
         
-        
+        backgroundView.backgroundColor = Constants.backgroundColorForTableViews
     }
     
     
     
     func getArguments() {
         
-        if fact.documentID != "" {
-            DataHelper().getDeepData(get: "Facts", documentID: fact.documentID) { (deepData) in // Fetch all Arguments for this fact
+        if let fact = fact {
+            
+            titleLabel.text = fact.title
+            
+            self.view.activityStartAnimating()
+            
+            DataHelper().getDeepData(documentID: fact.documentID) { (deepData) in // Fetch all Arguments for this fact
                 if let arguments = deepData as? [Argument] {
                     for argument in arguments {
                         if argument.proOrContra == "pro" {      // Sort the Arguments
@@ -44,6 +49,8 @@ class FactParentContainerViewController: UIViewController {
                     }
                     self.sendData(ProArguments: self.proArgumentList, ContraArguments: self.contraArgumentList) // Send to ContainerViews
                     self.setLabels()
+                    
+                    self.view.activityStopAnimating()
                 }
             }
         }
@@ -82,5 +89,7 @@ class FactParentContainerViewController: UIViewController {
         }
     }
     
+    @IBAction func infoButtonTapped(_ sender: Any) {
+    }
     
 }
