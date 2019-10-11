@@ -8,10 +8,12 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
+import FirebaseAuth
 
 class SupportTheCommunityTableViewController: UITableViewController {
     
-    
+    @IBOutlet weak var infoButton: UIBarButtonItem!
     
     var jobOffers = [JobOffer]()
     
@@ -38,8 +40,6 @@ class SupportTheCommunityTableViewController: UITableViewController {
     }
     
     // MARK: - Table view data source
-    
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return jobOffers.count
@@ -126,6 +126,7 @@ class SupportTheCommunityTableViewController: UITableViewController {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
+        infoButton.showEasyTipView(text: Constants.texts.jobOfferText)
     }
 }
 

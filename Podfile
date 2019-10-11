@@ -11,6 +11,7 @@ target 'Imagine' do
  pod 'Firebase/Firestore'
  pod 'Firebase/Storage'
  pod 'Firebase/Auth'
+ pod 'Firebase/Messaging'
  pod 'SDWebImage'
  pod 'SwiftLinkPreview'
  pod 'MessengerKit', :git => 'https://github.com/steve228uk/MessengerKit.git'

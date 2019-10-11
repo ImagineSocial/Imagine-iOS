@@ -29,6 +29,7 @@ class voteCampaignTableViewController: UITableViewController {
     @IBOutlet weak var subHeaderLabel: UILabel!
     @IBOutlet weak var shareIdeaButton: DesignableButton!
     @IBOutlet weak var descriptionLabel: UILabel!
+    @IBOutlet weak var infoButton: UIBarButtonItem!
     
     var campaigns = [Campaign]()
     var votes = [Vote]()
@@ -281,10 +282,10 @@ class voteCampaignTableViewController: UITableViewController {
             self.notLoggedInAlert()
         }
     }
-    @IBAction func infoButtonTapped(_ sender: Any) {
-        infoScreen.showInfoScreen()
-    }
     
+    @IBAction func infoButtonTapped(_ sender: Any) {
+        infoButton.showEasyTipView(text: Constants.texts.voteCampaignText)
+    }
 }
 
 

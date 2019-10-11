@@ -67,7 +67,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         super.viewDidLoad()
         self.view.activityStartAnimating()
         
-        savePostButton.tintColor = .black
+        if #available(iOS 13.0, *) {
+            savePostButton.tintColor = .label
+        } else {
+            savePostButton.tintColor = .black
+        }
         scrollView.delegate = self
         
         handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
@@ -89,6 +93,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         super.viewWillAppear(animated)
         commentButton.alpha = 1
         
+        // If you come back from PostCommentChatViewController
         if let trailingConstant = self.commentButtonTrailing {
             trailingConstant.constant = -15
         }
@@ -104,23 +109,36 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         default:
             if post.user.name == "" {
                 print("1")
+                var toComments = false
+                if post.toComments {    // Comes from the SideMenu NotifactionCenter
+                    self.toCommentsTapped()
+                    toComments = true
+                }
+                
                 PostHelper().getPostsFromDocumentIDs(documentIDs: [post.documentID]) { (posts) in
                     if let post = posts?[0] {
                         print("1m5")
-                        post.getUser()
+//                        post.getUser()    // Already done in getPostsFromDocumentIDs (9.10.19)
                         self.post = post
+                        self.post.toComments = toComments
                         self.checkForData()
                     }
                 }
             } else {
-                setupScrollView()
-                setupViews()
-                showPost()
-                showRepost()
-                instantiateContainerView()
+                self.loadPost()
             }
         }
     }
+    
+    func loadPost() {
+        setupScrollView()
+        setupViews()
+        showPost()
+        showRepost()
+        instantiateContainerView()
+    }
+    
+    
     
     var index = 0
     func checkForData() {
@@ -132,7 +150,12 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         } else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 self.index+=1
-                self.checkForData()
+                if self.post.anonym {
+                    print("Anonymous Post")
+                    self.loadPost()
+                } else {
+                    self.checkForData()
+                }
             }
         }
         } else {
@@ -186,12 +209,18 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         let imageWidth = post.imageWidth
         let imageHeight = post.imageHeight
         
+        print("Das ist der post.type: ", post.type)
         switch post.type {
         case .picture:
             if let url = URL(string: post.imageURL) {
                 postImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
             }
             
+            // No Post yet
+            if imageWidth == 0 || imageHeight == 0 {
+                print("no Post yet")
+                return
+            }
             let ratio = imageWidth / imageHeight
             let contentWidth = self.contentView.frame.width
             let newHeight = contentWidth / ratio
@@ -346,7 +375,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         stackView.addArrangedSubview(wowButton)
         stackView.addArrangedSubview(haButton)
         stackView.addArrangedSubview(niceButton)
-        stackView.addArrangedSubview(shareButton)
+        let view = UIView()
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
+        stackView.addArrangedSubview(view)
         
         contentView.addSubview(stackView)
         stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
@@ -599,7 +634,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         return button
     }()
-    
+
     let nameLabel : UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -666,7 +701,16 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(savePostTapped), for: .touchUpInside)
         button.setImage(UIImage(named: "save"), for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        if #available(iOS 13.0, *) {
+            button.setTitleColor(.label, for: .normal)
+        } else {
+            button.setTitleColor(.black, for: .normal)
+        }
+        if #available(iOS 13.0, *) {
+            button.tintColor = .label
+        } else {
+            button.tintColor = .black
+        }
         
         return button
     }()
@@ -676,7 +720,16 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(translatePostTapped), for: .touchUpInside)
         button.setImage(UIImage(named: "globe"), for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        if #available(iOS 13.0, *) {
+            button.setTitleColor(.label, for: .normal)
+        } else {
+            button.setTitleColor(.black, for: .normal)
+        }
+        if #available(iOS 13.0, *) {
+            button.tintColor = .label
+        } else {
+            button.tintColor = .black
+        }
         
         return button
     }()
@@ -704,7 +757,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     let descriptionView : UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(red:1.00, green:0.93, blue:0.84, alpha:1.0)
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .secondarySystemBackground
+        } else {
+            view.backgroundColor = UIColor(red:1.00, green:0.93, blue:0.84, alpha:1.0)
+        }
         
         return view
     }()
@@ -733,8 +790,17 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         let thanksButton = DesignableButton()
         thanksButton.setImage(UIImage(named: "thanks"), for: .normal)
         thanksButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 14)
-        thanksButton.setTitleColor(.black, for: .normal)
-        thanksButton.titleLabel?.textColor = .black
+        if #available(iOS 13.0, *) {
+            thanksButton.setTitleColor(.label, for: .normal)
+        } else {
+            thanksButton.setTitleColor(.black, for: .normal)
+        }
+
+        if #available(iOS 13.0, *) {
+            thanksButton.tintColor = .label
+        } else {
+            thanksButton.tintColor = .black
+        }
 //        thanksButton.backgroundColor = Constants.thanksColor
         thanksButton.layer.borderColor = Constants.thanksColor.cgColor
         thanksButton.layer.borderWidth = 1.5
@@ -747,10 +813,17 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     let wowButton: DesignableButton = {
         let wowButton = DesignableButton()
-        wowButton.titleLabel?.textColor = .black
-        wowButton.setTitleColor(.black, for: .normal)
         wowButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 14)
-        wowButton.tintColor = .black
+        if #available(iOS 13.0, *) {
+            wowButton.setTitleColor(.label, for: .normal)
+        } else {
+            wowButton.setTitleColor(.black, for: .normal)
+        }
+        if #available(iOS 13.0, *) {
+            wowButton.tintColor = .label
+        } else {
+            wowButton.tintColor = .black
+        }
         wowButton.setImage(UIImage(named: "wow"), for: .normal)
 //        wowButton.backgroundColor = Constants.wowColor
         wowButton.layer.borderColor = Constants.wowColor.cgColor
@@ -764,8 +837,16 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     let haButton: DesignableButton = {
         let haButton = DesignableButton()
-        haButton.titleLabel?.textColor = .black
-        haButton.setTitleColor(.black, for: .normal)
+        if #available(iOS 13.0, *) {
+            haButton.setTitleColor(.label, for: .normal)
+        } else {
+            haButton.setTitleColor(.black, for: .normal)
+        }
+        if #available(iOS 13.0, *) {
+            haButton.tintColor = .label
+        } else {
+            haButton.tintColor = .black
+        }
         haButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 14)
         haButton.setImage(UIImage(named: "ha"), for: .normal)
 //        haButton.backgroundColor = Constants.haColor
@@ -780,7 +861,16 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     let niceButton: DesignableButton = {
         let niceButton = DesignableButton()
-        niceButton.setTitleColor(.black, for: .normal)
+        if #available(iOS 13.0, *) {
+            niceButton.setTitleColor(.label, for: .normal)
+        } else {
+            niceButton.setTitleColor(.black, for: .normal)
+        }
+        if #available(iOS 13.0, *) {
+            niceButton.tintColor = .label
+        } else {
+            niceButton.tintColor = .black
+        }
         niceButton.setImage(UIImage(named: "nice"), for: .normal)
         niceButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 14)
 //        niceButton.backgroundColor = Constants.niceColor
@@ -812,7 +902,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         stackView.axis  = NSLayoutConstraint.Axis.horizontal
         stackView.distribution  = UIStackView.Distribution.fillEqually
         stackView.alignment = UIStackView.Alignment.fill
-        stackView.spacing   = 15.0
+        stackView.spacing = 15.0
         stackView.sizeToFit()
         
         return stackView
@@ -1083,14 +1173,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             titleLabel.text = post.title
             descriptionLabel.text = descriptionText
             createDateLabel.text = post.createTime
-            nameLabel.text = "\(post.user.name) \(post.user.surname)"
             if let youTubeID = post.linkURL.youtubeID {
                 youTubeView.load(withVideoId: youTubeID)
             }
             
-            if let url = URL(string: post.user.imageURL) {
-                profilePictureImageView.sd_setImage(with: url, completed: nil)
-            }
+            self.setUser()
             
             if descriptionText == "" {
                 self.descriptionView.heightAnchor.constraint(equalToConstant: 0).isActive = true
@@ -1101,11 +1188,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             titleLabel.text = post.title
             
             createDateLabel.text = post.createTime
-            nameLabel.text = "\(post.user.name) \(post.user.surname)"
             
-            if let url = URL(string: post.user.imageURL) {
-                profilePictureImageView.sd_setImage(with: url, completed: nil)
-            }
+            self.setUser()
             
             if descriptionText == "" {
                 self.descriptionView.heightAnchor.constraint(equalToConstant: 0).isActive = true
@@ -1114,6 +1198,19 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             }
         }
         
+    }
+    
+    func setUser() {
+        if self.post.anonym {
+            profilePictureImageView.image = UIImage(named: "default-user")
+            nameLabel.text = Constants.strings.anonymPosterName
+        } else {
+            nameLabel.text = "\(post.user.name) \(post.user.surname)"
+            
+            if let url = URL(string: post.user.imageURL) {
+                profilePictureImageView.sd_setImage(with: url, completed: nil)
+            }
+        }
     }
     
     func showRepost() {
@@ -1188,16 +1285,22 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     @objc func repostUserTapped() {
-        if post.repost?.originalPosterUID != "" {
-            performSegue(withIdentifier: "toUserSegue", sender: post.repost!.user)
-        } else {
-            print("no user to find")
+        if let repost = post.repost {
+            if repost.originalPosterUID != "" {
+                if repost.anonym {
+                    performSegue(withIdentifier: "toUserSegue", sender: repost.user)
+                }
+            } else {
+                print("no user to find")
+            }
         }
     }
     
     @objc func userTapped() {
         if post.originalPosterUID != "" {
-            performSegue(withIdentifier: "toUserSegue", sender: post.user)
+            if !post.anonym {
+                performSegue(withIdentifier: "toUserSegue", sender: post.user)
+            }
         } else {
             print("Kein User zu finden!")
         }
@@ -1307,13 +1410,16 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     @objc func toCommentsTapped() {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            print("Jetzt ist es toComments?: ", self.post.toComments)
             let viewController = PostCommentChatViewController(post: self.post)
             UIView.transition(with: self.navigationController!.view, duration: 0.5, options: .transitionFlipFromRight, animations: {
                 self.navigationController?.pushViewController(viewController, animated: true)
             }, completion: nil)
         }
         
-        self.commentButtonTrailing!.constant = -250
+        if let commentConstant = self.commentButtonTrailing {
+            commentConstant.constant = -250
+        }
         
         UIView.animate(withDuration: 0.5, animations: {
             self.view.layoutIfNeeded()

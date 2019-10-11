@@ -60,7 +60,6 @@ class CampaignCell: UITableViewCell {
         progressView.clipsToBounds = true
         
         // add corner radius on `contentView`
-        contentView.backgroundColor = .white
         contentView.layer.cornerRadius = 5
         contentView.clipsToBounds = true
         backgroundColor =  Constants.backgroundColorForTableViews

@@ -62,7 +62,6 @@ class RePostCell : BaseFeedCell {
         cellImageView.layer.cornerRadius = 5
         
         // add corner radius on `contentView`
-        contentView.backgroundColor = .white
         contentView.layer.cornerRadius = 8
         backgroundColor =  Constants.backgroundColorForTableViews
     }
@@ -88,9 +87,7 @@ class RePostCell : BaseFeedCell {
     
     func setCell(){
         if let post = post {
-            
-            print("Set 'Repost' Post")
-            
+                        
             if ownProfile {
                 thanksButton.setTitle(String(post.votes.thanks), for: .normal)
                 wowButton.setTitle(String(post.votes.wow), for: .normal)
@@ -111,32 +108,39 @@ class RePostCell : BaseFeedCell {
             }
             
             if post.user.name == "" {
-                self.getName()
+                if post.anonym {
+                    self.setUser()
+                } else {
+                    self.getName()
+                }
+            } else {
+                setUser()
             }
             
             // Post Sachen einstellen
             translatedTitleLabel.text = post.title
-            reposterNameLabel.text = "\(post.user.name) \(post.user.surname)"
             repostDateLabel.text = post.createTime
             
             commentCountLabel.text = String(post.commentCount)
-            
-            // Profile Picture
-            if let url = URL(string: post.user.imageURL) {
-                reposterProfilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
-            }
             
             
             // Repost Sachen einstellen
             if let repost = post.repost {
                 originalTitleLabel.text = repost.title
                 originalCreateDateLabel.text = repost.createTime
-                ogPosterNameLabel.text = "\(post.user.name) \(post.user.surname)"
                 
-                // Profile Picture
-                if let url = URL(string: repost.user.imageURL) {
-                    profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                if repost.anonym {
+                    ogPosterNameLabel.text = Constants.strings.anonymPosterName
+                    profilePictureImageView.image = UIImage(named: "default-user")
+                } else {
+                    ogPosterNameLabel.text = "\(post.user.name) \(post.user.surname)"
+                    
+                    // Profile Picture
+                    if let url = URL(string: repost.user.imageURL) {
+                        profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                    }
                 }
+                
                 
                 if let url = URL(string: repost.imageURL) {
                     cellImageView.isHidden = false      // Check ich nicht, aber geht!
@@ -176,6 +180,23 @@ class RePostCell : BaseFeedCell {
         }
     }
     
+    func setUser() {
+        if let post = post {
+            if post.anonym {
+                reposterNameLabel.text = Constants.strings.anonymPosterName
+                reposterProfilePictureImageView.image = UIImage(named: "default-user")
+            } else {
+                reposterNameLabel.text = "\(post.user.name) \(post.user.surname)"
+                // Profile Picture
+                
+                // Profile Picture
+                if let url = URL(string: post.user.imageURL) {
+                    reposterProfilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                }
+            }
+        }
+    }
+    
     
     var index = 0
     func getName() {
@@ -187,7 +208,7 @@ class RePostCell : BaseFeedCell {
                         self.index+=1
                     }
                 } else {
-                    setCell()
+                    setUser()
                 }
             }
         }

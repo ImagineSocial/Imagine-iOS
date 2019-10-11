@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -27,11 +25,11 @@
             <rect key="frame" x="0.0" y="0.0" width="442" height="488"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Bl5-Bg-iDX" id="8Li-sg-RIa">
-                <rect key="frame" x="0.0" y="0.0" width="442" height="487.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="442" height="488"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cHE-oi-NwK" customClass="WKYTPlayerView">
-                        <rect key="frame" x="0.0" y="141" width="442" height="306.5"/>
+                        <rect key="frame" x="0.0" y="141" width="442" height="307"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Hier steht der Titel meines Posts. Wenn ich kein Bild Poste auch der ganze Post" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.60000002384185791" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ieH-gT-AfC">
@@ -68,6 +66,7 @@
                             <constraint firstAttribute="height" constant="25" id="Vb2-ez-5Wk"/>
                             <constraint firstAttribute="width" constant="25" id="o97-99-SoU"/>
                         </constraints>
+                        <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                         <state key="normal" image="menu">
                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </state>
@@ -119,20 +118,21 @@
                         </userDefinedRuntimeAttributes>
                     </view>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YCv-O3-1Rj" userLabel="viewForOpticalBorderToNextPost">
-                        <rect key="frame" x="0.0" y="487.5" width="442" height="0.0"/>
+                        <rect key="frame" x="0.0" y="488" width="442" height="0.0"/>
                         <color key="backgroundColor" white="0.90372160609999996" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="height" id="4f8-PN-Q58"/>
                         </constraints>
                     </view>
                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="PAH-qF-8Nm">
-                        <rect key="frame" x="10" y="457.5" width="422" height="25"/>
+                        <rect key="frame" x="10" y="458" width="422" height="25"/>
                         <subviews>
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bbz-n1-cVf" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="72.5" height="25"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                                <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <state key="normal" title="Button" image="thanks">
-                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -146,8 +146,9 @@
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OyQ-Mj-fzf" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                 <rect key="frame" x="87.5" y="0.0" width="72.5" height="25"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                                <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <state key="normal" title="Button" image="wow">
-                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -161,8 +162,9 @@
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ouP-TA-FTb" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                 <rect key="frame" x="175" y="0.0" width="72" height="25"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                                <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <state key="normal" title="Button" image="ha">
-                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -176,8 +178,9 @@
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IZM-ql-dIg" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                 <rect key="frame" x="262" y="0.0" width="72.5" height="25"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                                <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <state key="normal" title="Button" image="nice">
-                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -193,6 +196,7 @@
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="comments" translatesAutoresizingMaskIntoConstraints="NO" id="veW-9m-IJc">
                                         <rect key="frame" x="5" y="5" width="47.5" height="15"/>
+                                        <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="17" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4mi-la-RSE">
                                         <rect key="frame" x="52.5" y="2" width="20" height="23"/>
@@ -227,6 +231,7 @@
                         </connections>
                     </button>
                 </subviews>
+                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                 <constraints>
                     <constraint firstItem="YCv-O3-1Rj" firstAttribute="leading" secondItem="8Li-sg-RIa" secondAttribute="leading" id="03w-Pz-P8J"/>
                     <constraint firstItem="cHE-oi-NwK" firstAttribute="leading" secondItem="8Li-sg-RIa" secondAttribute="leading" id="0BI-4p-M4D"/>

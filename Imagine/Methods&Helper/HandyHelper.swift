@@ -9,6 +9,7 @@
 import Foundation
 import Firebase
 import FirebaseFirestore
+import FirebaseAuth
 import DateToolsSwift
 
 enum VoteButton {
@@ -18,58 +19,13 @@ enum VoteButton {
     case nice
 }
 
-extension Date {
-    
-    func formatRelativeString() -> String {
-        let dateFormatter = DateFormatter()
-        
-        let calendar = Calendar(identifier: .gregorian)
-        dateFormatter.doesRelativeDateFormatting = true
-        
-        if calendar.isDateInToday(self) {
-            dateFormatter.timeStyle = .short
-            dateFormatter.dateStyle = .none
-        } else if calendar.isDateInYesterday(self){
-            dateFormatter.timeStyle = .none
-            dateFormatter.dateStyle = .medium
-        } else if calendar.compare(Date(), to: self, toGranularity: .weekOfYear) == .orderedSame {
-            let weekday = calendar.dateComponents([.weekday], from: self).weekday ?? 0
-            return dateFormatter.weekdaySymbols[weekday-1]
-        } else {
-            dateFormatter.timeStyle = .none
-            dateFormatter.dateStyle = .short
-        }
-        
-        return dateFormatter.string(from: self)
-    }
-    
-    func formatForFeed() -> String {
-        let dateFormatter = DateFormatter()
-        
-        let calendar = Calendar(identifier: .gregorian)
-        dateFormatter.doesRelativeDateFormatting = true
-        
-        var feedString = ""
-        let date = Date()
-        
-        // To-do: the date variable is not in the correct time zone??
-        if calendar.isDateInToday(self) {
-            let hoursAgoString = NSLocalizedString("%d hours ago", comment: "How many hours is the post old")
-            
-            feedString = String.localizedStringWithFormat(hoursAgoString, date.hoursLater(than: self))
-        } else if calendar.isDateInYesterday(self){
-            dateFormatter.timeStyle = .none
-            dateFormatter.dateStyle = .medium
-            feedString = dateFormatter.string(from: self)
-        } else {
-            let daysAgoString = NSLocalizedString("%d days ago", comment: "How many days is the post old")
-            
-            feedString = String.localizedStringWithFormat(daysAgoString, self.daysAgo)
-        }
-        
-        return feedString
-    }
+enum NotificationType {
+    case message
+    case friend
+    case comment
+    case blogPost
 }
+
 
 class HandyHelper {
     
@@ -315,91 +271,91 @@ class HandyHelper {
     
     
     
-    func getChats(chatList: @escaping ([Chat]) -> Void ) {
-        var chatsList = [Chat]()
-        
-        DispatchQueue.main.async {
-            
-            if let user = Auth.auth().currentUser {
-                let chatsRef = self.db.collection("Users").document(user.uid).collection("chats")
-                
-                chatsRef.getDocuments { (snapshot, error) in
-                    if error == nil {
-                        
-                        for document in snapshot!.documents {
-                            let documentData = document.data()
-                            
-                            guard let participant = documentData["participant"] as? String else { return }
-                            
-                            let chat = Chat()
-                            chat.documentID = document.documentID
-                            chat.participant.userUID = participant
-                            if let lastMessageID = documentData["lastReadMessage"] as? String {
-                                chat.lastReadMessageUID = lastMessageID
-                            }
-                            
-                            chatsList.append(chat)
-                        }
-                        chatList(chatsList)
-                    } else {
-                        print("We have an error within the chats: \(error?.localizedDescription ?? "")")
-                    }
-                }
-                
-            } else {
-                // Nobody logged In
-            }
-        }
-    }
-    
-    func getCountOfUnreadMessages(chatList: [Chat], unreadMessages: @escaping (Int) -> Void ) {
-        var count = 0
-        
-        DispatchQueue.main.async {
-            
-            for chat in chatList {
-                let chatsRef = self.db.collection("Chats").document(chat.documentID).collection("threads").order(by: "sentAt", descending: true)
-                
-                // Already been in this chat at least once
-                if let lastReadMessage = chat.lastReadMessageUID {
-                    
-                    let lastReadMessageDoc = self.db.collection("Chats").document(chat.documentID).collection("threads").document(lastReadMessage)
-                    
-                    lastReadMessageDoc.getDocument { (document, error) in
-                        if let error = error {
-                            print("We have an error: \(error.localizedDescription)")
-                        } else {
-                            let endingChatsRef = chatsRef.end(beforeDocument: document!)
-                            endingChatsRef.getDocuments(completion: { (snap, error) in
-                                
-                                if let error = error {
-                                    print("We have an error: \(error.localizedDescription)")
-                                } else {
-                                    let unreadMessageCount = snap!.documents.count
-                                    
-                                    count = count+unreadMessageCount
-                                    
-                                    unreadMessages(count)
-                                }
-                            })
-                        }
-                    }
-                } else {
-                    // New chat, not a lastReadMessageUID set
-                    chatsRef.getDocuments { (snap, error) in
-                        if let error = error {
-                            print("We have an error: \(error.localizedDescription)")
-                        } else {
-                            let unreadMessageCount = snap!.documents.count
-                            count = count+unreadMessageCount
-                            unreadMessages(count)
-                        }
-                    }
-                }
-                // Here was unreadMessages(count) but it finished too early
-            }
-        }
-    }
+//    func getChats(chatList: @escaping ([Chat]) -> Void ) {
+//        var chatsList = [Chat]()
+//        
+//        DispatchQueue.main.async {
+//            
+//            if let user = Auth.auth().currentUser {
+//                let chatsRef = self.db.collection("Users").document(user.uid).collection("chats")
+//                
+//                chatsRef.getDocuments { (snapshot, error) in
+//                    if error == nil {
+//                        
+//                        for document in snapshot!.documents {
+//                            let documentData = document.data()
+//                            
+//                            guard let participant = documentData["participant"] as? String else { return }
+//                            
+//                            let chat = Chat()
+//                            chat.documentID = document.documentID
+//                            chat.participant.userUID = participant
+//                            if let lastMessageID = documentData["lastReadMessage"] as? String {
+//                                chat.lastMessage.uid = lastMessageID
+//                            }
+//                            
+//                            chatsList.append(chat)
+//                        }
+//                        chatList(chatsList)
+//                    } else {
+//                        print("We have an error within the chats: \(error?.localizedDescription ?? "")")
+//                    }
+//                }
+//                
+//            } else {
+//                // Nobody logged In
+//            }
+//        }
+//    }
+//    
+//    func getCountOfUnreadMessages(chatList: [Chat], unreadMessages: @escaping (Int) -> Void ) {
+//        var count = 0
+//        
+//        DispatchQueue.main.async {
+//            
+//            for chat in chatList {
+//                let chatsRef = self.db.collection("Chats").document(chat.documentID).collection("threads").order(by: "sentAt", descending: true)
+//                
+//                // Already been in this chat at least once
+//                if let lastReadMessage = chat.lastMessage.uid {
+//                    
+//                    let lastReadMessageDoc = self.db.collection("Chats").document(chat.documentID).collection("threads").document(lastReadMessage)
+//                    
+//                    lastReadMessageDoc.getDocument { (document, error) in
+//                        if let error = error {
+//                            print("We have an error: \(error.localizedDescription)")
+//                        } else {
+//                            let endingChatsRef = chatsRef.end(beforeDocument: document!)
+//                            endingChatsRef.getDocuments(completion: { (snap, error) in
+//                                
+//                                if let error = error {
+//                                    print("We have an error: \(error.localizedDescription)")
+//                                } else {
+//                                    let unreadMessageCount = snap!.documents.count
+//                                    
+//                                    count = count+unreadMessageCount
+//                                    
+//                                    unreadMessages(count)
+//                                }
+//                            })
+//                        }
+//                    }
+//                } else {
+//                    // New chat, not a lastReadMessageUID set
+//                    chatsRef.getDocuments { (snap, error) in
+//                        if let error = error {
+//                            print("We have an error: \(error.localizedDescription)")
+//                        } else {
+//                            let unreadMessageCount = snap!.documents.count
+//                            count = count+unreadMessageCount
+//                            unreadMessages(count)
+//                        }
+//                    }
+//                }
+//                // Here was unreadMessages(count) but it finished too early
+//            }
+//        }
+//    }
     
     func getLocaleCurrencyString(number: Double) -> String {
         let currencyFormatter = NumberFormatter()
@@ -412,7 +368,58 @@ class HandyHelper {
         } else {
             return String(number)
         }
-        
     }
+    
+    func saveFCMToken(token:String) {
+        if let user = Auth.auth().currentUser {
+            let userRef = db.collection("Users").document(user.uid)
+            
+            userRef.setData(["fcmToken":token], mergeFields: ["fcmToken"])
+            
+            UserDefaults.standard.setValue(token, forKey: "fcmToken")
+        }
+    }
+    
+    func deleteNotifications(type: NotificationType, id: String) {
+        print("delete Notification")
+        
+        if let user = Auth.auth().currentUser {
+            
+            switch type {
+            case .message:
+                let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("chatID", isEqualTo: id)
+                
+                self.deleteInFirebase(ref: notRef)
+            case .comment:
+                let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("postID", isEqualTo: id)
+                
+                self.deleteInFirebase(ref: notRef)
+            case .friend:
+                let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("userID", isEqualTo: id)
+                
+                self.deleteInFirebase(ref: notRef)
+            case .blogPost:
+                let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("type", isEqualTo: "blogPost")
+                
+                self.deleteInFirebase(ref: notRef)
+            }
+            
+            
+        }
+    }
+    
+    func deleteInFirebase(ref: Query) {
+        ref.getDocuments { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                
+                for document in snap!.documents {
+                    document.reference.delete()
+                }
+            }
+        }
+    }
+    
     
 }

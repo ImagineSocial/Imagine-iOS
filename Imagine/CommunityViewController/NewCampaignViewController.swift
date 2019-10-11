@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import FirebaseFirestore
+import EasyTipView
 
 class NewCampaignViewController: UIViewController {
     
@@ -16,7 +17,7 @@ class NewCampaignViewController: UIViewController {
     @IBOutlet weak var shortBodyTextField: UITextView!
     @IBOutlet weak var longBodyTextField: UITextView!
     @IBOutlet weak var categoryTextField: UITextField!
-    @IBOutlet weak var shareButton: DesignableButton!
+    @IBOutlet weak var doneButton: UIBarButtonItem!
     
     var up = false
     
@@ -99,5 +100,6 @@ class NewCampaignViewController: UIViewController {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
+        doneButton.showEasyTipView(text: Constants.texts.postCampaignText)
     }
 }

@@ -72,7 +72,7 @@ class PostHelper {
     
     
     
-    func getTheSavedPosts(getMore: Bool, whichPostList: PostList, userUID : String, returnPosts: @escaping ([Post], _ InitialFetch:Bool) -> Void) {
+    func getTheSavedPosts(getMore: Bool, whichPostList: PostList, userUID : String, returnPosts: @escaping ([Post]?, _ InitialFetch:Bool) -> Void) {
         
         // check if there are more posts to fetch
         if morePostsToFetch {
@@ -163,6 +163,7 @@ class PostHelper {
             }
         } else {    // No more Posts to fetch = End of list
             print("We already have all posts fetched")
+            returnPosts(nil, self.initialFetch)
         }
     }
     
@@ -262,7 +263,11 @@ class PostHelper {
                         post.report = report
                     }
                     
-                    post.getUser()
+                    if originalPoster == "anonym" {
+                        post.anonym = true
+                    } else {
+                        post.getUser()
+                    }
                     self.posts.append(post)
                     
                     
@@ -297,7 +302,12 @@ class PostHelper {
                         post.report = report
                     }
                     
-                    post.getUser()
+                    if originalPoster == "anonym" {
+                        post.anonym = true
+                        print("Set Post as anonym")
+                    } else {
+                        post.getUser()
+                    }
                     self.posts.append(post)
                     
                     // YouTubeVideo
@@ -323,7 +333,11 @@ class PostHelper {
                         post.report = report
                     }
                     
-                    post.getUser()
+                    if originalPoster == "anonym" {
+                        post.anonym = true
+                    } else {
+                        post.getUser()
+                    }
                     self.posts.append(post)
                     
                     //Link
@@ -353,7 +367,11 @@ class PostHelper {
                         post.report = report
                     }
                     
-                    post.getUser()
+                    if originalPoster == "anonym" {
+                        post.anonym = true
+                    } else {
+                        post.getUser()
+                    }
                     self.posts.append(post)
                     
                     // Repost
@@ -382,7 +400,12 @@ class PostHelper {
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
                     }
-                    post.getUser()
+                    
+                    if originalPoster == "anonym" {
+                        post.anonym = true
+                    } else {
+                        post.getUser()
+                    }
                     
                     post.getRepost(returnRepost: { (repost) in
                         post.repost = repost
@@ -520,6 +543,7 @@ class PostHelper {
                 }
             }
         }
+        print("Set Completed")
         completion()
     }
     

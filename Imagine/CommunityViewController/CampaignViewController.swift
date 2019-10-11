@@ -9,9 +9,16 @@
 import UIKit
 import Firebase
 import FirebaseFirestore
+import FirebaseAuth
 import EasyTipView
 
-class CampaignViewController: UIViewController, ReachabilityObserverDelegate, EasyTipViewDelegate {
+extension UIBarButtonItem {
+    func showEasyTipView(text: String) {
+        EasyTipView.show(forItem: self, text: text)
+    }
+}
+
+class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
     
 
@@ -37,6 +44,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate, Ea
     func showCampaign() {
         headerLabel.text = campaign.title
         shortBodyLabel.text = campaign.cellText
+        longBodyLabel.text = campaign.descriptionText
         createDateLabel.text = campaign.createDate
         supporterLabel.text = "\(campaign.supporter) Supporter"
         oppositionLabel.text = "\(campaign.opposition) Vetos"
@@ -155,31 +163,10 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate, Ea
     @IBAction func reportPressed(_ sender: Any) {
     }
     
-    func easyTipViewDidDismiss(_ tipView: EasyTipView) {
-        print("Dismissed")
-    }
+    
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        var preferences = EasyTipView.Preferences()
-        preferences.drawing.font = UIFont(name: "IBMPlexSans", size: 18)!
-        preferences.drawing.foregroundColor = UIColor.white
-        preferences.drawing.backgroundColor = Constants.imagineColor
-        preferences.drawing.arrowPosition = EasyTipView.ArrowPosition.top
-        preferences.positioning.bubbleHInset = 10
-        preferences.positioning.bubbleVInset = 10
-        preferences.positioning.maxWidth = self.view.frame.width-40
-        // Maximum of 800 Words
-        
-        let voteInfoText = "Ihr entscheidet selbst, was die genaue Bedeutung der Buttons sind. Wir finden, diese 4 Emotionen rund um 'danke', 'wow, 'ha' und 'nice' decken die gängigsten Reaktionen auf Beiträge ab. Wir werden sicherlich noch gemeinsam entscheiden, wie man die gesamte Darstellung und Interaktion überarbeiten kann."
-        
-        
-        
-//        EasyTipView(text: "Hallo Moin", preferences: preferences, delegate: self)
-//        EasyTipView(contentView: self.headerLabel, preferences: preferences, delegate: self)
-        let text = "Hallo Moin Along with texting, emojis, and stickers, GIFs are de rigueur when it comes to instant digital communication. Adding a GIF button to a chat or messaging feature in your app or to a social posting feature is a quick and easy way to boost engagement in your app with exciting GIF content. This includes GIF search and GIF reaction categories.\n /n/n \n A few great use cases are messaging apps, dating apps, or workplace collaboration apps. The iOS SDK (GfycatKit) and Android SDK (Gfycat Picker Fragment) were developed for these use cases and have UI elements and analytics already included. To use the Gfycat “GIF” button icon, you can find a .svg here. The SDKs are also ad-enabled (off by default). If you’d like to plug this in as well, send us a note to api@gfycat.com during your development process. Hallo Moin"
-        
-        print("TextCount: ", text.count)
-        EasyTipView.show(animated: true, forItem: infoButton, withinSuperview: nil, text: text, preferences: preferences, delegate: self)
+        infoButton.showEasyTipView(text: Constants.texts.campaignDetailText)
     }
     
 }

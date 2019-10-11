@@ -8,6 +8,8 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
+import FirebaseAuth
 
 class JobOfferingViewController: UIViewController {
 
@@ -25,16 +27,18 @@ class JobOfferingViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        interestedCountLabel.text = String(jobOffer.interested)     // Damit er nach dem Bewerben updatet
+        interestedCountLabel.text = "\(jobOffer.interested) sind interessiert"     // Damit er nach dem Bewerben updatet
     }
     
     func setJobOffer() {
         if jobOffer.documentID != "" {
             headerLabel.text = jobOffer.title
             smallBodyLabel.text = jobOffer.cellText
+            fullBodyLabel.text = jobOffer.descriptionText
         } else {    // Also "Wir brauchen dich!"
             headerLabel.text = "Wir brauchen dich!"
             smallBodyLabel.text = "Wenn du glaubst, mit deinem Wissen kannst du uns helfen, aber es gibt keine passende Ausschreibung, gib uns Bescheid! Wir sind auf klüge Köpfe angewiesen!"
+            fullBodyLabel.text = "Schreib uns einfach, welcher Bereich dich besonders interessiert und deine Motivation.\n\n Wir würden uns freuen"
         }
         
     }

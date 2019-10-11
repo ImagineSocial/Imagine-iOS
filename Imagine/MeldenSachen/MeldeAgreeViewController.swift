@@ -9,12 +9,14 @@
 import UIKit
 import FirebaseFirestore
 import Firebase
+import FirebaseAuth
 
 class MeldeAgreeViewController: UIViewController {
 
     var reportCategory = ""
     var choosenReportOption = ""
     var post = Post()
+    let db = Firestore.firestore()
     
     @IBOutlet weak var MeldegrundLabel: UILabel!
     @IBOutlet weak var HinweisTextLabel: UILabel!
@@ -33,15 +35,15 @@ class MeldeAgreeViewController: UIViewController {
         MeldegrundLabel.attributedText = underlineAttributedString
         
         if reportCategory == "Optisch markieren" {
-            HinweisTextLabel.text = "Deine Mituser überprüfen nun ob der Post markiert werden muss. Wir wollen dafür sorgen, dass wir durch ein transparentes Internet surfen. Bitte missbrauche diese Features nicht, sonst müssen wir deinen Trust-Rang heruntersetzen. Mehr Infos zu dem Meldesystem findest du im Info-Bereich.             Vielen Dank für deine Mithilfe!"
+            HinweisTextLabel.text = "Deine Mituser überprüfen nun ob der Post markiert werden muss. Wir wollen dafür sorgen, dass wir durch ein transparentes Internet surfen. Bitte missbrauche diese Features nicht, sonst müssen wir deinen Trust-Rang heruntersetzen. Mehr Infos zu dem Meldesystem findest du im Info-Bereich.\nVielen Dank für deine Mithilfe!"
         } else if reportCategory == "Schlechte Absicht" {
-            HinweisTextLabel.text = "Deine Mituser überprüfen nun ob der Post wegen schlechter Absichten entfernt werden muss. Wir wollen dafür sorgen, dass wir durch ein transparentes Internet surfen. Bitte missbrauche diese Features nicht, sonst müssen wir deinen Trust-Rang heruntersetzen. Mehr Infos zu dem Meldesystem findest du im Info-Bereich.          Vielen Dank für deine Mithilfe!"
+            HinweisTextLabel.text = "Deine Mituser überprüfen nun ob der Post wegen schlechter Absichten entfernt werden muss. Wir wollen dafür sorgen, dass wir durch ein transparentes Internet surfen. Bitte missbrauche diese Features nicht, sonst müssen wir deinen Trust-Rang heruntersetzen. Mehr Infos zu dem Meldesystem findest du im Info-Bereich.\nVielen Dank für deine Mithilfe!"
             
         } else if reportCategory == "Lüge/Täuschung" {
-            HinweisTextLabel.text = "Deine Mituser überprüfen nun ob der Post wegen Lüge oder Täuschung entfernt werden muss. Wir wollen dafür sorgen, dass wir durch ein transparentes Internet surfen. Bitte missbrauche diese Features nicht, sonst müssen wir deinen Trust-Rang heruntersetzen. Mehr Infos zu dem Meldesystem findest du im Info-Bereich.           Vielen Dank für deine Mithilfe!"
+            HinweisTextLabel.text = "Deine Mituser überprüfen nun ob der Post wegen Lüge oder Täuschung entfernt werden muss. Wir wollen dafür sorgen, dass wir durch ein transparentes Internet surfen. Bitte missbrauche diese Features nicht, sonst müssen wir deinen Trust-Rang heruntersetzen. Mehr Infos zu dem Meldesystem findest du im Info-Bereich.\nVielen Dank für deine Mithilfe!"
             
         } else if reportCategory == "Inhalt" {
-            HinweisTextLabel.text = "Deine Mituser überprüfen nun ob der Post wegen unpassendem Inhalt entfernt werden muss. Wir wollen dafür sorgen, dass wir durch ein transparentes Internet surfen. Bitte missbrauche diese Features nicht, sonst müssen wir deinen Trust-Rang heruntersetzen. Mehr Infos zu dem Meldesystem findest du im Info-Bereich.            Vielen Dank für deine Mithilfe!"
+            HinweisTextLabel.text = "Deine Mituser überprüfen nun ob der Post wegen unpassendem Inhalt entfernt werden muss. Wir wollen dafür sorgen, dass wir durch ein transparentes Internet surfen. Bitte missbrauche diese Features nicht, sonst müssen wir deinen Trust-Rang heruntersetzen. Mehr Infos zu dem Meldesystem findest du im Info-Bereich.\nVielen Dank für deine Mithilfe!"
         }
     }
     
@@ -66,16 +68,34 @@ class MeldeAgreeViewController: UIViewController {
             reportOptionForDatabase = "normal"
         }
         
-        let postRef = Firestore.firestore().collection("Posts")
+        let postRef = db.collection("Posts")
         postRef.document(post.documentID).updateData(["report": reportOptionForDatabase]) { err in
             if let err = err {
                 print("Error updating document: \(err)")
             } else {
                 print("Document successfully updated")
-                self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+                
             }
         }
         
+    }
+    
+    func saveReport() {
+        let ref = db.collection("Reports").document()
+        if let user = Auth.auth().currentUser {
+            let data: [String:Any] = ["category": reportCategory, "reason": choosenReportOption, "reportingUser": user.uid, "reported post":post.documentID]
+            
+            ref.setData(data) { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    print("Successfully saved")
+                    self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+                }
+            }
+        } else {
+            self.notLoggedInAlert()
+        }
     }
     
     
@@ -86,8 +106,7 @@ class MeldeAgreeViewController: UIViewController {
     
     @IBAction func sendPressed(_ sender: Any) {
         saveReportOption()
-        
-        // Hier fehlen die Auswirkungen auf die Posts also überprüfen und dann löschen usw.
+        saveReport()
     }
     
     

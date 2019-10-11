@@ -8,6 +8,8 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
+import FirebaseAuth
 
 class SavedPostTableViewController: BaseFeedTableViewController {
     
@@ -31,14 +33,18 @@ class SavedPostTableViewController: BaseFeedTableViewController {
             if let user = Auth.auth().currentUser {
                 postHelper.getTheSavedPosts(getMore: getMore, whichPostList: .savedPosts, userUID: user.uid) { (posts, initialFetch)  in
                     
+                    guard let posts = posts else {
+                        print("No More Posts")
+                        self.view.activityStopAnimating()
+                        return
+                    }
+                    
                     print("\(posts.count) neue dazu .InitialFetch: ",initialFetch)
                     
                     if initialFetch {   // Get the first batch of posts
                         self.posts = posts
                         self.tableView.reloadData()
-                        
-                        // I just load it for the first profilepicture and name
-//                        self.getName()
+                        self.fetchesPosts = false
                         
                         self.refreshControl?.endRefreshing()
                         

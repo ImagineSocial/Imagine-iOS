@@ -12,6 +12,7 @@ import FirebaseAuth
 import FirebaseFirestore
 import SDWebImage
 import Reachability
+import EasyTipView
 
 class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDelegate, DismissDelegate {
     
@@ -20,13 +21,21 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     var searchController = UISearchController()
     var screenEdgeRecognizer: UIScreenEdgePanGestureRecognizer!
     
-    private var invitationCount = 0
+//    private var invitationCount = 0
     var loggedIn = false    // For the barButtonItem
+    
+    var notificationListener: ListenerRegistration?
+    var friendRequests = 0
+    var newBlogPost = 0
+    var newMessages = 0
+    var newComments = 0
+    var notifications = [Comment]() // Maybe later also likes and stuff
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setUpSearchController()
+        setUpEasyTipViewPreferences()
         
         // Initiliaze ScreenEdgePanRecognizer
         screenEdgeRecognizer = UIScreenEdgePanGestureRecognizer(target: self,
@@ -37,7 +46,10 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         // Others
         loadBarButtonItem()
         
+        setNotificationListener()
+        
         getPosts(getMore: true)
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -62,21 +74,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     }
     
     
-    override func viewDidAppear(_ animated: Bool) {
-        
-        // Change getchats to listener who cantacts me
-        self.handyHelper.getChats { (chatList) in
-            self.handyHelper.getCountOfUnreadMessages(chatList: chatList, unreadMessages: { (count) in
-                if let items = self.tabBarController?.tabBar.items {
-                    let tabItem = items[1]
-                    if count != 0 {
-                        tabItem.badgeValue = String(count)
-                    }
-                }
-            })
-        }
-    }
-    
     override func didReceiveMemoryWarning() {
         print("Memory Pressure triggered")
         SDImageCache.shared.clearMemory()
@@ -84,6 +81,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     }
     
     // MARK: - Methods
+    
     @objc override func getPosts(getMore:Bool) {
         /*
          If "getMore" is true, you want to get more Posts, or the initial batch of 20 Posts, if not you want to refresh the current feed
@@ -93,19 +91,18 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         if isConnected() {
         
             self.view.activityStartAnimating()
-            
             postHelper.getPostsForMainFeed(getMore: getMore) { (posts,initialFetch)  in
                 
                 print("\(posts.count) neue dazu")
                 if initialFetch {   // Get the first batch of posts
                     self.posts = posts
                     self.tableView.reloadData()
+                    self.fetchesPosts = false
                     
-                    self.postHelper.getEvent(completion: { (post) in
-                        self.posts.insert(post, at: 8)
-                        self.tableView.reloadData()
-                        
-                    })
+//                    self.postHelper.getEvent(completion: { (post) in
+//                        self.posts.insert(post, at: 8)
+//                        self.tableView.reloadData()
+//                    })
                     
                     // remove ActivityIndicator incl. backgroundView
                     self.view.activityStopAnimating()
@@ -155,35 +152,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     }
     
     
-    func checkForInvitations() {
-        
-        DispatchQueue.main.async {
-            
-            if let user = Auth.auth().currentUser {
-                let friendsRef = self.db.collection("Users").document(user.uid).collection("friends").whereField("accepted", isEqualTo: false)
-                
-                friendsRef.getDocuments { (snap, err) in
-                    if let err = err {
-                        print("We have an error: \(err.localizedDescription)")
-                    } else {
-                        if self.invitationCount != snap!.documents.count {
-                            self.invitationCount = snap!.documents.count
-                            
-                            if self.invitationCount != 0 {
-                                self.smallNumberForInvitationRequest.text = String(self.invitationCount)
-                                self.smallNumberForInvitationRequest.isHidden = false
-                            } else {
-                                self.smallNumberForInvitationRequest.isHidden = true
-                            }
-                        } else if snap!.documents.count == 0 {
-                            self.smallNumberForInvitationRequest.isHidden = true
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
     
     func checkForLoggedInUser() {
         print("check")
@@ -198,6 +166,120 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             }
             self.screenEdgeRecognizer.isEnabled = false
             self.loadBarButtonItem()
+            
+            if let listener = self.notificationListener {
+                listener.remove()
+            }
+        }
+    }
+    
+    func setNotificationListener() {
+        
+        if let _ = notificationListener {
+            print("Listener already Set")
+        } else {
+            print("Set listener")
+            if let user = Auth.auth().currentUser {
+                let notRef = db.collection("Users").document(user.uid).collection("notifications")
+                
+                notificationListener = notRef.addSnapshotListener { (snap, err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        
+                        if let snapshot = snap {
+                            snapshot.documentChanges.forEach { (change) in
+                                let data = change.document.data()
+                                if let type = data["type"] as? String {
+                                    
+                                    switch change.type {
+                                        
+                                    case .added:
+                                        
+                                        switch type {
+                                        case "friend":
+                                            
+                                            self.friendRequests = self.friendRequests+1
+                                        case "comment":
+                                            if let text = data["comment"] as? String, let author = data["name"] as? String, let postID = data["postID"] as? String {
+                                                let comment = Comment()
+                                                comment.postID = change.document.documentID
+                                                comment.author = author
+                                                comment.postID = postID
+                                                comment.text = text
+                                                self.notifications.append(comment)
+                                            }
+                                            self.newComments = self.newComments+1
+                                        case "message":
+                                            self.newMessages = self.newMessages+1
+                                        case "blogPost":
+                                            self.newBlogPost = self.newBlogPost+1
+                                        default:
+                                            print("Unknown Type")
+                                        }
+                                        
+                                    case .removed:
+                                        print("Something got removed")
+                                        switch type {
+                                        case "friend":
+                                            self.friendRequests = self.friendRequests-1
+                                        case "comment":
+                                            self.newComments = self.newComments-1
+                                            if let postID = data["postID"] as? String {
+                                                print("Delete notification out of array")
+                                                self.notifications = self.notifications.filter{$0.postID != postID}
+                                            }
+                                        
+                                        case "message":
+                                            self.newMessages = self.newMessages-1
+                                        case "blogPost":
+                                            self.newBlogPost = self.newBlogPost-1
+                                        default:
+                                            print("Unknown Type")
+                                        }
+                                        
+                                    default:
+                                        print("These cant get modifier")
+                                    }
+                                    
+                                }
+                            }
+                            self.setBarButtonProfileBadge(value: self.newComments+self.friendRequests)
+                            self.setBlogPostBadge(value: self.newBlogPost)
+                            self.setChatBadge(value: self.newMessages)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func setBarButtonProfileBadge(value: Int) {
+        if value != 0 {
+            self.smallNumberForInvitationRequest.text = String(value)
+            self.smallNumberForInvitationRequest.isHidden = false
+        } else {
+            self.smallNumberForInvitationRequest.isHidden = true
+        }
+    }
+    
+    func setBlogPostBadge(value: Int) {
+        if value != 0 {
+            self.smallNumberForImagineBlogButton.text = String(value)
+            self.smallNumberForImagineBlogButton.isHidden = false
+        } else {
+            self.smallNumberForImagineBlogButton.isHidden = true
+        }
+    }
+    
+    func setChatBadge(value: Int) {
+        if let tabItems = tabBarController?.tabBar.items {
+            let tabItem = tabItems[1] //Chats
+            if value != 0 {
+                tabItem.badgeValue = String(value)
+            } else {
+                tabItem.badgeValue = nil
+            }
         }
     }
 
@@ -232,6 +314,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    // MARK: - PrepareForSegue
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showPost" {
@@ -318,12 +401,14 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             // For iOS 10 and earlier, place the search controller's search bar in the table view's header.
             tableView.tableHeaderView = searchController.searchBar
         }
+        self.navigationItem.hidesSearchBarWhenScrolling = true
+        self.searchController.isActive = false
         definesPresentationContext = true
     }
     
     @objc func searchBarTapped() {
         // Show search bar
-        self.fetchesPosts = true // Otherwise the view thinks it scrolled to the button via the function scrollViewDidScroll in BaseFeedTableViewController, could figure a better way
+        self.fetchesPosts = true // Otherwise the view thinks it scrolled to the button via the function scrollViewDidScroll in BaseFeedTableViewController, couldn't figure a better way
 
         //        self.searchController.isActive = true   // Not perfekt but works
         self.searchController.searchBar.becomeFirstResponder()
@@ -354,7 +439,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                 
                 self.createBarButton()
                 
-                self.checkForInvitations()
+                self.setNotificationListener()
             } else {    // Already got barButtons
                 
                 if let _ = Auth.auth().currentUser {
@@ -373,7 +458,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     func createRightBarButtons() {
         // Set Blog and Search Button
         let imagineButton = DesignableButton(type: .custom)
-        imagineButton.setImage(UIImage(named: "HippySign"), for: .normal)
+        imagineButton.setImage(UIImage(named: "ImagineSign"), for: .normal)
         imagineButton.addTarget(self, action: #selector(self.imagineSignTapped), for: .touchUpInside)
         imagineButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
         imagineButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
@@ -473,8 +558,8 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     
     
     @objc func BarButtonItemTapped() {
-        sideMenu.showSettings()
-        sideMenu.checkInvitations(invites: self.invitationCount)
+        sideMenu.showMenu()
+        sideMenu.checkNotifications(invitations: self.friendRequests, notifications: self.notifications)
     }
     
     @objc func logInButtonTapped() {
@@ -484,8 +569,24 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     override func userTapped(post: Post) {
         performSegue(withIdentifier: "toUserSegue", sender: post.user)
     }
-    // MARK: - Reachability
     
+    // MARK: - EasyTipViewPreferences
+    func setUpEasyTipViewPreferences() {
+        var preferences = EasyTipView.Preferences()
+        preferences.drawing.font = UIFont(name: "IBMPlexSans", size: 18)!
+        preferences.drawing.foregroundColor = UIColor.white
+        preferences.drawing.backgroundColor = Constants.imagineColor
+        preferences.drawing.arrowPosition = EasyTipView.ArrowPosition.top
+        preferences.drawing.textAlignment = .left
+        preferences.positioning.bubbleHInset = 10
+        preferences.positioning.bubbleVInset = 10
+        preferences.positioning.maxWidth = self.view.frame.width-40
+        // Maximum of 800 Words
+        
+        EasyTipView.globalPreferences = preferences
+    }
+    
+    // MARK: - Reachability
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
@@ -529,7 +630,8 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         let navigationBarHeight: CGFloat = self.navigationController!.navigationBar.frame.height
         
         self.newsMenu.showView(navBarHeight: navigationBarHeight)
-        self.smallNumberForImagineBlogButton.isHidden = true
+        
+        handyHelper.deleteNotifications(type: .blogPost, id: "blogPost")
     }
     
     let smallNumberForImagineBlogButton: UILabel = {
@@ -561,7 +663,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     
     
     
-    func sideMenuButtonTapped(whichButton: SideMenuButton) {
+    func sideMenuButtonTapped(whichButton: SideMenuButton, id: String?) {
         
         switch whichButton {
         case .toUser:
@@ -571,6 +673,15 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             performSegue(withIdentifier: "toFriendsSegue", sender: nil)
         case .toSavedPosts:
             performSegue(withIdentifier: "toSavedPosts", sender: nil)
+        case .toEULA:
+            performSegue(withIdentifier: "toEULASegue", sender: nil)
+        case .toPost:
+            if let id = id{
+                let post = Post()
+                post.documentID = id
+                post.toComments = true
+                performSegue(withIdentifier: "showPost", sender: post)
+            }
         default:
             print("nothing happens")
         }
@@ -607,9 +718,8 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
 //}
 
 
-
+// MARK: - UISearchResultsUpdating Delegate
 extension FeedTableViewController: UISearchResultsUpdating {
-    // MARK: - UISearchResultsUpdating Delegate
     
     func updateSearchResults(for searchController: UISearchController) {
         
@@ -628,8 +738,6 @@ extension FeedTableViewController: UISearchResultsUpdating {
                 resultsController.tableView.reloadData()
             }
         }
-        
-        
     }
     
     func searchTheDatabase(searchText: String, searchScope: Int) {
@@ -801,8 +909,9 @@ extension FeedTableViewController: UISearchResultsUpdating {
     
 }
 
+ // MARK: - UISearchBar Delegate
 extension FeedTableViewController: UISearchBarDelegate {
-    // MARK: - UISearchBar Delegate
+   
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         
         if let text = searchBar.text {

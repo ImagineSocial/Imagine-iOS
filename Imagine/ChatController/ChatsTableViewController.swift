@@ -18,8 +18,8 @@ class ChatsTableViewController: UITableViewController {
     var chatsList = [Chat]()
     var currentUserUid:String?
     
-    var badgeValue = 0
-    var badgeIndex = 0  // Without it, the number is wrong if you are scrolling
+    
+    var initialFetch = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,23 +28,33 @@ class ChatsTableViewController: UITableViewController {
         self.navigationController?.navigationBar.shadowImage = UIImage()
         
         tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: "NibBlankCell")
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
+        
         getChats()
     }
     
-    func setTabBarBadge() {
-        if let tabItems = tabBarController?.tabBar.items {
-            let tabItem = tabItems[1] //Chats
-            if badgeValue != 0 {
-                tabItem.badgeValue = String(badgeValue)
-            }
-        }
+    override func viewWillAppear(_ animated: Bool) {
+        // Does not get reloaded after you have logged In again!
+        tableView.reloadData()
     }
     
     
-    func getChats() {
+    
+    /*
+     
+     --Initial Fetch --
+     1. getChats -> participant & documentID from each chat of the user
+     2. getUnreadMessages -> Just the count of the unread messages of each chat and listener set
+     3. loadUsers -> the participant is fetched with name and Picture
+     4. getLastMessage -> Last message of each chat is fetched
+     
+     -- New Message --
+     1. getUnreadMessages -> Listener gets called
+     2. getNewMessage -> Fetch Last Message and reload TableView
+     
+     */
+    
+    
+    func getChats() {   // Get participant and every documentID of every chat that the user has
         if let user = Auth.auth().currentUser {
             if chatsList.count == 0 {
                 self.view.activityStartAnimating()
@@ -67,12 +77,13 @@ class ChatsTableViewController: UITableViewController {
                             chat.documentID = document.documentID
                             chat.participant.userUID = participant
                             if let lastMessageID = documentData["lastReadMessage"] as? String {
-                                chat.lastReadMessageUID = lastMessageID
+                                chat.lastMessage.uid = lastMessageID
                             }
                             
                             self.chatsList.append(chat)
                         }
-                        self.firebaseListener()
+                        self.getUnreadMessages()
+                        self.getLastMessages()
                     } else {
                         print("No new Chats")
                         self.view.activityStopAnimating()
@@ -85,118 +96,131 @@ class ChatsTableViewController: UITableViewController {
         }
     }
     
-    func firebaseListener() {
-        for chat in chatsList {
-            
-            let chatsRef = db.collection("Chats").document(chat.documentID).collection("threads").order(by: "sentAt", descending: true).limit(to: 1)
-            
-            chatsRef.addSnapshotListener { (snapshot, error) in
-                if let error = error {
+    func getUnreadMessages() {
+        if let user = Auth.auth().currentUser {
+            let notificationRef = db.collection("Users").document(user.uid).collection("notifications").whereField("type", isEqualTo: "message")
+            notificationRef.addSnapshotListener { (snap, err) in    // Get messageNotifications
+                if let error = err {
                     print("We have an error: \(error.localizedDescription)")
-                } else {
-                    //To-Do: Differentiate between new message and initial fetch, than send a notification to badge value and notification on your phone
-                    
-                    // Delete an empty Chat : Empty Chats happen when you start a new chat but dont send anything
-                    if snapshot!.documentChanges.count == 0 {
-                        
-                        self.chatsList.removeAll{$0.documentID == chat.documentID}
-                        
-                        if let currentUserUid = self.currentUserUid {
-                            let emptyChatRef = self.db.collection("Users").document(currentUserUid).collection("chats").document(chat.documentID)
-                            
-                            emptyChatRef.getDocument(completion: { (doc, err) in
-                                if let err = err {
-                                    print("We hava an error getting Documents: \(err.localizedDescription)")
-                                } else {
-                                    if let document = doc {
-                                        document.reference.delete()
-                                        print("Delete empty Chat")
+                } else {                    
+                    if let snap = snap {
+//                        self.updateTabBarBadge(value: snap.documents.count)
+                        snap.documentChanges.forEach { (change) in  // One Message Notification
+                            if change.type == DocumentChangeType.added {    // Just get it if it is added
+                                
+                                let data = change.document.data()
+                                
+                                if let chatID = data["chatID"] as? String {
+                                    for chat in self.chatsList {
+                                        if chatID == chat.documentID {  // Found the chat for the notification
+                                            let unreadCount = chat.unreadMessages
+                                            chat.unreadMessages = unreadCount+1 // Add one for unreadMessageCount
+                                            
+                                            if !self.initialFetch {
+                                                print("New Message")
+                                                if let messageID = data["messageID"] as? String {
+                                                    self.getNewMessage(chat: chat, messageID: messageID)
+                                                }
+                                            } else {
+                                                print("First Fetch")
+                                            }
+                                        }
                                     }
                                 }
-                            })
+                            } else if change.type == DocumentChangeType.removed {
+                                print("Got removed")
+                            }
                         }
-                        
-                        // Get the chat's last messages
-                    } else {
-                        snapshot!.documentChanges.forEach({ (change) in
-                            // Chck if the last Sent message in this chat is equal to the lastReadMessageUID saved in the users database. If not the functions checks how many messages there actually are
-                            if change.document.documentID != chat.lastReadMessageUID {
-                                self.getCountOfUnreadMessages(chat: chat)
-                            }
-                            
-                            let docData = change.document.data()
-                            
-                            chat.lastMessage = docData["body"] as? String ?? ""
-                            chat.lastMessageSender = docData["userID"] as? String ?? ""
-                            
-                            if let lastMessageDate = docData["sentAt"] as? Timestamp {
-                                
-                                chat.lastMessageSentAt = lastMessageDate.dateValue().formatRelativeString()
-                                chat.lastMessageDate = lastMessageDate.dateValue()  // For sorting
-                            }
-                        })
+                        self.initialFetch = false
                     }
-                    self.loadUsers()
                 }
             }
         }
     }
     
-    func getCountOfUnreadMessages(chat:Chat) {
-        
-        let chatsRef = self.db.collection("Chats").document(chat.documentID).collection("threads").order(by: "sentAt", descending: true)
-        
-        // Already been in this chat at least once
-        if let lastReadMessage = chat.lastReadMessageUID {
-            
-            let lastReadMessageDoc = db.collection("Chats").document(chat.documentID).collection("threads").document(lastReadMessage)
-            
-            lastReadMessageDoc.getDocument { (document, error) in
-                if let error = error {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    let endingChatsRef = chatsRef.end(beforeDocument: document!)
+    
+    func getNewMessage(chat: Chat, messageID: String) {
+        let messageRef = db.collection("Chats").document(chat.documentID).collection("threads").document(messageID)
+        messageRef.getDocument { (doc, err) in
+            if let error = err {
+                print("We have an error: ", error.localizedDescription)
+            } else {
+                if let document = doc {
                     
-                    endingChatsRef.getDocuments(completion: { (snap, error) in
-                        
-                        if let error = error {
-                            print("We have an error: \(error.localizedDescription)")
-                        } else {
-                            let unreadMessageCount = snap!.documents.count
+                    if let data = document.data() {
+                        if let body = data["body"] as? String, let sentAt = data["sentAt"] as? Timestamp, let userID = data["userID"] as? String {
                             
+                            chat.lastMessage.message = body
+                            chat.lastMessage.sender = userID
+                            let date = sentAt.dateValue()
+                            chat.lastMessage.sentAtDate = date
+                            chat.lastMessage.sentAt = date.formatRelativeString()
+                            chat.lastMessage.uid = document.documentID
                             
-                            chat.unreadMessages = unreadMessageCount
-                            self.badgeValue = 0
-                            self.badgeIndex = 0
                             self.tableView.reloadData()
                         }
-                    })
-                }
-            }
-        } else {
-            // New chat, not a lastReadMessageUID set
-            chatsRef.getDocuments { (snap, error) in
-                if let error = error {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    let unreadMessageCount = snap!.documents.count
-                    
-                    chat.unreadMessages = unreadMessageCount
-                    
-                    self.badgeValue = 0
-                    self.badgeIndex = 0
-                    self.tableView.reloadData()
+                    }
                 }
             }
         }
     }
     
+    func getLastMessages() {
+        for chat in chatsList {
+            let messageRef = db.collection("Chats").document(chat.documentID).collection("threads").order(by: "sentAt", descending: true).limit(to: 1)//I guess
+            
+            messageRef.getDocuments { (snapshot, err) in
+                if let error = err {
+                    print("We have an error: ", error.localizedDescription)
+                } else {
+                    if let snap = snapshot {
+                        if snap.documents.count == 0 {
+                            self.deleteChat(chatID: chat.documentID)
+                        }
+                        for document in snap.documents {
+                            let data = document.data()
+                            if let body = data["body"] as? String, let sentAt = data["sentAt"] as? Timestamp, let userID = data["userID"] as? String {
+                                
+                                chat.lastMessage.message = body
+                                chat.lastMessage.sender = userID
+                                let date = sentAt.dateValue()
+                                chat.lastMessage.sentAtDate = date  // to sort the chats
+                                chat.lastMessage.sentAt = date.formatRelativeString()
+                                chat.lastMessage.uid = document.documentID
+                            }
+                        }
+                        // Not optimal because it gets called each time
+                        self.chatsList = self.chatsList.sorted(by: { ($0.lastMessage.sentAtDate ?? .distantPast) > ($1.lastMessage.sentAtDate ?? .distantPast) })
+                    }
+                }
+            }
+        }
+        loadUsers()
+    }
     
+    func deleteChat(chatID: String) {
+        self.chatsList.removeAll{$0.documentID == chatID}
+        
+        print("Trying to delete chat with ID: ", chatID)
+        
+        if let currentUserUid = self.currentUserUid {
+            let emptyChatRef = self.db.collection("Users").document(currentUserUid).collection("chats").document(chatID)
+
+            emptyChatRef.getDocument(completion: { (doc, err) in
+                if let err = err {
+                    print("We hava an error getting Documents: \(err.localizedDescription)")
+                } else {
+                    if let document = doc {
+                        document.reference.delete()
+                        print("Delete empty Chat")
+                    }
+                }
+            })
+        }
+    }
     
     
     func loadUsers() {
-        
-        chatsList = chatsList.sorted(by: { ($0.lastMessageDate ?? .distantPast) > ($1.lastMessageDate ?? .distantPast) })
         
         for chat in chatsList {
             // User Daten raussuchen
@@ -210,8 +234,8 @@ class ChatsTableViewController: UITableViewController {
                         chat.participant.surname = docData["surname"] as? String ?? ""
                         chat.participant.imageURL = docData["profilePictureURL"] as? String ?? ""
                         
-                        self.badgeValue = 0
-                        self.badgeIndex = 0
+//                        self.badgeValue = 0
+//                        self.badgeIndex = 0
                         self.tableView.reloadData()
                         self.view.activityStopAnimating()
                     }
@@ -221,6 +245,7 @@ class ChatsTableViewController: UITableViewController {
                 }
             })
         }
+        tableView.reloadData()
     }
     
     
@@ -250,9 +275,7 @@ class ChatsTableViewController: UITableViewController {
             }
             
             let cell = UITableViewCell()
-            
-            
-            
+                        
             cell.textLabel?.textAlignment = .center
             cell.textLabel?.adjustsFontSizeToFitWidth = true
             
@@ -263,7 +286,7 @@ class ChatsTableViewController: UITableViewController {
                 let chat = chatsList[indexPath.row]
                 
                 if chat.unreadMessages != 0 {
-                    self.badgeValue = badgeValue+chat.unreadMessages
+//                    self.badgeValue = badgeValue+chat.unreadMessages
                     cell.unreadMessages.text = String(chat.unreadMessages)
                     cell.unreadMessages.isHidden = false
                     cell.unreadMessageView.isHidden = false
@@ -276,14 +299,14 @@ class ChatsTableViewController: UITableViewController {
                 cell.nameLabel.text = "\(chat.participant.name) \(chat.participant.surname)"
                 
                 if let currentUserUid = currentUserUid {
-                    if currentUserUid == chat.lastMessageSender {
-                        cell.lastMessage.text = "Du: \(chat.lastMessage)"
+                    if currentUserUid == chat.lastMessage.sender {  // If you are the sender of the last message
+                        cell.lastMessage.text = "Du: \(chat.lastMessage.message)"
                     } else {
-                        cell.lastMessage.text = "\(chat.participant.name): \(chat.lastMessage)"
+                        cell.lastMessage.text = "\(chat.participant.name): \(chat.lastMessage.message)"
                     }
                 }
                 
-                cell.lastMessageDateLabel.text = chat.lastMessageSentAt
+                cell.lastMessageDateLabel.text = chat.lastMessage.sentAt
                 
                 cell.profilePictureImageView.layer.cornerRadius = cell.profilePictureImageView.frame.width/2
                 cell.profilePictureImageView.layoutIfNeeded()
@@ -292,10 +315,10 @@ class ChatsTableViewController: UITableViewController {
                     cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
                 }
                 
-                if self.badgeIndex <= self.chatsList.count {
-                    self.setTabBarBadge()
-                    self.badgeIndex+=1
-                }
+//                if self.badgeIndex <= self.chatsList.count {
+//                    self.setTabBarBadge()
+//                    self.badgeIndex+=1
+//                }
                 
                 return cell
             }
@@ -376,9 +399,13 @@ class Chat {
     var participant = User()
     var documentID = ""
     var unreadMessages = 0
-    var lastMessage = ""
-    var lastMessageSender = ""
-    var lastMessageSentAt = ""
-    var lastMessageDate: Date?  // To sort the Chats
-    var lastReadMessageUID :String?
+    var lastMessage = Message()
+}
+
+class Message {
+    var message = ""
+    var sender = ""
+    var sentAt = ""
+    var sentAtDate: Date?   // To sort the Chats
+    var uid: String?
 }

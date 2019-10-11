@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FirebaseFirestore
 
 extension UIViewController {
     
@@ -37,6 +39,8 @@ class CommunityOverviewViewController: UIViewController {
     @IBOutlet weak var upperRightButton: DesignableButton!
     @IBOutlet weak var secretButton: DesignableButton!
     @IBOutlet weak var buttonStackView: UIStackView!
+    
+    let db = Firestore.firestore()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -79,6 +83,12 @@ class CommunityOverviewViewController: UIViewController {
             imagineBlogButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 16)
             communityChatButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 16)
             voteButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 16)
+        }
+        
+        if let user = Auth.auth().currentUser {
+            if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" {
+                self.setNotifierForAdmin()
+            }
         }
     }
     
@@ -138,12 +148,31 @@ class CommunityOverviewViewController: UIViewController {
     }
     
     @IBAction func principleButtonTapped(_ sender: Any) {
-        let info = Info(title: "Imagine-Grundsatz", image: UIImage(named: "HippySign"), description: "Kommunikation, Transparenz und soziale Verantwortung sind für uns die wichtigsten Merkmale für ein faires Miteinander zwischen User/Kunde und Unternehmen.  Wir hoffen, dass in Zukunft Unternehmen eine offene Atmosphäre zu ihren Kunden aufbauen und pflegen. Ihr gegenseitliches Handeln sollte verständlich dargelegt und nicht in langen Datenschutz- und Nutzungsrichtlinien verschlüsselt werden.  Firmen suchen trotz hoher Einnahmen, Steuer- und Gesetzeslücken um ihren Profit zu maximieren, während die User und Allgemeinheit nicht berücksichtigt werden.   Das Umdenken der Unternehmen muss eingefordert werden. Im Informationszeitalter haben Konsumenten die Möglichkeit sich zu vernetzen, ihre Rechte einzufordern und die derzeitige Profitgier anzuprangern. ")
+        let info = Info(title: "Imagine-Grundsatz", image: UIImage(named: "ImagineSign"), description: Constants.texts.principleText)
         
         performSegue(withIdentifier: "toPrincipleInfo", sender: info)
     }
     
     @IBAction func secretButtonTapped(_ sender: Any) {
         performSegue(withIdentifier: "toSecretSegue", sender: nil)
+    }
+    
+    func setNotifierForAdmin() {
+        let ref = db.collection("Reports")
+        ref.getDocuments { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                let count = snap!.count
+                
+                if let tabItems = self.tabBarController?.tabBar.items {
+                    let tabItem = tabItems[4] //Community
+                    if count != 0 {
+                        tabItem.badgeValue = String(count)
+                    }
+                }
+                
+            }
+        }
     }
 }

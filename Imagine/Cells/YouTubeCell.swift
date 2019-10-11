@@ -64,7 +64,6 @@ class YouTubeCell: BaseFeedCell {
         titleLabel.adjustsFontSizeToFitWidth = true
         
         // add corner radius on `contentView`
-        contentView.backgroundColor = .white
         contentView.layer.cornerRadius = 8
         backgroundColor =  Constants.backgroundColorForTableViews
     }
@@ -91,7 +90,6 @@ class YouTubeCell: BaseFeedCell {
     func setCell() {
         if let post = post {
             
-            print("Set 'YouTube' Post")
             if ownProfile {
                 thanksButton.setTitle(String(post.votes.thanks), for: .normal)
                 wowButton.setTitle(String(post.votes.wow), for: .normal)
@@ -121,7 +119,13 @@ class YouTubeCell: BaseFeedCell {
             }
             
             if post.user.name == "" {
-                self.getName()
+                if post.anonym {
+                    self.setUser()
+                } else {
+                    self.getName()
+                }
+            } else {
+                setUser()
             }
             
             nameLabel.text = "\(post.user.name) \(post.user.surname)"
@@ -145,6 +149,22 @@ class YouTubeCell: BaseFeedCell {
         }
     }
     
+    func setUser() {
+        if let post = post {
+            if post.anonym {
+                nameLabel.text = Constants.strings.anonymPosterName
+                profilePictureImageView.image = UIImage(named: "default-user")
+            } else {
+                nameLabel.text = "\(post.user.name) \(post.user.surname)"
+                // Profile Picture
+                
+                if let url = URL(string: post.user.imageURL) {
+                    profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                }
+            }
+        }
+    }
+    
     var index = 0
     func getName() {
         if index < 20 {
@@ -155,7 +175,7 @@ class YouTubeCell: BaseFeedCell {
                         self.index+=1
                     }
                 } else {
-                    setCell()
+                    setUser()
                 }
             }
         }
@@ -198,7 +218,9 @@ class YouTubeCell: BaseFeedCell {
     
     @IBAction func userButtonTapped(_ sender: Any) {
         if let post = post {
-            delegate?.userTapped(post: post)
+            if !post.anonym {
+                delegate?.userTapped(post: post)
+            }
         }
     }
 }

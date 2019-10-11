@@ -73,11 +73,8 @@ class PostCell : BaseFeedCell {
 //        lay.shadowColor = UIColor.black.cgColor
         
         // add corner radius on `contentView`
-        contentView.backgroundColor = .white
         contentView.layer.cornerRadius = 8
         backgroundColor =  Constants.backgroundColorForTableViews
-        
-        
     }
     
     
@@ -119,34 +116,18 @@ class PostCell : BaseFeedCell {
         profilePictureImageView.sd_cancelCurrentImageLoad()
         profilePictureImageView.image = nil
         
+        
     }
     
-//    var user:User? {
-//        didSet {
-//            if let user = user {
-//                ogPosterLabel.text = "\(user.name) \(user.surname)"
-//
-//                // Profile Picture
-//                if let url = URL(string: user.imageURL) {
-//                    profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
-//                }
-//            }
-//        }
-//    }
-    
+
     var post:Post? {
         didSet {
-            
-            
-            // Erneut nach post.user gucken und wenn er geladen ist, ist stop und das Profil wird geladen
             setCell()
-            
         }
     }
     
     func setCell() {
         if let post = post {
-            print("Set 'Image' Post")
             
             if ownProfile {
                 thanksButton.setTitle(String(post.votes.thanks), for: .normal)
@@ -169,34 +150,29 @@ class PostCell : BaseFeedCell {
             }
             
             if post.user.name == "" {
-                self.getName()
+                if post.anonym {
+                    self.setUser()
+                } else {
+                    self.getName()
+                }
+            } else {
+                setUser()
             }
             
-            ogPosterLabel.text = "\(post.user.name) \(post.user.surname)"
             cellCreateDateLabel.text = post.createTime
-            
             titleLabel.text = post.title
             commentCountLabel.text = String(post.commentCount)
             
-            
-            // Profile Picture
-            
-            if let url = URL(string: post.user.imageURL) {
-                profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
-            }
-            
             // LabelHeight calculated by the number of letters
-            
             // Maybe call this when I fetch the Posts and put it into the object? ReportView also
             let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
             titleLabelHeightConstraint.constant = labelHeight
             
             
-            
             if let url = URL(string: post.imageURL) {
                 if let cellImageView = cellImageView {
-                    cellImageView.sd_imageIndicator = SDWebImageActivityIndicator.whiteLarge
-                    cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+                    cellImageView.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
+                    cellImageView.sd_setImage(with: url, placeholderImage: nil, options: [], completed: nil)
                 }
             }
             
@@ -207,6 +183,24 @@ class PostCell : BaseFeedCell {
             reportViewButtonInTop.isHidden = reportViewOptions.buttonHidden
             reportViewLabel.text = reportViewOptions.labelText
             reportView.backgroundColor = reportViewOptions.backgroundColor
+        }
+    }
+    
+    func setUser() {
+        if let post = post {
+            
+            if post.anonym {
+                print("Anonymous post")
+                ogPosterLabel.text = Constants.strings.anonymPosterName
+                profilePictureImageView.image = UIImage(named: "default-user")
+            } else {
+                ogPosterLabel.text = "\(post.user.name) \(post.user.surname)"
+                
+                // Profile Picture
+                if let url = URL(string: post.user.imageURL) {
+                    profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                }
+            }
         }
     }
     
@@ -221,7 +215,7 @@ class PostCell : BaseFeedCell {
                         self.index+=1
                     }
                 } else {
-                    setCell()
+                    setUser()
                 }
             }
         }
@@ -268,7 +262,9 @@ class PostCell : BaseFeedCell {
     
     @IBAction func userButtonTapped(_ sender: Any) {
         if let post = post {
-            delegate?.userTapped(post: post)
+            if !post.anonym {
+                delegate?.userTapped(post: post)
+            }
         }
     }
     

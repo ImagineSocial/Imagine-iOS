@@ -14,18 +14,20 @@ import SDWebImage
 extension UITabBar {
     static let height: CGFloat = 48
     
-    override open func sizeThatFits(_ size: CGSize) -> CGSize {
-        guard let window = UIApplication.shared.keyWindow else {
-            return super.sizeThatFits(size)
-        }
-        var sizeThatFits = super.sizeThatFits(size)
-        if #available(iOS 11.0, *) {
-            sizeThatFits.height = UITabBar.height + window.safeAreaInsets.bottom
-        } else {
-            sizeThatFits.height = UITabBar.height
-        }
-        return sizeThatFits
-    }
+//    override open func sizeThatFits(_ size: CGSize) -> CGSize {
+//        guard let window = UIApplication.shared.keyWindow else {
+//            return super.sizeThatFits(size)
+//        }
+//        var sizeThatFits = super.sizeThatFits(size)
+//        if #available(iOS 13.0, *) {
+//            print("Hasnt worked in Ios13")
+//        } else if #available(iOS 11.0, *){
+//            sizeThatFits.height = UITabBar.height + window.safeAreaInsets.bottom
+//        } else {
+//            sizeThatFits.height = UITabBar.height
+//        }
+//        return sizeThatFits
+//    }
 }
 
 class TabBarViewController: UITabBarController {

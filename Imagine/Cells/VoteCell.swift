@@ -22,7 +22,6 @@ class VoteCell: UITableViewCell {
         super.awakeFromNib()
         
         // add corner radius on `contentView`
-        contentView.backgroundColor = .white
         contentView.layer.cornerRadius = 5
         backgroundColor =  Constants.backgroundColorForTableViews
     }

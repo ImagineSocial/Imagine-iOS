@@ -13,6 +13,7 @@ import FirebaseFirestore
 import FirebaseStorage
 import FirebaseAuth
 import SDWebImage
+import EasyTipView
 
 enum PostSelection {
     case picture
@@ -51,6 +52,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var selectDate = false
     var selectedDate: Date?
     
+    var postAnonymous = false
+    
     let db = Firestore.firestore()
     
     var selectedOption: PostSelection = .thought
@@ -58,13 +61,17 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let labelFont = UIFont(name: "IBMPlexSans-Medium", size: 15)
     let characterLimitForTitle = 200
     let characterLimitForEventTitle = 100
+    let defaultOptionViewHeight: CGFloat = 45
     
     var up = false
+    
+    var linkedFact: Fact?
     
     var pictureViewHeight: NSLayoutConstraint?
     var linkViewHeight: NSLayoutConstraint?
     var eventViewHeight: NSLayoutConstraint?
     var locationViewHeight: NSLayoutConstraint?
+    var optionViewHeight: NSLayoutConstraint?
     
     var descriptionViewTopAnchor: NSLayoutConstraint?
     var pictureViewTopAnchor: NSLayoutConstraint?
@@ -75,14 +82,19 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         imagePicker.delegate = self
         titleTextView.delegate = self
         
+//        let factCollectionVC = FactCollectionViewController()
+//        factCollectionVC.delegate = self
+        
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
         
         setCompleteUIForThought()
         setPictureViewUI()
         setLinkViewUI()
-        setEventViewUI()
-        setLocationViewUI()
+        setUpOptionViewUI()
+//        setEventViewUI()
+//        setLocationViewUI()
+        
         
         let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15) as Any]
         markPostSegmentControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
@@ -107,7 +119,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         setTitleViewUI()
         setDescriptionViewUI()
-        setMarkPostViewUI()
         
         self.descriptionViewTopAnchor = descriptionView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1)
         self.descriptionViewTopAnchor!.isActive = true
@@ -239,7 +250,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let titleView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
 
         return view
     }()
@@ -303,7 +318,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let descriptionView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
         
         return view
     }()
@@ -349,7 +368,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let linkView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
         
         return view
     }()
@@ -400,7 +423,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let pictureView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
         
         return view
     }()
@@ -421,6 +448,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         button.setImage(UIImage(named: "compact_camera"), for: .normal)
         button.addTarget(self, action: #selector(camTapped), for: .touchUpInside)
         button.alpha = 0
+        if #available(iOS 13.0, *) {
+            button.tintColor = .label
+        } else {
+            button.tintColor = .black
+        }
         
         return button
     }()
@@ -431,6 +463,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         button.setImage(UIImage(named: "folder"), for: .normal)
         button.addTarget(self, action: #selector(CamRollTapped), for: .touchUpInside)
         button.alpha = 0
+        if #available(iOS 13.0, *) {
+            button.tintColor = .label
+        } else {
+            button.tintColor = .black
+        }
         
         return button
     }()
@@ -501,7 +538,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let eventView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
         
         return view
     }()
@@ -589,7 +630,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let locationView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
         
         return view
     }()
@@ -634,11 +679,138 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.locationViewHeight!.isActive = true
     }
     
+    // MARK: - OptionViewUI
+    let optionView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
+        
+        return view
+    }()
+    
+    let optionButton: DesignableButton = {
+        let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        if #available(iOS 13.0, *) {
+            button.setTitleColor(.label, for: .normal)
+            
+        } else {
+            button.setTitleColor(.black, for: .normal)
+        }
+        button.tintColor = Constants.imagineColor
+        button.setImage(UIImage(named: "menu"), for: .normal)
+//        button.setTitle("Mehr", for: .normal)
+        button.addTarget(self, action: #selector(optionButtonTapped), for: .touchUpInside)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
+//        button.layer.borderColor = Constants.imagineColor.cgColor
+//        button.layer.borderWidth = 1
+//        button.cornerRadius = 4
+        
+        return button
+    }()
+    
+    let optionStackView: UIStackView = {
+       let stack = UIStackView()
+        stack.axis = .vertical
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.alpha = 0
+        stack.isHidden = true
+        stack.distribution = .fillEqually
+        
+        return stack
+    }()
+    
+    let addFactButton: DesignableButton = {
+        let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = Constants.imagineColor
+        button.setTitle("Mit Fakt verlinken", for: .normal)
+        button.addTarget(self, action: #selector(linkFactToPostTapped), for: .touchUpInside)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
+//        if #available(iOS 13.0, *) {
+//            button.setTitleColor(.label, for: .normal)
+//        } else {
+//            button.setTitleColor(.black, for: .normal)
+//        }
+        button.setTitleColor(Constants.imagineColor, for: .normal)
+        return button
+    }()
+    
+    let addedFactImageView: UIImageView = {
+       let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 4
+        imageView.layer.borderColor = UIColor.black.cgColor
+        imageView.layer.borderWidth = 0.5
+        imageView.contentMode = .scaleAspectFill
+        
+        return imageView
+    }()
+    
+    let addedFactDescriptionLabel: UILabel = {
+       let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
+        
+        return label
+    }()
+    
+    func setUpOptionViewUI() {
+        
+        optionView.addSubview(optionButton)
+        optionButton.topAnchor.constraint(equalTo: optionView.topAnchor, constant: 5).isActive = true
+        optionButton.leadingAnchor.constraint(equalTo: optionView.leadingAnchor, constant: 10).isActive = true
+        optionButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        
+        setMarkPostViewUI()
+        setPostAnonymousViewUI()
+        
+        optionStackView.addArrangedSubview(markPostView)
+        optionStackView.addArrangedSubview(postAnonymousView)
+        optionStackView.addArrangedSubview(addFactButton)
+        
+        optionView.addSubview(optionStackView)
+        optionStackView.leadingAnchor.constraint(equalTo: optionView.leadingAnchor).isActive = true
+        optionStackView.trailingAnchor.constraint(equalTo: optionView.trailingAnchor).isActive = true
+        optionStackView.topAnchor.constraint(equalTo: optionButton.bottomAnchor, constant: 3).isActive = true
+        optionStackView.bottomAnchor.constraint(equalTo: optionView.bottomAnchor, constant: -5).isActive = true
+                
+        self.view.addSubview(optionView)
+        optionView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 1).isActive = true
+        optionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+        optionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        optionViewHeight = optionView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight)
+        optionViewHeight!.isActive = true
+        
+        let endView = UIView()
+        if #available(iOS 13.0, *) {
+            endView.backgroundColor = .systemBackground
+        } else {
+            endView.backgroundColor = .white
+        }
+        endView.translatesAutoresizingMaskIntoConstraints = false
+
+        self.view.addSubview(endView)
+        endView.topAnchor.constraint(equalTo: optionView.bottomAnchor, constant: 1).isActive = true
+        endView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+        endView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        endView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+    }
+    
     // MARK: - MarkPostViewUI
     let markPostView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
         
         return view
     }()
@@ -676,6 +848,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let markPostButton :DesignableButton = {
         let button = DesignableButton(type: .detailDisclosure)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = Constants.imagineColor
         button.addTarget(self, action: #selector(markPostInfoButtonPressed), for: .touchUpInside)
         
         return button
@@ -692,10 +865,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         markPostSegmentControl.bottomAnchor.constraint(equalTo: markPostView.bottomAnchor, constant: -8).isActive = true
         
         markPostView.addSubview(markPostLabel)
-        markPostLabel.topAnchor.constraint(equalTo: markPostSegmentControl.topAnchor).isActive = true
-        markPostLabel.leadingAnchor.constraint(equalTo: markPostSegmentControl.leadingAnchor).isActive = true
-        markPostLabel.heightAnchor.constraint(equalTo: markPostSegmentControl.heightAnchor).isActive = true
-        markPostLabel.widthAnchor.constraint(equalTo: markPostSegmentControl.widthAnchor).isActive = true
+        markPostLabel.centerXAnchor.constraint(equalTo: markPostView.centerXAnchor).isActive = true
+        markPostLabel.centerYAnchor.constraint(equalTo: markPostView.centerYAnchor).isActive = true
         
         markPostView.addSubview(markPostButton)
         markPostButton.centerYAnchor.constraint(equalTo: markPostView.centerYAnchor).isActive = true
@@ -704,21 +875,62 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         markPostButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
         markPostButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
         
-        self.view.addSubview(markPostView)
-        markPostView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 1).isActive = true
-        markPostView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        markPostView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        markPostView.heightAnchor.constraint(equalToConstant: 40).isActive = true
-
-        let endView = UIView()
-        endView.backgroundColor = .white
-        endView.translatesAutoresizingMaskIntoConstraints = false
-
-        self.view.addSubview(endView)
-        endView.topAnchor.constraint(equalTo: markPostView.bottomAnchor, constant: 1).isActive = true
-        endView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        endView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        endView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+    }
+    
+    // MARK: - Post Anonymous UI
+    let postAnonymousView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
+        
+        return view
+    }()
+    
+    let postAnonymousLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Anonym posten"
+        label.textAlignment = .center
+        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
+        
+        return label
+    }()
+    
+    let postAnonymousSwitch: UISwitch = {
+       let switcher = UISwitch()
+        switcher.translatesAutoresizingMaskIntoConstraints = false
+        switcher.addTarget(self, action: #selector(postAnonymousSwitchChanged), for: .valueChanged)
+        
+        return switcher
+    }()
+    
+    let postAnonymousButton :DesignableButton = {
+        let button = DesignableButton(type: .detailDisclosure)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = Constants.imagineColor
+        button.addTarget(self, action: #selector(postAnonymousButtonPressed), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    func setPostAnonymousViewUI() {
+        postAnonymousView.addSubview(postAnonymousSwitch)
+        postAnonymousSwitch.centerYAnchor.constraint(equalTo: postAnonymousView.centerYAnchor).isActive = true
+        postAnonymousSwitch.leadingAnchor.constraint(equalTo: postAnonymousView.leadingAnchor, constant: 5).isActive = true
+        
+        postAnonymousView.addSubview(postAnonymousLabel)
+        postAnonymousLabel.centerYAnchor.constraint(equalTo: postAnonymousView.centerYAnchor).isActive = true
+        postAnonymousLabel.centerXAnchor.constraint(equalTo: postAnonymousView.centerXAnchor).isActive = true
+        
+        postAnonymousView.addSubview(postAnonymousButton)
+        postAnonymousButton.centerYAnchor.constraint(equalTo: postAnonymousView.centerYAnchor).isActive = true
+        postAnonymousButton.trailingAnchor.constraint(equalTo: postAnonymousView.trailingAnchor, constant: -10).isActive = true
+        postAnonymousButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        postAnonymousButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
         
     }
     
@@ -726,7 +938,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @objc func keyboardWillChange(notification: NSNotification) {
         
-        if self.up == false {
+        if !self.up {
             
             if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
                 if descriptionTextView.isFirstResponder {
@@ -895,7 +1107,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    
     @objc func markPostSwitchChanged() {
         if markPostSwitch.isOn {
             markPostSegmentControl.isHidden = false
@@ -920,11 +1131,59 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    @objc func markPostInfoButtonPressed() {
-        // infoPopUp
+    @objc func optionButtonTapped() {
+        if descriptionTextView.isFirstResponder {
+            descriptionTextView.resignFirstResponder()
+        } else if titleTextView.isFirstResponder {
+            titleTextView.resignFirstResponder()
+        }
+        if let height = optionViewHeight {
+            if height.constant <= defaultOptionViewHeight {
+                height.constant = 165
+                
+                UIView.animate(withDuration: 0.4, animations: {
+                    self.view.layoutIfNeeded()
+                }) { (_) in
+                    self.optionStackView.isHidden = false
+                    UIView.animate(withDuration: 0.1) {
+                        self.optionStackView.alpha = 1
+                    }
+                }
+            } else {
+                height.constant = defaultOptionViewHeight
+                
+                UIView.animate(withDuration: 0.4, animations: {
+                    self.optionStackView.alpha = 0
+                    self.view.layoutIfNeeded()
+                }) { (_) in
+                    self.optionStackView.isHidden = true
+                }
+            }
+        }
     }
     
-
+    @objc func linkFactToPostTapped() {
+        performSegue(withIdentifier: "searchFactsSegue", sender: nil)
+    }
+    
+    @objc func markPostInfoButtonPressed() {
+        EasyTipView.show(forView: headerView, text: Constants.texts.markPostText)
+    }
+    
+    @objc func postAnonymousButtonPressed() {
+        EasyTipView.show(forView: headerView, text: Constants.texts.postAnonymousText)
+    }
+    
+    @objc func postAnonymousSwitchChanged() {
+        if postAnonymousSwitch.isOn {
+            self.postAnonymous = true
+            print("Post anonym: ",postAnonymous)
+        } else {
+            self.postAnonymous = false
+            print("Post anonym: ",postAnonymous)
+            
+        }
+    }
     
     @IBAction func postSelectionSegmentChanged(_ sender: Any) {
         
@@ -1076,11 +1335,30 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "searchFactsSegue" {
+            if let navCon = segue.destination as? UINavigationController {
+                if let factVC = navCon.topViewController as? FactCollectionViewController {
+                    factVC.addFactToPost = true
+                    factVC.delegate = self
+                }
+            }
+        }
+    }
+    
+    //MARK: SharePressed
+    
     @IBAction func sharePressed(_ sender: Any) {
         
         if let user = Auth.auth().currentUser {
-            let userID = user.uid
+            var userID = ""
             let postRef = db.collection("Posts").document()
+            
+            if self.postAnonymous {
+                userID = "anonym"
+            } else {
+                userID = user.uid
+            }
 
             if titleTextView.text != "" {
                 switch selectedOption {
@@ -1176,6 +1454,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     }
                 })
             })
+        } else {
+            self.alert(message: "Du hast kein Bild hochgeladen. Möchtest du kein Bild hochladen, wähle bitte eine andere Post-Option aus", title: "Kein Bild")
         }
     }
     
@@ -1266,20 +1546,40 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
+    
     func uploadTheData(postRef: DocumentReference, userID: String, dataDictionary: [String: Any]) {
         
         let documentID = postRef.documentID
         
-        let userRef = Firestore.firestore().collection("Users").document(userID).collection("posts").document(documentID)
+        var userRef: DocumentReference?
         
+        if postAnonymous {
+            userRef = db.collection("AnonymousPosts").document(documentID)
+        } else {
+            userRef = db.collection("Users").document(userID).collection("posts").document(documentID)
+            
+        }
         
-        postRef.setData(dataDictionary) { (err) in
+        var data = dataDictionary
+        
+        if let fact = self.linkedFact { // If there is a fact that should be linked to this post, i append its ID to the array
+            data["linkedFactID"] = fact.documentID
+        }
+        
+        postRef.setData(data) { (err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
                 // Inform User
             } else {
-                userRef.setData(["createTime": self.getDate()])      // add the post to the user
-                
+                if let ref = userRef {
+                    if self.postAnonymous {
+                        if let user = Auth.auth().currentUser {
+                            ref.setData(["createTime": self.getDate(), "originalPoster": user.uid])
+                        }
+                    } else {
+                        ref.setData(["createTime": self.getDate()])      // add the post to the user
+                    }
+                }
                 if self.camPic { // To Save on your device, not the best solution though
                     if let selectedImage = self.selectedImageFromPicker {
                         UIImageWriteToSavedPhotosAlbum(selectedImage, nil, nil, nil)
@@ -1330,6 +1630,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.previewImageView.image = nil
             self.characterCountLabel.text = "200"
             self.pictureViewHeight!.constant = 100
+            self.optionButtonTapped()
+            self.addedFactDescriptionLabel.text?.removeAll()
+            self.addedFactImageView.image = nil
             
             self.titleTextView.resignFirstResponder()
             self.descriptionTextView.resignFirstResponder()
@@ -1388,5 +1691,33 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         case .event:
             return "event"
         }
+    }
+}
+
+extension NewPostViewController: LinkFactWithPostDelegate {
+    func selectedFact(fact: Fact) {
+        
+        self.linkedFact = fact
+        
+        optionView.addSubview(addedFactImageView)
+        addedFactImageView.topAnchor.constraint(equalTo: optionView.topAnchor, constant: 5).isActive = true
+        addedFactImageView.trailingAnchor.constraint(equalTo: optionView.trailingAnchor, constant: -20).isActive = true
+        addedFactImageView.widthAnchor.constraint(equalToConstant: defaultOptionViewHeight-10).isActive = true
+        addedFactImageView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-10).isActive = true
+        
+        if let url = URL(string: fact.imageURL) {
+            addedFactImageView.sd_setImage(with: url, completed: nil)
+        }
+        
+        optionView.addSubview(addedFactDescriptionLabel)
+        addedFactDescriptionLabel.centerYAnchor.constraint(equalTo: addedFactImageView.centerYAnchor).isActive = true
+        addedFactDescriptionLabel.trailingAnchor.constraint(equalTo: addedFactImageView.leadingAnchor, constant: -15).isActive = true
+        
+        addedFactDescriptionLabel.text = "Verlinkter Fakt:  '\(fact.title)' "
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.optionButtonTapped()
+        }
+        
     }
 }

@@ -14,6 +14,7 @@ class FactParentContainerViewController: UIViewController {
     @IBOutlet weak var contraArgumentCountLabel: UILabel!
     @IBOutlet weak var proArgumentCountLabel: UILabel!
     @IBOutlet weak var backgroundView: UIView!
+    @IBOutlet weak var infoButton: UIBarButtonItem!
     
     
     var fact:Fact?
@@ -90,6 +91,7 @@ class FactParentContainerViewController: UIViewController {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
+        infoButton.showEasyTipView(text: Constants.texts.argumentOverviewText)
     }
     
 }

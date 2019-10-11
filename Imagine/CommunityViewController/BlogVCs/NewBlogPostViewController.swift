@@ -20,6 +20,7 @@ class NewBlogPostViewController: UIViewController {
     @IBOutlet weak var headerLabel: UILabel!
     
     var user:User?
+    let db = Firestore.firestore()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,13 +54,14 @@ class NewBlogPostViewController: UIViewController {
             
             if let user = user {
                 
-                let blogRef = Firestore.firestore().collection("BlogPosts")
+                let blogRef = db.collection("BlogPosts")
                 
                 var dataDictionary: [String: Any] = ["title": titleTextField.text, "subtitle": shortDescriptionTextfield.text, "category" : categoryTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "profileImageURL": user.imageURL, "poster": user.name]
                 
                 
                 blogRef.addDocument(data: dataDictionary)
                 
+                self.getEveryUserAndSetNotification()
                 
                 
                 let alert = UIAlertController(title: "Fertig!", message: "Danke, dass du postest Malte!", preferredStyle: .alert)
@@ -67,6 +69,32 @@ class NewBlogPostViewController: UIViewController {
                     
                 }))
                 present(alert, animated: true) {        }
+            }
+        }
+    }
+    
+    func getEveryUserAndSetNotification() {
+        db.collection("Users").getDocuments { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                for doc in snap!.documents {
+                    let documentID = doc.documentID
+                    self.setNotification(documentID: documentID)
+                }
+            }
+        }
+    }
+    
+    func setNotification(documentID: String) {
+        let ref = db.collection("Users").document(documentID).collection("notification").document()
+
+        let data:[String:Any] = ["type": "blogPost"]
+        ref.setData(data) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                print("set Notification")
             }
         }
     }

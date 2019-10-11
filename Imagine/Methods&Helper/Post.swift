@@ -48,6 +48,8 @@ class Post {
     var originalPosterUID = ""      // kann eigentlich weg weil in User Objekt
     var commentCount = 0
     var createDate: Date?
+    var toComments = false // If you want to skip to comments (For now)
+    var anonym = false
     var user = User()
     var votes = Votes()
     var event = Event()
@@ -111,7 +113,11 @@ class Post {
                             post.type = postType
                         }
                         
-                        post.getUser()
+                        if originalPoster == "anonym" {
+                            post.anonym = true
+                        } else {
+                            post.getUser()
+                        }
                             
                         returnRepost(post)
                     }

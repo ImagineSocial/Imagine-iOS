@@ -23,7 +23,6 @@ class EventCell :UITableViewCell {
         descriptionLabel.layer.cornerRadius = 5
         
         // add corner radius on `contentView`
-        contentView.backgroundColor = .white
         contentView.layer.cornerRadius = 8
         backgroundColor =  Constants.backgroundColorForTableViews
     }

@@ -10,6 +10,7 @@ import UIKit
 import SDWebImage
 import Firebase
 import FirebaseFirestore
+import FirebaseAuth
 
 enum RepostType {
     case repost
@@ -26,6 +27,7 @@ class RepostViewController: UIViewController {
     @IBOutlet weak var smallTitleTranslateLabel: UILabel!
     @IBOutlet weak var smallDescriptionTranslateLabel: UILabel!
     @IBOutlet weak var useOriginalTextButton: DesignableButton!
+    @IBOutlet weak var shareButton: UIBarButtonItem!
     
     var post = Post()
     var repost: RepostType = .repost
@@ -121,6 +123,14 @@ class RepostViewController: UIViewController {
     }
     
     @IBAction func sharePressed(_ sender: Any) {
+        if titleTranslationTextView.text != nil {
+            uploadRepost()
+        } else {
+            self.alert(message: "Füge bitte einen Titel hinzu")
+        }
+    }
+    
+    func uploadRepost() {
         let postRef = Firestore.firestore().collection("Posts")
         
         let postRefDocumentID = postRef.document().documentID
@@ -147,5 +157,6 @@ class RepostViewController: UIViewController {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
+        shareButton.showEasyTipView(text: Constants.texts.createRepostText)
     }
 }

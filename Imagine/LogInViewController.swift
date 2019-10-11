@@ -33,6 +33,8 @@ enum SignInFrame {
     case supportImagine
     case ready
     case error
+    case acceptEULA
+    case wait
 }
 
 protocol DismissDelegate {
@@ -119,9 +121,12 @@ class LogInViewController: UIViewController {
             answerTextfield.isSecureTextEntry = true
             questionLabel.text = "Deine beiden Passwörter stimmen nicht überein. Versuch es bitte noch einmal:"
         case .keepCalm: // Is set in "tryTOSignUp
+            eulaButton.isHidden = true
+            answerTextfield.isEnabled = true
             answerTextfield.textContentType = .none
             answerTextfield.isSecureTextEntry = false
-            questionLabel.text = "Wirst du Ruhe bewahren wenn dich etwas oder jemand bei Imagine aufregt und keine verletzenden Begriffe nutzen?"
+            questionLabel.text = "Herzlich Willkommen bei Imagine. Wirst du Ruhe bewahren wenn dich etwas oder jemand bei Imagine aufregt und keine verletzenden Begriffe nutzen?"
+            nextButton.setTitle("Weiter", for: .normal)
         case .respectYourFellowMan:
             answerTextfield.isSecureTextEntry = false
             questionLabel.text = "Wirst du die Ansichten und Meinungen deiner Mit-User respektieren?"
@@ -132,6 +137,15 @@ class LogInViewController: UIViewController {
             nextButton.setTitle("Zu Imagine", for: .normal)
         case .error:
             questionLabel.text = "Irgendwas ist hier kaputt, versuch es bitte später nochmal!"
+        case .acceptEULA:
+            self.nextButton.alpha = 1
+            self.answerTextfield.alpha = 0
+            self.answerTextfield.isEnabled = false
+            questionLabel.text = "Stimmst du den Apple Nutzungsbedingungen zu und lädst keine unangebrachten Inhalte hoch? "
+            nextButton.setTitle("Ich stimme zu", for: .normal)
+            showEulaButton()
+        case .wait:
+            print("Nothing")
         }
         
         UIView.animate(withDuration: 1.3, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
@@ -140,6 +154,33 @@ class LogInViewController: UIViewController {
         })
         
     }
+    
+    func showEulaButton() {
+        self.view.addSubview(eulaButton)
+        eulaButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        eulaButton.topAnchor.constraint(equalTo: nextButton.bottomAnchor, constant: 25).isActive = true
+        eulaButton.widthAnchor.constraint(equalToConstant: 180).isActive = true
+        eulaButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+    }
+    @objc func toEulaTapped() {
+        if let url = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
+            UIApplication.shared.open(url)
+        }
+    }
+    
+    let eulaButton: DesignableButton = {
+        let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.cornerRadius = 4
+        button.backgroundColor = Constants.imagineColor
+        button.setTitle("Zur Vereinbarung", for: .normal)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 18)
+        button.setTitleColor(.white, for: .normal)
+        button.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
+        
+        return button
+    }()
     
     func startLogIn() {
         answerTextfield.text = ""
@@ -181,6 +222,8 @@ class LogInViewController: UIViewController {
         nextButton.isEnabled = false
         answerTextfield.resignFirstResponder()
         
+        print("Button Pushed mit Dings: ", signUpFrame)
+        
         if signUp {
             if let input = answerTextfield.text {
                 
@@ -213,7 +256,7 @@ class LogInViewController: UIViewController {
                     }
                 case .repeatPassword:
                     if password == answer {
-                        self.tryToSignUp()
+                        self.signUpFrame = .acceptEULA
                     } else {
                         self.signUpFrame = .wrongRepeatedPassword
                     }
@@ -234,21 +277,33 @@ class LogInViewController: UIViewController {
                 // ToDo: Save the Answer
                 case .supportImagine:
                     signUpFrame = .ready
-                // ToDo: Save the Answer
+                case .acceptEULA:
+                    tryToSignUp()
+                    self.signUpFrame = .wait
+                    print("Zu dings schicken")
+                    self.view.activityStartAnimating()
                 case .ready:
                     self.delegate?.loadUser()
                     self.dismiss(animated: true, completion: nil)
                 case .error:
                     self.dismiss(animated: true, completion: nil)
+                case .wait:
+                    print("Nothing")
                 }
                 
-                UIView.animate(withDuration: 1.3, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
+                UIView.animate(withDuration: 1, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
                     self.answerTextfield.alpha = 0
                     self.nextButton.alpha = 0
                     self.questionLabel.alpha = 0
                 }, completion: { (_) in
         
-                    self.startSignUpSession()
+                    switch self.signUpFrame {
+                    case .wait:
+                        print("Wait for the signUp")
+                    default:
+                        self.startSignUpSession()
+                    }
+                    
                     
                 })
                 
@@ -336,6 +391,7 @@ class LogInViewController: UIViewController {
                         } else {
                             print("User wurde in Datenbank übertragen")
                             self.signUpFrame = .keepCalm
+                            self.view.activityStopAnimating()
                             self.startSignUpSession()
                         }
                     })
@@ -404,7 +460,7 @@ class LogInViewController: UIViewController {
     let nextButton: DesignableButton = {
        let button = DesignableButton()
         button.layer.cornerRadius = 5
-        button.backgroundColor = UIColor(red:0.19, green:0.82, blue:1.00, alpha:1.0)
+        button.backgroundColor = Constants.imagineColor
         button.tag = 0
         button.setTitle("Weiter", for: .normal)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 22)
@@ -438,9 +494,9 @@ class LogInViewController: UIViewController {
                 self.attentionLabel.alpha = 0
                 self.peaceSignView.alpha = 0.3
                 
-                if let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as? UIView{
-                    statusBar.alpha = 0
-                }
+//                if let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as? UIView{
+//                    statusBar.alpha = 0
+//                }
                 
             }, completion: { (_) in
                 self.initialStackView.isHidden = true
@@ -455,9 +511,9 @@ class LogInViewController: UIViewController {
                 self.initialStackView.alpha = 0
                 self.peaceSignView.alpha = 0.3
                 
-                if let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as? UIView{
-                    statusBar.alpha = 0
-                }
+//                if let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as? UIView{
+//                    statusBar.alpha = 0
+//                }
                 
             }, completion: { (_) in
                 self.initialStackView.isHidden = true
@@ -489,7 +545,7 @@ class LogInViewController: UIViewController {
                 
             }, completion: { (_) in
                 self.initialButton2.backgroundColor = UIColor(red:1.00, green:0.54, blue:0.52, alpha:1.0)
-                self.initialLabel.text = "Das ist Imagine. Erweise dich als würdig und wir nehmen dich gerne bei uns auf! Nimm dir Zeit dafür. Sei ehrlich und du selbst!"
+                self.initialLabel.text = "Das ist Imagine. Beweise dich und wir nehmen dich gerne bei uns auf! Nimm dir Zeit dafür. Sei ehrlich und du selbst!"
                 self.initialButton1.setTitle("Ich bin bereit!", for: .normal)
                 self.initialButton2.setTitle("Lieber Später!", for: .normal)
                 self.initialButton2.backgroundColor = UIColor(red:1.00, green:0.54, blue:0.52, alpha:1.0)
@@ -520,11 +576,13 @@ class LogInViewController: UIViewController {
         }
     }
     
+    
     override func viewWillDisappear(_ animated: Bool) {
-        if let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as? UIView{
-            statusBar.alpha = 1
-        }
+//        if let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as? UIView{
+//            statusBar.alpha = 1
+//        }
     }
+    
     
     @IBAction func cancelTapped(_ sender: Any) {
         if signUpInProgress {

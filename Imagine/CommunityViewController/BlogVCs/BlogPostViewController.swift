@@ -16,6 +16,7 @@ class BlogPostViewController: UIViewController {
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var blogImageView: UIImageView!
     @IBOutlet weak var bodyTextView: UITextView!
+    @IBOutlet weak var imageViewHeightConstraint: NSLayoutConstraint!
     
     
     override func viewDidLoad() {
@@ -38,7 +39,10 @@ class BlogPostViewController: UIViewController {
                 headerLabel.text = info.title
                 if let image = info.image {
                     blogImageView.image = image
-                } 
+                } else {
+                    blogImageView.isHidden = true
+                    imageViewHeightConstraint.constant = 20
+                }
                 bodyTextView.text = info.description
             }
         }

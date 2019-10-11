@@ -8,6 +8,8 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
+import FirebaseAuth
 
 enum BlankCellType {
     case savedPicture

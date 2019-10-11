@@ -25,6 +25,7 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
     let db = Firestore.firestore()
     var isNewMessage = false
     
+    let handyHelper = HandyHelper()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -234,9 +235,11 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
             
             let friendRef = db.collection("Users").document(friend.user.userUID).collection("friends").document(user.uid)
             
-            friendRef.setData(data) { (error) in    // Change Database of the inviter
-                if error != nil {
-                    print("We have an errror while trying to add a friend: \(error?.localizedDescription ?? "No Error")")
+            friendRef.setData(data) { (err) in    // Change Database of the inviter
+                if let error = err {
+                    print("We have an errror while trying to add a friend: \(error.localizedDescription)")
+                } else {
+                    self.handyHelper.deleteNotifications(type: .friend, id: friend.user.userUID)
                 }
             }
             
@@ -246,12 +249,8 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
     func declineInvitation(friend: Friend) {
         if let user = Auth.auth().currentUser {
             let requestRef = db.collection("Users").document(user.uid).collection("friends").document(friend.user.userUID)
-            //            requestRef.setData(["declined": true], mergeFields:["declined"])
             requestRef.delete()
-            
-            // Delete inviters request
-            
-            
+            handyHelper.deleteNotifications(type: .friend, id: friend.user.userUID)
         }
     }
     

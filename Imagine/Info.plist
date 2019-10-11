@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string></string>
+	<string>Imagine...</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSApplicationCategoryType</key>
@@ -30,11 +30,11 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Wir wollen nur Fotos machen!</string>
+	<string>Wir würden gerne auf deine Kamera zugreifen um ein Bild zu machen</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Dürfen wir die Photos auch auf deinem Handy speichern?</string>
+	<string>Wir würden gerne das aufgenommene Bild in deinem Fotoalbum speichern</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Wir würden gerne auch deine Ordner nutzen zum Photo auswählen!</string>
+	<string>Wir würden gerne auf deine Ordner zugreifen, damit du ein Foto auswählen kannst</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Kalam-Regular.ttf</string>
@@ -48,6 +48,10 @@
 		<string>IBMPlexSans-SemiBold.ttf</string>
 		<string>IBMPlexSans-Thin.ttf</string>
 		<string>IBMPlexSans-SemiBold.ttf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

@@ -159,6 +159,9 @@ class DataHelper {
                             campaign.supporter = supporter
                             campaign.opposition = opposition
                             campaign.category = category
+                            if let description = documentData["campaignExplanation"] as? String {
+                                campaign.descriptionText = description
+                            }
                             
                            list.append(campaign)
                         }
@@ -249,6 +252,9 @@ class DataHelper {
                     jobOffer.createDate = stringDate
                     jobOffer.interested = interestedCount
                     jobOffer.category = category
+                    if let description = documentData["description"] as? String {
+                        jobOffer.descriptionText = description
+                    }
                     
                     list.append(jobOffer)
                 }

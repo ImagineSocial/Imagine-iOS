@@ -8,6 +8,8 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
+import FirebaseAuth
 
 class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     
@@ -18,6 +20,7 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     @IBOutlet weak var upvoteButton: DesignableButton!
     @IBOutlet weak var downvotesLabel: UILabel!
     @IBOutlet weak var upvotesLabel: UILabel!
+    @IBOutlet weak var infoButton: UIBarButtonItem!
     
     var argument: Argument?
     var fact: Fact?
@@ -119,5 +122,6 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
+        infoButton.showEasyTipView(text: Constants.texts.argumentDetailText)
     }
 }

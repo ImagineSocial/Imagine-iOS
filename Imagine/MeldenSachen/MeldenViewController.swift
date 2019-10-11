@@ -8,6 +8,9 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
+import FirebaseAuth
+import FirebaseStorage
 
 
 class MeldenViewController: UIViewController {
@@ -31,7 +34,11 @@ class MeldenViewController: UIViewController {
             if alreadySaved {
                 self.savePostButtonIcon.tintColor = Constants.green
             } else {
-                self.savePostButtonIcon.tintColor = .black
+                if #available(iOS 13.0, *) {
+                    self.savePostButtonIcon.tintColor = .label
+                } else {
+                    self.savePostButtonIcon.tintColor = .black
+                }
             }
         }
     }
@@ -43,7 +50,11 @@ class MeldenViewController: UIViewController {
     let deleteView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
         
         return view
     }()
@@ -52,6 +63,11 @@ class MeldenViewController: UIViewController {
         let imageView = UIImageView(image: UIImage(named: "trash"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .center
+        if #available(iOS 13.0, *) {
+            imageView.tintColor = .label
+        } else {
+            imageView.tintColor = .black
+        }
         
         return imageView
     }()
@@ -62,8 +78,16 @@ class MeldenViewController: UIViewController {
         button.addTarget(self, action: #selector(showAlertForDeleteOption), for: .touchUpInside)
         button.setTitle("Post löschen", for: .normal)
         button.setTitleColor(.black, for: .normal)
-        button.tintColor = .black
-        button.backgroundColor = .white
+        if #available(iOS 13.0, *) {
+            button.tintColor = .label
+        } else {
+            button.tintColor = .black
+        }
+        if #available(iOS 13.0, *) {
+            button.backgroundColor = .systemBackground
+        } else {
+            button.backgroundColor = .white
+        }
         button.titleLabel?.font = UIFont(name: "Symbol", size: 20)
         
         return button

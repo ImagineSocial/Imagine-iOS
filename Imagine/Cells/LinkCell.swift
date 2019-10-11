@@ -68,7 +68,6 @@ class LinkCell : BaseFeedCell {
         titleLabel.layoutIfNeeded()
         
         // add corner radius on `contentView`
-        contentView.backgroundColor = .white
         contentView.layer.cornerRadius = 8
         backgroundColor =  Constants.backgroundColorForTableViews
     }
@@ -93,7 +92,6 @@ class LinkCell : BaseFeedCell {
     func setCell() {
         if let post = post {
             
-            print("Set 'Link' Post")
             if ownProfile {
                 thanksButton.setTitle(String(post.votes.thanks), for: .normal)
                 wowButton.setTitle(String(post.votes.wow), for: .normal)
@@ -121,7 +119,13 @@ class LinkCell : BaseFeedCell {
             }
             
             if post.user.name == "" {
-                self.getName()
+                if post.anonym {
+                    self.setUser()
+                } else {
+                    self.getName()
+                }
+            } else {
+                setUser()
             }
             
             createDateLabel.text = post.createTime
@@ -156,6 +160,21 @@ class LinkCell : BaseFeedCell {
         }
     }
     
+    func setUser() {
+        if let post = post {
+            if post.anonym {
+                ogPosterNameLabel.text = Constants.strings.anonymPosterName
+                profilePictureImageView.image = UIImage(named: "default-user")
+            } else {
+                ogPosterNameLabel.text = "\(post.user.name) \(post.user.surname)"
+                
+                // Profile Picture
+                if let url = URL(string: post.user.imageURL) {
+                    profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                }
+            }
+        }
+    }
     
     var index = 0
     func getName() {
@@ -167,7 +186,7 @@ class LinkCell : BaseFeedCell {
                         self.index+=1
                     }
                 } else {
-                    setCell()
+                    setUser()
                 }
             }
         }
@@ -218,7 +237,9 @@ class LinkCell : BaseFeedCell {
     
     @IBAction func userButtonTapped(_ sender: Any) {
         if let post = post {
-            delegate?.userTapped(post: post)
+            if !post.anonym {
+                delegate?.userTapped(post: post)
+            }
         }
     }
     

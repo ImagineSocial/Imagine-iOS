@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import FirebaseFirestore
+import FirebaseAuth
 
 enum NewFactType {
     case fact
@@ -33,6 +34,7 @@ class NewFactViewController: UIViewController {
     @IBOutlet weak var proButton: DesignableButton!
     @IBOutlet weak var addSourceLabel: UILabel!
     @IBOutlet weak var sourceLabel: UILabel!
+    @IBOutlet weak var doneButton: UIBarButtonItem!
     
     var fact: Fact?
     var argument: Argument?
@@ -55,7 +57,7 @@ class NewFactViewController: UIViewController {
         sourceTextField.isHidden = true
         
         descriptionTextView.layer.cornerRadius = 3
-        descriptionTextView.backgroundColor = Constants.backgroundColorForTableViews
+//        descriptionTextView.backgroundColor = Constants.backgroundColorForTableViews
 
         setUI()
         
@@ -245,5 +247,6 @@ class NewFactViewController: UIViewController {
         }
     }
     @IBAction func infoButtonTapped(_ sender: Any) {
+        doneButton.showEasyTipView(text: Constants.texts.addArgumentText)
     }
 }

@@ -50,8 +50,6 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
     // To open the link
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         
-        
-        
         UIApplication.shared.open(URL)
         return false
     }
@@ -71,6 +69,5 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
         }
     }
     
-    @IBAction func infoButtonTapped(_ sender: Any) {
-    }
+
 }

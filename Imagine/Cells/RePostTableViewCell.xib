@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -24,7 +22,7 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="475"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="OPI-UT-l5L" id="uRR-6c-6J1">
-                <rect key="frame" x="0.0" y="0.0" width="375" height="474.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="375" height="475"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UAd-Ez-vM7" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
@@ -67,7 +65,7 @@
                         </userDefinedRuntimeAttributes>
                     </view>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eiJ-lf-DwH" userLabel="OGPostView" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="10" y="152" width="355" height="282.5"/>
+                        <rect key="frame" x="10" y="152.5" width="355" height="282.5"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Cb4-JX-Uh9">
                                 <rect key="frame" x="2" y="2" width="351" height="225.5"/>
@@ -104,7 +102,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="hV4-fh-krR" firstAttribute="leading" secondItem="Yy9-HG-nMR" secondAttribute="trailing" constant="10" id="85p-WQ-k04"/>
                             <constraint firstItem="Yy9-HG-nMR" firstAttribute="bottom" secondItem="hV4-fh-krR" secondAttribute="bottom" id="Byt-pW-z2B"/>
@@ -128,13 +126,13 @@
                         </userDefinedRuntimeAttributes>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hier steht die Übersetzung meines Posts. Wenn ich kein Bild Poste auch der ganze Post" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.64999997615814209" translatesAutoresizingMaskIntoConstraints="NO" id="XDl-QE-Tuq">
-                        <rect key="frame" x="10" y="77" width="355" height="70"/>
+                        <rect key="frame" x="10" y="77" width="355" height="70.5"/>
                         <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="20"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yGo-8c-MKu" userLabel="viewForOpticalBorderToNextPost">
-                        <rect key="frame" x="0.0" y="474.5" width="375" height="0.0"/>
+                        <rect key="frame" x="0.0" y="475" width="375" height="0.0"/>
                         <color key="backgroundColor" white="0.90238384922889814" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="height" id="9Om-v9-oI7"/>
@@ -166,6 +164,7 @@
                             <constraint firstAttribute="height" constant="25" id="16O-VL-Vtv"/>
                             <constraint firstAttribute="width" constant="25" id="KCj-fb-oMu"/>
                         </constraints>
+                        <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                         <state key="normal" image="menu">
                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </state>
@@ -179,13 +178,14 @@
                         </connections>
                     </button>
                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="b36-WA-y8y">
-                        <rect key="frame" x="10" y="439.5" width="355" height="25"/>
+                        <rect key="frame" x="10" y="440" width="355" height="25"/>
                         <subviews>
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6N0-gh-py4" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="59" height="25"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                                <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <state key="normal" title="Button" image="thanks">
-                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -199,8 +199,9 @@
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y86-Ko-iMx" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                 <rect key="frame" x="74" y="0.0" width="59" height="25"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                                <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <state key="normal" title="Button" image="wow">
-                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -214,8 +215,9 @@
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NEB-4l-G9M" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                 <rect key="frame" x="148" y="0.0" width="59" height="25"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                                <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <state key="normal" title="Button" image="ha">
-                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -229,8 +231,9 @@
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pqk-TM-IGx" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                 <rect key="frame" x="222" y="0.0" width="59" height="25"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                                <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <state key="normal" title="Button" image="nice">
-                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -246,6 +249,7 @@
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="comments" translatesAutoresizingMaskIntoConstraints="NO" id="VaH-WJ-3g6">
                                         <rect key="frame" x="5" y="5" width="34" height="15"/>
+                                        <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="17" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L7E-yZ-9FU">
                                         <rect key="frame" x="39" y="2" width="20" height="23"/>
@@ -274,6 +278,7 @@
                         </constraints>
                     </stackView>
                 </subviews>
+                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="b36-WA-y8y" secondAttribute="trailing" constant="10" id="00x-tc-3fV"/>
                     <constraint firstItem="XDl-QE-Tuq" firstAttribute="top" secondItem="sha-wU-sGx" secondAttribute="bottom" constant="3" id="3Xe-dK-0DZ"/>

@@ -112,11 +112,17 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                     
                     postHelper.getTheSavedPosts(getMore: getMore, whichPostList: .postsFromUser, userUID: user.userUID) { (posts, initialFetch)  in
                         
+                        guard let posts = posts else {
+                            print("No more Posts")
+                            self.view.activityStopAnimating()
+                            
+                            return
+                        }
+                        
                         if initialFetch {   // Get the first batch of posts
                             self.posts = posts
                             self.tableView.reloadData()
-                            
-//                            self.getName()   // Just for now
+                            self.fetchesPosts = false
                             
                             self.refreshControl?.endRefreshing()
                         } else {    // Append the next batch to the existing
@@ -709,11 +715,23 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     }
     
     func sendInvitation() {
+        self.view.activityStartAnimating()
         if let user = Auth.auth().currentUser {
             if let currentProfile = userOfProfile {
                 
                 let friendsRef = db.collection("Users").document(currentProfile.userUID).collection("friends").document(user.uid)
                 let data: [String:Any] = ["accepted": false, "requestedAt" : Timestamp(date: Date())]
+                
+                let notificationsRef = db.collection("Users").document(currentProfile.userUID).collection("notifications").document()
+                let notificationData : [String: Any] = ["type": "friend", "name": user.displayName, "userID": user.uid]
+                
+                notificationsRef.setData(notificationData) { (err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        print("Successfully saved the notification")
+                    }
+                }
                 
                 friendsRef.setData(data) { (error) in
                     if error != nil {
@@ -725,6 +743,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                             
                         }))
                         self.present(alert, animated: true) {
+                            self.view.activityStopAnimating()
                             self.addAsFriendButton.setTitle("Angefragt", for: .normal)
                         }
                     }

@@ -10,6 +10,7 @@ import UIKit
 import Photos
 import Firebase
 import FirebaseFirestore
+import FirebaseAuth
 import MessengerKit
 
 class PostCommentChatViewController: MSGMessengerViewController {
@@ -58,6 +59,10 @@ class PostCommentChatViewController: MSGMessengerViewController {
         if hasntSwipedYet {
             showSwipeView()
         }
+        
+        if post.toComments {    // Comes from SideMenu Notification
+            self.deleteNotification()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -67,64 +72,10 @@ class PostCommentChatViewController: MSGMessengerViewController {
         }
     }
     
-    func setBarButtonItem() {
-        let backButton = DesignableButton(type: .custom)
-        backButton.translatesAutoresizingMaskIntoConstraints = false
-        backButton.setTitle("Zum Post", for: .normal)
-        backButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 16)
-        backButton.setTitleColor(UIColor(red:0.33, green:0.47, blue:0.65, alpha:1.0), for: .normal)
-        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-        backButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
-        backButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        
-        let rightBarButton = UIBarButtonItem(customView: backButton)
-        self.navigationItem.leftBarButtonItem = rightBarButton
-    }
-    
-    @objc func backButtonTapped() {
-        UIView.transition(with: self.navigationController!.view, duration: 0.5, options: .transitionFlipFromLeft, animations: {
-            self.navigationController?.popViewController(animated: true)
-        }, completion: nil)
-    }
-    
-    @objc func swipedToRight() {
-        backButtonTapped()
-        
-        hasntSwipedYet = false
-    }
-    
-    func showSwipeView() {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        let layer = view.layer
-        layer.borderColor = UIColor.black.cgColor
-        layer.borderWidth = 0.5
-        layer.cornerRadius = 20
-        view.clipsToBounds = true
-        view.layoutIfNeeded()
-        
-        view.backgroundColor = .black
-        view.alpha = 0.2
-        
-        self.view.addSubview(view)
-        view.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 250).isActive = true
-        view.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        view.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        let leadingConstraint = view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 75)
-        leadingConstraint.isActive = true
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            leadingConstraint.constant = 300
-            
-            UIView.animate(withDuration: 0.5) {
-                self.view.layoutIfNeeded()
-                view.alpha = 0
-            }
-        }
-    }
     
     init(post: Post) {
         self.post = post
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -185,7 +136,68 @@ class PostCommentChatViewController: MSGMessengerViewController {
         }
     }
     
-    // Firebase Listener
+    func deleteNotification() {
+        HandyHelper().deleteNotifications(type: .comment, id: post.documentID)
+    }
+    
+    //MARK: - BarButton
+    func setBarButtonItem() {
+        let backButton = DesignableButton(type: .custom)
+        backButton.translatesAutoresizingMaskIntoConstraints = false
+        backButton.setTitle("Zum Post", for: .normal)
+        backButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 16)
+        backButton.setTitleColor(UIColor(red:0.33, green:0.47, blue:0.65, alpha:1.0), for: .normal)
+        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        backButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
+        backButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        
+        let rightBarButton = UIBarButtonItem(customView: backButton)
+        self.navigationItem.leftBarButtonItem = rightBarButton
+    }
+    
+    @objc func backButtonTapped() {
+        UIView.transition(with: self.navigationController!.view, duration: 0.5, options: .transitionFlipFromLeft, animations: {
+            self.navigationController?.popViewController(animated: true)
+        }, completion: nil)
+    }
+    
+    @objc func swipedToRight() {
+        backButtonTapped()
+        
+        hasntSwipedYet = false
+    }
+    
+    func showSwipeView() {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        let layer = view.layer
+        layer.borderColor = UIColor.black.cgColor
+        layer.borderWidth = 0.5
+        layer.cornerRadius = 20
+        view.clipsToBounds = true
+        view.layoutIfNeeded()
+        
+        view.backgroundColor = .black
+        view.alpha = 0.2
+        
+        self.view.addSubview(view)
+        view.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 250).isActive = true
+        view.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        let leadingConstraint = view.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 75)
+        leadingConstraint.isActive = true
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            leadingConstraint.constant = 300
+            
+            UIView.animate(withDuration: 0.5) {
+                self.view.layoutIfNeeded()
+                view.alpha = 0
+            }
+        }
+    }
+    
+    // MARK: - Firebase Listener
     func firebaseListener() {
         
         let reference = db.collection("Comments").document(post.documentID).collection("threads").order(by: "sentAt", descending: false)
@@ -213,9 +225,7 @@ class PostCommentChatViewController: MSGMessengerViewController {
         let doc = change.document
         let docData = doc.data()
         var sender = false
-        guard let currentUser = Auth.auth().currentUser?.uid else {
-            return
-        }
+        
         
         guard let id = docData["id"] as? Int,
             let body = docData["body"] as? String,
@@ -224,9 +234,10 @@ class PostCommentChatViewController: MSGMessengerViewController {
             else {
                 return    // Falls er das nicht zuordnen kann
         }
-        
-        if userUID == currentUser {
-            sender = true   // Die Nachricht stammt von ihm
+        if let userID = Auth.auth().currentUser?.uid {
+            if userUID == userID {
+                sender = true   // Die Nachricht stammt von ihm
+            }
         }
         
         let sentDate:Date = sentAtTimestamp.dateValue()
@@ -258,22 +269,35 @@ class PostCommentChatViewController: MSGMessengerViewController {
     
         let data : [String: Any] = ["body": bodyString, "id": message.id, "sentAt": Timestamp(date: Date()), "userID": currentUserUid]
         
-        reference.addDocument(data: data) { error in
-            if let e = error {
-                print("Error sending message: \(e.localizedDescription)")
+        if let currentUser = currentUser { 
+            let notificationRef = db.collection("Users").document(post.originalPosterUID).collection("notifications").document()
+            let notificationData: [String: Any] = ["type": "comment", "comment": bodyString, "name": currentUser.displayName, "postID": self.post.documentID]
+            
+            notificationRef.setData(notificationData) { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    print("Successfully set notification")
+                }
+            }
+        }
+        
+        reference.addDocument(data: data) { err in
+            if let error = err {
+                print("Error sending message: \(error.localizedDescription)")
                 return
             }
         }
     }
     
-    // MSGMessengerStuff
+    // MARK: - MSGMessengerStuff
     
 //    override var style: MSGMessengerStyle {
 //        let style = MessengerKit.Styles.iMessage
 //        return style
 //    }
     
-    override func inputViewPrimaryActionTriggered(inputView: MSGInputView) {    // Wenn jemand send gedrückt hat
+    override func inputViewPrimaryActionTriggered(inputView: MSGInputView) {    // If somebody presses send
         
         
         let body: MSGMessageBody =  (inputView.message.containsOnlyEmoji && inputView.message.count < 5) ? .emoji(inputView.message) : .text(inputView.message)
@@ -283,7 +307,7 @@ class PostCommentChatViewController: MSGMessengerViewController {
             if allowedToComment {
                 let message = MSGMessage(id: id+1, body: body, user: user, sentAt: Date())
                 
-                if currentUserUid != "" {   // Falls man nur Gast ist
+                if currentUserUid != "" {   // if you are a guest (not logged in)
                     saveInFirebase(bodyString: inputView.message, message: message)
                 }
             } else {
