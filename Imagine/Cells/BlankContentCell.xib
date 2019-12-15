@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -20,7 +18,7 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="652"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="1sn-aN-hf7" id="bfe-gQ-9hC">
-                <rect key="frame" x="0.0" y="0.0" width="414" height="651.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="414" height="652"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="meetNewPeople" translatesAutoresizingMaskIntoConstraints="NO" id="PSc-aT-Wzs">
@@ -29,10 +27,10 @@
                             <constraint firstAttribute="height" constant="250" id="R2f-jv-gKQ"/>
                         </constraints>
                     </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Speicher jetzt deine Lieblingssachen!" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="lW0-Zc-OVx">
-                        <rect key="frame" x="10" y="456" width="394" height="40"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Speicher jetzt deine Lieblingssachen!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="lW0-Zc-OVx">
+                        <rect key="frame" x="40" y="456" width="334" height="70"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="40" id="vOc-t1-ruk"/>
+                            <constraint firstAttribute="height" constant="70" id="vOc-t1-ruk"/>
                         </constraints>
                         <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="20"/>
                         <nil key="textColor"/>
@@ -43,9 +41,9 @@
                     <constraint firstItem="PSc-aT-Wzs" firstAttribute="leading" secondItem="bfe-gQ-9hC" secondAttribute="leading" id="2ed-gb-MqZ"/>
                     <constraint firstItem="PSc-aT-Wzs" firstAttribute="centerY" secondItem="bfe-gQ-9hC" secondAttribute="centerY" id="OYe-Ee-Y8s"/>
                     <constraint firstAttribute="trailing" secondItem="PSc-aT-Wzs" secondAttribute="trailing" id="WvA-Bt-xEJ"/>
-                    <constraint firstItem="lW0-Zc-OVx" firstAttribute="leading" secondItem="bfe-gQ-9hC" secondAttribute="leading" constant="10" id="rYg-ZA-hxD"/>
+                    <constraint firstItem="lW0-Zc-OVx" firstAttribute="leading" secondItem="bfe-gQ-9hC" secondAttribute="leading" constant="40" id="rYg-ZA-hxD"/>
                     <constraint firstItem="lW0-Zc-OVx" firstAttribute="top" secondItem="PSc-aT-Wzs" secondAttribute="bottom" constant="5" id="w8R-9T-rER"/>
-                    <constraint firstAttribute="trailing" secondItem="lW0-Zc-OVx" secondAttribute="trailing" constant="10" id="wcd-OI-xkr"/>
+                    <constraint firstAttribute="trailing" secondItem="lW0-Zc-OVx" secondAttribute="trailing" constant="40" id="wcd-OI-xkr"/>
                     <constraint firstItem="PSc-aT-Wzs" firstAttribute="centerX" secondItem="bfe-gQ-9hC" secondAttribute="centerX" id="zjU-cV-hsL"/>
                 </constraints>
             </tableViewCellContentView>

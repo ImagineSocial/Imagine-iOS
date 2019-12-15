@@ -36,8 +36,9 @@ class TabBarViewController: UITabBarController {
         super.viewDidLoad()
         
         self.tabBar.isTranslucent = false   //Prevents a bug/glitch where the items jump when going back from antother ViewController
-        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: Constants.imagineColor], for: .selected)
-        
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: .selected)
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: Constants.imagineColor], for: .normal)
+        //Doesnt work
         }
 
     override func viewWillAppear(_ animated: Bool) {

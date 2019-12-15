@@ -39,9 +39,20 @@ class voteCampaignTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if let user = Auth.auth().currentUser {
+            if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" {
+                print("Nicht bei Malte loggen")
+            } else {
+                Analytics.logEvent("LookingForCampaigns", parameters: [:])
+            }
+        } else {
+            Analytics.logEvent("LookingForCampaigns", parameters: [:])
+        }
+        
         self.view.activityStartAnimating()
         
         tableView.separatorStyle = .none
+//        tableView.backgroundColor = Constants.backgroundColorForTableViews
         
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.view.backgroundColor = .white
@@ -55,8 +66,7 @@ class voteCampaignTableViewController: UITableViewController {
         leftSwipe.direction = .left
         self.view.addGestureRecognizer(leftSwipe)
         
-        setVoteModeUI()
-        
+        setCampaignUI()
         
         let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15) as Any]
         segmentedControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
@@ -127,7 +137,6 @@ class voteCampaignTableViewController: UITableViewController {
                 cell.headerLabel.text = vote.title
                 cell.bodyLabel.text = vote.subtitle
                 cell.voteTillDateLabel.text = "Abstimmung bis: \(vote.endOfVoteDate)"
-                cell.voteTillDateLabel.backgroundColor = Constants.imagineColor
                 cell.costLabel.text = vote.cost
                 cell.timePeriodLabel.text = "\(vote.timeToRealization) Monat"
                 cell.commentCountLabel.text = "7"
@@ -163,9 +172,9 @@ class voteCampaignTableViewController: UITableViewController {
         
         switch mode {
         case .campaign:
-            return 170
+            return 165
         case .vote:
-            return 190
+            return 185
         }
     }
     

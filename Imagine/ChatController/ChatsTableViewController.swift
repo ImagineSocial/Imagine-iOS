@@ -17,6 +17,7 @@ class ChatsTableViewController: UITableViewController {
     let db = Firestore.firestore()
     var chatsList = [Chat]()
     var currentUserUid:String?
+    var loggedIn = false
     
     
     var initialFetch = true
@@ -24,8 +25,13 @@ class ChatsTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.isTranslucent = false
+        if #available(iOS 13.0, *) {
+            self.navigationController?.view.backgroundColor = .systemBackground
+        } else {
+            self.navigationController?.view.backgroundColor = .white
+        }
         
         tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: "NibBlankCell")
         
@@ -34,7 +40,15 @@ class ChatsTableViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         // Does not get reloaded after you have logged In again!
-        tableView.reloadData()
+        // Wont disappear when not logged in anymore
+        
+        if Auth.auth().currentUser == nil && loggedIn == true {
+            self.chatsList.removeAll()
+            self.tableView.reloadData()
+        } else if Auth.auth().currentUser != nil && loggedIn == false {
+            self.getChats()
+        }
+//        tableView.reloadData()
     }
     
     
@@ -56,11 +70,14 @@ class ChatsTableViewController: UITableViewController {
     
     func getChats() {   // Get participant and every documentID of every chat that the user has
         if let user = Auth.auth().currentUser {
+            self.loggedIn = true
             if chatsList.count == 0 {
                 self.view.activityStartAnimating()
             }
             currentUserUid = user.uid
+            
             let chatsRef = db.collection("Users").document(user.uid).collection("chats")
+            
             chatsRef.getDocuments { (snapshot, error) in
                 if let error = error {
                     print("We have an error within the chats: \(error.localizedDescription)")
@@ -93,18 +110,23 @@ class ChatsTableViewController: UITableViewController {
         } else {
             self.chatsList.removeAll()
             self.tableView.reloadData()
+            self.loggedIn = false
         }
     }
+    
+    
     
     func getUnreadMessages() {
         if let user = Auth.auth().currentUser {
             let notificationRef = db.collection("Users").document(user.uid).collection("notifications").whereField("type", isEqualTo: "message")
+            
             notificationRef.addSnapshotListener { (snap, err) in    // Get messageNotifications
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else {                    
                     if let snap = snap {
 //                        self.updateTabBarBadge(value: snap.documents.count)
+                        
                         snap.documentChanges.forEach { (change) in  // One Message Notification
                             if change.type == DocumentChangeType.added {    // Just get it if it is added
                                 
@@ -234,8 +256,6 @@ class ChatsTableViewController: UITableViewController {
                         chat.participant.surname = docData["surname"] as? String ?? ""
                         chat.participant.imageURL = docData["profilePictureURL"] as? String ?? ""
                         
-//                        self.badgeValue = 0
-//                        self.badgeIndex = 0
                         self.tableView.reloadData()
                         self.view.activityStopAnimating()
                     }
@@ -256,8 +276,11 @@ class ChatsTableViewController: UITableViewController {
         // #warning Incomplete implementation, return the number of rows
         
         if chatsList.count == 0 {
+            tableView.separatorStyle = .none
             return 1
         } else {
+            tableView.separatorStyle = .singleLine
+            tableView.separatorInset = UIEdgeInsets(top: 0, left: 85, bottom: 0, right: 0)
             return chatsList.count
         }
         
@@ -286,7 +309,6 @@ class ChatsTableViewController: UITableViewController {
                 let chat = chatsList[indexPath.row]
                 
                 if chat.unreadMessages != 0 {
-//                    self.badgeValue = badgeValue+chat.unreadMessages
                     cell.unreadMessages.text = String(chat.unreadMessages)
                     cell.unreadMessages.isHidden = false
                     cell.unreadMessageView.isHidden = false
@@ -314,11 +336,6 @@ class ChatsTableViewController: UITableViewController {
                 if let url = URL(string: chat.participant.imageURL) {
                     cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
                 }
-                
-//                if self.badgeIndex <= self.chatsList.count {
-//                    self.setTabBarBadge()
-//                    self.badgeIndex+=1
-//                }
                 
                 return cell
             }
@@ -365,6 +382,7 @@ class ChatsTableViewController: UITableViewController {
                 if let chatVC = segue.destination as? ChatViewController {
                     chatVC.chatSetting = .normal
                     chatVC.chat = chosenChat
+                    chatVC.readDelegate = self
                 }
             }
         }
@@ -373,10 +391,13 @@ class ChatsTableViewController: UITableViewController {
                 friendVC.isNewMessage = true
             }
         }
-        
     }
-    
-    
+}
+
+extension ChatsTableViewController : ReadMessageDelegate {
+    func read() {
+        self.tableView.reloadData()
+    }
 }
 
 //MARK: - ChatCell

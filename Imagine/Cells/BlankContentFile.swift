@@ -17,6 +17,7 @@ enum BlankCellType {
     case chat
     case ownProfile
     case userProfile
+    case postsOfFacts
 }
 
 class BlankContentCell: UITableViewCell {
@@ -34,7 +35,7 @@ class BlankContentCell: UITableViewCell {
                     if let _ = Auth.auth().currentUser {
                         self.descriptionLabel.text = "Du hast noch keine Chats. Schreibe jetzt deine Freunde an"
                     } else {
-                        self.descriptionLabel.text = "Tausch dich hier mit deinen Mitmenschen aus"
+                        self.descriptionLabel.text = "Tausche dich hier mit deinen Mitmenschen aus"
                     }
                     
                 case .friends:
@@ -49,6 +50,9 @@ class BlankContentCell: UITableViewCell {
                 case .userProfile:
                     self.pictureView.image = UIImage(named: "savePostImage")
                     self.descriptionLabel.text = "Dieser User hat noch keine Posts hochgeladen"
+                case .postsOfFacts:
+                    self.pictureView.image = UIImage(named: "savePostImage")
+                    self.descriptionLabel.text = "Es sind keine Beiträge zu diesem Thema zu finden"
                 }
             }
         }

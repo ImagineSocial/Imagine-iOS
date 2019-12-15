@@ -34,7 +34,10 @@ class JobOfferingViewController: UIViewController {
         if jobOffer.documentID != "" {
             headerLabel.text = jobOffer.title
             smallBodyLabel.text = jobOffer.cellText
-            fullBodyLabel.text = jobOffer.descriptionText
+            
+            let newLineString = "\n"    // Need to hardcode this and replace the \n of the fetched text
+            let descriptionText = jobOffer.descriptionText.replacingOccurrences(of: "\\n", with: newLineString)
+            fullBodyLabel.text = descriptionText
         } else {    // Also "Wir brauchen dich!"
             headerLabel.text = "Wir brauchen dich!"
             smallBodyLabel.text = "Wenn du glaubst, mit deinem Wissen kannst du uns helfen, aber es gibt keine passende Ausschreibung, gib uns Bescheid! Wir sind auf klüge Köpfe angewiesen!"

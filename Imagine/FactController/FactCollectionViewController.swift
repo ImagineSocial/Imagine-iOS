@@ -12,7 +12,13 @@ import Firebase
 private let reuseIdentifier = "FactCell"
 
 protocol LinkFactWithPostDelegate {
-    func selectedFact(fact: Fact)
+    func selectedFact(fact: Fact, closeMenu: Bool)
+}
+
+enum FactCollectionDisplayOption {
+    case all
+    case justFacts
+    case justTopics
 }
 
 class FactCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
@@ -20,7 +26,11 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     @IBOutlet weak var infoButton: UIBarButtonItem!
     
     var facts = [Fact]()
+    var topicFacts = [Fact]()
+    var factFacts = [Fact]()
     var filteredFacts = [Fact]()
+    
+    var displayOption: FactCollectionDisplayOption = .all
     
     let db = Firestore.firestore()
     
@@ -40,10 +50,13 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             self.setDismissButton()
         }
         
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.isTranslucent = true
-        self.navigationController?.view.backgroundColor = UIColor.clear
+        self.navigationController?.navigationBar.isTranslucent = false
+        if #available(iOS 13.0, *) {
+            self.navigationController?.navigationBar.backgroundColor = .systemBackground
+        } else {
+            self.navigationController?.navigationBar.backgroundColor = .white
+        }
         
         self.view.activityStartAnimating()
     }
@@ -68,13 +81,29 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
    
     func getFacts() {
         DataHelper().getData(get: .facts) { (facts) in
-            self.facts = facts as! [Fact]
             
-            let fact = Fact(addMoreDataCell: true)
-            self.facts.append(fact)
-            
-            self.collectionView.reloadData()
-            self.view.activityStopAnimating()
+            if let facts = facts as? [Fact] {
+                self.facts = facts
+                
+                for fact in facts {
+                    if fact.displayMode == .fact {
+                        self.factFacts.append(fact)
+                    } else {
+                        self.topicFacts.append(fact)
+                    }
+                }
+                
+                let fact = Fact(addMoreDataCell: true)
+                self.facts.append(fact)
+                self.factFacts.append(fact)
+                self.topicFacts.append(fact)
+                
+                self.collectionView.reloadData()
+                self.view.activityStopAnimating()
+            } else {
+                self.view.activityStopAnimating()
+                print("Something went wrong")
+            }
         }
     }
     
@@ -82,8 +111,9 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Suche nach Fakten"
-        
+    
         self.navigationItem.searchController = searchController
+        self.navigationItem.hidesSearchBarWhenScrolling = true
         definesPresentationContext = true
         
     }
@@ -101,17 +131,28 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         
         if isFiltering {
             return filteredFacts.count
+        } else {
+            
+            switch displayOption {
+            case .all:
+                return facts.count
+            case .justTopics:
+                return topicFacts.count
+            case .justFacts:
+                return factFacts.count
+            }
         }
-        return facts.count
-        
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
         if kind == UICollectionView.elementKindSectionHeader {  // View above CollectionView
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "collectionViewView", for: indexPath)
+            if let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "collectionViewView", for: indexPath) as? FactCollectionHeader {
             
-            return view
+                view.delegate = self
+                
+                return view
+            }
         }
         
         return UICollectionReusableView()
@@ -124,7 +165,15 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         if isFiltering {
             fact = filteredFacts[indexPath.row]
         } else {
-            fact = facts[indexPath.row]
+            
+            switch displayOption {
+            case .all:
+                fact = facts[indexPath.row]
+            case .justTopics:
+                fact = topicFacts[indexPath.row]
+            case .justFacts:
+                fact = factFacts[indexPath.row]
+            }
         }
         
         if fact!.addMoreCell {
@@ -141,25 +190,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         } else {
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? FactCell {
                 
-                
-                cell.factCellLabel.text = fact!.title
-                
-                if let url = URL(string: fact!.imageURL) {
-                    cell.factCellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
-                    cell.factCellImageView.contentMode = .scaleAspectFill
-                }
-                
-                let gradient = CAGradientLayer()
-                gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
-                gradient.endPoint = CGPoint(x: 0.5, y: 0.6)
-                let whiteColor = UIColor.white
-                gradient.colors = [whiteColor.withAlphaComponent(0.0).cgColor, whiteColor.withAlphaComponent(0.5).cgColor, whiteColor.withAlphaComponent(0.7).cgColor]
-                gradient.locations = [0.0, 0.7, 1]
-                gradient.frame = cell.gradientView.bounds
-                cell.gradientView.layer.mask = gradient
-                
-                cell.layer.cornerRadius = 4
-                cell.layer.masksToBounds = true
+                cell.fact = fact!
                 
                 return cell
             }
@@ -184,18 +215,46 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         if isFiltering {
             fact = filteredFacts[indexPath.row]
         } else {
-            fact = facts[indexPath.row]
+            switch displayOption {
+            case .all:
+                fact = facts[indexPath.row]
+            case .justTopics:
+                fact = topicFacts[indexPath.row]
+            case .justFacts:
+                fact = factFacts[indexPath.row]
+            }
         }
         
-        
-        if fact!.addMoreCell {
-            performSegue(withIdentifier: "toNewArgumentSegue", sender: nil)
-        } else {
-            if self.addFactToPost {
-                self.setFactForPost(fact: fact!)
+        if let fact = fact {
+            if fact.addMoreCell {
+                performSegue(withIdentifier: "toNewArgumentSegue", sender: nil)
             } else {
-                performSegue(withIdentifier: "goToArguments", sender: fact)
+                if self.addFactToPost {
+                    self.setFactForPost(fact: fact)
+                } else {
+                    if fact.displayMode == .fact {
+                        performSegue(withIdentifier: "goToArguments", sender: fact)
+                    } else {
+                        performSegue(withIdentifier: "goToPostsOfTopic", sender: fact)
+                    }
+                }
             }
+        }
+    }
+    
+    func logUser(fact: Fact) {
+        if let user = Auth.auth().currentUser {
+            if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" {
+                print("Nicht bei Malte loggen")
+            } else {
+                Analytics.logEvent("FactDetailOpened", parameters: [
+                    AnalyticsParameterTerm: fact.title
+                ])
+            }
+        } else {
+            Analytics.logEvent("FactDetailOpened", parameters: [
+                AnalyticsParameterTerm: fact.title
+            ])
         }
     }
     
@@ -205,8 +264,19 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             if let fact = sender as? Fact {
                 if let argumentVC = segue.destination as? FactParentContainerViewController {
                     argumentVC.fact = fact
+                    
+                    self.logUser(fact: fact)
                 }
-                
+            }
+        }
+        
+        if segue.identifier == "goToPostsOfTopic" {
+            if let fact = sender as? Fact {
+                if let nextVC = segue.destination as? PostsOfFactTableViewController {
+                    nextVC.fact = fact
+                    
+                    self.logUser(fact: fact)
+                }
             }
         }
         
@@ -226,9 +296,15 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     //MARK: LinkFactAndPost
     
     func setFactForPost(fact: Fact) {
-        print("Set delegate")
-        delegate?.selectedFact(fact: fact)
-        self.dismiss(animated: true, completion: nil)
+        print("Set delegate: ", fact.title)
+        delegate?.selectedFact(fact: fact, closeMenu: true)
+        if searchController.isActive {
+            searchController.dismiss(animated: false) {
+                self.dismiss(animated: true, completion: nil)
+            }
+        } else {
+            self.dismiss(animated: true, completion: nil)
+        }
     }
     
     
@@ -252,9 +328,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                     let documentID = document.documentID
                     
                     guard let name = documentData["name"] as? String,
-                        let createTimestamp = documentData["createDate"] as? Timestamp,
-                        let imageURL = documentData["imageURL"] as? String
-                        
+                        let createTimestamp = documentData["createDate"] as? Timestamp
                         else {
                             continue
                     }
@@ -266,7 +340,12 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                     fact.title = name
                     fact.createDate = stringDate
                     fact.documentID = documentID
-                    fact.imageURL = imageURL
+                    if let imageURL = documentData["imageURL"] as? String {
+                        fact.imageURL = imageURL
+                    }
+                    if let description = documentData["description"] as? String {
+                        fact.description = description
+                    }
                     
                     self.filteredFacts.append(fact)
                 }
@@ -282,6 +361,29 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     }
 }
 
+extension FactCollectionViewController: TopOfCollectionViewDelegate {
+    
+    func sortFactsTapped(option: FactCollectionDisplayOption) {
+        
+        print("Option: ", option)
+        self.displayOption = option
+        collectionView.reloadData()
+    }
+//        switch self.displayOption {
+//        case .all:
+//            self.displayOption = .justTopics
+//            collectionView.reloadData()
+//        case .justTopics:
+//            self.displayOption = .justFacts
+//            collectionView.reloadData()
+//        case .justFacts:
+//            self.displayOption = .all
+//            collectionView.reloadData()
+//        }
+    }
+    
+
+
 extension FactCollectionViewController: UISearchResultsUpdating {
   func updateSearchResults(for searchController: UISearchController) {
     let searchBar = searchController.searchBar
@@ -293,8 +395,72 @@ class FactCell:UICollectionViewCell {
     @IBOutlet weak var factCellLabel: UILabel!
     @IBOutlet weak var factCellImageView: UIImageView!
     @IBOutlet weak var gradientView: UIView!
+    
+    override func awakeFromNib() {
+        factCellImageView.contentMode = .scaleAspectFill
+        
+        let gradient = CAGradientLayer()
+        gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
+        gradient.endPoint = CGPoint(x: 0.5, y: 0.6)
+        let whiteColor = UIColor.white
+        gradient.colors = [whiteColor.withAlphaComponent(0.0).cgColor, whiteColor.withAlphaComponent(0.5).cgColor, whiteColor.withAlphaComponent(0.7).cgColor]
+        gradient.locations = [0.0, 0.7, 1]
+        gradient.frame = gradientView.bounds
+        
+        gradientView.layer.mask = gradient
+        
+        layer.cornerRadius = 4
+        layer.masksToBounds = true
+    }
+    
+    override func prepareForReuse() {
+        factCellImageView.image = nil
+    }
+    
+    var fact: Fact? {
+        didSet {
+            if let fact = fact {
+                factCellLabel.text = fact.title
+                
+                if let url = URL(string: fact.imageURL) {
+                    factCellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "FactStamp"), options: [], completed: nil)
+                } else {
+                    factCellImageView.image = UIImage(named: "FactStamp")
+                }
+            }
+        }
+    }
 }
 
 class AddTopicCell: UICollectionViewCell {
     
+}
+
+protocol TopOfCollectionViewDelegate {
+    func sortFactsTapped(option: FactCollectionDisplayOption)
+}
+
+
+class FactCollectionHeader: UICollectionReusableView {
+    @IBOutlet weak var sortFactsButton: DesignableButton!
+    
+    var delegate: TopOfCollectionViewDelegate?
+    var displayOption: FactCollectionDisplayOption = .all
+    
+    @IBAction func sortFactsTapped(_ sender: Any) {
+                
+        switch self.displayOption {
+        case .all:
+            self.displayOption = .justTopics
+            sortFactsButton.setTitle("Nur Themen", for: .normal)
+        case .justTopics:
+            self.displayOption = .justFacts
+            sortFactsButton.setTitle("Nur Fakten", for: .normal)
+        case .justFacts:
+            self.displayOption = .all
+            sortFactsButton.setTitle("Alle", for: .normal)
+        }
+        
+        delegate?.sortFactsTapped(option: self.displayOption)
+    }
 }

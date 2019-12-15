@@ -14,14 +14,20 @@ import SDWebImage
 import Reachability
 import EasyTipView
 
-class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDelegate, DismissDelegate {
+
+class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDelegate, DismissDelegate, UNUserNotificationCenterDelegate {
+    
+    @IBOutlet weak var sortPostsButton: DesignableButton!
+    @IBOutlet weak var viewAboveTableView: UIView!
+    
+    
+
     
     let searchTableVC = SearchTableViewController()
     
     var searchController = UISearchController()
     var screenEdgeRecognizer: UIScreenEdgePanGestureRecognizer!
     
-//    private var invitationCount = 0
     var loggedIn = false    // For the barButtonItem
     
     var notificationListener: ListenerRegistration?
@@ -30,9 +36,16 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     var newMessages = 0
     var newComments = 0
     var notifications = [Comment]() // Maybe later also likes and stuff
+    var upvotes = [Comment]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if #available(iOS 13.0, *) {
+            self.view.backgroundColor = .secondarySystemBackground
+        } else {
+            self.view.backgroundColor = UIColor(red: 242.0, green: 242.0, blue: 247.0, alpha: 1.0)
+        }
         
         setUpSearchController()
         setUpEasyTipViewPreferences()
@@ -50,6 +63,17 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         
         getPosts(getMore: true)
         
+        if !self.isAppAlreadyLaunchedOnce() {
+            self.showIntroView()
+        }
+
+        if let viewControllers = self.tabBarController?.viewControllers {
+            if let navVC = viewControllers[2] as? UINavigationController {
+                if let newVC = navVC.topViewController as? NewPostViewController {
+                    newVC.delegate = self
+                }
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -59,7 +83,12 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         }
         
         self.navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.view.backgroundColor = .white
+//        self.navigationController?.view.backgroundColor = .white
+        if #available(iOS 13.0, *) {
+            self.navigationController?.view.backgroundColor = .secondarySystemBackground
+        } else {
+            self.navigationController?.view.backgroundColor = UIColor(red: 242.0, green: 242.0, blue: 247.0, alpha: 1.0)
+        }
         
         //        // Restore the searchController's active state.
         //        if restoredState.wasActive {
@@ -71,6 +100,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         //                restoredState.wasFirstResponder = false
         //            }
         //        } Aus dem apple tutorial für die suche
+    
     }
     
     
@@ -79,6 +109,9 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         SDImageCache.shared.clearMemory()
         
     }
+    
+    
+    
     
     // MARK: - Methods
     
@@ -91,7 +124,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         if isConnected() {
         
             self.view.activityStartAnimating()
-            postHelper.getPostsForMainFeed(getMore: getMore) { (posts,initialFetch)  in
+            postHelper.getPostsForMainFeed(getMore: getMore, sort: self.sortBy) { (posts,initialFetch)  in
                 
                 print("\(posts.count) neue dazu")
                 if initialFetch {   // Get the first batch of posts
@@ -145,13 +178,20 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     }
     
     
-    // After dismissal of the logInViewController
-    func loadUser() {
+    func loadUser() {   // After dismissal of the logInViewController
         print("Loaded")
+        self.setNotificationListener()
         self.checkForLoggedInUser()
+        self.setNotifications()
     }
     
     
+    
+    func setNotifications() {   // Ask for persmission to send Notifications
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            appDelegate.registerForPushNoticications(application: UIApplication.shared)
+        }
+    }
     
     func checkForLoggedInUser() {
         print("check")
@@ -190,8 +230,11 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                         if let snapshot = snap {
                             snapshot.documentChanges.forEach { (change) in
                                 let data = change.document.data()
+                                
+                                 
                                 if let type = data["type"] as? String {
                                     
+                                    print("Im notificationsListener: \(type)")
                                     switch change.type {
                                         
                                     case .added:
@@ -214,10 +257,29 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                                             self.newMessages = self.newMessages+1
                                         case "blogPost":
                                             self.newBlogPost = self.newBlogPost+1
+                                        case "upvote":
+                                            if let postID = data["postID"] as? String, let button = data["button"] as? String, let title = data["title"] as? String {
+                                                
+                                                if let upvote = self.upvotes.first(where: {$0.postID == postID}) {
+                                                    
+                                                    self.addUpvote(comment: upvote, buttonType: button)
+                                                } else {
+                                                    let comment = Comment()
+                            
+                                                    comment.postID =  postID
+                                                    comment.upvotes = Votes()
+                                                    comment.title = title
+                                                    
+                                                    self.upvotes.append(comment)
+                                                    
+                                                    self.addUpvote(comment: comment, buttonType: button)
+                                                    
+                                                    self.newComments = self.newComments+1
+                                                }
+                                            }
                                         default:
                                             print("Unknown Type")
                                         }
-                                        
                                     case .removed:
                                         print("Something got removed")
                                         switch type {
@@ -229,11 +291,21 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                                                 print("Delete notification out of array")
                                                 self.notifications = self.notifications.filter{$0.postID != postID}
                                             }
-                                        
                                         case "message":
                                             self.newMessages = self.newMessages-1
                                         case "blogPost":
                                             self.newBlogPost = self.newBlogPost-1
+                                        case "upvote":
+                                            if let postID = data["postID"] as? String {
+                                                print("Delete upvote out of array")
+                                                
+                                                let count = self.upvotes.count
+                                                self.upvotes = self.upvotes.filter{$0.postID != postID}
+                                                
+                                                if count != self.upvotes.count {
+                                                    self.newComments = self.newComments-1   
+                                                }
+                                            }
                                         default:
                                             print("Unknown Type")
                                         }
@@ -241,7 +313,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                                     default:
                                         print("These cant get modifier")
                                     }
-                                    
                                 }
                             }
                             self.setBarButtonProfileBadge(value: self.newComments+self.friendRequests)
@@ -254,8 +325,26 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         }
     }
     
+    func addUpvote(comment: Comment, buttonType: String) {
+        if let votes = comment.upvotes {
+
+            switch buttonType {
+            case "thanks":
+                votes.thanks = votes.thanks+1
+            case "wow":
+                votes.wow = votes.wow+1
+            case "ha":
+                votes.ha = votes.ha+1
+            case "nice":
+                votes.nice = votes.nice+1
+            default:
+                print("Something went wrong")
+            }
+        }
+    }
+    
     func setBarButtonProfileBadge(value: Int) {
-        if value != 0 {
+        if value >= 1 {
             self.smallNumberForInvitationRequest.text = String(value)
             self.smallNumberForInvitationRequest.isHidden = false
         } else {
@@ -264,7 +353,8 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     }
     
     func setBlogPostBadge(value: Int) {
-        if value != 0 {
+        print("Das sind die BlogPosts: \(value)")
+        if value >= 1 {
             self.smallNumberForImagineBlogButton.text = String(value)
             self.smallNumberForImagineBlogButton.isHidden = false
         } else {
@@ -358,6 +448,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                     userVC.userOfProfile = chosenUser
                     userVC.currentState = .otherUser
                 } else { // The CurrentUser
+                    userVC.delegate = self
                     userVC.currentState = .ownProfileWithEditing
                     print("Hier wird der currentstate eingestellt")
                 }
@@ -375,6 +466,27 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                 vc.delegate = self
             }
         }
+        if segue.identifier == "toFactSegue" {
+            if let fact = sender as? Fact {
+                if let navCon = segue.destination as? UINavigationController {
+                    if let factVC = navCon.topViewController as? FactParentContainerViewController {
+                        factVC.fact = fact
+                        factVC.needNavigationController = true
+                    }
+                }
+            }
+        }
+        
+        if segue.identifier == "goToPostsOfTopic" {
+            if let fact = sender as? Fact {
+                if let navCon = segue.destination as? UINavigationController {
+                    if let factVC = navCon.topViewController as? PostsOfFactTableViewController {
+                        factVC.fact = fact
+                        factVC.needNavigationController = true
+                    }
+                }
+            }
+        }
     }
     
     // MARK: - SearchBar
@@ -389,7 +501,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         searchController.obscuresBackgroundDuringPresentation = true
         searchController.searchBar.placeholder = "Durchsuche Imagine"
         searchController.delegate = self
-        searchController.dimsBackgroundDuringPresentation = false
         
         searchController.searchBar.scopeButtonTitles = ["Posts", "User"]
         searchController.searchBar.delegate = self
@@ -404,7 +515,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         self.navigationItem.hidesSearchBarWhenScrolling = true
         self.searchController.isActive = false
         definesPresentationContext = true
-    }
+     }
     
     @objc func searchBarTapped() {
         // Show search bar
@@ -455,6 +566,8 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         }
     }
     
+    
+    
     func createRightBarButtons() {
         // Set Blog and Search Button
         let imagineButton = DesignableButton(type: .custom)
@@ -480,7 +593,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         
         //create new Button for the profilePictureButton
         let button = DesignableButton(type: .custom)
-        button.frame = CGRect(x: 0, y: 0, width: 35, height: 35)
+        button.frame = CGRect(x: 0, y: 0, width: 35, height: 35)    // Apparently needed for the rounded corners
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         
@@ -495,9 +608,9 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             button.imageView?.contentMode = .scaleAspectFill
             button.layer.cornerRadius = button.frame.width/2
             button.addTarget(self, action: #selector(self.BarButtonItemTapped), for: .touchUpInside)
-            button.addTarget(self, action: #selector(self.BarButtonItemTapped), for: .touchUpInside)
             button.layer.borderWidth =  0.1
-            button.layer.borderColor = UIColor.black.cgColor
+            button.layer.borderColor = Constants.imagineColor.cgColor
+            
             
             if let url = user.photoURL{ // Set Photo
                 
@@ -525,21 +638,31 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             
             self.smallNumberForInvitationRequest.isHidden = true
             
-            button.widthAnchor.constraint(equalToConstant: 50).isActive = true
-            button.heightAnchor.constraint(equalToConstant: 35).isActive = true
-            button.layer.cornerRadius = 5
+//            button.widthAnchor.constraint(equalToConstant: 55).isActive = true
+//            button.heightAnchor.constraint(equalToConstant: 25).isActive = true
+            button.layer.cornerRadius = 4
             
             button.addTarget(self, action: #selector(self.logInButtonTapped), for: .touchUpInside)
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+            button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 15)
             button.setTitle("Log-In", for: .normal)
-            button.setTitleColor(.blue, for: .normal)
-            //                self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+            button.setTitleColor(Constants.imagineColor, for: .normal)
+//            button.layer.borderColor = Constants.imagineColor.cgColor
+//            button.layer.borderWidth = 1
             
             view.addSubview(button)
         }
         
         let barButton = UIBarButtonItem(customView: view)
-        self.navigationItem.leftBarButtonItem = barButton
+        
+        
+        let date = Date()
+        let month = date.month
+        if month == 11 || month == 12 {
+            print("Welchen Monat haben wir: \(month)")
+            self.createAdventskalenderButton(firstView: barButton)
+        } else {
+            self.navigationItem.leftBarButtonItem = barButton
+        }
     }
     
     
@@ -552,6 +675,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         label.textColor = UIColor.white
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 10)
+        label.isHidden = true
         
         return label
     }()
@@ -559,7 +683,9 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     
     @objc func BarButtonItemTapped() {
         sideMenu.showMenu()
-        sideMenu.checkNotifications(invitations: self.friendRequests, notifications: self.notifications)
+        
+        let notifications = self.notifications+self.upvotes
+        sideMenu.checkNotifications(invitations: self.friendRequests, notifications: notifications)
     }
     
     @objc func logInButtonTapped() {
@@ -617,6 +743,48 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         }
     }
     
+    //MARK: - TopView
+    
+    @IBAction func sortPostsTapped(_ sender: Any) {
+                
+        UIView.animate(withDuration: 0.2, animations: {
+            self.sortPostsButton.alpha = 0
+        }) { (_) in
+            self.increaseTopView()
+        }
+    }
+    
+    override func decreaseTopView() {
+        
+        guard let headerView = tableView.tableHeaderView else {
+          return
+        }
+        
+        let size = CGSize(width: self.view.frame.width, height: 30)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.sortingStackView.alpha = 0
+        }) { (_) in
+            self.sortingStackView.isHidden = true
+        }
+        
+        if headerView.frame.size.height != size.height {
+            headerView.frame.size.height = size.height
+        }
+        
+        self.tableView.tableHeaderView = headerView
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.view.layoutIfNeeded()
+        }) { (_) in
+            UIView.animate(withDuration: 0.1) {
+                self.sortPostsButton.alpha = 1
+            }
+        }
+        
+        
+    }
+    
     // MARK: - ImagineBlogButton
     
     lazy var newsMenu: NewsOverviewMenu = {
@@ -628,7 +796,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     @objc func imagineSignTapped() {
         
         let navigationBarHeight: CGFloat = self.navigationController!.navigationBar.frame.height
-        
         self.newsMenu.showView(navBarHeight: navigationBarHeight)
         
         handyHelper.deleteNotifications(type: .blogPost, id: "blogPost")
@@ -643,6 +810,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 10)
         label.text = String(1)
+        label.isHidden = true
         
         return label
     }()
@@ -679,13 +847,144 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             if let id = id{
                 let post = Post()
                 post.documentID = id
+                if let user = Auth.auth().currentUser {     //Only works if you get notifications for your own posts
+                    post.originalPosterUID = user.uid
+                }
+                performSegue(withIdentifier: "showPost", sender: post)
+            }
+        case .toComment:
+            if let id = id{
+                let post = Post()
+                post.documentID = id
                 post.toComments = true
+                if let user = Auth.auth().currentUser {
+                    post.originalPosterUID = user.uid
+                }
                 performSegue(withIdentifier: "showPost", sender: post)
             }
         default:
             print("nothing happens")
         }
         
+    }
+    
+    //MARK: - FirstTimeOpenedAppScreen
+    
+    let blackView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(white: 0, alpha: 0.5)
+//        view.alpha = 0
+        
+        return view
+    }()
+    
+    let introView: UIView = {
+       let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 20
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
+        view.layer.borderColor = Constants.imagineColor.cgColor
+        view.layer.borderWidth = 5
+        
+        return view
+    }()
+    
+    let introLabel: UILabel = {
+       let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans", size: 24)
+        if #available(iOS 13.0, *) {
+            label.textColor = .label
+        } else {
+            label.textColor = .black
+        }
+        label.text = Constants.texts.introText
+        label.numberOfLines = 0
+        label.minimumScaleFactor = 0.5
+        
+        return label
+    }()
+    
+    let introButton: DesignableButton = {
+       let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("🙏", for: .normal)
+        button.layer.borderColor = Constants.imagineColor.cgColor
+        button.layer.borderWidth = 2
+        button.layer.cornerRadius = 4
+        
+        return button
+    }()
+    
+    @objc func dismissIntroView() {
+        blackView.removeFromSuperview()
+        introView.removeFromSuperview()
+    }
+    
+    func showIntroView() {
+        if let window = UIApplication.shared.keyWindow {
+        
+            window.addSubview(blackView)
+            blackView.frame = window.frame
+            
+            introView.addSubview(introLabel)
+            
+            introView.addSubview(introButton)
+            introButton.centerXAnchor.constraint(equalTo: introView.centerXAnchor).isActive = true
+            introButton.bottomAnchor.constraint(equalTo: introView.bottomAnchor, constant: -10).isActive = true
+            introButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+            introButton.widthAnchor.constraint(equalToConstant: 60).isActive = true
+            
+            introLabel.leadingAnchor.constraint(equalTo: introView.leadingAnchor, constant: 10).isActive = true
+            introLabel.trailingAnchor.constraint(equalTo: introView.trailingAnchor, constant: -10).isActive = true
+            introLabel.topAnchor.constraint(equalTo: introView.topAnchor, constant: 10).isActive = true
+            introLabel.bottomAnchor.constraint(equalTo: introButton.topAnchor, constant: -30).isActive = true
+                        
+            window.addSubview(introView)
+            introView.leadingAnchor.constraint(equalTo: window.leadingAnchor, constant: 20).isActive = true
+            introView.trailingAnchor.constraint(equalTo: window.trailingAnchor, constant: -20).isActive = true
+//            introView.topAnchor.constraint(equalTo: window.topAnchor, constant: 50).isActive = true
+            introView.bottomAnchor.constraint(equalTo: window.bottomAnchor, constant: -50).isActive = true
+            
+            introButton.addTarget(self, action: #selector(dismissIntroView), for: .touchUpInside)
+        }
+    }
+    
+    func isAppAlreadyLaunchedOnce() -> Bool {
+        let defaults = UserDefaults.standard
+        if let _ = defaults.string(forKey: "isAppAlreadyLaunchedOnce"){
+            return true
+        } else {
+            defaults.set(true, forKey: "isAppAlreadyLaunchedOnce")
+            print("App launched first time")
+            return false
+        }
+    }
+    
+    //MARK:- Adventskalender
+    func createAdventskalenderButton(firstView: UIBarButtonItem) {
+        let adventButton = DesignableButton(type: .custom)
+        adventButton.setImage(UIImage(named: "xmasBeer"), for: .normal)
+        adventButton.imageView?.contentMode = .scaleAspectFit
+        adventButton.backgroundColor = .white
+        adventButton.addTarget(self, action: #selector(self.adventButtonTapped), for: .touchUpInside)
+        adventButton.frame = CGRect(x: 0, y: 0, width: 35, height: 35)
+        adventButton.widthAnchor.constraint(equalToConstant: 35).isActive = true
+        adventButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        adventButton.cornerRadius = adventButton.frame.height/2
+        adventButton.clipsToBounds = true
+        
+        let adventBarButton = UIBarButtonItem(customView: adventButton)
+        self.navigationItem.leftBarButtonItems = [firstView, adventBarButton]
+    }
+    
+    @objc func adventButtonTapped() {
+        performSegue(withIdentifier: "toAdventskalender", sender: nil)
     }
 }
 
@@ -859,11 +1158,13 @@ extension FeedTableViewController: UISearchResultsUpdating {
             let user = User()
             if let docData = document.data() {
                 
-                if let name = docData["name"] as? String, let surname = docData["surname"] as? String, let imageURL = docData["profilePictureURL"] as? String {
+                if let name = docData["name"] as? String, let surname = docData["surname"] as? String {
                     user.name = name
                     user.surname = surname
                     user.userUID = document.documentID
-                    user.imageURL = imageURL
+                    if let imageURL = docData["profilePictureURL"] as? String {
+                        user.imageURL = imageURL
+                    }
                     if let status = docData["statusText"] as? String {
                         user.statusQuote = status
                     }
@@ -904,9 +1205,21 @@ extension FeedTableViewController: UISearchResultsUpdating {
             }
         }
     }
+}
 
-
-    
+extension FeedTableViewController: LogOutDelegate {
+    func deleteListener() {     // Triggered when the User logges themselve out. Otherwise they would get notified after they logged themself in and a new user could not get a new notificationListener
+        self.notificationListener?.remove()
+        self.notificationListener = nil
+        
+        self.newComments = 0
+        self.friendRequests = 0
+        self.newBlogPost = 0
+        self.newMessages = 0
+        self.notifications.removeAll()
+        
+        print("listener removed")
+    }
 }
 
  // MARK: - UISearchBar Delegate
@@ -917,5 +1230,11 @@ extension FeedTableViewController: UISearchBarDelegate {
         if let text = searchBar.text {
             searchTheDatabase(searchText: text, searchScope: selectedScope)
         }
+    }
+}
+
+extension FeedTableViewController: JustPostedDelegate {
+    func posted() {
+        self.getPosts(getMore: false)
     }
 }

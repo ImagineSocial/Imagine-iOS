@@ -25,9 +25,7 @@ class ArgumentTableViewController: UITableViewController {
 
         getArguments()
         tableView.layer.cornerRadius = 1
-        tableView.separatorStyle = .none
-        tableView.backgroundColor = Constants.backgroundColorForTableViews
-        
+        tableView.separatorStyle = .none        
         tableView.register(UINib(nibName: "ArgumentCell", bundle: nil), forCellReuseIdentifier: identifier)
         tableView.register(AddFactCell.self, forCellReuseIdentifier: reuseIdentifier)
         

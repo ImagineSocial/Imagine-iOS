@@ -24,7 +24,7 @@ class SupportTheCommunityCell: UITableViewCell {
         // add corner radius on `contentView`
         contentView.layer.cornerRadius = 5
         contentView.clipsToBounds = true
-        backgroundColor =  Constants.backgroundColorForTableViews
+        backgroundColor =  .clear        
     }
     
     override func layoutSubviews() {

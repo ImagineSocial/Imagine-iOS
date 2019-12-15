@@ -17,6 +17,7 @@ enum SideMenuButton {
     case toUser
     case toEULA
     case toPost
+    case toComment
     case cancel
 }
 
@@ -59,6 +60,35 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         
         notificationTableView.delegate = self
         notificationTableView.dataSource = self
+        
+        if let window = UIApplication.shared.keyWindow {
+        
+        window.addSubview(blackView)
+        blackView.frame = window.frame
+        blackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(sideMenuDismissed)))
+        
+        
+        window.addSubview(sideMenuView)
+        sideMenuView.addSubview(profileButton)
+        sideMenuView.addSubview(profilePictureImageView)
+        sideMenuView.addSubview(nameLabel)
+        sideMenuView.addSubview(smallNumberLabel)
+        sideMenuView.addSubview(disclaimerView)
+        sideMenuView.addSubview(notificationTableView)
+        
+        addConstraints()
+        
+        let y = window.frame.height
+        let sideMenuWidth : CGFloat = 260
+        sideMenuView.frame = CGRect(x: -window.frame.width, y: 0, width: sideMenuWidth, height: y)
+        
+        let slideLeft = UISwipeGestureRecognizer(target: self, action: #selector(sideMenuDismissed))
+        slideLeft.direction = .left
+        window.addGestureRecognizer(slideLeft)
+        
+        
+        sideMenuView.layoutIfNeeded()
+        }
     }
     
     
@@ -110,33 +140,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     
     func showMenu() {
         //show menu
-        if let window = UIApplication.shared.keyWindow {
-            
-            window.addSubview(blackView)
-            blackView.frame = window.frame
-            blackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(sideMenuDismissed)))
-            
-            
-            window.addSubview(sideMenuView)
-            sideMenuView.addSubview(profileButton)
-            sideMenuView.addSubview(profilePictureImageView)
-            sideMenuView.addSubview(nameLabel)
-            sideMenuView.addSubview(smallNumberLabel)
-            sideMenuView.addSubview(disclaimerView)
-            sideMenuView.addSubview(notificationTableView)
-            
-            addConstraints()
-            
-            let y = window.frame.height
-            let sideMenuWidth : CGFloat = 260
-            sideMenuView.frame = CGRect(x: -window.frame.width, y: 0, width: sideMenuWidth, height: y)
-            
-            let slideLeft = UISwipeGestureRecognizer(target: self, action: #selector(sideMenuDismissed))
-            slideLeft.direction = .left
-            window.addGestureRecognizer(slideLeft)
-            
-            
-            sideMenuView.layoutIfNeeded()
+        
             
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 
@@ -147,7 +151,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
                 
                 self.sideMenuView.layoutSubviews()
             })
-        }
+//        }
     }
     
     func handleDismiss(sideMenuButton: SideMenuButton, id: String?) {    // Not just dismiss but also the presented options
@@ -179,8 +183,8 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         
         profileButton.leadingAnchor.constraint(equalTo: profilePictureImageView.leadingAnchor).isActive = true
         profileButton.topAnchor.constraint(equalTo: profilePictureImageView.topAnchor).isActive = true
-        profileButton.widthAnchor.constraint(equalTo: profilePictureImageView.widthAnchor).isActive = true
-        profileButton.heightAnchor.constraint(equalTo: profilePictureImageView.heightAnchor).isActive = true
+        profileButton.trailingAnchor.constraint(equalTo: profilePictureImageView.trailingAnchor).isActive = true
+        profileButton.bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor).isActive = true
         
         nameLabel.topAnchor.constraint(equalTo: profilePictureImageView.bottomAnchor, constant: 15).isActive = true
         nameLabel.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor).isActive = true
@@ -253,8 +257,10 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         if let user = Auth.auth().currentUser {
             if let url = user.photoURL {
                 profilePictureImageView.sd_setImage(with: url, completed: nil)
-                nameLabel.text = user.displayName
+            } else {
+                profilePictureImageView.image = UIImage(named: "default-user")
             }
+            nameLabel.text = user.displayName
             profilePictureImageView.layer.cornerRadius = profilePictureImageView.frame.height/2
             profilePictureImageView.layoutIfNeeded()
         }
@@ -286,6 +292,8 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
+        label.textColor = Constants.imagineColor
+        
         return label
     }()
     
@@ -294,11 +302,12 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.setTitle("Freunde", for: .normal)
         btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-        if #available(iOS 13.0, *) {
-            btn.setTitleColor(.label, for: .normal)
-        } else {
-            btn.setTitleColor(.black, for: .normal)
-        }
+//        if #available(iOS 13.0, *) {
+//            btn.setTitleColor(.label, for: .normal)
+//        } else {
+//            btn.setTitleColor(.black, for: .normal)
+//        }
+        btn.setTitleColor(Constants.imagineColor, for: .normal)
         return btn
     }()
     
@@ -369,13 +378,14 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     let savedButton: DesignableButton = {
         let btn = DesignableButton()
         btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.setTitle("Saved", for: .normal)
+        btn.setTitle("Gesichert", for: .normal)
         btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-        if #available(iOS 13.0, *) {
-            btn.setTitleColor(.label, for: .normal)
-        } else {
-            btn.setTitleColor(.black, for: .normal)
-        }
+//        if #available(iOS 13.0, *) {
+//            btn.setTitleColor(.label, for: .normal)
+//        } else {
+//            btn.setTitleColor(.black, for: .normal)
+//        }
+        btn.setTitleColor(Constants.imagineColor, for: .normal)
         return btn
     }()
     
@@ -427,11 +437,12 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Nutzungsbedingungen", for: .normal)
-        if #available(iOS 13.0, *) {
-            button.setTitleColor(.label, for: .normal)
-        } else {
-            button.setTitleColor(.black, for: .normal)
-        }
+//        if #available(iOS 13.0, *) {
+//            button.setTitleColor(.label, for: .normal)
+//        } else {
+//            button.setTitleColor(.black, for: .normal)
+//        }
+        button.setTitleColor(Constants.imagineColor, for: .normal)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 12)
         button.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
         
@@ -443,6 +454,11 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         logo.translatesAutoresizingMaskIntoConstraints = false
         logo.image = UIImage(named: "settings")
         logo.contentMode = .center
+        if #available(iOS 13.0, *) {
+            logo.tintColor = .label
+        } else {
+            logo.tintColor = .black
+        }
         
         return logo
     }()
@@ -468,12 +484,20 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
         return 60
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let comment = notifications[indexPath.row]
-        self.handleDismiss(sideMenuButton: .toPost, id: comment.postID)
+        
+        if let _ = comment.upvotes {
+            // Vote notification
+            self.handleDismiss(sideMenuButton: .toPost, id: comment.postID)
+        } else {
+            // Comment Notification
+            self.handleDismiss(sideMenuButton: .toComment, id: comment.postID)
+        }
     }
     
     let notificationTableView: UITableView = {
@@ -482,57 +506,20 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         tableView.layer.cornerRadius = 4
         tableView.layer.masksToBounds = true
         tableView.separatorStyle = .none
-//        tableView.layer.borderColor = Constants.imagineColor.cgColor
-//        tableView.layer.borderWidth = 2
         
         return tableView
     }()
     
 }
 
-class NotificationCell: UITableViewCell {
-    @IBOutlet weak var headerLabel: UILabel!
-    @IBOutlet weak var mainTextLabel: UILabel!
-    @IBOutlet weak var messageLabel: UILabel!
-    
-    override func awakeFromNib() {
-        // add corner radius on `contentView`
-//        contentView.backgroundColor = Constants.imagineColor
-        contentView.layer.cornerRadius = 8
-        contentView.layer.borderWidth = 1
-        contentView.layer.borderColor = Constants.imagineColor.cgColor
-        
-        messageLabel.layer.cornerRadius = messageLabel.frame.height/2
-        messageLabel.layer.masksToBounds = true
-        
-        layer.masksToBounds = true
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        //set the values for top,left,bottom,right margins
-        let margins = UIEdgeInsets(top: 5, left: 0, bottom: 5, right: 0)
-        contentView.frame = contentView.frame.inset(by: margins)
-    }
-    
-    var comment:Comment? {
-        didSet {
-            if let comment = comment {
-                
-                headerLabel.text = "\(comment.author) hat kommentiert:"
-                mainTextLabel.text = "\(comment.text)".quoted
-            }
-        }
-    }
-    
-}
-
 class Comment {
+    var title = ""
     var text = ""
     var createTimeString = ""
     var createTime = Date()
     var author = ""
     var postID = ""
+    var upvotes: Votes?
 }
 
 

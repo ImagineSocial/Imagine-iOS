@@ -83,6 +83,19 @@ class MeldeAgreeViewController: UIViewController {
     func saveReport() {
         let ref = db.collection("Reports").document()
         if let user = Auth.auth().currentUser {
+            
+            let notificationRef = db.collection("Users").document("CZOcL3VIwMemWwEfutKXGAfdlLy1").collection("notifications").document()
+            let notificationData: [String: Any] = ["type": "message", "message": "Jemand hat eine Sache markiert oder gemeldet", "name": "Meldung", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "messageID": user.uid]
+            
+            
+            notificationRef.setData(notificationData) { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    print("Successfully set notification")
+                }
+            }
+            
             let data: [String:Any] = ["category": reportCategory, "reason": choosenReportOption, "reportingUser": user.uid, "reported post":post.documentID]
             
             ref.setData(data) { (err) in

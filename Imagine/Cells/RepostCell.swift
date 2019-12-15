@@ -38,16 +38,28 @@ class RePostCell : BaseFeedCell {
         haButton.setImage(nil, for: .normal)
         niceButton.setImage(nil, for: .normal)
         
+        thanksButton.imageView?.contentMode = .scaleAspectFit
+        wowButton.imageView?.contentMode = .scaleAspectFit
+        haButton.imageView?.contentMode = .scaleAspectFit
+        niceButton.imageView?.contentMode = .scaleAspectFit
+        
         buttonLabel.textColor = .black
         
-        thanksButton.layer.borderWidth = 1.5
-        thanksButton.layer.borderColor = thanksColor.cgColor
-        wowButton.layer.borderWidth = 1.5
-        wowButton.layer.borderColor = wowColor.cgColor
-        haButton.layer.borderWidth = 1.5
-        haButton.layer.borderColor = haColor.cgColor
-        niceButton.layer.borderWidth = 1.5
-        niceButton.layer.borderColor = niceColor.cgColor
+        if #available(iOS 13.0, *) {
+            thanksButton.layer.borderColor = UIColor.label.cgColor
+            wowButton.layer.borderColor = UIColor.label.cgColor
+            haButton.layer.borderColor = UIColor.label.cgColor
+            niceButton.layer.borderColor = UIColor.label.cgColor
+        } else {
+            thanksButton.layer.borderColor = UIColor.black.cgColor
+            wowButton.layer.borderColor = UIColor.black.cgColor
+            haButton.layer.borderColor = UIColor.black.cgColor
+            niceButton.layer.borderColor = UIColor.black.cgColor
+        }
+        thanksButton.layer.borderWidth = 0.5
+        wowButton.layer.borderWidth = 0.5
+        haButton.layer.borderWidth = 0.5
+        niceButton.layer.borderWidth = 0.5
         
         //Profile Picture
         let repostLayer = reposterProfilePictureImageView.layer
@@ -63,7 +75,9 @@ class RePostCell : BaseFeedCell {
         
         // add corner radius on `contentView`
         contentView.layer.cornerRadius = 8
-        backgroundColor =  Constants.backgroundColorForTableViews
+        backgroundColor = .clear
+//        contentView.backgroundColor = Constants.imagineColor
+        cellImageView.layer.cornerRadius = 8
     }
     
     override func prepareForReuse() {
@@ -101,10 +115,10 @@ class RePostCell : BaseFeedCell {
                     setOwnCell()
                 }
             } else {
-                thanksButton.setImage(UIImage(named: "thanks"), for: .normal)
-                wowButton.setImage(UIImage(named: "wow"), for: .normal)
-                haButton.setImage(UIImage(named: "ha"), for: .normal)
-                niceButton.setImage(UIImage(named: "nice"), for: .normal)
+                thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
+                wowButton.setImage(UIImage(named: "wowButton"), for: .normal)
+                haButton.setImage(UIImage(named: "haButton"), for: .normal)
+                niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
             }
             
             if post.user.name == "" {

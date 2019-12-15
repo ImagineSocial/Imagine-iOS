@@ -87,7 +87,7 @@ class NewBlogPostViewController: UIViewController {
     }
     
     func setNotification(documentID: String) {
-        let ref = db.collection("Users").document(documentID).collection("notification").document()
+        let ref = db.collection("Users").document(documentID).collection("notifications").document()
 
         let data:[String:Any] = ["type": "blogPost"]
         ref.setData(data) { (err) in
@@ -97,6 +97,9 @@ class NewBlogPostViewController: UIViewController {
                 print("set Notification")
             }
         }
+    }
+    @IBAction func dismissTapped(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
     }
     
 }

@@ -30,7 +30,7 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
     func setUpView() {
         if let source = source {
             
-            let length = source.title.count
+            let length = source.title.count+1
             
             let attributedString = NSMutableAttributedString(string: "Gehe zur Quelle: \(source.title)")
             attributedString.addAttribute(.link, value: source.source, range: NSRange(location: 16, length: length))

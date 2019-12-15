@@ -12,6 +12,8 @@ target 'Imagine' do
  pod 'Firebase/Storage'
  pod 'Firebase/Auth'
  pod 'Firebase/Messaging'
+ pod 'Firebase/Performance'
+ pod 'Firebase/Analytics'
  pod 'SDWebImage'
  pod 'SwiftLinkPreview'
  pod 'MessengerKit', :git => 'https://github.com/steve228uk/MessengerKit.git'
@@ -19,5 +21,7 @@ target 'Imagine' do
  pod 'YoutubePlayer-in-WKWebView'
  pod 'ReachabilitySwift'
  pod 'EasyTipView'
+ pod 'Fabric', '~> 1.10.2'
+ pod 'Crashlytics', '~> 3.14.0'
  
 end

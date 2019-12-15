@@ -53,35 +53,37 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                 
                 if error != nil {
                     print("We have an error when we fetch the friends: ", error?.localizedDescription ?? "No error")
-                }
-                
-                for document in snapshot!.documents {
+                } else {
                     
-                    let documentID = document.documentID
-                    let documentData = document.data()
-                    
-                    guard let requestedAt = documentData["requestedAt"] as? Timestamp,
-                        let accepted = documentData["accepted"] as? Bool
-                        else {
-                            return
+                    for document in snapshot!.documents {
+                        
+                        let documentID = document.documentID
+                        let documentData = document.data()
+                        
+                        guard let requestedAt = documentData["requestedAt"] as? Timestamp,
+                            let accepted = documentData["accepted"] as? Bool
+                            else {
+                                return
+                        }
+                        let friend = Friend()
+                        
+                        friend.user.userUID = documentID
+                        friend.accepted = accepted
+                        friend.requestedAt = HandyHelper().getStringDate(timestamp: requestedAt)
+                        
+                        if accepted {
+                            self.alreadyFriends.append(friend)
+                        } else {
+                            // not accepted
+                            self.requestedFriends.append(friend)
+                        }
                     }
-                    let friend = Friend()
                     
-                    friend.user.userUID = documentID
-                    friend.accepted = accepted
-                    friend.requestedAt = HandyHelper().getStringDate(timestamp: requestedAt)
                     
-                    if accepted {
-                        self.alreadyFriends.append(friend)
-                    } else {
-                        // not accepted
-                        self.requestedFriends.append(friend)
-                    }
+                    self.sections = [Category(name: "Freundschaftsanfragen", friends: self.requestedFriends),
+                                     Category(name: "Freunde", friends: self.alreadyFriends)]
+                    self.loadUsers()
                 }
-                
-                self.sections = [Category(name: "Freundschaftsanfragen", friends: self.requestedFriends),
-                                 Category(name: "Freunde", friends: self.alreadyFriends)]
-                self.loadUsers()
             }
         } else {
             self.view.activityStopAnimating()
@@ -340,6 +342,12 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                         chat.participant = user
                         chat.documentID = newDocumentID
                         
+                        newChatRef.setData(["participants": [user.userUID,currentUser.uid]]) { (err) in
+                            if let error = err {
+                                print("We have an error: \(error.localizedDescription)")
+                            }
+                        }
+                        
                         // Create Chat Reference for the current User
                         let dataForCurrentUsersDatabase = ["participant": chat.participant.userUID]
                         let currentUsersDatabaseRef = self.db.collection("Users").document(currentUser.uid).collection("chats").document(newDocumentID)
@@ -363,7 +371,6 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                         self.performSegue(withIdentifier: "toNewMessage", sender: chat)
                         
                     } else {    // Go to the existing chat
-                        print("hier auch")
                         if let document = querySnapshot?.documents.last {
                             
                             let chat = Chat()

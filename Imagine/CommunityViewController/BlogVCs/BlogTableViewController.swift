@@ -18,6 +18,7 @@ class BlogTableViewController: UITableViewController {
 
         getData()
         self.view.activityStartAnimating()
+        tableView.separatorStyle = .none
     }
     
     func getData() {

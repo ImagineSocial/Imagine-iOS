@@ -23,7 +23,7 @@ class VoteCell: UITableViewCell {
         
         // add corner radius on `contentView`
         contentView.layer.cornerRadius = 5
-        backgroundColor =  Constants.backgroundColorForTableViews
+        backgroundColor =  .clear
     }
     
     override func layoutSubviews() {

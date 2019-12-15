@@ -14,6 +14,7 @@ class BlogPostViewController: UIViewController {
     var info: Info?
     
     @IBOutlet weak var headerLabel: UILabel!
+    @IBOutlet weak var subHeaderLabel: UILabel!
     @IBOutlet weak var blogImageView: UIImageView!
     @IBOutlet weak var bodyTextView: UITextView!
     @IBOutlet weak var imageViewHeightConstraint: NSLayoutConstraint!
@@ -28,9 +29,13 @@ class BlogPostViewController: UIViewController {
     func setPost() {
         if let post = blogPost {
             headerLabel.text = post.title
-//            bodyTextView.text = post.description
+            subHeaderLabel.text = post.subtitle
+            bodyTextView.text = post.description
+            
             if let url = URL(string: post.imageURL) {
                 blogImageView.sd_setImage(with: url, completed: nil)
+            } else {
+                //Just the Imagine Sign
             }
             
         } else {

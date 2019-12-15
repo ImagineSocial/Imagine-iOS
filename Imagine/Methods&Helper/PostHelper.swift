@@ -32,11 +32,15 @@ class PostHelper {
     var lastEventSnap: QueryDocumentSnapshot?
     var lastSavedPostsSnap: QueryDocumentSnapshot?
     
+    let factJSONString = "linkedFactID"
+    
     /* These two variables are here to make sure that we just fetch as many as there are documents and dont start at the beginning again  */
     var morePostsToFetch = true
     var alreadyFetchedCount = 0
     
-    func getPostsForMainFeed(getMore:Bool, returnPosts: @escaping ([Post], _ InitialFetch:Bool) -> Void) {
+    
+    //MARK: - Main Feed
+    func getPostsForMainFeed(getMore:Bool,sort: PostSortOptions, returnPosts: @escaping ([Post], _ InitialFetch:Bool) -> Void) {
         
         posts.removeAll()
         
@@ -44,9 +48,31 @@ class PostHelper {
         settings.areTimestampsInSnapshotsEnabled = true
         db.settings = settings
         
+        var orderBy = "createTime"
+        var descending = true
         
+        switch sort {
+        case .dateIncreasing:
+            orderBy = "createTime"
+            descending = false
+        case .thanksCount:
+            orderBy = "thanksCount"
+            descending = true
+        case .wowCount:
+            orderBy = "wowCount"
+            descending = true
+        case .haCount:
+            orderBy = "haCount"
+            descending = true
+        case .niceCount:
+            orderBy = "niceCount"
+            descending = true
+        default:
+            orderBy = "createTime"
+            descending = true
+        }
         
-        var postRef = db.collection("Posts").order(by: "createTime", descending: true).limit(to: 20)
+        var postRef = db.collection("Posts").order(by: orderBy, descending: descending).limit(to: 20)
         
         if getMore {    // If you want to get More Posts
             if let lastSnap = lastSnap {        // For the next loading batch of 20, that will start after this snapshot
@@ -71,8 +97,8 @@ class PostHelper {
     }
     
     
-    
-    func getTheSavedPosts(getMore: Bool, whichPostList: PostList, userUID : String, returnPosts: @escaping ([Post]?, _ InitialFetch:Bool) -> Void) {
+    //MARK: - Saved and UserPosts
+    func getPostList(getMore: Bool, whichPostList: PostList, userUID : String, returnPosts: @escaping ([Post]?, _ InitialFetch:Bool) -> Void) {
         
         // check if there are more posts to fetch
         if morePostsToFetch {
@@ -109,61 +135,95 @@ class PostHelper {
                 }
                 
                 
-                userPostRef.getDocuments { (querySnapshot, error) in
-                    if error != nil {
-                        print("Wir haben einen Error bei den Userposts: \(error?.localizedDescription ?? "No error")")
-                    }
-                    
-                    if querySnapshot!.documents.count == 0 {    // Hasnt posted or saved anything yet
-                        let post = Post()
-                        post.type = .nothingPostedYet
-                        returnPosts([post], self.initialFetch)
-                    }
-                    
-                    let fetchedDocsCount = querySnapshot!.documents.count
-                    self.alreadyFetchedCount = self.alreadyFetchedCount+fetchedDocsCount
-                    
-                    let fullCollectionRef = self.db.collection("Users").document(userUID).collection(ref)
-                    self.checkHowManyDocumentsThereAre(ref: fullCollectionRef)
-                    
-                    self.lastSavedPostsSnap = querySnapshot?.documents.last // For the next batch
-                    
-                    switch whichPostList {
-                    case .postsFromUser:
-                        for document in querySnapshot!.documents {
-                            let documentID = document.documentID
-                            
-                            documentIDsOfPosts.append(documentID)
+                userPostRef.getDocuments { (querySnapshot, err) in
+                    if let error = err {
+                        print("Wir haben einen Error bei den Userposts: \(error.localizedDescription)")
+                    } else {
+                        
+                        if querySnapshot!.documents.count == 0 {    // Hasnt posted or saved anything yet
+                            let post = Post()
+                            post.type = .nothingPostedYet
+                            returnPosts([post], self.initialFetch)
                         }
                         
-                        self.getPostsFromDocumentIDs(documentIDs: documentIDsOfPosts, done: { (_) in
-                            // Needs to be sorted because the posts are fetched without the date that they were added
-                            self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
-                            returnPosts(self.posts, self.initialFetch)
-                        })
-                    case .savedPosts:
-                        for document in querySnapshot!.documents {
-                            let docData = document.data()
-                            
-                            if let documentID = docData["documentID"] as? String {
-                                print("DocID: ", documentID)
+                        let fetchedDocsCount = querySnapshot!.documents.count
+                        self.alreadyFetchedCount = self.alreadyFetchedCount+fetchedDocsCount
+                        
+                        let fullCollectionRef = self.db.collection("Users").document(userUID).collection(ref)
+                        self.checkHowManyDocumentsThereAre(ref: fullCollectionRef)
+                        
+                        self.lastSavedPostsSnap = querySnapshot?.documents.last // For the next batch
+                        
+                        switch whichPostList {
+                        case .postsFromUser:
+                            for document in querySnapshot!.documents {
+                                let documentID = document.documentID
+                                
                                 documentIDsOfPosts.append(documentID)
                             }
+                            
+                            self.getPostsFromDocumentIDs(documentIDs: documentIDsOfPosts, done: { (_) in
+                                // Needs to be sorted because the posts are fetched without the date that they were added
+                                self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                                returnPosts(self.posts, self.initialFetch)
+                            })
+                        case .savedPosts:
+                            for document in querySnapshot!.documents {
+                                let docData = document.data()
+                                
+                                if let documentID = docData["documentID"] as? String {
+                                    print("DocID: ", documentID)
+                                    documentIDsOfPosts.append(documentID)
+                                }
+                            }
+                            
+                            
+                            
+                            self.getPostsFromDocumentIDs(documentIDs: documentIDsOfPosts, done: { (_) in
+                                // Needs to be sorted because the posts are fetched without the date that they were added
+                                self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                                returnPosts(self.posts, self.initialFetch)
+                            })
                         }
-                        
-                        
-                        
-                        self.getPostsFromDocumentIDs(documentIDs: documentIDsOfPosts, done: { (_) in
-                            // Needs to be sorted because the posts are fetched without the date that they were added
-                            self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
-                            returnPosts(self.posts, self.initialFetch)
-                        })
                     }
                 }
             }
         } else {    // No more Posts to fetch = End of list
             print("We already have all posts fetched")
             returnPosts(nil, self.initialFetch)
+        }
+    }
+    
+    func getPostsForFact(factID: String, posts: @escaping ([Post]) -> Void) {
+        
+        let ref = db.collection("Facts").document(factID).collection("posts")
+        
+        var documentIDsOfPosts = [String]()
+        
+        ref.getDocuments { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if snap!.documents.count == 0 {    // Hasnt posted or saved anything yet
+                    let post = Post()
+                    post.type = .nothingPostedYet
+                    posts([post])
+                } else {
+                    
+                 for document in snap!.documents {
+                     let documentID = document.documentID
+                     
+                     documentIDsOfPosts.append(documentID)
+                 }
+                 
+                 self.getPostsFromDocumentIDs(documentIDs: documentIDsOfPosts, done: { (_) in
+                     // Needs to be sorted because the posts are fetched without the date that they were added
+                     self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                     posts(self.posts)
+                 })
+                    
+                }
+            }
         }
     }
     
@@ -184,6 +244,7 @@ class PostHelper {
         
     }
     
+    // MARK: Get Posts from DocumentIDs
     func getPostsFromDocumentIDs(documentIDs: [String], done: @escaping ([Post]?) -> Void) {
         print("Get posts")
         let endIndex = documentIDs.count
@@ -200,7 +261,6 @@ class PostHelper {
                         
                         startIndex = startIndex+1
                         
-//                        print("StartIndex: \(startIndex) | EndIndex: \(endIndex)")
                         if startIndex == endIndex {
                             self.getCommentCount(completion: {
                               done(self.posts)
@@ -214,7 +274,7 @@ class PostHelper {
     
     
     
-    
+    //MARK: -add Post
     func addThePost(document: DocumentSnapshot) {
         
         let documentID = document.documentID
@@ -263,6 +323,13 @@ class PostHelper {
                         post.report = report
                     }
                     
+                    if let factID = documentData[factJSONString] as? String {
+                        let fact = Fact(addMoreDataCell: false)
+                        fact.documentID = factID
+                        
+                        post.fact = fact
+                    }
+                    
                     if originalPoster == "anonym" {
                         post.anonym = true
                     } else {
@@ -302,6 +369,13 @@ class PostHelper {
                         post.report = report
                     }
                     
+                    if let factID = documentData[factJSONString] as? String {
+                        let fact = Fact(addMoreDataCell: false)
+                        fact.documentID = factID
+                        
+                        post.fact = fact
+                    }
+                    
                     if originalPoster == "anonym" {
                         post.anonym = true
                         print("Set Post as anonym")
@@ -331,6 +405,13 @@ class PostHelper {
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
+                    }
+                    
+                    if let factID = documentData[factJSONString] as? String {
+                        let fact = Fact(addMoreDataCell: false)
+                        fact.documentID = factID
+                        
+                        post.fact = fact
                     }
                     
                     if originalPoster == "anonym" {
@@ -367,6 +448,13 @@ class PostHelper {
                         post.report = report
                     }
                     
+                    if let factID = documentData[factJSONString] as? String {
+                        let fact = Fact(addMoreDataCell: false)
+                        fact.documentID = factID
+                        
+                        post.fact = fact
+                    }
+                    
                     if originalPoster == "anonym" {
                         post.anonym = true
                     } else {
@@ -399,6 +487,13 @@ class PostHelper {
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
+                    }
+                    
+                    if let factID = documentData[factJSONString] as? String {
+                        let fact = Fact(addMoreDataCell: false)
+                        fact.documentID = factID
+                        
+                        post.fact = fact
                     }
                     
                     if originalPoster == "anonym" {
@@ -602,13 +697,6 @@ class PostHelper {
     }
 }
 
-
-class Votes {
-    var thanks = 0
-    var wow = 0
-    var ha = 0
-    var nice = 0
-}
 
 class ReportOptions {
     // Optical change

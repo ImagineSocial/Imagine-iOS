@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         Messaging.messaging().delegate = self
         FirebaseApp.configure()
         
-        // CHange Color of navigationItem and Barbutton
+        // Change Color of navigationItem and Barbutton
         UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: Constants.imagineColor, NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 18)], for: .normal)
         UINavigationBar.appearance().tintColor = Constants.imagineColor
         
@@ -39,7 +39,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         self.window?.rootViewController = initialViewController
         self.window?.makeKeyAndVisible()
         
+        if let _ = Auth.auth().currentUser {    // Already signed up but before integration of notifications. Will ask after sign Up. Can delete this after everybody has set it (maybe 3 Users left)
+            registerForPushNoticications(application: application)
+        }
         
+        deleteApplicationBadgeNumber(application: application)
+        
+        return true
+    }
+    
+    func registerForPushNoticications(application: UIApplication) {
         // Set FirebaseCloudMessaging for Apple Notification Center
         if #available(iOS 10.0, *) {
             // For iOS 10 display notification (sent via APNS)
@@ -55,8 +64,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             application.registerUserNotificationSettings(settings)
         }
         application.registerForRemoteNotifications()
-        
-        return true
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -71,6 +78,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+        deleteApplicationBadgeNumber(application: application)
+    }
+    
+    func deleteApplicationBadgeNumber(application: UIApplication) {
         if application.applicationIconBadgeNumber != 0 {
             application.applicationIconBadgeNumber = 0
         }

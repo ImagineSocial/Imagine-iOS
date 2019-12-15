@@ -23,7 +23,7 @@ class SourceTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.layer.cornerRadius = 1
-        tableView.backgroundColor = Constants.backgroundColorForTableViews
+//        tableView.backgroundColor = Constants.backgroundColorForTableViews
         tableView.separatorStyle = .none
         
         tableView.register(AddFactCell.self, forCellReuseIdentifier: reuseIdentifier)
@@ -35,7 +35,6 @@ class SourceTableViewController: UITableViewController {
         if let argument = argument, let fact = fact {
             DataHelper().getDeepestArgument(factID: fact.documentID, argumentID: argument.documentID, deepDataType: .sources) { (deepestData) in
                 if let sources = deepestData as? [Source] {
-                    print("Jommen welche an: \(sources)")
                     self.sources = sources
                     self.tableView.reloadData()
                 }
@@ -132,8 +131,8 @@ class sourceCell: UITableViewCell {
         super.awakeFromNib()
         
         // add corner radius on `contentView`
-        contentView.backgroundColor = .white
-        contentView.layer.cornerRadius = 5
+        contentView.backgroundColor = Constants.imagineColor
+        contentView.layer.cornerRadius = 4
         contentView.clipsToBounds = true
         backgroundColor =  .clear
     }

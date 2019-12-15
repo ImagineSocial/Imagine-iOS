@@ -87,6 +87,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         self.view.addSubview(buttonLabel)
         setupViewController()
+        
+        handyHelper.deleteNotifications(type: .upvote, id: post.documentID)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -359,14 +361,14 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         contentView.addSubview(savePostButton)
         savePostButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
         savePostButton.topAnchor.constraint(equalTo: nameLabel.topAnchor).isActive = true
-        savePostButton.widthAnchor.constraint(equalToConstant: 35).isActive = true
-        savePostButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        savePostButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        savePostButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
         
         contentView.addSubview(translatePostButton)
         translatePostButton.trailingAnchor.constraint(equalTo: savePostButton.leadingAnchor, constant: -10).isActive = true
         translatePostButton.topAnchor.constraint(equalTo: nameLabel.topAnchor).isActive = true
-        translatePostButton.widthAnchor.constraint(equalToConstant: 35).isActive = true
-        translatePostButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        translatePostButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        translatePostButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
     }
     
     func addVoteAndDescriptionUI(topAnchorEqualTo: NSLayoutAnchor<NSLayoutYAxisAnchor>) {
@@ -381,6 +383,18 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         } else {
             view.backgroundColor = .white
         }
+        view.addSubview(commentImage)
+        view.addSubview(commentCountLabel)
+        commentImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5).isActive = true
+        commentImage.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -5).isActive = true
+        commentImage.topAnchor.constraint(equalTo: view.topAnchor, constant: 5).isActive = true
+        commentImage.trailingAnchor.constraint(equalTo: commentCountLabel.leadingAnchor).isActive = true
+        
+        commentCountLabel.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        commentCountLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        commentCountLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 2).isActive = true
+        commentCountLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -3).isActive = true
+        
         stackView.addArrangedSubview(view)
         
         contentView.addSubview(stackView)
@@ -401,21 +415,49 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         descriptionView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 10).isActive = true
 //        descriptionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         
+        let voteButtonWidth = ((self.view.frame.width-(6*15))/5)    // To match the width of 2 Buttons, which vary with the screensize
+        let commentButtonWidth = voteButtonWidth*2+15
+        let linkedFactViewWidth = voteButtonWidth*3+30
+        let buttonHeight: CGFloat = 35
+        
+        linkedFactView.addSubview(linkedFactImageView)
+        linkedFactImageView.leadingAnchor.constraint(equalTo: linkedFactView.leadingAnchor).isActive = true
+        linkedFactImageView.topAnchor.constraint(equalTo: linkedFactView.topAnchor).isActive = true
+        linkedFactImageView.widthAnchor.constraint(equalToConstant: buttonHeight).isActive = true
+        linkedFactImageView.heightAnchor.constraint(equalTo: linkedFactView.heightAnchor).isActive = true
+        
+        linkedFactView.addSubview(linkedFactLabel)
+        linkedFactLabel.leadingAnchor.constraint(equalTo: linkedFactImageView.trailingAnchor, constant: 10).isActive = true
+        linkedFactLabel.trailingAnchor.constraint(equalTo: linkedFactView.trailingAnchor, constant: -10).isActive = true
+        linkedFactLabel.centerYAnchor.constraint(equalTo: linkedFactImageView.centerYAnchor).isActive = true
+//        linkedFactLabel.centerXAnchor.constraint(equalTo: linkedFactView.centerXAnchor, constant: buttonHeight).isActive = true
+        
+        linkedFactView.addSubview(linkedFactButton)
+        linkedFactButton.leadingAnchor.constraint(equalTo: linkedFactView.leadingAnchor).isActive = true
+        linkedFactButton.trailingAnchor.constraint(equalTo: linkedFactView.trailingAnchor).isActive = true
+        linkedFactButton.heightAnchor.constraint(equalTo: linkedFactView.heightAnchor).isActive = true
+        linkedFactButton.widthAnchor.constraint(equalTo: linkedFactView.widthAnchor).isActive = true
+        
+        commentView.addSubview(linkedFactView)
+        linkedFactView.leadingAnchor.constraint(equalTo: commentView.leadingAnchor, constant: 15).isActive = true
+        linkedFactView.topAnchor.constraint(equalTo: commentView.topAnchor, constant: 10).isActive = true
+        linkedFactView.widthAnchor.constraint(equalToConstant: linkedFactViewWidth).isActive = true
+        linkedFactView.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
+        
+        
         commentView.addSubview(commentButton)
         commentButton.topAnchor.constraint(equalTo: commentView.topAnchor, constant: 10).isActive = true
         commentButtonTrailing = commentButton.trailingAnchor.constraint(equalTo: commentView.trailingAnchor, constant: -15)
             commentButtonTrailing!.isActive = true
-        
-        let voteButtonWidth = ((self.view.frame.width-(6*15))/5)
-        let commentButtonWidth = voteButtonWidth*2+15
         commentButton.widthAnchor.constraint(equalToConstant: commentButtonWidth).isActive = true
-        commentButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        commentButton.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
         
         contentView.addSubview(commentView)
         commentView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         commentView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
         commentView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 10).isActive = true
-        commentView.heightAnchor.constraint(equalToConstant: 55).isActive = true
+        let newHeight = buttonHeight+20
+        commentView.heightAnchor.constraint(equalToConstant: newHeight).isActive = true
         commentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true
         
     }
@@ -638,7 +680,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     let nameLabel : UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 15)
+        label.font = UIFont(name: "IBMPlexSans", size: 14)
         
         return label
     }()
@@ -646,7 +688,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     let createDateLabel : UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans-Light", size: 11)
+        label.font = UIFont(name: "IBMPlexSans-Light", size: 10)
         
         return label
     }()
@@ -654,7 +696,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     let titleLabel : UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 20)
+        label.font = UIFont(name: "IBMPlexSans", size: 18)
         label.numberOfLines = 0
         label.textAlignment = .left
         label.minimumScaleFactor = 0.8
@@ -742,14 +784,27 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         return button
     }()
     
-    let descriptionLabel : UILabel = {
-        let label = UILabel()
+//    let descriptionLabel : UILabel = {
+//        let label = UILabel()
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.font = UIFont(name: "IBMPlexSans-Regular", size: 20)
+//        label.numberOfLines = 0
+//        label.textAlignment = NSTextAlignment.left
+//        label.sizeToFit()
+//        label.clipsToBounds = true
+//
+//        return label
+//    }()
+    
+    let descriptionLabel : UITextView = {   // Changed to TextView to make links clickable
+        let label = UITextView()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans-Regular", size: 20)
-        label.numberOfLines = 0
         label.textAlignment = NSTextAlignment.left
-        label.sizeToFit()
-        label.clipsToBounds = true
+        label.isScrollEnabled = false
+        label.isEditable = false
+        label.dataDetectorTypes = .all
+        label.backgroundColor = .clear
         
         return label
     }()
@@ -760,8 +815,49 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if #available(iOS 13.0, *) {
             view.backgroundColor = .secondarySystemBackground
         } else {
-            view.backgroundColor = UIColor(red:1.00, green:0.93, blue:0.84, alpha:1.0)
+            view.backgroundColor = .lightGray
         }
+        
+        return view
+    }()
+    
+    let linkedFactImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 4
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.clear.cgColor
+        imageView.clipsToBounds = true
+        
+        return imageView
+    }()
+    
+    let linkedFactLabel: UILabel = {
+       let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans", size: 15)
+        label.minimumScaleFactor = 0.5
+        label.textAlignment = .center
+
+        return label
+    }()
+    
+    let linkedFactButton: DesignableButton = {
+       let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(linkedFactTapped), for: .touchUpInside)
+        
+        
+        return button
+    }()
+    
+    let linkedFactView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 4
+        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor.clear.cgColor
         
         return view
     }()
@@ -771,9 +867,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         commentButton.translatesAutoresizingMaskIntoConstraints = false
         commentButton.addTarget(self, action: #selector(toCommentsTapped), for: .touchUpInside)
         commentButton.setTitle("Kommentare", for: .normal)
-        commentButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 16)
+        commentButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 15)
         commentButton.layer.cornerRadius = 4
-        commentButton.backgroundColor = UIColor(red:0.33, green:0.47, blue:0.65, alpha:1.0)
+        commentButton.backgroundColor = Constants.imagineColor
         
         return commentButton
     }()
@@ -788,21 +884,19 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     let thanksButton : DesignableButton = {
         let thanksButton = DesignableButton()
-        thanksButton.setImage(UIImage(named: "thanks"), for: .normal)
+        thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
         thanksButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 14)
         if #available(iOS 13.0, *) {
             thanksButton.setTitleColor(.label, for: .normal)
+            thanksButton.tintColor = .label
+            thanksButton.layer.borderColor = UIColor.label.cgColor
         } else {
             thanksButton.setTitleColor(.black, for: .normal)
+            thanksButton.tintColor = .black
+            thanksButton.layer.borderColor = UIColor.black.cgColor
         }
 
-        if #available(iOS 13.0, *) {
-            thanksButton.tintColor = .label
-        } else {
-            thanksButton.tintColor = .black
-        }
-//        thanksButton.backgroundColor = Constants.thanksColor
-        thanksButton.layer.borderColor = Constants.thanksColor.cgColor
+        thanksButton.imageView?.contentMode = .scaleAspectFit
         thanksButton.layer.borderWidth = 1.5
         thanksButton.layer.cornerRadius = 4
         thanksButton.clipsToBounds = true
@@ -816,17 +910,17 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         wowButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 14)
         if #available(iOS 13.0, *) {
             wowButton.setTitleColor(.label, for: .normal)
+            wowButton.tintColor = .label
+            wowButton.layer.borderColor = UIColor.label.cgColor
         } else {
             wowButton.setTitleColor(.black, for: .normal)
-        }
-        if #available(iOS 13.0, *) {
-            wowButton.tintColor = .label
-        } else {
             wowButton.tintColor = .black
+            wowButton.layer.borderColor = UIColor.black.cgColor
         }
-        wowButton.setImage(UIImage(named: "wow"), for: .normal)
-//        wowButton.backgroundColor = Constants.wowColor
-        wowButton.layer.borderColor = Constants.wowColor.cgColor
+        
+        wowButton.setImage(UIImage(named: "wowButton"), for: .normal)
+        
+        wowButton.imageView?.contentMode = .scaleAspectFit
         wowButton.layer.borderWidth = 1.5
         wowButton.layer.cornerRadius = 4
         wowButton.clipsToBounds = true
@@ -839,18 +933,18 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         let haButton = DesignableButton()
         if #available(iOS 13.0, *) {
             haButton.setTitleColor(.label, for: .normal)
+            haButton.tintColor = .label
+            haButton.layer.borderColor = UIColor.label.cgColor
         } else {
             haButton.setTitleColor(.black, for: .normal)
-        }
-        if #available(iOS 13.0, *) {
-            haButton.tintColor = .label
-        } else {
             haButton.tintColor = .black
+            haButton.layer.borderColor = UIColor.black.cgColor
         }
+        
         haButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 14)
-        haButton.setImage(UIImage(named: "ha"), for: .normal)
-//        haButton.backgroundColor = Constants.haColor
-        haButton.layer.borderColor = Constants.haColor.cgColor
+        haButton.setImage(UIImage(named: "haButton"), for: .normal)
+        
+        haButton.imageView?.contentMode = .scaleAspectFit
         haButton.layer.borderWidth = 1.5
         haButton.layer.cornerRadius = 4
         haButton.clipsToBounds = true
@@ -863,24 +957,52 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         let niceButton = DesignableButton()
         if #available(iOS 13.0, *) {
             niceButton.setTitleColor(.label, for: .normal)
+            niceButton.tintColor = .label
+            niceButton.layer.borderColor = UIColor.label.cgColor
         } else {
             niceButton.setTitleColor(.black, for: .normal)
-        }
-        if #available(iOS 13.0, *) {
-            niceButton.tintColor = .label
-        } else {
             niceButton.tintColor = .black
+            niceButton.layer.borderColor = UIColor.black.cgColor
         }
-        niceButton.setImage(UIImage(named: "nice"), for: .normal)
+        
+        
+        niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
         niceButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 14)
-//        niceButton.backgroundColor = Constants.niceColor
-        niceButton.layer.borderColor = Constants.niceColor.cgColor
+        
+        niceButton.imageView?.contentMode = .scaleAspectFit
         niceButton.layer.borderWidth = 1.5
         niceButton.layer.cornerRadius = 4
         niceButton.clipsToBounds = true
         niceButton.addTarget(self, action: #selector(niceTapped), for: .touchUpInside)
         
         return niceButton
+    }()
+    
+    let commentImage: UIImageView = {
+       let img = UIImageView()
+        img.translatesAutoresizingMaskIntoConstraints = false
+        img.image = UIImage(named: "comments")
+        img.contentMode = .scaleAspectFit
+        if #available(iOS 13.0, *) {
+            img.tintColor = .label
+        } else {
+            img.tintColor = .black
+        }
+        
+        return img
+    }()
+    
+    let commentCountLabel: UILabel = {
+       let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans-ExtraLight", size: 14)
+        if #available(iOS 13.0, *) {
+            label.textColor = .label
+        } else {
+            label.textColor = .black
+        }
+        
+        return label
     }()
     
     let shareButton: DesignableButton = {
@@ -1126,29 +1248,46 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     func showPost() {
         
         if let user = Auth.auth().currentUser {
-            if user.uid == post.originalPosterUID {
+            if user.uid == post.originalPosterUID { // Your own Post -> Different UI for a different Feeling. Shows like counts
                 self.ownPost = true
                 
                 self.thanksButton.setImage(nil, for: .normal)
                 self.thanksButton.setTitle(String(post.votes.thanks), for: .normal)
                 self.thanksButton.layer.borderWidth = 0
-                self.thanksButton.backgroundColor = Constants.thanksColor
-                self.thanksButton.setTitleColor(.white, for: .normal)
+                
                 self.wowButton.setImage(nil, for: .normal)
                 self.wowButton.setTitle(String(post.votes.wow), for: .normal)
                 self.wowButton.layer.borderWidth = 0
-                self.wowButton.backgroundColor = Constants.wowColor
-                self.wowButton.setTitleColor(.white, for: .normal)
+                
                 self.haButton.setImage(nil, for: .normal)
                 self.haButton.setTitle(String(post.votes.ha), for: .normal)
                 self.haButton.layer.borderWidth = 0
-                self.haButton.backgroundColor = Constants.haColor
-                self.haButton.setTitleColor(.white, for: .normal)
+                
                 self.niceButton.setImage(nil, for: .normal)
                 self.niceButton.setTitle(String(post.votes.nice), for: .normal)
                 self.niceButton.layer.borderWidth = 0
-                self.niceButton.backgroundColor = Constants.niceColor
-                self.niceButton.setTitleColor(.white, for: .normal)
+                
+                if #available(iOS 13.0, *) {
+                    thanksButton.backgroundColor = .label
+                    wowButton.backgroundColor = .label
+                    haButton.backgroundColor = .label
+                    niceButton.backgroundColor = .label
+                    
+                    thanksButton.setTitleColor(.systemBackground, for: .normal)
+                    wowButton.setTitleColor(.systemBackground, for: .normal)
+                    haButton.setTitleColor(.systemBackground, for: .normal)
+                    niceButton.setTitleColor(.systemBackground, for: .normal)
+                } else {
+                    thanksButton.backgroundColor = .black
+                    wowButton.backgroundColor = .black
+                    haButton.backgroundColor = .black
+                    niceButton.backgroundColor = .black
+                    
+                    thanksButton.setTitleColor(.white, for: .normal)
+                    wowButton.setTitleColor(.white, for: .normal)
+                    haButton.setTitleColor(.white, for: .normal)
+                    niceButton.setTitleColor(.white, for: .normal)
+                }
             }
         }
         
@@ -1173,6 +1312,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             titleLabel.text = post.title
             descriptionLabel.text = descriptionText
             createDateLabel.text = post.createTime
+            commentCountLabel.text = String(post.commentCount)
+            
             if let youTubeID = post.linkURL.youtubeID {
                 youTubeView.load(withVideoId: youTubeID)
             }
@@ -1184,10 +1325,35 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             } else {
                 descriptionLabel.text = descriptionText
             }
+            if let fact = post.fact {   // Isnt attached if you come from search
+                //Need boolean wether already fetched or not
+                if fact.fetchComplete {
+                    setFact()
+                } else {
+                    let baseCell = BaseFeedCell()
+                    baseCell.loadFact(post: self.post) { (fact) in
+                        self.post.fact = fact
+                        self.setFact()
+                    }
+                }
+            }
         default:
             titleLabel.text = post.title
-            
             createDateLabel.text = post.createTime
+            commentCountLabel.text = String(post.commentCount)
+            
+            if let fact = post.fact {   // Isnt attached if you come from search
+                //Need boolean wether already fetched or not
+                if fact.fetchComplete {
+                    setFact()
+                } else {
+                    let baseCell = BaseFeedCell()
+                    baseCell.loadFact(post: self.post) { (fact) in
+                        self.post.fact = fact
+                        self.setFact()
+                    }
+                }
+            }
             
             self.setUser()
             
@@ -1198,6 +1364,20 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             }
         }
         
+    }
+    
+    func setFact() {
+        if let fact = post.fact {
+            self.linkedFactLabel.text = "'\(fact.title)'"
+            
+            if let url = URL(string: fact.imageURL) {
+                self.linkedFactImageView.sd_setImage(with: url, completed: nil)
+            } else {
+                self.linkedFactImageView.image = UIImage(named: "FactStamp")
+            }
+            self.linkedFactView.layer.borderColor = Constants.imagineColor.cgColor
+            self.linkedFactImageView.layer.borderColor = Constants.imagineColor.cgColor
+        }
     }
     
     func setUser() {
@@ -1233,6 +1413,94 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
+    func updatePost(button: VoteButton) {
+        if let _ = Auth.auth().currentUser {
+            
+            var desButton = DesignableButton()
+            switch button {
+            case .thanks:
+                self.post.votes.thanks+=1
+                desButton = self.thanksButton
+            case .wow:
+                self.post.votes.wow+=1
+                desButton = self.wowButton
+            case .ha:
+                desButton = self.haButton
+                self.post.votes.ha+=1
+            case .nice:
+                desButton = self.niceButton
+                self.post.votes.nice+=1
+            }
+            
+            handyHelper.updatePost(button: button, post: self.post)
+            showButtonText(post: self.post, button: desButton)
+            //To-Do: Update number on Button and show animation
+        } else {
+            self.notLoggedInAlert()
+        }
+    }
+    
+    func showButtonText(post: Post, button: DesignableButton) {
+        buttonLabel.alpha = 1
+        button.titleLabel?.textColor = .black
+        button.setTitleColor(.black, for: .normal)
+        
+        if let _ = centerX {
+            centerX!.isActive = false
+            //            centerX = nil
+            
+            distanceConstraint!.isActive = false
+        }
+        
+        centerX = buttonLabel.centerXAnchor.constraint(equalTo: button.centerXAnchor)
+        centerX!.priority = UILayoutPriority(rawValue: 250)
+        centerX!.isActive = true
+        
+        distanceConstraint = buttonLabel.bottomAnchor.constraint(equalTo: button.topAnchor, constant: -5)
+        distanceConstraint!.priority = UILayoutPriority(rawValue: 250)
+        distanceConstraint!.isActive = true
+        self.view.layoutIfNeeded()
+        
+        var title = String(post.votes.thanks)
+        
+        switch button {
+        case thanksButton:
+            buttonLabel.text = "danke"
+        case wowButton:
+            buttonLabel.text = "wow"
+            title = String(post.votes.wow)
+        case haButton:
+            buttonLabel.text = "ha"
+            title = String(post.votes.ha)
+        case niceButton:
+            buttonLabel.text = "nice"
+            title = String(post.votes.nice)
+        default:
+            buttonLabel.text = "so nicht"
+        }
+        
+        distanceConstraint!.constant = -30
+        
+        UIView.animate(withDuration: 1.5) {
+            self.view.layoutIfNeeded()
+            self.buttonLabel.alpha = 0
+        }
+        
+        button.setImage(nil, for: .normal)
+        button.setTitle(title, for: .normal)
+    }
+    
+    
+    
+    @objc func writeCommentTapped() {
+        
+    }
+    
+    func goToEventUser(user: User) {
+        performSegue(withIdentifier: "toUserSegue", sender: user)
+    }
+    
+    //MARK: - Buttons Tapped
     @objc func postImageTapped() {
         let pinchVC = PinchToZoomViewController()
         
@@ -1326,91 +1594,24 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         updatePost(button: .nice)
     }
     
-    func updatePost(button: VoteButton) {
-        if let _ = Auth.auth().currentUser {
-            
-            var desButton = DesignableButton()
-            switch button {
-            case .thanks:
-                self.post.votes.thanks+=1
-                desButton = self.thanksButton
-            case .wow:
-                self.post.votes.wow+=1
-                desButton = self.wowButton
-            case .ha:
-                desButton = self.haButton
-                self.post.votes.ha+=1
-            case .nice:
-                desButton = self.niceButton
-                self.post.votes.nice+=1
-            }
-            
-            handyHelper.updatePost(button: button, post: self.post)
-            showButtonText(post: self.post, button: desButton)
-            //To-Do: Update number on Button and show animation
-        } else {
-            self.notLoggedInAlert()
-        }
-    }
-    
-    func showButtonText(post: Post, button: DesignableButton) {
-        buttonLabel.alpha = 1
-        button.titleLabel?.textColor = .black
-        button.setTitleColor(.black, for: .normal)
-        
-        if let _ = centerX {
-            centerX!.isActive = false
-            //            centerX = nil
-            
-            distanceConstraint!.isActive = false
-        }
-        
-        centerX = buttonLabel.centerXAnchor.constraint(equalTo: button.centerXAnchor)
-        centerX!.priority = UILayoutPriority(rawValue: 250)
-        centerX!.isActive = true
-        
-        distanceConstraint = buttonLabel.bottomAnchor.constraint(equalTo: button.topAnchor, constant: -5)
-        distanceConstraint!.priority = UILayoutPriority(rawValue: 250)
-        distanceConstraint!.isActive = true
-        self.view.layoutIfNeeded()
-        
-        var title = String(post.votes.thanks)
-        
-        switch button {
-        case thanksButton:
-            buttonLabel.text = "danke"
-        case wowButton:
-            buttonLabel.text = "wow"
-            title = String(post.votes.wow)
-        case haButton:
-            buttonLabel.text = "ha"
-            title = String(post.votes.ha)
-        case niceButton:
-            buttonLabel.text = "nice"
-            title = String(post.votes.nice)
-        default:
-            buttonLabel.text = "so nicht"
-        }
-        
-        distanceConstraint!.constant = -30
-        
-        UIView.animate(withDuration: 1.5) {
-            self.view.layoutIfNeeded()
-            self.buttonLabel.alpha = 0
-        }
-        
-        button.setImage(nil, for: .normal)
-        button.setTitle(title, for: .normal)
-    }
-    
     @IBAction func moreTapped(_ sender: Any) {
         performSegue(withIdentifier: "reportSegue", sender: post)
+    }
+    
+    @objc func linkedFactTapped() {
+        if let fact = post.fact {
+            switch fact.displayMode {
+            case .fact:
+                performSegue(withIdentifier: "toFactSegue", sender: fact)
+            case .topic:
+                performSegue(withIdentifier: "goToPostsOfTopic", sender: fact)
+            }
+        }
     }
     
     @objc func toCommentsTapped() {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            print("Jetzt ist es toComments?: ", self.post.toComments)
             let viewController = PostCommentChatViewController(post: self.post)
             UIView.transition(with: self.navigationController!.view, duration: 0.5, options: .transitionFlipFromRight, animations: {
                 self.navigationController?.pushViewController(viewController, animated: true)
@@ -1429,15 +1630,29 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
     }
     
-    @objc func writeCommentTapped() {
-        
-    }
-    
-    func goToEventUser(user: User) {
-        performSegue(withIdentifier: "toUserSegue", sender: user)
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if segue.identifier == "toFactSegue" {
+            if let fact = sender as? Fact {
+                if let navCon = segue.destination as? UINavigationController {
+                    if let factVC = navCon.topViewController as? FactParentContainerViewController {
+                        factVC.fact = fact
+                        factVC.needNavigationController = true
+                    }
+                }
+            }
+        }
+        
+        if segue.identifier == "goToPostsOfTopic" {
+            if let fact = sender as? Fact {
+                if let navCon = segue.destination as? UINavigationController {
+                    if let factVC = navCon.topViewController as? PostsOfFactTableViewController {
+                        factVC.fact = fact
+                        factVC.needNavigationController = true
+                    }
+                }
+            }
+        }
         
         if segue.identifier == "toUserSegue" {
             if let chosenUser = sender as? User {
@@ -1471,6 +1686,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 }
             }
         }
+        
     }
 }
 

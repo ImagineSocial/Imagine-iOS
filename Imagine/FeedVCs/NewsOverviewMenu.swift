@@ -19,7 +19,8 @@ class NewsOverviewMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     let tableView: UITableView = {
         let style = UITableView.Style.plain
         let tv = UITableView(frame: .zero, style: style)
-        tv.backgroundColor = Constants.backgroundColorForTableViews
+        tv.separatorStyle = .none
+//        tv.backgroundColor = Constants.backgroundColorForTableViews
         return tv
     }()
     

@@ -29,9 +29,10 @@ enum EventType {
     case event
 }
 
-// Fehlermeldungen für nichtvorhandene Links oder Bilder
-// Constraints Absichern
-// Event alles hinzufügen
+protocol JustPostedDelegate {
+    func posted()
+}
+
 class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate {
     
     
@@ -51,6 +52,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var camPic = false
     var selectDate = false
     var selectedDate: Date?
+    var comingFromPostsOfFact = false
     
     var postAnonymous = false
     
@@ -76,14 +78,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var descriptionViewTopAnchor: NSLayoutConstraint?
     var pictureViewTopAnchor: NSLayoutConstraint?
     
+    var delegate: JustPostedDelegate?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         imagePicker.delegate = self
         titleTextView.delegate = self
-        
-//        let factCollectionVC = FactCollectionViewController()
-//        factCollectionVC.delegate = self
         
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
@@ -95,6 +96,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
 //        setEventViewUI()
 //        setLocationViewUI()
         
+        
+        if comingFromPostsOfFact {
+            setDismissButton()
+        }
         
         let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15) as Any]
         markPostSegmentControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
@@ -724,18 +729,28 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         return stack
     }()
     
+    let anonymousImageView: UIImageView = {
+       let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "mask")
+        imageView.contentMode = .scaleAspectFit
+        if #available(iOS 13.0, *) {
+            imageView.tintColor = .label
+        } else {
+            imageView.tintColor = .black
+        }
+        imageView.isHidden = true
+        
+        return imageView
+    }()
+    
     let addFactButton: DesignableButton = {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = Constants.imagineColor
-        button.setTitle("Mit Fakt verlinken", for: .normal)
+        button.setTitle("Thema verlinken", for: .normal)
         button.addTarget(self, action: #selector(linkFactToPostTapped), for: .touchUpInside)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
-//        if #available(iOS 13.0, *) {
-//            button.setTitleColor(.label, for: .normal)
-//        } else {
-//            button.setTitleColor(.black, for: .normal)
-//        }
         button.setTitleColor(Constants.imagineColor, for: .normal)
         return button
     }()
@@ -767,12 +782,19 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         optionButton.leadingAnchor.constraint(equalTo: optionView.leadingAnchor, constant: 10).isActive = true
         optionButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
         
+        optionView.addSubview(anonymousImageView)
+        anonymousImageView.leadingAnchor.constraint(equalTo: optionButton.trailingAnchor, constant: 20).isActive = true
+        anonymousImageView.centerYAnchor.constraint(equalTo: optionButton.centerYAnchor).isActive = true
+        anonymousImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        anonymousImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
         setMarkPostViewUI()
         setPostAnonymousViewUI()
         
         optionStackView.addArrangedSubview(markPostView)
         optionStackView.addArrangedSubview(postAnonymousView)
         optionStackView.addArrangedSubview(addFactButton)
+        
         
         optionView.addSubview(optionStackView)
         optionStackView.leadingAnchor.constraint(equalTo: optionView.leadingAnchor).isActive = true
@@ -1132,6 +1154,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func optionButtonTapped() {
+                
         if descriptionTextView.isFirstResponder {
             descriptionTextView.resignFirstResponder()
         } else if titleTextView.isFirstResponder {
@@ -1167,21 +1190,22 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func markPostInfoButtonPressed() {
-        EasyTipView.show(forView: headerView, text: Constants.texts.markPostText)
+        EasyTipView.show(forView: optionView, text: Constants.texts.markPostText)
     }
     
     @objc func postAnonymousButtonPressed() {
-        EasyTipView.show(forView: headerView, text: Constants.texts.postAnonymousText)
+        EasyTipView.show(forView: optionView, text: Constants.texts.postAnonymousText)
     }
     
     @objc func postAnonymousSwitchChanged() {
         if postAnonymousSwitch.isOn {
             self.postAnonymous = true
+            self.anonymousImageView.isHidden = false
             print("Post anonym: ",postAnonymous)
         } else {
             self.postAnonymous = false
             print("Post anonym: ",postAnonymous)
-            
+            self.anonymousImageView.isHidden = true
         }
     }
     
@@ -1361,22 +1385,18 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
 
             if titleTextView.text != "" {
+                self.view.activityStartAnimating()
+                self.shareButton.isEnabled = false
                 switch selectedOption {
                 case .thought:
-                    self.view.activityStartAnimating()
                     self.postThought(postRef: postRef, userID: userID)
                 case .picture:
-                    self.view.activityStartAnimating()
                     self.savePicture(userID: userID, postRef: postRef)
-//                    self.shareButton.isEnabled = false
                 case .link:
-                    self.view.activityStartAnimating()
                     self.postLink(postRef: postRef, userID: userID)
                 case .YTVideo:
-                    self.view.activityStartAnimating()
                     self.postYTVideo(postRef: postRef, userID: userID)
                 case .event:
-                    self.view.activityStartAnimating()
                     self.postEvent(postRef: postRef, userID: userID)
                 }
             } else {
@@ -1402,6 +1422,16 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
         if let originalImage = info[.originalImage] as? UIImage {
             selectedImageFromPicker = originalImage
+//            print("Das ist die Scale des Bildes: \(originalImage.)")
+            
+            if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 1) {
+                let data = NSData(data: image)
+                    
+                let imageSize = data.count/1000 // in kb
+                
+                print("Das ist die ImageSize: \(imageSize)")
+                
+            }
         }
         
         if let selectedImageSize = selectedImageFromPicker?.size {
@@ -1433,36 +1463,71 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         dismiss(animated: true, completion: nil)
     }
     
+    
     func savePicture(userID: String, postRef: DocumentReference) {
-        let storageRef = Storage.storage().reference().child("postPictures").child("\(postRef.documentID).png")
-        
-        if let uploadData = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.1) {   //Es war das Fragezeichen
-            storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in    //Bild speichern
-                if let error = error {
-                    print(error)
-                    return
+                
+        if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 1) {
+            let data = NSData(data: image)
+                
+            let imageSize = data.count/1000
+            
+            
+            if imageSize <= 500 {   // When the imageSize is under 500kB it wont be compressed, because you can see the difference
+                // No compression
+                print("No compression")
+                self.storeImage(data: image, postRef: postRef, userID: userID)
+            } else if imageSize <= 1000 {
+                if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.4) {
+                    
+                    self.storeImage(data: image, postRef: postRef, userID: userID)
                 }
-                storageRef.downloadURL(completion: { (url, err) in  // Hier wird die URL runtergezogen
-                    if let err = err {
-                        print(err)
-                        return
-                    }
-                    if let url = url {
-                        self.imageURL = url.absoluteString
-                        
-                        self.postPicture(postRef: postRef, userID: userID)
-                    }
-                })
-            })
+            } else if imageSize <= 2000 {
+                if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.25) {
+                    
+                    self.storeImage(data: image, postRef: postRef, userID: userID)
+                }
+            } else {
+                if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.1) {
+                    
+                    self.storeImage(data: image, postRef: postRef, userID: userID)
+                }
+            }
+            
         } else {
             self.alert(message: "Du hast kein Bild hochgeladen. Möchtest du kein Bild hochladen, wähle bitte eine andere Post-Option aus", title: "Kein Bild")
         }
     }
     
+    func storeImage(data: Data, postRef: DocumentReference, userID: String) {
+        
+        let storageRef = Storage.storage().reference().child("postPictures").child("\(postRef.documentID).png")
+        
+        storageRef.putData(data, metadata: nil, completion: { (metadata, error) in    //Bild speichern
+            if let error = error {
+                print(error)
+                return
+            }
+            storageRef.downloadURL(completion: { (url, err) in  // Hier wird die URL runtergezogen
+                if let err = err {
+                    print(err)
+                    return
+                }
+                if let url = url {
+                    self.imageURL = url.absoluteString
+                    
+                    self.postPicture(postRef: postRef, userID: userID)
+                }
+            })
+        })
+    }
+    
     // MARK: - Upload the post
     
     func postThought(postRef: DocumentReference, userID: String) {
-        let descriptionText = descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")  // Just the text of the description has got line breaks
+        
+        let text = descriptionTextView.text.trimmingCharacters(in: .newlines)
+        let descriptionText = text.replacingOccurrences(of: "\n", with: "\\n")  // Just the text of the description has got line breaks
+        
         let tags = self.getTagsToSave()
         
         let dataDictionary: [String: Any] = ["title": titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "thought", "report": getReportString(), "tags": tags]
@@ -1483,9 +1548,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 
                 self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
             } else {
+                self.view.activityStopAnimating()
+                self.shareButton.isEnabled = true
                 self.alert(message: "Unser Programm sagt mir, dass die URL nicht korrekt ist. Bitte überprüfe den Link", title: "Link fehlerhaft")
             }
         } else {
+            self.view.activityStopAnimating()
+            self.shareButton.isEnabled = true
             self.alert(message: "Du hast kein Link angegeben. Möchtest du kein Link posten, wähle bitte eine andere Post-Option aus", title: "Kein Link")
         }
     }
@@ -1502,8 +1571,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             print("picture posted")
             
         } else {
-            self.alert(message: "Du hast kein Bild hochgeladen. Möchtest du kein Bild hochladen, wähle bitte eine andere Post-Option aus", title: "Kein Bild")
+            self.view.activityStopAnimating()
             self.shareButton.isEnabled = true
+            self.alert(message: "Du hast kein Bild hochgeladen. Möchtest du kein Bild hochladen, wähle bitte eine andere Post-Option aus", title: "Kein Bild")
         }
     }
     
@@ -1519,6 +1589,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             print("YouTubeVideo Postet")
         } else {
+            self.view.activityStopAnimating()
+            self.shareButton.isEnabled = true
             self.alert(message: "Du hast kein Youtube Link angegeben. Möchtest du kein Youtube-Video posten, wähle bitte eine andere Post-Option aus", title: "Kein YouTube Link")
         }
     }
@@ -1539,9 +1611,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 self.uploadTheEvent(userID: userID, dataDictionary: dataDictionary)
                 
             } else {
+                self.view.activityStopAnimating()
+                self.shareButton.isEnabled = true
                 self.alert(message: "Bitte füge ein Titelbild hinzu, das spricht die Menschen eher an. Danke!", title: "Kein Bild")
             }
         } else {
+            self.view.activityStopAnimating()
+            self.shareButton.isEnabled = true
             self.alert(message: "Bitte gib Datum und Ort an, wenn du eine Veranstaltung erstellst", title: "Datum oder Ort fehlt")
         }
     }
@@ -1564,6 +1640,17 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         if let fact = self.linkedFact { // If there is a fact that should be linked to this post, i append its ID to the array
             data["linkedFactID"] = fact.documentID
+            
+            // Add the post to the specific fact, so that it can be looked into
+            let ref = db.collection("Facts").document(fact.documentID).collection("posts").document(documentID)
+            
+            ref.setData(["createTime": self.getDate()]) { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    print("FactReference successfully added")
+                }
+            }
         }
         
         postRef.setData(data) { (err) in
@@ -1630,7 +1717,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.previewImageView.image = nil
             self.characterCountLabel.text = "200"
             self.pictureViewHeight!.constant = 100
-            self.optionButtonTapped()
+            
+            if self.optionViewHeight?.constant != self.defaultOptionViewHeight {
+                self.optionButtonTapped()
+            }
             self.addedFactDescriptionLabel.text?.removeAll()
             self.addedFactImageView.image = nil
             
@@ -1638,10 +1728,21 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.descriptionTextView.resignFirstResponder()
             self.linkTextField.resignFirstResponder()
             self.locationTextField.resignFirstResponder()
-        }))
-        
-        self.present(alert, animated: true) {
             
+            
+            Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.switchToFeedTab), userInfo: nil, repeats: false)
+            
+        }))        
+        self.present(alert, animated: true) {
+        }
+    }
+
+    @objc func switchToFeedTab() {
+        if comingFromPostsOfFact {
+            self.dismiss(animated: true, completion: nil)
+        } else {
+            delegate?.posted()
+            tabBarController?.selectedIndex = 0
         }
     }
     
@@ -1695,7 +1796,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
 }
 
 extension NewPostViewController: LinkFactWithPostDelegate {
-    func selectedFact(fact: Fact) {
+    
+    func selectedFact(fact: Fact, closeMenu: Bool) {
         
         self.linkedFact = fact
         
@@ -1705,19 +1807,40 @@ extension NewPostViewController: LinkFactWithPostDelegate {
         addedFactImageView.widthAnchor.constraint(equalToConstant: defaultOptionViewHeight-10).isActive = true
         addedFactImageView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-10).isActive = true
         
-        if let url = URL(string: fact.imageURL) {
-            addedFactImageView.sd_setImage(with: url, completed: nil)
-        }
-        
         optionView.addSubview(addedFactDescriptionLabel)
         addedFactDescriptionLabel.centerYAnchor.constraint(equalTo: addedFactImageView.centerYAnchor).isActive = true
         addedFactDescriptionLabel.trailingAnchor.constraint(equalTo: addedFactImageView.leadingAnchor, constant: -15).isActive = true
         
-        addedFactDescriptionLabel.text = "Verlinkter Fakt:  '\(fact.title)' "
+        if let url = URL(string: fact.imageURL) {
+            addedFactImageView.sd_setImage(with: url, completed: nil)
+        } else {
+            addedFactImageView.image = UIImage(named: "FactStamp")
+        }
+         
+        addedFactDescriptionLabel.text = "Verlinkt:  '\(fact.title)' "
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.optionButtonTapped()
+        if closeMenu {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.optionButtonTapped()
+            }
         }
         
+    }
+    
+    func setDismissButton() {
+        let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = Constants.imagineColor
+        button.addTarget(self, action: #selector(dismissTapped), for: .touchUpInside)
+        button.setImage(UIImage(named: "Dismiss"), for: .normal)
+        button.heightAnchor.constraint(equalToConstant: 23).isActive = true
+        button.widthAnchor.constraint(equalToConstant: 23).isActive = true
+        
+        let barButton = UIBarButtonItem(customView: button)
+        self.navigationItem.leftBarButtonItem = barButton
+    }
+    
+    @objc func dismissTapped() {
+        self.dismiss(animated: true, completion: nil)
     }
 }

@@ -16,6 +16,7 @@ enum LogInFrame {
     case enterPassword
     case wrongPassword
     case wrongEmail
+    case forgotPassword
 }
 
 enum SignInFrame {
@@ -51,6 +52,7 @@ class LogInViewController: UIViewController {
     @IBOutlet weak var peaceSignView: UIImageView!
     
     let attentionLabel = UILabel()
+    let db = Firestore.firestore()
     
     var signUp = false
     var name = ""
@@ -76,6 +78,7 @@ class LogInViewController: UIViewController {
         answerTextfield.resignFirstResponder()
     }
     
+    //MARK: - SignUp & LogIn Sessions
     
     func startSignUpSession() {
         signUpInProgress = true
@@ -99,7 +102,7 @@ class LogInViewController: UIViewController {
         case .invalidEmail:
             answerTextfield.textContentType = .emailAddress
             answerTextfield.isSecureTextEntry = false
-            questionLabel.text = "Die angegebene Email-Adresse scheint nicht korrekt zu sein. Gib sie noch einmal ein:"
+            questionLabel.text = "Die angegebene Email-Adresse scheint nicht korrekt zu sein. Gib sie bitte erneut ein:"
         case .EmailAlreadyInUse:
             answerTextfield.textContentType = .emailAddress
             answerTextfield.isSecureTextEntry = false
@@ -125,15 +128,15 @@ class LogInViewController: UIViewController {
             answerTextfield.isEnabled = true
             answerTextfield.textContentType = .none
             answerTextfield.isSecureTextEntry = false
-            questionLabel.text = "Herzlich Willkommen bei Imagine. Wirst du Ruhe bewahren wenn dich etwas oder jemand bei Imagine aufregt und keine verletzenden Begriffe nutzen?"
+            questionLabel.text = "Herzlich Willkommen bei Imagine. Wir wollen eine respektvolle Stimmung bei Imagine bewahren. Daher wollen wir beleidigende und verletzende Aussagen aus dem Netzwerk fernhalten. Ok?"
             nextButton.setTitle("Weiter", for: .normal)
         case .respectYourFellowMan:
             answerTextfield.isSecureTextEntry = false
-            questionLabel.text = "Wirst du die Ansichten und Meinungen deiner Mit-User respektieren?"
+            questionLabel.text = "Wirst du die Ansichten und Meinungen deiner Mit-User respektieren, auch wenn diese sich von deinen Unterscheiden?"
         case .supportImagine:
-            questionLabel.text = "Würdest du Imagine als Netzwerk unterstützen und melden, upvoten und schlichten wenn es angebracht ist? "
+            questionLabel.text = "Wirst du Ungerechtigkeiten und Verstöße gegen die eben genannten Regeln melden und die Stimmung bei Imagine gerecht und einvernehmlich halten?"
         case .ready:
-            questionLabel.text = "Wir freuen uns dich bei uns zu begrüßen! Schau dich doch ein wenig um"
+            questionLabel.text = "Super. Wir freuen uns dich bei uns zu begrüßen! Schau dich ein wenig um und vergiss nicht deine Email Adresse zu bestätigen🙏 (vielleicht Spam Ordner)"
             nextButton.setTitle("Zu Imagine", for: .normal)
         case .error:
             questionLabel.text = "Irgendwas ist hier kaputt, versuch es bitte später nochmal!"
@@ -141,7 +144,7 @@ class LogInViewController: UIViewController {
             self.nextButton.alpha = 1
             self.answerTextfield.alpha = 0
             self.answerTextfield.isEnabled = false
-            questionLabel.text = "Stimmst du den Apple Nutzungsbedingungen zu und lädst keine unangebrachten Inhalte hoch? "
+            questionLabel.text = "Stimmst du den Apple Nutzungsbedingungen zu und lädst keine unangebrachten Inhalte hoch?"
             nextButton.setTitle("Ich stimme zu", for: .normal)
             showEulaButton()
         case .wait:
@@ -154,33 +157,6 @@ class LogInViewController: UIViewController {
         })
         
     }
-    
-    func showEulaButton() {
-        self.view.addSubview(eulaButton)
-        eulaButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-        eulaButton.topAnchor.constraint(equalTo: nextButton.bottomAnchor, constant: 25).isActive = true
-        eulaButton.widthAnchor.constraint(equalToConstant: 180).isActive = true
-        eulaButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        
-    }
-    @objc func toEulaTapped() {
-        if let url = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
-            UIApplication.shared.open(url)
-        }
-    }
-    
-    let eulaButton: DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.cornerRadius = 4
-        button.backgroundColor = Constants.imagineColor
-        button.setTitle("Zur Vereinbarung", for: .normal)
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 18)
-        button.setTitleColor(.white, for: .normal)
-        button.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
-        
-        return button
-    }()
     
     func startLogIn() {
         answerTextfield.text = ""
@@ -195,14 +171,20 @@ class LogInViewController: UIViewController {
             questionLabel.text = "Nun noch dein Kennwort und wir können loslegen!"
             answerTextfield.textContentType = .password
             answerTextfield.isSecureTextEntry = true
+            resetPasswordButton.isHidden = false
         case .wrongEmail:
             self.questionLabel.text = "Deine eingegebene Email-Adresse ist nicht korrekt"
             answerTextfield.textContentType = .emailAddress
             answerTextfield.isSecureTextEntry = false
         case .wrongPassword:
-            self.questionLabel.text = "Dein Passwort oder deine Email-Adresse ist nicht korrekt"
+            self.questionLabel.text = "Dein Passwort ist nicht korrekt, versuche es erneut:"
             answerTextfield.textContentType = .password
             answerTextfield.isSecureTextEntry = true
+            resetPasswordButton.isHidden = false
+        case .forgotPassword:
+            questionLabel.text = "Gib deine EmailAdresse ein, damit wir dir eine Mail zum zurücksetzen deines Passwortes senden können."
+            answerTextfield.textContentType = .emailAddress
+            answerTextfield.isSecureTextEntry = false
         }
         
         UIView.animate(withDuration: 1.3, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
@@ -212,11 +194,7 @@ class LogInViewController: UIViewController {
         
     }
     
-    @objc func textGetsWritten() {
-        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveLinear, animations: {
-            self.nextButton.alpha = 1
-        })
-    }
+    // MARK: - NextButtonTapped
     
     @objc func nextButtonPushed(sender: DesignableButton!) {
         nextButton.isEnabled = false
@@ -328,6 +306,8 @@ class LogInViewController: UIViewController {
                 case .wrongPassword:
                     password = answer
                     tryToLogIn()
+                case .forgotPassword:
+                    self.resetPassword(email: answer)
                 }
             }
             
@@ -343,6 +323,8 @@ class LogInViewController: UIViewController {
         }
         print(signUpAnswers)
     }
+    
+    //MARK: - Try to Sign Up
     
     func tryToSignUp() {
         print("Hier zum registrieren")
@@ -362,10 +344,15 @@ class LogInViewController: UIViewController {
                     default:
                         self.signUpFrame = .error
                     }
+                    self.view.activityStopAnimating()
                     self.startSignUpSession()
                 }
             } else {
                 print("User wurde erfolgreich erstellt.")
+                
+                Analytics.logEvent(AnalyticsEventSignUp, parameters: [
+                    AnalyticsParameterMethod: "email"
+                ])
                 
                 if let user = Auth.auth().currentUser {
                     let changeRequest = user.createProfileChangeRequest()
@@ -382,8 +369,8 @@ class LogInViewController: UIViewController {
                         }
                     }
                 
-                    let userRef = Firestore.firestore().collection("Users").document(user.uid)
-                    let data = ["name": self.name, "surname": self.surname, "full_name": fullName]
+                    let userRef = self.db.collection("Users").document(user.uid)
+                    let data: [String:Any] = ["name": self.name, "surname": self.surname, "full_name": fullName, "createDate": Timestamp(date: Date())]
                     
                     userRef.setData(data, completion: { (error) in
                         if let error = error {
@@ -393,6 +380,16 @@ class LogInViewController: UIViewController {
                             self.signUpFrame = .keepCalm
                             self.view.activityStopAnimating()
                             self.startSignUpSession()
+                            
+                            self.notifyMalte(name: fullName)
+                            
+                            user.sendEmailVerification { (error) in
+                                if let err = error {
+                                    print("We have an error: \(err.localizedDescription)")
+                                } else {
+                                    print("Email Verification send")
+                                }
+                            }
                         }
                     })
                 }
@@ -400,6 +397,22 @@ class LogInViewController: UIViewController {
         }
         
     }
+    
+    func notifyMalte(name: String) {
+        let notificationRef = db.collection("Users").document("CZOcL3VIwMemWwEfutKXGAfdlLy1").collection("notifications").document()
+        let notificationData: [String: Any] = ["type": "message", "message": "Wir haben einen neuen User: \(name)", "name": "System", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "messageID": "Dont Know"]
+        
+        
+        notificationRef.setData(notificationData) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                print("Successfully set notification")
+            }
+        }
+    }
+    
+    //MARK: -Try to log in
     
     func tryToLogIn() {
         print(" Hier zum einloggen")
@@ -423,13 +436,136 @@ class LogInViewController: UIViewController {
                     
                 }
             } else {
-                print("User wurde erfolgreich eingeloggt.")
-                self.delegate?.loadUser()
-                self.dismiss(animated: true, completion: nil)
+                if let result = result {
+                    if !result.user.isEmailVerified {
+                        print("Not yet verified")
+                        self.tryToLogOut()
+                        
+                        let alertVC = UIAlertController(title: "Error", message: "Deine Email Adresse wurde noch nicht verifiziert. Sollen wir dir erneut eine Bestätigungs Email an \(self.email) senden?", preferredStyle: .alert)
+                        let alertActionOkay = UIAlertAction(title: "Okay", style: .default) {
+                            (_) in
+                            result.user.sendEmailVerification { (err) in
+                                                                
+                                if let error = err {
+                                    print("We have an error: \(error.localizedDescription)")
+                                } else {
+                                    self.alert(message: "Der Link wurde verschickt")
+                                    self.dismiss(animated: true, completion: nil)
+                                }
+                            }
+                        }
+                        let alertActionCancel = UIAlertAction(title: "Abbrechen", style: .cancel) { (_) in
+                            self.dismiss(animated: true, completion: nil)
+                        }
+
+                        alertVC.addAction(alertActionOkay)
+                        alertVC.addAction(alertActionCancel)
+                        self.present(alertVC, animated: true, completion: nil)
+                    } else {
+                        print("User wurde erfolgreich eingeloggt.")
+                        
+                        Analytics.logEvent(AnalyticsEventLogin, parameters: [
+                        AnalyticsParameterMethod: "email"
+                        ])
+                    
+                        self.delegate?.loadUser()
+                        self.dismiss(animated: true, completion: nil)
+                    }
+                }
             }
         }
     }
     
+    func resetPassword(email: String) {
+        Auth.auth().sendPasswordReset(withEmail: email) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+                if let errCode = AuthErrorCode(rawValue: error._code) {
+                    
+                    switch errCode {
+                    case .invalidEmail:
+                        self.logInFrame = .wrongEmail
+                        
+                    default:
+                        self.logInFrame = .wrongEmail
+                    }
+                    self.startLogIn()
+                }
+            } else {
+                self.alert(message: "Die E-Mail wurde gesendet", title: "Schau in dein Postfach, ändere dein Passwort und versuche es erneut. Bis gleich!")
+                
+            }
+        }
+    }
+    
+    func tryToLogOut() {
+        do {
+            try Auth.auth().signOut()
+            print("Log Out successful")
+        } catch {
+            print("Log Out not successfull")
+        }
+    }
+    
+    
+    //MARK: -Functions
+    func showEulaButton() {
+        self.view.addSubview(eulaButton)
+        eulaButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        eulaButton.topAnchor.constraint(equalTo: nextButton.bottomAnchor, constant: 25).isActive = true
+        eulaButton.widthAnchor.constraint(equalToConstant: 180).isActive = true
+        eulaButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+    }
+    @objc func toEulaTapped() {
+        if let url = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
+            UIApplication.shared.open(url)
+        }
+    }
+    
+    let eulaButton: DesignableButton = {
+        let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.cornerRadius = 4
+        button.backgroundColor = Constants.imagineColor
+        button.setTitle("Zur Vereinbarung", for: .normal)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 18)
+        button.setTitleColor(.white, for: .normal)
+        button.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    let resetPasswordButton: DesignableButton = {
+       let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.cornerRadius = 4
+        button.clipsToBounds = true
+        button.setTitle("Passwort vergessen", for: .normal)
+        button.setTitleColor(Constants.imagineColor, for: .normal)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 10)
+        button.addTarget(self, action: #selector(resetPasswordTapped), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    @objc func resetPasswordTapped() {
+        self.logInFrame = .forgotPassword
+        self.startLogIn()
+    }
+    
+    func showResetPasswordButton() {
+        self.view.addSubview(resetPasswordButton)
+        resetPasswordButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        resetPasswordButton.topAnchor.constraint(equalTo: nextButton.bottomAnchor, constant: 3).isActive = true
+        resetPasswordButton.isHidden = true
+    }
+    
+    @objc func textGetsWritten() {
+        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveLinear, animations: {
+            self.nextButton.alpha = 1
+        })
+    }
     
     
     let questionLabel: UILabel = {
@@ -483,6 +619,8 @@ class LogInViewController: UIViewController {
         newStackView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -75).isActive = true
         //nextButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
         questionLabel.heightAnchor.constraint(equalToConstant: 200).isActive = true
+        
+        showResetPasswordButton()
         
     }
     
@@ -545,20 +683,20 @@ class LogInViewController: UIViewController {
                 
             }, completion: { (_) in
                 self.initialButton2.backgroundColor = UIColor(red:1.00, green:0.54, blue:0.52, alpha:1.0)
-                self.initialLabel.text = "Das ist Imagine. Beweise dich und wir nehmen dich gerne bei uns auf! Nimm dir Zeit dafür. Sei ehrlich und du selbst!"
+                self.initialLabel.text = "Willkommen bei Imagine. Lass uns das Ritual starten und dich in unserer Gemeinschaft aufnehmen! Vergiss nicht ehrlich zu sein und ganz du selbst!"
                 self.initialButton1.setTitle("Ich bin bereit!", for: .normal)
                 self.initialButton2.setTitle("Lieber Später!", for: .normal)
                 self.initialButton2.backgroundColor = UIColor(red:1.00, green:0.54, blue:0.52, alpha:1.0)
                 //  Achtung Label
-                self.view.addSubview(self.attentionLabel)
-                self.attentionLabel.alpha = 0
-                self.attentionLabel.translatesAutoresizingMaskIntoConstraints = false
-                self.attentionLabel.centerXAnchor.constraint(equalTo: self.initialStackView.centerXAnchor, constant: 0).isActive = true
-                self.attentionLabel.topAnchor.constraint(equalTo: self.initialStackView.topAnchor, constant: -55).isActive = true
-                self.attentionLabel.text = "Achtung!"
-                self.attentionLabel.font = UIFont(name: "IBMPlexSans", size: 30)
-                self.attentionLabel.shadowColor = UIColor.white
-                self.attentionLabel.shadowOffset = CGSize(width: 3, height: -1)
+//                self.view.addSubview(self.attentionLabel)
+//                self.attentionLabel.alpha = 0
+//                self.attentionLabel.translatesAutoresizingMaskIntoConstraints = false
+//                self.attentionLabel.centerXAnchor.constraint(equalTo: self.initialStackView.centerXAnchor, constant: 0).isActive = true
+//                self.attentionLabel.topAnchor.constraint(equalTo: self.initialStackView.topAnchor, constant: -55).isActive = true
+//                self.attentionLabel.text = ""
+//                self.attentionLabel.font = UIFont(name: "IBMPlexSans", size: 30)
+//                self.attentionLabel.shadowColor = UIColor.white
+//                self.attentionLabel.shadowOffset = CGSize(width: 3, height: -1)
                 
                 self.initialLabelConstraint.constant = 150
                 

@@ -32,23 +32,6 @@ class CampaignCell: UITableViewCell {
                 vetoLabel.text = "\(campaign.opposition) Vetos"
                 categoryLabel.text = campaign.category
                 
-                let category = campaign.category
-                var labelColor: UIColor?
-                
-                switch category {
-                case "Management":
-                    labelColor = Constants.red
-                case "Finanzen":
-                    labelColor = Constants.green
-                case "Kommunikation":
-                    labelColor = Constants.imagineColor
-                case "Inhalt":
-                    labelColor = .purple
-                default:
-                    labelColor = .black
-                }
-                
-                categoryLabel.textColor = labelColor
             }
         }
     }
@@ -62,7 +45,7 @@ class CampaignCell: UITableViewCell {
         // add corner radius on `contentView`
         contentView.layer.cornerRadius = 5
         contentView.clipsToBounds = true
-        backgroundColor =  Constants.backgroundColorForTableViews
+        backgroundColor =  .clear
     }
     
     override func layoutSubviews() {

@@ -27,7 +27,7 @@ class PostCommentChatViewController: MSGMessengerViewController {
     
     public var hasntSwipedYet = true
     
-    let tim = ChatUser(displayName: "Tim", avatar: UIImage(named: "default-user"), avatarURL: nil, isSender: false)
+    let tim = ChatUser(displayName: "", avatar: UIImage(named: "default-user"), avatarURL: nil, isSender: false)
     
     var id = 2
     
@@ -60,9 +60,7 @@ class PostCommentChatViewController: MSGMessengerViewController {
             showSwipeView()
         }
         
-        if post.toComments {    // Comes from SideMenu Notification
-            self.deleteNotification()
-        }
+        HandyHelper().deleteNotifications(type: .comment, id: post.documentID)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -204,16 +202,17 @@ class PostCommentChatViewController: MSGMessengerViewController {
         
         // Guckt ob sich was verändert
         listener = reference.addSnapshotListener { querySnapshot, error in
-            guard let snapshot = querySnapshot else {
-                print("Error listening for channel updates: \(error?.localizedDescription ?? "No error")")
-                return      // Wenn squerySnapshot nicht snapshot ist
-            }
-            
-            let snapCount = snapshot.documentChanges.count
-            
-            // Alles neue (Am anfang alle) werden jetzt weitergeleitet als "change" document
-            snapshot.documentChanges.forEach { change in
-                self.handlingChanges(incomingChanges: snapCount, change: change)
+            if let err = error {
+                print("Error listening for channel updates: \(err.localizedDescription)")
+            } else {
+                if let snapshot = querySnapshot {
+                    let snapCount = snapshot.documentChanges.count
+                    
+                    // Alles neue (Am anfang alle) werden jetzt weitergeleitet als "change" document
+                    snapshot.documentChanges.forEach { change in
+                        self.handlingChanges(incomingChanges: snapCount, change: change)
+                    }
+                }
             }
         }
         
@@ -269,16 +268,20 @@ class PostCommentChatViewController: MSGMessengerViewController {
     
         let data : [String: Any] = ["body": bodyString, "id": message.id, "sentAt": Timestamp(date: Date()), "userID": currentUserUid]
         
-        if let currentUser = currentUser { 
-            let notificationRef = db.collection("Users").document(post.originalPosterUID).collection("notifications").document()
-            let notificationData: [String: Any] = ["type": "comment", "comment": bodyString, "name": currentUser.displayName, "postID": self.post.documentID]
-            
-            notificationRef.setData(notificationData) { (err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    print("Successfully set notification")
+        if let currentUser = currentUser {
+            if currentUserUid != post.originalPosterUID && post.originalPosterUID != "" {
+                let notificationRef = db.collection("Users").document(post.originalPosterUID).collection("notifications").document()
+                let notificationData: [String: Any] = ["type": "comment", "comment": bodyString, "name": currentUser.displayName, "postID": self.post.documentID]
+                
+                notificationRef.setData(notificationData) { (err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        print("Successfully set notification")
+                    }
                 }
+            } else {
+                print("No notification if you comment your own post")
             }
         }
         
@@ -299,9 +302,9 @@ class PostCommentChatViewController: MSGMessengerViewController {
     
     override func inputViewPrimaryActionTriggered(inputView: MSGInputView) {    // If somebody presses send
         
-        
         let body: MSGMessageBody =  (inputView.message.containsOnlyEmoji && inputView.message.count < 5) ? .emoji(inputView.message) : .text(inputView.message)
         
+        print("##Body: ", body)
         // inputView.message ist die Nachricht
         if let user = currentUser {
             if allowedToComment {

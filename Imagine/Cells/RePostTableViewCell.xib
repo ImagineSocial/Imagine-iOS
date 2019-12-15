@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -65,10 +65,10 @@
                         </userDefinedRuntimeAttributes>
                     </view>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eiJ-lf-DwH" userLabel="OGPostView" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="10" y="152.5" width="355" height="282.5"/>
+                        <rect key="frame" x="10" y="153.5" width="355" height="282.5"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Cb4-JX-Uh9">
-                                <rect key="frame" x="2" y="2" width="351" height="225.5"/>
+                                <rect key="frame" x="5" y="5" width="345" height="220.5"/>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hier steht der Originaltitel meines Posts. Wenn ich kein Bild Poste auch der ganze Post" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.64999997615814209" translatesAutoresizingMaskIntoConstraints="NO" id="uZB-Gt-KLo">
                                 <rect key="frame" x="5" y="227.5" width="210" height="50"/>
@@ -98,26 +98,26 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yy9-HG-nMR">
                                 <rect key="frame" x="256.5" y="260.5" width="48.5" height="12"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="9"/>
-                                <nil key="textColor"/>
+                                <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="hV4-fh-krR" firstAttribute="leading" secondItem="Yy9-HG-nMR" secondAttribute="trailing" constant="10" id="85p-WQ-k04"/>
                             <constraint firstItem="Yy9-HG-nMR" firstAttribute="bottom" secondItem="hV4-fh-krR" secondAttribute="bottom" id="Byt-pW-z2B"/>
                             <constraint firstAttribute="height" constant="282.5" id="Cpx-WK-CH1"/>
-                            <constraint firstItem="uZB-Gt-KLo" firstAttribute="top" secondItem="Cb4-JX-Uh9" secondAttribute="bottom" id="Gfi-ny-AaG"/>
+                            <constraint firstItem="uZB-Gt-KLo" firstAttribute="top" secondItem="Cb4-JX-Uh9" secondAttribute="bottom" constant="2" id="Gfi-ny-AaG"/>
                             <constraint firstItem="uZB-Gt-KLo" firstAttribute="leading" secondItem="eiJ-lf-DwH" secondAttribute="leading" constant="5" id="HLi-y0-ujh"/>
                             <constraint firstItem="hV4-fh-krR" firstAttribute="leading" secondItem="eeR-sG-s0N" secondAttribute="trailing" constant="10" id="Id2-ov-rjh"/>
-                            <constraint firstItem="Cb4-JX-Uh9" firstAttribute="top" secondItem="eiJ-lf-DwH" secondAttribute="top" constant="2" id="QQj-dx-Hu6"/>
+                            <constraint firstItem="Cb4-JX-Uh9" firstAttribute="top" secondItem="eiJ-lf-DwH" secondAttribute="top" constant="5" id="QQj-dx-Hu6"/>
                             <constraint firstAttribute="trailing" secondItem="hV4-fh-krR" secondAttribute="trailing" constant="10" id="Rpr-cW-5KY"/>
                             <constraint firstItem="eeR-sG-s0N" firstAttribute="leading" secondItem="uZB-Gt-KLo" secondAttribute="trailing" constant="10" id="SK0-Er-c5e"/>
                             <constraint firstAttribute="bottom" secondItem="uZB-Gt-KLo" secondAttribute="bottom" constant="5" id="XHB-ZQ-2Zt"/>
-                            <constraint firstAttribute="trailing" secondItem="Cb4-JX-Uh9" secondAttribute="trailing" constant="2" id="YlQ-d2-JMe"/>
+                            <constraint firstAttribute="trailing" secondItem="Cb4-JX-Uh9" secondAttribute="trailing" constant="5" id="YlQ-d2-JMe"/>
                             <constraint firstAttribute="bottom" secondItem="hV4-fh-krR" secondAttribute="bottom" constant="10" id="ZbP-c3-EF4"/>
                             <constraint firstItem="eeR-sG-s0N" firstAttribute="top" secondItem="hV4-fh-krR" secondAttribute="top" id="jK6-ZG-0bi"/>
-                            <constraint firstItem="Cb4-JX-Uh9" firstAttribute="leading" secondItem="eiJ-lf-DwH" secondAttribute="leading" constant="2" id="vKD-UU-jTT"/>
+                            <constraint firstItem="Cb4-JX-Uh9" firstAttribute="leading" secondItem="eiJ-lf-DwH" secondAttribute="leading" constant="5" id="vKD-UU-jTT"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -126,8 +126,8 @@
                         </userDefinedRuntimeAttributes>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hier steht die Übersetzung meines Posts. Wenn ich kein Bild Poste auch der ganze Post" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.64999997615814209" translatesAutoresizingMaskIntoConstraints="NO" id="XDl-QE-Tuq">
-                        <rect key="frame" x="10" y="77" width="355" height="70.5"/>
-                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="20"/>
+                        <rect key="frame" x="10" y="77" width="355" height="71.5"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="18"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
@@ -140,9 +140,9 @@
                         <viewLayoutGuide key="safeArea" id="xNp-pt-qMl"/>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c74-TK-Xp0">
-                        <rect key="frame" x="60" y="54.5" width="59" height="14.5"/>
-                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="11"/>
-                        <nil key="textColor"/>
+                        <rect key="frame" x="60" y="56" width="53.5" height="13"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="10"/>
+                        <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="default-user" translatesAutoresizingMaskIntoConstraints="NO" id="sha-wU-sGx">
@@ -153,8 +153,8 @@
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RRe-IJ-Hz8">
-                        <rect key="frame" x="60" y="34" width="89" height="21"/>
-                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
+                        <rect key="frame" x="60" y="34" width="78" height="18.5"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
@@ -164,7 +164,7 @@
                             <constraint firstAttribute="height" constant="25" id="16O-VL-Vtv"/>
                             <constraint firstAttribute="width" constant="25" id="KCj-fb-oMu"/>
                         </constraints>
-                        <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="tintColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <state key="normal" image="menu">
                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </state>
@@ -177,14 +177,14 @@
                             <action selector="moreTapped:" destination="OPI-UT-l5L" eventType="touchUpInside" id="cX3-Ym-c5N"/>
                         </connections>
                     </button>
-                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="b36-WA-y8y">
-                        <rect key="frame" x="10" y="440" width="355" height="25"/>
+                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="17" translatesAutoresizingMaskIntoConstraints="NO" id="b36-WA-y8y">
+                        <rect key="frame" x="10" y="442" width="355" height="23"/>
                         <subviews>
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6N0-gh-py4" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="59" height="25"/>
+                                <rect key="frame" x="0.0" y="0.0" width="57.5" height="23"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
                                 <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <state key="normal" title="Button" image="thanks">
+                                <state key="normal" title="Button" image="thanksButton">
                                     <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <userDefinedRuntimeAttributes>
@@ -197,10 +197,10 @@
                                 </connections>
                             </button>
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y86-Ko-iMx" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="74" y="0.0" width="59" height="25"/>
+                                <rect key="frame" x="74.5" y="0.0" width="57.5" height="23"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
                                 <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <state key="normal" title="Button" image="wow">
+                                <state key="normal" title="Button" image="wowButton">
                                     <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <userDefinedRuntimeAttributes>
@@ -213,10 +213,10 @@
                                 </connections>
                             </button>
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NEB-4l-G9M" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="148" y="0.0" width="59" height="25"/>
+                                <rect key="frame" x="149" y="0.0" width="57" height="23"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
                                 <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <state key="normal" title="Button" image="ha">
+                                <state key="normal" title="Button" image="haButton">
                                     <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <userDefinedRuntimeAttributes>
@@ -229,10 +229,10 @@
                                 </connections>
                             </button>
                             <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Pqk-TM-IGx" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="222" y="0.0" width="59" height="25"/>
+                                <rect key="frame" x="223" y="0.0" width="57.5" height="23"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
                                 <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <state key="normal" title="Button" image="nice">
+                                <state key="normal" title="Button" image="niceButton">
                                     <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 </state>
                                 <userDefinedRuntimeAttributes>
@@ -245,25 +245,24 @@
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cJb-QI-9x8">
-                                <rect key="frame" x="296" y="0.0" width="59" height="25"/>
+                                <rect key="frame" x="297.5" y="0.0" width="57.5" height="23"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="comments" translatesAutoresizingMaskIntoConstraints="NO" id="VaH-WJ-3g6">
-                                        <rect key="frame" x="5" y="5" width="34" height="15"/>
+                                        <rect key="frame" x="5" y="5" width="32.5" height="13"/>
                                         <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="17" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L7E-yZ-9FU">
-                                        <rect key="frame" x="39" y="2" width="20" height="23"/>
+                                        <rect key="frame" x="37.5" y="2" width="20" height="18"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="BJX-Nd-xsl"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
-                                        <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="L7E-yZ-9FU" secondAttribute="trailing" id="66c-JW-axU"/>
-                                    <constraint firstAttribute="bottom" secondItem="L7E-yZ-9FU" secondAttribute="bottom" id="FNZ-Tf-eSX"/>
+                                    <constraint firstAttribute="bottom" secondItem="L7E-yZ-9FU" secondAttribute="bottom" constant="3" id="FNZ-Tf-eSX"/>
                                     <constraint firstAttribute="bottom" secondItem="VaH-WJ-3g6" secondAttribute="bottom" constant="5" id="GuN-cW-UGd"/>
                                     <constraint firstItem="VaH-WJ-3g6" firstAttribute="top" secondItem="Sg7-JV-qCU" secondAttribute="top" constant="5" id="Ors-kv-fEv"/>
                                     <constraint firstItem="L7E-yZ-9FU" firstAttribute="leading" secondItem="VaH-WJ-3g6" secondAttribute="trailing" id="edx-gq-eTA"/>
@@ -274,7 +273,7 @@
                             </view>
                         </subviews>
                         <constraints>
-                            <constraint firstAttribute="height" constant="25" id="DjU-va-sLP"/>
+                            <constraint firstAttribute="height" constant="23" id="DjU-va-sLP"/>
                         </constraints>
                     </stackView>
                 </subviews>
@@ -286,7 +285,7 @@
                     <constraint firstItem="XDl-QE-Tuq" firstAttribute="leading" secondItem="uRR-6c-6J1" secondAttribute="leading" constant="10" id="5QZ-eb-yL9"/>
                     <constraint firstItem="c74-TK-Xp0" firstAttribute="bottom" secondItem="sha-wU-sGx" secondAttribute="bottom" constant="-5" id="6vE-MG-Whi"/>
                     <constraint firstAttribute="trailing" secondItem="XDl-QE-Tuq" secondAttribute="trailing" constant="10" id="7Gh-yt-cZF"/>
-                    <constraint firstItem="b36-WA-y8y" firstAttribute="top" secondItem="eiJ-lf-DwH" secondAttribute="bottom" constant="5" id="85Z-CD-fay"/>
+                    <constraint firstItem="b36-WA-y8y" firstAttribute="top" secondItem="eiJ-lf-DwH" secondAttribute="bottom" constant="6" id="85Z-CD-fay"/>
                     <constraint firstItem="UAd-Ez-vM7" firstAttribute="leading" secondItem="uRR-6c-6J1" secondAttribute="leading" id="9h6-Ln-CpV"/>
                     <constraint firstItem="sha-wU-sGx" firstAttribute="top" secondItem="UAd-Ez-vM7" secondAttribute="bottom" constant="10" id="EPH-Bm-eCe"/>
                     <constraint firstItem="eiJ-lf-DwH" firstAttribute="leading" secondItem="uRR-6c-6J1" secondAttribute="leading" constant="10" id="Eqe-Q9-X3i"/>
@@ -334,10 +333,10 @@
     <resources>
         <image name="comments" width="30" height="30"/>
         <image name="default-user" width="415" height="415"/>
-        <image name="ha" width="200" height="100"/>
+        <image name="haButton" width="800" height="800"/>
         <image name="menu" width="30" height="30"/>
-        <image name="nice" width="200" height="100"/>
-        <image name="thanks" width="200" height="100"/>
-        <image name="wow" width="200" height="100"/>
+        <image name="niceButton" width="800" height="800"/>
+        <image name="thanksButton" width="800" height="800"/>
+        <image name="wowButton" width="615" height="596"/>
     </resources>
 </document>

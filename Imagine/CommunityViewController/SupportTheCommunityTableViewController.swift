@@ -27,6 +27,15 @@ class SupportTheCommunityTableViewController: UITableViewController {
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.view.backgroundColor = .white
         
+        if let user = Auth.auth().currentUser {
+            if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" {
+                print("Nicht bei Malte loggen")
+            } else {
+                Analytics.logEvent("LookingForJobs", parameters: [:])
+            }
+        } else {
+            Analytics.logEvent("LookingForJobs", parameters: [:])
+        }
     }
     
     
@@ -51,28 +60,11 @@ class SupportTheCommunityTableViewController: UITableViewController {
             
             let supportField = jobOffers[indexPath.row]
             
-            
             cell.headerLabel.text = supportField.title
             cell.cellBodyLabel.text = supportField.cellText
             cell.createDateLabel.text = supportField.createDate
             cell.interestedCountLabel.text = "\(supportField.interested) Interessenten"
             cell.categoryLabel.text = supportField.category
-            
-            let category = supportField.category
-            switch category {
-            case "IT":
-                cell.categoryLabel.textColor = Constants.imagineColor
-            case "Management":
-                cell.categoryLabel.textColor = Constants.red
-            case "Sprache":
-                cell.categoryLabel.textColor = Constants.green
-            case "Allgemein":
-                cell.categoryLabel.textColor = .purple
-            default:
-                cell.categoryLabel.textColor = .black
-                
-            }
-            
             
             return cell
         }
@@ -106,7 +98,7 @@ class SupportTheCommunityTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 225
+        return 195
     }
     
     @IBAction func bugReportTapped(_ sender: Any) {

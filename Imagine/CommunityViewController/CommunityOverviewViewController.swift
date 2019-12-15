@@ -7,8 +7,7 @@
 //
 
 import UIKit
-import FirebaseAuth
-import FirebaseFirestore
+import Firebase
 
 extension UIViewController {
     
@@ -40,6 +39,7 @@ class CommunityOverviewViewController: UIViewController {
     @IBOutlet weak var secretButton: DesignableButton!
     @IBOutlet weak var buttonStackView: UIStackView!
     
+    
     let db = Firestore.firestore()
     
     override func viewDidLoad() {
@@ -53,23 +53,24 @@ class CommunityOverviewViewController: UIViewController {
         gesture.minimumPressDuration = 3
         self.view.addGestureRecognizer(gesture)
         
-        upperRightButton.backgroundColor = Constants.imagineColor
-        howCanIHelpButton.backgroundColor = Constants.imagineColor
-        imagineBlogButton.backgroundColor = Constants.imagineColor
-        communityChatButton.backgroundColor = Constants.imagineColor
-        voteButton.backgroundColor = Constants.imagineColor
+        
+        let buttons : [UIButton] = [visionButton, moreButtonTapped, upperRightButton,imagineBlogButton,communityChatButton,voteButton]
+        
+        let cornerRadius:CGFloat = 8
+        
+        for button in buttons {
+            let layer = button.layer
+            layer.cornerRadius = cornerRadius
+            layer.borderColor = Constants.imagineColor.cgColor
+            layer.borderWidth = 2
+        }
+        
+//        voteButton.titleLabel?.lineBreakMode = .byWordWrapping
+        voteButton.titleLabel?.numberOfLines = 0
+        voteButton.titleLabel?.textAlignment = .center
+        howCanIHelpButton.layer.cornerRadius = cornerRadius
         
         
-        visionButton.imageView?.contentMode = .scaleAspectFit
-        let vLayer = visionButton.layer
-        vLayer.cornerRadius = 4
-        vLayer.borderColor = Constants.imagineColor.cgColor
-        vLayer.borderWidth = 2
-        moreButtonTapped.imageView?.contentMode = .scaleAspectFit
-        let mLayer = moreButtonTapped.layer
-        mLayer.cornerRadius = 4
-        mLayer.borderColor = Constants.imagineColor.cgColor
-        mLayer.borderWidth = 2
         
         print( self.view.frame.height, "Height")
         if self.view.frame.height >= 800 {
@@ -149,6 +150,16 @@ class CommunityOverviewViewController: UIViewController {
     
     @IBAction func principleButtonTapped(_ sender: Any) {
         let info = Info(title: "Imagine-Grundsatz", image: UIImage(named: "ImagineSign"), description: Constants.texts.principleText)
+        
+        if let user = Auth.auth().currentUser {
+            if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" {
+                print("Nicht bei Malte loggen")
+            } else {
+                Analytics.logEvent("PrincipleOpened", parameters: [:])
+            }
+        } else {
+            Analytics.logEvent("PrincipleOpened", parameters: [:])
+        }
         
         performSegue(withIdentifier: "toPrincipleInfo", sender: info)
     }

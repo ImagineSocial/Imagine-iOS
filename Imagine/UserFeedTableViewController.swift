@@ -22,6 +22,9 @@ enum AccessState{
     case blockedToInteract
 }
 
+protocol LogOutDelegate {
+    func deleteListener()
+}
 
 class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate {
     
@@ -34,6 +37,8 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     @IBOutlet weak var statusTextView: UITextView!
     @IBOutlet weak var cameraView: UIView!
     @IBOutlet weak var moreButton: DesignableButton!
+    @IBOutlet weak var headerView: UIView!
+    @IBOutlet weak var profileView: UIView!
     
     
     /* You have to set currentState and userOfProfile when you call this VC - Couldnt get the init to work */
@@ -45,12 +50,26 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     var currentState:AccessState?
     
+    var delegate: LogOutDelegate?
+    
+    let defaultStatusText = "Schreibe hier deinen Status"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
+        
+        self.navigationController?.navigationBar.isTranslucent = false
+        
+        if #available(iOS 13.0, *) {
+            self.view.backgroundColor = .secondarySystemBackground
+            self.navigationController?.view.backgroundColor = .secondarySystemBackground
+        } else {
+            self.view.backgroundColor = UIColor(red: 242.0, green: 242.0, blue: 247.0, alpha: 1.0)
+            self.navigationController?.view.backgroundColor = UIColor(red: 242.0, green: 242.0, blue: 247.0, alpha: 1.0)
+        }
+        
         
         self.moreButton.isHidden = true
         cameraView.isHidden = true
@@ -66,6 +85,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         setBarButtonItem()
         
         imagePicker.delegate = self
+//        profileView.layer.cornerRadius = 8
     }
     
     func checkIfBlocked() {
@@ -110,7 +130,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                     
                     self.view.activityStartAnimating()
                     
-                    postHelper.getTheSavedPosts(getMore: getMore, whichPostList: .postsFromUser, userUID: user.userUID) { (posts, initialFetch)  in
+                    postHelper.getPostList(getMore: getMore, whichPostList: .postsFromUser, userUID: user.userUID) { (posts, initialFetch)  in
                         
                         guard let posts = posts else {
                             print("No more Posts")
@@ -246,10 +266,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                                 if statusQuote != "" {
                                     self.statusTextView.text = statusQuote
                                 } else {
-                                   self.statusTextView.text = "Schreibe jetzt einen Status"
+                                    self.statusTextView.text = self.defaultStatusText
                                 }
                             } else {
-                               self.statusTextView.text = "Schreibe jetzt einen Status"
+                                self.statusTextView.text = self.defaultStatusText
                             }
                         }
                     }
@@ -625,20 +645,29 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     }
     
     //MARK: - Buttons
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if let text = textView.text {
+            if text == defaultStatusText {
+                textView.text = ""
+            }
+        }
+    }
     
     func textViewDidEndEditing(_ textView: UITextView) {
         if let text = textView.text {
-            if let user = Auth.auth().currentUser {
-                let ref = db.collection("Users").document(user.uid)
-                
-                let data = ["statusText": text]
-                ref.setData(data, mergeFields: ["statusText"])
+            if text != defaultStatusText && text != "" {
+                if let user = Auth.auth().currentUser {
+                    let ref = db.collection("Users").document(user.uid)
+                    
+                    let data = ["statusText": text]
+                    ref.setData(data, mergeFields: ["statusText"])
+                }
             }
         }
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        if text == "\n" {
+        if text == "\n" {       // If you hit return
             textView.resignFirstResponder()
             return false
         }
@@ -673,6 +702,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             do {
                 try Auth.auth().signOut()
                 print("Log Out successful")
+                self.delegate?.deleteListener()
                 self.navigationController?.popViewController(animated: true)
             } catch {
                 print("Log Out not successfull")
@@ -832,13 +862,19 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 chat.participant = profileUser
                 chat.documentID = newDocumentID
                 
+                newChatRef.setData(["participants": [profileUser.userUID, loggedInUser.uid]]) { (err) in
+                    if let error = err {
+                        print("We have an error: ", error.localizedDescription)
+                    }
+                }
+                
                 // Create Chat Reference for the current User
                 let dataForCurrentUsersDatabase = ["participant": chat.participant.userUID]
                 let currentUsersDatabaseRef = self.db.collection("Users").document(loggedInUser.uid).collection("chats").document(newDocumentID)
                 
-                currentUsersDatabaseRef.setData(dataForCurrentUsersDatabase) { (error) in
-                    if error != nil {
-                        print("We have an error when saving chat for current User: \(error?.localizedDescription ?? "No error")")
+                currentUsersDatabaseRef.setData(dataForCurrentUsersDatabase) { (err) in
+                    if let error = err {
+                        print("We have an error when saving chat for current User: \(error.localizedDescription)")
                     }
                 }
                 
@@ -846,9 +882,9 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 let dataForProfileUsersDatabase = ["participant": loggedInUser.uid]
                 let profileUsersDatabaseRef = self.db.collection("Users").document(profileUser.userUID).collection("chats").document(newDocumentID)
                 
-                profileUsersDatabaseRef.setData(dataForProfileUsersDatabase) { (error) in
-                    if error != nil {
-                        print("We have an error when saving chat for profile User: \(error?.localizedDescription ?? "No error")")
+                profileUsersDatabaseRef.setData(dataForProfileUsersDatabase) { (err) in
+                    if let error = err {
+                        print("We have an error when saving chat for profile User: \(error.localizedDescription)")
                     }
                 }
                 
@@ -867,6 +903,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         self.performSegue(withIdentifier: "toChatSegue", sender: chat)
     }
     
+    //MARK: - PrepareForSegue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toChatSegue" {
             if let chosenChat = sender as? Chat {
@@ -887,6 +924,26 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             if let chosenPost = sender as? Post {
                 if let reportVC = segue.destination as? MeldenViewController {
                     reportVC.post = chosenPost
+                }
+            }
+        }
+        if segue.identifier == "toFactSegue" {
+            if let fact = sender as? Fact {
+                if let navCon = segue.destination as? UINavigationController {
+                    if let factVC = navCon.topViewController as? FactParentContainerViewController {
+                        factVC.fact = fact
+                        factVC.needNavigationController = true
+                    }
+                }
+            }
+        }
+        if segue.identifier == "goToPostsOfTopic" {
+            if let fact = sender as? Fact {
+                if let navCon = segue.destination as? UINavigationController {
+                    if let factVC = navCon.topViewController as? PostsOfFactTableViewController {
+                        factVC.fact = fact
+                        factVC.needNavigationController = true
+                    }
                 }
             }
         }

@@ -24,6 +24,7 @@ enum NotificationType {
     case friend
     case comment
     case blogPost
+    case upvote
 }
 
 
@@ -111,13 +112,13 @@ class HandyHelper {
         if titleCount <= 40 {           // Two Lines
             labelHeight = 40
         } else if titleCount <= 80 {    // Three Lines
-            labelHeight = 60
+            labelHeight = 50
         } else if titleCount <= 120 {   // Four Lines
-            labelHeight = 105
+            labelHeight = 90
         } else if titleCount <= 160 {   //  5 Lines
-            labelHeight = 130
+            labelHeight = 115
         } else if titleCount <= 200 {   // 6 Lines
-            labelHeight = 160
+            labelHeight = 145
         }
         
         return labelHeight
@@ -182,10 +183,43 @@ class HandyHelper {
         }
         
         if keyForFirestore != "" {
-            //db.setValue(valueForFirestore, forKey: keyForFirestore)
             db.updateData([keyForFirestore:valueForFirestore])
         } else {
             print("Could not update")
+        }
+        
+        if !post.anonym {
+            notifyUserForUpvote(button: button, post: post)
+        }
+    }
+    
+    func notifyUserForUpvote(button: VoteButton, post: Post) {
+        
+        var buttonString: String?
+        
+        switch button {
+        case .thanks:
+            buttonString = "thanks"
+        case .wow:
+            buttonString = "wow"
+        case .ha:
+            buttonString = "ha"
+        case .nice:
+            buttonString = "nice"
+        }
+        
+        if let button = buttonString {
+            let data = ["type": "upvote", "button": button, "postID": post.documentID, "title": post.title]
+            
+            let ref = db.collection("Users").document(post.originalPosterUID).collection("notifications").document()
+            
+            ref.setData(data) { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    print("notification set")
+                }
+            }
         }
     }
     
@@ -269,94 +303,6 @@ class HandyHelper {
         }
     }
     
-    
-    
-//    func getChats(chatList: @escaping ([Chat]) -> Void ) {
-//        var chatsList = [Chat]()
-//        
-//        DispatchQueue.main.async {
-//            
-//            if let user = Auth.auth().currentUser {
-//                let chatsRef = self.db.collection("Users").document(user.uid).collection("chats")
-//                
-//                chatsRef.getDocuments { (snapshot, error) in
-//                    if error == nil {
-//                        
-//                        for document in snapshot!.documents {
-//                            let documentData = document.data()
-//                            
-//                            guard let participant = documentData["participant"] as? String else { return }
-//                            
-//                            let chat = Chat()
-//                            chat.documentID = document.documentID
-//                            chat.participant.userUID = participant
-//                            if let lastMessageID = documentData["lastReadMessage"] as? String {
-//                                chat.lastMessage.uid = lastMessageID
-//                            }
-//                            
-//                            chatsList.append(chat)
-//                        }
-//                        chatList(chatsList)
-//                    } else {
-//                        print("We have an error within the chats: \(error?.localizedDescription ?? "")")
-//                    }
-//                }
-//                
-//            } else {
-//                // Nobody logged In
-//            }
-//        }
-//    }
-//    
-//    func getCountOfUnreadMessages(chatList: [Chat], unreadMessages: @escaping (Int) -> Void ) {
-//        var count = 0
-//        
-//        DispatchQueue.main.async {
-//            
-//            for chat in chatList {
-//                let chatsRef = self.db.collection("Chats").document(chat.documentID).collection("threads").order(by: "sentAt", descending: true)
-//                
-//                // Already been in this chat at least once
-//                if let lastReadMessage = chat.lastMessage.uid {
-//                    
-//                    let lastReadMessageDoc = self.db.collection("Chats").document(chat.documentID).collection("threads").document(lastReadMessage)
-//                    
-//                    lastReadMessageDoc.getDocument { (document, error) in
-//                        if let error = error {
-//                            print("We have an error: \(error.localizedDescription)")
-//                        } else {
-//                            let endingChatsRef = chatsRef.end(beforeDocument: document!)
-//                            endingChatsRef.getDocuments(completion: { (snap, error) in
-//                                
-//                                if let error = error {
-//                                    print("We have an error: \(error.localizedDescription)")
-//                                } else {
-//                                    let unreadMessageCount = snap!.documents.count
-//                                    
-//                                    count = count+unreadMessageCount
-//                                    
-//                                    unreadMessages(count)
-//                                }
-//                            })
-//                        }
-//                    }
-//                } else {
-//                    // New chat, not a lastReadMessageUID set
-//                    chatsRef.getDocuments { (snap, error) in
-//                        if let error = error {
-//                            print("We have an error: \(error.localizedDescription)")
-//                        } else {
-//                            let unreadMessageCount = snap!.documents.count
-//                            count = count+unreadMessageCount
-//                            unreadMessages(count)
-//                        }
-//                    }
-//                }
-//                // Here was unreadMessages(count) but it finished too early
-//            }
-//        }
-//    }
-    
     func getLocaleCurrencyString(number: Double) -> String {
         let currencyFormatter = NumberFormatter()
         currencyFormatter.usesGroupingSeparator = true
@@ -402,6 +348,11 @@ class HandyHelper {
                 let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("type", isEqualTo: "blogPost")
                 
                 self.deleteInFirebase(ref: notRef)
+            case .upvote:
+                let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("type", isEqualTo: "upvote").whereField("postID", isEqualTo: id)
+                
+                self.deleteInFirebase(ref: notRef)
+                
             }
             
             

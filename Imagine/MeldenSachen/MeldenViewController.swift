@@ -77,18 +77,17 @@ class MeldenViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(showAlertForDeleteOption), for: .touchUpInside)
         button.setTitle("Post löschen", for: .normal)
-        button.setTitleColor(.black, for: .normal)
         if #available(iOS 13.0, *) {
-            button.tintColor = .label
+            button.setTitleColor(.label, for: .normal)
         } else {
-            button.tintColor = .black
+            button.setTitleColor(.black, for: .normal)
         }
         if #available(iOS 13.0, *) {
             button.backgroundColor = .systemBackground
         } else {
             button.backgroundColor = .white
         }
-        button.titleLabel?.font = UIFont(name: "Symbol", size: 20)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 20)
         
         return button
     }()
@@ -140,6 +139,7 @@ class MeldenViewController: UIViewController {
                             print("We have an error: \(error.localizedDescription)")
                         } else {
                             self.dismiss(animated: true, completion: nil)
+                            self.alert(message: "Fertig", title: "Das Bild wurde erfolgreich gelöscht. Aktualisiere den Feed und es ist weg")
                         }
                     }
                 }
@@ -152,6 +152,7 @@ class MeldenViewController: UIViewController {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
                     self.dismiss(animated: true, completion: nil)
+                    self.alert(message: "Fertig", title: "Das Bild wurde erfolgreich gelöscht. Aktualisiere den Feed und es ist weg")
                 }
             }
             print("No picture to delete")

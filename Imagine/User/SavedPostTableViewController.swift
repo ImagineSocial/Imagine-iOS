@@ -21,6 +21,15 @@ class SavedPostTableViewController: BaseFeedTableViewController {
         
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.isTranslucent = false
+        
+        if #available(iOS 13.0, *) {
+            self.view.backgroundColor = .secondarySystemBackground
+            self.navigationController?.view.backgroundColor = .secondarySystemBackground
+        } else {
+            self.view.backgroundColor = UIColor(red: 242.0, green: 242.0, blue: 247.0, alpha: 1.0)
+            self.navigationController?.view.backgroundColor = UIColor(red: 242.0, green: 242.0, blue: 247.0, alpha: 1.0)
+        }
         
         self.noPostsType = .savedPicture
         // navigationItem.rightBarButtonItem = editButtonItem
@@ -31,7 +40,7 @@ class SavedPostTableViewController: BaseFeedTableViewController {
         if isConnected() {
             
             if let user = Auth.auth().currentUser {
-                postHelper.getTheSavedPosts(getMore: getMore, whichPostList: .savedPosts, userUID: user.uid) { (posts, initialFetch)  in
+                postHelper.getPostList(getMore: getMore, whichPostList: .savedPosts, userUID: user.uid) { (posts, initialFetch)  in
                     
                     guard let posts = posts else {
                         print("No More Posts")
@@ -117,6 +126,26 @@ class SavedPostTableViewController: BaseFeedTableViewController {
             if let chosenPost = sender as? Post {
                 if let reportVC = segue.destination as? MeldenViewController {
                     reportVC.post = chosenPost
+                }
+            }
+        }
+        if segue.identifier == "toFactSegue" {
+            if let fact = sender as? Fact {
+                if let navCon = segue.destination as? UINavigationController {
+                    if let factVC = navCon.topViewController as? FactParentContainerViewController {
+                        factVC.fact = fact
+                        factVC.needNavigationController = true
+                    }
+                }
+            }
+        }
+        if segue.identifier == "goToPostsOfTopic" {
+            if let fact = sender as? Fact {
+                if let navCon = segue.destination as? UINavigationController {
+                    if let factVC = navCon.topViewController as? PostsOfFactTableViewController {
+                        factVC.fact = fact
+                        factVC.needNavigationController = true
+                    }
                 }
             }
         }

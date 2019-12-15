@@ -33,6 +33,13 @@ enum ReportType {
     case ignorant
 }
 
+class Votes {
+    var thanks = 0
+    var wow = 0
+    var ha = 0
+    var nice = 0
+}
+
 class Post {
     var title = ""
     var imageURL = ""
@@ -54,6 +61,7 @@ class Post {
     var votes = Votes()
     var event = Event()
     var repost: Post?
+    var fact:Fact?
     
     let handyHelper = HandyHelper()
     
@@ -107,6 +115,13 @@ class Post {
                         
                         if let reportType = self.handyHelper.setReportType(fetchedString: report) {
                             post.report = reportType
+                        }
+                        
+                        if let factID = docData["linkedFactID"] as? String {
+                            let fact = Fact(addMoreDataCell: false)
+                            fact.documentID = factID
+                            
+                            post.fact = fact
                         }
                         
                         if let postType = self.handyHelper.setPostType(fetchedString: postType) {

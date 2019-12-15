@@ -37,35 +37,52 @@ class YouTubeCell: BaseFeedCell {
     @IBOutlet weak var reportView: DesignablePopUp!
     @IBOutlet weak var reportViewLabel: UILabel!
     @IBOutlet weak var reportViewButtonInTop: DesignableButton!
+    @IBOutlet weak var factImageView: UIImageView!
     
     var delegate: PostCellDelegate?
     
     override func awakeFromNib() {
         self.addSubview(buttonLabel)
         
-        thanksButton.layer.borderWidth = 1.5
-        thanksButton.layer.borderColor = thanksColor.cgColor
-        wowButton.layer.borderWidth = 1.5
-        wowButton.layer.borderColor = wowColor.cgColor
-        haButton.layer.borderWidth = 1.5
-        haButton.layer.borderColor = haColor.cgColor
-        niceButton.layer.borderWidth = 1.5
-        niceButton.layer.borderColor = niceColor.cgColor
+        if #available(iOS 13.0, *) {
+            thanksButton.layer.borderColor = UIColor.label.cgColor
+            wowButton.layer.borderColor = UIColor.label.cgColor
+            haButton.layer.borderColor = UIColor.label.cgColor
+            niceButton.layer.borderColor = UIColor.label.cgColor
+        } else {
+            thanksButton.layer.borderColor = UIColor.black.cgColor
+            wowButton.layer.borderColor = UIColor.black.cgColor
+            haButton.layer.borderColor = UIColor.black.cgColor
+            niceButton.layer.borderColor = UIColor.black.cgColor
+        }
+        thanksButton.layer.borderWidth = 0.5
+        wowButton.layer.borderWidth = 0.5
+        haButton.layer.borderWidth = 0.5
+        niceButton.layer.borderWidth = 0.5
         
         thanksButton.setImage(nil, for: .normal)
         wowButton.setImage(nil, for: .normal)
         haButton.setImage(nil, for: .normal)
         niceButton.setImage(nil, for: .normal)
         
+        thanksButton.imageView?.contentMode = .scaleAspectFit
+        wowButton.imageView?.contentMode = .scaleAspectFit
+        haButton.imageView?.contentMode = .scaleAspectFit
+        niceButton.imageView?.contentMode = .scaleAspectFit
+        
+        factImageView.layer.cornerRadius = 3
+        factImageView.layer.borderWidth = 1
+        factImageView.layer.borderColor = UIColor.clear.cgColor
+        
         // Profile Picture
         let layer = profilePictureImageView.layer
         layer.cornerRadius = profilePictureImageView.frame.width/2
-        
         titleLabel.adjustsFontSizeToFitWidth = true
         
         // add corner radius on `contentView`
         contentView.layer.cornerRadius = 8
-        backgroundColor =  Constants.backgroundColorForTableViews
+        backgroundColor = .clear
+        playerView.layer.cornerRadius = 8
     }
     
     override func prepareForReuse() {
@@ -76,6 +93,10 @@ class YouTubeCell: BaseFeedCell {
         profilePictureImageView.image = nil
         
         playerView.stopVideo()
+        
+        factImageView.layer.borderColor = UIColor.clear.cgColor
+        factImageView.image = nil
+        factImageView.backgroundColor = .clear
     }
     
     
@@ -103,10 +124,10 @@ class YouTubeCell: BaseFeedCell {
                     setOwnCell()
                 }
             } else {
-                thanksButton.setImage(UIImage(named: "thanks"), for: .normal)
-                wowButton.setImage(UIImage(named: "wow"), for: .normal)
-                haButton.setImage(UIImage(named: "ha"), for: .normal)
-                niceButton.setImage(UIImage(named: "nice"), for: .normal)
+                thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
+                wowButton.setImage(UIImage(named: "wowButton"), for: .normal)
+                haButton.setImage(UIImage(named: "haButton"), for: .normal)
+                niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
             }
             
             if let youtubeID = post.linkURL.youtubeID {
@@ -128,9 +149,26 @@ class YouTubeCell: BaseFeedCell {
                 setUser()
             }
             
-            nameLabel.text = "\(post.user.name) \(post.user.surname)"
-            createDateLabel.text = post.createTime
+            if let fact = post.fact {
+                self.factImageView.layer.borderColor = UIColor.lightText.cgColor
+                                
+                if fact.title == "" {
+                    self.getFact()
+                } else {
+                    if let url = URL(string: fact.imageURL) {
+                        self.factImageView.sd_setImage(with: url, completed: nil)
+                    } else {
+                        self.factImageView.image = UIImage(named: "FactStamp")
+                        if #available(iOS 13.0, *) {
+                            self.factImageView.backgroundColor = .systemBackground
+                        } else {
+                            self.factImageView.backgroundColor = .white
+                        }
+                    }
+                }
+            }
             
+            createDateLabel.text = post.createTime
             titleLabel.text = post.title
             
             commentCountLabel.text = String(post.commentCount)
@@ -181,6 +219,26 @@ class YouTubeCell: BaseFeedCell {
         }
     }
     
+    func getFact() {
+        if let post = post {
+            self.loadFact(post: post) {
+                (fact) in
+                post.fact = fact
+                
+                if let url = URL(string: post.fact!.imageURL) {
+                    self.factImageView.sd_setImage(with: url, completed: nil)
+                } else {
+                    self.factImageView.image = UIImage(named: "FactStamp")
+                    if #available(iOS 13.0, *) {
+                        self.factImageView.backgroundColor = .systemBackground
+                    } else {
+                        self.factImageView.backgroundColor = .white
+                    }
+                }
+            }
+        }
+    }
+    
     @IBAction func moreButtonTapped(_ sender: Any) {
         if let post = post {
             delegate?.reportTapped(post: post)
@@ -220,6 +278,14 @@ class YouTubeCell: BaseFeedCell {
         if let post = post {
             if !post.anonym {
                 delegate?.userTapped(post: post)
+            }
+        }
+    }
+    
+    @IBAction func linkedFactTapped(_ sender: Any) {
+        if let post = post {
+            if let fact = post.fact {
+                delegate?.factTapped(fact: fact)
             }
         }
     }
