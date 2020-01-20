@@ -18,9 +18,9 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var downvoteButton: DesignableButton!
     @IBOutlet weak var upvoteButton: DesignableButton!
-    @IBOutlet weak var downvotesLabel: UILabel!
-    @IBOutlet weak var upvotesLabel: UILabel!
     @IBOutlet weak var infoButton: UIBarButtonItem!
+    @IBOutlet weak var upvoteCountLabel: UILabel!
+    @IBOutlet weak var downvoteCountLabel: UILabel!
     
     var argument: Argument?
     var fact: Fact?
@@ -38,10 +38,26 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
         let fact = fact
             else { return }
         
-        upvotesLabel.text = String(argument.upvotes)
-        downvotesLabel.text = String(argument.downvotes)
+        upvoteCountLabel.text = String(argument.upvotes)
+        downvoteCountLabel.text = String(argument.downvotes)
         titleLabel.text = argument.title
         descriptionLabel.text = argument.description
+        
+//        downvoteButton.layer.borderWidth = 1
+//        if #available(iOS 13.0, *) {
+//            downvoteButton.layer.borderColor = UIColor.label.cgColor
+//        } else {
+//            downvoteButton.layer.borderColor = UIColor.black.cgColor
+//        }
+//        downvoteButton.layer.cornerRadius = downvoteButton.frame.width/2
+//        
+//        upvoteButton.layer.borderWidth = 1
+//        if #available(iOS 13.0, *) {
+//            upvoteButton.layer.borderColor = UIColor.label.cgColor
+//        } else {
+//            upvoteButton.layer.borderColor = UIColor.black.cgColor
+//        }
+//        upvoteButton.layer.cornerRadius = downvoteButton.frame.width/2
         
         self.navigationItem.title = fact.title
     }
@@ -98,8 +114,8 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
 
     func ready() {
         if let argument = argument {
-            self.upvotesLabel.text = String(argument.upvotes)
-            self.downvotesLabel.text = String(argument.downvotes)
+            self.upvoteCountLabel.text = String(argument.upvotes)
+            self.downvoteCountLabel.text = String(argument.downvotes)
             self.upvoteButton.isEnabled = false
             self.downvoteButton.isEnabled = false
         }

@@ -111,7 +111,7 @@ class PostCommentChatViewController: MSGMessengerViewController {
                     }
                 }
             } else {
-                post.getUser()
+                post.getUser(isAFriend: false)
                 checkForData()
             }
         }

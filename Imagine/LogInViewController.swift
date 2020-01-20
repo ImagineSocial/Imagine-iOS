@@ -19,7 +19,7 @@ enum LogInFrame {
     case forgotPassword
 }
 
-enum SignInFrame {
+enum SignUpFrame {
     case enterFirstName
     case enterLastName
     case enterEmail
@@ -33,9 +33,9 @@ enum SignInFrame {
     case keepCalm
     case supportImagine
     case ready
-    case error
     case acceptEULA
     case wait
+    case error
 }
 
 protocol DismissDelegate {
@@ -61,8 +61,10 @@ class LogInViewController: UIViewController {
     var email = ""
     var password = ""
     var logInFrame: LogInFrame = .enterEmail
-    var signUpFrame: SignInFrame = .enterFirstName
+    var signUpFrame: SignUpFrame = .enterFirstName
     var signUpInProgress = false
+    
+    let maltesUID = "CZOcL3VIwMemWwEfutKXGAfdlLy1"
     
     var delegate:DismissDelegate?
     
@@ -81,6 +83,7 @@ class LogInViewController: UIViewController {
     //MARK: - SignUp & LogIn Sessions
     
     func startSignUpSession() {
+        
         signUpInProgress = true
         answerTextfield.text = ""
         nextButton.isEnabled = true
@@ -90,11 +93,13 @@ class LogInViewController: UIViewController {
         case .enterFirstName:
             answerTextfield.textContentType = .givenName
             questionLabel.text = NSLocalizedString("Child of earth, what is your name?", comment: "Enter your name (with a 'too much' touch)")
+            informationLabel.text = "Dein gewählter Vorname wird auf deinem Profil & in deinen Beiträgen für \"Fremde\" sichtbar sein"
         case .enterLastName:
             answerTextfield.textContentType = .familyName
                 let surnameText = NSLocalizedString("Glad to meet you %@. What is the name of your family?", comment: "Enter your surname (with a 'too much' touch)")
             print("name:", name)
             questionLabel.text = String.localizedStringWithFormat(surnameText, name)
+            informationLabel.text = "Dein Nachname wird nur für deine Freunde auf Imagine sichtbar sein" //und in der User-Suche (um Freunde zu finden)
         case .enterEmail:
             answerTextfield.textContentType = .emailAddress
             answerTextfield.isSecureTextEntry = false
@@ -111,6 +116,7 @@ class LogInViewController: UIViewController {
             answerTextfield.textContentType = .newPassword
             answerTextfield.isSecureTextEntry = true
             questionLabel.text = "Wie soll dein Passwort sein?"
+            informationLabel.text = "Das Passwort muss mindestens 6 Zeichen haben, und schon ein bisschen sicher sein!"
         case .weakPassword:
             answerTextfield.textContentType = .newPassword
             answerTextfield.isSecureTextEntry = true
@@ -143,19 +149,36 @@ class LogInViewController: UIViewController {
         case .acceptEULA:
             self.nextButton.alpha = 1
             self.answerTextfield.alpha = 0
+            self.informationLabel.alpha = 0
             self.answerTextfield.isEnabled = false
             questionLabel.text = "Stimmst du den Apple Nutzungsbedingungen zu und lädst keine unangebrachten Inhalte hoch?"
             nextButton.setTitle("Ich stimme zu", for: .normal)
             showEulaButton()
         case .wait:
-            print("Nothing")
+            print("Waitin'")
         }
-        
-        UIView.animate(withDuration: 1.3, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
-            self.answerTextfield.alpha = 1
-            self.questionLabel.alpha = 1
+        UIView.animate(withDuration: 0.9, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
+        self.answerTextfield.alpha = 1
+        self.questionLabel.alpha = 1
+        }, completion: { (_) in
+            
+            switch self.signUpFrame {
+            case .enterFirstName:
+                self.showInformationLabel()
+            case .enterLastName:
+                self.showInformationLabel()
+            case .enterPassword:
+                self.showInformationLabel()
+            default:
+                print("Nothing")
+            }
         })
-        
+    }
+
+    func showInformationLabel() {
+        UIView.animate(withDuration: 0.2) {
+            self.informationLabel.alpha = 1
+        }
     }
     
     func startLogIn() {
@@ -186,8 +209,7 @@ class LogInViewController: UIViewController {
             answerTextfield.textContentType = .emailAddress
             answerTextfield.isSecureTextEntry = false
         }
-        
-        UIView.animate(withDuration: 1.3, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: 0.9, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
             self.answerTextfield.alpha = 1
             self.questionLabel.alpha = 1
         })
@@ -199,9 +221,7 @@ class LogInViewController: UIViewController {
     @objc func nextButtonPushed(sender: DesignableButton!) {
         nextButton.isEnabled = false
         answerTextfield.resignFirstResponder()
-        
-        print("Button Pushed mit Dings: ", signUpFrame)
-        
+                
         if signUp {
             if let input = answerTextfield.text {
                 
@@ -268,9 +288,9 @@ class LogInViewController: UIViewController {
                 case .wait:
                     print("Nothing")
                 }
-                
-                UIView.animate(withDuration: 1, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
+                UIView.animate(withDuration: 0.7, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
                     self.answerTextfield.alpha = 0
+                    self.informationLabel.alpha = 0
                     self.nextButton.alpha = 0
                     self.questionLabel.alpha = 0
                 }, completion: { (_) in
@@ -310,9 +330,9 @@ class LogInViewController: UIViewController {
                     self.resetPassword(email: answer)
                 }
             }
-            
-            UIView.animate(withDuration: 1.3, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
+            UIView.animate(withDuration: 0.9, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
                 self.answerTextfield.alpha = 0
+                self.informationLabel.alpha = 0
                 self.nextButton.alpha = 0
                 self.questionLabel.alpha = 0
             }, completion: { (_) in
@@ -370,7 +390,7 @@ class LogInViewController: UIViewController {
                     }
                 
                     let userRef = self.db.collection("Users").document(user.uid)
-                    let data: [String:Any] = ["name": self.name, "surname": self.surname, "full_name": fullName, "createDate": Timestamp(date: Date())]
+                    let data: [String:Any] = ["name": self.name, "surname": self.surname, "full_name": fullName, "createDate": Timestamp(date: Date())] //"username": self.displayName,
                     
                     userRef.setData(data, completion: { (error) in
                         if let error = error {
@@ -382,6 +402,7 @@ class LogInViewController: UIViewController {
                             self.startSignUpSession()
                             
                             self.notifyMalte(name: fullName)
+                            self.addMalteAsAFriend(userID: user.uid)
                             
                             user.sendEmailVerification { (error) in
                                 if let err = error {
@@ -395,11 +416,23 @@ class LogInViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    func addMalteAsAFriend(userID: String) {
+        let friendsRef = db.collection("Users").document(userID).collection("friends").document(maltesUID)
+        let data: [String:Any] = ["accepted": true, "requestedAt" : Timestamp(date: Date())]
         
+        friendsRef.setData(data) { (error) in
+            if error != nil {
+                print("We couldnt add as Friend: Error \(error?.localizedDescription ?? "No error")")
+            } else {
+               print("Malte is now your friend")
+            }
+        }
     }
     
     func notifyMalte(name: String) {
-        let notificationRef = db.collection("Users").document("CZOcL3VIwMemWwEfutKXGAfdlLy1").collection("notifications").document()
+        let notificationRef = db.collection("Users").document(maltesUID).collection("notifications").document()
         let notificationData: [String: Any] = ["type": "message", "message": "Wir haben einen neuen User: \(name)", "name": "System", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "messageID": "Dont Know"]
         
         
@@ -562,7 +595,7 @@ class LogInViewController: UIViewController {
     }
     
     @objc func textGetsWritten() {
-        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveLinear, animations: {
+        UIView.animate(withDuration: 0.7, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveLinear, animations: {
             self.nextButton.alpha = 1
         })
     }
@@ -593,6 +626,22 @@ class LogInViewController: UIViewController {
         return textField
     }()
     
+    let informationLabel: UILabel = {
+       let label = UILabel()
+        label.textAlignment = .center
+        label.font = UIFont(name: "IBMPlexSans", size:11)
+        if #available(iOS 13.0, *) {
+            label.textColor = UIColor.secondaryLabel
+        } else {
+            label.textColor = .lightGray
+        }
+        label.alpha = 0
+        label.text = ""
+        label.numberOfLines = 0
+        
+        return label
+    }()
+    
     let nextButton: DesignableButton = {
        let button = DesignableButton()
         button.layer.cornerRadius = 5
@@ -607,7 +656,7 @@ class LogInViewController: UIViewController {
     
     func setUpUI() {
         
-        let newStackView = UIStackView(arrangedSubviews: [questionLabel,answerTextfield,nextButton])
+        let newStackView = UIStackView(arrangedSubviews: [questionLabel, informationLabel, answerTextfield,nextButton])
         newStackView.axis = .vertical
         newStackView.distribution = .fillProportionally
         newStackView.spacing = 20
@@ -621,13 +670,12 @@ class LogInViewController: UIViewController {
         questionLabel.heightAnchor.constraint(equalToConstant: 200).isActive = true
         
         showResetPasswordButton()
-        
     }
     
     
     @IBAction func logInTouched(_ sender: Any) {
         if signUp { // Wenn die Button sich geändert haben
-            UIView.animate(withDuration: 2, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            UIView.animate(withDuration: 1.5, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 self.initialStackView.alpha = 0
                 self.attentionLabel.alpha = 0
                 self.peaceSignView.alpha = 0.3
@@ -644,8 +692,7 @@ class LogInViewController: UIViewController {
             })
         } else {
             //Start Log-In
-            
-            UIView.animate(withDuration: 2, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            UIView.animate(withDuration: 1.5, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 self.initialStackView.alpha = 0
                 self.peaceSignView.alpha = 0.3
                 
@@ -665,8 +712,7 @@ class LogInViewController: UIViewController {
     @IBAction func signUpTouched(_ sender: Any) {
         
         if signUp { // Wenn der Button sich geändert haben
-            
-            UIView.animate(withDuration: 2, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            UIView.animate(withDuration: 1.5, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                 self.initialStackView.alpha = 0
                 self.attentionLabel.alpha = 0
                 
@@ -676,7 +722,7 @@ class LogInViewController: UIViewController {
             })
         } else {
             // Erster Schritt
-            UIView.animate(withDuration: 3, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveLinear, animations: {
+            UIView.animate(withDuration: 2.0, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveLinear, animations: {
                 self.initialStackView.alpha = 0
                 self.peaceSignView.alpha = 0.5
                 self.signUp = true  // Button verändern sich
@@ -701,12 +747,12 @@ class LogInViewController: UIViewController {
                 self.initialLabelConstraint.constant = 150
                 
                 // Zweiter Schritt
-                UIView.animate(withDuration: 1.3, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+                UIView.animate(withDuration: 0.9, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
                     self.attentionLabel.alpha = 1
                     self.view.layoutIfNeeded()
                 }, completion: { (_) in
                     //Dritter Schritt
-                    UIView.animate(withDuration: 1.3, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveLinear, animations: {
+                    UIView.animate(withDuration: 0.9, delay: 0.2, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveLinear, animations: {
                         self.initialStackView.alpha = 1
                     })
                 })

@@ -30,6 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         // Change Color of navigationItem and Barbutton
         UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: Constants.imagineColor, NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 18)], for: .normal)
         UINavigationBar.appearance().tintColor = Constants.imagineColor
+//        UINavigationBar.appearance().isTranslucent = true Too many other views with different options
         
         // Initiate rootviewcontroller here because otherwise the app would crash because a child of TabBarViewController would call Firebase before FirebaseApp.configure would be called here in AppDelegate
         self.window = UIWindow(frame: UIScreen.main.bounds)

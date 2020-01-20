@@ -68,7 +68,7 @@ class SettingCell: BaseCell {
                     nameLabel.textColor = .black
                     nameLabel.textAlignment = .left
                     nameLabelLeadingConstraint?.constant = settingCellHeight+10
-                    iconImageView.image = UIImage(named: "collaboration")?.withRenderingMode(.alwaysTemplate)
+                    iconImageView.image = UIImage(named: "block")
                     nameLabel.text = blockUserText
                 case .camera:
                     backgroundColor = .white
@@ -100,7 +100,7 @@ class SettingCell: BaseCell {
                     nameLabel.textColor = .black
                     nameLabel.textAlignment = .left
                     nameLabelLeadingConstraint?.constant = settingCellHeight+10
-                    iconImageView.image = UIImage(named: "chat")?.withRenderingMode(.alwaysTemplate)
+                    iconImageView.image = UIImage(named: "messageBubble")?.withRenderingMode(.alwaysTemplate)
                     nameLabel.text = chatWithUserText
                 case .deleteFriend:
                     backgroundColor = .white
@@ -108,7 +108,7 @@ class SettingCell: BaseCell {
                     nameLabel.textColor = .black
                     nameLabel.textAlignment = .left
                     nameLabelLeadingConstraint?.constant = settingCellHeight+10
-                    iconImageView.image = UIImage(named: "man-woman")?.withRenderingMode(.alwaysTemplate)
+                    iconImageView.image = UIImage(named: "people")?.withRenderingMode(.alwaysTemplate)
                     nameLabel.text = deleteFriendText
                 default:
                     backgroundColor = .white

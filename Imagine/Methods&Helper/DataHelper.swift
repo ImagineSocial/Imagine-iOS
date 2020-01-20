@@ -441,17 +441,6 @@ class JobOffer {
     var category = ""
 }
 
-class Campaign {
-    var title = ""
-    var cellText = ""
-    var descriptionText = ""
-    var documentID = ""
-    var createDate = ""
-    var supporter = 0
-    var opposition = 0
-    var category = ""
-}
-
 class Vote {
     var title = ""
     var subtitle = ""
@@ -469,6 +458,7 @@ class Vote {
 }
 
 class BlogPost {
+    var isCurrentProjectsCell = false
     var title = ""
     var subtitle = ""
     var description = ""

@@ -14,8 +14,8 @@ class SearchPostCell: UITableViewCell {
         didSet {
             if let post = post {
                 titleLabel.text = post.title
-                if post.user.name != "" {
-                    nameLabel.text = "\(post.user.name)  -  \(post.createTime)"
+                if post.user.displayName != "" {
+                    nameLabel.text = "\(post.user.displayName)  -  \(post.createTime)"
                 } else {
                     if post.anonym {
                         nameLabel.text = "Anonym  -  \(post.createTime)"
@@ -57,13 +57,13 @@ class SearchPostCell: UITableViewCell {
     func getName() {
         if index < 20 {
             if let post = self.post {
-                if post.user.name == "" {
+                if post.user.displayName == "" {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         self.getName()
                         self.index+=1
                     }
                 } else {
-                    self.nameLabel.text = "\(post.user.name)  -  \(post.createTime)"
+                    self.nameLabel.text = "\(post.user.displayName)  -  \(post.createTime)"
                 }
             }
         }

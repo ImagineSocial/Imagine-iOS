@@ -22,26 +22,62 @@ extension String {
         
         return (self as NSString).substring(with: result.range)
     }
+    
+    var imgurID: String? {
+        // Better pattern possible, couldnt find solution for an "logical or" for "gallery/" und ".com/"
+        
+        if self.contains("imgur") {
+            if self.contains("gallery") {
+                print("Eine Galerie")
+                
+                let pattern = "(?<=gallery/)([\\w-]++)" //|(?<=.com/)
+                
+                let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+                let range = NSRange(location: 0, length: count)
+                
+                guard let result = regex?.firstMatch(in: self, range: range) else {
+                    return nil
+                }
+                //https://i.imgur.com/CmxSTlU.mp4
+                print("Klappt: \((self as NSString).substring(with: result.range))")
+                return (self as NSString).substring(with: result.range)
+            } else {
+                print("Keine Galerie")
+                
+                let pattern = "(?<=.com/)([\\w-]++)" //|(?<=.com/)
+                
+                let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+                let range = NSRange(location: 0, length: count)
+                
+                guard let result = regex?.firstMatch(in: self, range: range) else {
+                    return nil
+                }
+                //https://i.imgur.com/CmxSTlU.mp4
+                print("Klappt: \((self as NSString).substring(with: result.range))")
+                return (self as NSString).substring(with: result.range)
+            }
+        } else {
+            print("Not an Imgur link")
+            return nil
+        }
+    }
 }
 
 class YouTubeCell: BaseFeedCell {
     
     @IBOutlet weak var playerView: WKYTPlayerView!
-    @IBOutlet weak var profilePictureImageView: UIImageView!
-    @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var createDateLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var commentCountLabel: UILabel!
     @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var titleLabelHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var reportView: DesignablePopUp!
     @IBOutlet weak var reportViewLabel: UILabel!
     @IBOutlet weak var reportViewButtonInTop: DesignableButton!
-    @IBOutlet weak var factImageView: UIImageView!
     
     var delegate: PostCellDelegate?
     
     override func awakeFromNib() {
+        selectionStyle = .none
+        
         self.addSubview(buttonLabel)
         
         if #available(iOS 13.0, *) {
@@ -139,7 +175,7 @@ class YouTubeCell: BaseFeedCell {
                 profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
             }
             
-            if post.user.name == "" {
+            if post.user.displayName == "" {
                 if post.anonym {
                     self.setUser()
                 } else {
@@ -190,10 +226,14 @@ class YouTubeCell: BaseFeedCell {
     func setUser() {
         if let post = post {
             if post.anonym {
-                nameLabel.text = Constants.strings.anonymPosterName
-                profilePictureImageView.image = UIImage(named: "default-user")
+                if let anonymousName = post.anonymousName {
+                    OPNameLabel.text = anonymousName
+                } else {
+                    OPNameLabel.text = Constants.strings.anonymPosterName
+                }
+                profilePictureImageView.image = UIImage(named: "anonym-user")
             } else {
-                nameLabel.text = "\(post.user.name) \(post.user.surname)"
+                OPNameLabel.text = post.user.displayName
                 // Profile Picture
                 
                 if let url = URL(string: post.user.imageURL) {
@@ -207,7 +247,7 @@ class YouTubeCell: BaseFeedCell {
     func getName() {
         if index < 20 {
             if let post = self.post {
-                if post.user.name == "" {
+                if post.user.displayName == "" {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         self.getName()
                         self.index+=1

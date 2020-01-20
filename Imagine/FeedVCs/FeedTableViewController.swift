@@ -20,9 +20,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     @IBOutlet weak var sortPostsButton: DesignableButton!
     @IBOutlet weak var viewAboveTableView: UIView!
     
-    
-
-    
     let searchTableVC = SearchTableViewController()
     
     var searchController = UISearchController()
@@ -38,14 +35,10 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     var notifications = [Comment]() // Maybe later also likes and stuff
     var upvotes = [Comment]()
     
+    let defaults = UserDefaults.standard
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if #available(iOS 13.0, *) {
-            self.view.backgroundColor = .secondarySystemBackground
-        } else {
-            self.view.backgroundColor = UIColor(red: 242.0, green: 242.0, blue: 247.0, alpha: 1.0)
-        }
         
         setUpSearchController()
         setUpEasyTipViewPreferences()
@@ -64,7 +57,9 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         getPosts(getMore: true)
         
         if !self.isAppAlreadyLaunchedOnce() {
-            self.showIntroView()
+            performSegue(withIdentifier: "toIntroView", sender: nil)
+        } else if self.isItTheSecondTimeTheAppLaunches() {
+            self.alert(message: "Schau dir mal an was wir aus dem Netzwerk so alles machen könnten...", title: "Hast du schon auf den blauen Owen ↑ geklickt?")
         }
 
         if let viewControllers = self.tabBarController?.viewControllers {
@@ -83,10 +78,12 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         }
         
         self.navigationController?.navigationBar.isTranslucent = false
-//        self.navigationController?.view.backgroundColor = .white
+        
         if #available(iOS 13.0, *) {
+            self.navigationController?.navigationBar.barTintColor = .systemBackground
             self.navigationController?.view.backgroundColor = .secondarySystemBackground
         } else {
+            self.navigationController?.navigationBar.barTintColor = .white
             self.navigationController?.view.backgroundColor = UIColor(red: 242.0, green: 242.0, blue: 247.0, alpha: 1.0)
         }
         
@@ -129,6 +126,10 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                 print("\(posts.count) neue dazu")
                 if initialFetch {   // Get the first batch of posts
                     self.posts = posts
+                    let post = Post()
+                    post.type = .topTopicCell
+                    self.posts.insert(post, at: 0)
+                    
                     self.tableView.reloadData()
                     self.fetchesPosts = false
                     
@@ -385,7 +386,11 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         if tableView === self.tableView {
             post = posts[indexPath.row]
             
-            performSegue(withIdentifier: "showPost", sender: post)
+            if post.type == .topTopicCell {
+                tableView.deselectRow(at: indexPath, animated: false)
+            } else {
+                performSegue(withIdentifier: "showPost", sender: post)
+            }
         } else {
             if let searchVC = self.searchController.searchResultsController as? SearchTableViewController {
                 
@@ -412,6 +417,12 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                 if let postVC = segue.destination as? PostViewController {
                     postVC.post = chosenPost
                 }
+            }
+        }
+        
+        if segue.identifier == "toIntroView" {
+            if let introVC = segue.destination as? SwipeCollectionViewController {
+                introVC.diashow = .intro
             }
         }
         
@@ -578,7 +589,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         
         imagineButton.addSubview(self.smallNumberForImagineBlogButton)
         
-        
         let searchBarButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(self.searchBarTapped))
         let imagineBarButton = UIBarButtonItem(customView: imagineButton)
         self.navigationItem.rightBarButtonItems = [searchBarButton, imagineBarButton]
@@ -653,16 +663,8 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         }
         
         let barButton = UIBarButtonItem(customView: view)
+        self.navigationItem.leftBarButtonItem = barButton
         
-        
-        let date = Date()
-        let month = date.month
-        if month == 11 || month == 12 {
-            print("Welchen Monat haben wir: \(month)")
-            self.createAdventskalenderButton(firstView: barButton)
-        } else {
-            self.navigationItem.leftBarButtonItem = barButton
-        }
     }
     
     
@@ -818,7 +820,11 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     func blogPostSelected(blogPost: BlogPost) {
         self.newsMenu.handleDismiss()
         
-        self.performSegue(withIdentifier: "toBlogPost", sender: blogPost)
+        if blogPost.isCurrentProjectsCell {
+            //Go to Imagine information site
+        } else {
+            self.performSegue(withIdentifier: "toBlogPost", sender: blogPost)
+        }
     }
     
     // MARK: - Side Menu
@@ -868,153 +874,114 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         
     }
     
-    //MARK: - FirstTimeOpenedAppScreen
-    
-    let blackView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(white: 0, alpha: 0.5)
-//        view.alpha = 0
-        
-        return view
-    }()
-    
-    let introView: UIView = {
-       let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.clipsToBounds = true
-        view.layer.cornerRadius = 20
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
-        view.layer.borderColor = Constants.imagineColor.cgColor
-        view.layer.borderWidth = 5
-        
-        return view
-    }()
-    
-    let introLabel: UILabel = {
-       let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 24)
-        if #available(iOS 13.0, *) {
-            label.textColor = .label
-        } else {
-            label.textColor = .black
-        }
-        label.text = Constants.texts.introText
-        label.numberOfLines = 0
-        label.minimumScaleFactor = 0.5
-        
-        return label
-    }()
-    
-    let introButton: DesignableButton = {
-       let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("🙏", for: .normal)
-        button.layer.borderColor = Constants.imagineColor.cgColor
-        button.layer.borderWidth = 2
-        button.layer.cornerRadius = 4
-        
-        return button
-    }()
-    
-    @objc func dismissIntroView() {
-        blackView.removeFromSuperview()
-        introView.removeFromSuperview()
-    }
-    
-    func showIntroView() {
-        if let window = UIApplication.shared.keyWindow {
-        
-            window.addSubview(blackView)
-            blackView.frame = window.frame
-            
-            introView.addSubview(introLabel)
-            
-            introView.addSubview(introButton)
-            introButton.centerXAnchor.constraint(equalTo: introView.centerXAnchor).isActive = true
-            introButton.bottomAnchor.constraint(equalTo: introView.bottomAnchor, constant: -10).isActive = true
-            introButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
-            introButton.widthAnchor.constraint(equalToConstant: 60).isActive = true
-            
-            introLabel.leadingAnchor.constraint(equalTo: introView.leadingAnchor, constant: 10).isActive = true
-            introLabel.trailingAnchor.constraint(equalTo: introView.trailingAnchor, constant: -10).isActive = true
-            introLabel.topAnchor.constraint(equalTo: introView.topAnchor, constant: 10).isActive = true
-            introLabel.bottomAnchor.constraint(equalTo: introButton.topAnchor, constant: -30).isActive = true
-                        
-            window.addSubview(introView)
-            introView.leadingAnchor.constraint(equalTo: window.leadingAnchor, constant: 20).isActive = true
-            introView.trailingAnchor.constraint(equalTo: window.trailingAnchor, constant: -20).isActive = true
-//            introView.topAnchor.constraint(equalTo: window.topAnchor, constant: 50).isActive = true
-            introView.bottomAnchor.constraint(equalTo: window.bottomAnchor, constant: -50).isActive = true
-            
-            introButton.addTarget(self, action: #selector(dismissIntroView), for: .touchUpInside)
-        }
-    }
-    
+//    //MARK: - FirstTimeOpenedAppScreen
+//
+//    let blackView: UIView = {
+//        let view = UIView()
+//        view.backgroundColor = UIColor(white: 0, alpha: 0.5)
+////        view.alpha = 0
+//
+//        return view
+//    }()
+//
+//    let introView: UIView = {
+//       let view = UIView()
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//        view.clipsToBounds = true
+//        view.layer.cornerRadius = 20
+//        if #available(iOS 13.0, *) {
+//            view.backgroundColor = .systemBackground
+//        } else {
+//            view.backgroundColor = .white
+//        }
+//        view.layer.borderColor = Constants.imagineColor.cgColor
+//        view.layer.borderWidth = 5
+//
+//        return view
+//    }()
+//
+//    let introLabel: UILabel = {
+//       let label = UILabel()
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.font = UIFont(name: "IBMPlexSans", size: 24)
+//        if #available(iOS 13.0, *) {
+//            label.textColor = .label
+//        } else {
+//            label.textColor = .black
+//        }
+//        label.text = Constants.texts.introText
+//        label.numberOfLines = 0
+//        label.minimumScaleFactor = 0.5
+//
+//        return label
+//    }()
+//
+//    let introButton: DesignableButton = {
+//       let button = DesignableButton()
+//        button.translatesAutoresizingMaskIntoConstraints = false
+//        button.setTitle("🙏", for: .normal)
+//        button.layer.borderColor = Constants.imagineColor.cgColor
+//        button.layer.borderWidth = 2
+//        button.layer.cornerRadius = 4
+//
+//        return button
+//    }()
+//
+//    @objc func dismissIntroView() {
+//        blackView.removeFromSuperview()
+//        introView.removeFromSuperview()
+//    }
+//
+//    func showIntroView() {
+//        if let window = UIApplication.shared.keyWindow {
+//
+//            window.addSubview(blackView)
+//            blackView.frame = window.frame
+//
+//            introView.addSubview(introLabel)
+//
+//            introView.addSubview(introButton)
+//            introButton.centerXAnchor.constraint(equalTo: introView.centerXAnchor).isActive = true
+//            introButton.bottomAnchor.constraint(equalTo: introView.bottomAnchor, constant: -10).isActive = true
+//            introButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+//            introButton.widthAnchor.constraint(equalToConstant: 60).isActive = true
+//
+//            introLabel.leadingAnchor.constraint(equalTo: introView.leadingAnchor, constant: 10).isActive = true
+//            introLabel.trailingAnchor.constraint(equalTo: introView.trailingAnchor, constant: -10).isActive = true
+//            introLabel.topAnchor.constraint(equalTo: introView.topAnchor, constant: 10).isActive = true
+//            introLabel.bottomAnchor.constraint(equalTo: introButton.topAnchor, constant: -30).isActive = true
+//
+//            window.addSubview(introView)
+//            introView.leadingAnchor.constraint(equalTo: window.leadingAnchor, constant: 20).isActive = true
+//            introView.trailingAnchor.constraint(equalTo: window.trailingAnchor, constant: -20).isActive = true
+////            introView.topAnchor.constraint(equalTo: window.topAnchor, constant: 50).isActive = true
+//            introView.bottomAnchor.constraint(equalTo: window.bottomAnchor, constant: -50).isActive = true
+//
+//            introButton.addTarget(self, action: #selector(dismissIntroView), for: .touchUpInside)
+//        }
+//    }
+//
     func isAppAlreadyLaunchedOnce() -> Bool {
-        let defaults = UserDefaults.standard
-        if let _ = defaults.string(forKey: "isAppAlreadyLaunchedOnce"){
+        
+        if let _ = defaults.string(forKey: "isAppLaunchedOnce"){
             return true
         } else {
-            defaults.set(true, forKey: "isAppAlreadyLaunchedOnce")
+            defaults.set(true, forKey: "isAppLaunchedOnce")
             print("App launched first time")
             return false
         }
     }
     
-    //MARK:- Adventskalender
-    func createAdventskalenderButton(firstView: UIBarButtonItem) {
-        let adventButton = DesignableButton(type: .custom)
-        adventButton.setImage(UIImage(named: "xmasBeer"), for: .normal)
-        adventButton.imageView?.contentMode = .scaleAspectFit
-        adventButton.backgroundColor = .white
-        adventButton.addTarget(self, action: #selector(self.adventButtonTapped), for: .touchUpInside)
-        adventButton.frame = CGRect(x: 0, y: 0, width: 35, height: 35)
-        adventButton.widthAnchor.constraint(equalToConstant: 35).isActive = true
-        adventButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
-        adventButton.cornerRadius = adventButton.frame.height/2
-        adventButton.clipsToBounds = true
-        
-        let adventBarButton = UIBarButtonItem(customView: adventButton)
-        self.navigationItem.leftBarButtonItems = [firstView, adventBarButton]
-    }
-    
-    @objc func adventButtonTapped() {
-        performSegue(withIdentifier: "toAdventskalender", sender: nil)
+    func isItTheSecondTimeTheAppLaunches() -> Bool {
+        if let _ = defaults.string(forKey: "isItTheSecondTimeTheAppLaunches") {
+            return false
+        } else {
+            defaults.set(true, forKey: "isItTheSecondTimeTheAppLaunches")
+            print("App launched second time")
+            return true
+        }
     }
 }
-
-// Maybe load whole cells?
-//extension FeedTableViewController: UITableViewDataSourcePrefetching {
-//    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-//        for indexPath in indexPaths {
-//            let post = posts[indexPath.row]
-//
-//            if let _ = imageCache.object(forKey: post.imageURL as NSString) {
-//                print("Wurde schon gecached")
-//            } else {
-//                if let url = URL(string: post.imageURL) {
-//                    print("Prefetchen neues Bild: \(post.title)")
-//                    DispatchQueue.global().async {
-//                        let data = try? Data(contentsOf: url)
-//
-//                        DispatchQueue.main.async {
-//                            if let data = data {
-//                                if let image = UIImage(data: data) {
-//                                    self.imageCache.setObject(image, forKey: post.imageURL as NSString)
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
 
 
 // MARK: - UISearchResultsUpdating Delegate
@@ -1045,7 +1012,7 @@ extension FeedTableViewController: UISearchResultsUpdating {
         
         switch searchScope {
         case 0: // Search Posts
-            let titleRef = db.collection("Posts").whereField("title", isGreaterThan: searchText).whereField("title", isLessThan: "\(searchText)z").limit(to: 10)
+            let titleRef = db.collection("Posts").whereField("title", isGreaterThan: searchText).whereField("title", isLessThan: "\(searchText)ü").limit(to: 10)
             
             titleRef.getDocuments { (querySnap, error) in
                 if let err = error {
@@ -1088,7 +1055,7 @@ extension FeedTableViewController: UISearchResultsUpdating {
             
             
         case 1: // Search Users
-            let fullNameRef = db.collection("Users").whereField("full_name", isGreaterThan: searchText).whereField("full_name", isLessThan: "\(searchText)z").limit(to: 3)
+            let fullNameRef = db.collection("Users").whereField("full_name", isGreaterThan: searchText).whereField("full_name", isLessThan: "\(searchText)ü").limit(to: 3)
             
             fullNameRef.getDocuments { (querySnap, error) in
                 if let err = error {
@@ -1106,7 +1073,7 @@ extension FeedTableViewController: UISearchResultsUpdating {
                 }
             }
             
-            let nameRef = db.collection("Users").whereField("name", isGreaterThan: searchText).whereField("name", isLessThan: "\(searchText)z").limit(to: 3)
+            let nameRef = db.collection("Users").whereField("name", isGreaterThan: searchText).whereField("name", isLessThan: "\(searchText)ü").limit(to: 3)
             
             nameRef.getDocuments { (querySnap, error) in
                 if let err = error {
@@ -1125,7 +1092,7 @@ extension FeedTableViewController: UISearchResultsUpdating {
                 }
             }
             
-            let surnameRef = db.collection("Users").whereField("surname", isGreaterThan: searchText).whereField("surname", isLessThan: "\(searchText)z").limit(to: 3)
+            let surnameRef = db.collection("Users").whereField("surname", isGreaterThan: searchText).whereField("surname", isLessThan: "\(searchText)ü").limit(to: 3)
             
             surnameRef.getDocuments { (querySnap, error) in
                 if let err = error {
@@ -1159,8 +1126,12 @@ extension FeedTableViewController: UISearchResultsUpdating {
             if let docData = document.data() {
                 
                 if let name = docData["name"] as? String, let surname = docData["surname"] as? String {
-                    user.name = name
-                    user.surname = surname
+                    
+                    //When you search for names, you can search for their real names and it will answer, but the names will not show up...?!
+                    
+                    let name = name
+//                    let surname = surname
+                    user.displayName = name
                     user.userUID = document.documentID
                     if let imageURL = docData["profilePictureURL"] as? String {
                         user.imageURL = imageURL
@@ -1194,8 +1165,8 @@ extension FeedTableViewController: UISearchResultsUpdating {
                     if let postType = self.handyHelper.setPostType(fetchedString: type) {
                         post.type = postType
                     }
-                    post.imageWidth = CGFloat(imageWidth ?? 0)
-                    post.imageHeight = CGFloat(imageHeight ?? 0)
+                    post.mediaWidth = CGFloat(imageWidth ?? 0)
+                    post.mediaHeight = CGFloat(imageHeight ?? 0)
                     post.documentID = document.documentID
                     post.originalPosterUID = op
                     

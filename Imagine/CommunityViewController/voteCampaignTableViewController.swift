@@ -52,10 +52,6 @@ class voteCampaignTableViewController: UITableViewController {
         self.view.activityStartAnimating()
         
         tableView.separatorStyle = .none
-//        tableView.backgroundColor = Constants.backgroundColorForTableViews
-        
-        self.navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.view.backgroundColor = .white
         
         let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(setCampaignUI))
         rightSwipe.direction = .right
@@ -71,7 +67,10 @@ class voteCampaignTableViewController: UITableViewController {
         let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15) as Any]
         segmentedControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
         segmentedControl.tintColor = Constants.imagineColor
-        shareIdeaButton.backgroundColor = Constants.imagineColor
+        
+        let lay = shareIdeaButton.layer
+        lay.borderColor = Constants.imagineColor.cgColor
+        lay.borderWidth = 1
     }
     
     lazy var infoScreen: InfoScreen = {
@@ -139,7 +138,7 @@ class voteCampaignTableViewController: UITableViewController {
                 cell.voteTillDateLabel.text = "Abstimmung bis: \(vote.endOfVoteDate)"
                 cell.costLabel.text = vote.cost
                 cell.timePeriodLabel.text = "\(vote.timeToRealization) Monat"
-                cell.commentCountLabel.text = "7"
+                cell.commentCountLabel.text = "0"
                 
                 cell.voteTillDateLabel.layer.cornerRadius = 4
                 cell.impactLabel.layer.cornerRadius = 4

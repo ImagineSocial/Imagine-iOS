@@ -21,6 +21,7 @@ protocol PostCellDelegate {
 }
 
 class PostCell : BaseFeedCell {
+    
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var cellImageView: UIImageView!
     @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
@@ -28,15 +29,12 @@ class PostCell : BaseFeedCell {
     @IBOutlet weak var reportViewLabel: UILabel!
     @IBOutlet weak var reportView: DesignablePopUp!
     @IBOutlet weak var reportViewButtonInTop: DesignableButton!
-    @IBOutlet weak var cellCreateDateLabel: UILabel!
-    @IBOutlet weak var profilePictureImageView: UIImageView!
-    @IBOutlet weak var ogPosterLabel: UILabel!
-    @IBOutlet weak var commentCountLabel: UILabel!
-    @IBOutlet weak var factImageView: UIImageView!
     
     var delegate: PostCellDelegate?
     
     override func awakeFromNib() {
+        selectionStyle = .none
+        
         let layer = profilePictureImageView.layer
         layer.cornerRadius = profilePictureImageView.frame.width/2
         
@@ -132,7 +130,7 @@ class PostCell : BaseFeedCell {
                 niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
             }
             
-            if post.user.name == "" {
+            if post.user.displayName == "" {
                 if post.anonym {
                     self.setUser()
                 } else {
@@ -165,7 +163,7 @@ class PostCell : BaseFeedCell {
                 }
             }
             
-            cellCreateDateLabel.text = post.createTime
+            createDateLabel.text = post.createTime
             titleLabel.text = post.title
             commentCountLabel.text = String(post.commentCount)
             
@@ -196,11 +194,14 @@ class PostCell : BaseFeedCell {
         if let post = post {
             
             if post.anonym {
-                print("Anonymous post")
-                ogPosterLabel.text = Constants.strings.anonymPosterName
-                profilePictureImageView.image = UIImage(named: "default-user")
+                if let anonymousName = post.anonymousName {
+                    OPNameLabel.text = anonymousName
+                } else {
+                    OPNameLabel.text = Constants.strings.anonymPosterName
+                }
+                profilePictureImageView.image = UIImage(named: "anonym-user")
             } else {
-                ogPosterLabel.text = "\(post.user.name) \(post.user.surname)"
+                OPNameLabel.text = post.user.displayName
                 
                 // Profile Picture
                 if let url = URL(string: post.user.imageURL) {
@@ -215,7 +216,7 @@ class PostCell : BaseFeedCell {
     func getName() {
         if index < 20 {
             if let post = self.post {
-                if post.user.name == "" {
+                if post.user.displayName == "" {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         self.getName()
                         self.index+=1

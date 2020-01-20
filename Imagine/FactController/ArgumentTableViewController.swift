@@ -81,7 +81,7 @@ class ArgumentTableViewController: UITableViewController {
         if argument.addMoreData {
             return 50
         } else {
-            return 203
+            return 130
         }
     }
     

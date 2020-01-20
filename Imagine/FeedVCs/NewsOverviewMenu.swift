@@ -13,8 +13,10 @@ class NewsOverviewMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     var posts = [BlogPost]()
     
     var feedTableVC: FeedTableViewController?
+    let identifier = "NibBlogPostCell"
     
     let blackView = UIView()
+    
     
     let tableView: UITableView = {
         let style = UITableView.Style.plain
@@ -35,7 +37,7 @@ class NewsOverviewMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         
         if let window = UIApplication.shared.keyWindow {
             
-            blackView.backgroundColor = UIColor(white: 0, alpha: 0.25)
+            blackView.backgroundColor = UIColor(white: 0, alpha: 0.6)
             
             blackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleDismiss)))
             
@@ -43,7 +45,7 @@ class NewsOverviewMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
             
             window.addSubview(tableView)
             
-            tableView.frame = CGRect(x: 10, y: navBarHeight+30, width: window.frame.width-20, height: 200)
+            tableView.frame = CGRect(x: 10, y: navBarHeight+30, width: window.frame.width-20, height: 450)
             tableView.layer.cornerRadius = 10
             
             
@@ -80,24 +82,36 @@ class NewsOverviewMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let blogPost = posts[indexPath.row]
         
-        let identifier = "NibBlogPostCell"
-        
-        tableView.register(UINib(nibName: "BlogPostCell", bundle: nil), forCellReuseIdentifier: identifier)
-        
-        if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? BlogCell {
-            let blogPost = posts[indexPath.row]
+        if blogPost.isCurrentProjectsCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: "CurrentProjectsCell", for: indexPath) as? CurrentProjectsCell {
+                
+                
+                return cell
+            }
+        } else {
             
-            cell.post = blogPost
-            
-            return cell
+            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? BlogCell {
+                
+                
+                cell.post = blogPost
+                
+                return cell
+            }
         }
         
         return UITableViewCell()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 225
+        let post = posts[indexPath.row]
+        
+        if post.isCurrentProjectsCell {
+            return 275
+        } else {
+            return 225
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -115,12 +129,18 @@ class NewsOverviewMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         tableView.dataSource = self
         tableView.delegate = self
         
-        tableView.register(BlogCell.self, forCellReuseIdentifier: "BlogCell")
+        tableView.register(UINib(nibName: "BlogPostCell", bundle: nil), forCellReuseIdentifier: identifier)
+        tableView.register(UINib(nibName: "CurrentProjectsCell", bundle: nil), forCellReuseIdentifier: "CurrentProjectsCell")
         
         self.tableView.activityStartAnimating()
         
         DataHelper().getData(get: .blogPosts) { (posts) in
             self.posts = posts as! [BlogPost]
+            let first = BlogPost()
+            first.isCurrentProjectsCell = true
+            
+            self.posts.insert(first, at: 0)
+            
             self.tableView.reloadData()
             self.tableView.activityStopAnimating()
         }

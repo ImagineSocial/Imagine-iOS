@@ -11,21 +11,31 @@ import Firebase
 import FirebaseFirestore
 import EasyTipView
 
+enum CampaignType {
+    case general
+    case IT
+    case communication
+    case design
+}
+
 class NewCampaignViewController: UIViewController {
     
     @IBOutlet weak var titleTextField: UITextField!
     @IBOutlet weak var shortBodyTextField: UITextView!
     @IBOutlet weak var longBodyTextField: UITextView!
-    @IBOutlet weak var categoryTextField: UITextField!
     @IBOutlet weak var doneButton: UIBarButtonItem!
+    @IBOutlet weak var categoryPickerView: UIPickerView!
     
     var up = false
+    let categories: [CampaignCategory] = [CampaignCategory(title: "Allgemein", type: .general), CampaignCategory(title: "IT", type: .IT), CampaignCategory(title: "Kommunikation", type: .communication), CampaignCategory(title: "Design", type: .design)]
+    var chosenCategory: CampaignType = .general
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        categoryPickerView.delegate = self
+        categoryPickerView.dataSource = self
+        categoryPickerView.showsSelectionIndicator = false
         
     }
     
@@ -33,25 +43,13 @@ class NewCampaignViewController: UIViewController {
         titleTextField.resignFirstResponder()
         shortBodyTextField.resignFirstResponder()
         longBodyTextField.resignFirstResponder()
-        categoryTextField.resignFirstResponder()
     }
     
     func getDate() -> Timestamp {
         
         return Timestamp(date: Date())
     }
-    
-    @objc func keyboardWillChange(notification: NSNotification) {
-        
-        if self.up == false {
-            if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-                if categoryTextField.isFirstResponder {
-                    self.view.frame.origin.y -= 150
-                    self.up = true
-                }
-            }
-        }
-    }
+
     
     @objc func keyboardWillHide() {
         if up {
@@ -67,15 +65,25 @@ class NewCampaignViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
+    func getCategoryString() -> String {
+        switch self.chosenCategory {
+        case .general:
+            return "general"
+        case .communication:
+            return "communication"
+        case .IT:
+            return "IT"
+        case .design:
+            return "design"
+        }
+    }
+    
     @IBAction func shareButtonTapped(_ sender: Any) {
         if titleTextField.text != nil && shortBodyTextField.text != nil {
             let campaignRef = Firestore.firestore().collection("Campaigns")
             
             let campaignRefDocumentID = campaignRef.document().documentID
-            var dataDictionary: [String: Any] = ["campaignTitle": titleTextField.text, "campaignShortBody": shortBodyTextField.text, "campaignType" : "normal", "category" : categoryTextField.text, "campaignExplanation": longBodyTextField.text, "campaignID": campaignRefDocumentID, "campaignCreateTime": getDate(), "campaignSupporter": 0, "campaignOpposition": 0, "voters": [""]]
-            
-            
-            
+            var dataDictionary: [String: Any] = ["campaignTitle": titleTextField.text, "campaignShortBody": shortBodyTextField.text, "campaignType" : "normal", "category" : getCategoryString(), "campaignExplanation": longBodyTextField.text, "campaignID": campaignRefDocumentID, "campaignCreateTime": getDate(), "campaignSupporter": 0, "campaignOpposition": 0, "voters": [""]]
             
             campaignRef.document(campaignRefDocumentID).setData(dataDictionary) // Glaube macht keinen Unterschied
             
@@ -89,7 +97,6 @@ class NewCampaignViewController: UIViewController {
                 self.titleTextField.text?.removeAll()
                 self.shortBodyTextField.text?.removeAll()
                 self.longBodyTextField.text?.removeAll()
-                self.categoryTextField.text?.removeAll()
             }
         }
     }
@@ -102,4 +109,27 @@ class NewCampaignViewController: UIViewController {
     @IBAction func infoButtonTapped(_ sender: Any) {
         doneButton.showEasyTipView(text: Constants.texts.postCampaignText)
     }
+}
+
+extension NewCampaignViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        categories.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        let category = categories[row]
+        
+        self.chosenCategory = category.type
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        categories[row].title
+    }
+    
 }

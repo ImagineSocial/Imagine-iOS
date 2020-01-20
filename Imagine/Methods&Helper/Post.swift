@@ -18,6 +18,8 @@ enum PostType {
     case repost
     case event
     case youTubeVideo
+    case GIF
+    case topTopicCell
     case nothingPostedYet
 }
 
@@ -46,8 +48,8 @@ class Post {
     var description = ""
     var linkURL = ""
     var type: PostType = .picture
-    var imageHeight: CGFloat = 0.0
-    var imageWidth: CGFloat = 0.0
+    var mediaHeight: CGFloat = 0.0
+    var mediaWidth: CGFloat = 0.0
     var report:ReportType = .normal
     var documentID = ""
     var createTime = ""
@@ -57,6 +59,7 @@ class Post {
     var createDate: Date?
     var toComments = false // If you want to skip to comments (For now)
     var anonym = false
+    var anonymousName: String?
     var user = User()
     var votes = Votes()
     var event = Event()
@@ -101,8 +104,8 @@ class Post {
                         
                         post.title = title      // Sachen zuordnen
                         post.imageURL = imageURL
-                        post.imageHeight = CGFloat(picHeight)
-                        post.imageWidth = CGFloat(picWidth)
+                        post.mediaHeight = CGFloat(picHeight)
+                        post.mediaWidth = CGFloat(picWidth)
                         post.description = description
                         post.documentID = document.documentID
                         post.createTime = stringDate
@@ -131,7 +134,7 @@ class Post {
                         if originalPoster == "anonym" {
                             post.anonym = true
                         } else {
-                            post.getUser()
+                            post.getUser(isAFriend: false)
                         }
                             
                         returnRepost(post)
@@ -144,7 +147,7 @@ class Post {
         }
     }
     
-    func getUser() {
+    func getUser(isAFriend: Bool) {
         
         let db = Firestore.firestore()
         // User Daten raussuchen
@@ -153,22 +156,28 @@ class Post {
         let user = User()
         
         userRef.getDocument(completion: { (document, err) in
-            if let document = document {
-                if let docData = document.data() {
-                    
-                    user.name = docData["name"] as? String ?? ""
-                    user.surname = docData["surname"] as? String ?? ""
-                    user.imageURL = docData["profilePictureURL"] as? String ?? ""
-                    user.userUID = self.originalPosterUID
-                    user.statusQuote = docData["statusText"] as? String ?? ""
-                    user.blocked = docData["blocked"] as? [String] ?? nil
-                    
-                    self.user = user
+            if let error = err {
+                print("We got an error with a user: \(error.localizedDescription)")
+            } else {
+                if let document = document {
+                    if let docData = document.data() {
+                        
+                        if isAFriend {
+                            let fullName = docData["full_name"] as? String ?? ""
+                            user.displayName = fullName
+                        } else {
+                            let userName = docData["name"] as? String ?? "Username"
+                            user.displayName = userName
+                        }
+                        
+                        user.imageURL = docData["profilePictureURL"] as? String ?? ""
+                        user.userUID = self.originalPosterUID
+                        user.statusQuote = docData["statusText"] as? String ?? ""
+                        user.blocked = docData["blocked"] as? [String] ?? nil
+                        
+                        self.user = user
+                    }
                 }
-            }
-            
-            if err != nil {
-                print("Wir haben einen Error beim User: \(err?.localizedDescription ?? "")")
             }
         })
     }
@@ -177,8 +186,7 @@ class Post {
 
 
 public class User {
-    public var name = ""
-    public var surname = ""
+    public var displayName = ""
     public var imageURL = ""
     public var userUID = ""
     public var image = UIImage(named: "default-user")

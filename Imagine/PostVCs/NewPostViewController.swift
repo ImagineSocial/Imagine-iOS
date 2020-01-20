@@ -17,9 +17,9 @@ import EasyTipView
 
 enum PostSelection {
     case picture
-    case link
+    case linkYTVideo
     case thought
-    case YTVideo
+    case GIF
     case event
 }
 
@@ -55,6 +55,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var comingFromPostsOfFact = false
     
     var postAnonymous = false
+    var anonymousName: String?
+    var anonymousString = "anonym"
     
     let db = Firestore.firestore()
     
@@ -139,12 +141,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
 //        }
         
         switch selectedOption {
-        case .link:
+        case .linkYTVideo:
             self.linkLabel.text = "Link:"
             self.linkTextField.placeholder = "Link: https://..."
-        case .YTVideo:
-            self.linkLabel.text = "Youtube Video-Link:"
-            self.linkTextField.placeholder = "Link: youtube.com/watch?v=9zr_whatever..."
+        case .GIF:
+            self.linkLabel.text = "GIF-Link:"
+            self.linkTextField.placeholder = "Link: ...whatever.mp4"
         default:
             print("Wont happen")
         }
@@ -385,7 +387,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let linkLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Link:"
+        label.text = "Link oder YouTube-Video:"
         label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
         label.alpha = 0
         
@@ -450,7 +452,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let cameraButton :DesignableButton = {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: "compact_camera"), for: .normal)
+        button.setImage(UIImage(named: "camera"), for: .normal)
         button.addTarget(self, action: #selector(camTapped), for: .touchUpInside)
         button.alpha = 0
         if #available(iOS 13.0, *) {
@@ -971,9 +973,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                         offset = 50
                     case .picture:
                         offset = 125
-                    case .link:
+                    case .linkYTVideo:
                         offset = 100
-                    case .YTVideo:
+                    case .GIF:
                         offset = 100
                     case .event:
                         offset = 175
@@ -998,9 +1000,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 offset = 50
             case .picture:
                 offset = 125
-            case .link:
+            case .linkYTVideo:
                 offset = 100
-            case .YTVideo:
+            case .GIF:
                 offset = 100
             case .event:
                 offset = 175
@@ -1201,10 +1203,24 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         if postAnonymousSwitch.isOn {
             self.postAnonymous = true
             self.anonymousImageView.isHidden = false
-            print("Post anonym: ",postAnonymous)
+            
+            let alert = UIAlertController(title: "Anonymer Name", message: "Gib an, welcher Name bei diesem anonymen Post angezeigt werden soll. Der Name darf keine reale Person sein.", preferredStyle: .alert)
+
+            alert.addTextField { (textField) in
+                textField.placeholder = "Max Mustermann"
+            }
+
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
+                let textField = alert!.textFields![0] // Force unwrapping because we know it exists.
+                
+                if textField.text != "" {
+                    self.anonymousName = textField.text
+                } //else: Default String will show in the feed
+            }))
+            self.present(alert, animated: true, completion: nil)
+            
         } else {
             self.postAnonymous = false
-            print("Post anonym: ",postAnonymous)
             self.anonymousImageView.isHidden = true
         }
     }
@@ -1231,7 +1247,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     self.setTheChange()
                 }
             }
-        case .link:
+        case .linkYTVideo:
             
             // Let the LinkView disappear
             UIView.animate(withDuration: 0.1, animations: {
@@ -1246,7 +1262,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     self.setTheChange()
                 }
             }
-        case .YTVideo:
+        case .GIF:
             // Let the LinkView disappear
             UIView.animate(withDuration: 0.1, animations: {
                 self.linkLabel.alpha = 0
@@ -1318,11 +1334,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             insertUIForPicture()
         }
         if postSelectionSegmentedControl.selectedSegmentIndex == 2 {
-            self.selectedOption = .link
+            self.selectedOption = .linkYTVideo
             insertUIForLink()
         }
         if postSelectionSegmentedControl.selectedSegmentIndex == 3 {
-            self.selectedOption = .YTVideo
+            self.selectedOption = .GIF
             insertUIForLink()
         }
         if postSelectionSegmentedControl.selectedSegmentIndex == 4 {
@@ -1377,9 +1393,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         if let user = Auth.auth().currentUser {
             var userID = ""
             let postRef = db.collection("Posts").document()
-            
+
             if self.postAnonymous {
-                userID = "anonym"
+                userID = anonymousString
             } else {
                 userID = user.uid
             }
@@ -1392,10 +1408,14 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     self.postThought(postRef: postRef, userID: userID)
                 case .picture:
                     self.savePicture(userID: userID, postRef: postRef)
-                case .link:
-                    self.postLink(postRef: postRef, userID: userID)
-                case .YTVideo:
-                    self.postYTVideo(postRef: postRef, userID: userID)
+                case .linkYTVideo:
+                    if let _ = linkTextField.text?.youtubeID {
+                        self.postYTVideo(postRef: postRef, userID: userID)
+                    } else {
+                        self.postLink(postRef: postRef, userID: userID)
+                    }
+                case .GIF:
+                    self.postGIF(postRef: postRef, userID: userID)
                 case .event:
                     self.postEvent(postRef: postRef, userID: userID)
                 }
@@ -1577,6 +1597,61 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
+    
+    
+    func postGIF(postRef: DocumentReference, userID: String) {
+        
+        let text = linkTextField.text
+        
+        var link: String?
+        
+        if let text = text {
+            if text.contains(".mp4") {
+                link = text
+            } else {
+                self.alert(message: "Im Moment sind nur Links mit Endung '.mp4' möglich. Die Endung .GIF ist veraltet, wird aus Speichergründen nicht mehr benutzt. Sag uns aber gerne bescheid, wie du deine GIFs verbreiten möchtest!", title: "Wir können dein GIF leider nicht hochladen")
+                return
+                
+//                if let imgurID = text.imgurID { // Check if Imgur
+//                    let imgurLink = "https://i.imgur.com/\(imgurID).mp4"
+//
+//                    link = imgurLink
+//                } else {
+//                    self.alert(message: "Wir können dein GIF leider nicht hochladen. Im Moment sind nur Links mit Endung '.mp4' oder von der Internetseite imgur.com möglich. Sag uns aber gerne bescheid, wie du deine GIFs verbreiten möchtest!", title: "Tut uns Leid...")
+//                    self.view.activityStopAnimating()
+//                    self.shareButton.isEnabled = true
+//
+//                    return
+//                }
+            }
+        } else {
+            self.alert(message: "Bitte gib einen link zu deinem GIF ein.", title: "Kein Link angegeben")
+            self.view.activityStopAnimating()
+            self.shareButton.isEnabled = true
+            
+            return
+        }
+        
+                    
+        if let link = link {
+            print("Das ist der GIF Link: \(link)")
+            self.view.activityStopAnimating()
+            self.shareButton.isEnabled = true
+            
+            
+            let descriptionText = descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
+            let tags = self.getTagsToSave()
+
+            let dataDictionary: [String: Any] = ["title": titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "GIF", "report": getReportString(), "link": link, "tags": tags]
+
+            self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
+
+            print("GIF Postet")
+            
+        }
+    }
+    
+    
     func postYTVideo(postRef: DocumentReference, userID: String) {
         if let _ = linkTextField.text?.youtubeID {  // YouTubeVideo
             
@@ -1633,12 +1708,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             userRef = db.collection("AnonymousPosts").document(documentID)
         } else {
             userRef = db.collection("Users").document(userID).collection("posts").document(documentID)
-            
         }
         
         var data = dataDictionary
         
-        if let fact = self.linkedFact { // If there is a fact that should be linked to this post, i append its ID to the array
+        if let fact = self.linkedFact { // If there is a fact that should be linked to this post, and append its ID to the array
             data["linkedFactID"] = fact.documentID
             
             // Add the post to the specific fact, so that it can be looked into
@@ -1650,6 +1724,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 } else {
                     print("FactReference successfully added")
                 }
+            }
+        }
+        
+        if userID == anonymousString {
+            if let anonymousName = anonymousName {
+                // Add the anonymousName, set in the alert, to the array
+                data["anonymousName"] = anonymousName
             }
         }
         
@@ -1723,6 +1804,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
             self.addedFactDescriptionLabel.text?.removeAll()
             self.addedFactImageView.image = nil
+            self.addedFactImageView.layer.borderColor = UIColor.clear.cgColor
             
             self.titleTextView.resignFirstResponder()
             self.descriptionTextView.resignFirstResponder()

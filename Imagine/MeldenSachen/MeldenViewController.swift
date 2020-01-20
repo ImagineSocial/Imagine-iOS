@@ -62,7 +62,7 @@ class MeldenViewController: UIViewController {
     let trashImage: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "trash"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .center
+        imageView.contentMode = .scaleAspectFit
         if #available(iOS 13.0, *) {
             imageView.tintColor = .label
         } else {
@@ -79,14 +79,12 @@ class MeldenViewController: UIViewController {
         button.setTitle("Post löschen", for: .normal)
         if #available(iOS 13.0, *) {
             button.setTitleColor(.label, for: .normal)
-        } else {
-            button.setTitleColor(.black, for: .normal)
-        }
-        if #available(iOS 13.0, *) {
             button.backgroundColor = .systemBackground
         } else {
+            button.setTitleColor(.black, for: .normal)
             button.backgroundColor = .white
         }
+        
         button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 20)
         
         return button
@@ -100,8 +98,8 @@ class MeldenViewController: UIViewController {
         trashButton.trailingAnchor.constraint(equalTo: deleteView.trailingAnchor).isActive = true
         
         deleteView.addSubview(trashImage)
-        trashImage.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        trashImage.leadingAnchor.constraint(equalTo: deleteView.leadingAnchor, constant: 5).isActive = true
+        trashImage.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        trashImage.leadingAnchor.constraint(equalTo: deleteView.leadingAnchor, constant: 8).isActive = true
         trashImage.centerYAnchor.constraint(equalTo: deleteView.centerYAnchor).isActive = true
         
         self.lowerStackView.insertArrangedSubview(deleteView, at: 0)

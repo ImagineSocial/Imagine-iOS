@@ -21,16 +21,15 @@ class RePostCell : BaseFeedCell {
     @IBOutlet weak var reportViewLabel: UILabel!
     @IBOutlet weak var reportViewButton: DesignableButton!
     @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var profilePictureImageView: UIImageView!
     @IBOutlet weak var ogPosterNameLabel: UILabel!
     @IBOutlet weak var reposterNameLabel: UILabel!
     @IBOutlet weak var repostDateLabel: UILabel!
     @IBOutlet weak var reposterProfilePictureImageView: UIImageView!
-    @IBOutlet weak var commentCountLabel: UILabel!
     
     var delegate: PostCellDelegate?
     
     override func awakeFromNib() {
+        selectionStyle = .none
         self.addSubview(buttonLabel)
         
         thanksButton.setImage(nil, for: .normal)
@@ -121,7 +120,7 @@ class RePostCell : BaseFeedCell {
                 niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
             }
             
-            if post.user.name == "" {
+            if post.user.displayName == "" {
                 if post.anonym {
                     self.setUser()
                 } else {
@@ -144,10 +143,14 @@ class RePostCell : BaseFeedCell {
                 originalCreateDateLabel.text = repost.createTime
                 
                 if repost.anonym {
-                    ogPosterNameLabel.text = Constants.strings.anonymPosterName
-                    profilePictureImageView.image = UIImage(named: "default-user")
+                    if let anonymousName = post.anonymousName {
+                        OPNameLabel.text = anonymousName
+                    } else {
+                        OPNameLabel.text = Constants.strings.anonymPosterName
+                    }
+                    profilePictureImageView.image = UIImage(named: "anonym-user")
                 } else {
-                    ogPosterNameLabel.text = "\(post.user.name) \(post.user.surname)"
+                    ogPosterNameLabel.text = post.user.displayName
                     
                     // Profile Picture
                     if let url = URL(string: repost.user.imageURL) {
@@ -197,10 +200,14 @@ class RePostCell : BaseFeedCell {
     func setUser() {
         if let post = post {
             if post.anonym {
-                reposterNameLabel.text = Constants.strings.anonymPosterName
-                reposterProfilePictureImageView.image = UIImage(named: "default-user")
+                if let anonymousName = post.anonymousName {
+                    OPNameLabel.text = anonymousName
+                } else {
+                    OPNameLabel.text = Constants.strings.anonymPosterName
+                }
+                reposterProfilePictureImageView.image = UIImage(named: "anonym-user")
             } else {
-                reposterNameLabel.text = "\(post.user.name) \(post.user.surname)"
+                reposterNameLabel.text = post.user.displayName
                 // Profile Picture
                 
                 // Profile Picture
@@ -216,7 +223,7 @@ class RePostCell : BaseFeedCell {
     func getName() {
         if index < 20 {
             if let post = self.post {
-                if post.user.name == "" {
+                if post.user.displayName == "" {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         self.getName()
                         self.index+=1

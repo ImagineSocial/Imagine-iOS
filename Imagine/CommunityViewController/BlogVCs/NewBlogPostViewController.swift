@@ -38,7 +38,7 @@ class NewBlogPostViewController: UIViewController {
     
     func getUser() {
         if let user = Auth.auth().currentUser {
-            self.user = HandyHelper().getUser(userUID: user.uid)
+            self.user = HandyHelper().getUserForNewBlogpostOnly(userUID: user.uid)
         }
     }
     
@@ -56,7 +56,7 @@ class NewBlogPostViewController: UIViewController {
                 
                 let blogRef = db.collection("BlogPosts")
                 
-                var dataDictionary: [String: Any] = ["title": titleTextField.text, "subtitle": shortDescriptionTextfield.text, "category" : categoryTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "profileImageURL": user.imageURL, "poster": user.name]
+                var dataDictionary: [String: Any] = ["title": titleTextField.text, "subtitle": shortDescriptionTextfield.text, "category" : categoryTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "profileImageURL": user.imageURL, "poster": "Malte"]
                 
                 
                 blogRef.addDocument(data: dataDictionary)

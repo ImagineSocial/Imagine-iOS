@@ -10,9 +10,8 @@ import UIKit
 import SDWebImage
 import SwiftLinkPreview
 import Firebase
-import FirebaseFirestore
-import FirebaseAuth
 import YoutubePlayer_in_WKWebView
+import AVKit
 
 extension UIScrollView {
     
@@ -63,6 +62,17 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     fileprivate var backUpButtonHeight : NSLayoutConstraint?
     fileprivate var imageHeightConstraint : NSLayoutConstraint?
     
+    //GIFS
+    var avPlayer: AVPlayer?
+    var avPlayerLayer: AVPlayerLayer?
+    
+    var videoPlayerItem: AVPlayerItem? = nil {
+        didSet {
+            avPlayer?.replaceCurrentItem(with: self.videoPlayerItem)
+            avPlayer?.play()
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.activityStartAnimating()
@@ -109,7 +119,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             showPost()
             instantiateContainerView()
         default:
-            if post.user.name == "" {
+            if post.user.displayName == "" {
                 print("1")
                 var toComments = false
                 if post.toComments {    // Comes from the SideMenu NotifactionCenter
@@ -117,10 +127,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                     toComments = true
                 }
                 
+                //No post data yet
                 PostHelper().getPostsFromDocumentIDs(documentIDs: [post.documentID]) { (posts) in
                     if let post = posts?[0] {
                         print("1m5")
-//                        post.getUser()    // Already done in getPostsFromDocumentIDs (9.10.19)
+
                         self.post = post
                         self.post.toComments = toComments
                         self.checkForData()
@@ -146,7 +157,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     func checkForData() {
         print("Check for data")
         if index < 20 {
-        if post.user.name != "" {
+        if post.user.displayName != "" {
             print("2")
             self.setupViewController()
         } else {
@@ -203,15 +214,14 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        print("layout", post.type)
-        
+                
         profilePictureImageView.layer.cornerRadius = profilePictureImageView.bounds.size.width / 2
         repostProfilePictureImageView.layer.cornerRadius = profilePictureImageView.bounds.size.width / 2
-        print("Noch layout")
-        let imageWidth = post.imageWidth
-        let imageHeight = post.imageHeight
+
+        let imageWidth = post.mediaWidth
+        let imageHeight = post.mediaHeight
         
-        print("Das ist der post.type: ", post.type)
+
         switch post.type {
         case .picture:
             if let url = URL(string: post.imageURL) {
@@ -220,7 +230,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             
             // No Post yet
             if imageWidth == 0 || imageHeight == 0 {
-                print("no Post yet")
                 return
             }
             let ratio = imageWidth / imageHeight
@@ -230,6 +239,31 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             
             postImageView.frame.size = CGSize(width: contentWidth, height: newHeight)
             
+            // Otherwise there is an error, because somehow a 0 height is set somewhere for the picture
+            if let _ = imageHeightConstraint {
+                imageHeightConstraint!.constant = newHeight
+                imageHeightConstraint!.isActive = true
+            } else {
+                imageHeightConstraint = postImageView.heightAnchor.constraint(equalToConstant: newHeight)
+                imageHeightConstraint?.isActive = true
+            }
+            
+        case .GIF:
+            
+            // No Post yet
+            if imageWidth == 0 || imageHeight == 0 {
+                return
+            }
+            
+            let ratio = imageWidth / imageHeight
+            let contentWidth = self.contentView.frame.width
+            let newHeight = contentWidth / ratio
+                        
+            postImageView.frame.size = CGSize(width: contentWidth, height: newHeight)
+            if let playLay = avPlayerLayer {
+                playLay.frame.size = postImageView.frame.size
+            }
+                
             // Otherwise there is an error, because somehow a 0 height is set somewhere for the picture
             if let _ = imageHeightConstraint {
                 imageHeightConstraint!.constant = newHeight
@@ -309,7 +343,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 setUpPictureUI()
             case .link:
                 setUpLinkUI()
-                
+            case .GIF:
+                setUpGIFUI()
             case .repost:
                 setUpRepostUI()
                 
@@ -359,16 +394,16 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         print("titleHeight: ", titleLabelHeight, post.title)
         
         contentView.addSubview(savePostButton)
-        savePostButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
-        savePostButton.topAnchor.constraint(equalTo: nameLabel.topAnchor).isActive = true
-        savePostButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
-        savePostButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        savePostButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        savePostButton.topAnchor.constraint(equalTo: nameLabel.topAnchor, constant: 5).isActive = true
+        savePostButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        savePostButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
         contentView.addSubview(translatePostButton)
-        translatePostButton.trailingAnchor.constraint(equalTo: savePostButton.leadingAnchor, constant: -10).isActive = true
-        translatePostButton.topAnchor.constraint(equalTo: nameLabel.topAnchor).isActive = true
-        translatePostButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
-        translatePostButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        translatePostButton.trailingAnchor.constraint(equalTo: savePostButton.leadingAnchor, constant: -15).isActive = true
+        translatePostButton.topAnchor.constraint(equalTo: nameLabel.topAnchor, constant: 5).isActive = true
+        translatePostButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        translatePostButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
     }
     
     func addVoteAndDescriptionUI(topAnchorEqualTo: NSLayoutAnchor<NSLayoutYAxisAnchor>) {
@@ -470,6 +505,19 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         postImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
         
         postImageView.layoutIfNeeded() //?
+        
+        addVoteAndDescriptionUI(topAnchorEqualTo: postImageView.bottomAnchor)
+    }
+    
+    func setUpGIFUI() {
+        contentView.addSubview(postImageView)
+        postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        postImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
+        
+        postImageView.layoutIfNeeded() //?
+        
+        setupGIFPlayer()
         
         addVoteAndDescriptionUI(topAnchorEqualTo: postImageView.bottomAnchor)
     }
@@ -708,7 +756,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     lazy var postImageView : UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "default")
         imageView.contentMode = .scaleAspectFill
         imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(postImageTapped)))
@@ -745,12 +792,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         button.setImage(UIImage(named: "save"), for: .normal)
         if #available(iOS 13.0, *) {
             button.setTitleColor(.label, for: .normal)
-        } else {
-            button.setTitleColor(.black, for: .normal)
-        }
-        if #available(iOS 13.0, *) {
             button.tintColor = .label
         } else {
+            button.setTitleColor(.black, for: .normal)
             button.tintColor = .black
         }
         
@@ -761,15 +805,14 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(translatePostTapped), for: .touchUpInside)
-        button.setImage(UIImage(named: "globe"), for: .normal)
+        button.setImage(UIImage(named: "translate"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
+        
         if #available(iOS 13.0, *) {
             button.setTitleColor(.label, for: .normal)
-        } else {
-            button.setTitleColor(.black, for: .normal)
-        }
-        if #available(iOS 13.0, *) {
             button.tintColor = .label
         } else {
+            button.setTitleColor(.black, for: .normal)
             button.tintColor = .black
         }
         
@@ -1091,7 +1134,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     let repostImageView : UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "default-user")
+        imageView.image = UIImage(named: "default")
         imageView.contentMode = .scaleAspectFit
         let layer = imageView.layer
         imageView.isUserInteractionEnabled = true
@@ -1362,6 +1405,18 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             } else {
                 descriptionLabel.text = descriptionText
             }
+            
+            
+            // GIF configuration
+            if post.type == .GIF {
+                postImageView.isUserInteractionEnabled = false
+                
+                if let url = URL(string: post.linkURL) {
+                    let item = AVPlayerItem(url: url)
+                    self.videoPlayerItem = item
+                }
+            }
+            
         }
         
     }
@@ -1382,10 +1437,14 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     func setUser() {
         if self.post.anonym {
-            profilePictureImageView.image = UIImage(named: "default-user")
-            nameLabel.text = Constants.strings.anonymPosterName
+            profilePictureImageView.image = UIImage(named: "anonym-user")
+            if let anonymousName = post.anonymousName {
+                nameLabel.text = anonymousName
+            } else {
+                nameLabel.text = Constants.strings.anonymPosterName
+            }
         } else {
-            nameLabel.text = "\(post.user.name) \(post.user.surname)"
+            nameLabel.text = post.user.displayName
             
             if let url = URL(string: post.user.imageURL) {
                 profilePictureImageView.sd_setImage(with: url, completed: nil)
@@ -1396,7 +1455,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     func showRepost() {
         if let repost = post.repost {
             
-            let ratio = repost.imageWidth / repost.imageHeight
+            let ratio = repost.mediaWidth / repost.mediaHeight
             let contentWidth = self.contentView.frame.width - 10
             let newHeight = contentWidth / ratio
             
@@ -1405,7 +1464,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             
             self.repostTitleLabel.text = repost.title
             self.repostCreateDateLabel.text = repost.createTime
-            self.repostNameLabel.text = "\(repost.user.name) \(repost.user.surname)"
+            self.repostNameLabel.text = repost.user.displayName
             
             if let url = URL(string: repost.user.imageURL) {
                 self.repostProfilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
@@ -1437,6 +1496,30 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             //To-Do: Update number on Button and show animation
         } else {
             self.notLoggedInAlert()
+        }
+    }
+    
+    func setupGIFPlayer(){
+        self.avPlayer = AVPlayer.init(playerItem: self.videoPlayerItem)
+        avPlayerLayer = AVPlayerLayer(player: avPlayer)
+        avPlayerLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
+        avPlayer?.volume = 0
+        avPlayer?.actionAtItemEnd = .none
+        
+        avPlayerLayer?.frame = self.view.bounds
+        self.postImageView.layer.addSublayer(avPlayerLayer!)
+        
+        //To Loop the Video
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(playerItemDidReachEnd(notification:)),
+                                               name: .AVPlayerItemDidPlayToEndTime,
+                                               object: avPlayer?.currentItem)
+    }
+    
+    //To Loop the Video
+    @objc func playerItemDidReachEnd(notification: Notification) {
+        if let playerItem = notification.object as? AVPlayerItem {
+            playerItem.seek(to: CMTime.zero, completionHandler: nil)
         }
     }
     
@@ -1506,7 +1589,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         switch post.type {
         case .repost:
-            pinchVC.post = self.post.repost!
+            pinchVC.post = self.post.repost
         default:
             pinchVC.post = self.post
         }
@@ -1726,11 +1809,11 @@ class UserTableView: UITableViewController {
     func getUsers() {
         if let post = post {
             
-            HandyHelper().getUsers(userList: post.event.participants) { (users) in
-                self.users = users
-                
-                self.tableView.reloadData()
-            }
+//            HandyHelper().getUsers(userList: post.event.participants) { (users) in
+//                self.users = users
+//                
+//                self.tableView.reloadData()
+//            }
         }
         
     }
@@ -1768,7 +1851,7 @@ class UserTableView: UITableViewController {
         let nameLabel = UILabel()
         cell.addSubview(nameLabel)
         
-        nameLabel.text = "\(user.name) \(user.surname)"
+        nameLabel.text = user.displayName
         
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 15).isActive = true

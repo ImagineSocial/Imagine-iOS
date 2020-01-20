@@ -20,7 +20,6 @@ extension UIBarButtonItem {
 
 class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
-    
 
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var shortBodyLabel: UILabel!

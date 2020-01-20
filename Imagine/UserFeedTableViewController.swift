@@ -12,6 +12,7 @@ import Firebase
 import FirebaseFirestore
 import FirebaseAuth
 import FirebaseStorage
+import AVKit
 
 // This enum represents the different states, when accessing the UserFeedTableVC
 enum AccessState{
@@ -39,6 +40,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     @IBOutlet weak var moreButton: DesignableButton!
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var profileView: UIView!
+    @IBOutlet weak var messageBubbleImageView: UIImageView!
     
     
     /* You have to set currentState and userOfProfile when you call this VC - Couldnt get the init to work */
@@ -236,13 +238,13 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             self.setCurrentProfile()
             self.noPostsType = .userProfile
         case .friendOfCurrentUser:
-            self.addAsFriendButton.setTitle("Unfollow", for: .normal)
+            self.addAsFriendButton.setTitle("Freund löschen", for: .normal)
             self.setCurrentProfile()
             self.noPostsType = .userProfile
         case .blockedToInteract:
             self.profilePictureImageView.image = UIImage(named: "default-user")
             if let currentUser = userOfProfile {
-                self.nameLabel.text = currentUser.name
+                self.nameLabel.text = currentUser.displayName  //Blocked means not befriended, so it shows the username
             }
         }
     }
@@ -250,6 +252,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     func setOwnProfile() {
         
         chatWithUserButton.isHidden = true // Not possible to message yourself
+        messageBubbleImageView.isHidden = true
         addAsFriendButton.isHidden = true
         profilePictureButton.isEnabled = true
         
@@ -290,7 +293,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             
             if let displayName = user.displayName {
                 nameLabel.text = displayName
-                currentUser.name = displayName
+                currentUser.displayName = displayName
             }
             if let url = user.photoURL {
                 profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
@@ -305,12 +308,12 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     func setCurrentProfile() {
         
         //        self.userOfProfile = user
-        if let currentUser = userOfProfile {
-            self.nameLabel.text = "\(currentUser.name) \(currentUser.surname)"
-            self.imageURL = currentUser.imageURL
-            self.statusTextView.text = currentUser.statusQuote
+        if let userOfProfile = userOfProfile {
+            self.nameLabel.text = userOfProfile.displayName
+            self.imageURL = userOfProfile.imageURL
+            self.statusTextView.text = userOfProfile.statusQuote
             
-            if let url = URL(string: currentUser.imageURL) {
+            if let url = URL(string: userOfProfile.imageURL) {
                 self.profilePictureImageView.sd_setImage(with: url, completed: nil)
             } else {
                 self.profilePictureImageView.image = UIImage(named: "default-user")
@@ -444,6 +447,8 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         let post = posts[indexPath.row]
         
         switch post.type {
+        case .topTopicCell:
+            tableView.deselectRow(at: indexPath, animated: false)
         case .repost:
             let identifier = "NibRepostCell"
             
@@ -456,6 +461,22 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 
                 return repostCell
             }
+            
+        case .GIF:
+            let identifier = "GIFCell"
+            
+            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? GifCell {
+                
+                cell.post = post
+                cell.delegate = self
+                if let url = URL(string: post.linkURL) {
+                    cell.videoPlayerItem = AVPlayerItem.init(url: url)
+                    cell.startPlayback()
+                }
+                
+                return cell
+            }
+            
         case .picture:
             let identifier = "NibPostCell"
             
@@ -727,7 +748,16 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             switch state {
             case .friendOfCurrentUser:
                 // Unfollow this person
-                self.deleteAsFriend()
+                
+                let alert = UIAlertController(title: "Möchtest du diese Person als Freund löschen?", message: "Wenn du dir sicher bist, klicke auf OK!", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .destructive, handler: { (_) in
+                    self.deleteAsFriend()
+                }))
+                alert.addAction(UIAlertAction(title: "Abbrechen", style: .cancel, handler: { (_) in
+                    alert.dismiss(animated: true, completion: nil)
+                }))
+                self.present(alert, animated: true) {
+                }
                 
             case .otherUser:
                 // Follow/Befriend this person

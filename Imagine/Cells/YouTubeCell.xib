@@ -29,40 +29,40 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cHE-oi-NwK" customClass="WKYTPlayerView">
-                        <rect key="frame" x="5" y="141" width="410" height="308"/>
+                        <rect key="frame" x="5" y="136" width="410" height="313"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.60000002384185791" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ieH-gT-AfC">
-                        <rect key="frame" x="10" y="76" width="400" height="60"/>
+                        <rect key="frame" x="10" y="71" width="400" height="60"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="60" id="NYL-fM-cBM"/>
                         </constraints>
-                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="18"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QQc-HD-Sju">
-                        <rect key="frame" x="60" y="56" width="53.5" height="13"/>
-                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="10"/>
+                        <rect key="frame" x="55" y="52" width="48.5" height="12"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="9"/>
                         <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="default-user" translatesAutoresizingMaskIntoConstraints="NO" id="pJZ-x5-NJx">
-                        <rect key="frame" x="10" y="34" width="40" height="40"/>
+                        <rect key="frame" x="10" y="34" width="35" height="35"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="40" id="2NF-Vc-CjL"/>
-                            <constraint firstAttribute="width" constant="40" id="JHb-uk-e24"/>
+                            <constraint firstAttribute="height" constant="35" id="2NF-Vc-CjL"/>
+                            <constraint firstAttribute="width" constant="35" id="JHb-uk-e24"/>
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="253" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HDI-PF-chJ">
-                        <rect key="frame" x="60" y="34" width="0.0" height="0.0"/>
-                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                        <rect key="frame" x="55" y="34" width="0.0" height="0.0"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pRu-mz-1IO" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="380" y="39" width="30" height="30"/>
+                        <rect key="frame" x="385" y="39" width="25" height="25"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="30" id="Vb2-ez-5Wk"/>
-                            <constraint firstAttribute="width" constant="30" id="o97-99-SoU"/>
+                            <constraint firstAttribute="height" constant="25" id="Vb2-ez-5Wk"/>
+                            <constraint firstAttribute="width" constant="25" id="o97-99-SoU"/>
                         </constraints>
                         <color key="tintColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <state key="normal" image="menu">
@@ -222,20 +222,20 @@
                         </constraints>
                     </stackView>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="By6-PX-xBD" userLabel="userButton">
-                        <rect key="frame" x="7" y="31" width="56" height="46"/>
+                        <rect key="frame" x="7" y="31" width="51" height="41"/>
                         <connections>
                             <action selector="userButtonTapped:" destination="Bl5-Bg-iDX" eventType="touchUpInside" id="LLG-XM-JXI"/>
                         </connections>
                     </button>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="rdR-hK-Vmg">
-                        <rect key="frame" x="330" y="39" width="30" height="30"/>
+                        <rect key="frame" x="330" y="36.5" width="30" height="30"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="30" id="ATi-xb-w1I"/>
                             <constraint firstAttribute="height" constant="30" id="UhJ-i2-gQ7"/>
                         </constraints>
                     </imageView>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ggw-dj-C9N">
-                        <rect key="frame" x="327" y="36" width="36" height="36"/>
+                        <rect key="frame" x="327" y="33.5" width="36" height="36"/>
                         <connections>
                             <action selector="linkedFactTapped:" destination="Bl5-Bg-iDX" eventType="touchUpInside" id="qkk-9u-0Dw"/>
                         </connections>
@@ -245,7 +245,7 @@
                 <constraints>
                     <constraint firstItem="YCv-O3-1Rj" firstAttribute="leading" secondItem="8Li-sg-RIa" secondAttribute="leading" id="03w-Pz-P8J"/>
                     <constraint firstItem="cHE-oi-NwK" firstAttribute="leading" secondItem="8Li-sg-RIa" secondAttribute="leading" constant="5" id="0BI-4p-M4D"/>
-                    <constraint firstItem="pRu-mz-1IO" firstAttribute="leading" secondItem="rdR-hK-Vmg" secondAttribute="trailing" constant="20" id="0rg-8y-Ld1"/>
+                    <constraint firstItem="pRu-mz-1IO" firstAttribute="leading" secondItem="rdR-hK-Vmg" secondAttribute="trailing" constant="25" id="0rg-8y-Ld1"/>
                     <constraint firstItem="ggw-dj-C9N" firstAttribute="width" secondItem="rdR-hK-Vmg" secondAttribute="width" constant="6" id="2GW-lD-zLj"/>
                     <constraint firstItem="PAH-qF-8Nm" firstAttribute="top" secondItem="cHE-oi-NwK" secondAttribute="bottom" constant="10" id="B9L-rh-kVX"/>
                     <constraint firstItem="ieH-gT-AfC" firstAttribute="leading" secondItem="8Li-sg-RIa" secondAttribute="leading" constant="10" id="BrO-uV-HhB"/>
@@ -280,11 +280,11 @@
                 </constraints>
             </tableViewCellContentView>
             <connections>
+                <outlet property="OPNameLabel" destination="HDI-PF-chJ" id="qVq-2g-ewo"/>
                 <outlet property="commentCountLabel" destination="4mi-la-RSE" id="bSQ-hR-5FK"/>
                 <outlet property="createDateLabel" destination="QQc-HD-Sju" id="yTI-Ot-1aE"/>
                 <outlet property="factImageView" destination="rdR-hK-Vmg" id="VO9-Xb-Rzc"/>
                 <outlet property="haButton" destination="ouP-TA-FTb" id="ReI-mm-IzI"/>
-                <outlet property="nameLabel" destination="HDI-PF-chJ" id="geL-uU-uo6"/>
                 <outlet property="niceButton" destination="IZM-ql-dIg" id="K87-F1-SpO"/>
                 <outlet property="playerView" destination="cHE-oi-NwK" id="s2b-7o-9Hf"/>
                 <outlet property="profilePictureImageView" destination="pJZ-x5-NJx" id="tvF-ea-wCG"/>

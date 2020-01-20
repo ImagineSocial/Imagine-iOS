@@ -38,9 +38,11 @@ class CommunityOverviewViewController: UIViewController {
     @IBOutlet weak var upperRightButton: DesignableButton!
     @IBOutlet weak var secretButton: DesignableButton!
     @IBOutlet weak var buttonStackView: UIStackView!
+    @IBOutlet weak var newCampaignButton: UIButton!
     
     
     let db = Firestore.firestore()
+    private let cornerRadius:CGFloat = 8
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,23 +58,17 @@ class CommunityOverviewViewController: UIViewController {
         
         let buttons : [UIButton] = [visionButton, moreButtonTapped, upperRightButton,imagineBlogButton,communityChatButton,voteButton]
         
-        let cornerRadius:CGFloat = 8
-        
         for button in buttons {
             let layer = button.layer
             layer.cornerRadius = cornerRadius
-            layer.borderColor = Constants.imagineColor.cgColor
-            layer.borderWidth = 2
+//            layer.borderColor = Constants.imagineColor.cgColor
+//            layer.borderWidth = 2
         }
         
-//        voteButton.titleLabel?.lineBreakMode = .byWordWrapping
         voteButton.titleLabel?.numberOfLines = 0
         voteButton.titleLabel?.textAlignment = .center
         howCanIHelpButton.layer.cornerRadius = cornerRadius
         
-        
-        
-        print( self.view.frame.height, "Height")
         if self.view.frame.height >= 800 {
             howCanIHelpButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 22)
             imagineBlogButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 22)
@@ -91,7 +87,10 @@ class CommunityOverviewViewController: UIViewController {
                 self.setNotifierForAdmin()
             }
         }
+        
     }
+    
+    
     
     @IBAction func communityChatTapped(_ sender: Any) {
         let chat = Chat()
@@ -110,6 +109,12 @@ class CommunityOverviewViewController: UIViewController {
             }
         }
         
+        if segue.identifier == "toVisionSegue" {
+            if let visionVC = segue.destination as? SwipeCollectionViewController {
+                visionVC.diashow = .vision
+            }
+        }
+        
         if segue.identifier == "toPrincipleInfo" {
             if let info = sender as? Info {
                 if let vc = segue.destination as? BlogPostViewController {
@@ -122,8 +127,20 @@ class CommunityOverviewViewController: UIViewController {
     @objc func showSecretButton() {
         UIView.animate(withDuration: 2, animations: {
             self.buttonStackView.alpha = 0
+            self.visionButton.alpha = 0
+            self.moreButtonTapped.alpha = 0
+            self.howCanIHelpButton.alpha = 0
+            self.imagineBlogButton.alpha = 0
+            self.communityChatButton.alpha = 0
+            self.voteButton.alpha = 0
         }) { (_) in
             self.buttonStackView.isHidden = true
+            self.visionButton.isHidden = true
+            self.moreButtonTapped.isHidden = true
+            self.howCanIHelpButton.isHidden = true
+            self.imagineBlogButton.isHidden = true
+            self.communityChatButton.isHidden = true
+            self.voteButton.isHidden = true
             self.secretButton.alpha = 0
             self.secretButton.isHidden = false
             
@@ -135,7 +152,13 @@ class CommunityOverviewViewController: UIViewController {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.navigationBar.isTranslucent = true
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
+        self.navigationController?.navigationBar.isTranslucent = false
+        
         self.buttonStackView.isHidden = false
         self.buttonStackView.alpha = 1
         self.secretButton.isHidden = true
@@ -167,6 +190,15 @@ class CommunityOverviewViewController: UIViewController {
     @IBAction func secretButtonTapped(_ sender: Any) {
         performSegue(withIdentifier: "toSecretSegue", sender: nil)
     }
+    
+    @IBAction func newCampaignButtonTapped(_ sender: Any) {
+        if let _ = Auth.auth().currentUser {
+            performSegue(withIdentifier: "toNewCampaignSegue", sender: nil)
+        } else {
+            self.notLoggedInAlert()
+        }
+    }
+    
     
     func setNotifierForAdmin() {
         let ref = db.collection("Reports")

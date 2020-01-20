@@ -108,8 +108,10 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
             if let document = document {
                 if let docData = document.data() {
                     
-                    friend.user.name = docData["name"] as? String ?? ""
-                    friend.user.surname = docData["surname"] as? String ?? ""
+                    let name = docData["name"] as? String ?? ""
+                    let surname = docData["surname"] as? String ?? ""
+                    
+                    friend.user.displayName = "\(name) \(surname)"
                     friend.user.imageURL = docData["profilePictureURL"] as? String ?? ""
                     friend.user.statusQuote = docData["statusText"] as? String ?? ""
                     friend.user.blocked = docData["blocked"] as? [String] ?? nil
@@ -174,7 +176,7 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                 cell.setFriend(friend: friend)
                 
                 cell.acceptLabel.isHidden = true
-                cell.nameLabel.text = "\(friend.user.name) \(friend.user.surname)"
+                cell.nameLabel.text = friend.user.displayName
                 
                 
                 cell.profilePictureImageView.layer.cornerRadius = 2

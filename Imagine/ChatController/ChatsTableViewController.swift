@@ -217,7 +217,12 @@ class ChatsTableViewController: UITableViewController {
                 }
             }
         }
-        loadUsers()
+        let postHelper = PostHelper()
+        //Get Friends of the current User to check when they load the user of the chats
+        postHelper.getTheUsersFriend {friends in
+            self.loadUsers(friends: friends)
+        }
+        
     }
     
     func deleteChat(chatID: String) {
@@ -242,7 +247,7 @@ class ChatsTableViewController: UITableViewController {
     }
     
     
-    func loadUsers() {
+    func loadUsers(friends: [String]) {
         
         for chat in chatsList {
             // User Daten raussuchen
@@ -252,8 +257,15 @@ class ChatsTableViewController: UITableViewController {
                 if let document = document {
                     if let docData = document.data() {
                         
-                        chat.participant.name = docData["name"] as? String ?? ""
-                        chat.participant.surname = docData["surname"] as? String ?? ""
+                        if friends.contains(chat.participant.userUID) {
+                            // Is a friend of the current User
+                            let name = docData["name"] as? String ?? ""
+                            let surname = docData["surname"] as? String ?? ""
+                            
+                            chat.participant.displayName = "\(name) \(surname)"
+                        } else {
+                            chat.participant.displayName = docData["name"] as? String ?? ""
+                        }
                         chat.participant.imageURL = docData["profilePictureURL"] as? String ?? ""
                         
                         self.tableView.reloadData()
@@ -317,14 +329,13 @@ class ChatsTableViewController: UITableViewController {
                     cell.unreadMessageView.isHidden = true
                 }
                 
-                
-                cell.nameLabel.text = "\(chat.participant.name) \(chat.participant.surname)"
+                cell.nameLabel.text = chat.participant.displayName
                 
                 if let currentUserUid = currentUserUid {
                     if currentUserUid == chat.lastMessage.sender {  // If you are the sender of the last message
                         cell.lastMessage.text = "Du: \(chat.lastMessage.message)"
                     } else {
-                        cell.lastMessage.text = "\(chat.participant.name): \(chat.lastMessage.message)"
+                        cell.lastMessage.text = "\(chat.participant.displayName): \(chat.lastMessage.message)"
                     }
                 }
                 

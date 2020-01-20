@@ -16,9 +16,6 @@
         <array key="IBMPlexSans-Regular.ttf">
             <string>IBMPlexSans</string>
         </array>
-        <array key="IBMPlexSans-SemiBold.ttf">
-            <string>IBMPlexSans-SemiBold</string>
-        </array>
     </customFonts>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -30,73 +27,87 @@
                 <rect key="frame" x="0.0" y="0.0" width="200" height="214"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wieviel Text steht hier nur drin?" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.59999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="lyc-K4-wL5">
-                        <rect key="frame" x="5" y="5" width="190" height="82"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="750" text="Wieviel Text steht hier nur drin?" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.59999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="lyc-K4-wL5">
+                        <rect key="frame" x="5" y="5" width="190" height="44.5"/>
                         <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="17"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Hier steht eine viel ausführliche Beschreibung, mit einem Hint, was da eigentlich so los ist. Hier geht einiges!" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.59999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="gKd-wt-nOP">
-                        <rect key="frame" x="5" y="97" width="190" height="70"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="70" id="Zos-OJ-YuX"/>
-                        </constraints>
-                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" text="Hier steht eine viel ausführliche Beschreibung, mit einem Hint, was da eigentlich so los ist. Hier geht einiges!" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999999999999996" translatesAutoresizingMaskIntoConstraints="NO" id="gKd-wt-nOP">
+                        <rect key="frame" x="5" y="49.5" width="190" height="128.5"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="13"/>
+                        <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="gq1-01-GeC">
-                        <rect key="frame" x="5" y="194" width="190" height="15"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="AYE-sB-tKx">
-                                <rect key="frame" x="0.0" y="0.0" width="92.5" height="15"/>
-                                <fontDescription key="fontDescription" name="IBMPlexSans-SemiBold" family="IBM Plex Sans" pointSize="10"/>
-                                <color key="textColor" red="0.92941176469999998" green="0.33333333329999998" blue="0.23137254900000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="TfP-Zl-o7e">
-                                <rect key="frame" x="97.5" y="0.0" width="92.5" height="15"/>
-                                <fontDescription key="fontDescription" name="IBMPlexSans-SemiBold" family="IBM Plex Sans" pointSize="10"/>
-                                <color key="textColor" red="0.36433214857869345" green="0.69966018199920654" blue="0.36993340974072508" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="15" id="uZz-zj-M8n"/>
-                        </constraints>
-                    </stackView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Quelle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.90000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="jGi-hr-3T0">
-                        <rect key="frame" x="5" y="177" width="190" height="12"/>
+                        <rect key="frame" x="25" y="186" width="142" height="12"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="12" id="o1U-gw-EKU"/>
                         </constraints>
                         <fontDescription key="fontDescription" name="IBMPlexSans-Light" family="IBM Plex Sans" pointSize="11"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="kBJ-V3-6FG">
+                        <rect key="frame" x="172" y="173" width="23" height="38"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="upvote" translatesAutoresizingMaskIntoConstraints="NO" id="eqB-8K-abA">
+                                <rect key="frame" x="0.0" y="0.0" width="23" height="12.5"/>
+                                <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="4" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uIz-Bq-hjL">
+                                <rect key="frame" x="0.0" y="12.5" width="23" height="13"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="downvote" translatesAutoresizingMaskIntoConstraints="NO" id="Zql-Vz-TnB">
+                                <rect key="frame" x="0.0" y="25.5" width="23" height="12.5"/>
+                                <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                            </imageView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="38" id="IBF-gR-K1d"/>
+                            <constraint firstAttribute="width" constant="23" id="K4P-H1-zVB"/>
+                        </constraints>
+                    </stackView>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="caution" translatesAutoresizingMaskIntoConstraints="NO" id="nzU-pW-Fgs">
+                        <rect key="frame" x="5" y="184.5" width="15" height="15"/>
+                        <color key="tintColor" systemColor="systemYellowColor" red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="15" id="9Cg-s6-886"/>
+                            <constraint firstAttribute="height" constant="15" id="Udu-Q0-V4v"/>
+                        </constraints>
+                    </imageView>
                 </subviews>
                 <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 <constraints>
-                    <constraint firstItem="gq1-01-GeC" firstAttribute="leading" secondItem="NrW-SJ-m0X" secondAttribute="leading" constant="5" id="101-4B-79b"/>
-                    <constraint firstItem="jGi-hr-3T0" firstAttribute="top" secondItem="gKd-wt-nOP" secondAttribute="bottom" constant="10" id="8w4-5a-2Bg"/>
+                    <constraint firstItem="kBJ-V3-6FG" firstAttribute="leading" secondItem="jGi-hr-3T0" secondAttribute="trailing" constant="5" id="3zz-yG-pkc"/>
+                    <constraint firstAttribute="trailing" secondItem="kBJ-V3-6FG" secondAttribute="trailing" constant="5" id="6Al-W3-fyL"/>
                     <constraint firstAttribute="trailing" secondItem="lyc-K4-wL5" secondAttribute="trailing" constant="5" id="Fh3-jN-dPY"/>
-                    <constraint firstItem="gKd-wt-nOP" firstAttribute="top" secondItem="lyc-K4-wL5" secondAttribute="bottom" constant="10" id="IZX-Qq-UOe"/>
+                    <constraint firstAttribute="bottom" secondItem="kBJ-V3-6FG" secondAttribute="bottom" constant="3" id="G5v-gL-fO0"/>
+                    <constraint firstItem="gKd-wt-nOP" firstAttribute="top" secondItem="lyc-K4-wL5" secondAttribute="bottom" id="IZX-Qq-UOe"/>
                     <constraint firstItem="lyc-K4-wL5" firstAttribute="leading" secondItem="NrW-SJ-m0X" secondAttribute="leading" constant="5" id="JNc-fe-pYM"/>
-                    <constraint firstItem="jGi-hr-3T0" firstAttribute="leading" secondItem="NrW-SJ-m0X" secondAttribute="leading" constant="5" id="NDC-bh-irB"/>
-                    <constraint firstAttribute="bottom" secondItem="gq1-01-GeC" secondAttribute="bottom" constant="5" id="SvI-to-fe6"/>
-                    <constraint firstAttribute="trailing" secondItem="jGi-hr-3T0" secondAttribute="trailing" constant="5" id="Uhd-gp-iJs"/>
+                    <constraint firstItem="jGi-hr-3T0" firstAttribute="leading" secondItem="nzU-pW-Fgs" secondAttribute="trailing" constant="5" id="L68-x6-Hfv"/>
+                    <constraint firstItem="jGi-hr-3T0" firstAttribute="centerY" secondItem="uIz-Bq-hjL" secondAttribute="centerY" id="WGc-Qt-Omf"/>
                     <constraint firstItem="lyc-K4-wL5" firstAttribute="top" secondItem="NrW-SJ-m0X" secondAttribute="top" constant="5" id="WU7-w0-5Eq"/>
-                    <constraint firstItem="gq1-01-GeC" firstAttribute="top" secondItem="jGi-hr-3T0" secondAttribute="bottom" constant="5" id="bfH-oP-AOz"/>
-                    <constraint firstAttribute="trailing" secondItem="gq1-01-GeC" secondAttribute="trailing" constant="5" id="e03-xZ-JkI"/>
                     <constraint firstAttribute="trailing" secondItem="gKd-wt-nOP" secondAttribute="trailing" constant="5" id="fYk-7e-Gdg"/>
+                    <constraint firstItem="kBJ-V3-6FG" firstAttribute="top" secondItem="gKd-wt-nOP" secondAttribute="bottom" constant="-5" id="kC9-Jg-l4I"/>
                     <constraint firstItem="gKd-wt-nOP" firstAttribute="leading" secondItem="NrW-SJ-m0X" secondAttribute="leading" constant="5" id="pVI-fP-c5P"/>
+                    <constraint firstItem="nzU-pW-Fgs" firstAttribute="leading" secondItem="NrW-SJ-m0X" secondAttribute="leading" constant="5" id="pcj-5b-y3l"/>
+                    <constraint firstItem="nzU-pW-Fgs" firstAttribute="centerY" secondItem="jGi-hr-3T0" secondAttribute="centerY" id="rI4-5S-prQ"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
                 <outlet property="bodyLabel" destination="gKd-wt-nOP" id="O4f-Rc-4iQ"/>
-                <outlet property="contraCountLabel" destination="AYE-sB-tKx" id="NOr-JD-i0y"/>
                 <outlet property="headerLabel" destination="lyc-K4-wL5" id="5Cn-dY-10W"/>
-                <outlet property="proCountLabel" destination="TfP-Zl-o7e" id="3kY-zN-bqp"/>
+                <outlet property="numberOfUpvotesLabel" destination="uIz-Bq-hjL" id="lcy-iN-mF9"/>
                 <outlet property="sourceLabel" destination="jGi-hr-3T0" id="01S-ut-7dE"/>
             </connections>
             <point key="canvasLocation" x="134.40000000000001" y="7.1964017991004505"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="caution" width="30" height="30"/>
+        <image name="downvote" width="30" height="30"/>
+        <image name="upvote" width="30" height="30"/>
+    </resources>
 </document>

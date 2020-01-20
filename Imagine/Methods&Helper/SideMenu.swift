@@ -92,6 +92,25 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
     
     
+    
+    
+    
+    func showMenu() {
+        //show menu
+        
+            
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+                
+                self.blackView.alpha = 1
+                self.sideMenuView.frame = CGRect(x:0, y: 0, width: self.sideMenuView.frame.width, height: self.sideMenuView.frame.height)
+                
+            }, completion: { (_) in
+                
+                self.sideMenuView.layoutSubviews()
+            })
+//        }
+    }
+    
     @objc func toUserProfileTapped() {
         print("To User")
         handleDismiss(sideMenuButton: .toUser, id: nil)
@@ -137,23 +156,6 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         
     }
     
-    
-    func showMenu() {
-        //show menu
-        
-            
-            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
-                
-                self.blackView.alpha = 1
-                self.sideMenuView.frame = CGRect(x:0, y: 0, width: self.sideMenuView.frame.width, height: self.sideMenuView.frame.height)
-                
-            }, completion: { (_) in
-                
-                self.sideMenuView.layoutSubviews()
-            })
-//        }
-    }
-    
     func handleDismiss(sideMenuButton: SideMenuButton, id: String?) {    // Not just dismiss but also the presented options
         UIView.animate(withDuration: 0.5, animations: {
             self.blackView.alpha = 0
@@ -171,6 +173,8 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
             }
         })
     }
+    
+    
     
     // -MARK: Constraints
     func addConstraints() {

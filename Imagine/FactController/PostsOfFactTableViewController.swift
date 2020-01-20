@@ -260,8 +260,8 @@ class PostsOfFactTableViewController: UITableViewController {
                     // Label vergrößern
                     let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
                     
-                    let imageHeight = post.imageHeight
-                    let imageWidth = post.imageWidth
+                    let imageHeight = post.mediaHeight
+                    let imageWidth = post.mediaWidth
                     
                     let ratio = imageWidth / imageHeight
                     var newHeight = self.view.frame.width / ratio

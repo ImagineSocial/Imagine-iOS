@@ -10,22 +10,19 @@ import UIKit
 
 class ThoughtCell : BaseFeedCell {
     
-    @IBOutlet weak var profilePictureImageView : UIImageView!
-    @IBOutlet weak var ogPosterLabel: UILabel!
-    @IBOutlet weak var createDateLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var reportView: DesignablePopUp!
     @IBOutlet weak var reportViewLabel: UILabel!
     @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var commentCountLabel: UILabel!
     @IBOutlet weak var reportViewButtonInTop: DesignableButton!
-    @IBOutlet weak var factImageView: UIImageView!
     @IBOutlet weak var titleToLikeButtonsConstraint: NSLayoutConstraint!
     @IBOutlet weak var descriptionLabel: UILabel!
     
     var delegate: PostCellDelegate?
     
     override func awakeFromNib() {
+        selectionStyle = .none
+        
         self.addSubview(buttonLabel)
         buttonLabel.textColor = .black
         
@@ -127,7 +124,7 @@ class ThoughtCell : BaseFeedCell {
             commentCountLabel.text = String(post.commentCount)
             
             
-            if post.user.name == "" {
+            if post.user.displayName == "" {
                 if post.anonym {
                     self.setUser()
                 } else {
@@ -176,11 +173,14 @@ class ThoughtCell : BaseFeedCell {
     func setUser() {
         if let post = post {
             if post.anonym {
-                ogPosterLabel.text = Constants.strings.anonymPosterName
-                
-                profilePictureImageView.image = UIImage(named: "default-user")
+                if let anonymousName = post.anonymousName {
+                    OPNameLabel.text = anonymousName
+                } else {
+                    OPNameLabel.text = Constants.strings.anonymPosterName
+                }
+                profilePictureImageView.image = UIImage(named: "anonym-user")
             } else {
-                ogPosterLabel.text = "\(post.user.name) \(post.user.surname)"
+                OPNameLabel.text = post.user.displayName
                 // Profile Picture
                 
                 if let url = URL(string: post.user.imageURL) {
@@ -194,7 +194,7 @@ class ThoughtCell : BaseFeedCell {
     func getName() {
         if index < 20 {
             if let post = self.post {
-                if post.user.name == "" {
+                if post.user.displayName == "" {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         self.getName()
                         self.index+=1

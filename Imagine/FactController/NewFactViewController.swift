@@ -40,12 +40,12 @@ class NewFactViewController: UIViewController {
     @IBOutlet weak var descriptionTextView: UITextView!
     @IBOutlet weak var sourceTextField: UITextField!
     @IBOutlet weak var ProContraLabel: UILabel!
-    @IBOutlet weak var contraButton: DesignableButton!
-    @IBOutlet weak var proButton: DesignableButton!
     @IBOutlet weak var addSourceLabel: UILabel!
     @IBOutlet weak var sourceLabel: UILabel!
     @IBOutlet weak var doneButton: UIBarButtonItem!
     @IBOutlet weak var titleTextField: UITextView!
+    @IBOutlet weak var proContraSegmentedControl: UISegmentedControl!
+    @IBOutlet weak var seperatorView3: UIView!
     
     var fact: Fact?
     var argument: Argument?
@@ -73,18 +73,16 @@ class NewFactViewController: UIViewController {
         newFactDisplayPicker.dataSource = self
         
         addSourceLabel.isHidden = true
-        proButton.isHidden = true
-        contraButton.isHidden = true
+        proContraSegmentedControl.isHidden = true
         ProContraLabel.isHidden = true
         sourceTextField.isHidden = true
+        
         
         descriptionTextView.layer.cornerRadius = 3
 //        descriptionTextView.backgroundColor = Constants.backgroundColorForTableViews
 
         setUI()
-        
-        ProContraLabel.text = getProOrContraString()
-        
+                
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
@@ -97,8 +95,28 @@ class NewFactViewController: UIViewController {
             headerLabel.text = "Teile dein Argument mit uns!"
             addSourceLabel.isHidden = false
         case .argument:
-            proButton.isHidden = false
-            contraButton.isHidden = false
+            
+            if let fact = fact {
+                switch fact.factDisplayNames {
+                case .advantageDisadvantage:
+                    proContraSegmentedControl.setTitle("Vorteile", forSegmentAt: 0)
+                    proContraSegmentedControl.setTitle("Nachteile", forSegmentAt: 1)
+                case .confirmDoubt:
+                    proContraSegmentedControl.setTitle("Zweifel", forSegmentAt: 0)
+                    proContraSegmentedControl.setTitle("Bestätigung", forSegmentAt: 1)
+                default:
+                    print("Stays pro/contra")
+                }
+            }
+            
+            switch proOrContra {
+            case .contra:
+                proContraSegmentedControl.selectedSegmentIndex = 0
+            default:
+                proContraSegmentedControl.selectedSegmentIndex = 1
+            }
+            
+            proContraSegmentedControl.isHidden = false
             ProContraLabel.isHidden = false
             
             headerLabel.text = "Teile dein Argument mit uns!"
@@ -107,6 +125,7 @@ class NewFactViewController: UIViewController {
             sourceTextField.isHidden = false
             headerLabel.text = "Teile deine Quelle mit uns!"
         case .fact:
+            seperatorView3.isHidden = true
             sourceLabel.isHidden = true
             headerLabel.text = "Erstelle einen neuen Fakt"
             descriptionLabel.text = factDescription
@@ -222,16 +241,13 @@ class NewFactViewController: UIViewController {
         sourceTextField.resignFirstResponder()
     }
     
-    @IBAction func contraButtonTapped(_ sender: Any) {
-        proOrContra = .contra
-        ProContraLabel.text = getProOrContraString()
-        ProContraLabel.textColor = Constants.red
-    }
-    
-    @IBAction func proButtonTapped(_ sender: Any) {
-        proOrContra = .pro
-        ProContraLabel.text = getProOrContraString()
-        ProContraLabel.textColor = Constants.green
+    @IBAction func proContraSegmentChanged(_ sender: Any) {
+        
+        if proContraSegmentedControl.selectedSegmentIndex == 0 {
+            proOrContra = .pro
+        } else {
+            proOrContra = .contra
+        }
     }
     
     func getProOrContraString() -> String {
@@ -381,6 +397,8 @@ class NewFactViewController: UIViewController {
         self.descriptionTextView.text?.removeAll()
         self.sourceTextField.text?.removeAll()
     }
+    
+    
     
     // MARK: - Move The Keyboard Up!
     @objc func keyboardWillChange(notification: NSNotification) {

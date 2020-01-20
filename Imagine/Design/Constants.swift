@@ -23,6 +23,7 @@ struct Constants {
     
     struct strings {
         static let anonymPosterName = "Ein anonymer Nutzer"
+        static let textOfTheWeek = "Tauscht euch aus, seid nett und lernt neue Menschen kennen!"
     }
     
     struct texts {

@@ -131,8 +131,7 @@ class sourceCell: UITableViewCell {
         super.awakeFromNib()
         
         // add corner radius on `contentView`
-        contentView.backgroundColor = Constants.imagineColor
-        contentView.layer.cornerRadius = 4
+        contentView.layer.cornerRadius = 6
         contentView.clipsToBounds = true
         backgroundColor =  .clear
     }

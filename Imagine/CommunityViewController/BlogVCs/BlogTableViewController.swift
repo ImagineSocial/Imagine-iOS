@@ -12,10 +12,15 @@ import SDWebImage
 class BlogTableViewController: UITableViewController {
 
     var postList = [BlogPost]()
+    let blogPostIdentifier = "NibBlogPostCell"
+    let currentProjectsIdentifier = "CurrentProjectsCell"
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        tableView.register(UINib(nibName: "BlogPostCell", bundle: nil), forCellReuseIdentifier: blogPostIdentifier)
+        tableView.register(UINib(nibName: "CurrentProjectsCell", bundle: nil), forCellReuseIdentifier: currentProjectsIdentifier)
+        
         getData()
         self.view.activityStartAnimating()
         tableView.separatorStyle = .none
@@ -24,6 +29,12 @@ class BlogTableViewController: UITableViewController {
     func getData() {
         DataHelper().getData(get: .blogPosts) { (posts) in
             self.postList = posts as! [BlogPost]
+            
+            let first = BlogPost()
+            first.isCurrentProjectsCell = true
+            
+            self.postList.insert(first, at: 0)
+            
             self.tableView.reloadData()
             self.view.activityStopAnimating()
         }
@@ -37,29 +48,46 @@ class BlogTableViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let identifier = "NibBlogPostCell"
         
-        tableView.register(UINib(nibName: "BlogPostCell", bundle: nil), forCellReuseIdentifier: identifier)
+        let blogPost = postList[indexPath.row]
         
-        if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? BlogCell {
-            let blogPost = postList[indexPath.row]
+        if blogPost.isCurrentProjectsCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: currentProjectsIdentifier, for: indexPath) as? CurrentProjectsCell {
+                
+                
+                return cell
+            }
+        } else {
             
-            cell.post = blogPost
-            
-            return cell
+            if let cell = tableView.dequeueReusableCell(withIdentifier: blogPostIdentifier, for: indexPath) as? BlogCell {
+                
+                cell.post = blogPost
+                
+                return cell
+            }
         }
+        
         return UITableViewCell()
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 225
+        let post = postList[indexPath.row]
+        
+        if post.isCurrentProjectsCell {
+            return 275
+        } else {
+            return 225
+        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let blogPost = postList[indexPath.row]
         
-        performSegue(withIdentifier: "toBlogPost", sender: blogPost)
+        if !blogPost.isCurrentProjectsCell {
+            performSegue(withIdentifier: "toBlogPost", sender: blogPost)
+        }
         tableView.deselectRow(at: indexPath, animated: true)
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

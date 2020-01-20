@@ -182,7 +182,11 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                 let layer = cell.layer
                 layer.cornerRadius = 4
                 layer.masksToBounds = true
-                layer.borderColor = Constants.imagineColor.cgColor
+                if #available(iOS 13.0, *) {
+                    layer.borderColor = UIColor.label.cgColor
+                } else {
+                    layer.borderColor = UIColor.black.cgColor
+                }
                 layer.borderWidth = 2
                 
                 return cell
@@ -316,7 +320,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     
     func filterContentForSearchText(_ searchText: String ){
         
-        let titleRef = db.collection("Facts").whereField("name", isGreaterThan: searchText).whereField("name", isLessThan: "\(searchText)z").limit(to: 10)
+        let titleRef = db.collection("Facts").whereField("name", isGreaterThan: searchText).whereField("name", isLessThan: "\(searchText)ü").limit(to: 10)
         
         titleRef.getDocuments { (snap, err) in
             if let error = err {
@@ -340,6 +344,16 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                     fact.title = name
                     fact.createDate = stringDate
                     fact.documentID = documentID
+                    
+                    if let displayOption = documentData["displayOption"] as? String {
+                        switch displayOption {
+                        case "topic":
+                            fact.displayMode = .topic
+                        default:
+                            fact.displayMode = .fact
+                        }
+                    }
+                    
                     if let imageURL = documentData["imageURL"] as? String {
                         fact.imageURL = imageURL
                     }

@@ -12,9 +12,8 @@ class ArgumentCell: UITableViewCell {
 
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var bodyLabel: UILabel!
-    @IBOutlet weak var contraCountLabel: UILabel!
-    @IBOutlet weak var proCountLabel: UILabel!
     @IBOutlet weak var sourceLabel: UILabel!
+    @IBOutlet weak var numberOfUpvotesLabel: UILabel!
     
     
     var argument: Argument? {
@@ -27,12 +26,16 @@ class ArgumentCell: UITableViewCell {
                 
                 headerLabel.text = argument.title
                 bodyLabel.text = argument.description
-                let upString = NSLocalizedString("consent: %d", comment: "How many people agree with the argument")
-                proCountLabel.text = String.localizedStringWithFormat(upString, argument.upvotes)
-                let downString = NSLocalizedString("doubt: %d", comment: "How many people disagree with the given argument")
-                contraCountLabel.text = String.localizedStringWithFormat(downString, argument.downvotes)
+//                let upString = NSLocalizedString("consent: %d", comment: "How many people agree with the argument")
+                let downvotes = argument.downvotes
+                let upvotes = -downvotes+argument.upvotes
+                numberOfUpvotesLabel.text = String(upvotes)
+//                nummer für die upvotes berechnen und neues Warnzeichen für Quelle
+//                proCountLabel.text = String.localizedStringWithFormat(upString, argument.upvotes)
+//                let downString = NSLocalizedString("doubt: %d", comment: "How many people disagree with the given argument")
+//                contraCountLabel.text = String.localizedStringWithFormat(downString, argument.downvotes)
                 
-                sourceLabel.text = "Quelle: Nicht überprüft ⚠️"
+                sourceLabel.text = "Quelle: Nicht überprüft"
                 
                 
 //                if argument.source.isEmpty {    // For now, später muss wahrheitswert der Quellen überprüft werden
@@ -50,7 +53,7 @@ class ArgumentCell: UITableViewCell {
         super.awakeFromNib()
         
         // add corner radius on `contentView`
-        contentView.layer.cornerRadius = 5
+        contentView.layer.cornerRadius = 6
         contentView.clipsToBounds = true
         backgroundColor =  .clear
     }

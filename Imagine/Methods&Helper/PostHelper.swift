@@ -34,9 +34,64 @@ class PostHelper {
     
     let factJSONString = "linkedFactID"
     
+    var friends: [String]?
+    
     /* These two variables are here to make sure that we just fetch as many as there are documents and dont start at the beginning again  */
     var morePostsToFetch = true
     var alreadyFetchedCount = 0
+    
+    init() {
+        
+    }
+    
+    func getTheUsersFriend(fetchedFriends: @escaping ([String]) -> Void) {
+        if self.friends == nil {
+            if let user = Auth.auth().currentUser {
+                let userRef = db.collection("Users").document(user.uid).collection("friends")
+                
+                userRef.getDocuments { (snaps, err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        if let snaps = snaps {
+                            var friends = [String]()
+                            for document in snaps.documents {
+                                friends.append(document.documentID)
+                            }
+                            
+                            //Add yourself to the list so you see your full name in the feed
+                            friends.append(user.uid)
+                            
+                            self.friends = friends
+                            
+                            fetchedFriends(friends)
+                        } else {
+                            //return empty array
+                            fetchedFriends([])
+                        }
+                    }
+                }
+            }
+        } else {
+            
+            fetchedFriends(self.friends!)
+            print("Already got the friends")
+        }
+    }
+    
+    func checkIfOPIsAFriend(userUID: String) -> Bool {
+        if let friends = self.friends {
+            for friend in friends {
+                if friend == userUID {
+                    return true
+                }
+            }
+            return false
+        } else {
+            return false
+        }
+    }
+    
     
     
     //MARK: - Main Feed
@@ -73,26 +128,29 @@ class PostHelper {
         }
         
         var postRef = db.collection("Posts").order(by: orderBy, descending: descending).limit(to: 20)
-        
+                
         if getMore {    // If you want to get More Posts
             if let lastSnap = lastSnap {        // For the next loading batch of 20, that will start after this snapshot
                 postRef = postRef.start(afterDocument: lastSnap)
                 self.initialFetch = false
             }
-        } else { // Else you want to refresh the feed
+        } else { // Else: you want to refresh the feed
             self.initialFetch = true
         }
         
-        postRef.getDocuments { (querySnapshot, error) in
+        self.getTheUsersFriend { (_) in // First get the friends to choose which name to fetch
             
-            self.lastSnap = querySnapshot?.documents.last    // Last document for the next fetch cycle
-            
-            for document in querySnapshot!.documents {
-                self.addThePost(document: document)
+            postRef.getDocuments { (querySnapshot, error) in
+                
+                self.lastSnap = querySnapshot?.documents.last    // Last document for the next fetch cycle
+                
+                for document in querySnapshot!.documents {
+                    self.addThePost(document: document)
+                }
+                self.getCommentCount(completion: {
+                    returnPosts(self.posts, self.initialFetch)
+                })
             }
-            self.getCommentCount(completion: {
-                returnPosts(self.posts, self.initialFetch)
-            })
         }
     }
     
@@ -113,7 +171,7 @@ class PostHelper {
             case .savedPosts:
                 postListReference = "saved"
             }
-            print("Hier wird jetzt gearbeitet. InitialFetch: ", initialFetch)
+
             var documentIDsOfPosts = [String]()
             
             if let ref = postListReference {
@@ -257,14 +315,17 @@ class PostHelper {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
                     if let document = document {
-                        self.addThePost(document: document)
                         
-                        startIndex = startIndex+1
-                        
-                        if startIndex == endIndex {
-                            self.getCommentCount(completion: {
-                              done(self.posts)
-                            })
+                        self.getTheUsersFriend { (_) in // First get the friends to check which name to fetch
+                            self.addThePost(document: document)
+                            
+                            startIndex = startIndex+1
+                            
+                            if startIndex == endIndex {
+                                self.getCommentCount(completion: {
+                                  done(self.posts)
+                                })
+                            }
                         }
                     }
                 }
@@ -301,6 +362,7 @@ class PostHelper {
                 
                 let dateToSort = createTimestamp.dateValue()
                 let stringDate = createTimestamp.dateValue().formatForFeed()
+                let isAFriend: Bool = self.checkIfOPIsAFriend(userUID: originalPoster)
                 
                 // Thought
                 if postType == "thought" {
@@ -332,8 +394,11 @@ class PostHelper {
                     
                     if originalPoster == "anonym" {
                         post.anonym = true
+                        if let anonymousName = documentData["anonymousName"] as? String {
+                            post.anonymousName = anonymousName
+                        }
                     } else {
-                        post.getUser()
+                        post.getUser(isAFriend: isAFriend)
                     }
                     self.posts.append(post)
                     
@@ -352,8 +417,8 @@ class PostHelper {
                     let post = Post()
                     post.title = title
                     post.imageURL = imageURL
-                    post.imageHeight = CGFloat(picHeight)
-                    post.imageWidth = CGFloat(picWidth)
+                    post.mediaHeight = CGFloat(picHeight)
+                    post.mediaWidth = CGFloat(picWidth)
                     post.description = description
                     post.type = .picture
                     post.documentID = documentID
@@ -378,9 +443,11 @@ class PostHelper {
                     
                     if originalPoster == "anonym" {
                         post.anonym = true
-                        print("Set Post as anonym")
+                        if let anonymousName = documentData["anonymousName"] as? String {
+                            post.anonymousName = anonymousName
+                        }
                     } else {
-                        post.getUser()
+                        post.getUser(isAFriend: isAFriend)
                     }
                     self.posts.append(post)
                     
@@ -416,12 +483,71 @@ class PostHelper {
                     
                     if originalPoster == "anonym" {
                         post.anonym = true
+                        if let anonymousName = documentData["anonymousName"] as? String {
+                            post.anonymousName = anonymousName
+                        }
                     } else {
-                        post.getUser()
+                        post.getUser(isAFriend: isAFriend)
                     }
                     self.posts.append(post)
                     
                     //Link
+                } else if postType == "GIF" {
+                    
+                    guard let gifURL = documentData["link"] as? String
+                        
+                        else {
+                            return     // Falls er das nicht als (String) zuordnen kann
+                    }
+                    
+                    let post = Post()       // Erst neuen Post erstellen
+                    post.title = title      // Dann die Sachen zuordnen
+                    post.linkURL = gifURL
+                    post.description = description
+                    post.type = .GIF
+                    post.documentID = documentID
+                    post.createTime = stringDate
+                    post.originalPosterUID = originalPoster
+                    post.votes.thanks = thanksCount
+                    post.votes.wow = wowCount
+                    post.votes.ha = haCount
+                    post.votes.nice = niceCount
+                    post.createDate = dateToSort
+                    
+                    if let report = self.handyHelper.setReportType(fetchedString: reportString) {
+                        post.report = report
+                    }
+                    
+                    if let factID = documentData[factJSONString] as? String {
+                        let fact = Fact(addMoreDataCell: false)
+                        fact.documentID = factID
+                        
+                        post.fact = fact
+                    }
+                    
+                    if let url = URL(string: gifURL) {
+                        let size = handyHelper.getWidthAndHeightFromVideo(url: url)
+                        
+                        if let size = size {
+                            post.mediaWidth = size.width
+                            post.mediaHeight = size.height
+                        } else {
+                            print("Couldnt get a valid Video")
+                            return
+                        }
+                    }
+                    
+                    if originalPoster == "anonym" {
+                        post.anonym = true
+                        if let anonymousName = documentData["anonymousName"] as? String {
+                            post.anonymousName = anonymousName
+                        }
+                    } else {
+                        post.getUser(isAFriend: isAFriend)
+                    }
+                    
+                    self.posts.append(post)
+                    
                 } else if postType == "link" {
                     
                     guard let linkURL = documentData["link"] as? String
@@ -457,8 +583,11 @@ class PostHelper {
                     
                     if originalPoster == "anonym" {
                         post.anonym = true
+                        if let anonymousName = documentData["anonymousName"] as? String {
+                            post.anonymousName = anonymousName
+                        }
                     } else {
-                        post.getUser()
+                        post.getUser(isAFriend: isAFriend)
                     }
                     self.posts.append(post)
                     
@@ -498,8 +627,11 @@ class PostHelper {
                     
                     if originalPoster == "anonym" {
                         post.anonym = true
+                        if let anonymousName = documentData["anonymousName"] as? String {
+                            post.anonymousName = anonymousName
+                        }
                     } else {
-                        post.getUser()
+                        post.getUser(isAFriend: isAFriend)
                     }
                     
                     post.getRepost(returnRepost: { (repost) in
@@ -576,45 +708,45 @@ class PostHelper {
         
     }
     
-    func getUsers(postList: [Post], completion: @escaping ([Post]) -> Void) {
-        //Wenn die Funktion fertig ist soll returnPosts bei der anderen losgehen
-        for post in postList {
-            // Vorläufig Daten hinzufügen
-            //              print("postID::::::" , post.documentID)
-            //            if post.type == "repost" || post.type == "translation" {
-            //                let postRef = db.collection("Posts").document(post.documentID)
-            //                let documentData : [String:Any] = ["thanksCount": 8, "wowCount": 4, "haCount": 3, "niceCount": 2]
-            //
-            //                postRef.setData(documentData, merge: true)
-            //            }
-            
-            
-            // User Daten raussuchen
-            let userRef = db.collection("Users").document(post.originalPosterUID)
-            
-            userRef.getDocument(completion: { (document, err) in
-                if let document = document {
-                    if let docData = document.data() {
-                        let user = User()
-                        
-                        user.name = docData["name"] as? String ?? ""
-                        user.surname = docData["surname"] as? String ?? ""
-                        user.imageURL = docData["profilePictureURL"] as? String ?? ""
-                        user.userUID = post.originalPosterUID
-                        user.blocked = docData["blocked"] as? [String] ?? nil
-                        
-                        post.user = user
-                    }
-                }
-                
-                if let err = err {
-                    print("Wir haben einen Error beim User: \(err.localizedDescription)")
-                }
-            })
-            
-        }
-        completion(postList)
-    }
+//    func getUsers(postList: [Post], completion: @escaping ([Post]) -> Void) {
+//        //Wenn die Funktion fertig ist soll returnPosts bei der anderen losgehen
+//        for post in postList {
+//            // Vorläufig Daten hinzufügen
+//            //              print("postID::::::" , post.documentID)
+//            //            if post.type == "repost" || post.type == "translation" {
+//            //                let postRef = db.collection("Posts").document(post.documentID)
+//            //                let documentData : [String:Any] = ["thanksCount": 8, "wowCount": 4, "haCount": 3, "niceCount": 2]
+//            //
+//            //                postRef.setData(documentData, merge: true)
+//            //            }
+//            
+//            
+//            // User Daten raussuchen
+//            let userRef = db.collection("Users").document(post.originalPosterUID)
+//            
+//            userRef.getDocument(completion: { (document, err) in
+//                if let document = document {
+//                    if let docData = document.data() {
+//                        let user = User()
+//                        
+//                        user.name = docData["name"] as? String ?? ""
+//                        user.surname = docData["surname"] as? String ?? ""
+//                        user.imageURL = docData["profilePictureURL"] as? String ?? ""
+//                        user.userUID = post.originalPosterUID
+//                        user.blocked = docData["blocked"] as? [String] ?? nil
+//                        
+//                        post.user = user
+//                    }
+//                }
+//                
+//                if let err = err {
+//                    print("Wir haben einen Error beim User: \(err.localizedDescription)")
+//                }
+//            })
+//            
+//        }
+//        completion(postList)
+//    }
     
     
     func getCommentCount(completion: () -> Void) {
