@@ -238,7 +238,7 @@
                 <outlet property="profilePictureImageView" destination="2U1-T4-i1y" id="61m-gP-33U"/>
                 <outlet property="reportButton" destination="JYE-wr-VKL" id="Id5-QD-lCM"/>
                 <outlet property="thanksButton" destination="30h-ya-zIH" id="7Vp-9F-cXT"/>
-                <outlet property="titleLabel" destination="KaD-cK-a1w" id="s0I-Eg-ciG"/>
+                <outlet property="titleLabel" destination="KaD-cK-a1w" id="xs0-ll-oeo"/>
                 <outlet property="wowButton" destination="dCb-NX-Hfg" id="xEM-SE-LoS"/>
             </connections>
             <point key="canvasLocation" x="159.42028985507247" y="87.053571428571431"/>

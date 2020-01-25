@@ -276,6 +276,13 @@
                             <constraint firstAttribute="height" constant="23" id="DjU-va-sLP"/>
                         </constraints>
                     </stackView>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="j0G-2f-t98">
+                        <rect key="frame" x="300" y="34" width="25" height="25"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="25" id="5wR-en-8jf"/>
+                            <constraint firstAttribute="width" constant="25" id="TWI-cZ-rSl"/>
+                        </constraints>
+                    </imageView>
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                 <constraints>
@@ -283,12 +290,14 @@
                     <constraint firstItem="XDl-QE-Tuq" firstAttribute="top" secondItem="sha-wU-sGx" secondAttribute="bottom" constant="3" id="3Xe-dK-0DZ"/>
                     <constraint firstItem="b36-WA-y8y" firstAttribute="leading" secondItem="uRR-6c-6J1" secondAttribute="leading" constant="10" id="3of-Ut-djB"/>
                     <constraint firstItem="XDl-QE-Tuq" firstAttribute="leading" secondItem="uRR-6c-6J1" secondAttribute="leading" constant="10" id="5QZ-eb-yL9"/>
+                    <constraint firstItem="j0G-2f-t98" firstAttribute="centerY" secondItem="brU-fD-KQ3" secondAttribute="centerY" id="5XQ-3c-E6J"/>
                     <constraint firstItem="c74-TK-Xp0" firstAttribute="bottom" secondItem="sha-wU-sGx" secondAttribute="bottom" constant="-5" id="6vE-MG-Whi"/>
                     <constraint firstAttribute="trailing" secondItem="XDl-QE-Tuq" secondAttribute="trailing" constant="10" id="7Gh-yt-cZF"/>
                     <constraint firstItem="b36-WA-y8y" firstAttribute="top" secondItem="eiJ-lf-DwH" secondAttribute="bottom" constant="6" id="85Z-CD-fay"/>
                     <constraint firstItem="UAd-Ez-vM7" firstAttribute="leading" secondItem="uRR-6c-6J1" secondAttribute="leading" id="9h6-Ln-CpV"/>
                     <constraint firstItem="sha-wU-sGx" firstAttribute="top" secondItem="UAd-Ez-vM7" secondAttribute="bottom" constant="10" id="EPH-Bm-eCe"/>
                     <constraint firstItem="eiJ-lf-DwH" firstAttribute="leading" secondItem="uRR-6c-6J1" secondAttribute="leading" constant="10" id="Eqe-Q9-X3i"/>
+                    <constraint firstItem="brU-fD-KQ3" firstAttribute="leading" secondItem="j0G-2f-t98" secondAttribute="trailing" constant="15" id="IC7-qF-ofC"/>
                     <constraint firstItem="sha-wU-sGx" firstAttribute="leading" secondItem="XDl-QE-Tuq" secondAttribute="leading" id="JcN-kJ-cdE"/>
                     <constraint firstItem="UAd-Ez-vM7" firstAttribute="top" secondItem="uRR-6c-6J1" secondAttribute="top" id="JzL-91-efX"/>
                     <constraint firstAttribute="trailing" secondItem="yGo-8c-MKu" secondAttribute="trailing" id="Mhe-If-pLQ"/>
@@ -309,12 +318,14 @@
                 <outlet property="OGPostView" destination="eiJ-lf-DwH" id="JMD-up-HFf"/>
                 <outlet property="cellImageView" destination="Cb4-JX-Uh9" id="8dX-pE-Xe4"/>
                 <outlet property="commentCountLabel" destination="L7E-yZ-9FU" id="HVU-oW-jCJ"/>
+                <outlet property="factImageView" destination="j0G-2f-t98" id="qZW-H9-JNR"/>
                 <outlet property="haButton" destination="NEB-4l-G9M" id="R23-Yz-R0R"/>
                 <outlet property="niceButton" destination="Pqk-TM-IGx" id="j6s-fU-bgD"/>
                 <outlet property="ogPosterNameLabel" destination="eeR-sG-s0N" id="t1J-3k-kvV"/>
+                <outlet property="ogProfilePictureImageView" destination="hV4-fh-krR" id="pAP-Ze-QUt"/>
                 <outlet property="originalCreateDateLabel" destination="Yy9-HG-nMR" id="b5O-eu-4vH"/>
                 <outlet property="originalTitleLabel" destination="uZB-Gt-KLo" id="FDQ-X8-xgZ"/>
-                <outlet property="profilePictureImageView" destination="hV4-fh-krR" id="ATQ-W1-6Kj"/>
+                <outlet property="profilePictureImageView" destination="sha-wU-sGx" id="ULx-Ph-m3b"/>
                 <outlet property="reportButton" destination="brU-fD-KQ3" id="59H-Uy-Phu"/>
                 <outlet property="reportView" destination="UAd-Ez-vM7" id="MJG-u3-IGM"/>
                 <outlet property="reportViewButton" destination="KsM-Ix-YUJ" id="w8l-FH-zAw"/>
@@ -322,7 +333,6 @@
                 <outlet property="reportViewLabel" destination="j2T-eI-9Oa" id="q1B-wV-Zjr"/>
                 <outlet property="repostDateLabel" destination="c74-TK-Xp0" id="Vy8-aT-g9P"/>
                 <outlet property="reposterNameLabel" destination="RRe-IJ-Hz8" id="QSK-lZ-ipZ"/>
-                <outlet property="reposterProfilePictureImageView" destination="sha-wU-sGx" id="i8P-G9-0aU"/>
                 <outlet property="thanksButton" destination="6N0-gh-py4" id="DFT-Rq-j87"/>
                 <outlet property="translatedTitleLabel" destination="XDl-QE-Tuq" id="jP8-m1-Tol"/>
                 <outlet property="wowButton" destination="Y86-Ko-iMx" id="yvd-nZ-3Vn"/>

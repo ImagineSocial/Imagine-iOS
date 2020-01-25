@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		38A670E2DD2C447329D62048 /* Pods_Imagine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18EBB6E52E84D4B544558C3E /* Pods_Imagine.framework */; };
+		DEC9523435EEEB39EB758BB7 /* Pods_Imagine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9EEBA7E441B12EB052BDEE3 /* Pods_Imagine.framework */; };
 		E904F268229C274A00383885 /* JobSurveyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E904F267229C274A00383885 /* JobSurveyViewController.swift */; };
 		E90B1914238C210000EACCC7 /* IBMPlexSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E90B190D238C210000EACCC7 /* IBMPlexSans-Light.ttf */; };
 		E90B1915238C210000EACCC7 /* IBMPlexSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E90B190E238C210000EACCC7 /* IBMPlexSans-Regular.ttf */; };
@@ -79,6 +79,9 @@
 		E991CCD82270972F00940834 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E991CCD72270972F00940834 /* WebViewController.swift */; };
 		E991CCDA2273474F00940834 /* ThoughtPostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E991CCD92273474F00940834 /* ThoughtPostCell.xib */; };
 		E991CCDC2273476C00940834 /* ThoughtCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E991CCDB2273476C00940834 /* ThoughtCell.swift */; };
+		E9925A9823D86F4C00E1A9D4 /* MultiPictureCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9925A9723D86F4C00E1A9D4 /* MultiPictureCell.xib */; };
+		E9925A9A23D8718500E1A9D4 /* MultiPictureCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9925A9923D8718500E1A9D4 /* MultiPictureCollectionCell.xib */; };
+		E9925A9C23D8726300E1A9D4 /* MultiPictureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9925A9B23D8726300E1A9D4 /* MultiPictureCell.swift */; };
 		E992B48F2379874800D7E8E8 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E992B48E2379874800D7E8E8 /* NotificationCell.swift */; };
 		E995E99E23A5414F005E81B4 /* RunderProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = E995E99D23A5414F005E81B4 /* RunderProgress.swift */; };
 		E9A02AA32326580B000DAB69 /* BlankContentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9A02AA22326580B000DAB69 /* BlankContentCell.xib */; };
@@ -142,9 +145,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		16797DC0F1D954251EDB8D5B /* Pods-Imagine.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.release.xcconfig"; path = "Pods/Target Support Files/Pods-Imagine/Pods-Imagine.release.xcconfig"; sourceTree = "<group>"; };
-		18EBB6E52E84D4B544558C3E /* Pods_Imagine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Imagine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7C8C2E5FBCAFD05128A3F010 /* Pods-Imagine.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Imagine/Pods-Imagine.debug.xcconfig"; sourceTree = "<group>"; };
+		3068672F88CEB3439F7042BB /* Pods-Imagine.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.release.xcconfig"; path = "Target Support Files/Pods-Imagine/Pods-Imagine.release.xcconfig"; sourceTree = "<group>"; };
+		4129D0CA914F48BCC7FFBFE6 /* Pods-Imagine.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.debug.xcconfig"; path = "Target Support Files/Pods-Imagine/Pods-Imagine.debug.xcconfig"; sourceTree = "<group>"; };
+		C9EEBA7E441B12EB052BDEE3 /* Pods_Imagine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Imagine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E904F267229C274A00383885 /* JobSurveyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSurveyViewController.swift; sourceTree = "<group>"; };
 		E90B190D238C210000EACCC7 /* IBMPlexSans-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "IBMPlexSans-Light.ttf"; path = "../../../../Downloads/IBM_Plex_Sans-2/IBMPlexSans-Light.ttf"; sourceTree = "<group>"; };
 		E90B190E238C210000EACCC7 /* IBMPlexSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "IBMPlexSans-Regular.ttf"; path = "../../../../Downloads/IBM_Plex_Sans-2/IBMPlexSans-Regular.ttf"; sourceTree = "<group>"; };
@@ -221,6 +224,9 @@
 		E991CCD72270972F00940834 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		E991CCD92273474F00940834 /* ThoughtPostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ThoughtPostCell.xib; sourceTree = "<group>"; };
 		E991CCDB2273476C00940834 /* ThoughtCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThoughtCell.swift; sourceTree = "<group>"; };
+		E9925A9723D86F4C00E1A9D4 /* MultiPictureCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MultiPictureCell.xib; sourceTree = "<group>"; };
+		E9925A9923D8718500E1A9D4 /* MultiPictureCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MultiPictureCollectionCell.xib; sourceTree = "<group>"; };
+		E9925A9B23D8726300E1A9D4 /* MultiPictureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiPictureCell.swift; sourceTree = "<group>"; };
 		E992B48E2379874800D7E8E8 /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCell.swift; sourceTree = "<group>"; };
 		E995E99D23A5414F005E81B4 /* RunderProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RunderProgress.swift; path = "../../../../Versuch57/Versuch57/Design- & Ordnungssachen/RunderProgress.swift"; sourceTree = "<group>"; };
 		E9A02AA22326580B000DAB69 /* BlankContentCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BlankContentCell.xib; sourceTree = "<group>"; };
@@ -288,28 +294,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				38A670E2DD2C447329D62048 /* Pods_Imagine.framework in Frameworks */,
+				DEC9523435EEEB39EB758BB7 /* Pods_Imagine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0BFDD8714763C10909E5BBC8 /* Frameworks */ = {
+		631E3A3581F5AB201C2025DA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				18EBB6E52E84D4B544558C3E /* Pods_Imagine.framework */,
+				C9EEBA7E441B12EB052BDEE3 /* Pods_Imagine.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		76C5670C00C8F38123C67EE5 /* Pods */ = {
+		66199979602FCB98C67C9712 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				7C8C2E5FBCAFD05128A3F010 /* Pods-Imagine.debug.xcconfig */,
-				16797DC0F1D954251EDB8D5B /* Pods-Imagine.release.xcconfig */,
+				4129D0CA914F48BCC7FFBFE6 /* Pods-Imagine.debug.xcconfig */,
+				3068672F88CEB3439F7042BB /* Pods-Imagine.release.xcconfig */,
 			);
-			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		E938324E22F7196D0002DF8C /* BlogVCs */ = {
@@ -372,8 +378,8 @@
 				E962AC152224430400C6D6EF /* Imagine */,
 				E962AC142224430400C6D6EF /* Products */,
 				E9600E95223C0781003E5A7A /* Kalam */,
-				76C5670C00C8F38123C67EE5 /* Pods */,
-				0BFDD8714763C10909E5BBC8 /* Frameworks */,
+				66199979602FCB98C67C9712 /* Pods */,
+				631E3A3581F5AB201C2025DA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -512,6 +518,7 @@
 				E991CCD92273474F00940834 /* ThoughtPostCell.xib */,
 				E938104D22E707A90086F199 /* YouTubeCell.xib */,
 				E983F51B23C1FBC2005F7FDE /* GifCell.xib */,
+				E9925A9723D86F4C00E1A9D4 /* MultiPictureCell.xib */,
 				E94F29BD22B2F7E60015A8CC /* EventCell.xib */,
 				E96CE89522959E6D00BACD3B /* ArgumentCell.xib */,
 				E9EA7C9622E20DEB0015C0EC /* BlogPostCell.xib */,
@@ -526,6 +533,7 @@
 				E991CCDB2273476C00940834 /* ThoughtCell.swift */,
 				E938104F22E708510086F199 /* YouTubeCell.swift */,
 				E983F51D23C1FEA5005F7FDE /* GifCell.swift */,
+				E9925A9B23D8726300E1A9D4 /* MultiPictureCell.swift */,
 				E94F29BF22B375610015A8CC /* EventCell.swift */,
 				E9B79CE2224EC72000166EED /* JobOfferCell.swift */,
 				E9B79CE4224EC78900166EED /* CampaignCell.swift */,
@@ -542,6 +550,7 @@
 				E992B48E2379874800D7E8E8 /* NotificationCell.swift */,
 				E97C834B23D0945300CE3D3C /* CurrentProjectsCell.swift */,
 				E9CF17BC23CA45BD000E5149 /* Idea.xib */,
+				E9925A9923D8718500E1A9D4 /* MultiPictureCollectionCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -615,12 +624,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E962AC252224430600C6D6EF /* Build configuration list for PBXNativeTarget "Imagine" */;
 			buildPhases = (
-				D371CBBF1541620A6167637C /* [CP] Check Pods Manifest.lock */,
+				6B21FDFAEEBDB86D99DAABA4 /* [CP] Check Pods Manifest.lock */,
 				E962AC0F2224430400C6D6EF /* Sources */,
 				E962AC102224430400C6D6EF /* Frameworks */,
 				E962AC112224430400C6D6EF /* Resources */,
-				08F2093DE04BF4670F10DBE4 /* [CP] Embed Pods Frameworks */,
 				E9C42EED23620C0B00FC50BA /* ShellScript */,
+				32E2B3BD616770C459223582 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -685,8 +694,10 @@
 				E97DBED022AC1335007100E1 /* Localizable.strings in Resources */,
 				E9B9446B2259E5EC000145E2 /* PostTableViewCell.xib in Resources */,
 				E90B1918238C210000EACCC7 /* IBMPlexSans-Medium.ttf in Resources */,
+				E9925A9A23D8718500E1A9D4 /* MultiPictureCollectionCell.xib in Resources */,
 				E962AC212224430600C6D6EF /* LaunchScreen.storyboard in Resources */,
 				E90B1917238C210000EACCC7 /* IBMPlexSans-SemiBold.ttf in Resources */,
+				E9925A9823D86F4C00E1A9D4 /* MultiPictureCell.xib in Resources */,
 				E9CF2381233A27A500D3B295 /* TopicCell.xib in Resources */,
 				E90B1919238C210000EACCC7 /* IBMPlexSans-Thin.ttf in Resources */,
 				E90B1914238C210000EACCC7 /* IBMPlexSans-Light.ttf in Resources */,
@@ -714,7 +725,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		08F2093DE04BF4670F10DBE4 /* [CP] Embed Pods Frameworks */ = {
+		32E2B3BD616770C459223582 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -731,16 +742,20 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Imagine/Pods-Imagine-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D371CBBF1541620A6167637C /* [CP] Check Pods Manifest.lock */ = {
+		6B21FDFAEEBDB86D99DAABA4 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			inputFileListPaths = (
 			);
 			inputPaths = (
 				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
 				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-Imagine-checkManifestLockResult.txt",
 			);
@@ -873,6 +888,7 @@
 				E9C42EF12364396B00FC50BA /* SearchUserCell.swift in Sources */,
 				E9C6C237229601D8003F0F16 /* NewFactViewController.swift in Sources */,
 				E9B79CE922510F1900166EED /* TabBarViewController.swift in Sources */,
+				E9925A9C23D8726300E1A9D4 /* MultiPictureCell.swift in Sources */,
 				E9B1872A222E981000923037 /* MeldeAgreeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1030,7 +1046,7 @@
 		};
 		E962AC262224430600C6D6EF /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7C8C2E5FBCAFD05128A3F010 /* Pods-Imagine.debug.xcconfig */;
+			baseConfigurationReference = 4129D0CA914F48BCC7FFBFE6 /* Pods-Imagine.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Imagine/Imagine.entitlements;
@@ -1043,7 +1059,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.2;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -1053,7 +1069,7 @@
 		};
 		E962AC272224430600C6D6EF /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 16797DC0F1D954251EDB8D5B /* Pods-Imagine.release.xcconfig */;
+			baseConfigurationReference = 3068672F88CEB3439F7042BB /* Pods-Imagine.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Imagine/Imagine.entitlements;
@@ -1065,7 +1081,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.2;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;

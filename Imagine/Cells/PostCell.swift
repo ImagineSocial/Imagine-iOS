@@ -18,11 +18,11 @@ protocol PostCellDelegate {
     func niceTapped(post: Post)
     func linkTapped(post: Post)
     func factTapped(fact: Fact)
+    func collectionViewTapped(post: Post)
 }
 
 class PostCell : BaseFeedCell {
     
-    @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var cellImageView: UIImageView!
     @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var titleLabelHeightConstraint: NSLayoutConstraint!
@@ -35,18 +35,7 @@ class PostCell : BaseFeedCell {
     override func awakeFromNib() {
         selectionStyle = .none
         
-        let layer = profilePictureImageView.layer
-        layer.cornerRadius = profilePictureImageView.frame.width/2
-        
-        thanksButton.setImage(nil, for: .normal)
-        wowButton.setImage(nil, for: .normal)
-        haButton.setImage(nil, for: .normal)
-        niceButton.setImage(nil, for: .normal)
-        
-        thanksButton.imageView?.contentMode = .scaleAspectFit
-        wowButton.imageView?.contentMode = .scaleAspectFit
-        haButton.imageView?.contentMode = .scaleAspectFit
-        niceButton.imageView?.contentMode = .scaleAspectFit
+        self.initiateCell(thanksButton: thanksButton, wowButton: wowButton, haButton: haButton, niceButton: niceButton, factImageView: factImageView, profilePictureImageView: profilePictureImageView)
                 
         titleLabel.adjustsFontSizeToFitWidth = true
         
@@ -55,27 +44,6 @@ class PostCell : BaseFeedCell {
         
         let pinch = UIPinchGestureRecognizer(target: self, action: #selector(self.pinch(sender:)))
         self.cellImageView.addGestureRecognizer(pinch)
-        
-        factImageView.layer.cornerRadius = 3
-        factImageView.layer.borderWidth = 1
-        factImageView.layer.borderColor = UIColor.clear.cgColor
-        
-        
-        if #available(iOS 13.0, *) {
-            thanksButton.layer.borderColor = UIColor.label.cgColor
-            wowButton.layer.borderColor = UIColor.label.cgColor
-            haButton.layer.borderColor = UIColor.label.cgColor
-            niceButton.layer.borderColor = UIColor.label.cgColor
-        } else {
-            thanksButton.layer.borderColor = UIColor.black.cgColor
-            wowButton.layer.borderColor = UIColor.black.cgColor
-            haButton.layer.borderColor = UIColor.black.cgColor
-            niceButton.layer.borderColor = UIColor.black.cgColor
-        }
-        thanksButton.layer.borderWidth = 0.5
-        wowButton.layer.borderWidth = 0.5
-        haButton.layer.borderWidth = 0.5
-        niceButton.layer.borderWidth = 0.5
     
         self.addSubview(buttonLabel)
         

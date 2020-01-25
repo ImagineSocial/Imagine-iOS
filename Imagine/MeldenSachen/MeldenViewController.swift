@@ -120,8 +120,38 @@ class MeldenViewController: UIViewController {
         postRef.delete()
         
         switch post.type {
+        case .multiPicture:
+            let id = post.documentID
+            var index = 0
+            if let imageURLs = post.imageURLs {
+                for _ in imageURLs {
+                    let storageRef = Storage.storage().reference().child("postPictures").child("\(id)-\(index).png")
+                    
+                    index+=1
+                    storageRef.delete { (err) in
+                        if let err = err {
+                            print("We have an error deleting the old profile Picture: \(err.localizedDescription)")
+                        } else {
+                            print("Picture Deleted")
+                            
+                            let userPostRef = self.db.collection("Users").document(self.post.originalPosterUID).collection("posts").document(self.post.documentID)
+                            userPostRef.delete()
+                            userPostRef.delete { (err) in
+                                if let error = err {
+                                    print("We have an error: \(error.localizedDescription)")
+                                } else {
+                                    if index == imageURLs.count {
+                                        self.dismiss(animated: true, completion: nil)
+                                        self.alert(message: "Fertig", title: "Das Bild wurde erfolgreich gelöscht. Aktualisiere den Feed und es ist weg")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         case .picture:
-            let imageName = "\(post.documentID)"
+            let imageName = post.documentID
             let storageRef = Storage.storage().reference().child("postPictures").child("\(imageName).png")
             
             storageRef.delete { (err) in

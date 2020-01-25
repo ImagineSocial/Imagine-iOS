@@ -12,8 +12,9 @@ import Firebase
 import FirebaseFirestore
 import FirebaseStorage
 import FirebaseAuth
-import SDWebImage
 import EasyTipView
+import BSImagePicker
+import Photos
 
 enum PostSelection {
     case picture
@@ -21,6 +22,7 @@ enum PostSelection {
     case thought
     case GIF
     case event
+    case multiPicture
 }
 
 enum EventType {
@@ -43,6 +45,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     var imagePicker = UIImagePickerController()
+    var multiImagePicker = ImagePickerController()
+    var imageURLs = [String]()
+    var multiImageAssets = [PHAsset]()
+    var previewPictures = [UIImage]()
+    var selectedImagesFromPicker = [Data]()
     var selectedImageFromPicker:UIImage?
     var selectedImageHeight: CGFloat = 0.0
     var selectedImageWidth: CGFloat = 0.0
@@ -53,6 +60,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var selectDate = false
     var selectedDate: Date?
     var comingFromPostsOfFact = false
+    
+    let identifier = "MultiPictureCell"
+    let layout:UICollectionViewFlowLayout = UICollectionViewFlowLayout.init()
     
     var postAnonymous = false
     var anonymousName: String?
@@ -84,6 +94,17 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        previewCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
+        
+        previewCollectionView.dataSource = self
+        previewCollectionView.delegate = self
+        
+        layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
+        previewCollectionView.setCollectionViewLayout(layout, animated: true)
+        
+        let options = multiImagePicker.settings
+        options.selection.max = 3
         
         imagePicker.delegate = self
         titleTextView.delegate = self
@@ -479,20 +500,19 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         return button
     }()
     
-    let previewImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-//        imageView.image = UIImage(named: "default")
-        imageView.contentMode = .scaleAspectFit
+    let previewCollectionView: UICollectionView = {
+       let collectView = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout.init())
+        collectView.translatesAutoresizingMaskIntoConstraints = false
+        collectView.allowsSelection = true  //Pictures clickable
+        collectView.layer.cornerRadius = 8
+        collectView.isPagingEnabled = true
+        if #available(iOS 13.0, *) {
+            collectView.backgroundColor = .systemBackground
+        } else {
+            collectView.backgroundColor = .white
+        }
         
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showChoosenImage(tapGestureRecognizer:)))
-        imageView.isUserInteractionEnabled = true
-        imageView.addGestureRecognizer(tapGestureRecognizer)
-        imageView.layer.cornerRadius = 4
-        
-        // Tap isnt working
-        
-        return imageView
+        return collectView
     }()
     
     @objc func showChoosenImage(tapGestureRecognizer: UITapGestureRecognizer) {
@@ -525,12 +545,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         folderButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
         folderButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
-        pictureView.addSubview(previewImageView)
-        previewImageView.topAnchor.constraint(equalTo: pictureView.topAnchor).isActive = true
-        previewImageView.trailingAnchor.constraint(equalTo: pictureView.trailingAnchor).isActive = true
-        previewImageView.leadingAnchor.constraint(equalTo: cameraButton.trailingAnchor, constant: 25).isActive = true
-        previewImageView.bottomAnchor.constraint(equalTo: pictureView.bottomAnchor).isActive = true
-        
+        pictureView.addSubview(previewCollectionView)
+        previewCollectionView.topAnchor.constraint(equalTo: pictureView.topAnchor).isActive = true
+//        previewCollectionView.trailingAnchor.constraint(equalTo: pictureView.trailingAnchor, constant: -50).isActive = true
+        previewCollectionView.leadingAnchor.constraint(equalTo: cameraButton.trailingAnchor, constant: 75).isActive = true
+        previewCollectionView.widthAnchor.constraint(equalToConstant: 125).isActive = true
+        previewCollectionView.bottomAnchor.constraint(equalTo: pictureView.bottomAnchor).isActive = true
         
         self.view.addSubview(pictureView)
         pictureView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
@@ -969,6 +989,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     
                     var offset:CGFloat = 75
                     switch selectedOption {
+                    case .multiPicture:
+                        offset = 125
                     case .thought:
                         offset = 50
                     case .picture:
@@ -996,6 +1018,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             var offset:CGFloat = 75
             switch selectedOption {
+            case .multiPicture:
+                offset = 125
             case .thought:
                 offset = 50
             case .picture:
@@ -1080,16 +1104,33 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @objc func CamRollTapped() {
         if let _ = Auth.auth().currentUser {
-            imagePicker.sourceType = .photoLibrary
-            //imagePicker.allowsEditing = true
             
-            self.present(self.imagePicker, animated: true, completion: nil)
+            let alert = UIAlertController(title: "Wie viele Bilder willst du posten?", message: "Wähle aus, ob du ein einziges Bild, oder eine Reihe von bis zu 3 Bildern hochladen möchtest", preferredStyle: .actionSheet)
+
+            alert.addAction(UIAlertAction(title: "Nur ein Bild", style: .default, handler: { (_) in
+                self.imagePicker.sourceType = .photoLibrary
+                //imagePicker.allowsEditing = true
+                
+                self.selectedOption = .picture
+                self.present(self.imagePicker, animated: true, completion: nil)
+            }))
+            
+
+            alert.addAction(UIAlertAction(title: "Mehrere Bilder", style: .default, handler: { (_) in
+                
+                //toDo: remove the selection
+                self.selectedOption = .multiPicture
+                self.openMultiPictureImagePicker()
+            }))
+            alert.addAction(UIAlertAction(title: "Abbrechen", style: .destructive, handler: { (_) in
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            self.present(alert, animated: true, completion: nil)
             
         } else {
             self.notLoggedInAlert()
         }
     }
-    
     
     @objc func timeButtonTapped() {
         if selectDate {
@@ -1406,6 +1447,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 switch selectedOption {
                 case .thought:
                     self.postThought(postRef: postRef, userID: userID)
+                case .multiPicture:
+                    self.uploadImages(postRef: postRef, userID: userID)
                 case .picture:
                     self.savePicture(userID: userID, postRef: postRef)
                 case .linkYTVideo:
@@ -1427,6 +1470,138 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
+    
+    // MARK: - MultiImagePicker
+    
+    func openMultiPictureImagePicker() {
+        self.multiImageAssets.removeAll()
+            //TODo: change the selection
+        self.presentImagePicker(self.multiImagePicker, select: { (asset) in
+                self.multiImageAssets.append(asset)
+                
+            }, deselect: { (asset) in
+                self.multiImageAssets = self.multiImageAssets.filter{ $0 != asset}
+            }, cancel: { (asset) in
+                self.multiImageAssets.removeAll()
+            }, finish: { (asset) in
+                self.previewPictures.removeAll()
+                self.getImages(forPreview: true)
+                self.setImage()
+            })
+    }
+    
+    
+    func getPictureInCompressedQuality(image: UIImage) -> Data? {
+        if let originalImage = image.jpegData(compressionQuality: 1) {
+            let data = NSData(data: originalImage)
+            
+            let imageSize = data.count/1000
+            
+            if imageSize <= 500 {   // When the imageSize is under 500kB it wont be compressed, because you can see the difference
+                // No compression
+                return originalImage
+            } else if imageSize <= 1000 {
+                if let smallerImage = image.jpegData(compressionQuality: 0.4) {
+                    
+                    return smallerImage
+                }
+            } else if imageSize <= 2000 {
+                if let smallerImage = image.jpegData(compressionQuality: 0.25) {
+                    
+                    return smallerImage
+                }
+            } else {
+                if let smallerImage = image.jpegData(compressionQuality: 0.1) {
+                    
+                    return smallerImage
+                }
+            }
+        }
+        
+        return nil
+    }
+    
+    func getImages(forPreview: Bool)  {
+        self.selectedImagesFromPicker.removeAll()
+        
+        for asset in self.multiImageAssets {
+            
+            let options = PHImageRequestOptions()
+            options.isSynchronous = true
+            
+            // Request the maximum size. If you only need a smaller size make sure to request that instead.
+            PHImageManager.default().requestImage(for: asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFit, options: options) { (image, info) in
+                if let image = image {
+                    
+                    if forPreview {
+                        self.previewPictures.append(image)
+                        self.previewCollectionView.reloadData()
+                    } else {
+                        if self.selectedImageWidth == 0 {
+                            let size = image.size
+                            
+                            self.selectedImageHeight = size.height
+                            self.selectedImageWidth = size.width
+                        } else {
+                            print("Height already set")
+                        }
+                        
+                        if let comImage = self.getPictureInCompressedQuality(image: image) {
+                            self.selectedImagesFromPicker.append(comImage)
+                            print("##Das ist das komprimierte Bild: \(comImage)")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func uploadImages(postRef: DocumentReference, userID: String) {
+        print("Upload Images")
+        if multiImageAssets.count >= 2 && multiImageAssets.count <= 3 {
+        
+        getImages(forPreview: false)
+        
+        let count = self.selectedImagesFromPicker.count
+        var index = 0
+
+        print("##So viele im selectedimagesfrompicker: \(count)")
+
+        for image in self.selectedImagesFromPicker {
+
+            let storageRef = Storage.storage().reference().child("postPictures").child("\(postRef.documentID)-\(index).png")
+
+            index+=1
+            print("## storageRef: \(storageRef)")
+            storageRef.putData(image, metadata: nil, completion: { (metadata, error) in    //save picture
+                if let error = error {
+                    print("We have an error: \(error)")
+                    return
+                } else {
+                    storageRef.downloadURL(completion: { (url, err) in  // Hier wird die URL runtergezogen
+                        if let error = err {
+                            print("We have an error: \(error)")
+                            return
+                        } else {
+                            if let url = url {
+                                self.imageURLs.append(url.absoluteString)
+
+                                
+                                if index == count {
+                                    self.postMultiplePictures(postRef: postRef, userID: userID)
+                                }
+                            }
+                        }
+                    })
+                }
+            })
+        }
+        } else {
+            self.alert(message: "Wähle bitte weitere Bilder aus oder wähle die Option \"Nur ein Bild\"", title: "Fehlende Bilder")
+        }
+        
+    }
+    
     //MARK: - Image Picker
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -1442,16 +1617,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
         if let originalImage = info[.originalImage] as? UIImage {
             selectedImageFromPicker = originalImage
-//            print("Das ist die Scale des Bildes: \(originalImage.)")
-            
-            if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 1) {
-                let data = NSData(data: image)
-                    
-                let imageSize = data.count/1000 // in kb
-                
-                print("Das ist die ImageSize: \(imageSize)")
-                
-            }
         }
         
         if let selectedImageSize = selectedImageFromPicker?.size {
@@ -1460,7 +1625,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
         
         if let image = selectedImageFromPicker {
-            setImage(image: image)
+            setImage()
+            self.previewPictures.removeAll()
+            self.previewPictures.append(image)
+            self.previewCollectionView.reloadData()
         }
         
         imagePicker.dismiss(animated: true, completion: nil)
@@ -1468,12 +1636,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     
-    func setImage(image: UIImage) {
-        previewImageView.image = image
+    func setImage() {
+//        previewImageView.image = image
         
         self.pictureViewHeight!.constant = 150        // Absichern
         
-        UIView.animate(withDuration: 3) {
+        UIView.animate(withDuration: 1) {
             self.view.layoutIfNeeded()
         }
         
@@ -1482,6 +1650,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
     }
+    
     
     
     func savePicture(userID: String, postRef: DocumentReference) {
@@ -1597,7 +1766,17 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    
+    func postMultiplePictures(postRef: DocumentReference, userID: String) {
+        
+        let descriptionText = descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
+        let tags = self.getTagsToSave()
+        
+        let dataDictionary: [String: Any] = ["title": titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "multiPicture", "report": getReportString(), "imageURLs": self.imageURLs, "imageHeight": Double(selectedImageHeight), "imageWidth": Double(selectedImageWidth), "tags": tags]
+        
+        self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
+        print("multiPicture posted")
+        
+    }
     
     func postGIF(postRef: DocumentReference, userID: String) {
         
@@ -1795,7 +1974,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.linkTextField.text?.removeAll()
             self.locationTextField.text?.removeAll()
             self.titleTextView.text?.removeAll()
-            self.previewImageView.image = nil
+            self.previewPictures.removeAll()
+            self.previewCollectionView.reloadData()
             self.characterCountLabel.text = "200"
             self.pictureViewHeight!.constant = 100
             
@@ -1925,4 +2105,60 @@ extension NewPostViewController: LinkFactWithPostDelegate {
     @objc func dismissTapped() {
         self.dismiss(animated: true, completion: nil)
     }
+}
+
+
+//MARK: -PreviewCollectionView
+extension NewPostViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+        return previewPictures.count
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let image = previewPictures[indexPath.item]
+        
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as? MultiImageCollectionCell {
+            
+            cell.image = image
+            cell.layoutIfNeeded()
+            
+            return cell
+        }
+        
+        print("Got a problem with the collectionviewcell")
+        return UICollectionViewCell()
+    }
+    
+    // MARK: UICollectionViewDelegate
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        let size = CGSize(width: previewCollectionView.frame.width, height: previewCollectionView.frame.height)
+        print("das ist die size: ", size)
+        return size
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let image = previewPictures[indexPath.item]
+        
+        let pinchVC = PinchToZoomViewController()
+        pinchVC.image = image
+        pinchVC.hidesBottomBarWhenPushed = true
+        self.navigationController?.pushViewController(pinchVC, animated: true)
+    }
+    
+    //If we implement a pageControl
+    //        func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    //            if let indexPath = collectionView.indexPathsForVisibleItems.first {
+    //                pageControl.currentPage = indexPath.row
+    //            }
+    //        }
 }

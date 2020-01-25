@@ -39,8 +39,8 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     @IBOutlet weak var cameraView: UIView!
     @IBOutlet weak var moreButton: DesignableButton!
     @IBOutlet weak var headerView: UIView!
-    @IBOutlet weak var profileView: UIView!
     @IBOutlet weak var messageBubbleImageView: UIImageView!
+    @IBOutlet weak var totalPostCountLabel: UILabel!
     
     
     /* You have to set currentState and userOfProfile when you call this VC - Couldnt get the init to work */
@@ -49,6 +49,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     var imageURL = ""
     var selectedImageFromPicker = UIImage(named: "default-user")
     var userOfProfile:User?
+    var totalCountOfPosts = 0
     
     var currentState:AccessState?
     
@@ -81,13 +82,18 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         
         let layer = profilePictureImageView.layer
         layer.masksToBounds = true
-        layer.cornerRadius = profilePictureImageView.frame.width/2
+        layer.cornerRadius = 8
+        layer.borderWidth = 1
+        if #available(iOS 13.0, *) {
+            layer.borderColor = UIColor.secondarySystemBackground.cgColor
+        } else {
+            layer.borderColor = UIColor.lightGray.cgColor
+        }
         
         checkIfBlocked()
         setBarButtonItem()
         
         imagePicker.delegate = self
-//        profileView.layer.cornerRadius = 8
     }
     
     func checkIfBlocked() {
@@ -145,6 +151,9 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                             self.posts = posts
                             self.tableView.reloadData()
                             self.fetchesPosts = false
+                            
+                            self.totalCountOfPosts = self.postHelper.getTotalCount()
+                            self.totalPostCountLabel.text = String("\(self.totalCountOfPosts) Beiträge")
                             
                             self.refreshControl?.endRefreshing()
                         } else {    // Append the next batch to the existing
@@ -238,7 +247,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             self.setCurrentProfile()
             self.noPostsType = .userProfile
         case .friendOfCurrentUser:
-            self.addAsFriendButton.setTitle("Freund löschen", for: .normal)
+            self.addAsFriendButton.setTitle("Freund entfernen", for: .normal)
             self.setCurrentProfile()
             self.noPostsType = .userProfile
         case .blockedToInteract:
@@ -330,6 +339,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 if user.uid == currentProfile.userUID {    // Your profile but you view it as a stranger, the people want to see a difference, like: "Well this is how other people see my profile..."
                     self.addAsFriendButton.isHidden = true
                     self.chatWithUserButton.isHidden = true
+                    self.messageBubbleImageView.isHidden = true
                     
                     self.currentState = .ownProfile
                 } else { // Check if you are already friends or you have requested it
@@ -346,7 +356,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                                     if let accepted = docData["accepted"] as? Bool {
                                         if accepted {
                                             self.currentState = .friendOfCurrentUser
-                                            self.addAsFriendButton.setTitle("Unfollow", for: .normal)
+                                            self.addAsFriendButton.setTitle("Freund entfernen", for: .normal)
                                         } else {
                                             self.addAsFriendButton.setTitle("Angefragt", for: .normal)
                                             self.addAsFriendButton.isEnabled = false
@@ -447,6 +457,15 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         let post = posts[indexPath.row]
         
         switch post.type {
+        case .multiPicture:
+            let identifier = "MultiPictureCell"
+            
+            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? MultiPictureCell {
+                
+                cell.post = post
+                
+                return cell
+            }
         case .topTopicCell:
             tableView.deselectRow(at: indexPath, animated: false)
         case .repost:

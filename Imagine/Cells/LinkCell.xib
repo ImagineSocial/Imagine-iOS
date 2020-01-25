@@ -309,7 +309,7 @@
                 <outlet property="reportViewHeightConstraint" destination="Xjb-WI-IzM" id="63I-yQ-vSQ"/>
                 <outlet property="reportViewLabel" destination="Qey-Z8-fKo" id="8GF-48-e3y"/>
                 <outlet property="thanksButton" destination="EcK-en-V4C" id="gLh-mP-QXb"/>
-                <outlet property="titleLabel" destination="lXU-cL-RBT" id="Wdz-3t-dJN"/>
+                <outlet property="titleLabel" destination="lXU-cL-RBT" id="yzr-t7-5Tq"/>
                 <outlet property="urlLabel" destination="GtJ-5b-aFE" id="gLq-ep-VR9"/>
                 <outlet property="wowButton" destination="xY2-Ds-J7A" id="hzo-4S-a89"/>
             </connections>

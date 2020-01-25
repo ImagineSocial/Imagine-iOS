@@ -294,7 +294,7 @@
                 <outlet property="reportViewHeightConstraint" destination="BXO-c3-osC" id="JVa-82-NbX"/>
                 <outlet property="reportViewLabel" destination="eCm-YI-aKo" id="LSz-1b-9ox"/>
                 <outlet property="thanksButton" destination="Bbz-n1-cVf" id="bbG-Gx-P7Q"/>
-                <outlet property="titleLabel" destination="ieH-gT-AfC" id="kzg-Db-HQr"/>
+                <outlet property="titleLabel" destination="ieH-gT-AfC" id="MMd-nC-PKf"/>
                 <outlet property="titleLabelHeightConstraint" destination="NYL-fM-cBM" id="jla-83-KhJ"/>
                 <outlet property="wowButton" destination="OyQ-Mj-fzf" id="Yb6-Hy-oAl"/>
             </connections>

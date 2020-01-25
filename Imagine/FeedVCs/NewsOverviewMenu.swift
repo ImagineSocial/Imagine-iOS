@@ -87,6 +87,7 @@ class NewsOverviewMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         if blogPost.isCurrentProjectsCell {
             if let cell = tableView.dequeueReusableCell(withIdentifier: "CurrentProjectsCell", for: indexPath) as? CurrentProjectsCell {
                 
+                cell.delegate = self
                 
                 return cell
             }
@@ -108,7 +109,7 @@ class NewsOverviewMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         let post = posts[indexPath.row]
         
         if post.isCurrentProjectsCell {
-            return 275
+            return 290
         } else {
             return 225
         }
@@ -146,5 +147,11 @@ class NewsOverviewMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+}
+
+extension NewsOverviewMenu: CurrentProjectDelegate {
+    func sourceTapped(link: String) {
+        self.feedTableVC?.donationSourceTapped(link: link)
+    }
 }
 

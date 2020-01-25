@@ -38,6 +38,7 @@ class PostHelper {
     
     /* These two variables are here to make sure that we just fetch as many as there are documents and dont start at the beginning again  */
     var morePostsToFetch = true
+    var totalCountOfPosts = 0
     var alreadyFetchedCount = 0
     
     init() {
@@ -285,21 +286,27 @@ class PostHelper {
         }
     }
     
+    func getTotalCount() -> Int {
+        return self.totalCountOfPosts
+    }
+    
     
     func checkHowManyDocumentsThereAre(ref: CollectionReference) {
         
+        //ToDo: Return number of Posts to display in the Profile
         ref.getDocuments { (querySnap, error) in
             if let error = error {
                 print("We have an error: \(error.localizedDescription)")
             } else {
                 let wholeCollectionDocumentCount = querySnap!.documents.count
                 
+                self.totalCountOfPosts = wholeCollectionDocumentCount
+                
                 if wholeCollectionDocumentCount <= self.alreadyFetchedCount {
                     self.morePostsToFetch = false
                 }
             }
         }
-        
     }
     
     // MARK: Get Posts from DocumentIDs
@@ -368,8 +375,8 @@ class PostHelper {
                 if postType == "thought" {
                     
                     
-                    let post = Post()       // Erst neuen Post erstellen
-                    post.title = title      // Dann die Sachen zuordnen
+                    let post = Post()
+                    post.title = title
                     post.description = description
                     post.type = .thought
                     post.documentID = documentID
@@ -452,6 +459,53 @@ class PostHelper {
                     self.posts.append(post)
                     
                     // YouTubeVideo
+                } else if postType == "multiPicture" {
+                    
+                    guard let images = documentData["imageURLs"] as? [String],
+                        let picHeight = documentData["imageHeight"] as? Double,
+                        let picWidth = documentData["imageWidth"] as? Double
+                        else {
+                        return
+                    }
+                    
+                    let post = Post()
+                    post.title = title
+                    post.mediaWidth = CGFloat(picWidth)
+                    post.mediaHeight = CGFloat(picHeight)
+                    post.imageURLs = images
+                    post.description = description
+                    post.type = .multiPicture
+                    post.documentID = documentID
+                    post.createTime = stringDate
+                    post.originalPosterUID = originalPoster
+                    post.votes.thanks = thanksCount
+                    post.votes.wow = wowCount
+                    post.votes.ha = haCount
+                    post.votes.nice = niceCount
+                    post.createDate = dateToSort
+                    
+                    if let report = self.handyHelper.setReportType(fetchedString: reportString) {
+                        post.report = report
+                    }
+                    
+                    if let factID = documentData[factJSONString] as? String {
+                        let fact = Fact(addMoreDataCell: false)
+                        fact.documentID = factID
+                        
+                        post.fact = fact
+                    }
+                    
+                    if originalPoster == "anonym" {
+                        post.anonym = true
+                        if let anonymousName = documentData["anonymousName"] as? String {
+                            post.anonymousName = anonymousName
+                        }
+                    } else {
+                        post.getUser(isAFriend: isAFriend)
+                    }
+                    
+                    self.posts.append(post)
+                    
                 } else if postType == "youTubeVideo" {
                     
                     guard let linkURL = documentData["link"] as? String else { return  }

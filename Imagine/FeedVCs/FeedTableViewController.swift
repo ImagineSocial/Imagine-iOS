@@ -446,10 +446,13 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             }
         }
         if segue.identifier == "goToLink" {
-            if let chosenPost = sender as? Post {
-                if let webVC = segue.destination as? WebViewController {
+            if let webVC = segue.destination as? WebViewController {
+                if let chosenPost = sender as? Post {
+                    
                     webVC.post = chosenPost
                     
+                } else if let chosenLink = sender as? String {
+                    webVC.link = chosenLink
                 }
             }
         }
@@ -825,6 +828,10 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         } else {
             self.performSegue(withIdentifier: "toBlogPost", sender: blogPost)
         }
+    }
+    
+    func donationSourceTapped(link: String) {
+        performSegue(withIdentifier: "goToLink", sender: link)
     }
     
     // MARK: - Side Menu
@@ -1209,3 +1216,5 @@ extension FeedTableViewController: JustPostedDelegate {
         self.getPosts(getMore: false)
     }
 }
+
+

@@ -46,7 +46,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: DisabledCache.instance)
     
     let db = Firestore.firestore()
-    
     let handyHelper = HandyHelper()
     
     var ownPost = false
@@ -61,6 +60,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     fileprivate var backUpViewHeight : NSLayoutConstraint?
     fileprivate var backUpButtonHeight : NSLayoutConstraint?
     fileprivate var imageHeightConstraint : NSLayoutConstraint?
+    
+    //ImageCollectionView
+    var imageURLs = [String]()
+    let layout:UICollectionViewFlowLayout = UICollectionViewFlowLayout.init()
+    let identifier = "MultiPictureCell"
     
     //GIFS
     var avPlayer: AVPlayer?
@@ -77,6 +81,14 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         super.viewDidLoad()
         self.view.activityStartAnimating()
         
+        imageCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
+        
+        imageCollectionView.dataSource = self
+        imageCollectionView.delegate = self
+        
+        layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
+        imageCollectionView.setCollectionViewLayout(layout, animated: true)
+        
         if #available(iOS 13.0, *) {
             savePostButton.tintColor = .label
         } else {
@@ -84,11 +96,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
         scrollView.delegate = self
         
-        handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
-            if alreadySaved {
-                self.savePostButton.tintColor = Constants.green
-            }
-        }
+        
         
         let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(toCommentsTapped))
         swipeGesture.direction = .left
@@ -99,6 +107,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         setupViewController()
         
         handyHelper.deleteNotifications(type: .upvote, id: post.documentID)
+        handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
+            if alreadySaved {
+                self.savePostButton.tintColor = Constants.green
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -196,8 +209,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     func instantiateContainerView() {
         
-        switch post.type {
-        case .event:
+        if post.type == .event {
             let vc = UserTableView(post: self.post)
             vc.delegate = self
             
@@ -205,11 +217,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             vc.view.frame = CGRect(x: 0, y: 0, width: self.tableViewContainer.frame.size.width, height: self.tableViewContainer.frame.size.height)
             self.tableViewContainer.addSubview(vc.view)
             vc.didMove(toParent: self)
-            
-        default:
-          print("Whatever")
         }
-        
     }
     
     override func viewDidLayoutSubviews() {
@@ -223,32 +231,48 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
 
         switch post.type {
-        case .picture:
-            if let url = URL(string: post.imageURL) {
-                postImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+        case .multiPicture:
+            if let imageURLs = post.imageURLs {
+                if self.imageURLs.count != imageURLs.count {    // Append just once
+                    self.pageControl.numberOfPages = imageURLs.count
+                    for imageURL in imageURLs {
+                        
+                        self.imageURLs.append(imageURL)
+                        self.imageCollectionView.reloadData()
+                    }
+                }
             }
             
             // No Post yet
             if imageWidth == 0 || imageHeight == 0 {
                 return
             }
+            
             let ratio = imageWidth / imageHeight
             let contentWidth = self.contentView.frame.width
             let newHeight = contentWidth / ratio
             
             
-            postImageView.frame.size = CGSize(width: contentWidth, height: newHeight)
+            //            postImageView.frame.size = CGSize(width: contentWidth, height: newHeight)
+            imageCollectionView.frame.size = CGSize(width: contentWidth, height: newHeight)
             
             // Otherwise there is an error, because somehow a 0 height is set somewhere for the picture
             if let _ = imageHeightConstraint {
                 imageHeightConstraint!.constant = newHeight
                 imageHeightConstraint!.isActive = true
             } else {
-                imageHeightConstraint = postImageView.heightAnchor.constraint(equalToConstant: newHeight)
+                imageHeightConstraint = imageCollectionView.heightAnchor.constraint(equalToConstant: newHeight)
+                //                imageHeightConstraint = postImageView.heightAnchor.constraint(equalToConstant: newHeight)
                 imageHeightConstraint?.isActive = true
             }
-            
-        case .GIF:
+        case .picture:
+            if self.imageURLs.count == 0 {
+                self.imageURLs.append(post.imageURL)
+                self.imageCollectionView.reloadData()
+            }
+//            if let url = URL(string: post.imageURL) {
+//                postImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+//            }
             
             // No Post yet
             if imageWidth == 0 || imageHeight == 0 {
@@ -258,29 +282,68 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             let ratio = imageWidth / imageHeight
             let contentWidth = self.contentView.frame.width
             let newHeight = contentWidth / ratio
-                        
-            postImageView.frame.size = CGSize(width: contentWidth, height: newHeight)
-            if let playLay = avPlayerLayer {
-                playLay.frame.size = postImageView.frame.size
+            
+            
+//            postImageView.frame.size = CGSize(width: contentWidth, height: newHeight)
+            imageCollectionView.frame.size = CGSize(width: contentWidth, height: newHeight)
+            
+            // Otherwise there is an error, because somehow a 0 height is set somewhere for the picture
+            if let _ = imageHeightConstraint {
+                imageHeightConstraint!.constant = newHeight
+                imageHeightConstraint!.isActive = true
+            } else {
+                imageHeightConstraint = imageCollectionView.heightAnchor.constraint(equalToConstant: newHeight)
+//                imageHeightConstraint = postImageView.heightAnchor.constraint(equalToConstant: newHeight)
+                imageHeightConstraint?.isActive = true
             }
+            
+        case .GIF:
+            
+            // Gif has mediawidth?
+            // No Post yet
+            if imageWidth == 0 || imageHeight == 0 {
+                return
+            }
+            
+            let ratio = imageWidth / imageHeight
+            let contentWidth = self.contentView.frame.width
+            let newHeight = contentWidth / ratio
+              
+            imageCollectionView.frame.size = CGSize(width: contentWidth, height: newHeight)
+            if let playLay = avPlayerLayer {
+                playLay.frame.size = imageCollectionView.frame.size
+            }
+            
+//            postImageView.frame.size = CGSize(width: contentWidth, height: newHeight)
+//            if let playLay = avPlayerLayer {
+//                playLay.frame.size = postImageView.frame.size
+//            }
                 
             // Otherwise there is an error, because somehow a 0 height is set somewhere for the picture
             if let _ = imageHeightConstraint {
                 imageHeightConstraint!.constant = newHeight
                 imageHeightConstraint!.isActive = true
             } else {
-                imageHeightConstraint = postImageView.heightAnchor.constraint(equalToConstant: newHeight)
+                imageHeightConstraint = imageCollectionView.heightAnchor.constraint(equalToConstant: newHeight)
+//                imageHeightConstraint = postImageView.heightAnchor.constraint(equalToConstant: newHeight)
                 imageHeightConstraint?.isActive = true
             }
             
         case .link:
             slp.preview(post.linkURL, onSuccess: { (result) in
                 if let imageURL = result.image {
-                    self.postImageView.contentMode = .scaleAspectFill
-                    self.postImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "default"), options: [], completed: nil)
                     
-                    self.linkLabel.leadingAnchor.constraint(equalTo: self.postImageView.leadingAnchor).isActive = true
-                    self.linkLabel.trailingAnchor.constraint(equalTo: self.postImageView.trailingAnchor).isActive = true
+                    self.imageURLs.append(imageURL)
+                    self.imageCollectionView.reloadData()
+                    
+                    self.linkLabel.leadingAnchor.constraint(equalTo: self.imageCollectionView.leadingAnchor).isActive = true
+                    self.linkLabel.trailingAnchor.constraint(equalTo: self.imageCollectionView.trailingAnchor).isActive = true
+                    
+//                    self.postImageView.contentMode = .scaleAspectFill
+//                    self.postImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+//
+//                    self.linkLabel.leadingAnchor.constraint(equalTo: self.postImageView.leadingAnchor).isActive = true
+//                    self.linkLabel.trailingAnchor.constraint(equalTo: self.postImageView.trailingAnchor).isActive = true
                     
                 }
                 if let linkSource = result.canonicalUrl {
@@ -298,7 +361,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         case .event:
             
             if let url = URL(string: post.event.imageURL) {
-                postImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+//                postImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
             }
             
         default:
@@ -332,15 +395,17 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     func setupViews(){
         switch post.type {
         case.event:
-            
-            setUpEventUI()  // No UserUI Setup in an Event
+            print("No event for now")
+//            setUpEventUI()  // No UserUI Setup in an Event
         default:
             
             setUpUserUI()
             
             switch post.type {
+            case .multiPicture:
+                setUpPictureUI(multiPicture: true)
             case .picture:
-                setUpPictureUI()
+                setUpPictureUI(multiPicture: false)
             case .link:
                 setUpLinkUI()
             case .GIF:
@@ -498,51 +563,102 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     
-    func setUpPictureUI() {
-        contentView.addSubview(postImageView)
-        postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        postImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
+    func setUpPictureUI(multiPicture: Bool) {
         
-        postImageView.layoutIfNeeded() //?
+        contentView.addSubview(imageCollectionView)
+        imageCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        imageCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        imageCollectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
         
-        addVoteAndDescriptionUI(topAnchorEqualTo: postImageView.bottomAnchor)
+        imageCollectionView.layoutIfNeeded() //?
+        
+        if multiPicture {
+            contentView.addSubview(pageControl)
+            pageControl.centerXAnchor.constraint(equalTo: imageCollectionView.centerXAnchor).isActive = true
+            pageControl.topAnchor.constraint(equalTo: imageCollectionView.bottomAnchor).isActive = true
+            pageControl.heightAnchor.constraint(equalToConstant: 20).isActive = true
+            
+            addVoteAndDescriptionUI(topAnchorEqualTo: pageControl.bottomAnchor)
+        } else {
+            addVoteAndDescriptionUI(topAnchorEqualTo: imageCollectionView.bottomAnchor)
+        }
+        
+//        contentView.addSubview(postImageView)
+//        postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+//        postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+//        postImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
+//
+//        postImageView.layoutIfNeeded() //?
+//
+//        addVoteAndDescriptionUI(topAnchorEqualTo: postImageView.bottomAnchor)
     }
     
     func setUpGIFUI() {
-        contentView.addSubview(postImageView)
-        postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        postImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
+        contentView.addSubview(imageCollectionView)
+        imageCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        imageCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        imageCollectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
         
-        postImageView.layoutIfNeeded() //?
+        imageCollectionView.layoutIfNeeded() //?
         
         setupGIFPlayer()
         
-        addVoteAndDescriptionUI(topAnchorEqualTo: postImageView.bottomAnchor)
+        addVoteAndDescriptionUI(topAnchorEqualTo: imageCollectionView.bottomAnchor)
+        
+//        contentView.addSubview(postImageView)
+//        postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+//        postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+//        postImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
+//
+//        postImageView.layoutIfNeeded() //?
+//
+//        setupGIFPlayer()
+//
+//        addVoteAndDescriptionUI(topAnchorEqualTo: postImageView.bottomAnchor)
     }
     
     func setUpLinkUI() {
-        contentView.addSubview(postImageView)
-        postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        postImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
-        postImageView.heightAnchor.constraint(equalToConstant: 180).isActive = true
-        postImageView.layoutIfNeeded() //?
+        contentView.addSubview(imageCollectionView)
+        imageCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        imageCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        imageCollectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
+        imageCollectionView.heightAnchor.constraint(equalToConstant: 180).isActive = true
+        imageCollectionView.layoutIfNeeded() //?
         
         contentView.addSubview(linkLabel)
-        linkLabel.leadingAnchor.constraint(equalTo: postImageView.leadingAnchor).isActive = true
-        linkLabel.trailingAnchor.constraint(equalTo: postImageView.trailingAnchor).isActive = true
-        linkLabel.bottomAnchor.constraint(equalTo: postImageView.bottomAnchor).isActive = true
+        linkLabel.leadingAnchor.constraint(equalTo: imageCollectionView.leadingAnchor).isActive = true
+        linkLabel.trailingAnchor.constraint(equalTo: imageCollectionView.trailingAnchor).isActive = true
+        linkLabel.bottomAnchor.constraint(equalTo: imageCollectionView.bottomAnchor).isActive = true
         linkLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
         contentView.addSubview(linkButton)
-        linkButton.leadingAnchor.constraint(equalTo: postImageView.leadingAnchor).isActive = true
-        linkButton.bottomAnchor.constraint(equalTo: postImageView.bottomAnchor).isActive = true
-        linkButton.widthAnchor.constraint(equalTo: postImageView.widthAnchor).isActive = true
-        linkButton.heightAnchor.constraint(equalTo: postImageView.heightAnchor).isActive = true
+        linkButton.leadingAnchor.constraint(equalTo: imageCollectionView.leadingAnchor).isActive = true
+        linkButton.bottomAnchor.constraint(equalTo: imageCollectionView.bottomAnchor).isActive = true
+        linkButton.widthAnchor.constraint(equalTo: imageCollectionView.widthAnchor).isActive = true
+        linkButton.heightAnchor.constraint(equalTo: imageCollectionView.heightAnchor).isActive = true
         
-        addVoteAndDescriptionUI(topAnchorEqualTo: postImageView.bottomAnchor)
+        addVoteAndDescriptionUI(topAnchorEqualTo: imageCollectionView.bottomAnchor)
+        
+//        contentView.addSubview(postImageView)
+//        postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+//        postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+//        postImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
+//        postImageView.heightAnchor.constraint(equalToConstant: 180).isActive = true
+//        postImageView.layoutIfNeeded() //?
+//
+//        contentView.addSubview(linkLabel)
+//        linkLabel.leadingAnchor.constraint(equalTo: postImageView.leadingAnchor).isActive = true
+//        linkLabel.trailingAnchor.constraint(equalTo: postImageView.trailingAnchor).isActive = true
+//        linkLabel.bottomAnchor.constraint(equalTo: postImageView.bottomAnchor).isActive = true
+//        linkLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
+//
+//        contentView.addSubview(linkButton)
+//        linkButton.leadingAnchor.constraint(equalTo: postImageView.leadingAnchor).isActive = true
+//        linkButton.bottomAnchor.constraint(equalTo: postImageView.bottomAnchor).isActive = true
+//        linkButton.widthAnchor.constraint(equalTo: postImageView.widthAnchor).isActive = true
+//        linkButton.heightAnchor.constraint(equalTo: postImageView.heightAnchor).isActive = true
+//
+//        addVoteAndDescriptionUI(topAnchorEqualTo: postImageView.bottomAnchor)
     }
     
     func setUpYouTubeVideoUI() {
@@ -605,100 +721,106 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         addVoteAndDescriptionUI(topAnchorEqualTo: repostView.bottomAnchor)
     }
     
-    func setUpEventUI() {
-        contentView.addSubview(postImageView)
-        postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        postImageView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        postImageView.heightAnchor.constraint(equalToConstant: 175).isActive = true
-        
-        contentView.addSubview(titleLabel)
-        titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        titleLabel.topAnchor.constraint(equalTo: postImageView.bottomAnchor, constant: 10).isActive = true
-        titleLabel.heightAnchor.constraint(equalToConstant: 75).isActive = true
-        titleLabel.textAlignment = .center
-        titleLabel.font = UIFont(name: "IBMPlexSans-Bold", size: 25)
-        
-        // Erstmal stackView zusammenbasteln
-        firstStackView.addArrangedSubview(locationLabel)
-        secondStackView.addArrangedSubview(timeLabel)
-        eventStackView.addArrangedSubview(firstStackView)
-        eventStackView.addArrangedSubview(secondStackView)
-        
-        contentView.addSubview(eventStackView)
-        eventStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 40).isActive = true
-        eventStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40).isActive = true
-        eventStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
-        eventStackView.heightAnchor.constraint(equalToConstant: 75).isActive = true
-        
-        
-        descriptionView.addSubview(descriptionLabel)
-        descriptionLabel.leadingAnchor.constraint(equalTo: descriptionView.leadingAnchor, constant: 10).isActive = true
-        descriptionLabel.trailingAnchor.constraint(equalTo: descriptionView.trailingAnchor, constant: -10).isActive = true
-        descriptionLabel.topAnchor.constraint(equalTo: descriptionView.topAnchor, constant: 10).isActive = true
-        descriptionLabel.bottomAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: -10).isActive = true
-        
-        contentView.addSubview(descriptionView)
-        descriptionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        descriptionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        descriptionView.topAnchor.constraint(equalTo: eventStackView.bottomAnchor, constant: 55).isActive = true
-        
-        let detailLabel = UILabel()
-        contentView.addSubview(detailLabel)
-        
-        detailLabel.text = "Beschreibung:"
-        detailLabel.font = UIFont(name: "IBMPlexSans", size: 17)
-        detailLabel.translatesAutoresizingMaskIntoConstraints = false
-        detailLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
-        detailLabel.bottomAnchor.constraint(equalTo: descriptionView.topAnchor, constant: -10).isActive = true
-        
-        
-        contentView.addSubview(tableViewContainer)
-        tableViewContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: -2).isActive = true
-        tableViewContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 2).isActive = true
-        tableViewContainer.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 50).isActive = true
-        tableViewContainer.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        
-        
-        let willBeThereLabel = UILabel()
-        contentView.addSubview(willBeThereLabel)
-        
-        willBeThereLabel.text = "Bereits zugesagt:"
-        willBeThereLabel.font = UIFont(name: "IBMPlexSans", size: 17)
-        willBeThereLabel.translatesAutoresizingMaskIntoConstraints = false
-        willBeThereLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
-        willBeThereLabel.bottomAnchor.constraint(equalTo: tableViewContainer.topAnchor, constant: -5).isActive = true
-        
-        contentView.addSubview(interestedButton)
-        interestedButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 30).isActive = true
-        interestedButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -30).isActive = true
-        interestedButton.topAnchor.constraint(equalTo: tableViewContainer.bottomAnchor, constant: 15).isActive = true
-        interestedButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
-//        interestedButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5).isActive = true
-        
-        
-        commentView.addSubview(commentButton)
-        commentButton.topAnchor.constraint(equalTo: commentView.topAnchor, constant: 10).isActive = true
-        commentButtonTrailing = commentButton.trailingAnchor.constraint(equalTo: commentView.trailingAnchor, constant: -10)
-        commentButtonTrailing!.isActive = true
-        commentButton.widthAnchor.constraint(equalToConstant: 125).isActive = true
-        commentButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
-        
-        contentView.addSubview(commentView)
-        commentView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        commentView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        commentView.topAnchor.constraint(equalTo: interestedButton.bottomAnchor, constant: 10).isActive = true
-        commentView.heightAnchor.constraint(equalToConstant: 55).isActive = true
-        commentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true
-    }
+//    func setUpEventUI() {
+//        contentView.addSubview(postImageView)
+//        postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+//        postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+//        postImageView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+//        postImageView.heightAnchor.constraint(equalToConstant: 175).isActive = true
+//
+//
+//
+//        contentView.addSubview(titleLabel)
+//        titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+//        titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+//        titleLabel.topAnchor.constraint(equalTo: postImageView.bottomAnchor, constant: 10).isActive = true
+//        titleLabel.heightAnchor.constraint(equalToConstant: 75).isActive = true
+//        titleLabel.textAlignment = .center
+//        titleLabel.font = UIFont(name: "IBMPlexSans-Bold", size: 25)
+//
+//        // Erstmal stackView zusammenbasteln
+//        firstStackView.addArrangedSubview(locationLabel)
+//        secondStackView.addArrangedSubview(timeLabel)
+//        eventStackView.addArrangedSubview(firstStackView)
+//        eventStackView.addArrangedSubview(secondStackView)
+//
+//        contentView.addSubview(eventStackView)
+//        eventStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 40).isActive = true
+//        eventStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -40).isActive = true
+//        eventStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
+//        eventStackView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+//
+//
+//        descriptionView.addSubview(descriptionLabel)
+//        descriptionLabel.leadingAnchor.constraint(equalTo: descriptionView.leadingAnchor, constant: 10).isActive = true
+//        descriptionLabel.trailingAnchor.constraint(equalTo: descriptionView.trailingAnchor, constant: -10).isActive = true
+//        descriptionLabel.topAnchor.constraint(equalTo: descriptionView.topAnchor, constant: 10).isActive = true
+//        descriptionLabel.bottomAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: -10).isActive = true
+//
+//        contentView.addSubview(descriptionView)
+//        descriptionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+//        descriptionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+//        descriptionView.topAnchor.constraint(equalTo: eventStackView.bottomAnchor, constant: 55).isActive = true
+//
+//        let detailLabel = UILabel()
+//        contentView.addSubview(detailLabel)
+//
+//        detailLabel.text = "Beschreibung:"
+//        detailLabel.font = UIFont(name: "IBMPlexSans", size: 17)
+//        detailLabel.translatesAutoresizingMaskIntoConstraints = false
+//        detailLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
+//        detailLabel.bottomAnchor.constraint(equalTo: descriptionView.topAnchor, constant: -10).isActive = true
+//
+//
+//        contentView.addSubview(tableViewContainer)
+//        tableViewContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: -2).isActive = true
+//        tableViewContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 2).isActive = true
+//        tableViewContainer.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 50).isActive = true
+//        tableViewContainer.heightAnchor.constraint(equalToConstant: 100).isActive = true
+//
+//
+//        let willBeThereLabel = UILabel()
+//        contentView.addSubview(willBeThereLabel)
+//
+//        willBeThereLabel.text = "Bereits zugesagt:"
+//        willBeThereLabel.font = UIFont(name: "IBMPlexSans", size: 17)
+//        willBeThereLabel.translatesAutoresizingMaskIntoConstraints = false
+//        willBeThereLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
+//        willBeThereLabel.bottomAnchor.constraint(equalTo: tableViewContainer.topAnchor, constant: -5).isActive = true
+//
+//        contentView.addSubview(interestedButton)
+//        interestedButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 30).isActive = true
+//        interestedButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -30).isActive = true
+//        interestedButton.topAnchor.constraint(equalTo: tableViewContainer.bottomAnchor, constant: 15).isActive = true
+//        interestedButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+////        interestedButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5).isActive = true
+//
+//
+//        commentView.addSubview(commentButton)
+//        commentButton.topAnchor.constraint(equalTo: commentView.topAnchor, constant: 10).isActive = true
+//        commentButtonTrailing = commentButton.trailingAnchor.constraint(equalTo: commentView.trailingAnchor, constant: -10)
+//        commentButtonTrailing!.isActive = true
+//        commentButton.widthAnchor.constraint(equalToConstant: 125).isActive = true
+//        commentButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
+//
+//        contentView.addSubview(commentView)
+//        commentView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+//        commentView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+//        commentView.topAnchor.constraint(equalTo: interestedButton.bottomAnchor, constant: 10).isActive = true
+//        commentView.heightAnchor.constraint(equalToConstant: 55).isActive = true
+//        commentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true
+//    }
     
     // MARK: - Setup UI
     
     let repostView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(red:0.93, green:0.93, blue:0.93, alpha:1.0)
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .secondarySystemBackground
+        } else {
+            view.backgroundColor = UIColor(red:0.93, green:0.93, blue:0.93, alpha:1.0)
+        }
         view.layer.cornerRadius = 5
         view.layer.borderColor = UIColor.black.cgColor
         view.layer.borderWidth = 1
@@ -753,19 +875,51 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         return label
     }()
     
-    lazy var postImageView : UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFill
-        imageView.isUserInteractionEnabled = true
-        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(postImageTapped)))
-        let layer = imageView.layer
-        layer.cornerRadius = 1
-        layer.masksToBounds = true
-        imageView.clipsToBounds = true
+    lazy var imageCollectionView: UICollectionView = {
+       let collectView = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout.init())
+        collectView.translatesAutoresizingMaskIntoConstraints = false
+        collectView.allowsSelection = true  //Pictures clickable
+        collectView.layer.cornerRadius = 1
+        collectView.isPagingEnabled = true
+        collectView.showsHorizontalScrollIndicator = false
         
-        return imageView
+        if #available(iOS 13.0, *) {
+            collectView.backgroundColor = .systemBackground
+        } else {
+            collectView.backgroundColor = .white
+        }
+        
+        return collectView
     }()
+    
+    let pageControl: UIPageControl = {
+       let pg = UIPageControl()
+        pg.translatesAutoresizingMaskIntoConstraints = false
+        //TODO Colors
+        if #available(iOS 13.0, *) {
+            pg.currentPageIndicatorTintColor = .label
+            pg.pageIndicatorTintColor = .tertiaryLabel
+        } else {
+            pg.currentPageIndicatorTintColor = .black
+            pg.pageIndicatorTintColor = .lightGray
+        }
+        
+        return pg
+    }()
+    
+//    lazy var postImageView : UIImageView = {
+//        let imageView = UIImageView()
+//        imageView.translatesAutoresizingMaskIntoConstraints = false
+//        imageView.contentMode = .scaleAspectFill
+//        imageView.isUserInteractionEnabled = true
+//        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(postImageTapped)))
+//        let layer = imageView.layer
+//        layer.cornerRadius = 1
+//        layer.masksToBounds = true
+//        imageView.clipsToBounds = true
+//
+//        return imageView
+//    }()
     
     let youTubeView: WKYTPlayerView = {
         let ytv = WKYTPlayerView()
@@ -1409,7 +1563,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             
             // GIF configuration
             if post.type == .GIF {
-                postImageView.isUserInteractionEnabled = false
+//                postImageView.isUserInteractionEnabled = false
                 
                 if let url = URL(string: post.linkURL) {
                     let item = AVPlayerItem(url: url)
@@ -1507,7 +1661,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         avPlayer?.actionAtItemEnd = .none
         
         avPlayerLayer?.frame = self.view.bounds
-        self.postImageView.layer.addSublayer(avPlayerLayer!)
+        self.imageCollectionView.layer.addSublayer(avPlayerLayer!)
+//        self.postImageView.layer.addSublayer(avPlayerLayer!)
         
         //To Loop the Video
         NotificationCenter.default.addObserver(self,
@@ -1770,6 +1925,60 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             }
         }
         
+    }
+}
+
+//MARK: -PreviewCollectionView
+extension PostViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+        return imageURLs.count
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let image = imageURLs[indexPath.item]
+        
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as? MultiImageCollectionCell {
+            
+            cell.imageURL = image
+            cell.layoutIfNeeded()
+            
+            return cell
+        }
+        
+        print("Got a problem with the collectionviewcell")
+        return UICollectionViewCell()
+    }
+    
+    // MARK: UICollectionViewDelegate
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        let size = CGSize(width: imageCollectionView.frame.width, height: imageCollectionView.frame.height)
+        print("das ist die size: ", size)
+        return size
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let image = imageURLs[indexPath.item]
+        
+        let pinchVC = PinchToZoomViewController()
+        pinchVC.imageURL = image
+        pinchVC.hidesBottomBarWhenPushed = true
+        self.navigationController?.pushViewController(pinchVC, animated: true)
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if let indexPath = imageCollectionView.indexPathsForVisibleItems.first {
+            pageControl.currentPage = indexPath.row
+        }
     }
 }
 

@@ -19,6 +19,7 @@ enum PostType {
     case event
     case youTubeVideo
     case GIF
+    case multiPicture
     case topTopicCell
     case nothingPostedYet
 }
@@ -45,6 +46,7 @@ class Votes {
 class Post {
     var title = ""
     var imageURL = ""
+    var imageURLs: [String]?
     var description = ""
     var linkURL = ""
     var type: PostType = .picture

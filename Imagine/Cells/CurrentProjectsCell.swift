@@ -9,6 +9,10 @@
 import UIKit
 import Firebase
 
+protocol CurrentProjectDelegate {
+    func sourceTapped(link: String)
+}
+
 class CurrentProjectsCell: UITableViewCell {
     
     @IBOutlet weak var firstLabel: UILabel!
@@ -16,12 +20,17 @@ class CurrentProjectsCell: UITableViewCell {
     @IBOutlet weak var secondLabel: UILabel!
     @IBOutlet weak var fourthLabel: UILabel!
     
+    @IBOutlet weak var donationSourceButton: UIButton!
     @IBOutlet weak var firstView: UIView!
     @IBOutlet weak var secondView: UIView!
     @IBOutlet weak var thirdView: UIView!
     @IBOutlet weak var fourthView: UIView!
     
     let db = Firestore.firestore()
+    var donationSource: String?
+    var donationRecipient: String?
+    
+    var delegate: CurrentProjectDelegate?
     
     override func awakeFromNib() {
         
@@ -50,7 +59,12 @@ class CurrentProjectsCell: UITableViewCell {
             } else {
                 if let snap = snap {
                     if let data = snap.data() {
-                        
+                        if let donationRecipient = data["donationRecipient"] as? String, let source = data["donationSource"] as? String {
+                            self.donationSource = source
+                            self.donationRecipient = donationRecipient
+                            
+                            self.donationSourceButton.setTitle(donationRecipient, for: .normal)
+                        }
                         if let workedOn = data["workedOn"] as? [String] {
                             var index = 0
                             for string in workedOn {
@@ -64,4 +78,10 @@ class CurrentProjectsCell: UITableViewCell {
         }
     }
     
+    @IBAction func donationSourceButtonTapped(_ sender: Any) {
+        if let source = self.donationSource {
+            
+            delegate?.sourceTapped(link: source)
+        }
+    }
 }

@@ -299,7 +299,7 @@
                 <outlet property="reportViewHeightConstraint" destination="lwO-5w-xbA" id="DBr-wU-oty"/>
                 <outlet property="reportViewLabel" destination="RaD-5X-deS" id="x3X-PE-JlC"/>
                 <outlet property="thanksButton" destination="gO3-r5-CqV" id="DZk-k3-kSl"/>
-                <outlet property="titleLabel" destination="dmS-xc-Exh" id="ByC-OQ-ZGt"/>
+                <outlet property="titleLabel" destination="dmS-xc-Exh" id="N2d-ed-P49"/>
                 <outlet property="titleLabelHeightConstraint" destination="hfq-nC-vq2" id="WWp-iP-XQ8"/>
                 <outlet property="wowButton" destination="D4m-07-mLk" id="O1T-Mn-bV1"/>
             </connections>

@@ -24,7 +24,7 @@ class RePostCell : BaseFeedCell {
     @IBOutlet weak var ogPosterNameLabel: UILabel!
     @IBOutlet weak var reposterNameLabel: UILabel!
     @IBOutlet weak var repostDateLabel: UILabel!
-    @IBOutlet weak var reposterProfilePictureImageView: UIImageView!
+    @IBOutlet weak var ogProfilePictureImageView: UIImageView!
     
     var delegate: PostCellDelegate?
     
@@ -32,43 +32,13 @@ class RePostCell : BaseFeedCell {
         selectionStyle = .none
         self.addSubview(buttonLabel)
         
-        thanksButton.setImage(nil, for: .normal)
-        wowButton.setImage(nil, for: .normal)
-        haButton.setImage(nil, for: .normal)
-        niceButton.setImage(nil, for: .normal)
-        
-        thanksButton.imageView?.contentMode = .scaleAspectFit
-        wowButton.imageView?.contentMode = .scaleAspectFit
-        haButton.imageView?.contentMode = .scaleAspectFit
-        niceButton.imageView?.contentMode = .scaleAspectFit
+        self.initiateCell(thanksButton: thanksButton, wowButton: wowButton, haButton: haButton, niceButton: niceButton, factImageView: factImageView, profilePictureImageView: profilePictureImageView)
         
         buttonLabel.textColor = .black
         
-        if #available(iOS 13.0, *) {
-            thanksButton.layer.borderColor = UIColor.label.cgColor
-            wowButton.layer.borderColor = UIColor.label.cgColor
-            haButton.layer.borderColor = UIColor.label.cgColor
-            niceButton.layer.borderColor = UIColor.label.cgColor
-        } else {
-            thanksButton.layer.borderColor = UIColor.black.cgColor
-            wowButton.layer.borderColor = UIColor.black.cgColor
-            haButton.layer.borderColor = UIColor.black.cgColor
-            niceButton.layer.borderColor = UIColor.black.cgColor
-        }
-        thanksButton.layer.borderWidth = 0.5
-        wowButton.layer.borderWidth = 0.5
-        haButton.layer.borderWidth = 0.5
-        niceButton.layer.borderWidth = 0.5
-        
-        //Profile Picture
-        let repostLayer = reposterProfilePictureImageView.layer
-        repostLayer.cornerRadius = reposterProfilePictureImageView.frame.width/2
-        
         // Profile Picture
-        let layer = profilePictureImageView.layer
-        layer.cornerRadius = profilePictureImageView.frame.width/2
-        layer.borderWidth = 0.1
-        layer.borderColor = UIColor.black.cgColor
+        let layer = ogProfilePictureImageView.layer
+        layer.cornerRadius = ogProfilePictureImageView.frame.width/2
         
         cellImageView.layer.cornerRadius = 5
         
@@ -84,6 +54,9 @@ class RePostCell : BaseFeedCell {
         
         cellImageView.sd_cancelCurrentImageLoad()
         cellImageView.image = nil
+        
+        ogProfilePictureImageView.sd_cancelCurrentImageLoad()
+        ogProfilePictureImageView.image = nil
         
         profilePictureImageView.sd_cancelCurrentImageLoad()
         profilePictureImageView.image = nil
@@ -148,13 +121,13 @@ class RePostCell : BaseFeedCell {
                     } else {
                         OPNameLabel.text = Constants.strings.anonymPosterName
                     }
-                    profilePictureImageView.image = UIImage(named: "anonym-user")
+                    ogProfilePictureImageView.image = UIImage(named: "anonym-user")
                 } else {
                     ogPosterNameLabel.text = post.user.displayName
                     
                     // Profile Picture
                     if let url = URL(string: repost.user.imageURL) {
-                        profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                        ogProfilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
                     }
                 }
                 
@@ -180,7 +153,7 @@ class RePostCell : BaseFeedCell {
                 
                 // Profile Picture
                
-                profilePictureImageView.image = UIImage(named: "default-user")
+                ogProfilePictureImageView.image = UIImage(named: "default-user")
                 
                 cellImageView.isHidden = false      // Check ich nicht, aber geht!
                 cellImageView.image = UIImage(named: "default")
@@ -205,14 +178,14 @@ class RePostCell : BaseFeedCell {
                 } else {
                     OPNameLabel.text = Constants.strings.anonymPosterName
                 }
-                reposterProfilePictureImageView.image = UIImage(named: "anonym-user")
+                profilePictureImageView.image = UIImage(named: "anonym-user")
             } else {
                 reposterNameLabel.text = post.user.displayName
                 // Profile Picture
                 
                 // Profile Picture
                 if let url = URL(string: post.user.imageURL) {
-                    reposterProfilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                    profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
                 }
             }
         }

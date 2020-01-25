@@ -54,6 +54,7 @@ class BlogTableViewController: UITableViewController {
         if blogPost.isCurrentProjectsCell {
             if let cell = tableView.dequeueReusableCell(withIdentifier: currentProjectsIdentifier, for: indexPath) as? CurrentProjectsCell {
                 
+                cell.delegate = self
                 
                 return cell
             }
@@ -74,7 +75,7 @@ class BlogTableViewController: UITableViewController {
         let post = postList[indexPath.row]
         
         if post.isCurrentProjectsCell {
-            return 275
+            return 290
         } else {
             return 225
         }
@@ -98,7 +99,21 @@ class BlogTableViewController: UITableViewController {
                 }
             }
         }
+        if segue.identifier == "linkTapped" {
+            if let chosenLink = sender as? String {
+                if let webVC = segue.destination as? WebViewController {
+                    webVC.link = chosenLink
+                }
+            }
+        }
     }
+}
+
+extension BlogTableViewController: CurrentProjectDelegate {
+    func sourceTapped(link: String) {
+        performSegue(withIdentifier: "linkTapped", sender: link)
+    }
+
 }
 
 

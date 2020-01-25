@@ -379,6 +379,11 @@ class PostsOfFactTableViewController: UITableViewController {
 
 extension PostsOfFactTableViewController: PostCellDelegate {
     
+    func collectionViewTapped(post: Post) {
+        performSegue(withIdentifier: "showPost", sender: post)
+    }
+    
+    
     func userTapped(post: Post) {
         //Todo: To User
     }

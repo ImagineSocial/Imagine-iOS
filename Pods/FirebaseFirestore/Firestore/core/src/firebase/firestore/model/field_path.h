@@ -21,12 +21,15 @@
 #include <string>
 #include <utility>
 
-#include "Firestore/core/src/firebase/firestore/api/input_validation.h"
 #include "Firestore/core/src/firebase/firestore/model/base_path.h"
 #include "absl/strings/string_view.h"
 
 namespace firebase {
 namespace firestore {
+namespace remote {
+class Serializer;
+}
+
 namespace model {
 
 /**
@@ -38,7 +41,7 @@ class FieldPath : public impl::BasePath<FieldPath>,
                   public util::Comparable<FieldPath> {
  public:
   /** The field path string that represents the document's key. */
-  static constexpr char kDocumentKeyPath[] = "__name__";
+  static constexpr const char* kDocumentKeyPath = "__name__";
 
   // Note: Xcode 8.2 requires explicit specification of the constructor.
   FieldPath() : impl::BasePath<FieldPath>() {
@@ -60,8 +63,16 @@ class FieldPath : public impl::BasePath<FieldPath>,
    * PORTING NOTE: We define this on the model class to avoid having a tiny
    * api::FieldPath wrapper class.
    */
-  static FieldPath FromDotSeparatedString(absl::string_view path);
+  static FieldPath FromDotSeparatedString(const std::string& path);
 
+ private:
+  // TODO(b/146372592): Make this public once we can use Abseil across
+  // iOS/public C++ library boundaries.
+  friend class remote::Serializer;
+
+  static FieldPath FromDotSeparatedStringView(absl::string_view path);
+
+ public:
   /**
    * Creates and returns a new path from a set of segments received from the
    * public API.
@@ -77,32 +88,27 @@ class FieldPath : public impl::BasePath<FieldPath>,
    * where path segments are separated by a dot "." and optionally encoded using
    * backticks.
    */
-  static FieldPath FromServerFormat(absl::string_view path);
+  static FieldPath FromServerFormat(const std::string& path);
+
+ private:
+  // TODO(b/146372592): Make this public once we can use Abseil across
+  // iOS/public C++ library boundaries.
+  static FieldPath FromServerFormatView(absl::string_view path);
+
+ public:
   /** Returns a field path that represents an empty path. */
   static const FieldPath& EmptyPath();
   /** Returns a field path that represents a document key. */
   static const FieldPath& KeyFieldPath();
 
-  /** Returns a standardized string representation of this path. */
-  std::string CanonicalString() const;
   /** True if this FieldPath represents a document key. */
   bool IsKeyFieldPath() const;
 
- private:
-  static void ValidateSegments(const SegmentsT& segments) {
-    if (segments.empty()) {
-      api::ThrowInvalidArgument(
-          "Invalid field path. Provided names must not be empty.");
-    }
+  /** Returns a standardized string representation of this path. */
+  std::string CanonicalString() const;
 
-    for (size_t i = 0; i < segments.size(); i++) {
-      if (segments[i].empty()) {
-        api::ThrowInvalidArgument(
-            "Invalid field name at index %s. Field names must not be empty.",
-            i);
-      }
-    }
-  }
+ private:
+  static void ValidateSegments(const SegmentsT& segments);
 };
 
 }  // namespace model
