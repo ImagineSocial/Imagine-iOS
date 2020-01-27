@@ -46,6 +46,9 @@ class CreativeExampleViewController: UIViewController {
             thirdDescriptionLabel.font = UIFont(name: "American Typewriter", size: 15)
             summaryLabel.font = UIFont(name: "American Typewriter", size: 17)
             
+            headerLabel.text = "Power to the People!"
+            summaryLabel.text = "Je mehr Menschen sich für eine Sache einsetzen, desto größer wird ihr Einfluss. Suchen wir uns zuerst die Probleme, bei der sich alle einig sind und setzen uns effektiv für eine Veränderung ein. Lassen wir das Internet endlich für uns arbeiten!"
+            
         case .artist:
             
             headerLabel.font = UIFont(name: "Noteworthy", size: 20)
@@ -54,14 +57,19 @@ class CreativeExampleViewController: UIViewController {
             thirdDescriptionLabel.font = UIFont(name: "Noteworthy", size: 15)
             summaryLabel.font = UIFont(name: "Noteworthy", size: 17)
             
+            headerLabel.text = "Gestalten wir die Zukunft & die App wie es uns beliebt"
+            summaryLabel.text = "Der Einfluss der User ist fest in unserer Idee verankert. Wir wollen kreatives Denken unterstützen und freuen uns auch über kleine Gimmicks, die nicht zwangsläufig notwendig sind, aber das Erlebnis verbessern. Wir wollen anders sein und Menschen die anders denken und handeln anziehen!"
+            
         default:
             
-            headerLabel.font = UIFont(name: "DIN Alternate", size: 20)
+            headerLabel.font = UIFont(name: "DIN Alternate", size: 21)
             firstDescriptionLabel.font = UIFont(name: "DIN Alternate", size: 15)
             secondDescriptionLabel.font = UIFont(name: "DIN Alternate", size: 15)
             thirdDescriptionLabel.font = UIFont(name: "DIN Alternate", size: 15)
             summaryLabel.font = UIFont(name: "DIN Alternate", size: 17)
             
+            headerLabel.text = "Wir entscheiden wie sich die App anfühlt!"
+            summaryLabel.text = "Imagine ist ein Open Source Projekt. Wir können die kreativen Ideen von Vielen ausprobieren, testen und als Features etablieren. Die Möglichkeiten sind endlos, wir sind keinen Aktionären oder Investoren Rechenschaft schuldig, kreieren wir also etwas großes und außergewöhnliches!"
         }
         
         setView()
