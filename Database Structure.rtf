@@ -1,0 +1,175 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2509
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fswiss\fcharset0 Helvetica-Bold;\f2\fnil\fcharset0 AppleSymbols;
+\f3\fnil\fcharset77 ZapfDingbatsITC;\f4\fnil\fcharset0 LucidaGrande;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11120\viewh15700\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \
+
+\f1\b \ul User:
+\f0\b0 \ulnone   -"Users"	
+\f2\fs36 \uc0\u9901 
+\f0\fs24 \
+			-"userUID"		
+\f3\fs36 \uc0\u9997 \u65038 
+\f0\fs24 \
+					-["blocked": ["userUIDs"], \
+					"fcmToken": String, \
+					"full_name": String, \
+					"name": String, \
+					"surname": String, \
+					"profilePictureURL": String, \
+					"statusText": String]\
+\
+						-"friends"	
+\f2\fs36 \uc0\u9901 
+\f0\fs24 \
+								-"userUID"		
+\f3\fs36 \uc0\u9997 \u65038 
+\f0\fs24 \
+										-["accepted": Bool,\
+										"requestedAt": Timestamp]\
+\
+						-"notifications"	
+\f2\fs36 \uc0\u9901 
+\f0\fs24 \
+								-"documentUID"	
+\f3\fs36 \uc0\u9997 \u65038 
+\f0\fs24 \
+											-["type": String,\
+											"postID": String,\
+											"title": String]\
+\
+						-"posts"	
+\f2\fs36 \uc0\u9901 
+\f0\fs24 \
+								-"postID"	
+\f3\fs36 \uc0\u9997 \u65038 
+\f0\fs24 \
+										-["createTime": Timestamp]\
+\
+						-"saved"	
+\f2\fs36 \uc0\u9901 
+\f0\fs24 \
+								-"documentUID"	
+\f3\fs36 \uc0\u9997 \u65038 
+\f0\fs24 \
+										-["createTime": Timestamp,\
+										"documentID": String]\
+\
+									\
+\
+
+\f1\b \ul Posts:
+\f0\b0 \ulnone  -"Posts"	//CollectionID\
+			-"postID"		
+\f3\fs36 \uc0\u9997 \u65038 
+\f0\fs24 \
+					-["thanksCount": Number,\
+					"wowCount": Number,\
+					"haCount": Number,\
+					"niceCount": Number,\
+					"originalPoster": String (userUID),\
+					"type": String (see ref.),\
+					"title": String,\
+					"description": String,\
+					"createTime": Timestamp,\
+					"report": String (see ref.),\
+					"linkedFactID": String (factID),\
+					"imageURL": String,\
+					"imageHeight": Number,\
+					"imageWidth": Number,\
+					"link": String,\
+					"imageURLs": [String],\
+					"tags": [String] ]\
+\
+\
+
+\f1\b \ul Facts:
+\f0\b0 \ulnone  -"Facts"	
+\f2\fs36 \uc0\u9901 
+\f0\fs24 \
+			-"factID"		
+\f3\fs36 \uc0\u9997 \u65038 
+\f0\fs24 \
+					-["OP": String (userUID),\
+					"createDate": Timestamp,\
+					"name": String,\
+					"description": String,\
+					"displayOption": String (see ref.),\
+					"imageURL": String ]\
+	\
+						-"posts"	
+\f2\fs36 \uc0\u9901 
+\f0\fs24 \
+							-["createTime": Timestamp]\
+					\
+						-"arguments"	
+\f2\fs36 \uc0\u9901 
+\f0\fs24 	\
+							-"argumentID"	
+\f3\fs36 \uc0\u9997 \u65038 
+\f0\fs24 \
+								-["OP": String (userUID),\
+								"title": String,\
+								"description": String,\
+								"proContra": String (see ref.),\
+								"downvotes": Number,\
+								"upvotes": Number]\
+									\
+									-"sources"		
+\f2\fs36 \uc0\u9901 
+\f0\fs24 \
+										-"sourceID" 
+\f3\fs36 \uc0\u9997 \u65038 
+\f0\fs24 											-["OP": String (userUID),\
+											"title": String,\
+											"description": String,\
+											"source": String (linkURL)]\
+\
+\
+
+\f1\b\fs28 Reference: \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f3\b0\fs36 \cf0 \uc0\u9997 \u65038 
+\f4  
+\fs28 :
+\fs24 DocumentID
+\f3\fs36 \
+
+\f2 \uc0\u9901  
+\f4\fs24 :CollectionID
+\f0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+"report": 	"normal", "populism", "spoiler"...		// For the optical report of a post\
+\
+"type": \
+		-"picture":  \
+				["imageHeight", "imageWidth", "imageURL"]\
+		-"link":\
+				["link"]\
+		-"GIF":\
+				["link"]\
+		-"youTubeVideo":\
+				["link"]\
+		-"thought":\
+				[]	(Just "title" & "description necessary)\
+		-"multiPicture":\
+				["imageURLs"]\
+	\
+"displayOption": 	-"topic" (just posts)\
+\
+				-"fact" (proContraDiscussion) 	\
+					-"factDisplayNames":		(What is standing on top of the lists)\
+									-"advantage" (means "advantage"/ "disadvantage")\
+									-"confirmDoubt" (means "confirm"/ "doubt")\
+									-"proContra" (means "pro"/ "contra")\
+\
+"proContra": 	-"pro" (means right side i.e. "advantage"/"confirm"/"pro")\
+			-"contra" (means left side)\
+}
