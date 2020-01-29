@@ -72,6 +72,8 @@ class PostHelper {
                         }
                     }
                 }
+            } else {
+                fetchedFriends([])
             }
         } else {
             

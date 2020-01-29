@@ -58,8 +58,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         
         if !self.isAppAlreadyLaunchedOnce() {
             performSegue(withIdentifier: "toIntroView", sender: nil)
-        } else if self.isItTheSecondTimeTheAppLaunches() {
-            self.alert(message: "Schau dir mal an was wir aus dem Netzwerk so alles machen könnten...", title: "Hast du schon auf den blauen Owen ↑ geklickt?")
         }
 
         if let viewControllers = self.tabBarController?.viewControllers {
@@ -125,6 +123,13 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                 
                 print("\(posts.count) neue dazu")
                 if initialFetch {   // Get the first batch of posts
+                    
+                    if !self.isAppAlreadyLaunchedOnce() {
+                        
+                    } else if self.isItTheSecondTimeTheAppLaunches() {
+                        self.alert(message: "Schau dir mal an was wir aus dem Netzwerk so alles machen könnten...", title: "Hast du schon auf den blauen Owen ↑ geklickt?")
+                    }
+                    
                     self.posts = posts
                     let post = Post()
                     post.type = .topTopicCell
