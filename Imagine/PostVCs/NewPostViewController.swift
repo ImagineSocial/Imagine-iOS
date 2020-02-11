@@ -37,12 +37,10 @@ protocol JustPostedDelegate {
 
 class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate {
     
-    
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var postSelectionSegmentedControl: UISegmentedControl!
     @IBOutlet weak var shareButton: UIBarButtonItem!
     @IBOutlet weak var headerView: UIView!
-    
     
     var imagePicker = UIImagePickerController()
     var multiImagePicker = ImagePickerController()

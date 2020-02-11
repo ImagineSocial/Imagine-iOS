@@ -16,6 +16,7 @@
 		E90B1918238C210000EACCC7 /* IBMPlexSans-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E90B1911238C210000EACCC7 /* IBMPlexSans-Medium.ttf */; };
 		E90B1919238C210000EACCC7 /* IBMPlexSans-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E90B1912238C210000EACCC7 /* IBMPlexSans-Thin.ttf */; };
 		E90B191A238C210000EACCC7 /* IBMPlexSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E90B1913238C210000EACCC7 /* IBMPlexSans-Bold.ttf */; };
+		E90C892B23F29407005CE1D0 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90C892A23F29407005CE1D0 /* SettingViewController.swift */; };
 		E911EEF022DB157500EDD056 /* SettingsLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEEF22DB157500EDD056 /* SettingsLauncher.swift */; };
 		E911EEF222DB173E00EDD056 /* SettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEF122DB173E00EDD056 /* SettingCell.swift */; };
 		E911EEF422DB630300EDD056 /* SideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEF322DB630300EDD056 /* SideMenu.swift */; };
@@ -23,7 +24,6 @@
 		E9211AB9223FCBB100185A00 /* NewCampaignViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9211AB8223FCBB100185A00 /* NewCampaignViewController.swift */; };
 		E9211ABB223FF9C700185A00 /* CampaignViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9211ABA223FF9C700185A00 /* CampaignViewController.swift */; };
 		E929516A23328D4B006C37E3 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E929516923328D4B006C37E3 /* Constants.swift */; };
-		E929516C2333A331006C37E3 /* EULAViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E929516B2333A331006C37E3 /* EULAViewController.swift */; };
 		E93043B12293F06E00DC66D5 /* DataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93043B02293F06E00DC66D5 /* DataHelper.swift */; };
 		E938104E22E707A90086F199 /* YouTubeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E938104D22E707A90086F199 /* YouTubeCell.xib */; };
 		E938105022E708510086F199 /* YouTubeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E938104F22E708510086F199 /* YouTubeCell.swift */; };
@@ -156,6 +156,7 @@
 		E90B1911238C210000EACCC7 /* IBMPlexSans-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "IBMPlexSans-Medium.ttf"; path = "../../../../Downloads/IBM_Plex_Sans-2/IBMPlexSans-Medium.ttf"; sourceTree = "<group>"; };
 		E90B1912238C210000EACCC7 /* IBMPlexSans-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "IBMPlexSans-Thin.ttf"; path = "../../../../Downloads/IBM_Plex_Sans-2/IBMPlexSans-Thin.ttf"; sourceTree = "<group>"; };
 		E90B1913238C210000EACCC7 /* IBMPlexSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "IBMPlexSans-Bold.ttf"; path = "../../../../Downloads/IBM_Plex_Sans-2/IBMPlexSans-Bold.ttf"; sourceTree = "<group>"; };
+		E90C892A23F29407005CE1D0 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		E911EEEF22DB157500EDD056 /* SettingsLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLauncher.swift; sourceTree = "<group>"; };
 		E911EEF122DB173E00EDD056 /* SettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingCell.swift; sourceTree = "<group>"; };
 		E911EEF322DB630300EDD056 /* SideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenu.swift; sourceTree = "<group>"; };
@@ -164,7 +165,6 @@
 		E9211ABA223FF9C700185A00 /* CampaignViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CampaignViewController.swift; path = ../CampaignViewController.swift; sourceTree = "<group>"; };
 		E924BB3623435CDD00BC6024 /* Imagine.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Imagine.entitlements; sourceTree = "<group>"; };
 		E929516923328D4B006C37E3 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		E929516B2333A331006C37E3 /* EULAViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EULAViewController.swift; sourceTree = "<group>"; };
 		E93043B02293F06E00DC66D5 /* DataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHelper.swift; sourceTree = "<group>"; };
 		E938104D22E707A90086F199 /* YouTubeCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = YouTubeCell.xib; sourceTree = "<group>"; };
 		E938104F22E708510086F199 /* YouTubeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeCell.swift; sourceTree = "<group>"; };
@@ -522,9 +522,9 @@
 				E94F29BD22B2F7E60015A8CC /* EventCell.xib */,
 				E96CE89522959E6D00BACD3B /* ArgumentCell.xib */,
 				E9EA7C9622E20DEB0015C0EC /* BlogPostCell.xib */,
-				E9A02AA22326580B000DAB69 /* BlankContentCell.xib */,
 				E9E49D2C2349E8AB002E371E /* NotificationCell.xib */,
 				E9CF2380233A27A500D3B295 /* TopicCell.xib */,
+				E9A02AA22326580B000DAB69 /* BlankContentCell.xib */,
 				E97C834923D091AD00CE3D3C /* CurrentProjectsCell.xib */,
 				E9A46754231F1C84009AC8DA /* BaseFeedCell.swift */,
 				E9B79CDE224EC68500166EED /* PostCell.swift */,
@@ -583,7 +583,7 @@
 				E9B5B25122D7592A004155DA /* SearchTableViewController.swift */,
 				E991CCD72270972F00940834 /* WebViewController.swift */,
 				E9EA7C9422E1ED870015C0EC /* NewsOverviewMenu.swift */,
-				E929516B2333A331006C37E3 /* EULAViewController.swift */,
+				E90C892A23F29407005CE1D0 /* SettingViewController.swift */,
 			);
 			path = FeedVCs;
 			sourceTree = "<group>";
@@ -793,6 +793,7 @@
 				E983F51E23C1FEA5005F7FDE /* GifCell.swift in Sources */,
 				E9C6C2392296BEED003F0F16 /* FactDetailViewController.swift in Sources */,
 				E9A9934F226C7ACD00448932 /* LinkCell.swift in Sources */,
+				E90C892B23F29407005CE1D0 /* SettingViewController.swift in Sources */,
 				E96CE89422941C5C00BACD3B /* FactParentContainerViewController.swift in Sources */,
 				E938105022E708510086F199 /* YouTubeCell.swift in Sources */,
 				E9211AB9223FCBB100185A00 /* NewCampaignViewController.swift in Sources */,
@@ -814,7 +815,6 @@
 				E9B79CE3224EC72000166EED /* JobOfferCell.swift in Sources */,
 				E9B5B25222D7592A004155DA /* SearchTableViewController.swift in Sources */,
 				E929516A23328D4B006C37E3 /* Constants.swift in Sources */,
-				E929516C2333A331006C37E3 /* EULAViewController.swift in Sources */,
 				E9EA7C9922E5BC320015C0EC /* InfoScreen.swift in Sources */,
 				E9C6C23D22981C0B003F0F16 /* ArgumentTableViewController.swift in Sources */,
 				E96CE89022941A1F00BACD3B /* ProFactTableViewController.swift in Sources */,

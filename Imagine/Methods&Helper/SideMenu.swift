@@ -230,11 +230,10 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         notificationTableView.heightAnchor.constraint(equalToConstant: 175).isActive = true
         notificationTableView.topAnchor.constraint(equalTo: verticalStackView.bottomAnchor, constant: 30).isActive = true
         
-        disclaimerView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor, constant: 10).isActive = true
-        disclaimerView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor, constant: -30).isActive = true
-        disclaimerView.bottomAnchor.constraint(equalTo: sideMenuView.bottomAnchor, constant: -15).isActive = true
+        disclaimerView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor, constant: 20).isActive = true
+        disclaimerView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor, constant: -50).isActive = true
+        disclaimerView.bottomAnchor.constraint(equalTo: sideMenuView.bottomAnchor, constant: -25).isActive = true
         disclaimerView.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        
         
         self.sideMenuView.layoutSubviews()
         self.sideMenuView.layoutIfNeeded()
@@ -440,14 +439,14 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     let eulaButton:DesignableButton = {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Nutzungsbedingungen", for: .normal)
+        button.setTitle("Einstellungen", for: .normal)
 //        if #available(iOS 13.0, *) {
 //            button.setTitleColor(.label, for: .normal)
 //        } else {
 //            button.setTitleColor(.black, for: .normal)
 //        }
         button.setTitleColor(Constants.imagineColor, for: .normal)
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 12)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 16)
         button.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
         
         return button

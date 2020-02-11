@@ -34,6 +34,7 @@ enum SignUpFrame {
     case supportImagine
     case ready
     case acceptEULA
+    case acceptPrivacyAgreement
     case wait
     case error
 }
@@ -153,13 +154,26 @@ class LogInViewController: UIViewController {
             self.answerTextfield.isEnabled = false
             questionLabel.text = "Stimmst du den Apple Nutzungsbedingungen zu und lädst keine unangebrachten Inhalte hoch?"
             nextButton.setTitle("Ich stimme zu", for: .normal)
+            
+            showEulaButton()
+        case .acceptPrivacyAgreement:
+            self.nextButton.alpha = 1
+            self.answerTextfield.alpha = 0
+            self.informationLabel.alpha = 0
+            self.answerTextfield.isEnabled = false
+            questionLabel.text = "Mit der Registrierung akzeptierst du unsere Datenschutzerklärung und damit die Speicherung und Bearbeitung der eingegebenen Daten nach DSGVO-Vorgaben. Okay?"
+            nextButton.setTitle("Ich stimme zu", for: .normal)
+            
             showEulaButton()
         case .wait:
             print("Waitin'")
         }
         UIView.animate(withDuration: 0.9, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
-        self.answerTextfield.alpha = 1
-        self.questionLabel.alpha = 1
+            
+            if self.signUpFrame != .acceptPrivacyAgreement && self.signUpFrame != .acceptEULA {
+                self.answerTextfield.alpha = 1
+            }
+            self.questionLabel.alpha = 1
         }, completion: { (_) in
             
             switch self.signUpFrame {
@@ -254,7 +268,7 @@ class LogInViewController: UIViewController {
                     }
                 case .repeatPassword:
                     if password == answer {
-                        self.signUpFrame = .acceptEULA
+                        self.signUpFrame = .acceptPrivacyAgreement
                     } else {
                         self.signUpFrame = .wrongRepeatedPassword
                     }
@@ -275,6 +289,8 @@ class LogInViewController: UIViewController {
                 // ToDo: Save the Answer
                 case .supportImagine:
                     signUpFrame = .ready
+                case .acceptPrivacyAgreement:
+                    self.signUpFrame = .acceptEULA
                 case .acceptEULA:
                     tryToSignUp()
                     self.signUpFrame = .wait
@@ -551,8 +567,15 @@ class LogInViewController: UIViewController {
         
     }
     @objc func toEulaTapped() {
-        if let url = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
-            UIApplication.shared.open(url)
+        
+        if self.signUpFrame == .acceptPrivacyAgreement {
+            if let url = URL(string: "https://donmalte.github.io") {
+                UIApplication.shared.open(url)
+            }
+        } else {
+            if let url = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
+                UIApplication.shared.open(url)
+            }
         }
     }
     

@@ -58,7 +58,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
             UNUserNotificationCenter.current().requestAuthorization(
                 options: authOptions,
-                completionHandler: {_, _ in })
+                completionHandler: {granted, _ in
+                    let defaults = UserDefaults.standard
+                    if granted {
+                        defaults.set(true, forKey: "allowNotifications")
+                    } else {
+                        defaults.set(false, forKey: "allowNotifications")
+                    }
+            })
         } else {
             let settings: UIUserNotificationSettings =
                 UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
@@ -99,23 +106,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         
         InstanceID.instanceID().instanceID { (result, error) in
-          if let error = error {
-            print("Error fetching remote instance ID: \(error)")
-          } else if let result = result {
-            if let currentToken = UserDefaults.standard.value(forKey: "fcmToken") as? String {
-                if currentToken == result.token {
-                    print("The fcm token hasnt changed")
-                } else {
-                    //save Token in Database
+            if let error = error {
+                print("Error fetching remote instance ID: \(error)")
+            } else if let result = result {
+                if let currentToken = UserDefaults.standard.value(forKey: "fcmToken") as? String {
+                    if currentToken == result.token {
+                        print("The fcm token hasnt changed")
+                    } else {
+                        //save Token in Database
+                        HandyHelper().saveFCMToken(token: result.token)
+                    }
+                } else {    // Not a token set in userdefaults yet
                     HandyHelper().saveFCMToken(token: result.token)
+                    print("Set fcm token in userdefaults")
                 }
-            } else {    // Not a token set in userdefaults yet
-                HandyHelper().saveFCMToken(token: result.token)
-                print("Set fcm token in userdefaults")
+                
             }
-            
-            
-          }
         }
     }
 

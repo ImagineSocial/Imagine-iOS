@@ -73,9 +73,25 @@ class ReportABugViewController: UIViewController, UITextViewDelegate {
     
     func saveReport() {
         if let user = Auth.auth().currentUser {
-            let data: [String: Any] = ["userID": user.uid, "bugType": getTypeString(), "problem": reportDescriptionTextView.text]
+            
+            let text = reportDescriptionTextView.text
+            
+                let maltesUID = "CZOcL3VIwMemWwEfutKXGAfdlLy1"
+                let notificationRef = db.collection("Users").document(maltesUID).collection("notifications").document()
+                let notificationData: [String: Any] = ["type": "message", "message": "Ein neuer Bug: \(text)", "name": "System", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "UserID": user.uid]
+                
+                notificationRef.setData(notificationData) { (err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        print("Successfully set notification")
+                    }
+                }
+            
+            let data: [String: Any] = ["userID": user.uid, "bugType": getTypeString(), "problem": text]
             
             let bugRef = db.collection("Bugs").document()
+            
             bugRef.setData(data) { (err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")

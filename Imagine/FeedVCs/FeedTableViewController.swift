@@ -128,6 +128,8 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                         
                     } else if self.isItTheSecondTimeTheAppLaunches() {
                         self.alert(message: "Schau dir mal an was wir aus dem Netzwerk so alles machen könnten...", title: "Hast du schon auf den blauen Owen ↑ geklickt?")
+                    } else if !self.alreadyAcceptedPrivacyPolicy() {
+                        self.showGDPRAlert()
                     }
                     
                     self.posts = posts
@@ -438,7 +440,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                     userVC.currentState = .otherUser
                 } else { // The CurrentUser
                     userVC.currentState = .ownProfileWithEditing
-                    print("Hier wird der currentstate eingestellt")
                 }
             }
         }
@@ -982,6 +983,44 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             print("App launched first time")
             return false
         }
+    }
+    
+    func alreadyAcceptedPrivacyPolicy() -> Bool {
+        if let _ = defaults.string(forKey: "askedAboutCookies") {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    func showGDPRAlert() {
+        let alert = UIAlertController(title: "Wir haben 'Cookies' bei Imagine", message: "Gemäß unseren Datenschutzrichtlinien möchten wir damit herausfinden, wie die User unsere App nutzen und welche Features beliebt sind. Anonymisiert natürlich! Du kannst die Einstellung auch jederzeit ändern.", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Zu den Datenschutzrichtlinien", style: .default, handler: { (_) in
+            
+            if let url = URL(string: "https://donmalte.github.io") {
+                UIApplication.shared.open(url)
+            }
+            
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Ich akzeptiere Cookies", style: .default, handler: { (_) in
+            
+            self.defaults.set(true, forKey: "acceptedCookies")
+            self.defaults.set(true, forKey: "askedAboutCookies")
+            Analytics.setAnalyticsCollectionEnabled(true)
+            self.dismiss(animated: true, completion: nil)
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Keine Cookies", style: .cancel, handler: { (_) in
+            
+            //Already set to false
+            self.defaults.set(false, forKey: "acceptedCookies")
+            self.defaults.set(true, forKey: "askedAboutCookies")
+            self.dismiss(animated: true, completion: nil)
+        }))
+        
+        self.present(alert, animated: true, completion: nil)
     }
     
     func isItTheSecondTimeTheAppLaunches() -> Bool {
