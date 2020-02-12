@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DEC9523435EEEB39EB758BB7 /* Pods_Imagine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9EEBA7E441B12EB052BDEE3 /* Pods_Imagine.framework */; };
+		6031FF6320510F14AC01ED24 /* Pods_Imagine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B6ABEE519CECD54D4C7F4F /* Pods_Imagine.framework */; };
 		E904F268229C274A00383885 /* JobSurveyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E904F267229C274A00383885 /* JobSurveyViewController.swift */; };
 		E90B1914238C210000EACCC7 /* IBMPlexSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E90B190D238C210000EACCC7 /* IBMPlexSans-Light.ttf */; };
 		E90B1915238C210000EACCC7 /* IBMPlexSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E90B190E238C210000EACCC7 /* IBMPlexSans-Regular.ttf */; };
@@ -145,9 +145,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3068672F88CEB3439F7042BB /* Pods-Imagine.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.release.xcconfig"; path = "Target Support Files/Pods-Imagine/Pods-Imagine.release.xcconfig"; sourceTree = "<group>"; };
-		4129D0CA914F48BCC7FFBFE6 /* Pods-Imagine.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.debug.xcconfig"; path = "Target Support Files/Pods-Imagine/Pods-Imagine.debug.xcconfig"; sourceTree = "<group>"; };
-		C9EEBA7E441B12EB052BDEE3 /* Pods_Imagine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Imagine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A16D61AEE6C9FEFE3134E7B /* Pods-Imagine.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.release.xcconfig"; path = "Target Support Files/Pods-Imagine/Pods-Imagine.release.xcconfig"; sourceTree = "<group>"; };
+		2BCC09C8FE5205185DCE68CA /* Pods-Imagine.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.debug.xcconfig"; path = "Target Support Files/Pods-Imagine/Pods-Imagine.debug.xcconfig"; sourceTree = "<group>"; };
+		41B6ABEE519CECD54D4C7F4F /* Pods_Imagine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Imagine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E904F267229C274A00383885 /* JobSurveyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSurveyViewController.swift; sourceTree = "<group>"; };
 		E90B190D238C210000EACCC7 /* IBMPlexSans-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "IBMPlexSans-Light.ttf"; path = "../../../../Downloads/IBM_Plex_Sans-2/IBMPlexSans-Light.ttf"; sourceTree = "<group>"; };
 		E90B190E238C210000EACCC7 /* IBMPlexSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "IBMPlexSans-Regular.ttf"; path = "../../../../Downloads/IBM_Plex_Sans-2/IBMPlexSans-Regular.ttf"; sourceTree = "<group>"; };
@@ -294,28 +294,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DEC9523435EEEB39EB758BB7 /* Pods_Imagine.framework in Frameworks */,
+				6031FF6320510F14AC01ED24 /* Pods_Imagine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		631E3A3581F5AB201C2025DA /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				C9EEBA7E441B12EB052BDEE3 /* Pods_Imagine.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		66199979602FCB98C67C9712 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				4129D0CA914F48BCC7FFBFE6 /* Pods-Imagine.debug.xcconfig */,
-				3068672F88CEB3439F7042BB /* Pods-Imagine.release.xcconfig */,
+				2BCC09C8FE5205185DCE68CA /* Pods-Imagine.debug.xcconfig */,
+				1A16D61AEE6C9FEFE3134E7B /* Pods-Imagine.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		B810C08B97593C4F22408595 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				41B6ABEE519CECD54D4C7F4F /* Pods_Imagine.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		E938324E22F7196D0002DF8C /* BlogVCs */ = {
@@ -379,7 +379,7 @@
 				E962AC142224430400C6D6EF /* Products */,
 				E9600E95223C0781003E5A7A /* Kalam */,
 				66199979602FCB98C67C9712 /* Pods */,
-				631E3A3581F5AB201C2025DA /* Frameworks */,
+				B810C08B97593C4F22408595 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -624,12 +624,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E962AC252224430600C6D6EF /* Build configuration list for PBXNativeTarget "Imagine" */;
 			buildPhases = (
-				6B21FDFAEEBDB86D99DAABA4 /* [CP] Check Pods Manifest.lock */,
+				FC9F2D51D30A4DF29E444A0A /* [CP] Check Pods Manifest.lock */,
 				E962AC0F2224430400C6D6EF /* Sources */,
 				E962AC102224430400C6D6EF /* Frameworks */,
 				E962AC112224430400C6D6EF /* Resources */,
 				E9C42EED23620C0B00FC50BA /* ShellScript */,
-				32E2B3BD616770C459223582 /* [CP] Embed Pods Frameworks */,
+				8DCC0A4AA17A23E643137A1E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -725,7 +725,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		32E2B3BD616770C459223582 /* [CP] Embed Pods Frameworks */ = {
+		8DCC0A4AA17A23E643137A1E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -742,7 +742,24 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Imagine/Pods-Imagine-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6B21FDFAEEBDB86D99DAABA4 /* [CP] Check Pods Manifest.lock */ = {
+		E9C42EED23620C0B00FC50BA /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n#\"${PODS_ROOT}/Fabric/run\"\n\n";
+		};
+		FC9F2D51D30A4DF29E444A0A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -763,23 +780,6 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
-		};
-		E9C42EED23620C0B00FC50BA /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PODS_ROOT}/Fabric/run\"\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1046,7 +1046,7 @@
 		};
 		E962AC262224430600C6D6EF /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4129D0CA914F48BCC7FFBFE6 /* Pods-Imagine.debug.xcconfig */;
+			baseConfigurationReference = 2BCC09C8FE5205185DCE68CA /* Pods-Imagine.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Imagine/Imagine.entitlements;
@@ -1059,7 +1059,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.1;
+				MARKETING_VERSION = 1.4.3;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -1069,7 +1069,7 @@
 		};
 		E962AC272224430600C6D6EF /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3068672F88CEB3439F7042BB /* Pods-Imagine.release.xcconfig */;
+			baseConfigurationReference = 1A16D61AEE6C9FEFE3134E7B /* Pods-Imagine.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Imagine/Imagine.entitlements;
@@ -1081,7 +1081,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.1;
+				MARKETING_VERSION = 1.4.3;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;

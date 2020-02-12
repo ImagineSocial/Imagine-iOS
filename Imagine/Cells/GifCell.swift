@@ -43,8 +43,8 @@ class GifCell: BaseFeedCell {
         self.avPlayer = AVPlayer.init(playerItem: self.videoPlayerItem)
         avPlayerLayer = AVPlayerLayer(player: avPlayer)
         avPlayerLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
-        avPlayer?.volume = 0
         avPlayer?.actionAtItemEnd = .none
+        avPlayer?.isMuted = true
         
 //        avPlayerLayer?.frame = self.bounds
         self.gifView.layer.addSublayer(avPlayerLayer!)

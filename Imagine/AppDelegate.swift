@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import AVKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
@@ -42,6 +43,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         if let _ = Auth.auth().currentUser {    // Already signed up but before integration of notifications. Will ask after sign Up. Can delete this after everybody has set it (maybe 3 Users left)
             registerForPushNoticications(application: application)
+        }
+        
+        do{ // If i want to play full screen: https://stackoverflow.com/questions/31828654/turn-off-audio-playback-of-avplayer
+          try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: [AVAudioSession.CategoryOptions.mixWithOthers])
+          try AVAudioSession.sharedInstance().setActive(true)
+        }catch{//some meaningful exception handling
+            
         }
         
         deleteApplicationBadgeNumber(application: application)
