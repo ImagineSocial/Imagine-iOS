@@ -49,7 +49,7 @@ Info area, where you can dream about the functions and impacts, a truly social a
 
 We use Firebase as a provider for the authentification process, storage and database. This has been a great solution so far.
 
-# ..so...
+# so...
 there is a lot to do, thats true, but we are here, we already have a working network, there is no kickstarter between us and the market and we will make the necessary additions and changes together. We will find a market fit, gather smart people and keep on working for the change!
 
-If you are interested to help, you can interact with us via the app, send us a message on Facebook/Instagram, here on GitHub or however you can reach us. We need help in so many areas: UI/UX, Programming (in Kotlin/Java, Swift/ObjectiveC, Javascript...), translations (in english & persian for the beginning)... In short, if you are smart and/or motivated, we are happy for your help!
+If you are interested to help, you can interact with us via the app, send us a message on Facebook/Instagram, here on GitHub or however you can reach us. We need help in so many areas: UI/UX, Programming (in Kotlin/Java, Swift/ObjectiveC, Javascript...), translations (in english for the beginning)... In short, if you are smart and/or motivated, we are happy for your help!
