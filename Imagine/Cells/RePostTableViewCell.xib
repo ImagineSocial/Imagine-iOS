@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -283,6 +283,13 @@
                             <constraint firstAttribute="width" constant="25" id="TWI-cZ-rSl"/>
                         </constraints>
                     </imageView>
+                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="ehk-ck-mRO">
+                        <rect key="frame" x="313" y="49" width="14" height="14"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="14" id="NfL-dE-FtP"/>
+                            <constraint firstAttribute="width" constant="14" id="NmU-8i-yxL"/>
+                        </constraints>
+                    </imageView>
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                 <constraints>
@@ -300,6 +307,7 @@
                     <constraint firstItem="brU-fD-KQ3" firstAttribute="leading" secondItem="j0G-2f-t98" secondAttribute="trailing" constant="15" id="IC7-qF-ofC"/>
                     <constraint firstItem="sha-wU-sGx" firstAttribute="leading" secondItem="XDl-QE-Tuq" secondAttribute="leading" id="JcN-kJ-cdE"/>
                     <constraint firstItem="UAd-Ez-vM7" firstAttribute="top" secondItem="uRR-6c-6J1" secondAttribute="top" id="JzL-91-efX"/>
+                    <constraint firstItem="ehk-ck-mRO" firstAttribute="trailing" secondItem="j0G-2f-t98" secondAttribute="trailing" constant="2" id="Lk6-1Z-Dmj"/>
                     <constraint firstAttribute="trailing" secondItem="yGo-8c-MKu" secondAttribute="trailing" id="Mhe-If-pLQ"/>
                     <constraint firstItem="yGo-8c-MKu" firstAttribute="leading" secondItem="uRR-6c-6J1" secondAttribute="leading" id="OUi-7e-6Ju"/>
                     <constraint firstItem="eiJ-lf-DwH" firstAttribute="top" secondItem="XDl-QE-Tuq" secondAttribute="bottom" constant="5" id="RkS-rd-FsK"/>
@@ -310,6 +318,7 @@
                     <constraint firstAttribute="trailing" secondItem="brU-fD-KQ3" secondAttribute="trailing" constant="10" id="hR7-4W-JjJ"/>
                     <constraint firstItem="c74-TK-Xp0" firstAttribute="leading" secondItem="sha-wU-sGx" secondAttribute="trailing" constant="10" id="lcW-iS-71V"/>
                     <constraint firstAttribute="bottom" secondItem="yGo-8c-MKu" secondAttribute="bottom" id="nSq-3x-9NF"/>
+                    <constraint firstItem="ehk-ck-mRO" firstAttribute="bottom" secondItem="j0G-2f-t98" secondAttribute="bottom" constant="4" id="sHq-VW-x7P"/>
                     <constraint firstAttribute="trailing" secondItem="UAd-Ez-vM7" secondAttribute="trailing" id="vFb-oz-9dn"/>
                     <constraint firstItem="RRe-IJ-Hz8" firstAttribute="top" secondItem="sha-wU-sGx" secondAttribute="top" id="z5m-YA-z9U"/>
                 </constraints>
@@ -343,6 +352,7 @@
     <resources>
         <image name="comments" width="30" height="30"/>
         <image name="default-user" width="415" height="415"/>
+        <image name="greenTik" width="85" height="85"/>
         <image name="haButton" width="800" height="800"/>
         <image name="menu" width="30" height="30"/>
         <image name="niceButton" width="800" height="800"/>

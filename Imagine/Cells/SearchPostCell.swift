@@ -46,6 +46,14 @@ class SearchPostCell: UITableViewCell {
                     } else {
                         postImageView.image = UIImage(named: "default")
                     }
+                case .multiPicture:
+                    if let imageURLs = post.imageURLs {
+                    if let url = URL(string: imageURLs[0]) {
+                        postImageView.sd_setImage(with: url, completed: nil)
+                    } else {
+                        postImageView.image = UIImage(named: "default")
+                    }
+                    }
                 default:
                     postImageView.image = UIImage(named: "default")
                 }
@@ -112,41 +120,14 @@ class SearchPostCell: UITableViewCell {
         return label
     }()
     
-    private let view: UIView = {
-        let view = UIView()
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .secondarySystemBackground
-        } else {
-            view.backgroundColor = .lightGray
-        }
-        view.backgroundColor = .red
-        return view
-    }()
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         addSubview(titleLabel)
         addSubview(postImageView)
         addSubview(nameLabel)
-        addSubview(view)
-//        backgroundColor = .clear
-        
-//        addSubview(titleLabel)
-//        addSubview(postImageView)
-//
-//        postImageView.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
-//        postImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
-//        let height = self.contentView.frame.height-10
-//        postImageView.heightAnchor.constraint(equalToConstant: height).isActive = true
-//        postImageView.widthAnchor.constraint(equalToConstant: height).isActive = true
-//
-//        titleLabel.leadingAnchor.constraint(equalTo: postImageView.trailingAnchor, constant: 10).isActive = true
-//        titleLabel.topAnchor.constraint(equalTo: postImageView.topAnchor).isActive = true
-//        titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
-//        titleLabel.bottomAnchor.constraint(equalTo: postImageView.bottomAnchor).isActive = true
-    }
     
+    }
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -166,10 +147,6 @@ class SearchPostCell: UITableViewCell {
         titleLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor).isActive = true
         titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
         titleLabel.bottomAnchor.constraint(equalTo: postImageView.bottomAnchor).isActive = true
-        
-        view.widthAnchor.constraint(equalTo: self.widthAnchor).isActive = true
-        view.heightAnchor.constraint(equalToConstant: 5).isActive = true
-        view.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {

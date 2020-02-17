@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -194,6 +194,13 @@
                             <constraint firstAttribute="height" constant="23" id="SmP-cC-6nl"/>
                         </constraints>
                     </stackView>
+                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="WTr-Dd-cJI">
+                        <rect key="frame" x="351" y="31.5" width="16" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="16" id="ldR-6a-7FO"/>
+                            <constraint firstAttribute="width" constant="16" id="tIC-lo-Lzh"/>
+                        </constraints>
+                    </imageView>
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                 <constraints>
@@ -220,6 +227,8 @@
                     <constraint firstItem="DEp-5d-s4N" firstAttribute="centerY" secondItem="2U1-T4-i1y" secondAttribute="centerY" id="kvm-ez-QQV"/>
                     <constraint firstAttribute="bottom" secondItem="0FO-g7-xXe" secondAttribute="bottom" constant="5" id="mep-C8-D0e"/>
                     <constraint firstItem="yGu-Wr-egj" firstAttribute="leading" secondItem="fWs-0O-PKh" secondAttribute="leading" constant="5" id="mor-7P-wX5"/>
+                    <constraint firstItem="WTr-Dd-cJI" firstAttribute="bottom" secondItem="0X4-D9-x3n" secondAttribute="bottom" constant="2" id="ngU-P7-eos"/>
+                    <constraint firstItem="WTr-Dd-cJI" firstAttribute="trailing" secondItem="0X4-D9-x3n" secondAttribute="trailing" constant="2" id="nzE-3p-mzr"/>
                     <constraint firstItem="yGu-Wr-egj" firstAttribute="top" secondItem="KaD-cK-a1w" secondAttribute="bottom" constant="5" id="oAB-0F-rCe"/>
                     <constraint firstItem="2U1-T4-i1y" firstAttribute="leading" secondItem="KaD-cK-a1w" secondAttribute="leading" id="q4e-XV-h2Q"/>
                     <constraint firstItem="xGw-jt-Crf" firstAttribute="top" secondItem="2U1-T4-i1y" secondAttribute="top" id="sRV-YL-86J"/>
@@ -247,6 +256,7 @@
     <resources>
         <image name="comments" width="30" height="30"/>
         <image name="default-user" width="415" height="415"/>
+        <image name="greenTik" width="85" height="85"/>
         <image name="haButton" width="800" height="800"/>
         <image name="menu" width="30" height="30"/>
         <image name="niceButton" width="800" height="800"/>

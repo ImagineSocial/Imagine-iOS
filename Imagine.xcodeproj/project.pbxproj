@@ -138,6 +138,12 @@
 		E9EE0E3122D21C0E0039F32C /* SwipeCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EE0E3022D21C0E0039F32C /* SwipeCollectionViewController.swift */; };
 		E9EE0E3522D234DA0039F32C /* VisionPitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EE0E3422D234DA0039F32C /* VisionPitchCell.swift */; };
 		E9EE9D852316922E0033748E /* VoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EE9D842316922E0033748E /* VoteViewController.swift */; };
+		E9F31DC523F6C334001D5D25 /* FactCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9F31DC423F6C334001D5D25 /* FactCell.xib */; };
+		E9F31DC823F6D109001D5D25 /* RecentTopicsCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9F31DC723F6D109001D5D25 /* RecentTopicsCollectionCell.xib */; };
+		E9F31DCB23F6D2A3001D5D25 /* FactCollectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9F31DCA23F6D2A3001D5D25 /* FactCollectionHeader.xib */; };
+		E9F31DCD23F6D6D2001D5D25 /* FactCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F31DCC23F6D6D2001D5D25 /* FactCell.swift */; };
+		E9F31DCF23F6D78C001D5D25 /* RecentTopicsCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F31DCE23F6D78C001D5D25 /* RecentTopicsCollectionCell.swift */; };
+		E9F31DD123F70D8A001D5D25 /* SmallTopicCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9F31DD023F70D8A001D5D25 /* SmallTopicCell.xib */; };
 		E9F6030F235DE5DF00A58D08 /* PostsOfFactTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F6030E235DE5DF00A58D08 /* PostsOfFactTableViewController.swift */; };
 		E9F9B68B223D584600100F51 /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F9B68A223D584600100F51 /* PageViewController.swift */; };
 		E9F9B68D223D6C9500100F51 /* voteCampaignTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F9B68C223D6C9500100F51 /* voteCampaignTableViewController.swift */; };
@@ -283,6 +289,13 @@
 		E9EE0E3022D21C0E0039F32C /* SwipeCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeCollectionViewController.swift; sourceTree = "<group>"; };
 		E9EE0E3422D234DA0039F32C /* VisionPitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionPitchCell.swift; sourceTree = "<group>"; };
 		E9EE9D842316922E0033748E /* VoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteViewController.swift; sourceTree = "<group>"; };
+		E9F31DC423F6C334001D5D25 /* FactCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FactCell.xib; sourceTree = "<group>"; };
+		E9F31DC623F6C37D001D5D25 /* AddTopicCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = AddTopicCell.xib; path = /Users/DonnyM/Documents/SwiftProjects/Imagine/Imagine/Cells/AddTopicCell.xib; sourceTree = "<absolute>"; };
+		E9F31DC723F6D109001D5D25 /* RecentTopicsCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RecentTopicsCollectionCell.xib; sourceTree = "<group>"; };
+		E9F31DCA23F6D2A3001D5D25 /* FactCollectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FactCollectionHeader.xib; sourceTree = "<group>"; };
+		E9F31DCC23F6D6D2001D5D25 /* FactCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactCell.swift; sourceTree = "<group>"; };
+		E9F31DCE23F6D78C001D5D25 /* RecentTopicsCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentTopicsCollectionCell.swift; sourceTree = "<group>"; };
+		E9F31DD023F70D8A001D5D25 /* SmallTopicCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SmallTopicCell.xib; sourceTree = "<group>"; };
 		E9F6030E235DE5DF00A58D08 /* PostsOfFactTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsOfFactTableViewController.swift; sourceTree = "<group>"; };
 		E9F9B68A223D584600100F51 /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
 		E9F9B68C223D6C9500100F51 /* voteCampaignTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = voteCampaignTableViewController.swift; path = ../voteCampaignTableViewController.swift; sourceTree = "<group>"; };
@@ -512,6 +525,7 @@
 		E9B79CDD224EC66C00166EED /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				E9F31DC923F6D20A001D5D25 /* CollectionViewCells */,
 				E9B9446A2259E5EC000145E2 /* PostTableViewCell.xib */,
 				E9B944662258B674000145E2 /* RePostTableViewCell.xib */,
 				E9A9934C226C7A8200448932 /* LinkCell.xib */,
@@ -539,7 +553,6 @@
 				E9B79CE4224EC78900166EED /* CampaignCell.swift */,
 				E9EA7C9A22E5F47C0015C0EC /* VoteCell.swift */,
 				E96CE8972295A13B00BACD3B /* ArgumentCell.swift */,
-				E9EE0E3422D234DA0039F32C /* VisionPitchCell.swift */,
 				E911EEF122DB173E00EDD056 /* SettingCell.swift */,
 				E9A02AA423265822000DAB69 /* BlankContentFile.swift */,
 				E9A02AA6232D3181000DAB69 /* AddFactTableViewCell.swift */,
@@ -550,7 +563,6 @@
 				E992B48E2379874800D7E8E8 /* NotificationCell.swift */,
 				E97C834B23D0945300CE3D3C /* CurrentProjectsCell.swift */,
 				E9CF17BC23CA45BD000E5149 /* Idea.xib */,
-				E9925A9923D8718500E1A9D4 /* MultiPictureCollectionCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -600,6 +612,22 @@
 			);
 			name = CampaignVoteController;
 			path = CommunityViewController/CampaignVoteController;
+			sourceTree = "<group>";
+		};
+		E9F31DC923F6D20A001D5D25 /* CollectionViewCells */ = {
+			isa = PBXGroup;
+			children = (
+				E9F31DC623F6C37D001D5D25 /* AddTopicCell.xib */,
+				E9F31DC423F6C334001D5D25 /* FactCell.xib */,
+				E9925A9923D8718500E1A9D4 /* MultiPictureCollectionCell.xib */,
+				E9F31DC723F6D109001D5D25 /* RecentTopicsCollectionCell.xib */,
+				E9F31DCA23F6D2A3001D5D25 /* FactCollectionHeader.xib */,
+				E9F31DD023F70D8A001D5D25 /* SmallTopicCell.xib */,
+				E9EE0E3422D234DA0039F32C /* VisionPitchCell.swift */,
+				E9F31DCC23F6D6D2001D5D25 /* FactCell.swift */,
+				E9F31DCE23F6D78C001D5D25 /* RecentTopicsCollectionCell.swift */,
+			);
+			path = CollectionViewCells;
 			sourceTree = "<group>";
 		};
 		E9F9B690223D6D8500100F51 /* Methods&Helper */ = {
@@ -702,6 +730,7 @@
 				E90B1919238C210000EACCC7 /* IBMPlexSans-Thin.ttf in Resources */,
 				E90B1914238C210000EACCC7 /* IBMPlexSans-Light.ttf in Resources */,
 				E9A9934D226C7A8200448932 /* LinkCell.xib in Resources */,
+				E9F31DC523F6C334001D5D25 /* FactCell.xib in Resources */,
 				E9A02AA32326580B000DAB69 /* BlankContentCell.xib in Resources */,
 				E9600E9A223C0782003E5A7A /* Kalam-Regular.ttf in Resources */,
 				E90B1915238C210000EACCC7 /* IBMPlexSans-Regular.ttf in Resources */,
@@ -717,7 +746,10 @@
 				E9B944672258B674000145E2 /* RePostTableViewCell.xib in Resources */,
 				E90B1916238C210000EACCC7 /* IBMPlexSans-ExtraLight.ttf in Resources */,
 				E94F29BE22B2F7E60015A8CC /* EventCell.xib in Resources */,
+				E9F31DD123F70D8A001D5D25 /* SmallTopicCell.xib in Resources */,
+				E9F31DCB23F6D2A3001D5D25 /* FactCollectionHeader.xib in Resources */,
 				E962AC3222244C7B00C6D6EF /* GoogleService-Info.plist in Resources */,
+				E9F31DC823F6D109001D5D25 /* RecentTopicsCollectionCell.xib in Resources */,
 				E97C834A23D091AD00CE3D3C /* CurrentProjectsCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -854,6 +886,7 @@
 				E9E531FC229E9298004D0654 /* PostCommentChatViewController.swift in Sources */,
 				E97CC1D322A028C800A23490 /* EmojiExtension.swift in Sources */,
 				E9B79CE7224F88CD00166EED /* RepostViewController.swift in Sources */,
+				E9F31DCD23F6D6D2001D5D25 /* FactCell.swift in Sources */,
 				E9A02AA523265822000DAB69 /* BlankContentFile.swift in Sources */,
 				E97E902822464B4700BA0295 /* JobOfferingViewController.swift in Sources */,
 				E97A5959231D70A000B072A1 /* ReportABugViewController.swift in Sources */,
@@ -879,6 +912,7 @@
 				E91BD6BC2269C99B00EFEA3C /* VisionDetailViewController.swift in Sources */,
 				E9F9B68B223D584600100F51 /* PageViewController.swift in Sources */,
 				E9EE0E3122D21C0E0039F32C /* SwipeCollectionViewController.swift in Sources */,
+				E9F31DCF23F6D78C001D5D25 /* RecentTopicsCollectionCell.swift in Sources */,
 				E938325022F7198E0002DF8C /* BlogPostViewController.swift in Sources */,
 				E94F29C022B375610015A8CC /* EventCell.swift in Sources */,
 				E97DBED922AEA81A007100E1 /* Post.swift in Sources */,

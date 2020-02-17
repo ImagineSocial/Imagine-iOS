@@ -66,6 +66,8 @@ class PostCell : BaseFeedCell {
         factImageView.layer.borderColor = UIColor.clear.cgColor
         factImageView.image = nil
         factImageView.backgroundColor = .clear
+        
+        followTopicImageView.isHidden = true
     }
     
 
@@ -78,7 +80,7 @@ class PostCell : BaseFeedCell {
     func setCell() {
         if let post = post {
             
-            if ownProfile {
+            if ownProfile { // Set in the UserFeedTableViewController DataSource
                 thanksButton.setTitle(String(post.votes.thanks), for: .normal)
                 wowButton.setTitle(String(post.votes.wow), for: .normal)
                 haButton.setTitle(String(post.votes.ha), for: .normal)
@@ -116,18 +118,13 @@ class PostCell : BaseFeedCell {
                 }
                                 
                 if fact.title == "" {
-                    self.getFact()
-                } else {
-                    if let url = URL(string: fact.imageURL) {
-                        self.factImageView.sd_setImage(with: url, completed: nil)
+                    if fact.beingFollowed {
+                        self.getFact(beingFollowed: true)
                     } else {
-                        if #available(iOS 13.0, *) {
-                            self.factImageView.backgroundColor = .systemBackground
-                        } else {
-                            self.factImageView.backgroundColor = .white
-                        }
-                        self.factImageView.image = UIImage(named: "FactStamp")
+                        self.getFact(beingFollowed: false)
                     }
+                } else {
+                    self.loadFact()
                 }
             }
             
@@ -196,24 +193,32 @@ class PostCell : BaseFeedCell {
         }
     }
     
-    func getFact() {
+    func getFact(beingFollowed: Bool) {
         if let post = post {
-            self.loadFact(post: post) {
+            self.loadFact(post: post, beingFollowed: beingFollowed) {
                 (fact) in
                 post.fact = fact
                 
-                if let url = URL(string: post.fact!.imageURL) {
-                    self.factImageView.sd_setImage(with: url, completed: nil)
-                } else {
-                    print("Set default Picture")
-                    if #available(iOS 13.0, *) {
-                        self.factImageView.backgroundColor = .systemBackground
-                    } else {
-                        self.factImageView.backgroundColor = .white
-                    }
-                    self.factImageView.image = UIImage(named: "FactStamp")
-                }
+                self.loadFact()
             }
+        }
+    }
+    
+    func loadFact() {
+        if post!.fact!.beingFollowed {
+            followTopicImageView.isHidden = false
+        }
+        
+        if let url = URL(string: post!.fact!.imageURL) {
+            self.factImageView.sd_setImage(with: url, completed: nil)
+        } else {
+            print("Set default Picture")
+            if #available(iOS 13.0, *) {
+                self.factImageView.backgroundColor = .systemBackground
+            } else {
+                self.factImageView.backgroundColor = .white
+            }
+            self.factImageView.image = UIImage(named: "FactStamp")
         }
     }
     

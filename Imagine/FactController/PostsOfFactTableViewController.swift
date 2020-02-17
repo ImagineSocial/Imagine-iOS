@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import AVKit
 
 enum TableViewDisplayOptions {
     case small
@@ -21,19 +22,26 @@ class PostsOfFactTableViewController: UITableViewController {
     @IBOutlet weak var headerImageView: UIImageView!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var displayOptionButton: DesignableButton!
+    @IBOutlet weak var followTopicButton: DesignableButton!
     
     var fact: Fact?
     var noPostsType: BlankCellType = .postsOfFacts
     var posts = [Post]()
     var needNavigationController = false
     var displayOption: TableViewDisplayOptions = .small
+    var delegate: RecentTopicDelegate?
     
     let postHelper = PostHelper()
     let handyHelper = HandyHelper()
+    let factParentVC = FactParentContainerViewController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+       
+        followTopicButton.cornerRadius = 6
+        followTopicButton.layer.borderColor = Constants.imagineColor.cgColor
+        followTopicButton.layer.borderWidth = 0.5
+        
         self.navigationController?.navigationBar.shadowImage = UIImage()
         headerImageView.layer.cornerRadius = 4
         if #available(iOS 13.0, *) {
@@ -54,6 +62,8 @@ class PostsOfFactTableViewController: UITableViewController {
         tableView.register(UINib(nibName: "LinkCell", bundle: nil), forCellReuseIdentifier: "NibLinkCell")
         tableView.register(UINib(nibName: "ThoughtPostCell", bundle: nil), forCellReuseIdentifier: "NibThoughtCell")
         tableView.register(UINib(nibName: "YouTubeCell", bundle: nil), forCellReuseIdentifier: "NibYouTubeCell")
+        tableView.register(UINib(nibName: "GifCell", bundle: nil), forCellReuseIdentifier: "GIFCell")
+        tableView.register(UINib(nibName: "MultiPictureCell", bundle: nil), forCellReuseIdentifier: "MultiPictureCell")
 
         getPosts()
         
@@ -62,6 +72,11 @@ class PostsOfFactTableViewController: UITableViewController {
         }
         
         if let fact = fact {
+            
+            if fact.beingFollowed {
+                followTopicButton.setTitle("Unfollow", for: .normal)
+            }
+            delegate?.topicSelected(fact: fact)
             
             headerLabel.text = fact.title
             descriptionLabel.text = fact.description
@@ -201,6 +216,30 @@ class PostsOfFactTableViewController: UITableViewController {
                         
                         return cell
                     }
+                case .GIF:
+                    let identifier = "GIFCell"
+                    
+                    if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? GifCell {
+                     
+                        cell.post = post
+                        cell.delegate = self
+                        if let url = URL(string: post.linkURL) {
+                            cell.videoPlayerItem = AVPlayerItem.init(url: url)
+                            cell.startPlayback()
+                        }
+                        
+                        return cell
+                    }
+                case .multiPicture:
+                    let identifier = "MultiPictureCell"
+                    
+                    if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? MultiPictureCell {
+                        
+                        cell.delegate = self
+                        cell.post = post
+                        
+                        return cell
+                    }
                 default:
                     let identifier = "NibThoughtCell"
                     
@@ -301,6 +340,40 @@ class PostsOfFactTableViewController: UITableViewController {
                     let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
                     
                     return 330+labelHeight
+                case .GIF:
+                    
+                    let imageHeight = post.mediaHeight
+                    let imageWidth = post.mediaWidth
+                    
+                    let ratio = imageWidth / imageHeight
+                    var newHeight = self.view.frame.width / ratio
+                    
+                    if newHeight >= 500 {
+                        newHeight = 500
+                    }
+                    
+                    let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
+                    
+                    return newHeight+85+labelHeight //85 is height of title, profileicture, buttons etc.
+                //                return UITableView.automaticDimension
+                case .multiPicture:
+                    // Label vergrößern
+                    let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
+                    
+                    let imageHeight = post.mediaHeight
+                    let imageWidth = post.mediaWidth
+                    
+                    let ratio = imageWidth / imageHeight
+                    var newHeight = self.view.frame.width / ratio
+                    
+                    if newHeight >= 500 {
+                        newHeight = 500
+                    }
+                    
+                    
+                    heightForRow = newHeight+100+extraHeightForReportView+labelHeight // 100 weil Höhe von StackView & Rest
+                    
+                    return heightForRow
                 default:
                     return 300
                 }
@@ -337,6 +410,19 @@ class PostsOfFactTableViewController: UITableViewController {
             performSegue(withIdentifier: "goToNewPost", sender: fact)
         }
     }
+    
+    @IBAction func followTopicButtonTapped(_ sender: Any) {
+        if let fact = fact {
+            if fact.beingFollowed {
+                factParentVC.followTopic(fact: fact)
+                self.followTopicButton.setTitle("Follow", for: .normal)
+            } else {
+                factParentVC.unfollowTopic(fact: fact)
+                self.followTopicButton.setTitle("Unfollow", for: .normal)
+            }
+        }
+    }
+    
     
     //MARK:- Prepare For Segue
     

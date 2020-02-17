@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:/Users/DonnyM/Documents/SwiftProjects/Imagine/Imagine/Cells/AddTopicCell.xib">
+   </FileRef>
+   <FileRef
       location = "group:Imagine.xcodeproj">
    </FileRef>
    <FileRef

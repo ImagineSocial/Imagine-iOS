@@ -33,10 +33,6 @@ class DataHelper {
     let db = Firestore.firestore()
     let handyHelper = HandyHelper()
     
-    
-    
-    
-    
     func getData(get: DataType, returnData: @escaping ([Any]) -> Void) {
         // "get" Variable kann "campaign" für CommunityEntscheidungen, "jobOffer" für Hilfe der Community und "fact" für Fakten Dings sein
         
@@ -218,35 +214,13 @@ class DataHelper {
                         list.append(vote)
                         
                     case .facts:
-                        guard let name = documentData["name"] as? String,
-                            let createTimestamp = documentData["createDate"] as? Timestamp
-                            else {
-                                continue
+                        
+                        if let fact = self.addFact(data: documentData) {
+                            fact.documentID = documentID
+                            list.append(fact)
                         }
                         
-                        let stringDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
                         
-                        let fact = Fact(addMoreDataCell: false)
-                        fact.title = name
-                        fact.createDate = stringDate
-                        fact.documentID = documentID
-                        if let imageURL = documentData["imageURL"] as? String { // Not mandatory (in fact not selectable)
-                            fact.imageURL = imageURL
-                        }
-                        if let description = documentData["description"] as? String {   // Was introduced later on
-                            fact.description = description
-                        }
-                        if let displayType = documentData["displayOption"] as? String { // Was introduced later on
-                            fact.displayMode = self.getDisplayType(string: displayType)
-                        }
-                        
-                        if let displayNames = documentData["factDisplayNames"] as? String {
-                            fact.factDisplayNames = self.getDisplayNames(string: displayNames)
-                        }
-                        
-                        fact.fetchComplete = true
-                        
-                        list.append(fact)
                     case .jobOffer:
                         guard let title = documentData["jobTitle"] as? String,
                             let shortBody = documentData["jobShortBody"] as? String,
@@ -275,8 +249,72 @@ class DataHelper {
                     }
                 }
             }
-            returnData(list)
+            if get == .facts {  // Control wether or not the fact is beeing followed by the current user
+                if let user = Auth.auth().currentUser {
+                    self.getFollowedTopics(userUID: user.uid, factList: (list as! [Fact])) { (checkedList) in
+                        returnData(checkedList)
+                    }
+                } else {
+                    returnData(list)
+                }
+            } else {
+                returnData(list)
+            }
         }
+    }
+    
+    func getFollowedTopics(userUID: String, factList: [Fact], checkedList: @escaping ([Fact]) -> Void) {
+        let topicRef = db.collection("Users").document(userUID).collection("topics")
+        
+        topicRef.getDocuments { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    for document in snap.documents {
+                        for fact in factList {
+                            if fact.documentID == document.documentID {
+                                fact.beingFollowed = true
+                            }
+                        }
+                    }
+                    checkedList(factList)
+                    
+                }
+            }
+        }
+    }
+    
+    func addFact(data: [String: Any]) -> Fact? {
+        
+        guard let name = data["name"] as? String,
+            let createTimestamp = data["createDate"] as? Timestamp
+            else {
+                return nil
+        }
+        
+        let stringDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
+        
+        let fact = Fact(addMoreDataCell: false)
+        fact.title = name
+        fact.createDate = stringDate
+        if let imageURL = data["imageURL"] as? String { // Not mandatory (in fact not selectable)
+            fact.imageURL = imageURL
+        }
+        if let description = data["description"] as? String {   // Was introduced later on
+            fact.description = description
+        }
+        if let displayType = data["displayOption"] as? String { // Was introduced later on
+            fact.displayMode = self.getDisplayType(string: displayType)
+        }
+        
+        if let displayNames = data["factDisplayNames"] as? String {
+            fact.factDisplayNames = self.getDisplayNames(string: displayNames)
+        }
+        
+        fact.fetchComplete = true
+        
+        return fact
     }
     
     func getDisplayType(string: String) -> DisplayOption {

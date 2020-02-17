@@ -35,15 +35,12 @@ class PostHelper {
     let factJSONString = "linkedFactID"
     
     var friends: [String]?
+    var followedTopics = [String]()
     
     /* These two variables are here to make sure that we just fetch as many as there are documents and dont start at the beginning again  */
     var morePostsToFetch = true
     var totalCountOfPosts = 0
     var alreadyFetchedCount = 0
-    
-    init() {
-        
-    }
     
     func getTheUsersFriend(fetchedFriends: @escaping ([String]) -> Void) {
         if self.friends == nil {
@@ -96,7 +93,6 @@ class PostHelper {
     }
     
     
-    
     //MARK: - Main Feed
     func getPostsForMainFeed(getMore:Bool,sort: PostSortOptions, returnPosts: @escaping ([Post], _ InitialFetch:Bool) -> Void) {
         
@@ -130,9 +126,13 @@ class PostHelper {
             descending = true
         }
         
+        if initialFetch {
+            self.getFollowedTopics()
+        }
+        
         var postRef = db.collection("Posts").order(by: orderBy, descending: descending).limit(to: 20)
                 
-        if getMore {    // If you want to get More Posts
+        if getMore {    // If you want to get More Posts or it is the initalFetch
             if let lastSnap = lastSnap {        // For the next loading batch of 20, that will start after this snapshot
                 postRef = postRef.start(afterDocument: lastSnap)
                 self.initialFetch = false
@@ -153,6 +153,24 @@ class PostHelper {
                 self.getCommentCount(completion: {
                     returnPosts(self.posts, self.initialFetch)
                 })
+            }
+        }
+    }
+    
+    func getFollowedTopics() {
+        if let user = Auth.auth().currentUser {
+            let topicRef = db.collection("Users").document(user.uid).collection("topics")
+            
+            topicRef.getDocuments { (snap, err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    if let snap = snap {
+                        for document in snap.documents {
+                            self.followedTopics.append(document.documentID)
+                        }
+                    }
+                }
             }
         }
     }
@@ -395,10 +413,7 @@ class PostHelper {
                     }
                     
                     if let factID = documentData[factJSONString] as? String {
-                        let fact = Fact(addMoreDataCell: false)
-                        fact.documentID = factID
-                        
-                        post.fact = fact
+                        post.fact = self.addFact(factID: factID)
                     }
                     
                     if originalPoster == "anonym" {
@@ -444,10 +459,7 @@ class PostHelper {
                     }
                     
                     if let factID = documentData[factJSONString] as? String {
-                        let fact = Fact(addMoreDataCell: false)
-                        fact.documentID = factID
-                        
-                        post.fact = fact
+                        post.fact = self.addFact(factID: factID)
                     }
                     
                     if originalPoster == "anonym" {
@@ -491,10 +503,7 @@ class PostHelper {
                     }
                     
                     if let factID = documentData[factJSONString] as? String {
-                        let fact = Fact(addMoreDataCell: false)
-                        fact.documentID = factID
-                        
-                        post.fact = fact
+                        post.fact = self.addFact(factID: factID)
                     }
                     
                     if originalPoster == "anonym" {
@@ -531,10 +540,7 @@ class PostHelper {
                     }
                     
                     if let factID = documentData[factJSONString] as? String {
-                        let fact = Fact(addMoreDataCell: false)
-                        fact.documentID = factID
-                        
-                        post.fact = fact
+                        post.fact = self.addFact(factID: factID)
                     }
                     
                     if originalPoster == "anonym" {
@@ -575,10 +581,7 @@ class PostHelper {
                     }
                     
                     if let factID = documentData[factJSONString] as? String {
-                        let fact = Fact(addMoreDataCell: false)
-                        fact.documentID = factID
-                        
-                        post.fact = fact
+                        post.fact = self.addFact(factID: factID)
                     }
                     
                     if let url = URL(string: gifURL) {
@@ -631,10 +634,7 @@ class PostHelper {
                     }
                     
                     if let factID = documentData[factJSONString] as? String {
-                        let fact = Fact(addMoreDataCell: false)
-                        fact.documentID = factID
-                        
-                        post.fact = fact
+                        post.fact = self.addFact(factID: factID)
                     }
                     
                     if originalPoster == "anonym" {
@@ -675,10 +675,7 @@ class PostHelper {
                     }
                     
                     if let factID = documentData[factJSONString] as? String {
-                        let fact = Fact(addMoreDataCell: false)
-                        fact.documentID = factID
-                        
-                        post.fact = fact
+                        post.fact = self.addFact(factID: factID)
                     }
                     
                     if originalPoster == "anonym" {
@@ -697,6 +694,17 @@ class PostHelper {
                 }
             }
         }
+    }
+    
+    func addFact(factID: String) -> Fact {
+        let fact = Fact(addMoreDataCell: false)
+        fact.documentID = factID
+        for topic in self.followedTopics {
+            if factID == topic {
+                fact.beingFollowed = true
+            }
+        }
+        return fact
     }
     
     func getEvent(completion: @escaping (Post) -> Void) {

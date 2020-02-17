@@ -105,9 +105,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         
     }
     
-    
-    
-    
     // MARK: - Methods
     
     @objc override func getPosts(getMore:Bool) {
@@ -492,6 +489,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                     if let factVC = navCon.topViewController as? FactParentContainerViewController {
                         factVC.fact = fact
                         factVC.needNavigationController = true
+                        self.notifyFactCollectionViewController(fact: fact)
                     }
                 }
             }
@@ -503,7 +501,18 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                     if let factVC = navCon.topViewController as? PostsOfFactTableViewController {
                         factVC.fact = fact
                         factVC.needNavigationController = true
+                        self.notifyFactCollectionViewController(fact: fact)
                     }
+                }
+            }
+        }
+    }
+    
+    func notifyFactCollectionViewController(fact: Fact) {
+        if let viewControllers = self.tabBarController?.viewControllers {
+            if let navVC = viewControllers[3] as? UINavigationController {
+                if let factVC = navVC.topViewController as? FactCollectionViewController {
+                    factVC.registerRecentFact(fact: fact)
                 }
             }
         }
@@ -656,17 +665,13 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             self.loggedIn = false
             
             self.smallNumberForInvitationRequest.isHidden = true
-            
-//            button.widthAnchor.constraint(equalToConstant: 55).isActive = true
-//            button.heightAnchor.constraint(equalToConstant: 25).isActive = true
+
             button.layer.cornerRadius = 4
-            
             button.addTarget(self, action: #selector(self.logInButtonTapped), for: .touchUpInside)
             button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 15)
             button.setTitle("Log-In", for: .normal)
             button.setTitleColor(Constants.imagineColor, for: .normal)
-//            button.layer.borderColor = Constants.imagineColor.cgColor
-//            button.layer.borderWidth = 1
+
             
             view.addSubview(button)
         }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -252,6 +252,13 @@
                             <action selector="linkedFactTapped:" destination="1g0-Dv-YOj" eventType="touchUpInside" id="xjx-Mc-Y5O"/>
                         </connections>
                     </button>
+                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="GKq-uh-bXY">
+                        <rect key="frame" x="304" y="55.5" width="16" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="16" id="o6K-7C-1jP"/>
+                            <constraint firstAttribute="width" constant="16" id="vif-Ke-p0U"/>
+                        </constraints>
+                    </imageView>
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                 <constraints>
@@ -268,6 +275,7 @@
                     <constraint firstItem="djA-3t-hNJ" firstAttribute="height" secondItem="2fD-Zw-Cn5" secondAttribute="height" constant="6" id="HOO-eH-acq"/>
                     <constraint firstItem="hjC-07-xRy" firstAttribute="leading" secondItem="2fD-Zw-Cn5" secondAttribute="trailing" constant="25" id="IUN-Gn-uRe"/>
                     <constraint firstItem="bcg-65-L4m" firstAttribute="top" secondItem="lXU-cL-RBT" secondAttribute="bottom" constant="6" id="JNc-3a-qbF"/>
+                    <constraint firstItem="GKq-uh-bXY" firstAttribute="bottom" secondItem="djA-3t-hNJ" secondAttribute="bottom" constant="2" id="JiD-Yy-4n6"/>
                     <constraint firstItem="TBB-Tx-6Ic" firstAttribute="top" secondItem="YFa-V0-FKC" secondAttribute="top" id="NNE-rr-7k4"/>
                     <constraint firstItem="djA-3t-hNJ" firstAttribute="top" secondItem="2fD-Zw-Cn5" secondAttribute="top" constant="-3" id="Ne2-zf-csC"/>
                     <constraint firstItem="GtJ-5b-aFE" firstAttribute="trailing" secondItem="Ije-Bx-iN1" secondAttribute="trailing" id="PCg-6d-Qjq"/>
@@ -279,6 +287,7 @@
                     <constraint firstItem="4ep-1a-dRh" firstAttribute="top" secondItem="A9c-zL-XO1" secondAttribute="top" id="b5R-rF-hhk"/>
                     <constraint firstItem="rYB-wG-pxp" firstAttribute="trailing" secondItem="TBB-Tx-6Ic" secondAttribute="trailing" id="bAC-Tp-oyL"/>
                     <constraint firstItem="TBB-Tx-6Ic" firstAttribute="leading" secondItem="YFa-V0-FKC" secondAttribute="trailing" constant="10" id="cMK-NU-Xqj"/>
+                    <constraint firstItem="GKq-uh-bXY" firstAttribute="trailing" secondItem="djA-3t-hNJ" secondAttribute="trailing" constant="2" id="cgO-xI-wPT"/>
                     <constraint firstItem="GtJ-5b-aFE" firstAttribute="leading" secondItem="Ije-Bx-iN1" secondAttribute="leading" id="e1W-db-7xX"/>
                     <constraint firstItem="djA-3t-hNJ" firstAttribute="width" secondItem="2fD-Zw-Cn5" secondAttribute="width" constant="6" id="gaL-Uh-jaG"/>
                     <constraint firstAttribute="trailing" secondItem="bcg-65-L4m" secondAttribute="trailing" constant="10" id="iMO-s9-vWD"/>
@@ -319,6 +328,7 @@
     <resources>
         <image name="comments" width="30" height="30"/>
         <image name="default-user" width="415" height="415"/>
+        <image name="greenTik" width="85" height="85"/>
         <image name="haButton" width="800" height="800"/>
         <image name="menu" width="30" height="30"/>
         <image name="niceButton" width="800" height="800"/>

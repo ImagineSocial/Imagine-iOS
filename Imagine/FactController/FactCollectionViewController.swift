@@ -9,10 +9,14 @@
 import UIKit
 import Firebase
 
-private let reuseIdentifier = "FactCell"
+private let factCellIdentifier = "FactCell"
 
 protocol LinkFactWithPostDelegate {
     func selectedFact(fact: Fact, closeMenu: Bool)
+}
+
+protocol TopOfCollectionViewDelegate {
+    func sortFactsTapped(option: FactCollectionDisplayOption)
 }
 
 enum FactCollectionDisplayOption {
@@ -21,7 +25,7 @@ enum FactCollectionDisplayOption {
     case justTopics
 }
 
-class FactCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class FactCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RecentTopicCellDelegate, RecentTopicDelegate {
     
     @IBOutlet weak var infoButton: UIBarButtonItem!
     
@@ -39,6 +43,11 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     
     let collectionViewSpacing:CGFloat = 30
     let searchController = UISearchController(searchResultsController: nil)
+    
+    let secondHeaderIdentifier = "collectionViewView"
+    let recentTopicsCellIdentifier = "RecentTopicsCollectionCell"
+    
+    var reloadRecentTopics = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,6 +59,10 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             self.setDismissButton()
         }
         
+        collectionView.register((UINib(nibName: "FactCollectionHeader", bundle: nil)), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: secondHeaderIdentifier)
+        collectionView.register(UINib(nibName: "FactCell", bundle: nil), forCellWithReuseIdentifier: factCellIdentifier)
+        collectionView.register(UINib(nibName: "RecentTopicsCollectionCell", bundle: nil), forCellWithReuseIdentifier: recentTopicsCellIdentifier)
+        
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.isTranslucent = false
         if #available(iOS 13.0, *) {
@@ -59,6 +72,17 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         }
         
         self.view.activityStartAnimating()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        if reloadRecentTopics {
+            if let cell = collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? RecentTopicsCollectionCell {
+                cell.getFacts(initialFetch: false)
+                self.reloadRecentTopics = false
+            }
+            //else : The  scrollViewDidEndDecelerating Method will catch it if it is visible again
+        }
     }
     
     func setDismissButton() {
@@ -121,7 +145,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     // MARK: UICollectionViewDataSource
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 1
+        return 2
     }
     
   
@@ -129,93 +153,99 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        if isFiltering {
-            return filteredFacts.count
+        if section == 0 {
+            return 1
         } else {
-            
-            switch displayOption {
-            case .all:
-                return facts.count
-            case .justTopics:
-                return topicFacts.count
-            case .justFacts:
-                return factFacts.count
-            }
-        }
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        
-        if kind == UICollectionView.elementKindSectionHeader {  // View above CollectionView
-            if let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "collectionViewView", for: indexPath) as? FactCollectionHeader {
-            
-                view.delegate = self
+            if isFiltering {
+                return filteredFacts.count
+            } else {
                 
-                return view
+                switch displayOption {
+                case .all:
+                    return facts.count
+                case .justTopics:
+                    return topicFacts.count
+                case .justFacts:
+                    return factFacts.count
+                }
             }
         }
-        
-        return UICollectionReusableView()
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         var fact: Fact?
         
-        if isFiltering {
-            fact = filteredFacts[indexPath.row]
-        } else {
+        if indexPath.section == 0 { // First wide cell for recentTopics
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: recentTopicsCellIdentifier, for: indexPath) as? RecentTopicsCollectionCell {
+                
+                cell.delegate = self
+                
+                return cell
+            }
+        } else {    //Other cells
             
-            switch displayOption {
-            case .all:
-                fact = facts[indexPath.row]
-            case .justTopics:
-                fact = topicFacts[indexPath.row]
-            case .justFacts:
-                fact = factFacts[indexPath.row]
+            if isFiltering {
+                fact = filteredFacts[indexPath.row]
+            } else {
+                
+                switch displayOption {
+                case .all:
+                    fact = facts[indexPath.row]
+                case .justTopics:
+                    fact = topicFacts[indexPath.row]
+                case .justFacts:
+                    fact = factFacts[indexPath.row]
+                }
+            }
+            
+            if fact!.addMoreCell {
+                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddTopicCell", for: indexPath) as? AddTopicCell {
+                    
+                    let layer = cell.layer
+                    layer.cornerRadius = 4
+                    layer.masksToBounds = true
+                    if #available(iOS 13.0, *) {
+                        layer.borderColor = UIColor.label.cgColor
+                    } else {
+                        layer.borderColor = UIColor.black.cgColor
+                    }
+                    layer.borderWidth = 1
+                    
+                    return cell
+                }
+            } else {
+                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: factCellIdentifier, for: indexPath) as? FactCell {
+                    
+                    cell.fact = fact!
+                    
+                    return cell
+                }
             }
         }
         
-        if fact!.addMoreCell {
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddTopicCell", for: indexPath) as? AddTopicCell {
-                
-                let layer = cell.layer
-                layer.cornerRadius = 4
-                layer.masksToBounds = true
-                if #available(iOS 13.0, *) {
-                    layer.borderColor = UIColor.label.cgColor
-                } else {
-                    layer.borderColor = UIColor.black.cgColor
-                }
-                layer.borderWidth = 2
-                
-                return cell
-            }
-        } else {
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? FactCell {
-                
-                cell.fact = fact!
-                
-                return cell
-            }
-        }
-    
         return UICollectionViewCell()
     }
-
+    
     // MARK: UICollectionViewDelegate
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: (collectionView.frame.size.width/2)-collectionViewSpacing)
-        
-        return newSize
+        if indexPath.section == 0 {
+            let newSize = CGSize(width: (collectionView.frame.size.width)-(collectionViewSpacing+10), height: (collectionView.frame.size.width/4))
+            
+            return newSize
+        } else {
+            let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: (collectionView.frame.size.width/2)-collectionViewSpacing)
+            
+            return newSize
+        }
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         var fact: Fact?
-            
+        
         if isFiltering {
             fact = filteredFacts[indexPath.row]
         } else {
@@ -236,6 +266,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                 if self.addFactToPost {
                     self.setFactForPost(fact: fact)
                 } else {
+                    
                     if fact.displayMode == .fact {
                         performSegue(withIdentifier: "goToArguments", sender: fact)
                     } else {
@@ -245,6 +276,55 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             }
         }
     }
+    
+    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
+        if kind == UICollectionView.elementKindSectionHeader {  // View above CollectionView
+            if indexPath.section == 0 {
+                let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "factCollectionFirstHeader", for: indexPath)
+                
+                return view
+            } else {
+                if let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: secondHeaderIdentifier, for: indexPath) as? FactCollectionHeader {
+                    
+                    view.delegate = self
+                    
+                    return view
+                }
+            }
+        }
+        
+        return UICollectionReusableView()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        if section == 0 {
+            return CGSize(width: collectionView.frame.width, height: 70)
+        } else {
+            return CGSize(width: collectionView.frame.width, height: 20)
+        }
+    }
+
+    override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        
+        //To update the "currentTopic" Cell
+        for cell in collectionView.visibleCells {
+            let indexPath = collectionView.indexPath(for: cell)
+            
+            if indexPath == IndexPath(item: 0, section: 0) {
+                print("Is the right indexpath")
+                if self.reloadRecentTopics {
+                    if let cell = collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? RecentTopicsCollectionCell {
+                        cell.getFacts(initialFetch: false)
+                        self.reloadRecentTopics = false
+                    } else {
+                        print("still cant find cell")
+                    }
+                }
+            }
+        }
+    }
+    
     
     func logUser(fact: Fact) {
         if let user = Auth.auth().currentUser {
@@ -262,12 +342,46 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         }
     }
     
+    //MARK: -Recent Topics
+    //Topic in the recentTopic collectionView is tapped
+    func topicTapped(fact: Fact) {
+        
+        if fact.displayMode == .fact {
+            performSegue(withIdentifier: "goToArguments", sender: fact)
+        } else {
+            performSegue(withIdentifier: "goToPostsOfTopic", sender: fact)
+        }
+    }
     
+    func topicSelected(fact: Fact) {
+        print("TopicSelected")
+        registerRecentFact(fact: fact)
+    }
+    
+    func registerRecentFact(fact: Fact) {
+        // Safe the selected topic to display it later in the "currentTopic" CollectionView
+         let defaults = UserDefaults.standard
+         var factStrings = defaults.stringArray(forKey: "recentTopics") ?? [String]()
+        
+         factStrings = factStrings.filter{ $0 != fact.documentID }
+         factStrings.insert(fact.documentID, at: 0)
+         
+         if factStrings.count >= 10 {
+             factStrings.removeLast()
+         }
+         
+         defaults.set(factStrings, forKey: "recentTopics")
+        
+        reloadRecentTopics = true
+    }
+    
+    //MARK: -PrepareForSegue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToArguments" {
             if let fact = sender as? Fact {
                 if let argumentVC = segue.destination as? FactParentContainerViewController {
                     argumentVC.fact = fact
+                    argumentVC.delegate = self
                     
                     self.logUser(fact: fact)
                 }
@@ -278,7 +392,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             if let fact = sender as? Fact {
                 if let nextVC = segue.destination as? PostsOfFactTableViewController {
                     nextVC.fact = fact
-                    
+                    nextVC.delegate = self
                     self.logUser(fact: fact)
                 }
             }
@@ -379,22 +493,10 @@ extension FactCollectionViewController: TopOfCollectionViewDelegate {
     
     func sortFactsTapped(option: FactCollectionDisplayOption) {
         
-        print("Option: ", option)
         self.displayOption = option
         collectionView.reloadData()
     }
-//        switch self.displayOption {
-//        case .all:
-//            self.displayOption = .justTopics
-//            collectionView.reloadData()
-//        case .justTopics:
-//            self.displayOption = .justFacts
-//            collectionView.reloadData()
-//        case .justFacts:
-//            self.displayOption = .all
-//            collectionView.reloadData()
-//        }
-    }
+}
     
 
 
@@ -405,53 +507,9 @@ extension FactCollectionViewController: UISearchResultsUpdating {
   }
 }
 
-class FactCell:UICollectionViewCell {
-    @IBOutlet weak var factCellLabel: UILabel!
-    @IBOutlet weak var factCellImageView: UIImageView!
-    @IBOutlet weak var gradientView: UIView!
-    
-    override func awakeFromNib() {
-        factCellImageView.contentMode = .scaleAspectFill
-        
-        let gradient = CAGradientLayer()
-        gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
-        gradient.endPoint = CGPoint(x: 0.5, y: 0.6)
-        let whiteColor = UIColor.white
-        gradient.colors = [whiteColor.withAlphaComponent(0.0).cgColor, whiteColor.withAlphaComponent(0.5).cgColor, whiteColor.withAlphaComponent(0.7).cgColor]
-        gradient.locations = [0.0, 0.7, 1]
-        gradient.frame = gradientView.bounds
-        
-        gradientView.layer.mask = gradient
-        
-        layer.cornerRadius = 4
-        layer.masksToBounds = true
-    }
-    
-    override func prepareForReuse() {
-        factCellImageView.image = nil
-    }
-    
-    var fact: Fact? {
-        didSet {
-            if let fact = fact {
-                factCellLabel.text = fact.title
-                
-                if let url = URL(string: fact.imageURL) {
-                    factCellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "FactStamp"), options: [], completed: nil)
-                } else {
-                    factCellImageView.image = UIImage(named: "FactStamp")
-                }
-            }
-        }
-    }
-}
 
 class AddTopicCell: UICollectionViewCell {
     
-}
-
-protocol TopOfCollectionViewDelegate {
-    func sortFactsTapped(option: FactCollectionDisplayOption)
 }
 
 

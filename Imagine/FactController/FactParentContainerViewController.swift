@@ -10,6 +10,10 @@ import UIKit
 import EasyTipView
 import Firebase
 
+protocol RecentTopicDelegate {
+    func topicSelected(fact: Fact)
+}
+
 class FactParentContainerViewController: UIViewController {
     
     @IBOutlet weak var titleLabel: UILabel!
@@ -22,17 +26,32 @@ class FactParentContainerViewController: UIViewController {
     @IBOutlet weak var infoButton: UIButton!
     @IBOutlet weak var factImageView: UIImageView!
     @IBOutlet weak var descriptionLabel: UILabel!
+    @IBOutlet weak var followTopicButton: DesignableButton!
     
     var fact:Fact?
     var proArgumentList = [Argument]()
     var contraArgumentList = [Argument]()
     var needNavigationController = false
+    var delegate: RecentTopicDelegate?
+    let db = Firestore.firestore()
     
     //MARK:-
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let fact = fact {
+            if fact.beingFollowed {
+                followTopicButton.setTitle("Unfollow", for: .normal)
+            }
+            delegate?.topicSelected(fact: fact)
+        }
 
+        followTopicButton.cornerRadius = 6
+        followTopicButton.layer.borderColor = Constants.imagineColor.cgColor
+        followTopicButton.layer.borderWidth = 0.5
+        
         getArguments()
         setPostButton()
         
@@ -72,7 +91,7 @@ class FactParentContainerViewController: UIViewController {
         button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
         button.addTarget(self, action: #selector(toPostsTapped), for: .touchUpInside)
         button.layer.borderColor = Constants.imagineColor.cgColor
-        button.layer.borderWidth = 1
+        button.layer.borderWidth = 0.5
         button.cornerRadius = 4
         button.clipsToBounds = true
         
@@ -161,6 +180,36 @@ class FactParentContainerViewController: UIViewController {
         }
     }
     
+    func followTopic(fact: Fact) {
+        if let user = Auth.auth().currentUser {
+            let topicRef = db.collection("Users").document(user.uid).collection("topics").document(fact.documentID)
+            
+            topicRef.setData(["createDate": Timestamp(date: Date())]) { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    print("Succesfully subscribed to topic")
+                    fact.beingFollowed = true
+                }
+            }
+        }
+    }
+    
+    func unfollowTopic(fact: Fact) {
+        if let user = Auth.auth().currentUser {
+            let topicRef = db.collection("Users").document(user.uid).collection("topics").document(fact.documentID)
+            
+            topicRef.delete { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    fact.beingFollowed = false
+                    print("Successfully unfollowed")
+                }
+            }
+        }
+    }
+    
     //MARK:-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? ProFactTableViewController {
@@ -186,6 +235,19 @@ class FactParentContainerViewController: UIViewController {
     
     @IBAction func infoButtonTapped(_ sender: Any) {
         EasyTipView.show(forView: self.view, text: Constants.texts.argumentOverviewText)
+    }
+    
+    
+    @IBAction func followTopicButtonTapped(_ sender: Any) {
+        if let fact = fact {
+            if fact.beingFollowed {
+                self.unfollowTopic(fact: fact)
+                self.followTopicButton.setTitle("Follow", for: .normal)
+            } else {
+                self.followTopic(fact: fact)
+                self.followTopicButton.setTitle("Unfollow", for: .normal)
+            }
+        }
     }
     
 }
