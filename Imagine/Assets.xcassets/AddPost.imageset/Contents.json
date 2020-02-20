@@ -2,7 +2,7 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "AddPost.pdf",
+      "filename" : "AddPost.png",
       "scale" : "1x"
     },
     {
@@ -11,15 +11,11 @@
     },
     {
       "idiom" : "universal",
-      "filename" : "AddPost69.pdf",
       "scale" : "3x"
     }
   ],
   "info" : {
     "version" : 1,
     "author" : "xcode"
-  },
-  "properties" : {
-    "template-rendering-intent" : "template"
   }
 }

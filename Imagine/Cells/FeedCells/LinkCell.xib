@@ -252,12 +252,18 @@
                             <action selector="linkedFactTapped:" destination="1g0-Dv-YOj" eventType="touchUpInside" id="xjx-Mc-Y5O"/>
                         </connections>
                     </button>
-                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="GKq-uh-bXY">
+                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="GKq-uh-bXY" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
                         <rect key="frame" x="304" y="55.5" width="16" height="16"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="16" id="o6K-7C-1jP"/>
                             <constraint firstAttribute="width" constant="16" id="vif-Ke-p0U"/>
                         </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="8"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
                     </imageView>
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -308,6 +314,7 @@
                 <outlet property="commentCountLabel" destination="eAY-va-4Pp" id="ZGx-Kz-4kb"/>
                 <outlet property="createDateLabel" destination="KBh-GU-Tym" id="Yp0-Ua-LlV"/>
                 <outlet property="factImageView" destination="2fD-Zw-Cn5" id="t0M-ga-4Ro"/>
+                <outlet property="followTopicImageView" destination="GKq-uh-bXY" id="D6S-rw-9Hv"/>
                 <outlet property="haButton" destination="59n-Re-dvy" id="Z89-At-JwU"/>
                 <outlet property="linkThumbNailImageView" destination="Ije-Bx-iN1" id="S3d-BZ-HoQ"/>
                 <outlet property="niceButton" destination="R6i-6t-q5p" id="P5a-EU-ZzP"/>

@@ -53,13 +53,14 @@
                         <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="contactAdd" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oGm-Xn-SGZ" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                    <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oGm-Xn-SGZ" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                         <rect key="frame" x="172" y="107.5" width="20" height="20"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="A2C-Ib-D9Q"/>
                             <constraint firstAttribute="width" constant="20" id="khZ-W3-o4f"/>
                         </constraints>
                         <color key="tintColor" red="0.31537210939999999" green="0.46283984179999998" blue="0.65801352260000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <state key="normal" image="AddPost"/>
                         <connections>
                             <action selector="followButtonTapped:" destination="MZ7-QN-O6v" eventType="touchUpInside" id="AIo-F9-fkm"/>
                         </connections>
@@ -96,6 +97,7 @@
         </collectionViewCell>
     </objects>
     <resources>
+        <image name="AddPost" width="85" height="85"/>
         <image name="FactStamp" width="2854" height="2442"/>
     </resources>
 </document>

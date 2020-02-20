@@ -239,7 +239,7 @@ class PostCommentChatViewController: MSGMessengerViewController {
             }
         }
         
-        let sentDate:Date = sentAtTimestamp.dateValue()
+        let sentDate = sentAtTimestamp.dateValue()
         
         postHelper.getChatUser(uid: userUID, sender: sender, user: { (user) in
             

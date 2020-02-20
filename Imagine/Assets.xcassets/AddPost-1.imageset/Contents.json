@@ -2,7 +2,7 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "NewImagineSign.png",
+      "filename" : "AddPost.pdf",
       "scale" : "1x"
     },
     {
@@ -11,11 +11,15 @@
     },
     {
       "idiom" : "universal",
+      "filename" : "AddPost69-1.pdf",
       "scale" : "3x"
     }
   ],
   "info" : {
     "version" : 1,
     "author" : "xcode"
+  },
+  "properties" : {
+    "template-rendering-intent" : "template"
   }
 }

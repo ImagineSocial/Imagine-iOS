@@ -523,6 +523,7 @@ class Comment {
     var author = ""
     var postID = ""
     var upvotes: Votes?
+    var user: User?
 }
 
 

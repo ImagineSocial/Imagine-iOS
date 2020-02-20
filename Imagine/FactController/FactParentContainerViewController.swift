@@ -34,6 +34,7 @@ class FactParentContainerViewController: UIViewController {
     var needNavigationController = false
     var delegate: RecentTopicDelegate?
     let db = Firestore.firestore()
+    let radius:CGFloat = 6
     
     //MARK:-
     
@@ -48,8 +49,12 @@ class FactParentContainerViewController: UIViewController {
             delegate?.topicSelected(fact: fact)
         }
 
-        followTopicButton.cornerRadius = 6
-        followTopicButton.layer.borderColor = Constants.imagineColor.cgColor
+        followTopicButton.cornerRadius = radius
+        if #available(iOS 13.0, *) {
+            followTopicButton.layer.borderColor = UIColor.separator.cgColor
+        } else {
+            followTopicButton.layer.borderColor = UIColor.darkGray.cgColor
+        }
         followTopicButton.layer.borderWidth = 0.5
         
         getArguments()
@@ -63,7 +68,7 @@ class FactParentContainerViewController: UIViewController {
 //            self.navigationController?.view.backgroundColor = UIColor(red: 242.0, green: 242.0, blue: 247.0, alpha: 1.0)
 //        }
         
-        factImageView.layer.cornerRadius = 4
+        factImageView.layer.cornerRadius = radius
         
         if needNavigationController {
             setDismissButton()
@@ -89,13 +94,20 @@ class FactParentContainerViewController: UIViewController {
         button.setTitleColor(Constants.imagineColor, for: .normal)
         button.setTitle("Beiträge", for: .normal)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
+        if #available(iOS 13.0, *) {
+            button.backgroundColor = .secondarySystemBackground
+            button.layer.borderColor = UIColor.separator.cgColor
+        } else {
+            button.layer.borderColor = UIColor.darkGray.cgColor
+            button.backgroundColor = .lightGray
+        }
         button.addTarget(self, action: #selector(toPostsTapped), for: .touchUpInside)
-        button.layer.borderColor = Constants.imagineColor.cgColor
+//        button.layer.borderColor = Constants.imagineColor.cgColor
         button.layer.borderWidth = 0.5
-        button.cornerRadius = 4
+        button.cornerRadius = radius
         button.clipsToBounds = true
         
-        button.heightAnchor.constraint(equalToConstant: 23).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 25).isActive = true
         button.widthAnchor.constraint(equalToConstant: 75).isActive = true
         
         let barButton = UIBarButtonItem(customView: button)

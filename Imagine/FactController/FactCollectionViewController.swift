@@ -64,7 +64,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         collectionView.register(UINib(nibName: "RecentTopicsCollectionCell", bundle: nil), forCellWithReuseIdentifier: recentTopicsCellIdentifier)
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.isTranslucent = false
+//        self.navigationController?.navigationBar.isTranslucent = false
         if #available(iOS 13.0, *) {
             self.navigationController?.navigationBar.backgroundColor = .systemBackground
         } else {
@@ -75,6 +75,8 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        //FML
+        self.navigationController?.navigationBar.isTranslucent = true
         
         if reloadRecentTopics {
             if let cell = collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? RecentTopicsCollectionCell {
@@ -83,6 +85,10 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             }
             //else : The  scrollViewDidEndDecelerating Method will catch it if it is visible again
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        self.navigationController?.navigationBar.isTranslucent = false
     }
     
     func setDismissButton() {

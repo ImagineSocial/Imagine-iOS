@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSans-Medium.ttf">
+            <string>IBMPlexSans-Medium</string>
+        </array>
+        <array key="IBMPlexSans-Regular.ttf">
+            <string>IBMPlexSans</string>
+        </array>
+        <array key="IBMPlexSans-Thin.ttf">
+            <string>IBMPlexSans-Thin</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="CommentCell" rowHeight="102" id="aj4-eF-TBR" customClass="CommentCell" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="424" height="102"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="aj4-eF-TBR" id="0Vg-xH-S4S">
+                <rect key="frame" x="0.0" y="0.0" width="424" height="102"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FTS-vc-yco" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="64" y="10" width="340" height="72"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="253" text="Text" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q22-uC-mgD">
+                                <rect key="frame" x="10" y="27" width="320" height="40"/>
+                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VMh-oN-jNZ">
+                                <rect key="frame" x="10" y="5" width="35.5" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="17" id="1JE-rh-RaF"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="13"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Vor 3 h" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ym3-1M-box">
+                                <rect key="frame" x="55.5" y="5" width="30.5" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="17" id="nYC-vL-c3S"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="IBMPlexSans-Thin" family="IBM Plex Sans" pointSize="10"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="Ym3-1M-box" firstAttribute="centerY" secondItem="VMh-oN-jNZ" secondAttribute="centerY" id="0LT-SF-gzS"/>
+                            <constraint firstItem="Ym3-1M-box" firstAttribute="leading" secondItem="VMh-oN-jNZ" secondAttribute="trailing" constant="10" id="0h0-T3-VfI"/>
+                            <constraint firstAttribute="bottom" secondItem="Q22-uC-mgD" secondAttribute="bottom" constant="5" id="7zv-KA-xx2"/>
+                            <constraint firstItem="Q22-uC-mgD" firstAttribute="top" secondItem="VMh-oN-jNZ" secondAttribute="bottom" constant="5" id="X4Q-Py-uhF"/>
+                            <constraint firstItem="Q22-uC-mgD" firstAttribute="leading" secondItem="FTS-vc-yco" secondAttribute="leading" constant="10" id="ZDV-w5-nIF"/>
+                            <constraint firstItem="VMh-oN-jNZ" firstAttribute="top" secondItem="FTS-vc-yco" secondAttribute="top" constant="5" id="ZXa-On-GMM"/>
+                            <constraint firstItem="VMh-oN-jNZ" firstAttribute="leading" secondItem="FTS-vc-yco" secondAttribute="leading" constant="10" id="pY1-fn-ZMe"/>
+                            <constraint firstAttribute="trailing" secondItem="Q22-uC-mgD" secondAttribute="trailing" constant="10" id="t3D-cT-rn9"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="8"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="default-user" translatesAutoresizingMaskIntoConstraints="NO" id="xtk-iA-AdD" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="15" y="10" width="34" height="34"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="34" id="Uhd-LU-6qX"/>
+                            <constraint firstAttribute="height" constant="34" id="fZM-xV-CtG"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="17"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </imageView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="FTS-vc-yco" firstAttribute="top" secondItem="xtk-iA-AdD" secondAttribute="top" id="Czg-8y-qC8"/>
+                    <constraint firstItem="xtk-iA-AdD" firstAttribute="leading" secondItem="0Vg-xH-S4S" secondAttribute="leading" constant="15" id="DsM-Le-12k"/>
+                    <constraint firstAttribute="bottom" secondItem="FTS-vc-yco" secondAttribute="bottom" constant="20" id="Eb5-8I-ypH"/>
+                    <constraint firstItem="xtk-iA-AdD" firstAttribute="top" secondItem="0Vg-xH-S4S" secondAttribute="top" constant="10" id="Wx8-UX-mAf"/>
+                    <constraint firstAttribute="trailing" secondItem="FTS-vc-yco" secondAttribute="trailing" constant="20" id="iXu-by-2Py"/>
+                    <constraint firstItem="FTS-vc-yco" firstAttribute="leading" secondItem="xtk-iA-AdD" secondAttribute="trailing" constant="15" id="sa5-IS-oYI"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="bodyLabel" destination="Q22-uC-mgD" id="UQg-qs-E2W"/>
+                <outlet property="createDateLabel" destination="Ym3-1M-box" id="8c1-qr-un2"/>
+                <outlet property="nameLabel" destination="VMh-oN-jNZ" id="6Qw-Py-xGB"/>
+                <outlet property="profilePictureImageView" destination="xtk-iA-AdD" id="P7D-1l-DGx"/>
+            </connections>
+            <point key="canvasLocation" x="18.840579710144929" y="18.080357142857142"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="default-user" width="415" height="415"/>
+    </resources>
+</document>

@@ -12,6 +12,8 @@ import SwiftLinkPreview
 import Firebase
 import YoutubePlayer_in_WKWebView
 import AVKit
+import FirebaseAuth
+import FirebaseFirestore
 
 extension UIScrollView {
     
@@ -43,12 +45,16 @@ extension UIScrollView {
 class PostViewController: UIViewController, UIScrollViewDelegate {
     
     var post = Post()
+    var comments = [Comment]()
+    
     let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: DisabledCache.instance)
     
     let db = Firestore.firestore()
     let handyHelper = HandyHelper()
     
     var ownPost = false
+    var currentUser: User?
+    var allowedToComment = true
     
     let scrollView = UIScrollView()
     let contentView = UIView()
@@ -56,7 +62,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     var centerX: NSLayoutConstraint?
     var distanceConstraint: NSLayoutConstraint?
     
-    fileprivate var commentButtonTrailing: NSLayoutConstraint?
     fileprivate var backUpViewHeight : NSLayoutConstraint?
     fileprivate var backUpButtonHeight : NSLayoutConstraint?
     fileprivate var imageHeightConstraint : NSLayoutConstraint?
@@ -65,6 +70,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     var imageURLs = [String]()
     let layout:UICollectionViewFlowLayout = UICollectionViewFlowLayout.init()
     let identifier = "MultiPictureCell"
+    let commentIdentifier = "CommentCell"
+    var floatingCommentView: CommentAnswerView?
+    
     
     //GIFS
     var avPlayer: AVPlayer?
@@ -79,7 +87,14 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for:.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        //"Doesnt work")
+        
         self.view.activityStartAnimating()
+        
+        getcomments()
         
         imageCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
         
@@ -89,6 +104,18 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
         imageCollectionView.setCollectionViewLayout(layout, animated: true)
         
+        commentTableView.delegate = self
+        commentTableView.dataSource = self
+        
+        commentTableView.register(UINib(nibName: "CommentCell", bundle: nil), forCellReuseIdentifier: commentIdentifier)
+//        commentTableView.register(CommentTableViewFooter.self, forHeaderFooterViewReuseIdentifier: commentFooterIdentifier)
+        commentTableView.separatorStyle = .none
+        if let view = floatingCommentView {
+            view.delegate = self
+            print("Delegate set NR 1")
+        }
+        
+        
         if #available(iOS 13.0, *) {
             savePostButton.tintColor = .label
         } else {
@@ -96,32 +123,30 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
         scrollView.delegate = self
         
-        
-        
-        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(toCommentsTapped))
-        swipeGesture.direction = .left
-        commentView.addGestureRecognizer(swipeGesture)
-        self.view.addGestureRecognizer(swipeGesture)
-        
         self.view.addSubview(buttonLabel)
         setupViewController()
         
+        handyHelper.deleteNotifications(type: .comment, id: post.documentID)
         handyHelper.deleteNotifications(type: .upvote, id: post.documentID)
         handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
             if alreadySaved {
                 self.savePostButton.tintColor = Constants.green
             }
         }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        commentButton.alpha = 1
-        
-        // If you come back from PostCommentChatViewController
-        if let trailingConstant = self.commentButtonTrailing {
-            trailingConstant.constant = -15
+    override func viewWillDisappear(_ animated: Bool) {
+        if let view = floatingCommentView {
+            view.removeFromSuperview()
         }
+        
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     func setupViewController() {
@@ -130,13 +155,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             setupScrollView()
             setupViews()// Die Anzeige des "nach oben" button + view ist verkehrt wenn man halb zurück wischt und los lässt, weil das hier dann wieder gecalled wird
             showPost()
-            instantiateContainerView()
+//            instantiateContainerView()    // Was for the event object
         default:
             if post.user.displayName == "" {
                 print("1")
                 var toComments = false
                 if post.toComments {    // Comes from the SideMenu NotifactionCenter
-                    self.toCommentsTapped()
+                    self.scrollToBottom()
                     toComments = true
                 }
                 
@@ -161,7 +186,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         setupViews()
         showPost()
         showRepost()
-        instantiateContainerView()
+        checkIfTheCurrentUserIsBlocked()
+        setCurrentUser()
+//        instantiateContainerView()// Was for the event object
     }
     
     
@@ -207,18 +234,20 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
     }
     
-    func instantiateContainerView() {
-        
-        if post.type == .event {
-            let vc = UserTableView(post: self.post)
-            vc.delegate = self
-            
-            self.addChild(vc)
-            vc.view.frame = CGRect(x: 0, y: 0, width: self.tableViewContainer.frame.size.width, height: self.tableViewContainer.frame.size.height)
-            self.tableViewContainer.addSubview(vc.view)
-            vc.didMove(toParent: self)
-        }
-    }
+    // Was for the event object
+    
+//    func instantiateContainerView() {
+//
+//        if post.type == .event {
+//            let vc = UserTableView(post: self.post)
+//            vc.delegate = self
+//
+//            self.addChild(vc)
+//            vc.view.frame = CGRect(x: 0, y: 0, width: self.tableViewContainer.frame.size.width, height: self.tableViewContainer.frame.size.height)
+//            self.tableViewContainer.addSubview(vc.view)
+//            vc.didMove(toParent: self)
+//        }
+//    }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -430,8 +459,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         contentView.addSubview(profilePictureImageView)
         profilePictureImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
         profilePictureImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
-        profilePictureImageView.widthAnchor.constraint(equalToConstant: 46).isActive = true
-        profilePictureImageView.heightAnchor.constraint(equalToConstant: 46).isActive = true
+        profilePictureImageView.widthAnchor.constraint(equalToConstant: 42).isActive = true
+        profilePictureImageView.heightAnchor.constraint(equalToConstant: 42).isActive = true
         profilePictureImageView.layoutIfNeeded() // so it gets round
         
         contentView.addSubview(nameLabel)
@@ -447,16 +476,15 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         contentView.addSubview(createDateLabel)
         createDateLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor).isActive = true
-        createDateLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 3).isActive = true
+        createDateLabel.bottomAnchor.constraint(equalTo: profilePictureImageView.bottomAnchor, constant: -2).isActive = true
         
-        let titleLabelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
+//        let titleLabelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)-10
         
         contentView.addSubview(titleLabel)
         titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
         titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
-        titleLabel.topAnchor.constraint(equalTo: profilePictureImageView.bottomAnchor, constant: 1).isActive = true
-        titleLabel.heightAnchor.constraint(equalToConstant: titleLabelHeight).isActive = true 
-        print("titleHeight: ", titleLabelHeight, post.title)
+        titleLabel.topAnchor.constraint(equalTo: profilePictureImageView.bottomAnchor, constant: 15).isActive = true
+//        titleLabel.heightAnchor.constraint(equalToConstant: titleLabelHeight).isActive = true
         
         contentView.addSubview(savePostButton)
         savePostButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
@@ -504,16 +532,15 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         stackView.heightAnchor.constraint(equalToConstant: 25).isActive = true
         
         descriptionView.addSubview(descriptionLabel)
-        descriptionLabel.leadingAnchor.constraint(equalTo: descriptionView.leadingAnchor, constant: 10).isActive = true
-        descriptionLabel.trailingAnchor.constraint(equalTo: descriptionView.trailingAnchor, constant: -10).isActive = true
-        descriptionLabel.topAnchor.constraint(equalTo: descriptionView.topAnchor, constant: 10).isActive = true
-        descriptionLabel.bottomAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: -10).isActive = true
+        descriptionLabel.leadingAnchor.constraint(equalTo: descriptionView.leadingAnchor, constant: 0).isActive = true
+        descriptionLabel.trailingAnchor.constraint(equalTo: descriptionView.trailingAnchor, constant: 0).isActive = true
+        descriptionLabel.topAnchor.constraint(equalTo: descriptionView.topAnchor, constant: 0).isActive = true
+        descriptionLabel.bottomAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 0).isActive = true
         
         contentView.addSubview(descriptionView)
-        descriptionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        descriptionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        descriptionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
+        descriptionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
         descriptionView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 10).isActive = true
-//        descriptionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         
         let voteButtonWidth = ((self.view.frame.width-(6*15))/5)    // To match the width of 2 Buttons, which vary with the screensize
         let commentButtonWidth = voteButtonWidth*2+15
@@ -530,7 +557,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         linkedFactLabel.leadingAnchor.constraint(equalTo: linkedFactImageView.trailingAnchor, constant: 10).isActive = true
         linkedFactLabel.trailingAnchor.constraint(equalTo: linkedFactView.trailingAnchor, constant: -10).isActive = true
         linkedFactLabel.centerYAnchor.constraint(equalTo: linkedFactImageView.centerYAnchor).isActive = true
-//        linkedFactLabel.centerXAnchor.constraint(equalTo: linkedFactView.centerXAnchor, constant: buttonHeight).isActive = true
         
         linkedFactView.addSubview(linkedFactButton)
         linkedFactButton.leadingAnchor.constraint(equalTo: linkedFactView.leadingAnchor).isActive = true
@@ -539,36 +565,50 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         linkedFactButton.widthAnchor.constraint(equalTo: linkedFactView.widthAnchor).isActive = true
         
         commentView.addSubview(linkedFactView)
-        linkedFactView.leadingAnchor.constraint(equalTo: commentView.leadingAnchor, constant: 15).isActive = true
-        linkedFactView.topAnchor.constraint(equalTo: commentView.topAnchor, constant: 10).isActive = true
+        linkedFactView.trailingAnchor.constraint(equalTo: commentView.trailingAnchor, constant: -15).isActive = true
+        linkedFactView.topAnchor.constraint(equalTo: commentView.topAnchor, constant: 5).isActive = true
         linkedFactView.widthAnchor.constraint(equalToConstant: linkedFactViewWidth).isActive = true
         linkedFactView.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
         
+        commentView.addSubview(commentLabel)
+        commentLabel.bottomAnchor.constraint(equalTo: commentView.bottomAnchor).isActive = true
+        commentLabel.leadingAnchor.constraint(equalTo: commentView.leadingAnchor, constant: 15).isActive = true
+        commentLabel.widthAnchor.constraint(equalToConstant: commentButtonWidth).isActive = true
         
-        commentView.addSubview(commentButton)
-        commentButton.topAnchor.constraint(equalTo: commentView.topAnchor, constant: 10).isActive = true
-        commentButtonTrailing = commentButton.trailingAnchor.constraint(equalTo: commentView.trailingAnchor, constant: -15)
-            commentButtonTrailing!.isActive = true
-        commentButton.widthAnchor.constraint(equalToConstant: commentButtonWidth).isActive = true
-        commentButton.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
+        commentView.addSubview(separatorView)
+        separatorView.topAnchor.constraint(equalTo: commentLabel.bottomAnchor, constant: 1).isActive = true
+        separatorView.leadingAnchor.constraint(equalTo: commentView.leadingAnchor, constant: 15).isActive = true
+        separatorView.trailingAnchor.constraint(equalTo: commentView.trailingAnchor, constant: -15).isActive = true
+        separatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
         
         contentView.addSubview(commentView)
         commentView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         commentView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
         commentView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 10).isActive = true
-        let newHeight = buttonHeight+20
+        let newHeight = buttonHeight+30
         commentView.heightAnchor.constraint(equalToConstant: newHeight).isActive = true
-        commentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true
         
+        contentView.addSubview(commentTableView)
+        commentTableView.topAnchor.constraint(equalTo: commentView.bottomAnchor, constant: 10).isActive = true
+        commentTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        commentTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        
+        var height = 60
+        if post.commentCount >= 1 {
+            height = post.commentCount*100
+        }
+        commentTableView.heightAnchor.constraint(equalToConstant: CGFloat(height)).isActive = true
+        commentTableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20).isActive = true
+        
+        createFloatingCommentView()
     }
-    
     
     func setUpPictureUI(multiPicture: Bool) {
         
         contentView.addSubview(imageCollectionView)
         imageCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         imageCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        imageCollectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
+        imageCollectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
         
         imageCollectionView.layoutIfNeeded() //?
         
@@ -583,45 +623,26 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             addVoteAndDescriptionUI(topAnchorEqualTo: imageCollectionView.bottomAnchor)
         }
         
-//        contentView.addSubview(postImageView)
-//        postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-//        postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-//        postImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
-//
-//        postImageView.layoutIfNeeded() //?
-//
-//        addVoteAndDescriptionUI(topAnchorEqualTo: postImageView.bottomAnchor)
     }
     
     func setUpGIFUI() {
         contentView.addSubview(imageCollectionView)
         imageCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         imageCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        imageCollectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
+        imageCollectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
         
         imageCollectionView.layoutIfNeeded() //?
         
         setupGIFPlayer()
         
         addVoteAndDescriptionUI(topAnchorEqualTo: imageCollectionView.bottomAnchor)
-        
-//        contentView.addSubview(postImageView)
-//        postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-//        postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-//        postImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
-//
-//        postImageView.layoutIfNeeded() //?
-//
-//        setupGIFPlayer()
-//
-//        addVoteAndDescriptionUI(topAnchorEqualTo: postImageView.bottomAnchor)
     }
     
     func setUpLinkUI() {
         contentView.addSubview(imageCollectionView)
         imageCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         imageCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        imageCollectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
+        imageCollectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
         imageCollectionView.heightAnchor.constraint(equalToConstant: 180).isActive = true
         imageCollectionView.layoutIfNeeded() //?
         
@@ -638,34 +659,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         linkButton.heightAnchor.constraint(equalTo: imageCollectionView.heightAnchor).isActive = true
         
         addVoteAndDescriptionUI(topAnchorEqualTo: imageCollectionView.bottomAnchor)
-        
-//        contentView.addSubview(postImageView)
-//        postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-//        postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-//        postImageView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
-//        postImageView.heightAnchor.constraint(equalToConstant: 180).isActive = true
-//        postImageView.layoutIfNeeded() //?
-//
-//        contentView.addSubview(linkLabel)
-//        linkLabel.leadingAnchor.constraint(equalTo: postImageView.leadingAnchor).isActive = true
-//        linkLabel.trailingAnchor.constraint(equalTo: postImageView.trailingAnchor).isActive = true
-//        linkLabel.bottomAnchor.constraint(equalTo: postImageView.bottomAnchor).isActive = true
-//        linkLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
-//
-//        contentView.addSubview(linkButton)
-//        linkButton.leadingAnchor.constraint(equalTo: postImageView.leadingAnchor).isActive = true
-//        linkButton.bottomAnchor.constraint(equalTo: postImageView.bottomAnchor).isActive = true
-//        linkButton.widthAnchor.constraint(equalTo: postImageView.widthAnchor).isActive = true
-//        linkButton.heightAnchor.constraint(equalTo: postImageView.heightAnchor).isActive = true
-//
-//        addVoteAndDescriptionUI(topAnchorEqualTo: postImageView.bottomAnchor)
     }
     
     func setUpYouTubeVideoUI() {
         contentView.addSubview(youTubeView)
         youTubeView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         youTubeView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        youTubeView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
+        youTubeView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
         youTubeView.heightAnchor.constraint(equalToConstant: 240).isActive = true
         youTubeView.layoutIfNeeded() //?
         
@@ -676,7 +676,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         contentView.addSubview(repostView)
         repostView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
         repostView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
-        repostView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 1).isActive = true
+        repostView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
         repostView.layoutIfNeeded()
         
         repostView.addSubview(repostProfilePictureImageView)
@@ -813,6 +813,15 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     // MARK: - Setup UI
     
+    let commentTableView: UITableView = {
+       let tview = UITableView()
+        tview.translatesAutoresizingMaskIntoConstraints = false
+        tview.estimatedRowHeight = 200
+        tview.rowHeight = UITableView.automaticDimension
+        
+        return tview
+    }()
+    
     let repostView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -859,6 +868,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans-Light", size: 10)
+        if #available(iOS 13.0, *) {
+            label.textColor = .secondaryLabel
+        } else {
+            label.textColor = .lightGray
+        }
         
         return label
     }()
@@ -866,7 +880,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     let titleLabel : UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 18)
+        label.font = UIFont(name: "IBMPlexSans", size: 16)
         label.numberOfLines = 0
         label.textAlignment = .left
         label.minimumScaleFactor = 0.8
@@ -996,7 +1010,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     let descriptionLabel : UITextView = {   // Changed to TextView to make links clickable
         let label = UITextView()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans-Regular", size: 20)
+        label.font = UIFont(name: "IBMPlexSans-Regular", size: 22)
         label.textAlignment = NSTextAlignment.left
         label.isScrollEnabled = false
         label.isEditable = false
@@ -1009,6 +1023,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     let descriptionView : UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 8
+        
         if #available(iOS 13.0, *) {
             view.backgroundColor = .secondarySystemBackground
         } else {
@@ -1059,18 +1075,27 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         return view
     }()
     
-    let commentButton : DesignableButton = {
-        let commentButton = DesignableButton()
-        commentButton.translatesAutoresizingMaskIntoConstraints = false
-        commentButton.addTarget(self, action: #selector(toCommentsTapped), for: .touchUpInside)
-        commentButton.setTitle("Kommentare", for: .normal)
-        commentButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 15)
-        commentButton.layer.cornerRadius = 4
-        commentButton.backgroundColor = Constants.imagineColor
-        
-        return commentButton
+    let commentLabel: UILabel = {
+       let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans", size: 15)
+        label.textAlignment = .left
+        label.text = "Kommentare:"
+
+        return label
     }()
     
+    let separatorView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .separator
+        } else {
+            view.backgroundColor = .lightGray
+        }
+        
+        return view
+    }()
     
     let commentView : UIView = {
         let view = UIView()
@@ -1094,7 +1119,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
 
         thanksButton.imageView?.contentMode = .scaleAspectFit
-        thanksButton.layer.borderWidth = 1.5
+        thanksButton.layer.borderWidth = 0.5
         thanksButton.layer.cornerRadius = 4
         thanksButton.clipsToBounds = true
         thanksButton.addTarget(self, action: #selector(thanksTapped), for: .touchUpInside)
@@ -1118,7 +1143,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         wowButton.setImage(UIImage(named: "wowButton"), for: .normal)
         
         wowButton.imageView?.contentMode = .scaleAspectFit
-        wowButton.layer.borderWidth = 1.5
+        wowButton.layer.borderWidth = 0.5
         wowButton.layer.cornerRadius = 4
         wowButton.clipsToBounds = true
         wowButton.addTarget(self, action: #selector(wowTapped), for: .touchUpInside)
@@ -1142,7 +1167,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         haButton.setImage(UIImage(named: "haButton"), for: .normal)
         
         haButton.imageView?.contentMode = .scaleAspectFit
-        haButton.layer.borderWidth = 1.5
+        haButton.layer.borderWidth = 0.5
         haButton.layer.cornerRadius = 4
         haButton.clipsToBounds = true
         haButton.addTarget(self, action: #selector(haTapped), for: .touchUpInside)
@@ -1167,7 +1192,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         niceButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 14)
         
         niceButton.imageView?.contentMode = .scaleAspectFit
-        niceButton.layer.borderWidth = 1.5
+        niceButton.layer.borderWidth = 0.5
         niceButton.layer.cornerRadius = 4
         niceButton.clipsToBounds = true
         niceButton.addTarget(self, action: #selector(niceTapped), for: .touchUpInside)
@@ -1464,26 +1489,22 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 self.niceButton.setTitle(String(post.votes.nice), for: .normal)
                 self.niceButton.layer.borderWidth = 0
                 
+                thanksButton.setTitleColor(.white, for: .normal)
+                wowButton.setTitleColor(.white, for: .normal)
+                haButton.setTitleColor(.white, for: .normal)
+                niceButton.setTitleColor(.white, for: .normal)
+                
                 if #available(iOS 13.0, *) {
-                    thanksButton.backgroundColor = .label
-                    wowButton.backgroundColor = .label
-                    haButton.backgroundColor = .label
-                    niceButton.backgroundColor = .label
+                    thanksButton.backgroundColor = .tertiaryLabel
+                    wowButton.backgroundColor = .tertiaryLabel
+                    haButton.backgroundColor = .tertiaryLabel
+                    niceButton.backgroundColor = .tertiaryLabel
                     
-                    thanksButton.setTitleColor(.systemBackground, for: .normal)
-                    wowButton.setTitleColor(.systemBackground, for: .normal)
-                    haButton.setTitleColor(.systemBackground, for: .normal)
-                    niceButton.setTitleColor(.systemBackground, for: .normal)
                 } else {
                     thanksButton.backgroundColor = .black
                     wowButton.backgroundColor = .black
                     haButton.backgroundColor = .black
                     niceButton.backgroundColor = .black
-                    
-                    thanksButton.setTitleColor(.white, for: .normal)
-                    wowButton.setTitleColor(.white, for: .normal)
-                    haButton.setTitleColor(.white, for: .normal)
-                    niceButton.setTitleColor(.white, for: .normal)
                 }
             }
         }
@@ -1528,7 +1549,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                     setFact()
                 } else {
                     let baseCell = BaseFeedCell()
-                    baseCell.loadFact(post: self.post) { (fact) in
+                    baseCell.loadFact(post: self.post, beingFollowed: false) { (fact) in
                         self.post.fact = fact
                         self.setFact()
                     }
@@ -1545,7 +1566,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                     setFact()
                 } else {
                     let baseCell = BaseFeedCell()
-                    baseCell.loadFact(post: self.post) { (fact) in
+                    baseCell.loadFact(post: self.post, beingFollowed: false) { (fact) in
                         self.post.fact = fact
                         self.setFact()
                     }
@@ -1847,27 +1868,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    @objc func toCommentsTapped() {
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            let viewController = PostCommentChatViewController(post: self.post)
-            UIView.transition(with: self.navigationController!.view, duration: 0.5, options: .transitionFlipFromRight, animations: {
-                self.navigationController?.pushViewController(viewController, animated: true)
-            }, completion: nil)
-        }
-        
-        if let commentConstant = self.commentButtonTrailing {
-            commentConstant.constant = -250
-        }
-        
-        UIView.animate(withDuration: 0.5, animations: {
-            self.view.layoutIfNeeded()
-            self.commentButton.alpha = 0
-        }) { (_) in
-        }
-        
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "toFactSegue" {
@@ -1926,9 +1926,230 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
         
     }
+    
+    //MARK:- CommentAnswerView
+    
+    var keyboardheight:CGFloat = 0
+    
+    func createFloatingCommentView() {
+        let height = self.view.frame.height
+        floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: height-60, width: self.view.frame.width, height: 60))
+        floatingCommentView!.delegate = self
+        floatingCommentView!.post = self.post
+        if let window = UIApplication.shared.keyWindow {
+            window.addSubview(floatingCommentView!)
+        }
+    }
+    
+    @objc func keyboardWillHide() {
+        if let view = floatingCommentView {
+            view.frame.origin.y = view.frame.origin.y+(keyboardheight*2)
+        }
+    }
+    
+    @objc func keyboardWillChange(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            if let view = floatingCommentView {
+                
+                self.keyboardheight = keyboardSize.height-10
+                view.frame.origin.y = view.frame.origin.y-(keyboardheight)
+            }
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        print("We got touches")
+        if let view = floatingCommentView {
+            view.answerTextField.resignFirstResponder()
+        }
+    }
+    
+    func setCurrentUser() {
+        if let user = Auth.auth().currentUser {
+            self.getUser(userUID: user.uid) { (currentUser) in
+                self.currentUser = currentUser
+            }
+        }
+    }
+    
+    func checkIfTheCurrentUserIsBlocked() {
+        if post.user.userUID != "" {
+            if let user = Auth.auth().currentUser {
+                db.collection("Users").document(post.user.userUID).getDocument { (document, err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        if let docData = document!.data() {
+                            if let blocked = docData["blocked"] as? [String] {
+                                for id in blocked {
+                                    if user.uid == id {
+                                        self.allowedToComment = false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func saveCommentInFirebase(bodyString: String) {
+        
+        if let user = Auth.auth().currentUser {
+            
+            let reference = db.collection("Comments").document(post.documentID).collection("threads")
+            
+            let data : [String: Any] = ["body": bodyString, "id": 0, "sentAt": Timestamp(date: Date()), "userID": user.uid]
+            
+            if let currentUser = currentUser {
+                if user.uid != post.originalPosterUID && post.originalPosterUID != "" {
+                    let notificationRef = db.collection("Users").document(post.originalPosterUID).collection("notifications").document()
+                    let notificationData: [String: Any] = ["type": "comment", "comment": bodyString, "name": currentUser.displayName, "postID": self.post.documentID]
+                    
+                    notificationRef.setData(notificationData) { (err) in
+                        if let error = err {
+                            print("We have an error: \(error.localizedDescription)")
+                        } else {
+                            print("Successfully set notification")
+                        }
+                    }
+                } else {
+                    print("No notification if you comment your own post")
+                }
+                
+                
+                reference.addDocument(data: data) { err in
+                    if let error = err {
+                        print("Error sending message: \(error.localizedDescription)")
+                        return
+                    } else {
+                        if let view = self.floatingCommentView {
+                            view.answerTextField.text = ""
+                        }
+                        let comment = Comment()
+                        comment.createTime = Date()
+                        comment.user = currentUser
+                        comment.text = bodyString
+                        
+                        self.addCommentToTableView(comment: comment)
+                    }
+                }
+            } else {
+                print("No currentUser")
+            }
+            
+        } else {
+            self.notLoggedInAlert()
+        }
+    }
+    
+    func scrollToBottom() {
+        // Scroll to the end of the view
+    }
 }
 
-//MARK: -PreviewCollectionView
+extension PostViewController: CommentViewDelegate {
+    func sendButtonTapped(text: String) {
+        print("Button tapped")
+        if allowedToComment {
+        saveCommentInFirebase(bodyString: text)
+        } else {
+            if let view = floatingCommentView {
+                view.answerTextField.text = ""
+            }
+        }
+    }
+    
+    func commentTypingBegins() {
+        //        let bottomOffset = CGPoint(x: 0, y: scrollView.contentSize.height - scrollView.bounds.size.height)
+        //        scrollView.setContentOffset(bottomOffset, animated: true)
+    }
+}
+
+//MARK:- CommentTableView
+extension PostViewController: UITableViewDataSource, UITableViewDelegate {
+    
+    func getUser(userUID: String, returnUser: @escaping (User) -> Void) {
+        let ref = db.collection("Users").document(userUID)
+        
+        ref.getDocument { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let document = snap {
+                    if let data = document.data() {
+                        
+                        let user = User()
+                        user.displayName = data["name"] as? String ?? ""
+                        user.imageURL = data["profilePictureURL"] as? String ?? ""
+                        
+                        returnUser(user)
+                    }
+                }
+            }
+        }
+    }
+    
+    func getcomments() {
+        let reference = db.collection("Comments").document(post.documentID).collection("threads").order(by: "sentAt", descending: false)
+        
+        reference.getDocuments { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    for document in snap.documents {
+                        
+                        let docData = document.data()
+                        print("Looking")
+                        guard let body = docData["body"] as? String,
+                            let sentAtTimestamp = docData["sentAt"] as? Timestamp,
+                            let userUID = docData["userID"] as? String
+                            else {
+                                continue    // Falls er das nicht zuordnen kann
+                        }
+                        
+                        self.getUser(userUID: userUID) { (user) in
+                            let comment = Comment()
+                            comment.createTime = sentAtTimestamp.dateValue()
+                            comment.user = user
+                            comment.text = body
+
+                            self.addCommentToTableView(comment: comment)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func addCommentToTableView(comment: Comment) {
+        self.comments.append(comment)
+        self.comments.sort(by: { $0.createTime.compare($1.createTime) == .orderedAscending })
+        self.commentTableView.reloadData()
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return comments.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let comment = comments[indexPath.row]
+        
+        if let cell = commentTableView.dequeueReusableCell(withIdentifier: commentIdentifier, for: indexPath) as? CommentCell {
+            
+            cell.comment = comment
+            return cell
+        }
+        
+        return UITableViewCell()
+    }
+    
+}
+
+//MARK: -multiPictureCollectionView
 extension PostViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     
@@ -1982,105 +2203,107 @@ extension PostViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
 }
 
-extension PostViewController: EventUserDelegate {
-    func goToUser(user: User) {
-        performSegue(withIdentifier: "toUserSegue", sender: user)
-    }
-}
 
-protocol EventUserDelegate {
-    func goToUser(user: User)
-}
-
-class UserTableView: UITableViewController {
-    
-    let post: Post?
-    var users = [User]()
-    
-    var delegate:EventUserDelegate?
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        
-        getUsers()
-    }
-    
-    init(post: Post) {
-        self.post = post
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func getUsers() {
-        if let post = post {
-            
-//            HandyHelper().getUsers(userList: post.event.participants) { (users) in
-//                self.users = users
-//                
-//                self.tableView.reloadData()
-//            }
-        }
-        
-    }
-    
-    
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return users.count
-    }
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let user = users[indexPath.row]
-        
-        let cell = UITableViewCell()
-        
-        let iconImageView = UIImageView()
-        cell.addSubview(iconImageView)
-        
-        if let url = URL(string: user.imageURL) {
-            iconImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
-        } else {
-            iconImageView.image = UIImage(named: "default-user")
-        }
-        
-        iconImageView.translatesAutoresizingMaskIntoConstraints = false
-        iconImageView.contentMode = .scaleAspectFill
-        
-        iconImageView.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: 10).isActive = true
-        iconImageView.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: -5).isActive = true
-        iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        iconImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        
-        iconImageView.layer.cornerRadius = 15
-        iconImageView.clipsToBounds = true
-        
-        let nameLabel = UILabel()
-        cell.addSubview(nameLabel)
-        
-        nameLabel.text = user.displayName
-        
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        nameLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 15).isActive = true
-        nameLabel.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: -5).isActive = true
-        
-        nameLabel.font = UIFont(name: "IBMPlexSans", size: 15)
-        nameLabel.textColor = .black
-        
-        return cell
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 40
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let user = users[indexPath.row]
-        
-        delegate?.goToUser(user: user)
-    }
-    
-    
-}
+// Was for the event object
+//extension PostViewController: EventUserDelegate {
+//    func goToUser(user: User) {
+//        performSegue(withIdentifier: "toUserSegue", sender: user)
+//    }
+//}
+//
+//protocol EventUserDelegate {
+//    func goToUser(user: User)
+//}
+//
+//class UserTableView: UITableViewController {
+//
+//    let post: Post?
+//    var users = [User]()
+//
+//    var delegate:EventUserDelegate?
+//
+//    override func viewDidLoad() {
+//        super.viewDidLoad()
+//
+//
+//        getUsers()
+//    }
+//
+//    init(post: Post) {
+//        self.post = post
+//        super.init(nibName: nil, bundle: nil)
+//    }
+//
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+//
+//    func getUsers() {
+//        if let post = post {
+//
+////            HandyHelper().getUsers(userList: post.event.participants) { (users) in
+////                self.users = users
+////
+////                self.tableView.reloadData()
+////            }
+//        }
+//
+//    }
+//
+//
+//    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        return users.count
+//    }
+//
+//    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let user = users[indexPath.row]
+//
+//        let cell = UITableViewCell()
+//
+//        let iconImageView = UIImageView()
+//        cell.addSubview(iconImageView)
+//
+//        if let url = URL(string: user.imageURL) {
+//            iconImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+//        } else {
+//            iconImageView.image = UIImage(named: "default-user")
+//        }
+//
+//        iconImageView.translatesAutoresizingMaskIntoConstraints = false
+//        iconImageView.contentMode = .scaleAspectFill
+//
+//        iconImageView.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: 10).isActive = true
+//        iconImageView.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: -5).isActive = true
+//        iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+//        iconImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+//
+//        iconImageView.layer.cornerRadius = 15
+//        iconImageView.clipsToBounds = true
+//
+//        let nameLabel = UILabel()
+//        cell.addSubview(nameLabel)
+//
+//        nameLabel.text = user.displayName
+//
+//        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+//        nameLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 15).isActive = true
+//        nameLabel.bottomAnchor.constraint(equalTo: cell.bottomAnchor, constant: -5).isActive = true
+//
+//        nameLabel.font = UIFont(name: "IBMPlexSans", size: 15)
+//        nameLabel.textColor = .black
+//
+//        return cell
+//    }
+//
+//    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return 40
+//    }
+//
+//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        let user = users[indexPath.row]
+//
+//        delegate?.goToUser(user: user)
+//    }
+//
+//
+//}

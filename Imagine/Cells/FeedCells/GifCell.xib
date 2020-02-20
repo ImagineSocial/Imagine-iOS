@@ -194,12 +194,18 @@
                             <constraint firstAttribute="height" constant="23" id="SmP-cC-6nl"/>
                         </constraints>
                     </stackView>
-                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="WTr-Dd-cJI">
+                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="WTr-Dd-cJI" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
                         <rect key="frame" x="351" y="31.5" width="16" height="16"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="16" id="ldR-6a-7FO"/>
                             <constraint firstAttribute="width" constant="16" id="tIC-lo-Lzh"/>
                         </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="8"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
                     </imageView>
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -240,6 +246,7 @@
                 <outlet property="OPNameLabel" destination="xGw-jt-Crf" id="y5F-Vo-ezX"/>
                 <outlet property="createDateLabel" destination="FUi-G9-xa2" id="025-si-vU0"/>
                 <outlet property="factImageView" destination="DEp-5d-s4N" id="6z9-8W-Uzt"/>
+                <outlet property="followTopicImageView" destination="WTr-Dd-cJI" id="Nap-uG-zTw"/>
                 <outlet property="gifView" destination="yGu-Wr-egj" id="Bg0-0c-rpV"/>
                 <outlet property="haButton" destination="knU-2I-X5W" id="m7v-6n-XzB"/>
                 <outlet property="linkedFactButton" destination="0X4-D9-x3n" id="bwh-9U-lMU"/>

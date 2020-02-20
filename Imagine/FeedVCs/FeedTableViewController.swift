@@ -69,21 +69,61 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         }
     }
     
+    var statusBarView: UIView?
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(false, animated: animated)
+        self.navigationController?.hidesBarsOnSwipe = false
+        
+        if let view = statusBarView {
+            view.removeFromSuperview()
+        }
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
+        
+        self.navigationController?.hidesBarsOnSwipe = true
+        
+        if #available(iOS 13.0, *) {
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.setBackIndicatorImage(UIImage(systemName: "hand.point.left"), transitionMaskImage: UIImage(systemName: "hand.point.left"))
+            navBarAppearance.configureWithOpaqueBackground()
+            navBarAppearance.backgroundColor = .systemBackground
+            navBarAppearance.titleTextAttributes = [.foregroundColor: Constants.imagineColor, .font: UIFont(name: "IBMPlexSans-Medium", size: 25)!]
+            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: Constants.imagineColor, .font: UIFont(name: "IBMPlexSans-SemiBold", size: 30)]
+            navBarAppearance.shadowImage = UIImage()
+            
+            self.navigationController?.navigationBar.standardAppearance = navBarAppearance
+            self.navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
+                        
+        } else {
+            self.navigationController?.navigationBar.barTintColor = .white
+        }
+        
+        
+        // Add View for statusBar background
+        if let window = UIApplication.shared.keyWindow {
+            let view = UIView()
+
+            var height:CGFloat = 40
+            if #available(iOS 13.0, *) {
+                height = window.windowScene?.statusBarManager?.statusBarFrame.height ?? 40
+                view.backgroundColor = .systemBackground
+            } else {
+                height = UIApplication.shared.statusBarFrame.height
+                view.backgroundColor = .white
+            }
+            view.frame = CGRect(x: 0, y: 0, width: window.frame.width, height: height)
+            statusBarView = view
+            window.addSubview(statusBarView!)
+        }
+        
         
         DispatchQueue.main.async {
             self.checkForLoggedInUser()
         }
         
-        self.navigationController?.navigationBar.isTranslucent = false
         
-        if #available(iOS 13.0, *) {
-            self.navigationController?.navigationBar.barTintColor = .systemBackground
-            self.navigationController?.view.backgroundColor = .secondarySystemBackground
-        } else {
-            self.navigationController?.navigationBar.barTintColor = .white
-            self.navigationController?.view.backgroundColor = UIColor(red: 242.0, green: 242.0, blue: 247.0, alpha: 1.0)
-        }
         
         //        // Restore the searchController's active state.
         //        if restoredState.wasActive {
@@ -485,24 +525,20 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         }
         if segue.identifier == "toFactSegue" {
             if let fact = sender as? Fact {
-                if let navCon = segue.destination as? UINavigationController {
-                    if let factVC = navCon.topViewController as? FactParentContainerViewController {
+                if let factVC = segue.destination as? FactParentContainerViewController {
                         factVC.fact = fact
-                        factVC.needNavigationController = true
                         self.notifyFactCollectionViewController(fact: fact)
-                    }
                 }
             }
         }
         
         if segue.identifier == "goToPostsOfTopic" {
             if let fact = sender as? Fact {
-                if let navCon = segue.destination as? UINavigationController {
-                    if let factVC = navCon.topViewController as? PostsOfFactTableViewController {
-                        factVC.fact = fact
-                        factVC.needNavigationController = true
-                        self.notifyFactCollectionViewController(fact: fact)
-                    }
+                if let factVC = segue.destination as? PostsOfFactTableViewController {
+                    
+                    factVC.fact = fact
+                    self.notifyFactCollectionViewController(fact: fact)
+                    
                 }
             }
         }

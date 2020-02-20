@@ -27,7 +27,6 @@ class SearchPostCell: UITableViewCell {
                 
                 switch post.type {
                 case .youTubeVideo:
-                    print("YouTubeVideo")
                     postImageView.image = UIImage(named: "youtubeIcon")
                 case .link:
                     if #available(iOS 13.0, *) {

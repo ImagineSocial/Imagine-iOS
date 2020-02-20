@@ -283,8 +283,9 @@
                             <constraint firstAttribute="width" constant="25" id="TWI-cZ-rSl"/>
                         </constraints>
                     </imageView>
-                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="ehk-ck-mRO">
+                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="ehk-ck-mRO" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
                         <rect key="frame" x="313" y="49" width="14" height="14"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="14" id="NfL-dE-FtP"/>
                             <constraint firstAttribute="width" constant="14" id="NmU-8i-yxL"/>
@@ -328,6 +329,7 @@
                 <outlet property="cellImageView" destination="Cb4-JX-Uh9" id="8dX-pE-Xe4"/>
                 <outlet property="commentCountLabel" destination="L7E-yZ-9FU" id="HVU-oW-jCJ"/>
                 <outlet property="factImageView" destination="j0G-2f-t98" id="qZW-H9-JNR"/>
+                <outlet property="followTopicImageView" destination="ehk-ck-mRO" id="abs-3b-lX4"/>
                 <outlet property="haButton" destination="NEB-4l-G9M" id="R23-Yz-R0R"/>
                 <outlet property="niceButton" destination="Pqk-TM-IGx" id="j6s-fU-bgD"/>
                 <outlet property="ogPosterNameLabel" destination="eeR-sG-s0N" id="t1J-3k-kvV"/>

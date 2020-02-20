@@ -36,6 +36,7 @@ class FactCell:UICollectionViewCell {
     
     override func prepareForReuse() {
         factCellImageView.image = nil
+        followButton.setImage(UIImage(named: "AddPost"), for: .normal)
     }
     
     var fact: Fact? {

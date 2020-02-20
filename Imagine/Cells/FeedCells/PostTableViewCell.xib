@@ -245,12 +245,18 @@
                             <action selector="linkedFactTapped:" destination="ZUo-e7-XZo" eventType="touchUpInside" id="ZzU-LB-mvF"/>
                         </connections>
                     </button>
-                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="k6j-91-qWT">
+                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="k6j-91-qWT" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
                         <rect key="frame" x="294" y="55.5" width="16" height="16"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="16" id="Vsv-CW-noP"/>
                             <constraint firstAttribute="height" constant="16" id="nuf-FT-lI0"/>
                         </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="8"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
                     </imageView>
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -313,7 +319,6 @@
                 <outlet property="titleLabel" destination="dmS-xc-Exh" id="N2d-ed-P49"/>
                 <outlet property="titleLabelHeightConstraint" destination="hfq-nC-vq2" id="WWp-iP-XQ8"/>
                 <outlet property="wowButton" destination="D4m-07-mLk" id="O1T-Mn-bV1"/>
-                <outlet property="yellowStarImageView" destination="k6j-91-qWT" id="Zna-f9-84L"/>
             </connections>
             <point key="canvasLocation" x="-143.19999999999999" y="-81.409295352323838"/>
         </tableViewCell>

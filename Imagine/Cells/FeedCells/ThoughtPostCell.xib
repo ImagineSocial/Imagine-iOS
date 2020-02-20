@@ -243,12 +243,18 @@
                         <fontDescription key="fontDescription" name="IBMPlexSans-Thin" family="IBM Plex Sans" pointSize="9"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="s5Z-R4-AXa">
+                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="s5Z-R4-AXa" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
                         <rect key="frame" x="304" y="55.5" width="16" height="16"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="16" id="53K-2E-gWn"/>
                             <constraint firstAttribute="height" constant="16" id="h5U-fB-ado"/>
                         </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="8"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
                     </imageView>
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -298,6 +304,7 @@
                 <outlet property="createDateLabel" destination="8E1-kJ-UGl" id="2HM-gz-5lE"/>
                 <outlet property="descriptionLabel" destination="olk-UE-oeI" id="DeB-G4-1cP"/>
                 <outlet property="factImageView" destination="ZpZ-35-AXl" id="Fiu-Fb-jUM"/>
+                <outlet property="followTopicImageView" destination="s5Z-R4-AXa" id="kVB-j8-8E6"/>
                 <outlet property="haButton" destination="E02-dV-htZ" id="gM8-O4-hzz"/>
                 <outlet property="niceButton" destination="KNI-Pn-lNt" id="a4k-jn-FWM"/>
                 <outlet property="profilePictureImageView" destination="uCe-Ix-sJZ" id="aHK-6f-NQe"/>

@@ -34,16 +34,21 @@ class PostsOfFactTableViewController: UITableViewController {
     let postHelper = PostHelper()
     let handyHelper = HandyHelper()
     let factParentVC = FactParentContainerViewController()
+    let radius:CGFloat = 6
     
     override func viewDidLoad() {
         super.viewDidLoad()
        
-        followTopicButton.cornerRadius = 6
-        followTopicButton.layer.borderColor = Constants.imagineColor.cgColor
+        followTopicButton.cornerRadius = radius
+        if #available(iOS 13.0, *) {
+            followTopicButton.layer.borderColor = UIColor.separator.cgColor
+        } else {
+            followTopicButton.layer.borderColor = UIColor.darkGray.cgColor
+        }
         followTopicButton.layer.borderWidth = 0.5
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        headerImageView.layer.cornerRadius = 4
+        headerImageView.layer.cornerRadius = radius
         if #available(iOS 13.0, *) {
             headerImageView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
         } else {

@@ -240,12 +240,18 @@
                             <action selector="linkedFactTapped:" destination="Bl5-Bg-iDX" eventType="touchUpInside" id="qkk-9u-0Dw"/>
                         </connections>
                     </button>
-                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="sd0-sa-qEA">
+                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="sd0-sa-qEA" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
                         <rect key="frame" x="349" y="55.5" width="16" height="16"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="16" id="Kvi-2N-uww"/>
                             <constraint firstAttribute="height" constant="16" id="VY7-IS-DaA"/>
                         </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="8"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
                     </imageView>
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -293,6 +299,7 @@
                 <outlet property="commentCountLabel" destination="4mi-la-RSE" id="bSQ-hR-5FK"/>
                 <outlet property="createDateLabel" destination="QQc-HD-Sju" id="yTI-Ot-1aE"/>
                 <outlet property="factImageView" destination="rdR-hK-Vmg" id="VO9-Xb-Rzc"/>
+                <outlet property="followTopicImageView" destination="sd0-sa-qEA" id="9wm-gK-sfV"/>
                 <outlet property="haButton" destination="ouP-TA-FTb" id="ReI-mm-IzI"/>
                 <outlet property="niceButton" destination="IZM-ql-dIg" id="K87-F1-SpO"/>
                 <outlet property="playerView" destination="cHE-oi-NwK" id="s2b-7o-9Hf"/>

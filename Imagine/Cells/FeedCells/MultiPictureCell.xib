@@ -208,12 +208,18 @@
                         <color key="pageIndicatorTintColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="currentPageIndicatorTintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                     </pageControl>
-                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="qho-96-Dbb">
+                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="qho-96-Dbb" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
                         <rect key="frame" x="445" y="31.5" width="16" height="16"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="16" id="TkF-mj-GsM"/>
                             <constraint firstAttribute="width" constant="16" id="e1N-kO-SPM"/>
                         </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="8"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
                     </imageView>
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -258,6 +264,7 @@
                 <outlet property="commentCountLabel" destination="gk4-lb-41A" id="mkn-SW-0Vw"/>
                 <outlet property="createDateLabel" destination="WNh-fx-gtD" id="vzw-gT-hG1"/>
                 <outlet property="factImageView" destination="OF2-qf-jfE" id="hZh-wr-feJ"/>
+                <outlet property="followTopicImageView" destination="qho-96-Dbb" id="hHB-bC-GEe"/>
                 <outlet property="haButton" destination="G7I-SP-UBk" id="O2I-yh-iQN"/>
                 <outlet property="linkedFactButton" destination="1KF-jL-Zsb" id="Nxo-K8-acA"/>
                 <outlet property="niceButton" destination="bNL-X8-nDa" id="dSK-2A-aUf"/>
