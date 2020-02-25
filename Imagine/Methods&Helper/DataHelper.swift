@@ -157,7 +157,8 @@ class DataHelper {
                                 campaign.createDate = stringDate
                                 campaign.supporter = supporter
                                 campaign.opposition = opposition
-                                campaign.category = category
+                                campaign.category = self.getCampaignType(categoryString: category)
+                                
                                 if let description = documentData["campaignExplanation"] as? String {
                                     campaign.descriptionText = description
                                 }
@@ -260,6 +261,33 @@ class DataHelper {
             } else {
                 returnData(list)
             }
+        }
+    }
+    
+    func getCategoryLabelText(type: CampaignType) -> String {
+        switch type {
+        case .proposal:
+            return "Vorschlag"
+        case .complaint:
+            return "Beschwerde"
+        case .call:
+            return "Aufruf"
+        case .change:
+            return "Veränderung"
+        }
+    }
+    
+    func getCampaignType(categoryString: String) -> CampaignCategory {
+        
+        switch categoryString {
+        case "complaint":
+            return CampaignCategory(title: getCategoryLabelText(type: .complaint), type: .complaint)
+        case "call":
+            return CampaignCategory(title: getCategoryLabelText(type: .call), type: .call)
+        case "change":
+            return CampaignCategory(title: getCategoryLabelText(type: .change), type: .change)
+        default:
+            return CampaignCategory(title: getCategoryLabelText(type: .proposal), type: .proposal)
         }
     }
     

@@ -30,8 +30,10 @@ class CampaignCell: UITableViewCell {
                 progressView.setProgress(progress, animated: true)
                 supporterLabel.text = "\(campaign.supporter) Supporter"
                 vetoLabel.text = "\(campaign.opposition) Vetos"
-                categoryLabel.text = campaign.category
                 
+                if let category = campaign.category {
+                    categoryLabel.text = category.title
+                }
             }
         }
     }

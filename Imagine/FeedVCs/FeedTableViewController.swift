@@ -89,14 +89,16 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             navBarAppearance.setBackIndicatorImage(UIImage(systemName: "hand.point.left"), transitionMaskImage: UIImage(systemName: "hand.point.left"))
             navBarAppearance.configureWithOpaqueBackground()
             navBarAppearance.backgroundColor = .systemBackground
-            navBarAppearance.titleTextAttributes = [.foregroundColor: Constants.imagineColor, .font: UIFont(name: "IBMPlexSans-Medium", size: 25)!]
-            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: Constants.imagineColor, .font: UIFont(name: "IBMPlexSans-SemiBold", size: 30)]
+            navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.imagineColor, .font: UIFont(name: "IBMPlexSans-Medium", size: 25)!]
+            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.imagineColor, .font: UIFont(name: "IBMPlexSans-SemiBold", size: 30)]
             navBarAppearance.shadowImage = UIImage()
             
             self.navigationController?.navigationBar.standardAppearance = navBarAppearance
             self.navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
                         
         } else {
+            self.navigationController?.navigationBar.isTranslucent = false
+            self.navigationController?.navigationBar.backgroundColor = .white
             self.navigationController?.navigationBar.barTintColor = .white
         }
         
@@ -673,7 +675,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             button.layer.cornerRadius = button.frame.width/2
             button.addTarget(self, action: #selector(self.BarButtonItemTapped), for: .touchUpInside)
             button.layer.borderWidth =  0.1
-            button.layer.borderColor = Constants.imagineColor.cgColor
+            button.layer.borderColor = UIColor.imagineColor.cgColor
             
             
             if let url = user.photoURL{ // Set Photo
@@ -706,7 +708,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             button.addTarget(self, action: #selector(self.logInButtonTapped), for: .touchUpInside)
             button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 15)
             button.setTitle("Log-In", for: .normal)
-            button.setTitleColor(Constants.imagineColor, for: .normal)
+            button.setTitleColor(UIColor.imagineColor, for: .normal)
 
             
             view.addSubview(button)
@@ -753,7 +755,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         var preferences = EasyTipView.Preferences()
         preferences.drawing.font = UIFont(name: "IBMPlexSans", size: 18)!
         preferences.drawing.foregroundColor = UIColor.white
-        preferences.drawing.backgroundColor = Constants.imagineColor
+        preferences.drawing.backgroundColor = UIColor.imagineColor
         preferences.drawing.arrowPosition = EasyTipView.ArrowPosition.top
         preferences.drawing.textAlignment = .left
         preferences.positioning.bubbleHInset = 10
@@ -1217,12 +1219,11 @@ extension FeedTableViewController: UISearchResultsUpdating {
             let user = User()
             if let docData = document.data() {
                 
-                if let name = docData["name"] as? String, let surname = docData["surname"] as? String {
+                if let name = docData["name"] as? String {
                     
                     //When you search for names, you can search for their real names and it will answer, but the names will not show up...?!
                     
                     let name = name
-//                    let surname = surname
                     user.displayName = name
                     user.userUID = document.documentID
                     if let imageURL = docData["profilePictureURL"] as? String {

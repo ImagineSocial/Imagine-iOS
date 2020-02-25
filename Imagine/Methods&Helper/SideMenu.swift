@@ -295,7 +295,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-        label.textColor = Constants.imagineColor
+        label.textColor = .imagineColor
         
         return label
     }()
@@ -310,7 +310,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
 //        } else {
 //            btn.setTitleColor(.black, for: .normal)
 //        }
-        btn.setTitleColor(Constants.imagineColor, for: .normal)
+        btn.setTitleColor(.imagineColor, for: .normal)
         return btn
     }()
     
@@ -388,7 +388,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
 //        } else {
 //            btn.setTitleColor(.black, for: .normal)
 //        }
-        btn.setTitleColor(Constants.imagineColor, for: .normal)
+        btn.setTitleColor(.imagineColor, for: .normal)
         return btn
     }()
     
@@ -445,7 +445,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
 //        } else {
 //            button.setTitleColor(.black, for: .normal)
 //        }
-        button.setTitleColor(Constants.imagineColor, for: .normal)
+        button.setTitleColor(.imagineColor, for: .normal)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 16)
         button.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
         
@@ -524,6 +524,7 @@ class Comment {
     var postID = ""
     var upvotes: Votes?
     var user: User?
+    var documentID = ""
 }
 
 

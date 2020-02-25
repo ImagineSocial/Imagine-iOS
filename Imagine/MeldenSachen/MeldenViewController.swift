@@ -14,14 +14,18 @@ import FirebaseStorage
 
 
 class MeldenViewController: UIViewController {
-
+    
     @IBOutlet weak var savePostButtonIcon: UIImageView!
     @IBOutlet weak var lowerStackView: UIStackView!
-    @IBOutlet weak var lowerStackViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var savePostView: UIView!
+    @IBOutlet weak var repostPostView: UIView!
+    @IBOutlet weak var translatePostView: UIView!
     
-    var post = Post()
+    var post: Post?
+    var comment: Comment?
     var reportCategory = ""
     var repost : RepostType = .repost
+    var reportComment = false
     
     let db = Firestore.firestore()
     
@@ -29,15 +33,23 @@ class MeldenViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
-            if alreadySaved {
-                self.savePostButtonIcon.tintColor = Constants.green
-            } else {
-                if #available(iOS 13.0, *) {
-                    self.savePostButtonIcon.tintColor = .label
+        
+        if reportComment {
+            savePostView.isHidden = true
+            repostPostView.isHidden = true
+            translatePostView.isHidden = true
+        }
+        
+        if let post = post {
+            handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
+                if alreadySaved {
+                    self.savePostButtonIcon.tintColor = Constants.green
                 } else {
-                    self.savePostButtonIcon.tintColor = .black
+                    if #available(iOS 13.0, *) {
+                        self.savePostButtonIcon.tintColor = .label
+                    } else {
+                        self.savePostButtonIcon.tintColor = .black
+                    }
                 }
             }
         }
@@ -84,38 +96,43 @@ class MeldenViewController: UIViewController {
             button.setTitleColor(.black, for: .normal)
             button.backgroundColor = .white
         }
-        
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 20)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 16)
+        button.contentHorizontalAlignment = .left
         
         return button
     }()
     
     func insertDeleteView() {
-        deleteView.addSubview(trashButton)
-        trashButton.topAnchor.constraint(equalTo: deleteView.topAnchor).isActive = true
-        trashButton.bottomAnchor.constraint(equalTo: deleteView.bottomAnchor).isActive = true
-        trashButton.leadingAnchor.constraint(equalTo: deleteView.leadingAnchor).isActive = true
-        trashButton.trailingAnchor.constraint(equalTo: deleteView.trailingAnchor).isActive = true
         
         deleteView.addSubview(trashImage)
-        trashImage.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        trashImage.widthAnchor.constraint(equalToConstant: 25).isActive = true
         trashImage.leadingAnchor.constraint(equalTo: deleteView.leadingAnchor, constant: 8).isActive = true
         trashImage.centerYAnchor.constraint(equalTo: deleteView.centerYAnchor).isActive = true
         
+        deleteView.addSubview(trashButton)
+        trashButton.topAnchor.constraint(equalTo: deleteView.topAnchor).isActive = true
+        trashButton.bottomAnchor.constraint(equalTo: deleteView.bottomAnchor).isActive = true
+        trashButton.leadingAnchor.constraint(equalTo: trashImage.trailingAnchor, constant: 15).isActive = true
+        trashButton.trailingAnchor.constraint(equalTo: deleteView.trailingAnchor).isActive = true
+        trashButton.heightAnchor.constraint(equalToConstant: 45).isActive = true
+        
         self.lowerStackView.insertArrangedSubview(deleteView, at: 0)
-        self.lowerStackViewHeightConstraint.constant = 230
         self.lowerStackView.layoutIfNeeded()
     }
     
     func checkIfItsYourPost() {
         if let user = Auth.auth().currentUser {
-            if post.originalPosterUID == user.uid {
-                insertDeleteView()
+            if let post = post {
+                if post.originalPosterUID == user.uid {
+                    insertDeleteView()
+                }
             }
         }
     }
     
     func deletePost() {
+        guard let post = post else { return }
+        
         let postRef = db.collection("Posts").document(post.documentID)
         postRef.delete()
         
@@ -134,8 +151,8 @@ class MeldenViewController: UIViewController {
                         } else {
                             print("Picture Deleted")
                             
-                            let userPostRef = self.db.collection("Users").document(self.post.originalPosterUID).collection("posts").document(self.post.documentID)
-                            userPostRef.delete()
+                            let userPostRef = self.db.collection("Users").document(post.originalPosterUID).collection("posts").document(post.documentID)
+                            
                             userPostRef.delete { (err) in
                                 if let error = err {
                                     print("We have an error: \(error.localizedDescription)")
@@ -160,8 +177,8 @@ class MeldenViewController: UIViewController {
                 } else {
                     print("Picture Deleted")
                     
-                    let userPostRef = self.db.collection("Users").document(self.post.originalPosterUID).collection("posts").document(self.post.documentID)
-                    userPostRef.delete()
+                    let userPostRef = self.db.collection("Users").document(post.originalPosterUID).collection("posts").document(post.documentID)
+                    
                     userPostRef.delete { (err) in
                         if let error = err {
                             print("We have an error: \(error.localizedDescription)")
@@ -174,7 +191,7 @@ class MeldenViewController: UIViewController {
             }
         default:
             let userPostRef = db.collection("Users").document(post.originalPosterUID).collection("posts").document(post.documentID)
-            userPostRef.delete()
+            
             userPostRef.delete { (err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
@@ -198,7 +215,7 @@ class MeldenViewController: UIViewController {
         }))
         present(alert, animated: true)
     }
-
+    
     @IBAction func dismissPressed(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
@@ -217,7 +234,11 @@ class MeldenViewController: UIViewController {
             reportCategory = ""
         }
         if let _ = Auth.auth().currentUser {
-            performSegue(withIdentifier: "reportOptionSegue", sender: post)
+            if let post = post {
+                performSegue(withIdentifier: "reportOptionSegue", sender: post)
+            } else if let comment = comment {
+                performSegue(withIdentifier: "reportOptionSegue", sender: comment)
+            }
         } else {
             self.notLoggedInAlert()
         }
@@ -242,6 +263,8 @@ class MeldenViewController: UIViewController {
     
     @IBAction func savePostTapped(_ sender: Any) {
         if let user = Auth.auth().currentUser {
+            
+            guard let post = post else { return }
             
             let ref = db.collection("Users").document(user.uid).collection("saved").document()
             
@@ -269,9 +292,9 @@ class MeldenViewController: UIViewController {
         //Set the default sharing message.
         let message = "Lade dir jetzt Imagine runter!"
         //Set the link to share.
-        if let link = NSURL(string: "http://yoururl.com")
+        if let link = NSURL(string: "https://imagine.social")
         {
-            let objectsToShare = [message] as [Any]
+            let objectsToShare = [message, link] as [Any]
             let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
             activityVC.excludedActivityTypes = [UIActivity.ActivityType.airDrop, UIActivity.ActivityType.addToReadingList]
             self.present(activityVC, animated: true, completion: nil)
@@ -287,9 +310,12 @@ class MeldenViewController: UIViewController {
             nextVC.reportCategory = self.reportCategory
             
             if let chosenPost = sender as? Post {
-                    nextVC.post = chosenPost
+                nextVC.post = chosenPost
+            } else if let chosenComment = sender as? Comment {
+                nextVC.comment = chosenComment
             }
         }
+        
         if let navVC = segue.destination as? UINavigationController {
             if let repostVC = navVC.topViewController as? RepostViewController {
                 if let chosenPost = sender as? Post {

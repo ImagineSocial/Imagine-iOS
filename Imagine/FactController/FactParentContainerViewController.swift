@@ -78,7 +78,7 @@ class FactParentContainerViewController: UIViewController {
     func setDismissButton() {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = Constants.imagineColor
+        button.tintColor = .imagineColor
         button.addTarget(self, action: #selector(dismissTapped), for: .touchUpInside)
         button.setImage(UIImage(named: "Dismiss"), for: .normal)
         button.heightAnchor.constraint(equalToConstant: 23).isActive = true
@@ -91,7 +91,7 @@ class FactParentContainerViewController: UIViewController {
     func setPostButton() {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitleColor(Constants.imagineColor, for: .normal)
+        button.setTitleColor(.imagineColor, for: .normal)
         button.setTitle("Beiträge", for: .normal)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
         if #available(iOS 13.0, *) {
@@ -99,7 +99,7 @@ class FactParentContainerViewController: UIViewController {
             button.layer.borderColor = UIColor.separator.cgColor
         } else {
             button.layer.borderColor = UIColor.darkGray.cgColor
-            button.backgroundColor = .lightGray
+            button.backgroundColor = .ios12secondarySystemBackground
         }
         button.addTarget(self, action: #selector(toPostsTapped), for: .touchUpInside)
 //        button.layer.borderColor = Constants.imagineColor.cgColor

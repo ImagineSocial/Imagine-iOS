@@ -10,9 +10,7 @@ import UIKit
 
 struct Constants {
     
-    //    static let imagineColor = UIColor(red:0.75, green:0.31, blue:0.35, alpha:1.0)
-    //    static let imagineColor = UIColor(red:0.75, green:0.29, blue:0.02, alpha:1.0)
-    static let imagineColor = UIColor(red:0.33, green:0.47, blue:0.65, alpha:1.0)   //#5377A6
+    
     static let thanksColor = UIColor(red:0.95, green:0.63, blue:0.34, alpha:1)
     static let wowColor = UIColor(red:0.95, green:0.76, blue:0.40, alpha:1)
     static let haColor = UIColor(red:0.95, green:0.87, blue:0.50, alpha:1)

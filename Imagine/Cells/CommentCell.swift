@@ -24,6 +24,9 @@ class CommentCell: UITableViewCell {
                     if let url = URL(string: user.imageURL) {
                         profilePictureImageView.sd_setImage(with: url, completed: nil)
                     }
+                } else {
+                    nameLabel.text = Constants.strings.anonymPosterName
+                    profilePictureImageView.image = UIImage(named: "anonym-user")
                 }
                 createDateLabel.text = comment.createTime.formatRelativeString()
                 bodyLabel.text = comment.text

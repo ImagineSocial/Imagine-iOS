@@ -94,7 +94,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     func setDismissButton() {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = Constants.imagineColor
+        button.tintColor = .imagineColor
         button.addTarget(self, action: #selector(dismissTapped), for: .touchUpInside)
         button.setImage(UIImage(named: "Dismiss"), for: .normal)
         button.heightAnchor.constraint(equalToConstant: 23).isActive = true
@@ -352,10 +352,15 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     //Topic in the recentTopic collectionView is tapped
     func topicTapped(fact: Fact) {
         
-        if fact.displayMode == .fact {
-            performSegue(withIdentifier: "goToArguments", sender: fact)
+        if self.addFactToPost {
+            self.setFactForPost(fact: fact)
         } else {
-            performSegue(withIdentifier: "goToPostsOfTopic", sender: fact)
+            
+            if fact.displayMode == .fact {
+                performSegue(withIdentifier: "goToArguments", sender: fact)
+            } else {
+                performSegue(withIdentifier: "goToPostsOfTopic", sender: fact)
+            }
         }
     }
     

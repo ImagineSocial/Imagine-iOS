@@ -21,7 +21,6 @@ extension UIBarButtonItem {
 class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
 
-    @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var shortBodyLabel: UILabel!
     @IBOutlet weak var longBodyLabel: UILabel!
     @IBOutlet weak var createDateLabel: UILabel!
@@ -30,18 +29,52 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     @IBOutlet weak var supportButton: DesignableButton!
     @IBOutlet weak var oppositionButton: DesignableButton!
     @IBOutlet weak var infoButton: UIBarButtonItem!
+    @IBOutlet weak var commentTableView: CommentTableView!
+    @IBOutlet weak var scrollView: UIScrollView!
     
     var campaign = Campaign()
     let db = Firestore.firestore()
+    
+    var floatingCommentView: CommentAnswerView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         showCampaign()
+        
+        let scrollViewTap = UITapGestureRecognizer(target: self, action: #selector(scrollViewTapped))
+        scrollViewTap.cancelsTouchesInView = false  // Otherwise the tap on the TableViews are not recognized
+        scrollView.addGestureRecognizer(scrollViewTap)
+        
+        commentTableView.initializeCommentTableView(section: .proposal)
+        commentTableView.commentDelegate = self
+        commentTableView.proposal = campaign
+        
+        createFloatingCommentView()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        if let view = floatingCommentView {
+            view.removeFromSuperview()
+        }
+    }
+    
+    @objc func scrollViewTapped() {
+        if let view = floatingCommentView {
+            view.answerTextField.resignFirstResponder()
+        }
+    }
+    
+    func createFloatingCommentView() {
+        let height = self.view.frame.height
+        floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: height-60, width: self.view.frame.width, height: 60))
+        floatingCommentView!.delegate = self
+        if let window = UIApplication.shared.keyWindow {
+            window.addSubview(floatingCommentView!)
+        }
     }
     
     func showCampaign() {
-        headerLabel.text = campaign.title
         shortBodyLabel.text = campaign.cellText
         longBodyLabel.text = campaign.descriptionText
         createDateLabel.text = campaign.createDate
@@ -166,6 +199,45 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
     @IBAction func infoButtonTapped(_ sender: Any) {
         infoButton.showEasyTipView(text: Constants.texts.campaignDetailText)
+    }
+    
+}
+
+extension CampaignViewController: CommentViewDelegate, CommentTableViewDelegate {
+    func sendButtonTapped(text: String, isAnonymous: Bool) {
+        floatingCommentView!.resignFirstResponder()
+        commentTableView.saveCommentInDatabase(bodyString: text, isAnonymous: isAnonymous)
+    }
+    
+    func commentTypingBegins() {
+        
+    }
+    
+    func doneSaving() {
+        print("Done")
+        if let view = floatingCommentView {
+            view.answerTextField.text = ""
+        }
+    }
+    
+    func notLoggedIn() {
+        self.notLoggedInAlert()
+    }
+    
+    func notAllowedToComment() {
+        if let view = floatingCommentView {
+            view.answerTextField.text = ""
+        }
+    }
+    
+    func commentGotReported(comment: Comment) {
+        
+        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let reportViewController = storyBoard.instantiateViewController(withIdentifier: "reportVC") as! MeldenViewController
+        reportViewController.reportComment = true
+        reportViewController.modalTransitionStyle = .coverVertical
+        reportViewController.modalPresentationStyle = .overFullScreen
+        self.present(reportViewController, animated: true, completion: nil)
     }
     
 }

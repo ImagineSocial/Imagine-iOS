@@ -12,10 +12,10 @@ import FirebaseFirestore
 import EasyTipView
 
 enum CampaignType {
-    case general
-    case IT
-    case communication
-    case design
+    case proposal
+    case complaint
+    case call
+    case change
 }
 
 class NewCampaignViewController: UIViewController {
@@ -27,8 +27,8 @@ class NewCampaignViewController: UIViewController {
     @IBOutlet weak var categoryPickerView: UIPickerView!
     
     var up = false
-    let categories: [CampaignCategory] = [CampaignCategory(title: "Allgemein", type: .general), CampaignCategory(title: "IT", type: .IT), CampaignCategory(title: "Kommunikation", type: .communication), CampaignCategory(title: "Design", type: .design)]
-    var chosenCategory: CampaignType = .general
+    let categories: [CampaignCategory] = [CampaignCategory(title: "Vorschlag", type: .proposal), CampaignCategory(title: "Beschwerde", type: .complaint), CampaignCategory(title: "Aufruf", type: .call), CampaignCategory(title: "Veränderung", type: .change)]
+    var chosenCategory: CampaignType = .proposal
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,16 +65,17 @@ class NewCampaignViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
+    
     func getCategoryString() -> String {
         switch self.chosenCategory {
-        case .general:
-            return "general"
-        case .communication:
-            return "communication"
-        case .IT:
-            return "IT"
-        case .design:
-            return "design"
+        case .proposal:
+            return "proposal"
+        case .complaint:
+            return "complaint"
+        case .call:
+            return "call"
+        case .change:
+            return "change"
         }
     }
     

@@ -124,8 +124,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15) as Any]
         markPostSegmentControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
-        markPostSegmentControl.tintColor = Constants.imagineColor
-        postSelectionSegmentedControl.tintColor = Constants.imagineColor
+        markPostSegmentControl.tintColor = .imagineColor
+        postSelectionSegmentedControl.tintColor = .imagineColor
         postSelectionSegmentedControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
         
         //KeyboardGoesUp
@@ -726,7 +726,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         } else {
             button.setTitleColor(.black, for: .normal)
         }
-        button.tintColor = Constants.imagineColor
+        button.tintColor = .imagineColor
         button.setImage(UIImage(named: "menu"), for: .normal)
 //        button.setTitle("Mehr", for: .normal)
         button.addTarget(self, action: #selector(optionButtonTapped), for: .touchUpInside)
@@ -764,14 +764,28 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         return imageView
     }()
     
+    let anonymousNameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans", size: 13)
+        label.minimumScaleFactor = 0.5
+//        if #available(iOS 13.0, *) {
+//            label.tintColor = .label
+//        } else {
+//            label.tintColor = .black
+//        }
+        
+        return label
+    }()
+    
     let addFactButton: DesignableButton = {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = Constants.imagineColor
+        button.tintColor = .imagineColor
         button.setTitle("Thema verlinken", for: .normal)
         button.addTarget(self, action: #selector(linkFactToPostTapped), for: .touchUpInside)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
-        button.setTitleColor(Constants.imagineColor, for: .normal)
+        button.setTitleColor(.imagineColor, for: .normal)
         return button
     }()
     
@@ -791,6 +805,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
+        label.textAlignment = .right
         
         return label
     }()
@@ -807,6 +822,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         anonymousImageView.centerYAnchor.constraint(equalTo: optionButton.centerYAnchor).isActive = true
         anonymousImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
         anonymousImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
+        optionView.addSubview(anonymousNameLabel)
+        anonymousNameLabel.leadingAnchor.constraint(equalTo: anonymousImageView.trailingAnchor, constant: 5).isActive = true
+        anonymousNameLabel.centerYAnchor.constraint(equalTo: anonymousImageView.centerYAnchor).isActive = true
+        anonymousNameLabel.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-10).isActive = true
         
         setMarkPostViewUI()
         setPostAnonymousViewUI()
@@ -836,12 +856,52 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             endView.backgroundColor = .white
         }
         endView.translatesAutoresizingMaskIntoConstraints = false
+        
+        endView.addSubview(blueOwenButton)
+        blueOwenButton.topAnchor.constraint(equalTo: endView.topAnchor, constant: 10).isActive = true
+        blueOwenButton.leadingAnchor.constraint(equalTo: endView.leadingAnchor, constant: 10).isActive = true
+        blueOwenButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        blueOwenButton.widthAnchor.constraint(equalToConstant: 85).isActive = true
+        
+        endView.addSubview(blueOwenImageView)
+        blueOwenImageView.centerYAnchor.constraint(equalTo: blueOwenButton.centerYAnchor).isActive = true
+        blueOwenImageView.leadingAnchor.constraint(equalTo: blueOwenButton.trailingAnchor, constant: 3).isActive = true
+        blueOwenImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        blueOwenImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
 
         self.view.addSubview(endView)
         endView.topAnchor.constraint(equalTo: optionView.bottomAnchor, constant: 1).isActive = true
         endView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
         endView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
         endView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+    }
+    
+    // Just for the moment, so the people get a sense of what is possible
+    let blueOwenButton :DesignableButton = {
+        let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitleColor(.imagineColor, for: .normal)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 13)
+        button.setTitle("Nur Freunde", for: .normal)
+        button.addTarget(self, action: #selector(blueOwenTapped), for: .touchUpInside)
+        button.cornerRadius = 4
+        button.layer.borderColor = UIColor.imagineColor.cgColor
+        button.layer.borderWidth = 0.5
+        
+        return button
+    }()
+    
+    let blueOwenImageView: UIImageView = {
+       let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "wow")
+        imageView.contentMode = .scaleAspectFill
+                
+        return imageView
+    }()
+    
+    @objc func blueOwenTapped() {
+        performSegue(withIdentifier: "toProposals", sender: nil)
     }
     
     // MARK: - MarkPostViewUI
@@ -890,7 +950,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let markPostButton :DesignableButton = {
         let button = DesignableButton(type: .detailDisclosure)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = Constants.imagineColor
+        button.tintColor = .imagineColor
         button.addTarget(self, action: #selector(markPostInfoButtonPressed), for: .touchUpInside)
         
         return button
@@ -953,7 +1013,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let postAnonymousButton :DesignableButton = {
         let button = DesignableButton(type: .detailDisclosure)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = Constants.imagineColor
+        button.tintColor = .imagineColor
         button.addTarget(self, action: #selector(postAnonymousButtonPressed), for: .touchUpInside)
         
         return button
@@ -982,7 +1042,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         if !self.up {
             
-            if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            if let _ = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
                 if descriptionTextView.isFirstResponder {
                     
                     var offset:CGFloat = 75
@@ -1252,8 +1312,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
                 let textField = alert!.textFields![0] // Force unwrapping because we know it exists.
                 
-                if textField.text != "" {
-                    self.anonymousName = textField.text
+                if let text = textField.text {
+                    self.anonymousName = text
+                    self.anonymousNameLabel.text = text
                 } //else: Default String will show in the feed
             }))
             self.present(alert, animated: true, completion: nil)
@@ -2069,7 +2130,8 @@ extension NewPostViewController: LinkFactWithPostDelegate {
         
         optionView.addSubview(addedFactDescriptionLabel)
         addedFactDescriptionLabel.centerYAnchor.constraint(equalTo: addedFactImageView.centerYAnchor).isActive = true
-        addedFactDescriptionLabel.trailingAnchor.constraint(equalTo: addedFactImageView.leadingAnchor, constant: -15).isActive = true
+        addedFactDescriptionLabel.trailingAnchor.constraint(equalTo: addedFactImageView.leadingAnchor, constant: -10).isActive = true
+        addedFactDescriptionLabel.leadingAnchor.constraint(equalTo: anonymousNameLabel.trailingAnchor, constant: -2).isActive = true
         
         if let url = URL(string: fact.imageURL) {
             addedFactImageView.sd_setImage(with: url, completed: nil)
@@ -2077,7 +2139,7 @@ extension NewPostViewController: LinkFactWithPostDelegate {
             addedFactImageView.image = UIImage(named: "FactStamp")
         }
          
-        addedFactDescriptionLabel.text = "Verlinkt:  '\(fact.title)' "
+        addedFactDescriptionLabel.text = "'\(fact.title)'"
         
         if closeMenu {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -2090,7 +2152,7 @@ extension NewPostViewController: LinkFactWithPostDelegate {
     func setDismissButton() {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = Constants.imagineColor
+        button.tintColor = .imagineColor
         button.addTarget(self, action: #selector(dismissTapped), for: .touchUpInside)
         button.setImage(UIImage(named: "Dismiss"), for: .normal)
         button.heightAnchor.constraint(equalToConstant: 23).isActive = true
@@ -2128,7 +2190,6 @@ extension NewPostViewController: UICollectionViewDelegate, UICollectionViewDataS
             return cell
         }
         
-        print("Got a problem with the collectionviewcell")
         return UICollectionViewCell()
     }
     
@@ -2136,7 +2197,6 @@ extension NewPostViewController: UICollectionViewDelegate, UICollectionViewDataS
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         let size = CGSize(width: previewCollectionView.frame.width, height: previewCollectionView.frame.height)
-        print("das ist die size: ", size)
         return size
     }
     

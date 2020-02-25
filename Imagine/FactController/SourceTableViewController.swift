@@ -23,7 +23,6 @@ class SourceTableViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.layer.cornerRadius = 1
-//        tableView.backgroundColor = Constants.backgroundColorForTableViews
         tableView.separatorStyle = .none
         
         tableView.register(AddFactCell.self, forCellReuseIdentifier: reuseIdentifier)
@@ -79,7 +78,6 @@ class SourceTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let source = sources[indexPath.row]
-        
         if source.addMoreCell {
             if let _ = Auth.auth().currentUser {
                 performSegue(withIdentifier: "toNewArgumentSegue", sender: nil)
@@ -97,7 +95,7 @@ class SourceTableViewController: UITableViewController {
         if source.addMoreCell {
             return 50
         } else {
-            return 60
+            return UITableView.automaticDimension
         }
     }
     

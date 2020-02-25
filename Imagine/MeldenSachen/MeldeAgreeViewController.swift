@@ -15,7 +15,8 @@ class MeldeAgreeViewController: UIViewController {
 
     var reportCategory = ""
     var choosenReportOption = ""
-    var post = Post()
+    var post: Post?
+    var comment: Comment?
     let db = Firestore.firestore()
     
     @IBOutlet weak var MeldegrundLabel: UILabel!
@@ -26,7 +27,6 @@ class MeldeAgreeViewController: UIViewController {
 
         displayNoticeAndWarning()
         
-        print(post.title)
     }
     
     func displayNoticeAndWarning() {
@@ -68,20 +68,23 @@ class MeldeAgreeViewController: UIViewController {
             reportOptionForDatabase = "normal"
         }
         
-        let postRef = db.collection("Posts")
-        postRef.document(post.documentID).updateData(["report": reportOptionForDatabase]) { err in
-            if let err = err {
-                print("Error updating document: \(err)")
-            } else {
-                print("Document successfully updated")
-                
+        if let post = post {
+            let postRef = db.collection("Posts")
+            postRef.document(post.documentID).updateData(["report": reportOptionForDatabase]) { err in
+                if let err = err {
+                    print("Error updating document: \(err)")
+                } else {
+                    print("Document successfully updated")
+                    
+                }
             }
+        } else if let comment = comment {
+            //todo: Find Comment Ref and update Data
         }
-        
     }
     
     func saveReport() {
-        let ref = db.collection("Reports").document()
+        
         if let user = Auth.auth().currentUser {
             
             let notificationRef = db.collection("Users").document("CZOcL3VIwMemWwEfutKXGAfdlLy1").collection("notifications").document()
@@ -96,22 +99,35 @@ class MeldeAgreeViewController: UIViewController {
                 }
             }
             
-            let data: [String:Any] = ["category": reportCategory, "reason": choosenReportOption, "reportingUser": user.uid, "reported post":post.documentID]
-            
-            ref.setData(data) { (err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    print("Successfully saved")
-                    self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
-                }
+            if let post = post {
+                
+                let data: [String:Any] = ["category": reportCategory, "reason": choosenReportOption, "reportingUser": user.uid, "reported post":post.documentID]
+                
+                saveReportInDatabase(data: data)
+                
+            } else if let comment = comment {
+                let data: [String:Any] = ["category": reportCategory, "reason": choosenReportOption, "reportingUser": user.uid, "reported post": comment.documentID]
+                
+                saveReportInDatabase(data: data)
             }
         } else {
             self.notLoggedInAlert()
         }
     }
     
-    
+    func saveReportInDatabase(data: [String:Any]) {
+        
+        let ref = db.collection("Reports").document()
+        
+        ref.setData(data) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                print("Successfully saved")
+                self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+            }
+        }
+    }
     
     @IBAction func backPressed(_ sender: Any) {
         dismiss(animated: true, completion: nil)

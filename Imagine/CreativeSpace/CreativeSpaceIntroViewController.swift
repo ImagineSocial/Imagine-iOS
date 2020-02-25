@@ -29,20 +29,28 @@ class CreativeSpaceIntroViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.barTintColor = .black
+        
+        if #available(iOS 13.0, *) {
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.backgroundColor = .black
+            
+            self.navigationController?.navigationBar.standardAppearance = navBarAppearance
+        } else {
+            self.navigationController?.navigationBar.shadowImage = UIImage()
+            self.navigationController?.navigationBar.barTintColor = .black
+        }
         
         let buttons = [artistButton!, ITArtistsButton!, revolutionistButton!]
         
         for button in buttons {
             let lay = button.layer
             lay.cornerRadius = 8
-            lay.borderColor = Constants.imagineColor.cgColor
+            lay.borderColor = UIColor.imagineColor.cgColor
             lay.borderWidth = 1
         }
         getData()
     }
+    
     
     func getData() {
         let ref = db.collection("TopTopicData").document("CurrentProjects").collection("Visions")

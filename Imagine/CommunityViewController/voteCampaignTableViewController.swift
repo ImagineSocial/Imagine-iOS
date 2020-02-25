@@ -66,10 +66,10 @@ class voteCampaignTableViewController: UITableViewController {
         
         let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15) as Any]
         segmentedControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
-        segmentedControl.tintColor = Constants.imagineColor
+        segmentedControl.tintColor = .imagineColor
         
         let lay = shareIdeaButton.layer
-        lay.borderColor = Constants.imagineColor.cgColor
+        lay.borderColor = UIColor.imagineColor.cgColor
         lay.borderWidth = 1
     }
     

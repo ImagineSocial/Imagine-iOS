@@ -21,6 +21,13 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     @IBOutlet weak var infoButton: UIBarButtonItem!
     @IBOutlet weak var upvoteCountLabel: UILabel!
     @IBOutlet weak var downvoteCountLabel: UILabel!
+    @IBOutlet weak var commentTableView: CommentTableView!
+    @IBOutlet weak var headerImageView: UIImageView!
+    @IBOutlet weak var headerTopicLabel: UILabel!
+    @IBOutlet weak var headerProContraLabel: UILabel!
+    @IBOutlet weak var scrollView: UIScrollView!
+    
+    var floatingCommentView: CommentAnswerView?
     
     var argument: Argument?
     var fact: Fact?
@@ -31,6 +38,39 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
         super.viewDidLoad()
 
         setDataUp()
+        
+        let scrollViewTap = UITapGestureRecognizer(target: self, action: #selector(scrollViewTapped))
+        scrollViewTap.cancelsTouchesInView = false  // Otherwise the tap on the TableViews are not recognized
+        scrollView.addGestureRecognizer(scrollViewTap)
+        
+        commentTableView.initializeCommentTableView(section: .argument)
+        commentTableView.commentDelegate = self
+        if let argument = argument {
+            commentTableView.argument = argument
+        }
+        
+        createFloatingCommentView()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        if let view = floatingCommentView {
+            view.removeFromSuperview()
+        }
+    }
+    
+    @objc func scrollViewTapped() {
+        if let view = floatingCommentView {
+            view.answerTextField.resignFirstResponder()
+        }
+    }
+    
+    func createFloatingCommentView() {
+        let height = self.view.frame.height
+        floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: height-60, width: self.view.frame.width, height: 60))
+        floatingCommentView!.delegate = self
+        if let window = UIApplication.shared.keyWindow {
+            window.addSubview(floatingCommentView!)
+        }
     }
     
     func setDataUp() {
@@ -43,25 +83,37 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
         titleLabel.text = argument.title
         descriptionLabel.text = argument.description
         
-//        downvoteButton.layer.borderWidth = 1
-//        if #available(iOS 13.0, *) {
-//            downvoteButton.layer.borderColor = UIColor.label.cgColor
-//        } else {
-//            downvoteButton.layer.borderColor = UIColor.black.cgColor
-//        }
-//        downvoteButton.layer.cornerRadius = downvoteButton.frame.width/2
-//        
-//        upvoteButton.layer.borderWidth = 1
-//        if #available(iOS 13.0, *) {
-//            upvoteButton.layer.borderColor = UIColor.label.cgColor
-//        } else {
-//            upvoteButton.layer.borderColor = UIColor.black.cgColor
-//        }
-//        upvoteButton.layer.cornerRadius = downvoteButton.frame.width/2
-        
-        self.navigationItem.title = fact.title
+        if let url = URL(string: fact.imageURL) {
+            headerImageView.sd_setImage(with: url, completed: nil)
+        }
+        headerTopicLabel.text = fact.title
+        if let names = fact.factDisplayNames {
+            self.headerProContraLabel.text = getDisplayString(displayNames: names, proOrContra: argument.proOrContra)
+        }
     }
     
+    func getDisplayString(displayNames: FactDisplayName, proOrContra: String) -> String {
+        switch displayNames {
+        case .advantageDisadvantage:
+            if proOrContra == "pro" {
+                return "Vorteile"
+            } else {
+               return "Nachteile"
+            }
+        case .confirmDoubt:
+           if proOrContra == "pro" {
+                return "Bestätigung"
+            } else {
+               return "Zweifel"
+            }
+        case .proContra:
+            if proOrContra == "pro" {
+                return "Pro"
+            } else {
+               return "Contra"
+            }
+        }
+    }
 
     @IBAction func downVoteButtonTapped(_ sender: Any) {
         voted(kindOfVote: .downvote)
@@ -140,4 +192,43 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     @IBAction func infoButtonTapped(_ sender: Any) {
         infoButton.showEasyTipView(text: Constants.texts.argumentDetailText)
     }
+}
+
+extension FactDetailViewController: CommentTableViewDelegate, CommentViewDelegate {
+    func sendButtonTapped(text: String, isAnonymous: Bool) {
+        floatingCommentView!.resignFirstResponder()
+        commentTableView.saveCommentInDatabase(bodyString: text, isAnonymous: isAnonymous)
+    }
+    
+    func commentTypingBegins() {
+        
+    }
+    
+    func notAllowedToComment() {
+        if let view = floatingCommentView {
+            view.answerTextField.text = ""
+        }
+    }
+    
+    func doneSaving() {
+        print("Done")
+        if let view = floatingCommentView {
+            view.answerTextField.text = ""
+        }
+    }
+    
+    func notLoggedIn() {
+        self.notLoggedInAlert()
+    }
+    
+    func commentGotReported(comment: Comment) {
+        
+        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let reportViewController = storyBoard.instantiateViewController(withIdentifier: "reportVC") as! MeldenViewController
+        reportViewController.reportComment = true
+        reportViewController.modalTransitionStyle = .coverVertical
+        reportViewController.modalPresentationStyle = .overFullScreen
+        self.present(reportViewController, animated: true, completion: nil)
+    }
+    
 }

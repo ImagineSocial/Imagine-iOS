@@ -583,7 +583,7 @@ class LogInViewController: UIViewController {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.cornerRadius = 4
-        button.backgroundColor = Constants.imagineColor
+        button.backgroundColor = .imagineColor
         button.setTitle("Zur Vereinbarung", for: .normal)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 18)
         button.setTitleColor(.white, for: .normal)
@@ -598,7 +598,7 @@ class LogInViewController: UIViewController {
         button.cornerRadius = 4
         button.clipsToBounds = true
         button.setTitle("Passwort vergessen", for: .normal)
-        button.setTitleColor(Constants.imagineColor, for: .normal)
+        button.setTitleColor(.imagineColor, for: .normal)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 10)
         button.addTarget(self, action: #selector(resetPasswordTapped), for: .touchUpInside)
         
@@ -668,7 +668,7 @@ class LogInViewController: UIViewController {
     let nextButton: DesignableButton = {
        let button = DesignableButton()
         button.layer.cornerRadius = 5
-        button.backgroundColor = Constants.imagineColor
+        button.backgroundColor = .imagineColor
         button.tag = 0
         button.setTitle("Weiter", for: .normal)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 22)

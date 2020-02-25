@@ -87,6 +87,7 @@
                     </label>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Ije-Bx-iN1">
                         <rect key="frame" x="255" y="90" width="110" height="90"/>
+                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="110" id="FAc-2O-2lc"/>
                             <constraint firstAttribute="height" constant="90" id="mGb-G5-eKk"/>

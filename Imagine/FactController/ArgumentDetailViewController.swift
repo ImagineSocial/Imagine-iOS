@@ -15,9 +15,12 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
     @IBOutlet weak var sourceTextView: UITextView!
     @IBOutlet weak var sourceTextViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var showSourceButton: DesignableButton!
+    @IBOutlet weak var commentTableView: CommentTableView!
     
     var source: Source?
     var argument: Argument?
+    
+    var floatingCommentView: CommentAnswerView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +28,24 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
         sourceTextView.delegate = self
 
         setUpView()
+        
+        if let source = source {
+            commentTableView.initializeCommentTableView(section: .source)
+            commentTableView.commentDelegate = self
+            commentTableView.source = source
+        } else if let argument = argument {
+            commentTableView.initializeCommentTableView(section: .counterArgument)
+            commentTableView.commentDelegate = self
+            commentTableView.counterArgument = argument
+        }
+        
+        createFloatingCommentView()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        if let view = floatingCommentView {
+            view.removeFromSuperview()
+        }
     }
     
     func setUpView() {
@@ -44,6 +65,12 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
             self.showSourceButton.isHidden = true
             self.titleLabel.text = argument.title
             self.descriptionLabel.text = argument.description
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let view = floatingCommentView {
+            view.answerTextField.resignFirstResponder()
         }
     }
     
@@ -69,5 +96,55 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
         }
     }
     
+    
+    func createFloatingCommentView() {
+        let height = self.view.frame.height
+        floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: height-60, width: self.view.frame.width, height: 60))
+        floatingCommentView!.delegate = self
+        
+        if let window = UIApplication.shared.keyWindow {
+            window.addSubview(floatingCommentView!)
+        }
+    }
 
+}
+
+extension ArgumentDetailViewController: CommentViewDelegate, CommentTableViewDelegate {
+    
+    func sendButtonTapped(text: String, isAnonymous: Bool) {
+        floatingCommentView!.resignFirstResponder()
+        commentTableView.saveCommentInDatabase(bodyString: text, isAnonymous: isAnonymous)
+    }
+    
+    func commentTypingBegins() {
+        
+    }
+    
+    func doneSaving() {
+        print("Done")
+        if let view = floatingCommentView {
+            view.answerTextField.text = ""
+        }
+    }
+    
+    func notLoggedIn() {
+        self.notLoggedInAlert()
+    }
+    
+    func notAllowedToComment() {
+        if let view = floatingCommentView {
+            view.answerTextField.text = ""
+        }
+    }
+    
+    func commentGotReported(comment: Comment) {
+        
+        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let reportViewController = storyBoard.instantiateViewController(withIdentifier: "reportVC") as! MeldenViewController
+        reportViewController.reportComment = true
+        reportViewController.modalTransitionStyle = .coverVertical
+        reportViewController.modalPresentationStyle = .overFullScreen
+        self.present(reportViewController, animated: true, completion: nil)
+    }
+    
 }

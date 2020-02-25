@@ -78,7 +78,7 @@ class ReportABugViewController: UIViewController, UITextViewDelegate {
             
                 let maltesUID = "CZOcL3VIwMemWwEfutKXGAfdlLy1"
                 let notificationRef = db.collection("Users").document(maltesUID).collection("notifications").document()
-                let notificationData: [String: Any] = ["type": "message", "message": "Ein neuer Bug: \(text)", "name": "System", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "UserID": user.uid]
+            let notificationData: [String: Any] = ["type": "message", "message": "Ein neuer Bug: \(String(describing: text))", "name": "System", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "UserID": user.uid]
                 
                 notificationRef.setData(notificationData) { (err) in
                     if let error = err {

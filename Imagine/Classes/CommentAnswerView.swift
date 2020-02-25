@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 
 protocol CommentViewDelegate {
-    func sendButtonTapped(text: String)
+    func sendButtonTapped(text: String, isAnonymous: Bool)
     func commentTypingBegins()
 }
 
@@ -19,39 +19,40 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
     var delegate: CommentViewDelegate?
     let db = Firestore.firestore()
     
-    var post: Post?
+    var isAnonymous = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         if #available(iOS 13.0, *) {
-            self.backgroundColor = .systemBackground
+            self.backgroundColor = .secondarySystemBackground
         } else {
-            self.backgroundColor = .white
+            self.backgroundColor = .ios12secondarySystemBackground
         }
         answerTextField.delegate = self
                 
         addSubview(answerTextField)
         addSubview(sendButton)
-        addSubview(imageView)
+        addSubview(anonymousButton)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    let imageView: UIImageView = {
-        let view = UIImageView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.image = UIImage(named: "messageBubble")
-        view.contentMode = .scaleAspectFit
-        if #available(iOS 13.0, *) {
-            view.tintColor = .label
-        } else {
-            view.tintColor = .white
-        }
+    let anonymousButton: DesignableButton = {
+       let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "mask"), for: .normal)
+        button.tintColor = .imagineColor
+        button.addTarget(self, action: #selector(anonymousTapped), for: .touchUpInside)
+        button.imageEdgeInsets = UIEdgeInsets(top: 3, left: 5, bottom: 5, right: 5)
         
-        return view
+        return button
     }()
     
     let answerTextField: UITextField = {
@@ -61,9 +62,9 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
         field.layer.cornerRadius = 10
         field.placeholder = " Sag etwas dazu..."
         if #available(iOS 13.0, *) {
-            field.backgroundColor = .secondarySystemBackground
+            field.backgroundColor = .systemBackground
         } else {
-            field.backgroundColor = .lightGray
+            field.backgroundColor = .white
         }
         
         return field
@@ -72,12 +73,14 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
     let sendButton: DesignableButton = {
        let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            button.setImage(UIImage(systemName: "paperplane.fill"), for: .normal)
-        } else {
-            button.setImage(UIImage(named: "upvote"), for: .normal)
-        }
-        button.tintColor = Constants.imagineColor
+        button.setImage(UIImage(named: "sendButton"), for: .normal)
+//        if #available(iOS 13.0, *) {
+//            button.setImage(UIImage(systemName: "paperplane.fill"), for: .normal)
+//        } else {
+//            button.setImage(UIImage(named: "upvote"), for: .normal)
+//        }
+        button.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        button.tintColor = .imagineColor
         button.addTarget(self, action: #selector(sendTapped), for: .touchUpInside)
         
         return button
@@ -87,9 +90,19 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
         delegate?.commentTypingBegins()
     }
     
+    @objc func anonymousTapped() {
+        if isAnonymous {
+            self.isAnonymous = false
+            anonymousButton.tintColor = .imagineColor
+        } else {
+            self.isAnonymous = true
+            anonymousButton.tintColor = Constants.green
+        }
+    }
+    
     @objc func sendTapped() {
         if let answer = answerTextField.text {
-            delegate?.sendButtonTapped(text: answer)
+            delegate?.sendButtonTapped(text: answer, isAnonymous: isAnonymous)
             answerTextField.resignFirstResponder()
         }
     }
@@ -102,18 +115,41 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
         sendButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
         sendButton.widthAnchor.constraint(equalToConstant: 35).isActive = true
         
-        imageView.centerYAnchor.constraint(equalTo: answerTextField.centerYAnchor).isActive = true
-        imageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        imageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
+        anonymousButton.centerYAnchor.constraint(equalTo: answerTextField.centerYAnchor).isActive = true
+        anonymousButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        anonymousButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        anonymousButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
         
         answerTextField.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
         answerTextField.heightAnchor.constraint(equalToConstant: 35).isActive = true
         answerTextField.trailingAnchor.constraint(equalTo: sendButton.leadingAnchor, constant: -10).isActive = true
-        answerTextField.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 10).isActive = true
+        answerTextField.leadingAnchor.constraint(equalTo: anonymousButton.trailingAnchor, constant: 10).isActive = true
         
     }
     
+    //MARK:- ViewMovesWithKeyboard
     
+    var keyboardheight:CGFloat = 0
+    
+    @objc func keyboardWillHide() {
+        
+        frame.origin.y = frame.origin.y+(keyboardheight*2)
+        
+    }
+    
+    override func willMove(toSuperview newSuperview: UIView?) {
+        if newSuperview == nil {
+            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        }
+    }
+    
+    
+    @objc func keyboardWillChange(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+                self.keyboardheight = keyboardSize.height-10
+                frame.origin.y = frame.origin.y-(keyboardheight)
+        }
+    }
     
 }

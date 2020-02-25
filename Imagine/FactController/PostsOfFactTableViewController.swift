@@ -111,7 +111,7 @@ class PostsOfFactTableViewController: UITableViewController {
     func setDismissButton() {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = Constants.imagineColor
+        button.tintColor = .imagineColor
         button.addTarget(self, action: #selector(dismissTapped), for: .touchUpInside)
         button.setImage(UIImage(named: "Dismiss"), for: .normal)
         button.heightAnchor.constraint(equalToConstant: 23).isActive = true

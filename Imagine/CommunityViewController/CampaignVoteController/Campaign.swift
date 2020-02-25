@@ -16,12 +16,12 @@ class Campaign {
     var createDate = ""
     var supporter = 0
     var opposition = 0
-    var category = ""
+    var category: CampaignCategory?
 }
 
 class CampaignCategory {
     var title:String
-    var type: CampaignType = .general
+    var type: CampaignType = .proposal
     
     init(title: String, type: CampaignType) {
         self.title = title

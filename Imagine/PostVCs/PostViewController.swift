@@ -94,7 +94,10 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         self.view.activityStartAnimating()
         
-        getcomments()
+        commentTableView.initializeCommentTableView(section: .post)
+        commentTableView.commentDelegate = self
+        commentTableView.post = self.post
+        
         
         imageCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
         
@@ -104,24 +107,17 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
         imageCollectionView.setCollectionViewLayout(layout, animated: true)
         
-        commentTableView.delegate = self
-        commentTableView.dataSource = self
-        
-        commentTableView.register(UINib(nibName: "CommentCell", bundle: nil), forCellReuseIdentifier: commentIdentifier)
-//        commentTableView.register(CommentTableViewFooter.self, forHeaderFooterViewReuseIdentifier: commentFooterIdentifier)
-        commentTableView.separatorStyle = .none
-        if let view = floatingCommentView {
-            view.delegate = self
-            print("Delegate set NR 1")
-        }
-        
-        
         if #available(iOS 13.0, *) {
             savePostButton.tintColor = .label
         } else {
             savePostButton.tintColor = .black
         }
+        
         scrollView.delegate = self
+        let scrollViewTap = UITapGestureRecognizer(target: self, action: #selector(scrollViewTapped))
+        scrollViewTap.cancelsTouchesInView = false  // Otherwise the tap on the TableViews are not recognized
+        scrollView.addGestureRecognizer(scrollViewTap)
+        
         
         self.view.addSubview(buttonLabel)
         setupViewController()
@@ -134,19 +130,12 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             }
         }
         
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
-
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         if let view = floatingCommentView {
             view.removeFromSuperview()
         }
-        
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     func setupViewController() {
@@ -186,8 +175,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         setupViews()
         showPost()
         showRepost()
-        checkIfTheCurrentUserIsBlocked()
-        setCurrentUser()
 //        instantiateContainerView()// Was for the event object
     }
     
@@ -570,36 +557,31 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         linkedFactView.widthAnchor.constraint(equalToConstant: linkedFactViewWidth).isActive = true
         linkedFactView.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
         
-        commentView.addSubview(commentLabel)
-        commentLabel.bottomAnchor.constraint(equalTo: commentView.bottomAnchor).isActive = true
-        commentLabel.leadingAnchor.constraint(equalTo: commentView.leadingAnchor, constant: 15).isActive = true
-        commentLabel.widthAnchor.constraint(equalToConstant: commentButtonWidth).isActive = true
-        
-        commentView.addSubview(separatorView)
-        separatorView.topAnchor.constraint(equalTo: commentLabel.bottomAnchor, constant: 1).isActive = true
-        separatorView.leadingAnchor.constraint(equalTo: commentView.leadingAnchor, constant: 15).isActive = true
-        separatorView.trailingAnchor.constraint(equalTo: commentView.trailingAnchor, constant: -15).isActive = true
-        separatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
+//        commentView.addSubview(commentLabel)
+//        commentLabel.bottomAnchor.constraint(equalTo: commentView.bottomAnchor).isActive = true
+//        commentLabel.leadingAnchor.constraint(equalTo: commentView.leadingAnchor, constant: 15).isActive = true
+//        commentLabel.widthAnchor.constraint(equalToConstant: commentButtonWidth).isActive = true
+//
+//        commentView.addSubview(separatorView)
+//        separatorView.topAnchor.constraint(equalTo: commentLabel.bottomAnchor, constant: 1).isActive = true
+//        separatorView.leadingAnchor.constraint(equalTo: commentView.leadingAnchor, constant: 15).isActive = true
+//        separatorView.trailingAnchor.constraint(equalTo: commentView.trailingAnchor, constant: -15).isActive = true
+//        separatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
         
         contentView.addSubview(commentView)
         commentView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         commentView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
         commentView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 10).isActive = true
-        let newHeight = buttonHeight+30
+        let newHeight = buttonHeight//+30
         commentView.heightAnchor.constraint(equalToConstant: newHeight).isActive = true
         
         contentView.addSubview(commentTableView)
         commentTableView.topAnchor.constraint(equalTo: commentView.bottomAnchor, constant: 10).isActive = true
         commentTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         commentTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        commentTableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30).isActive = true
         
-        var height = 60
-        if post.commentCount >= 1 {
-            height = post.commentCount*100
-        }
-        commentTableView.heightAnchor.constraint(equalToConstant: CGFloat(height)).isActive = true
-        commentTableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20).isActive = true
-        
+        //Not possible in ViewWillAppear because the view is not layed out yet I guess
         createFloatingCommentView()
     }
     
@@ -813,11 +795,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     // MARK: - Setup UI
     
-    let commentTableView: UITableView = {
-       let tview = UITableView()
+    let commentTableView: CommentTableView = {
+        let tview = CommentTableView()
         tview.translatesAutoresizingMaskIntoConstraints = false
-        tview.estimatedRowHeight = 200
-        tview.rowHeight = UITableView.automaticDimension
         
         return tview
     }()
@@ -1028,7 +1008,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if #available(iOS 13.0, *) {
             view.backgroundColor = .secondarySystemBackground
         } else {
-            view.backgroundColor = .lightGray
+            view.backgroundColor = .ios12secondarySystemBackground
         }
         
         return view
@@ -1513,7 +1493,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         let newLineString = "\n"    // Need to hardcode this and replace the \n of the fetched text
         let descriptionText = post.description.replacingOccurrences(of: "\\n", with: newLineString)
-        
+    
         switch post.type {
         case .event:
             titleLabel.text = post.event.title
@@ -1605,8 +1585,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             } else {
                 self.linkedFactImageView.image = UIImage(named: "FactStamp")
             }
-            self.linkedFactView.layer.borderColor = Constants.imagineColor.cgColor
-            self.linkedFactImageView.layer.borderColor = Constants.imagineColor.cgColor
+            self.linkedFactView.layer.borderColor = UIColor.imagineColor.cgColor
+            self.linkedFactImageView.layer.borderColor = UIColor.imagineColor.cgColor
         }
     }
     
@@ -1757,6 +1737,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     func goToEventUser(user: User) {
         performSegue(withIdentifier: "toUserSegue", sender: user)
+    }
+    
+
+    @objc func scrollViewTapped() {
+        if let view = floatingCommentView {
+            view.answerTextField.resignFirstResponder()
+        }
     }
     
     //MARK: - Buttons Tapped
@@ -1928,32 +1915,12 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     //MARK:- CommentAnswerView
-    
-    var keyboardheight:CGFloat = 0
-    
     func createFloatingCommentView() {
         let height = self.view.frame.height
         floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: height-60, width: self.view.frame.width, height: 60))
         floatingCommentView!.delegate = self
-        floatingCommentView!.post = self.post
         if let window = UIApplication.shared.keyWindow {
             window.addSubview(floatingCommentView!)
-        }
-    }
-    
-    @objc func keyboardWillHide() {
-        if let view = floatingCommentView {
-            view.frame.origin.y = view.frame.origin.y+(keyboardheight*2)
-        }
-    }
-    
-    @objc func keyboardWillChange(notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            if let view = floatingCommentView {
-                
-                self.keyboardheight = keyboardSize.height-10
-                view.frame.origin.y = view.frame.origin.y-(keyboardheight)
-            }
         }
     }
     
@@ -1964,100 +1931,31 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    func setCurrentUser() {
-        if let user = Auth.auth().currentUser {
-            self.getUser(userUID: user.uid) { (currentUser) in
-                self.currentUser = currentUser
-            }
-        }
-    }
-    
-    func checkIfTheCurrentUserIsBlocked() {
-        if post.user.userUID != "" {
-            if let user = Auth.auth().currentUser {
-                db.collection("Users").document(post.user.userUID).getDocument { (document, err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        if let docData = document!.data() {
-                            if let blocked = docData["blocked"] as? [String] {
-                                for id in blocked {
-                                    if user.uid == id {
-                                        self.allowedToComment = false
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    func saveCommentInFirebase(bodyString: String) {
-        
-        if let user = Auth.auth().currentUser {
-            
-            let reference = db.collection("Comments").document(post.documentID).collection("threads")
-            
-            let data : [String: Any] = ["body": bodyString, "id": 0, "sentAt": Timestamp(date: Date()), "userID": user.uid]
-            
-            if let currentUser = currentUser {
-                if user.uid != post.originalPosterUID && post.originalPosterUID != "" {
-                    let notificationRef = db.collection("Users").document(post.originalPosterUID).collection("notifications").document()
-                    let notificationData: [String: Any] = ["type": "comment", "comment": bodyString, "name": currentUser.displayName, "postID": self.post.documentID]
-                    
-                    notificationRef.setData(notificationData) { (err) in
-                        if let error = err {
-                            print("We have an error: \(error.localizedDescription)")
-                        } else {
-                            print("Successfully set notification")
-                        }
-                    }
-                } else {
-                    print("No notification if you comment your own post")
-                }
-                
-                
-                reference.addDocument(data: data) { err in
-                    if let error = err {
-                        print("Error sending message: \(error.localizedDescription)")
-                        return
-                    } else {
-                        if let view = self.floatingCommentView {
-                            view.answerTextField.text = ""
-                        }
-                        let comment = Comment()
-                        comment.createTime = Date()
-                        comment.user = currentUser
-                        comment.text = bodyString
-                        
-                        self.addCommentToTableView(comment: comment)
-                    }
-                }
-            } else {
-                print("No currentUser")
-            }
-            
-        } else {
-            self.notLoggedInAlert()
-        }
-    }
-    
     func scrollToBottom() {
         // Scroll to the end of the view
     }
 }
 
-extension PostViewController: CommentViewDelegate {
-    func sendButtonTapped(text: String) {
+extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
+    func notLoggedIn() {
+        self.notLoggedInAlert()
+    }
+    
+    func doneSaving() {
+        if let view = self.floatingCommentView {
+            view.answerTextField.text = ""
+        }
+    }
+    
+    func sendButtonTapped(text: String, isAnonymous: Bool) {
         print("Button tapped")
-        if allowedToComment {
-        saveCommentInFirebase(bodyString: text)
-        } else {
-            if let view = floatingCommentView {
-                view.answerTextField.text = ""
-            }
+        
+        commentTableView.saveCommentInDatabase(bodyString: text, isAnonymous: isAnonymous)
+    }
+    
+    func notAllowedToComment() {
+        if let view = floatingCommentView {
+            view.answerTextField.text = ""
         }
     }
     
@@ -2065,86 +1963,15 @@ extension PostViewController: CommentViewDelegate {
         //        let bottomOffset = CGPoint(x: 0, y: scrollView.contentSize.height - scrollView.bounds.size.height)
         //        scrollView.setContentOffset(bottomOffset, animated: true)
     }
-}
-
-//MARK:- CommentTableView
-extension PostViewController: UITableViewDataSource, UITableViewDelegate {
     
-    func getUser(userUID: String, returnUser: @escaping (User) -> Void) {
-        let ref = db.collection("Users").document(userUID)
+    func commentGotReported(comment: Comment) {
         
-        ref.getDocument { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let document = snap {
-                    if let data = document.data() {
-                        
-                        let user = User()
-                        user.displayName = data["name"] as? String ?? ""
-                        user.imageURL = data["profilePictureURL"] as? String ?? ""
-                        
-                        returnUser(user)
-                    }
-                }
-            }
-        }
-    }
-    
-    func getcomments() {
-        let reference = db.collection("Comments").document(post.documentID).collection("threads").order(by: "sentAt", descending: false)
-        
-        reference.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    for document in snap.documents {
-                        
-                        let docData = document.data()
-                        print("Looking")
-                        guard let body = docData["body"] as? String,
-                            let sentAtTimestamp = docData["sentAt"] as? Timestamp,
-                            let userUID = docData["userID"] as? String
-                            else {
-                                continue    // Falls er das nicht zuordnen kann
-                        }
-                        
-                        self.getUser(userUID: userUID) { (user) in
-                            let comment = Comment()
-                            comment.createTime = sentAtTimestamp.dateValue()
-                            comment.user = user
-                            comment.text = body
-
-                            self.addCommentToTableView(comment: comment)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    func addCommentToTableView(comment: Comment) {
-        self.comments.append(comment)
-        self.comments.sort(by: { $0.createTime.compare($1.createTime) == .orderedAscending })
-        self.commentTableView.reloadData()
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return comments.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let comment = comments[indexPath.row]
-        
-        if let cell = commentTableView.dequeueReusableCell(withIdentifier: commentIdentifier, for: indexPath) as? CommentCell {
-            
-            cell.comment = comment
-            return cell
-        }
-        
-        return UITableViewCell()
+        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let reportViewController = storyBoard.instantiateViewController(withIdentifier: "reportVC") as! MeldenViewController
+        reportViewController.reportComment = true
+        reportViewController.modalTransitionStyle = .coverVertical
+        reportViewController.modalPresentationStyle = .overFullScreen
+        self.present(reportViewController, animated: true, completion: nil)
     }
     
 }

@@ -19,7 +19,7 @@ class NotificationCell: UITableViewCell {
 //        contentView.backgroundColor = Constants.imagineColor
         contentView.layer.cornerRadius = 8
         contentView.layer.borderWidth = 1
-        contentView.layer.borderColor = Constants.imagineColor.cgColor
+        contentView.layer.borderColor = UIColor.imagineColor.cgColor
         
         messageLabel.backgroundColor = .red
         messageLabel.layer.cornerRadius = messageLabel.frame.height/2

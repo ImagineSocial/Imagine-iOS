@@ -12,7 +12,8 @@ class MeldeOptionViewController: UIViewController {
 
     var reportCategory = ""
     var choosenReportOption = ""
-    var post = Post()
+    var post: Post?
+    var comment: Comment?
     
     @IBOutlet weak var nextButton: DesignableButton!
     
@@ -29,7 +30,11 @@ class MeldeOptionViewController: UIViewController {
     
 
     @IBAction func nextPressed(_ sender: Any) {
-        performSegue(withIdentifier: "reportConfirmSegue", sender: post)
+        if let post = post {
+            performSegue(withIdentifier: "reportConfirmSegue", sender: post)
+        } else if let comment = comment {
+            performSegue(withIdentifier: "reportConfirmSegue", sender: comment)
+        }
     }
     
         
@@ -39,11 +44,13 @@ class MeldeOptionViewController: UIViewController {
             embededVC.delegate = self
         }
         if let nextVC = segue.destination as? MeldeAgreeViewController {
-            if let choosenPost = sender as? Post {
-                nextVC.post = choosenPost
-                nextVC.reportCategory = reportCategory
-                nextVC.choosenReportOption = choosenReportOption
+            if let chosenPost = sender as? Post {
+                nextVC.post = chosenPost
+            } else if let chosenComment = sender as? Comment {
+                nextVC.comment = chosenComment
             }
+            nextVC.reportCategory = reportCategory
+            nextVC.choosenReportOption = choosenReportOption
         }
     }
     
