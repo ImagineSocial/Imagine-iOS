@@ -32,7 +32,7 @@
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Imagine aktuell" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QZ4-Hi-CTz">
-                        <rect key="frame" x="144" y="55" width="87.5" height="15"/>
+                        <rect key="frame" x="141" y="55" width="93.5" height="15"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="15" id="mmf-DS-c0l"/>
                         </constraints>
@@ -179,7 +179,7 @@
                         </constraints>
                     </stackView>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KBH-Xk-Mon">
-                        <rect key="frame" x="190" y="75" width="110" height="20"/>
+                        <rect key="frame" x="190" y="75" width="109" height="20"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="pOQ-T7-PUy"/>
                         </constraints>
@@ -190,7 +190,7 @@
                         </connections>
                     </button>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Aktueller Spendenempfänger:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gk9-dM-Jfb">
-                        <rect key="frame" x="38.5" y="78.5" width="146.5" height="13"/>
+                        <rect key="frame" x="39" y="78" width="146" height="14.5"/>
                         <fontDescription key="fontDescription" name="IBMPlexSans-Light" family="IBM Plex Sans" pointSize="11"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -213,19 +213,15 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="donationSourceButton" destination="KBH-Xk-Mon" id="Lis-DN-5jF"/>
-                <outlet property="firstLabel" destination="yhF-2s-7gb" id="TZ3-4v-aiv"/>
                 <outlet property="firstView" destination="zje-pB-GXV" id="meb-Yr-Sr8"/>
-                <outlet property="fourthLabel" destination="EZ9-U8-GVK" id="owh-oy-I6z"/>
                 <outlet property="fourthView" destination="raE-oN-hQE" id="nl4-7U-YhV"/>
-                <outlet property="secondLabel" destination="T5V-Wy-6XU" id="oih-wh-I0z"/>
                 <outlet property="secondView" destination="tF9-V5-Ghf" id="pS6-aH-Dsy"/>
-                <outlet property="thirdLabel" destination="rH7-7R-sdo" id="MCI-iK-4PS"/>
                 <outlet property="thirdView" destination="TeO-Ta-Rq3" id="kFw-jY-JHD"/>
             </connections>
             <point key="canvasLocation" x="3.6231884057971016" y="54.241071428571423"/>
         </tableViewCell>
     </objects>
     <resources>
-        <image name="ImagineSign" width="691" height="688"/>
+        <image name="ImagineSign" width="640" height="641"/>
     </resources>
 </document>

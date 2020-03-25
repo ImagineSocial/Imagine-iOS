@@ -148,7 +148,7 @@ class PostHelper {
                 self.lastSnap = querySnapshot?.documents.last    // Last document for the next fetch cycle
                 
                 for document in querySnapshot!.documents {
-                    self.addThePost(document: document)
+                    self.addThePost(document: document, forFeed: true)
                 }
                 self.getCommentCount(completion: {
                     returnPosts(self.posts, self.initialFetch)
@@ -344,7 +344,7 @@ class PostHelper {
                     if let document = document {
                         
                         self.getTheUsersFriend { (_) in // First get the friends to check which name to fetch
-                            self.addThePost(document: document)
+                            self.addThePost(document: document, forFeed: true)
                             
                             startIndex = startIndex+1
                             
@@ -363,7 +363,7 @@ class PostHelper {
     
     
     //MARK: -add Post
-    func addThePost(document: DocumentSnapshot) {
+    func addThePost(document: DocumentSnapshot, forFeed: Bool) -> Post? {
         
         let documentID = document.documentID
         if let documentData = document.data() {
@@ -383,7 +383,7 @@ class PostHelper {
                     let niceCount = documentData["niceCount"] as? Int
                     
                     else {
-                        return
+                        return nil
                 }
                 
                 
@@ -424,7 +424,12 @@ class PostHelper {
                     } else {
                         post.getUser(isAFriend: isAFriend)
                     }
-                    self.posts.append(post)
+                    
+                    if forFeed {
+                        self.posts.append(post)
+                    } else {
+                        return post
+                    }
                     
                     
                     // Picture
@@ -435,7 +440,7 @@ class PostHelper {
                         let picWidth = documentData["imageWidth"] as? Double
                         
                         else {
-                            return
+                            return nil
                     }
 
                     let post = Post()
@@ -470,7 +475,12 @@ class PostHelper {
                     } else {
                         post.getUser(isAFriend: isAFriend)
                     }
-                    self.posts.append(post)
+                    
+                    if forFeed {
+                        self.posts.append(post)
+                    } else {
+                        return post
+                    }
                     
                     // YouTubeVideo
                 } else if postType == "multiPicture" {
@@ -479,7 +489,7 @@ class PostHelper {
                         let picHeight = documentData["imageHeight"] as? Double,
                         let picWidth = documentData["imageWidth"] as? Double
                         else {
-                        return
+                        return nil
                     }
                     
                     let post = Post()
@@ -515,11 +525,15 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    self.posts.append(post)
+                    if forFeed {
+                        self.posts.append(post)
+                    } else {
+                        return post
+                    }
                     
                 } else if postType == "youTubeVideo" {
                     
-                    guard let linkURL = documentData["link"] as? String else { return  }
+                    guard let linkURL = documentData["link"] as? String else { return nil  }
                     
                     let post = Post()
                     post.title = title
@@ -551,7 +565,12 @@ class PostHelper {
                     } else {
                         post.getUser(isAFriend: isAFriend)
                     }
-                    self.posts.append(post)
+                    
+                    if forFeed {
+                        self.posts.append(post)
+                    } else {
+                        return post
+                    }
                     
                     //Link
                 } else if postType == "GIF" {
@@ -559,11 +578,11 @@ class PostHelper {
                     guard let gifURL = documentData["link"] as? String
                         
                         else {
-                            return     // Falls er das nicht als (String) zuordnen kann
+                            return nil
                     }
                     
-                    let post = Post()       // Erst neuen Post erstellen
-                    post.title = title      // Dann die Sachen zuordnen
+                    let post = Post()
+                    post.title = title
                     post.linkURL = gifURL
                     post.description = description
                     post.type = .GIF
@@ -592,7 +611,7 @@ class PostHelper {
                             post.mediaHeight = size.height
                         } else {
                             print("Couldnt get a valid Video")
-                            return
+                            return nil
                         }
                     }
                     
@@ -605,18 +624,24 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    self.posts.append(post)
+                    if forFeed {
+                        self.posts.append(post)
+                    } else {
+                        return post
+                    }
                     
-                } else if postType == "link" {
+                } else if postType == "stop" {
+                    
+                }   else if postType == "link" {
                     
                     guard let linkURL = documentData["link"] as? String
                         
                         else {
-                            return     // Falls er das nicht als (String) zuordnen kann
+                            return nil
                     }
                     
-                    let post = Post()       // Erst neuen Post erstellen
-                    post.title = title      // Dann die Sachen zuordnen
+                    let post = Post()
+                    post.title = title
                     post.linkURL = linkURL
                     post.description = description
                     post.type = .link
@@ -645,7 +670,12 @@ class PostHelper {
                     } else {
                         post.getUser(isAFriend: isAFriend)
                     }
-                    self.posts.append(post)
+                    
+                    if forFeed {
+                        self.posts.append(post)
+                    } else {
+                        return post
+                    }
                     
                     // Repost
                 } else if postType == "repost" || postType == "translation" {
@@ -653,7 +683,7 @@ class PostHelper {
                     guard let postDocumentID = documentData["OGpostDocumentID"] as? String
                         
                         else {
-                            return
+                            return nil
                     }
                     
                     let post = Post()
@@ -690,10 +720,16 @@ class PostHelper {
                     post.getRepost(returnRepost: { (repost) in
                         post.repost = repost
                     })
-                    self.posts.append(post)
+                    if forFeed {
+                        self.posts.append(post)
+                    } else {
+                        return post
+                    }
                 }
             }
         }
+        
+        return nil
     }
     
     func addFact(factID: String) -> Fact {

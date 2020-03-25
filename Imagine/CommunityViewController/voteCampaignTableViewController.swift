@@ -23,18 +23,21 @@ enum Impact {
 
 class voteCampaignTableViewController: UITableViewController {
     
-    @IBOutlet weak var spaceBetweenSubheaderAndDescriptionLabel: NSLayoutConstraint!
+//    @IBOutlet weak var spaceBetweenSubheaderAndDescriptionLabel: NSLayoutConstraint!
     @IBOutlet weak var segmentedControl: UISegmentedControl!
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var subHeaderLabel: UILabel!
     @IBOutlet weak var shareIdeaButton: DesignableButton!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var infoButton: UIBarButtonItem!
+    @IBOutlet weak var shareIdeaButtonIcon: UIImageView!
     
     var campaigns = [Campaign]()
     var votes = [Vote]()
     var mode: suggestionMode = .vote
     let dataHelper = DataHelper()
+    
+    let voteCellIdentifier = "VoteCell"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,7 +54,9 @@ class voteCampaignTableViewController: UITableViewController {
         
         self.view.activityStartAnimating()
         
+        tableView.register(UINib(nibName: "VoteCell", bundle: nil), forCellReuseIdentifier: voteCellIdentifier)
         tableView.separatorStyle = .none
+                
         
         let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(setCampaignUI))
         rightSwipe.direction = .right
@@ -71,7 +76,13 @@ class voteCampaignTableViewController: UITableViewController {
         let lay = shareIdeaButton.layer
         lay.borderColor = UIColor.imagineColor.cgColor
         lay.borderWidth = 1
+        
+        
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+//           navigationController?.navigationBar.prefersLargeTitles = true
+       }
     
     lazy var infoScreen: InfoScreen = {
         let infoScreen = InfoScreen()
@@ -81,6 +92,7 @@ class voteCampaignTableViewController: UITableViewController {
     
     
     override func viewWillAppear(_ animated: Bool) {
+//        navigationController?.navigationBar.prefersLargeTitles = false
         getCampaigns()
     }
     
@@ -129,31 +141,11 @@ class voteCampaignTableViewController: UITableViewController {
                 return cell
             }
         case .vote:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "VoteCell", for: indexPath) as? VoteCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: voteCellIdentifier, for: indexPath) as? VoteCell {
                 
                 let vote = votes[indexPath.row]
                 
-                cell.headerLabel.text = vote.title
-                cell.bodyLabel.text = vote.subtitle
-                cell.voteTillDateLabel.text = "Abstimmung bis: \(vote.endOfVoteDate)"
-                cell.costLabel.text = vote.cost
-                cell.timePeriodLabel.text = "\(vote.timeToRealization) Monat"
-                cell.commentCountLabel.text = "0"
                 
-                cell.voteTillDateLabel.layer.cornerRadius = 4
-                cell.impactLabel.layer.cornerRadius = 4
-                
-                switch vote.impact {
-                case .light:
-                    cell.impactLabel.text = "Auswirkung: Leicht"
-                    cell.impactLabel.backgroundColor = Constants.green
-                case .medium:
-                    cell.impactLabel.text = "Auswirkung: Medium"
-                    cell.impactLabel.backgroundColor = .orange
-                case .strong:
-                    cell.impactLabel.text = "Auswirkung: Stark"
-                    cell.impactLabel.backgroundColor = Constants.red
-                }
                 
                 return cell
             }
@@ -216,20 +208,21 @@ class voteCampaignTableViewController: UITableViewController {
         case .vote:
             mode = .campaign
             
-            let option = UIView.AnimationOptions.transitionFlipFromLeft
+            let option = UIView.AnimationOptions.transitionCrossDissolve
             
-            UIView.transition(with: self.view, duration: 0.6, options: option, animations: {
-                self.tableView.tableHeaderView?.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 235)
+            UIView.transition(with: self.view, duration: 0.5, options: option, animations: {
+//                self.tableView.tableHeaderView?.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 180)
                 
                 self.shareIdeaButton.alpha = 1
+                self.shareIdeaButtonIcon.alpha = 1
                 
-                self.spaceBetweenSubheaderAndDescriptionLabel.constant = 70
+//                self.spaceBetweenSubheaderAndDescriptionLabel.constant = 70
                 
                 self.segmentedControl.selectedSegmentIndex = 0
                 self.headerLabel.fadeTransition(0.5)
-                self.headerLabel.text = "Gemeinsam errichten"
+                self.headerLabel.text = "Vorschläge"
                 self.subHeaderLabel.fadeTransition(0.5)
-                self.subHeaderLabel.text = "Teile uns deine Ideen für ein besseres Erlebnis mit!"
+//                self.subHeaderLabel.text = "Teile uns deine Ideen für ein besseres Erlebnis mit!"
                 self.descriptionLabel.fadeTransition(0.5)
                 self.descriptionLabel.text = "Aktuelle Kampagnen:"
                 self.tableView.reloadData()
@@ -248,18 +241,19 @@ class voteCampaignTableViewController: UITableViewController {
         case .campaign:
             mode = .vote
             
-            let option = UIView.AnimationOptions.transitionFlipFromRight
+            let option = UIView.AnimationOptions.transitionCrossDissolve
             
-            UIView.transition(with: self.view, duration: 0.7, options: option, animations: {
+            UIView.transition(with: self.view, duration: 0.5, options: option, animations: {
                 self.shareIdeaButton.alpha = 0
-                self.tableView.tableHeaderView?.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 190)
+                self.shareIdeaButtonIcon.alpha = 0
+//                self.tableView.tableHeaderView?.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 180)
                 
                 self.segmentedControl.selectedSegmentIndex = 1
-                self.spaceBetweenSubheaderAndDescriptionLabel.constant = 10
+//                self.spaceBetweenSubheaderAndDescriptionLabel.constant = 10
                 self.headerLabel.fadeTransition(0.5)
-                self.headerLabel.text = "Gemeinsam entscheiden"
+                self.headerLabel.text = "Votes"
                 self.subHeaderLabel.fadeTransition(0.5)
-                self.subHeaderLabel.text = "Du entscheidest mit, wie sich dein Netzwerk verändert!"
+//                self.subHeaderLabel.text = "Du entscheidest mit, wie sich dein Netzwerk verändert!"
                 self.descriptionLabel.fadeTransition(0.5)
                 self.descriptionLabel.text = "Aktuelle Abstimmungen:"
                 self.tableView.reloadData()

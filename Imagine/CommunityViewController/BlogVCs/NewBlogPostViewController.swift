@@ -56,7 +56,7 @@ class NewBlogPostViewController: UIViewController {
                 
                 let blogRef = db.collection("BlogPosts")
                 
-                let dataDictionary: [String: Any] = ["title": titleTextField.text, "subtitle": shortDescriptionTextfield.text, "category" : categoryTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "profileImageURL": user.imageURL, "poster": "Malte"]
+                let dataDictionary: [String: Any] = ["title": titleTextField.text, "subtitle": shortDescriptionTextfield.text, "category" : categoryTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "profileImageURL": user.imageURL, "poster": "Imagine"]
                 
                 
                 blogRef.addDocument(data: dataDictionary)

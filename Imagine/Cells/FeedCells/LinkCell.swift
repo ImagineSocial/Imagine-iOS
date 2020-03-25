@@ -33,6 +33,8 @@ class LinkCell : BaseFeedCell {
     
     let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: DisabledCache.instance)
     
+    var preview: Cancellable?
+    
     var delegate: PostCellDelegate?
     
     override func awakeFromNib() {
@@ -66,6 +68,10 @@ class LinkCell : BaseFeedCell {
         factImageView.image = nil
         factImageView.backgroundColor = .clear
         followTopicImageView.isHidden = true
+        
+        if let preview = preview {
+            preview.cancel()
+        }
     }
     
     var post :Post? {
@@ -126,19 +132,28 @@ class LinkCell : BaseFeedCell {
                     self.loadFact()
                 }
             }
+//            "https://www.daslandhilft.deassets/teaser-min.jpg") Response(url: Optional(https://www.daslandhilft.de
             
             createDateLabel.text = post.createTime
             titleLabel.text = post.title
             
             // Preview des Links anzeigen
-            slp.preview(post.linkURL, onSuccess: { (result) in
+            preview = slp.preview(post.linkURL, onSuccess: { (result) in
                 
-                // Hat sogar ne Cache, wäre cool für die Dauer der Ladezeiten:
+                // Even got a Cache, would be nice for the loadingspeed
                 //https://github.com/LeonardoCardoso/SwiftLinkPreview
                 
+                print("Das ist die url: \(result.image)", result, result.images)
+                
                 if let imageURL = result.image {
-                    self.linkThumbNailImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+                    if imageURL.isValidURL {
+                        self.linkThumbNailImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+                    } else {
+                        //Try
+                        self.linkThumbNailImageView.image = UIImage(named: "savePostImage")
+                    }
                 }
+                
                 if let linkSource = result.canonicalUrl {
                     self.urlLabel.text = linkSource
                 }

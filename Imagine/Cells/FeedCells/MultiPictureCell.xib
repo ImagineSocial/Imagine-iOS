@@ -221,6 +221,29 @@
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </imageView>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F0H-7o-15k" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="459" y="117" width="42" height="23"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1/3" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yd1-Zq-62c">
+                                <rect key="frame" x="11.5" y="3.5" width="19" height="16"/>
+                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
+                                <color key="textColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="yd1-Zq-62c" firstAttribute="centerX" secondItem="F0H-7o-15k" secondAttribute="centerX" id="AxM-ef-JjD"/>
+                            <constraint firstItem="yd1-Zq-62c" firstAttribute="centerY" secondItem="F0H-7o-15k" secondAttribute="centerY" id="HTT-Lh-ZTX"/>
+                            <constraint firstAttribute="width" constant="42" id="aNt-sb-rlp"/>
+                            <constraint firstAttribute="height" constant="23" id="mWE-8Z-h7m"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="10"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                 <constraints>
@@ -243,7 +266,9 @@
                     <constraint firstAttribute="trailing" secondItem="PKV-Ad-fVf" secondAttribute="trailing" constant="5" id="avE-z2-14D"/>
                     <constraint firstItem="1KF-jL-Zsb" firstAttribute="height" secondItem="OF2-qf-jfE" secondAttribute="height" constant="6" id="bH7-s8-Vzz"/>
                     <constraint firstItem="S3I-k9-eZ4" firstAttribute="leading" secondItem="N0L-Ru-SAL" secondAttribute="leading" constant="10" id="bH8-sS-x8e"/>
+                    <constraint firstItem="F0H-7o-15k" firstAttribute="trailing" secondItem="PKV-Ad-fVf" secondAttribute="trailing" constant="-10" id="gm1-vw-SNa"/>
                     <constraint firstAttribute="bottom" secondItem="S3I-k9-eZ4" secondAttribute="bottom" constant="6" id="isB-Ym-cX8"/>
+                    <constraint firstItem="F0H-7o-15k" firstAttribute="top" secondItem="PKV-Ad-fVf" secondAttribute="top" constant="10" id="mru-y8-o2p"/>
                     <constraint firstItem="nEl-se-MJg" firstAttribute="leading" secondItem="OF2-qf-jfE" secondAttribute="trailing" constant="25" id="mw1-te-yaY"/>
                     <constraint firstItem="1KF-jL-Zsb" firstAttribute="top" secondItem="OF2-qf-jfE" secondAttribute="top" constant="-3" id="nR5-zH-KGz"/>
                     <constraint firstItem="1KF-jL-Zsb" firstAttribute="leading" secondItem="OF2-qf-jfE" secondAttribute="leading" constant="-3" id="nl1-C7-BeN"/>
@@ -269,6 +294,7 @@
                 <outlet property="linkedFactButton" destination="1KF-jL-Zsb" id="Nxo-K8-acA"/>
                 <outlet property="niceButton" destination="bNL-X8-nDa" id="dSK-2A-aUf"/>
                 <outlet property="pageControl" destination="Vtl-dh-pFb" id="R5J-xM-CBo"/>
+                <outlet property="pictureCountLabel" destination="yd1-Zq-62c" id="olj-sA-hzI"/>
                 <outlet property="profilePictureImageView" destination="UAC-Bf-dhI" id="tac-OE-c89"/>
                 <outlet property="reportButton" destination="nEl-se-MJg" id="17a-nb-AIP"/>
                 <outlet property="thanksButton" destination="Jw4-w7-rZh" id="iIC-QV-WOa"/>

@@ -32,14 +32,16 @@ class JobOfferingViewController: UIViewController {
     
     func setJobOffer() {
         if jobOffer.documentID != "" {
-            headerLabel.text = jobOffer.title
+//            headerLabel.text = jobOffer.title
+            self.navigationItem.title = jobOffer.title
             smallBodyLabel.text = jobOffer.cellText
             
             let newLineString = "\n"    // Need to hardcode this and replace the \n of the fetched text
             let descriptionText = jobOffer.descriptionText.replacingOccurrences(of: "\\n", with: newLineString)
             fullBodyLabel.text = descriptionText
         } else {    // Also "Wir brauchen dich!"
-            headerLabel.text = "Wir brauchen dich!"
+//            headerLabel.text = "Wir brauchen dich!"
+            self.navigationItem.title = "Wir brauchen dich!"
             smallBodyLabel.text = "Wenn du glaubst, mit deinem Wissen kannst du uns helfen, aber es gibt keine passende Ausschreibung, gib uns Bescheid! Wir sind auf klüge Köpfe angewiesen!"
             fullBodyLabel.text = "Schreib uns einfach, welcher Bereich dich besonders interessiert und deine Motivation.\n\n Wir würden uns freuen"
         }
@@ -53,8 +55,6 @@ class JobOfferingViewController: UIViewController {
         } else {
             self.notLoggedInAlert()
         }
-    }
-    @IBAction func moreInfosPressed(_ sender: Any) {
     }
     
     

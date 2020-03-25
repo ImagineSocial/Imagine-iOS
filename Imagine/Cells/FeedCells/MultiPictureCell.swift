@@ -12,6 +12,7 @@ class MultiPictureCell: BaseFeedCell {
     
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var pageControl: UIPageControl!
+    @IBOutlet weak var pictureCountLabel: UILabel!
     
     let identifier = "MultiPictureCell"
     var images: [String]?
@@ -28,6 +29,7 @@ class MultiPictureCell: BaseFeedCell {
                     
                     self.images = images
                     self.pageControl.numberOfPages = images.count
+                    self.pictureCountLabel.text = "1/\(images.count)"
                     
                     collectionView.reloadData()
                 }
@@ -50,6 +52,9 @@ class MultiPictureCell: BaseFeedCell {
         
         collectionView.layer.cornerRadius = 8
         collectionView.isPagingEnabled = true
+        
+        self.addSubview(buttonLabel)
+        buttonLabel.textColor = .black
         
         // add corner radius on `contentView`
         contentView.layer.cornerRadius = 8
@@ -77,6 +82,7 @@ class MultiPictureCell: BaseFeedCell {
                 haButton.setTitle(String(post.votes.ha), for: .normal)
                 niceButton.setTitle(String(post.votes.nice), for: .normal)
                 
+                print("Its own cell set it up   ")
                 if let _ = cellStyle {
                     print("Already Set")
                 } else {
@@ -235,6 +241,8 @@ extension MultiPictureCell: UICollectionViewDelegate, UICollectionViewDataSource
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         if let indexPath = collectionView.indexPathsForVisibleItems.first {
             pageControl.currentPage = indexPath.row
+            
+            self.pictureCountLabel.text = "\(pageControl.currentPage+1)/\(pageControl.numberOfPages)"
         }
     }
     

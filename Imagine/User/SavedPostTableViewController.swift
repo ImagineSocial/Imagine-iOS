@@ -131,22 +131,15 @@ class SavedPostTableViewController: BaseFeedTableViewController {
         }
         if segue.identifier == "toFactSegue" {
             if let fact = sender as? Fact {
-                if let navCon = segue.destination as? UINavigationController {
-                    if let factVC = navCon.topViewController as? FactParentContainerViewController {
-                        factVC.fact = fact
-                        factVC.needNavigationController = true
+               
+                if let factVC = segue.destination as? ArgumentPageViewController {
+                    
+                    factVC.fact = fact
+                    if fact.displayMode == .topic {
+                        factVC.displayMode = .topic
                     }
                 }
-            }
-        }
-        if segue.identifier == "goToPostsOfTopic" {
-            if let fact = sender as? Fact {
-                if let navCon = segue.destination as? UINavigationController {
-                    if let factVC = navCon.topViewController as? PostsOfFactTableViewController {
-                        factVC.fact = fact
-                        factVC.needNavigationController = true
-                    }
-                }
+                
             }
         }
     }

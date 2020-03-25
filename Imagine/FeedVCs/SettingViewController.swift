@@ -22,9 +22,9 @@ class SettingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let layer = deleteAccountButton.layer
-        layer.borderColor = UIColor.systemRed.cgColor
-        layer.borderWidth = 0.5
+        deleteAccountButton.layer.borderColor = UIColor.systemRed.cgColor
+        deleteAccountButton.layer.borderWidth = 0.5
+        deleteAccountButton.cornerRadius = 4
         
         if defaults.bool(forKey: "acceptedCookies") {
             cookieSwitch.isOn = true

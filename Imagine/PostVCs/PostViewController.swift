@@ -139,6 +139,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func setupViewController() {
+        
+        createFloatingCommentView()
+        
         switch post.type {
         case .event:
             setupScrollView()
@@ -244,8 +247,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
 
         let imageWidth = post.mediaWidth
         let imageHeight = post.mediaHeight
-        
-
+                
         switch post.type {
         case .multiPicture:
             if let imageURLs = post.imageURLs {
@@ -557,17 +559,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         linkedFactView.widthAnchor.constraint(equalToConstant: linkedFactViewWidth).isActive = true
         linkedFactView.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
         
-//        commentView.addSubview(commentLabel)
-//        commentLabel.bottomAnchor.constraint(equalTo: commentView.bottomAnchor).isActive = true
-//        commentLabel.leadingAnchor.constraint(equalTo: commentView.leadingAnchor, constant: 15).isActive = true
-//        commentLabel.widthAnchor.constraint(equalToConstant: commentButtonWidth).isActive = true
-//
-//        commentView.addSubview(separatorView)
-//        separatorView.topAnchor.constraint(equalTo: commentLabel.bottomAnchor, constant: 1).isActive = true
-//        separatorView.leadingAnchor.constraint(equalTo: commentView.leadingAnchor, constant: 15).isActive = true
-//        separatorView.trailingAnchor.constraint(equalTo: commentView.trailingAnchor, constant: -15).isActive = true
-//        separatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        
         contentView.addSubview(commentView)
         commentView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         commentView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
@@ -582,8 +573,10 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         commentTableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30).isActive = true
         
         //Not possible in ViewWillAppear because the view is not layed out yet I guess
-        createFloatingCommentView()
+//        createFloatingCommentView()
     }
+    
+    
     
     func setUpPictureUI(multiPicture: Bool) {
         
@@ -1481,10 +1474,10 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                     niceButton.backgroundColor = .tertiaryLabel
                     
                 } else {
-                    thanksButton.backgroundColor = .black
-                    wowButton.backgroundColor = .black
-                    haButton.backgroundColor = .black
-                    niceButton.backgroundColor = .black
+                    thanksButton.backgroundColor = .darkGray
+                    wowButton.backgroundColor = .darkGray
+                    haButton.backgroundColor = .darkGray
+                    niceButton.backgroundColor = .darkGray
                 }
             }
         }
@@ -1846,12 +1839,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     @objc func linkedFactTapped() {
         if let fact = post.fact {
-            switch fact.displayMode {
-            case .fact:
-                performSegue(withIdentifier: "toFactSegue", sender: fact)
-            case .topic:
-                performSegue(withIdentifier: "goToPostsOfTopic", sender: fact)
-            }
+            performSegue(withIdentifier: "toFactSegue", sender: fact)
         }
     }
     
@@ -1859,10 +1847,10 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         if segue.identifier == "toFactSegue" {
             if let fact = sender as? Fact {
-                if let navCon = segue.destination as? UINavigationController {
-                    if let factVC = navCon.topViewController as? FactParentContainerViewController {
-                        factVC.fact = fact
-                        factVC.needNavigationController = true
+                if let factVC = segue.destination as? ArgumentPageViewController {
+                    factVC.fact = fact
+                    if fact.displayMode == .topic {
+                        factVC.displayMode = .topic
                     }
                 }
             }
@@ -1916,11 +1904,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     //MARK:- CommentAnswerView
     func createFloatingCommentView() {
-        let height = self.view.frame.height
-        floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: height-60, width: self.view.frame.width, height: 60))
-        floatingCommentView!.delegate = self
-        if let window = UIApplication.shared.keyWindow {
-            window.addSubview(floatingCommentView!)
+        if floatingCommentView == nil {
+            let height = UIScreen.main.bounds.height
+            floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: height-60, width: self.view.frame.width, height: 60))
+            floatingCommentView!.delegate = self
+            if let window = UIApplication.shared.keyWindow {
+                window.addSubview(floatingCommentView!)
+            }
         }
     }
     

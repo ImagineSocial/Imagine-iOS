@@ -39,17 +39,16 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        self.extendedLayoutIncludesOpaqueBars = true
+        
         presentVote()
         
-        voteTillDateView.layer.cornerRadius = 4
-        voteTillDateView.backgroundColor = Constants.backgroundColorForTableViews
+        voteTillDateView.layer.cornerRadius = 6
+        
         impactView.layer.cornerRadius = 4
-        impactView.backgroundColor = Constants.backgroundColorForTableViews
         costView.layer.cornerRadius = 4
-        costView.backgroundColor = Constants.backgroundColorForTableViews
         realizationTimeView.layer.cornerRadius = 4
-        realizationTimeView.backgroundColor = Constants.backgroundColorForTableViews
     }
     
     func presentVote() {
@@ -57,8 +56,7 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
             self.navigationController?.popViewController(animated: true)
             return
         }
-        
-        titleLabel.text = vote.title
+        self.navigationItem.title = vote.title
         subtitleLabel.text = vote.subtitle
         voteTillDateLabel.text = vote.endOfVoteDate
         descriptionLabel.text = vote.description

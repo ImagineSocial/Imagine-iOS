@@ -16,6 +16,7 @@ enum CampaignType {
     case complaint
     case call
     case change
+    case topicAddOn
 }
 
 class NewCampaignViewController: UIViewController {
@@ -27,7 +28,7 @@ class NewCampaignViewController: UIViewController {
     @IBOutlet weak var categoryPickerView: UIPickerView!
     
     var up = false
-    let categories: [CampaignCategory] = [CampaignCategory(title: "Vorschlag", type: .proposal), CampaignCategory(title: "Beschwerde", type: .complaint), CampaignCategory(title: "Aufruf", type: .call), CampaignCategory(title: "Veränderung", type: .change)]
+    let categories: [CampaignCategory] = [CampaignCategory(title: "Vorschlag", type: .proposal), CampaignCategory(title: "Beschwerde", type: .complaint), CampaignCategory(title: "Aufruf", type: .call), CampaignCategory(title: "Veränderung", type: .change), CampaignCategory(title: "Themen AddOn", type: .topicAddOn)]
     var chosenCategory: CampaignType = .proposal
     
     override func viewDidLoad() {
@@ -76,6 +77,8 @@ class NewCampaignViewController: UIViewController {
             return "call"
         case .change:
             return "change"
+        case .topicAddOn:
+            return "topicAddOn"
         }
     }
     

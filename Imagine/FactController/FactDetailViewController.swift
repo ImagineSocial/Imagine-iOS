@@ -65,7 +65,7 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     func createFloatingCommentView() {
-        let height = self.view.frame.height
+        let height = UIScreen.main.bounds.height
         floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: height-60, width: self.view.frame.width, height: 60))
         floatingCommentView!.delegate = self
         if let window = UIApplication.shared.keyWindow {

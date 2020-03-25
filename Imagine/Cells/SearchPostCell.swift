@@ -34,7 +34,7 @@ class SearchPostCell: UITableViewCell {
                     } else {
                         postImageView.tintColor = .black
                     }
-                    postImageView.image = UIImage(named: "globe")
+                    postImageView.image = UIImage(named: "translate")
                     postImageView.contentMode = .scaleAspectFit
                 case .thought:
                     postImageView.image = UIImage(named: "savePostImage")
@@ -47,12 +47,14 @@ class SearchPostCell: UITableViewCell {
                     }
                 case .multiPicture:
                     if let imageURLs = post.imageURLs {
-                    if let url = URL(string: imageURLs[0]) {
-                        postImageView.sd_setImage(with: url, completed: nil)
-                    } else {
-                        postImageView.image = UIImage(named: "default")
+                        if let url = URL(string: imageURLs[0]) {
+                            postImageView.sd_setImage(with: url, completed: nil)
+                        } else {
+                            postImageView.image = UIImage(named: "default")
+                        }
                     }
-                    }
+                case .GIF:
+                    postImageView.image = UIImage(named: "GIFIcon")                    
                 default:
                     postImageView.image = UIImage(named: "default")
                 }
@@ -79,6 +81,60 @@ class SearchPostCell: UITableViewCell {
     override func prepareForReuse() {
         postImageView.image = nil
         postImageView.contentMode = .scaleAspectFill
+        postImageView.isHidden = false
+    }
+    
+    
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        addSubview(titleLabel)
+        addSubview(postImageView)
+        addSubview(nameLabel)
+    
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        if let post = post {
+            if post.type == .thought {
+                nameLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
+                nameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
+                nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+                nameLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
+                
+                titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
+                titleLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor).isActive = true
+                titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+                titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -5).isActive = true
+                
+                postImageView.isHidden = true
+            } else {
+                setStandardLayout()
+            }
+        } else {
+            setStandardLayout()
+        }
+    }
+    
+    func setStandardLayout() {
+        postImageView.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
+        postImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
+        let height = self.contentView.frame.height-10
+        postImageView.heightAnchor.constraint(equalToConstant: height).isActive = true
+        postImageView.widthAnchor.constraint(equalToConstant: height).isActive = true
+        
+        nameLabel.leadingAnchor.constraint(equalTo: postImageView.trailingAnchor, constant: 10).isActive = true
+        nameLabel.topAnchor.constraint(equalTo: postImageView.topAnchor).isActive = true
+        nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+        nameLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
+        titleLabel.leadingAnchor.constraint(equalTo: postImageView.trailingAnchor, constant: 10).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor).isActive = true
+        titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+        titleLabel.bottomAnchor.constraint(equalTo: postImageView.bottomAnchor).isActive = true
     }
     
     private let titleLabel : UILabel = {
@@ -118,35 +174,6 @@ class SearchPostCell: UITableViewCell {
         
         return label
     }()
-    
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        addSubview(titleLabel)
-        addSubview(postImageView)
-        addSubview(nameLabel)
-    
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        postImageView.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
-        postImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
-        let height = self.contentView.frame.height-10
-        postImageView.heightAnchor.constraint(equalToConstant: height).isActive = true
-        postImageView.widthAnchor.constraint(equalToConstant: height).isActive = true
-        
-        nameLabel.leadingAnchor.constraint(equalTo: postImageView.trailingAnchor, constant: 10).isActive = true
-        nameLabel.topAnchor.constraint(equalTo: postImageView.topAnchor).isActive = true
-        nameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
-        nameLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        
-        titleLabel.leadingAnchor.constraint(equalTo: postImageView.trailingAnchor, constant: 10).isActive = true
-        titleLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor).isActive = true
-        titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
-        titleLabel.bottomAnchor.constraint(equalTo: postImageView.bottomAnchor).isActive = true
-    }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

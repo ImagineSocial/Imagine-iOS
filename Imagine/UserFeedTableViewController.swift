@@ -55,7 +55,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     var delegate: LogOutDelegate?
     
-    let defaultStatusText = "Schreibe hier deinen Status"
+    let defaultStatusText = "Hier steht dein Status"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -450,6 +450,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         switch currentState! {
         case .ownProfileWithEditing:
             ownProfile = true
+            
         default:
             ownProfile = false
         }
@@ -462,6 +463,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             
             if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? MultiPictureCell {
                 
+                cell.ownProfile = ownProfile
                 cell.post = post
                 
                 return cell
@@ -486,8 +488,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             
             if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? GifCell {
                 
+                cell.ownProfile = ownProfile
                 cell.post = post
                 cell.delegate = self
+                
                 if let url = URL(string: post.linkURL) {
                     cell.videoPlayerItem = AVPlayerItem.init(url: url)
                     cell.startPlayback()
@@ -562,13 +566,14 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             if let cell = tableView.dequeueReusableCell(withIdentifier: "NibBlankCell", for: indexPath) as? BlankContentCell {
                 
                 cell.type = noPostsType
+                cell.contentView.backgroundColor = self.tableView.backgroundColor
                 
                 return cell
             }
         }
         
         
-        return UITableViewCell()    // Falls das "if let" oben nicht zieht
+        return UITableViewCell()    
         
     }
     
@@ -978,20 +983,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         }
         if segue.identifier == "toFactSegue" {
             if let fact = sender as? Fact {
-                if let navCon = segue.destination as? UINavigationController {
-                    if let factVC = navCon.topViewController as? FactParentContainerViewController {
-                        factVC.fact = fact
-                        factVC.needNavigationController = true
-                    }
-                }
-            }
-        }
-        if segue.identifier == "goToPostsOfTopic" {
-            if let fact = sender as? Fact {
-                if let navCon = segue.destination as? UINavigationController {
-                    if let factVC = navCon.topViewController as? PostsOfFactTableViewController {
-                        factVC.fact = fact
-                        factVC.needNavigationController = true
+                if let factVC = segue.destination as? ArgumentPageViewController {
+                    factVC.fact = fact
+                    if fact.displayMode == .topic {
+                        factVC.displayMode = .topic
                     }
                 }
             }

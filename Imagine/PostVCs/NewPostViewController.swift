@@ -90,6 +90,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     var delegate: JustPostedDelegate?
     
+    var infoView: UIView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -133,8 +135,15 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
    
-    
-    
+    override func viewWillDisappear(_ animated: Bool) {
+        if let view = infoView {
+            view.removeFromSuperview()
+        }
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        self.infoView = nil
+        showInfoView()
+    }
     // MARK: - Functions for the UI Initializing
     
     func setCompleteUIForThought() {
@@ -1479,7 +1488,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         if segue.identifier == "searchFactsSegue" {
             if let navCon = segue.destination as? UINavigationController {
                 if let factVC = navCon.topViewController as? FactCollectionViewController {
-                    factVC.addFactToPost = true
+                    factVC.addFactToPost = .newPost
                     factVC.delegate = self
                 }
             }
@@ -2057,6 +2066,52 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.present(alert, animated: true) {
         }
     }
+    
+    func showInfoView() {
+        
+        let height = UIScreen.main.bounds.height
+        let view = UIView(frame: CGRect(x: 20, y: height-150, width: self.view.frame.width-40, height: 35))
+        view.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
+        view.alpha = 0
+        view.layer.cornerRadius = 10
+
+        self.infoView = view
+        
+        let label = UILabel(frame: CGRect(x: 5, y: 2, width: infoView!.frame.width-10, height: infoView!.frame.height-5))
+        label.text = "Beim posten wird nur dein Vorname im Feed sichtbar sein!"
+        label.textAlignment = .center
+        label.minimumScaleFactor = 0.5
+        label.font = UIFont(name: "IBMPlexSans", size: 15)
+        label.alpha = 0
+        label.adjustsFontSizeToFitWidth = true
+        
+        if #available(iOS 13.0, *) {
+            label.textColor = .label
+        } else {
+            label.textColor = .black
+        }
+        
+        infoView!.addSubview(label)
+        
+        if let window = UIApplication.shared.keyWindow {
+            window.addSubview(infoView!)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            UIView.animate(withDuration: 0.7, animations: {
+                self.infoView!.alpha = 1
+                label.alpha = 1
+            }) { (_) in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    UIView.animate(withDuration: 0.7, animations: {
+                        self.infoView!.alpha = 0
+                        label.alpha = 0
+                    }) { (_) in
+                        self.infoView!.removeFromSuperview()
+                    }
+                }
+            }
+        }
+    }
 
     @objc func switchToFeedTab() {
         if comingFromPostsOfFact {
@@ -2117,6 +2172,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
 }
 
 extension NewPostViewController: LinkFactWithPostDelegate {
+    func selectedFactForOptInfo(fact: Fact, type: OptionalInformationType) {
+        //too stupid to implement optional delegate functions
+    }
     
     func selectedFact(fact: Fact, closeMenu: Bool) {
         

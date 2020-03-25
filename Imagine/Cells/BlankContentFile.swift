@@ -18,6 +18,7 @@ enum BlankCellType {
     case ownProfile
     case userProfile
     case postsOfFacts
+    case search
 }
 
 class BlankContentCell: UITableViewCell {
@@ -40,19 +41,22 @@ class BlankContentCell: UITableViewCell {
                     
                 case .friends:
                     self.pictureView.image = UIImage(named: "meetNewPeople")
-                    self.descriptionLabel.text = "Hier werden deine Freunde angezeigt"
+                    self.descriptionLabel.text = "Hier werden dir deine Freunde angezeigt"
                 case .savedPicture:
                     self.pictureView.image = UIImage(named: "savePostImage")
-                    self.descriptionLabel.text = "Speichere hier deine Lieblings Posts"
+                    self.descriptionLabel.text = "Hier werden deine gespeicherten Beiträge gesammelt"
                 case .ownProfile:
                     self.pictureView.image = UIImage(named: "savePostImage")
-                    self.descriptionLabel.text = "Du hast noch keine Posts hochgeladen"
+                    self.descriptionLabel.text = "Du hast noch keine Beiträge hochgeladen"
                 case .userProfile:
                     self.pictureView.image = UIImage(named: "savePostImage")
-                    self.descriptionLabel.text = "Dieser User hat noch keine Posts hochgeladen"
+                    self.descriptionLabel.text = "Dieser User hat noch keine Beiträge hochgeladen"
                 case .postsOfFacts:
                     self.pictureView.image = UIImage(named: "savePostImage")
-                    self.descriptionLabel.text = "Es sind keine Beiträge zu diesem Thema zu finden"
+                    self.descriptionLabel.text = "Es sind noch keine Beiträge zu diesem Thema zu finden"
+                case .search:
+                    self.pictureView.isHidden = true
+                    self.descriptionLabel.isHidden = true
                 }
             }
         }

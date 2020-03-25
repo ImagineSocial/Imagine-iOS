@@ -13,6 +13,7 @@ private let factCellIdentifier = "FactCell"
 
 protocol LinkFactWithPostDelegate {
     func selectedFact(fact: Fact, closeMenu: Bool)
+    func selectedFactForOptInfo(fact:Fact, type: OptionalInformationType)
 }
 
 protocol TopOfCollectionViewDelegate {
@@ -23,6 +24,11 @@ enum FactCollectionDisplayOption {
     case all
     case justFacts
     case justTopics
+}
+
+enum AddFactToPostType {
+    case optInfo
+    case newPost
 }
 
 class FactCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RecentTopicCellDelegate, RecentTopicDelegate {
@@ -38,8 +44,9 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     
     let db = Firestore.firestore()
     
-    var addFactToPost = false
+    var addFactToPost : AddFactToPostType?
     var delegate: LinkFactWithPostDelegate?
+    var optionalInformationType: OptionalInformationType = .guilty
     
     let collectionViewSpacing:CGFloat = 30
     let searchController = UISearchController(searchResultsController: nil)
@@ -49,22 +56,24 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     
     var reloadRecentTopics = false
 
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         getFacts()
         setUpSearchController()
         
-        if addFactToPost {
+        if addFactToPost == .newPost {
             self.setDismissButton()
         }
         
         collectionView.register((UINib(nibName: "FactCollectionHeader", bundle: nil)), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: secondHeaderIdentifier)
         collectionView.register(UINib(nibName: "FactCell", bundle: nil), forCellWithReuseIdentifier: factCellIdentifier)
         collectionView.register(UINib(nibName: "RecentTopicsCollectionCell", bundle: nil), forCellWithReuseIdentifier: recentTopicsCellIdentifier)
+        collectionView.register(UINib(nibName: "AddTopicCell", bundle: nil), forCellWithReuseIdentifier: "AddTopicCell")
         
+        extendedLayoutIncludesOpaqueBars = true
         self.navigationController?.navigationBar.shadowImage = UIImage()
-//        self.navigationController?.navigationBar.isTranslucent = false
         if #available(iOS 13.0, *) {
             self.navigationController?.navigationBar.backgroundColor = .systemBackground
         } else {
@@ -74,10 +83,15 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         self.view.activityStartAnimating()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        navigationItem.hidesSearchBarWhenScrolling = true
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         //FML
-        self.navigationController?.navigationBar.isTranslucent = true
-        
+        if let _ = addFactToPost {  // TO show the search bar when you want to select a topic
+            navigationItem.hidesSearchBarWhenScrolling = false
+        }
         if reloadRecentTopics {
             if let cell = collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? RecentTopicsCollectionCell {
                 cell.getFacts(initialFetch: false)
@@ -140,7 +154,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     func setUpSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Suche nach Fakten"
+        searchController.searchBar.placeholder = "Durchsuche die Themen..."
     
         self.navigationItem.searchController = searchController
         self.navigationItem.hidesSearchBarWhenScrolling = true
@@ -208,15 +222,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             if fact!.addMoreCell {
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddTopicCell", for: indexPath) as? AddTopicCell {
                     
-                    let layer = cell.layer
-                    layer.cornerRadius = 4
-                    layer.masksToBounds = true
-                    if #available(iOS 13.0, *) {
-                        layer.borderColor = UIColor.label.cgColor
-                    } else {
-                        layer.borderColor = UIColor.black.cgColor
-                    }
-                    layer.borderWidth = 1
+                    
                     
                     return cell
                 }
@@ -269,15 +275,22 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             if fact.addMoreCell {
                 performSegue(withIdentifier: "toNewArgumentSegue", sender: nil)
             } else {
-                if self.addFactToPost {
-                    self.setFactForPost(fact: fact)
-                } else {
-                    
-                    if fact.displayMode == .fact {
-                        performSegue(withIdentifier: "goToArguments", sender: fact)
+                if let addFactToPost = addFactToPost{
+                    if addFactToPost == .newPost {
+                        self.setFactForPost(fact: fact)
                     } else {
-                        performSegue(withIdentifier: "goToPostsOfTopic", sender: fact)
+                        let factString = fact.title.quoted
+                        let alert = UIAlertController(title: "Bist du dir sicher?", message: "Möchtest du das Thema \(factString) zu dem AddOn hinzufügen?", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ja", style: .default, handler: { (_) in
+                            self.setFactForOptInfo(fact: fact)
+                        }))
+                        alert.addAction(UIAlertAction(title: "Abbrechen", style: .cancel, handler: { (_) in
+                            alert.dismiss(animated: true, completion: nil)
+                        }))
+                        self.present(alert, animated: true)
                     }
+                } else {
+                    performSegue(withIdentifier: "toPageVC", sender: fact)
                 }
             }
         }
@@ -287,9 +300,15 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         
         if kind == UICollectionView.elementKindSectionHeader {  // View above CollectionView
             if indexPath.section == 0 {
-                let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "factCollectionFirstHeader", for: indexPath)
+                if let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "factCollectionFirstHeader", for: indexPath) as? FirstCollectionHeader {
                 
-                return view
+                    if addFactToPost == .optInfo {
+                        view.headerLabel.font = UIFont(name: "IBMPlexSans", size: 16)
+                        view.headerLabel.numberOfLines = 0
+                        view.headerLabel.text = "Wähle eines dieser Themen aus oder nutze die Suchfunktion"
+                    }
+                    return view
+                }
             } else {
                 if let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: secondHeaderIdentifier, for: indexPath) as? FactCollectionHeader {
                     
@@ -318,7 +337,6 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             let indexPath = collectionView.indexPath(for: cell)
             
             if indexPath == IndexPath(item: 0, section: 0) {
-                print("Is the right indexpath")
                 if self.reloadRecentTopics {
                     if let cell = collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? RecentTopicsCollectionCell {
                         cell.getFacts(initialFetch: false)
@@ -352,15 +370,14 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     //Topic in the recentTopic collectionView is tapped
     func topicTapped(fact: Fact) {
         
-        if self.addFactToPost {
-            self.setFactForPost(fact: fact)
-        } else {
-            
-            if fact.displayMode == .fact {
-                performSegue(withIdentifier: "goToArguments", sender: fact)
+        if let addFactToPost = addFactToPost {
+            if addFactToPost == .newPost {
+                self.setFactForPost(fact: fact)
             } else {
-                performSegue(withIdentifier: "goToPostsOfTopic", sender: fact)
+                self.setFactForOptInfo(fact: fact)
             }
+        } else {
+            performSegue(withIdentifier: "toPageVC", sender: fact)
         }
     }
     
@@ -388,23 +405,16 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     
     //MARK: -PrepareForSegue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "goToArguments" {
-            if let fact = sender as? Fact {
-                if let argumentVC = segue.destination as? FactParentContainerViewController {
-                    argumentVC.fact = fact
-                    argumentVC.delegate = self
+        if segue.identifier == "toPageVC" {
+            if let pageVC = segue.destination as? ArgumentPageViewController {
+                if let chosenFact = sender as? Fact {
+                    pageVC.fact = chosenFact
+                    pageVC.recentTopicDelegate = self
+                    if chosenFact.displayMode == .topic {
+                        pageVC.displayMode = .topic
+                    }
                     
-                    self.logUser(fact: fact)
-                }
-            }
-        }
-        
-        if segue.identifier == "goToPostsOfTopic" {
-            if let fact = sender as? Fact {
-                if let nextVC = segue.destination as? PostsOfFactTableViewController {
-                    nextVC.fact = fact
-                    nextVC.delegate = self
-                    self.logUser(fact: fact)
+                    self.logUser(fact: chosenFact)
                 }
             }
         }
@@ -417,6 +427,8 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             }
         }
     }
+    
+
 
     @IBAction func infoButtonTapped(_ sender: Any) {
         infoButton.showEasyTipView(text: Constants.texts.factOverviewText)
@@ -425,8 +437,25 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     //MARK: LinkFactAndPost
     
     func setFactForPost(fact: Fact) {
-        print("Set delegate: ", fact.title)
         delegate?.selectedFact(fact: fact, closeMenu: true)
+        
+        //Can be a opt. Info!
+        closeAndDismiss()
+    }
+    
+    func setFactForOptInfo(fact: Fact) {
+        delegate?.selectedFactForOptInfo(fact: fact, type: self.optionalInformationType)
+        
+        if searchController.isActive {
+            searchController.dismiss(animated: false) {
+                self.navigationController?.popViewController(animated: true)
+            }
+        } else {
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    func closeAndDismiss() {
         if searchController.isActive {
             searchController.dismiss(animated: false) {
                 self.dismiss(animated: true, completion: nil)
@@ -435,8 +464,6 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             self.dismiss(animated: true, completion: nil)
         }
     }
-    
-    
     //MARK: -Search functionality
     
     var isSearchBarEmpty: Bool {
@@ -521,8 +548,55 @@ extension FactCollectionViewController: UISearchResultsUpdating {
 
 class AddTopicCell: UICollectionViewCell {
     
+    @IBOutlet weak var textLabel: UILabel!
+    @IBOutlet weak var plusWidthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var plusHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var plusLineStrength: NSLayoutConstraint!
+    @IBOutlet weak var plusLineStrength2: NSLayoutConstraint!
+    
+    
+    var isAddOnView: Bool? {
+        didSet {
+            if isAddOnView! {
+                textLabel.text = "Neues Item hinzufügen"
+                textLabel.font =  UIFont(name: "IBMPlexSans-Medium", size: 13)
+                plusHeightConstraint.constant = 35
+                plusWidthConstraint.constant = 35
+                plusLineStrength.constant = 3
+                plusLineStrength2.constant = 3
+                
+                layer.borderWidth = 0
+            }
+        }
+    }
+    
+    override func awakeFromNib() {
+        layer.cornerRadius = 4
+        layer.masksToBounds = true
+        if #available(iOS 13.0, *) {
+            layer.borderColor = UIColor.label.cgColor
+        } else {
+            layer.borderColor = UIColor.black.cgColor
+        }
+        layer.borderWidth = 0.5
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        if let _ = isAddOnView {
+            let eigth: CGFloat = self.contentView.frame.width/8
+            let margins = UIEdgeInsets(top: eigth, left: eigth, bottom: eigth, right: eigth)
+            contentView.frame = contentView.frame.inset(by: margins)
+        }
+    }
+    
 }
 
+class FirstCollectionHeader: UICollectionReusableView {
+    @IBOutlet weak var headerLabel: UILabel!
+    
+}
 
 class FactCollectionHeader: UICollectionReusableView {
     @IBOutlet weak var sortFactsButton: DesignableButton!

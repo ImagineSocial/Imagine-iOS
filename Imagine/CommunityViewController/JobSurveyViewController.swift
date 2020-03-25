@@ -35,7 +35,6 @@ class JobSurveyViewController: UIViewController, MFMailComposeViewControllerDele
 
         setUI()
         getUser()
-        print("Das ist ID: \(jobOffer.documentID)")
     }
     
     func setUI() {
@@ -74,7 +73,7 @@ class JobSurveyViewController: UIViewController, MFMailComposeViewControllerDele
     func setFirebaseData() {
         let jobRef = Firestore.firestore().collection("JobOffers").document(jobOffer.documentID)
         
-        var dataDictionary: [String: Any] = ["name": userName, "userUID": userUID, "qualifications": qualificationTextField.text, "sharedLink": linkTextField.text, "residence" : residenceTextField.text, "motivation" : inputTextField.text, "contact": contactTextField.text, "applicationCreateTime": getDate(), "message": messageTextField.text]
+        var dataDictionary: [String: Any] = ["name": userName, "userUID": userUID, "qualifications": qualificationTextField.text, "sharedLink": linkTextField.text, "residence" : residenceTextField.text, "motivation" : inputTextField.text, "contact": contactTextField.text, "applicationCreateTime": Timestamp(date: Date()), "message": messageTextField.text]
         
         jobRef.collection("supporter").addDocument(data: dataDictionary)
         
@@ -88,24 +87,6 @@ class JobSurveyViewController: UIViewController, MFMailComposeViewControllerDele
                 print("Document successfully updated")
             }
         }
-    }
-    
-    func getDate() -> Timestamp {
-        
-        let formatter = DateFormatter()
-        let date = Date()
-        
-        formatter.dateFormat = "dd MM yyyy HH:mm"
-        
-        let stringDate = formatter.string(from: date)
-        
-        if let result = formatter.date(from: stringDate) {
-            
-            let dateTimestamp :Timestamp = Timestamp(date: result)  // Hat keine Nanoseconds
-            
-            return dateTimestamp
-        }
-        return Timestamp(date: date)
     }
     
     func getUser() {

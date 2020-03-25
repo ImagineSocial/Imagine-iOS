@@ -16,6 +16,7 @@ class SupportTheCommunityTableViewController: UITableViewController {
     @IBOutlet weak var infoButton: UIBarButtonItem!
     
     var jobOffers = [JobOffer]()
+    let reuseIdentifier = "SupportTheCommunityCell"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,8 +25,12 @@ class SupportTheCommunityTableViewController: UITableViewController {
         
         getJobOffers()
         
-        self.navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.view.backgroundColor = .white
+        
+        tableView.register(UINib(nibName: "JobOfferCell", bundle: nil), forCellReuseIdentifier: reuseIdentifier)
+        
+        self.extendedLayoutIncludesOpaqueBars = true
+//        self.navigationController?.navigationBar.isTranslucent = false
+//        self.navigationController?.view.backgroundColor = .white
         
         if let user = Auth.auth().currentUser {
             if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" {
@@ -41,7 +46,17 @@ class SupportTheCommunityTableViewController: UITableViewController {
     
     func getJobOffers() {
         DataHelper().getData(get: .jobOffer) { (jobOffers) in
-            self.jobOffers = jobOffers as! [JobOffer]
+            let jobOffer = JobOffer()   // Der erste Eintrag
+            jobOffer.title = "Wir brauchen dich!"
+            jobOffer.cellText = "Wenn du glaubst, mit deinem Wissen oder Erfahrung kannst du uns helfen, aber es gibt keine passende Ausschreibung, gib uns Bescheid! Wir sind auf klüge Köpfe angewiesen!"
+            jobOffer.documentID = ""
+            jobOffer.stringDate = "15.05.2019"
+            jobOffer.interested = 0
+            jobOffer.category = "Allgemein"
+            
+            self.jobOffers.append(jobOffer)
+            
+            self.jobOffers.append(contentsOf: jobOffers as! [JobOffer])
             self.tableView.reloadData()
             self.view.activityStopAnimating()
         }
@@ -55,21 +70,18 @@ class SupportTheCommunityTableViewController: UITableViewController {
     }
     
     
-     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: "SupportTheCommunityCell", for: indexPath) as? SupportTheCommunityCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as? JobOfferCell{
             
             let supportField = jobOffers[indexPath.row]
             
-            cell.headerLabel.text = supportField.title
-            cell.cellBodyLabel.text = supportField.cellText
-            cell.createDateLabel.text = supportField.createDate
-            cell.interestedCountLabel.text = "\(supportField.interested) Interessenten"
-            cell.categoryLabel.text = supportField.category
+            cell.jobOffer = supportField
             
             return cell
         }
-     return UITableViewCell()
-     }
+        
+        return UITableViewCell()
+    }
     
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -98,7 +110,7 @@ class SupportTheCommunityTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 195
+        return UITableView.automaticDimension
     }
     
     @IBAction func bugReportTapped(_ sender: Any) {

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSans-Medium.ttf">
+            <string>IBMPlexSans-Medium</string>
+        </array>
+        <array key="IBMPlexSans-Regular.ttf">
+            <string>IBMPlexSans</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="DIYCollectionViewCell" id="t7G-Ff-jOe" customClass="DIYCollectionViewCell" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="200" height="170"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="lwW-LP-G32">
+                <rect key="frame" x="0.0" y="0.0" width="200" height="170"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ydf-j5-sOJ" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="5" y="85" width="190" height="80"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ImagineSign" translatesAutoresizingMaskIntoConstraints="NO" id="xz4-Rz-QCY">
+                                <rect key="frame" x="145" y="5" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="HcN-nQ-TKB"/>
+                                    <constraint firstAttribute="width" constant="40" id="l2w-sM-zoF"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hier steht die Beschreibung des neuen krassen DIY Prozesses: Nur bei Imagine!" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.59999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="ziZ-aO-qGZ">
+                                <rect key="frame" x="5" y="50" width="180" height="25"/>
+                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
+                                <color key="textColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hier steht die Beschreibung des neuen krassen DIY Prozesses: Nur bei Imagine!" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="wHq-pV-5uO">
+                                <rect key="frame" x="5" y="5" width="135" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="Akt-Q3-vkT"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="13"/>
+                                <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="tertiarySystemBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="wHq-pV-5uO" firstAttribute="leading" secondItem="Ydf-j5-sOJ" secondAttribute="leading" constant="5" id="1uF-my-mn8"/>
+                            <constraint firstItem="ziZ-aO-qGZ" firstAttribute="leading" secondItem="Ydf-j5-sOJ" secondAttribute="leading" constant="5" id="7ZK-s7-26E"/>
+                            <constraint firstAttribute="trailing" secondItem="ziZ-aO-qGZ" secondAttribute="trailing" constant="5" id="FdF-sU-ed5"/>
+                            <constraint firstItem="wHq-pV-5uO" firstAttribute="top" secondItem="Ydf-j5-sOJ" secondAttribute="top" constant="5" id="N23-Rb-jTQ"/>
+                            <constraint firstAttribute="trailing" secondItem="xz4-Rz-QCY" secondAttribute="trailing" constant="5" id="XIv-rC-sos"/>
+                            <constraint firstItem="xz4-Rz-QCY" firstAttribute="leading" secondItem="wHq-pV-5uO" secondAttribute="trailing" constant="5" id="d6R-mH-8u6"/>
+                            <constraint firstItem="xz4-Rz-QCY" firstAttribute="top" secondItem="Ydf-j5-sOJ" secondAttribute="top" constant="5" id="ejT-GK-Yid"/>
+                            <constraint firstAttribute="height" constant="80" id="h3p-Ec-Kkq"/>
+                            <constraint firstItem="ziZ-aO-qGZ" firstAttribute="top" secondItem="xz4-Rz-QCY" secondAttribute="bottom" constant="5" id="p5T-Hq-Li0"/>
+                            <constraint firstAttribute="bottom" secondItem="ziZ-aO-qGZ" secondAttribute="bottom" constant="5" id="vAa-ES-vVe"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="5"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hier steht die Beschreibung des neuen krassen DIY Prozesses: Nur bei Imagine!" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999999999999996" translatesAutoresizingMaskIntoConstraints="NO" id="kS4-V9-G8C">
+                        <rect key="frame" x="5" y="5" width="190" height="75"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="14"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="kS4-V9-G8C" secondAttribute="trailing" constant="5" id="5T5-q5-Ulo"/>
+                    <constraint firstItem="kS4-V9-G8C" firstAttribute="leading" secondItem="lwW-LP-G32" secondAttribute="leading" constant="5" id="Bx0-rr-91e"/>
+                    <constraint firstItem="Ydf-j5-sOJ" firstAttribute="top" secondItem="kS4-V9-G8C" secondAttribute="bottom" constant="5" id="CEa-Xn-o59"/>
+                    <constraint firstItem="kS4-V9-G8C" firstAttribute="top" secondItem="lwW-LP-G32" secondAttribute="top" constant="5" id="Rar-og-NcS"/>
+                    <constraint firstAttribute="trailing" secondItem="Ydf-j5-sOJ" secondAttribute="trailing" constant="5" id="hVh-I1-hdS"/>
+                    <constraint firstItem="Ydf-j5-sOJ" firstAttribute="leading" secondItem="lwW-LP-G32" secondAttribute="leading" constant="5" id="mxo-2y-5Xd"/>
+                    <constraint firstAttribute="bottom" secondItem="Ydf-j5-sOJ" secondAttribute="bottom" constant="5" id="sEA-mO-RSv"/>
+                </constraints>
+            </collectionViewCellContentView>
+            <size key="customSize" width="200" height="170"/>
+            <connections>
+                <outlet property="cellImageView" destination="xz4-Rz-QCY" id="0kg-Of-CjD"/>
+                <outlet property="descriptionLabel" destination="ziZ-aO-qGZ" id="zRl-52-IH2"/>
+                <outlet property="postImageViewWidthConstraint" destination="l2w-sM-zoF" id="cn9-9C-yY1"/>
+                <outlet property="postTitleLabel" destination="wHq-pV-5uO" id="vym-8E-xJu"/>
+                <outlet property="titleLabel" destination="kS4-V9-G8C" id="PyU-hz-1vz"/>
+            </connections>
+            <point key="canvasLocation" x="66.666666666666671" y="-22.098214285714285"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="ImagineSign" width="640" height="641"/>
+    </resources>
+</document>

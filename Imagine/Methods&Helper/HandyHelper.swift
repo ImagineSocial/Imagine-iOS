@@ -76,40 +76,9 @@ class HandyHelper {
 
         return user
     }
-    
-//    func getUsers(userList: [String], completion: @escaping ([User]) -> Void) {
-//        //Wenn die Funktion fertig ist soll returnPosts bei der anderen losgehen
-//        var users = [User]()
-//        
-//        for user in userList {
-//            // User Daten raussuchen
-//            let userRef = db.collection("Users").document(user)
-//            
-//            userRef.getDocument(completion: { (document, err) in
-//                if let document = document {
-//                    if let docData = document.data() {
-//                        let user = User()
-//                        
-//                        user.name = docData["name"] as? String ?? ""
-//                        user.surname = docData["surname"] as? String ?? ""
-//                        user.imageURL = docData["profilePictureURL"] as? String ?? ""
-//                        user.userUID = document.documentID
-//                        
-//                        users.append(user)
-//                        
-//                        completion(users)
-//                    }
-//                }
-//                
-//                if err != nil {
-//                    print("Wir haben einen Error beim User: \(err?.localizedDescription ?? "")")
-//                }
-//            })
-//        }
-//    }
+
     
     func setLabelHeight(titleCount: Int) -> CGFloat {
-        // Stellt die Höhe für das TitleLabel ein bei cellForRow und HeightForRow
         var labelHeight : CGFloat = 15  // One line
         
         if titleCount <= 50 {           // Two Lines
@@ -126,25 +95,6 @@ class HandyHelper {
         
         return labelHeight
     }
-    
-//    func setLabelHeight(titleCount: Int) -> CGFloat {
-//        // Stellt die Höhe für das TitleLabel ein bei cellForRow und HeightForRow
-//        var labelHeight : CGFloat = 20  // One line
-//
-//        if titleCount <= 40 {           // Two Lines
-//            labelHeight = 40
-//        } else if titleCount <= 80 {    // Three Lines
-//            labelHeight = 50
-//        } else if titleCount <= 120 {   // Four Lines
-//            labelHeight = 90
-//        } else if titleCount <= 160 {   //  5 Lines
-//            labelHeight = 115
-//        } else if titleCount <= 200 {   // 6 Lines
-//            labelHeight = 145
-//        }
-//
-//        return labelHeight
-//    }
     
     func setReportView(post: Post) -> (heightConstant:CGFloat, buttonHidden: Bool, labelText: String, backgroundColor: UIColor) {
         
@@ -219,7 +169,6 @@ class HandyHelper {
     func getWidthAndHeightFromVideo(url: URL) -> CGSize? {
         guard let track = AVURLAsset(url: url).tracks(withMediaType: AVMediaType.video).first else { return nil }
        let size = track.naturalSize.applying(track.preferredTransform)
-        print("Das sind die anderen Werte: \(abs(size.width)), \(abs(size.height))")
         
         return CGSize(width: abs(size.width), height: abs(size.height))
     }
@@ -272,8 +221,12 @@ class HandyHelper {
             postType = .youTubeVideo
         case "translation":
             postType = .repost  // Has to be changed
+        case "GIF":
+            postType = .GIF
+        case "multiPicture":
+            postType = .multiPicture
         default:
-            print("Something Wrong")
+            print("Something Wrong: Unknown type in SetPostType - HandyHelper")
             return PostType.picture
         }
         

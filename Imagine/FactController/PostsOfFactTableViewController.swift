@@ -17,6 +17,8 @@ enum TableViewDisplayOptions {
 
 class PostsOfFactTableViewController: UITableViewController {
     
+    @IBOutlet weak var headerSeparatorView: HairlineView!
+    @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var infoButton: UIBarButtonItem!
     @IBOutlet weak var headerImageView: UIImageView!
@@ -28,36 +30,27 @@ class PostsOfFactTableViewController: UITableViewController {
     var noPostsType: BlankCellType = .postsOfFacts
     var posts = [Post]()
     var needNavigationController = false
-    var displayOption: TableViewDisplayOptions = .small
-    var delegate: RecentTopicDelegate?
+    var displayOption: TableViewDisplayOptions = .normal
     
     let postHelper = PostHelper()
     let handyHelper = HandyHelper()
     let factParentVC = FactParentContainerViewController()
     let radius:CGFloat = 6
     
+    
+    var isMainViewController = true
+    
+    let defaults = UserDefaults.standard
+    let smallDisplayTypeUserDefaultsPhrase = "smallDisplayType"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-       
-        followTopicButton.cornerRadius = radius
-        if #available(iOS 13.0, *) {
-            followTopicButton.layer.borderColor = UIColor.separator.cgColor
-        } else {
-            followTopicButton.layer.borderColor = UIColor.darkGray.cgColor
-        }
-        followTopicButton.layer.borderWidth = 0.5
+        
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        headerImageView.layer.cornerRadius = radius
-        if #available(iOS 13.0, *) {
-            headerImageView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
-        } else {
-            headerImageView.layer.borderColor = UIColor.lightGray.cgColor
-        }
-        headerImageView.layer.borderWidth = 2
+        tableView.separatorStyle = .none
         
         //for small display option
-        tableView.separatorStyle = .none
         tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: "NibBlankCell")
         tableView.register(SearchPostCell.self, forCellReuseIdentifier: "SearchPostCell")
         
@@ -76,12 +69,73 @@ class PostsOfFactTableViewController: UITableViewController {
             setDismissButton()
         }
         
+        // The type of presentation can vary between the normal and small cells. Saved in UserDefault
+        let type = defaults.bool(forKey: smallDisplayTypeUserDefaultsPhrase)
+        
+        if type {
+            self.displayOption = .small
+        }
+        
+        setFactUI()
+        
+        if !isMainViewController {
+            decreaseTopView()
+            headerLabel.isHidden = true
+            headerImageView.isHidden = true
+            descriptionLabel.isHidden = true
+            followTopicButton.isHidden = true
+            headerSeparatorView.alpha = 0
+        }
+    }
+    
+    func decreaseTopView() {
+        guard let headerView = tableView.tableHeaderView else {
+          return
+        }
+        
+        let size = CGSize(width: self.view.frame.width, height: 80)
+        
+        if headerView.frame.size.height != size.height {
+            headerView.frame.size.height = size.height
+        }
+        
+        self.tableView.tableHeaderView = headerView
+        
+        self.view.layoutIfNeeded()
+        
+    }
+    
+    func setFactUI() {
+        
+        followTopicButton.cornerRadius = radius
+        followTopicButton.layer.borderWidth = 0.5
+        
+        headerImageView.layer.cornerRadius = radius
+        headerImageView.layer.borderWidth = 2
+        if #available(iOS 13.0, *) {
+            followTopicButton.layer.borderColor = UIColor.separator.cgColor
+            headerImageView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
+        } else {
+            followTopicButton.layer.borderColor = UIColor.darkGray.cgColor
+            headerImageView.layer.borderColor = UIColor.lightGray.cgColor
+        }
+        
+        if displayOption == .normal {
+            if #available(iOS 13.0, *) {
+                self.tableView.backgroundColor = .secondarySystemBackground
+                self.headerView.backgroundColor = .secondarySystemBackground
+            } else {
+                self.tableView.backgroundColor = .ios12secondarySystemBackground
+                self.headerView.backgroundColor = .ios12secondarySystemBackground
+            }
+        }
+        
+        
         if let fact = fact {
             
             if fact.beingFollowed {
                 followTopicButton.setTitle("Unfollow", for: .normal)
             }
-            delegate?.topicSelected(fact: fact)
             
             headerLabel.text = fact.title
             descriptionLabel.text = fact.description
@@ -162,6 +216,7 @@ class PostsOfFactTableViewController: UITableViewController {
             if let cell = tableView.dequeueReusableCell(withIdentifier: "NibBlankCell", for: indexPath) as? BlankContentCell {
                 
                 cell.type = noPostsType
+                cell.contentView.backgroundColor = self.tableView.backgroundColor
                 
                 return cell
             }
@@ -395,12 +450,36 @@ class PostsOfFactTableViewController: UITableViewController {
         switch displayOption {
         case .small:
             displayOption = .normal
+            defaults.set(false, forKey: smallDisplayTypeUserDefaultsPhrase)
             displayOptionButton.setImage(UIImage(named: "list-1"), for: .normal)
+            
+            if isMainViewController {
+                headerSeparatorView.alpha = 1
+            }
+            if #available(iOS 13.0, *) {
+                self.tableView.backgroundColor = .secondarySystemBackground
+                self.headerView.backgroundColor = .secondarySystemBackground
+            } else {
+                self.tableView.backgroundColor = .ios12secondarySystemBackground
+                self.headerView.backgroundColor = .ios12secondarySystemBackground
+            }
             
             tableView.reloadData()
         case .normal:
             displayOption = .small
+            defaults.set(true, forKey: smallDisplayTypeUserDefaultsPhrase)
+            
             displayOptionButton.setImage(UIImage(named: "today_apps"), for: .normal)
+            
+            headerSeparatorView.alpha = 0
+            
+            if #available(iOS 13.0, *) {
+                self.tableView.backgroundColor = .systemBackground
+                self.headerView.backgroundColor = .systemBackground
+            } else {
+                self.tableView.backgroundColor = .white
+                self.headerView.backgroundColor = .white
+            }
             
             tableView.reloadData()
         }
@@ -416,13 +495,16 @@ class PostsOfFactTableViewController: UITableViewController {
         }
     }
     
+    
     @IBAction func followTopicButtonTapped(_ sender: Any) {
         if let fact = fact {
             if fact.beingFollowed {
-                factParentVC.followTopic(fact: fact)
+                factParentVC.unfollowTopic(fact: fact)
+                fact.beingFollowed = false
                 self.followTopicButton.setTitle("Follow", for: .normal)
             } else {
-                factParentVC.unfollowTopic(fact: fact)
+                factParentVC.followTopic(fact: fact)
+                fact.beingFollowed = true
                 self.followTopicButton.setTitle("Unfollow", for: .normal)
             }
         }

@@ -376,9 +376,9 @@ class NewFactViewController: UIViewController {
         var data = [String: Any]()
         
         if let factDisplayName = displayOption.factDisplayNames {
-            data = ["name": titleTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "OP": op.uid, "displayOption": displayOption.displayOption, "factDisplayNames": factDisplayName]
+            data = ["name": titleTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "OP": op.uid, "displayOption": displayOption.displayOption, "factDisplayNames": factDisplayName, "popularity": 0]
         } else {
-            data = ["name": titleTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "OP": op.uid, "displayOption": displayOption.displayOption]
+            data = ["name": titleTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "OP": op.uid, "displayOption": displayOption.displayOption, "popularity": 0]
         }
         
         ref.setData(data) { (err) in

@@ -27,8 +27,6 @@ struct Constants {
     struct texts {
         static let voteCampaignText = "Gestaltet Imagine \n\nBei den Kampagnen könnt ihr eure eigene Idee einreichen, oder die besten Ideen eurer Mit-User unterstützen. Erreicht eine Kampagne genügend Unterstützer, wird das Anliegen vom Team überprüft. \n\nBei den Abstimmungen werden die Kampagnen aufgeführt, welche nach verschiedene Kriterien überprüft wurden und nun zur Abstimmung freigegeben sind.\n\nPro Kampagne und Abstimmung habt ihr nur eine Stimme."
         
-        static let voteInfoText = "Ihr entscheidet, was die genaue Bedeutung der Buttons sind. Wir finden, diese 4 Emotionen rund um ein Danke, Staunen über einen Inhalt, Amüsiert sein oder seine Zustimmung geben, decken die gängigsten Reaktionen auf Beiträge ab. \n\nWir werden sicherlich noch gemeinsam entscheiden, wie man die gesamte Darstellung und Interaktion überarbeiten kann."
-        
         static let postCampaignText = "Reiche deine eigene Idee für Imagine ein.\n\nVeränderungen des Aussehens oder der Haptik, Absicherungen der Demokratie, neue vielversprechende Features, neue Arten der Zusammenarbeit oder eine Überarbeitung der Vision sind stets willkommen. \n\nDie Idee sollte natürlich im Sinne von Vielen sein und nicht gegen unsere Grundsätze verstoßen."
         
         static let campaignDetailText = "Diese Kampagne stammt von einem Mitglied von Imagine.\n\nBevor du diese Abstimmung unterstützt oder herunter wählst, versuche bitte die Auswirkungen für das Netzwerk und seiner Nutze zu bedenken. Die Idee sollte der Großzahl der User einen Nutzen bieten und keine Einzelperson hervorheben. \nAuch die Kosten und Folgekosten sollten bedacht werden. \n\nDie Kommentarfunktion für diesen Bereich folgt demnächst."

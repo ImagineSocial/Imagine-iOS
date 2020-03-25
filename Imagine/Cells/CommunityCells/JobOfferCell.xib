@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSans-Medium.ttf">
+            <string>IBMPlexSans-Medium</string>
+        </array>
+        <array key="IBMPlexSans-Regular.ttf">
+            <string>IBMPlexSans</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="SupportTheCommunityCell" rowHeight="165" id="7KW-HN-9KX" customClass="JobOfferCell" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="165"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="7KW-HN-9KX" id="F75-GZ-Ov2">
+                <rect key="frame" x="0.0" y="0.0" width="375" height="165"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kategorie" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.64999997615814209" translatesAutoresizingMaskIntoConstraints="NO" id="kel-W8-0uN">
+                        <rect key="frame" x="285" y="12" width="70" height="17"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="70" id="BTS-pp-Ymj"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="13"/>
+                        <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Informatiker" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fmn-yh-ahA">
+                        <rect key="frame" x="40" y="8" width="235" height="25"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="25" id="Sjz-Zf-biF"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="19"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Ujy-kB-r9f">
+                        <rect key="frame" x="8" y="40" width="352" height="86"/>
+                        <string key="text">Unsere Algorithmen sind das Rückrad für eine faire und unterhaltsame Verteilung von Wissen und Posts. Höchste Priorität für dieses komplizierte Thema!</string>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0 Interessenten" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Roz-n1-yHD">
+                        <rect key="frame" x="8" y="136" width="100.5" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="xxk-Av-3ri"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mlZ-fA-faV">
+                        <rect key="frame" x="280" y="136" width="75" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="OWV-YC-36P"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="people" translatesAutoresizingMaskIntoConstraints="NO" id="xGU-Xb-7Z2" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="5" y="5.5" width="30" height="30"/>
+                        <color key="backgroundColor" systemColor="systemFillColor" red="0.47058823529999999" green="0.47058823529999999" blue="0.50196078430000002" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="tintColor" red="0.31537210939999999" green="0.46283984179999998" blue="0.65801352260000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="30" id="Y1t-dV-hJP"/>
+                            <constraint firstAttribute="width" constant="30" id="Z7Q-Me-YrJ"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="15"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </imageView>
+                </subviews>
+                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                <constraints>
+                    <constraint firstAttribute="trailingMargin" secondItem="kel-W8-0uN" secondAttribute="trailing" id="4TG-5Y-7h9"/>
+                    <constraint firstItem="Ujy-kB-r9f" firstAttribute="top" secondItem="fmn-yh-ahA" secondAttribute="bottom" constant="7" id="A9f-3v-zAr"/>
+                    <constraint firstAttribute="bottom" secondItem="Roz-n1-yHD" secondAttribute="bottom" constant="8" id="APc-w5-9JH"/>
+                    <constraint firstItem="kel-W8-0uN" firstAttribute="leading" secondItem="fmn-yh-ahA" secondAttribute="trailing" constant="10" id="D3b-kY-xEx"/>
+                    <constraint firstItem="kel-W8-0uN" firstAttribute="centerY" secondItem="fmn-yh-ahA" secondAttribute="centerY" id="LF3-nE-jGY"/>
+                    <constraint firstItem="Ujy-kB-r9f" firstAttribute="leading" secondItem="F75-GZ-Ov2" secondAttribute="leading" constant="8" id="OnY-sW-XiR"/>
+                    <constraint firstItem="fmn-yh-ahA" firstAttribute="leading" secondItem="xGU-Xb-7Z2" secondAttribute="trailing" constant="5" id="Z10-7Z-9aR"/>
+                    <constraint firstItem="xGU-Xb-7Z2" firstAttribute="leading" secondItem="F75-GZ-Ov2" secondAttribute="leading" constant="5" id="bEE-oR-157"/>
+                    <constraint firstItem="mlZ-fA-faV" firstAttribute="centerY" secondItem="Roz-n1-yHD" secondAttribute="centerY" id="ePR-di-N2Q"/>
+                    <constraint firstAttribute="trailing" secondItem="mlZ-fA-faV" secondAttribute="trailing" constant="20" id="hit-2W-10U"/>
+                    <constraint firstAttribute="trailing" secondItem="Ujy-kB-r9f" secondAttribute="trailing" constant="15" id="mEj-8m-T0N"/>
+                    <constraint firstItem="Roz-n1-yHD" firstAttribute="leading" secondItem="Ujy-kB-r9f" secondAttribute="leading" id="nIh-rz-iCT"/>
+                    <constraint firstItem="fmn-yh-ahA" firstAttribute="top" secondItem="F75-GZ-Ov2" secondAttribute="top" constant="8" id="nO3-Vr-by0"/>
+                    <constraint firstItem="Roz-n1-yHD" firstAttribute="top" secondItem="Ujy-kB-r9f" secondAttribute="bottom" constant="10" id="vNR-Xk-CEW"/>
+                    <constraint firstItem="xGU-Xb-7Z2" firstAttribute="centerY" secondItem="fmn-yh-ahA" secondAttribute="centerY" id="wQ1-Nh-77F"/>
+                </constraints>
+            </tableViewCellContentView>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <connections>
+                <outlet property="categoryLabel" destination="kel-W8-0uN" id="kvr-Mn-QOA"/>
+                <outlet property="cellBodyLabel" destination="Ujy-kB-r9f" id="c44-ma-euQ"/>
+                <outlet property="createDateLabel" destination="mlZ-fA-faV" id="3ou-4I-MAe"/>
+                <outlet property="headerLabel" destination="fmn-yh-ahA" id="VIl-OF-PVG"/>
+                <outlet property="interestedCountLabel" destination="Roz-n1-yHD" id="6Hh-29-ZJb"/>
+                <outlet property="jobOfferIconImageView" destination="xGU-Xb-7Z2" id="Yc6-qR-fFp"/>
+            </connections>
+            <point key="canvasLocation" x="129.71014492753625" y="81.361607142857139"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="people" width="102" height="102"/>
+    </resources>
+</document>

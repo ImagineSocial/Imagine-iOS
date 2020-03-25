@@ -86,7 +86,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         
         if #available(iOS 13.0, *) {
             let navBarAppearance = UINavigationBarAppearance()
-            navBarAppearance.setBackIndicatorImage(UIImage(systemName: "hand.point.left"), transitionMaskImage: UIImage(systemName: "hand.point.left"))
             navBarAppearance.configureWithOpaqueBackground()
             navBarAppearance.backgroundColor = .systemBackground
             navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.imagineColor, .font: UIFont(name: "IBMPlexSans-Medium", size: 25)!]
@@ -400,12 +399,14 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     }
     
     func setBlogPostBadge(value: Int) {
-        print("Das sind die BlogPosts: \(value)")
-        if value >= 1 {
-            self.smallNumberForImagineBlogButton.text = String(value)
-            self.smallNumberForImagineBlogButton.isHidden = false
-        } else {
-            self.smallNumberForImagineBlogButton.isHidden = true
+        if let tabItems = tabBarController?.tabBar.items {
+            let tabItem = tabItems[4] //Chats
+            
+            if value != 0 {
+                tabItem.badgeValue = String(value)
+            } else {
+                tabItem.badgeValue = nil
+            }
         }
     }
     
@@ -425,31 +426,12 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        var post = Post()
-        var user = User()
-
-        // Check to see which table view cell was selected.
-        if tableView === self.tableView {
-            post = posts[indexPath.row]
-            
-            if post.type == .topTopicCell {
-                tableView.deselectRow(at: indexPath, animated: false)
-            } else {
-                performSegue(withIdentifier: "showPost", sender: post)
-            }
+        let post = posts[indexPath.row]
+        
+        if post.type == .topTopicCell {
+            tableView.deselectRow(at: indexPath, animated: false)
         } else {
-            if let searchVC = self.searchController.searchResultsController as? SearchTableViewController {
-                
-                if let postResults = searchVC.postResults {
-                    post = postResults[indexPath.row]
-                    performSegue(withIdentifier: "showPost", sender: post)
-
-                } else if let userResult = searchVC.userResults {
-                    user = userResult[indexPath.row]
-                    performSegue(withIdentifier: "toUserSegue", sender: user)
-                }
-                
-            }
+            performSegue(withIdentifier: "showPost", sender: post)
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
@@ -509,7 +491,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                 } else { // The CurrentUser
                     userVC.delegate = self
                     userVC.currentState = .ownProfileWithEditing
-                    print("Hier wird der currentstate eingestellt")
                 }
             }
         }
@@ -527,9 +508,11 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         }
         if segue.identifier == "toFactSegue" {
             if let fact = sender as? Fact {
-                if let factVC = segue.destination as? FactParentContainerViewController {
+                if let factVC = segue.destination as? ArgumentPageViewController {
                         factVC.fact = fact
-                        self.notifyFactCollectionViewController(fact: fact)
+                    if fact.displayMode == .topic {
+                        factVC.displayMode = .topic
+                    }
                 }
             }
         }
@@ -556,49 +539,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         }
     }
     
-    // MARK: - SearchBar
     
-    func setUpSearchController() {
-        searchTableVC.tableView.delegate = self
-        
-        searchController = UISearchController(searchResultsController: searchTableVC)
-        
-        // Setup the Search Controller
-        searchController.searchResultsUpdater = self
-        searchController.obscuresBackgroundDuringPresentation = true
-        searchController.searchBar.placeholder = "Durchsuche Imagine"
-        searchController.delegate = self
-        
-        searchController.searchBar.scopeButtonTitles = ["Posts", "User"]
-        searchController.searchBar.delegate = self
-        
-        if #available(iOS 11.0, *) {
-            // For iOS 11 and later, place the search bar in the navigation bar.
-            self.navigationItem.searchController = searchController
-        } else {
-            // For iOS 10 and earlier, place the search controller's search bar in the table view's header.
-            tableView.tableHeaderView = searchController.searchBar
-        }
-        self.navigationItem.hidesSearchBarWhenScrolling = true
-        self.searchController.isActive = false
-        definesPresentationContext = true
-     }
-    
-    @objc func searchBarTapped() {
-        // Show search bar
-        self.fetchesPosts = true // Otherwise the view thinks it scrolled to the button via the function scrollViewDidScroll in BaseFeedTableViewController, couldn't figure a better way
-
-        //        self.searchController.isActive = true   // Not perfekt but works
-        self.searchController.searchBar.becomeFirstResponder()
-    }
-    
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        self.fetchesPosts = true // Otherwise the view thinks it scrolled to the button via the function scrollViewDidScroll in BaseFeedTableViewController, could figure a better way
-    }
-    
-    func didDismissSearchController(_ searchController: UISearchController) {
-        self.fetchesPosts = false   // Otherwise the view thinks it scrolled to the button via the function scrollViewDidScroll in BaseFeedTableViewController, could figure a better way
-    }
     
     
     // MARK: - Navigation Items
@@ -636,18 +577,9 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     
     
     func createRightBarButtons() {
-        // Set Blog and Search Button
-        let imagineButton = DesignableButton(type: .custom)
-        imagineButton.setImage(UIImage(named: "ImagineSign"), for: .normal)
-        imagineButton.addTarget(self, action: #selector(self.imagineSignTapped), for: .touchUpInside)
-        imagineButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        imagineButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        
-        imagineButton.addSubview(self.smallNumberForImagineBlogButton)
         
         let searchBarButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(self.searchBarTapped))
-        let imagineBarButton = UIBarButtonItem(customView: imagineButton)
-        self.navigationItem.rightBarButtonItems = [searchBarButton, imagineBarButton]
+        self.navigationItem.rightBarButtonItem = searchBarButton
     }
     
     func createBarButton() {
@@ -754,10 +686,11 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     func setUpEasyTipViewPreferences() {
         var preferences = EasyTipView.Preferences()
         preferences.drawing.font = UIFont(name: "IBMPlexSans", size: 18)!
-        preferences.drawing.foregroundColor = UIColor.white
-        preferences.drawing.backgroundColor = UIColor.imagineColor
+        preferences.drawing.foregroundColor = UIColor.black
+        preferences.drawing.backgroundColor = UIColor.ios12secondarySystemBackground
         preferences.drawing.arrowPosition = EasyTipView.ArrowPosition.top
         preferences.drawing.textAlignment = .left
+        preferences.drawing.cornerRadius = 10
         preferences.positioning.bubbleHInset = 10
         preferences.positioning.bubbleVInset = 10
         preferences.positioning.maxWidth = self.view.frame.width-40
@@ -779,7 +712,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     }
     
     override func reachabilityChanged(_ isReachable: Bool) {
-        print("changed! Connection reachable: ", isReachable, "fetch requested: ", fetchRequested)
         
         if isReachable {
             if fetchRequested { // To automatically redo the requested task
@@ -839,50 +771,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         
     }
     
-    // MARK: - ImagineBlogButton
-    
-    lazy var newsMenu: NewsOverviewMenu = {
-        let nM = NewsOverviewMenu()
-        nM.feedTableVC = self
-        return nM
-    }()
-    
-    @objc func imagineSignTapped() {
-        
-        let navigationBarHeight: CGFloat = self.navigationController!.navigationBar.frame.height
-        self.newsMenu.showView(navBarHeight: navigationBarHeight)
-        
-        handyHelper.deleteNotifications(type: .blogPost, id: "blogPost")
-    }
-    
-    let smallNumberForImagineBlogButton: UILabel = {
-        let label = UILabel.init(frame: CGRect.init(x: 20, y: 0, width: 12, height: 12))
-        label.backgroundColor = .red
-        label.clipsToBounds = true
-        label.layer.cornerRadius = 6
-        label.textColor = UIColor.white
-        label.textAlignment = .center
-        label.font = .systemFont(ofSize: 10)
-        label.text = String(1)
-        label.isHidden = true
-        
-        return label
-    }()
-    
-    func blogPostSelected(blogPost: BlogPost) {
-        self.newsMenu.handleDismiss()
-        
-        if blogPost.isCurrentProjectsCell {
-            //Go to Imagine information site
-        } else {
-            self.performSegue(withIdentifier: "toBlogPost", sender: blogPost)
-        }
-    }
-    
-    func donationSourceTapped(link: String) {
-        performSegue(withIdentifier: "goToLink", sender: link)
-    }
-    
     // MARK: - Side Menu
     
     lazy var sideMenu: SideMenu = {
@@ -930,93 +818,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         
     }
     
-//    //MARK: - FirstTimeOpenedAppScreen
-//
-//    let blackView: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = UIColor(white: 0, alpha: 0.5)
-////        view.alpha = 0
-//
-//        return view
-//    }()
-//
-//    let introView: UIView = {
-//       let view = UIView()
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        view.clipsToBounds = true
-//        view.layer.cornerRadius = 20
-//        if #available(iOS 13.0, *) {
-//            view.backgroundColor = .systemBackground
-//        } else {
-//            view.backgroundColor = .white
-//        }
-//        view.layer.borderColor = Constants.imagineColor.cgColor
-//        view.layer.borderWidth = 5
-//
-//        return view
-//    }()
-//
-//    let introLabel: UILabel = {
-//       let label = UILabel()
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        label.font = UIFont(name: "IBMPlexSans", size: 24)
-//        if #available(iOS 13.0, *) {
-//            label.textColor = .label
-//        } else {
-//            label.textColor = .black
-//        }
-//        label.text = Constants.texts.introText
-//        label.numberOfLines = 0
-//        label.minimumScaleFactor = 0.5
-//
-//        return label
-//    }()
-//
-//    let introButton: DesignableButton = {
-//       let button = DesignableButton()
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        button.setTitle("🙏", for: .normal)
-//        button.layer.borderColor = Constants.imagineColor.cgColor
-//        button.layer.borderWidth = 2
-//        button.layer.cornerRadius = 4
-//
-//        return button
-//    }()
-//
-//    @objc func dismissIntroView() {
-//        blackView.removeFromSuperview()
-//        introView.removeFromSuperview()
-//    }
-//
-//    func showIntroView() {
-//        if let window = UIApplication.shared.keyWindow {
-//
-//            window.addSubview(blackView)
-//            blackView.frame = window.frame
-//
-//            introView.addSubview(introLabel)
-//
-//            introView.addSubview(introButton)
-//            introButton.centerXAnchor.constraint(equalTo: introView.centerXAnchor).isActive = true
-//            introButton.bottomAnchor.constraint(equalTo: introView.bottomAnchor, constant: -10).isActive = true
-//            introButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
-//            introButton.widthAnchor.constraint(equalToConstant: 60).isActive = true
-//
-//            introLabel.leadingAnchor.constraint(equalTo: introView.leadingAnchor, constant: 10).isActive = true
-//            introLabel.trailingAnchor.constraint(equalTo: introView.trailingAnchor, constant: -10).isActive = true
-//            introLabel.topAnchor.constraint(equalTo: introView.topAnchor, constant: 10).isActive = true
-//            introLabel.bottomAnchor.constraint(equalTo: introButton.topAnchor, constant: -30).isActive = true
-//
-//            window.addSubview(introView)
-//            introView.leadingAnchor.constraint(equalTo: window.leadingAnchor, constant: 20).isActive = true
-//            introView.trailingAnchor.constraint(equalTo: window.trailingAnchor, constant: -20).isActive = true
-////            introView.topAnchor.constraint(equalTo: window.topAnchor, constant: 50).isActive = true
-//            introView.bottomAnchor.constraint(equalTo: window.bottomAnchor, constant: -50).isActive = true
-//
-//            introButton.addTarget(self, action: #selector(dismissIntroView), for: .touchUpInside)
-//        }
-//    }
-//
     func isAppAlreadyLaunchedOnce() -> Bool {
         
         if let _ = defaults.string(forKey: "isAppLaunchedOnce"){
@@ -1075,11 +876,66 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             return true
         }
     }
+    
+    // MARK: - SearchBar
+    
+    func setUpSearchController() {
+        
+        // I think it is unnecessary to set the searchResultsUpdater and searchcontroller Delegate here, but I couldnt work out an alone standing SearchViewController
+        
+        searchTableVC.customDelegate = self
+        
+        searchController = UISearchController(searchResultsController: searchTableVC)
+        
+        // Setup the Search Controller
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = true
+        searchController.searchBar.placeholder = "Durchsuche Imagine"
+        searchController.delegate = self
+        
+        searchController.searchBar.scopeButtonTitles = ["Posts", "User"]
+        searchController.searchBar.delegate = self
+        
+        if #available(iOS 11.0, *) {
+            // For iOS 11 and later, place the search bar in the navigation bar.
+            self.navigationItem.searchController = searchController
+        } else {
+            // For iOS 10 and earlier, place the search controller's search bar in the table view's header.
+            tableView.tableHeaderView = searchController.searchBar
+        }
+        self.navigationItem.hidesSearchBarWhenScrolling = true
+        self.searchController.isActive = false
+        definesPresentationContext = true
+     }
+    
+    @objc func searchBarTapped() {
+        // Show search bar
+        self.fetchesPosts = true // Otherwise the view thinks it scrolled to the button via the function scrollViewDidScroll in BaseFeedTableViewController, couldn't figure a better way
+
+        //        self.searchController.isActive = true   // Not perfekt but works
+        self.searchController.searchBar.becomeFirstResponder()
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        self.fetchesPosts = true // Otherwise the view thinks it scrolled to the button via the function scrollViewDidScroll in BaseFeedTableViewController, could figure a better way
+    }
+    
+    func didDismissSearchController(_ searchController: UISearchController) {
+        self.fetchesPosts = false   // Otherwise the view thinks it scrolled to the button via the function scrollViewDidScroll in BaseFeedTableViewController, could figure a better way
+    }
 }
 
 
-// MARK: - UISearchResultsUpdating Delegate
-extension FeedTableViewController: UISearchResultsUpdating {
+// MARK: - UISearchResultsUpdating Delegate, UISearchBar Delegate, CustomDelegate
+extension FeedTableViewController: UISearchResultsUpdating, UISearchBarDelegate, CustomSearchViewControllerDelegate {
+    
+    func didSelectItem(item: Any) {
+        if let post = item as? Post {
+            performSegue(withIdentifier: "showPost", sender: post)
+        } else if let user = item as? User {
+            performSegue(withIdentifier: "toUserSegue", sender: user)
+        }
+    }
     
     func updateSearchResults(for searchController: UISearchController) {
         
@@ -1089,187 +945,25 @@ extension FeedTableViewController: UISearchResultsUpdating {
         let scope = searchBar.selectedScopeButtonIndex
         
         if searchBar.text! != "" {
-            searchTheDatabase(searchText: searchBar.text!, searchScope: scope)
+            searchTableVC.searchTheDatabase(searchText: searchBar.text!, searchScope: scope)
         } else {
             // Clear the searchTableView
-            if let resultsController = self.searchController.searchResultsController as? SearchTableViewController {
-                resultsController.postResults = nil
-                resultsController.userResults = nil
-                resultsController.tableView.reloadData()
-            }
+            searchTableVC.showBlankTableView()
         }
     }
     
-    func searchTheDatabase(searchText: String, searchScope: Int) {
-        var postResults = [Post]()
-        var userResults = [User]()
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         
-        switch searchScope {
-        case 0: // Search Posts
-            let titleRef = db.collection("Posts").whereField("title", isGreaterThan: searchText).whereField("title", isLessThan: "\(searchText)ü").limit(to: 10)
-            
-            titleRef.getDocuments { (querySnap, error) in
-                if let err = error {
-                    print("We have an error searching for titles: \(err.localizedDescription)")
-                } else {
-                    for document in querySnap!.documents {
-                        
-                        addPost(document: document)
-                    }
-                    if let resultsController = self.searchController.searchResultsController as? SearchTableViewController {
-                        resultsController.postResults = nil
-                        resultsController.postResults = postResults
-                        resultsController.userResults = nil
-                        
-                        resultsController.tableView.reloadData()
-                    }
-                }
-            }
-            
-            // You have to write the whole noun
-            let tagRef = db.collection("Posts").whereField("tags", arrayContains: searchText).limit(to: 10)
-            
-            tagRef.getDocuments { (querySnap, error) in
-                if let err = error {
-                    print("We have an error searching for titles: \(err.localizedDescription)")
-                } else {
-                    for document in querySnap!.documents {
-                        
-                        addPost(document: document)
-                    }
-                    if let resultsController = self.searchController.searchResultsController as? SearchTableViewController {
-                        resultsController.postResults = nil
-                        resultsController.postResults = postResults
-                        resultsController.userResults = nil
-                        
-                        resultsController.tableView.reloadData()
-                    }
-                }
-            }
-            
-            
-        case 1: // Search Users
-            let fullNameRef = db.collection("Users").whereField("full_name", isGreaterThan: searchText).whereField("full_name", isLessThan: "\(searchText)ü").limit(to: 3)
-            
-            fullNameRef.getDocuments { (querySnap, error) in
-                if let err = error {
-                    print("We have an error searching for Users: \(err.localizedDescription)")
-                } else {
-                    for document in querySnap!.documents {
-                        addUser(document: document)
-                    }
-                    if let resultsController = self.searchController.searchResultsController as? SearchTableViewController {
-                        resultsController.userResults = userResults
-                        resultsController.postResults = nil
-                        
-                        resultsController.tableView.reloadData()
-                    }
-                }
-            }
-            
-            let nameRef = db.collection("Users").whereField("name", isGreaterThan: searchText).whereField("name", isLessThan: "\(searchText)ü").limit(to: 3)
-            
-            nameRef.getDocuments { (querySnap, error) in
-                if let err = error {
-                    print("We have an error searching for Users: \(err.localizedDescription)")
-                } else {
-                    for document in querySnap!.documents {
-                        
-                        addUser(document: document)
-                    }
-                    if let resultsController = self.searchController.searchResultsController as? SearchTableViewController {
-                        resultsController.userResults = userResults
-                        resultsController.postResults = nil
-                        
-                        resultsController.tableView.reloadData()
-                    }
-                }
-            }
-            
-            let surnameRef = db.collection("Users").whereField("surname", isGreaterThan: searchText).whereField("surname", isLessThan: "\(searchText)ü").limit(to: 3)
-            
-            surnameRef.getDocuments { (querySnap, error) in
-                if let err = error {
-                    print("We have an error searching for Users: \(err.localizedDescription)")
-                } else {
-                    for document in querySnap!.documents {
-                        
-                        addUser(document: document)
-                    }
-                    if let resultsController = self.searchController.searchResultsController as? SearchTableViewController {
-                        resultsController.userResults = userResults
-                        resultsController.postResults = nil
-                        
-                        resultsController.tableView.reloadData()
-                    }
-                }
-            }
-        default:
-            return
-        }
-        
-        
-        func addUser(document: DocumentSnapshot) {
-            
-            let userIsAlreadyFetched = userResults.contains { $0.userUID == document.documentID }
-            if userIsAlreadyFetched {   // Check if we got the user in on of the other queries
-                return
-            }
-            
-            let user = User()
-            if let docData = document.data() {
-                
-                if let name = docData["name"] as? String {
-                    
-                    //When you search for names, you can search for their real names and it will answer, but the names will not show up...?!
-                    
-                    let name = name
-                    user.displayName = name
-                    user.userUID = document.documentID
-                    if let imageURL = docData["profilePictureURL"] as? String {
-                        user.imageURL = imageURL
-                    }
-                    if let status = docData["statusText"] as? String {
-                        user.statusQuote = status
-                    }
-                    user.blocked = docData["blocked"] as? [String] ?? nil
-                    
-                    userResults.append(user)
-                }
-            }
-        }
-        
-        func addPost(document: DocumentSnapshot) {
-            
-            let postIsAlreadyFetched = postResults.contains { $0.documentID == document.documentID }
-            if postIsAlreadyFetched {   // Check if we got the user in on of the other queries
-                return
-            }
-            let post = Post()
-            if let docData = document.data() {
-                
-                if let title = docData["title"] as? String, let type = docData["type"] as? String, let op = docData["originalPoster"] as? String {
-                    let imageURL = docData["imageURL"] as? String
-                    let imageHeight = docData["imageHeight"] as? Double
-                    let imageWidth = docData["imageWidth"] as? Double
-                    post.title = title
-                    post.documentID = document.documentID
-                    post.imageURL = imageURL ?? ""
-                    if let postType = self.handyHelper.setPostType(fetchedString: type) {
-                        post.type = postType
-                    }
-                    post.mediaWidth = CGFloat(imageWidth ?? 0)
-                    post.mediaHeight = CGFloat(imageHeight ?? 0)
-                    post.documentID = document.documentID
-                    post.originalPosterUID = op
-                    
-                    postResults.append(post)
-                    
-                }
+        if let text = searchBar.text {
+            if text != "" {
+                searchTableVC.searchTheDatabase(searchText: text, searchScope: selectedScope)
+            } else {
+                searchTableVC.showBlankTableView()
             }
         }
     }
 }
+
 
 extension FeedTableViewController: LogOutDelegate {
     func deleteListener() {     // Triggered when the User logges themselve out. Otherwise they would get notified after they logged themself in and a new user could not get a new notificationListener
@@ -1283,17 +977,6 @@ extension FeedTableViewController: LogOutDelegate {
         self.notifications.removeAll()
         
         print("listener removed")
-    }
-}
-
- // MARK: - UISearchBar Delegate
-extension FeedTableViewController: UISearchBarDelegate {
-   
-    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-        
-        if let text = searchBar.text {
-            searchTheDatabase(searchText: text, searchScope: selectedScope)
-        }
     }
 }
 

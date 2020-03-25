@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSans-Medium.ttf">
+            <string>IBMPlexSans-Medium</string>
+        </array>
+        <array key="IBMPlexSans-Regular.ttf">
+            <string>IBMPlexSans</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="WhyGuiltyCollectionViewCell" id="3yd-jj-5rj" customClass="WhyGuiltyCollectionViewCell" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="240" height="228"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Bvo-sw-Vhr">
+                <rect key="frame" x="0.0" y="0.0" width="240" height="228"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ImagineSign" translatesAutoresizingMaskIntoConstraints="NO" id="5ad-DF-Brs">
+                        <rect key="frame" x="10" y="10" width="40" height="40"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="40" id="JtH-Uo-cc5"/>
+                            <constraint firstAttribute="width" constant="40" id="wvL-Eq-fs3"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hat das und das gemacht" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="70W-mC-7cy">
+                        <rect key="frame" x="60" y="28" width="170" height="22"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="10"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VAE-fP-sq0" customClass="HairlineView" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="10" y="139" width="220" height="1"/>
+                        <color key="backgroundColor" systemColor="separatorColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="1" id="9WP-WR-QYW"/>
+                        </constraints>
+                    </view>
+                    <stackView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="3qO-Yc-hLp">
+                        <rect key="frame" x="10" y="60" width="220" height="158"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LQM-H4-Ysc" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="220" height="74"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Deswegen sind sie doof" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vc7-8A-ZEk">
+                                        <rect key="frame" x="5" y="5" width="210" height="64"/>
+                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="tertiarySystemBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="vc7-8A-ZEk" secondAttribute="trailing" constant="5" id="Pza-iJ-Ir8"/>
+                                    <constraint firstItem="vc7-8A-ZEk" firstAttribute="leading" secondItem="LQM-H4-Ysc" secondAttribute="leading" constant="5" id="ePF-aW-hTn"/>
+                                    <constraint firstItem="vc7-8A-ZEk" firstAttribute="top" secondItem="LQM-H4-Ysc" secondAttribute="top" constant="5" id="epj-de-ehd"/>
+                                    <constraint firstAttribute="bottom" secondItem="vc7-8A-ZEk" secondAttribute="bottom" constant="5" id="iRv-j6-Dqs"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tvz-XU-rXd" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="84" width="220" height="74"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Aber sie machen auch das" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lyg-aa-RqR">
+                                        <rect key="frame" x="5" y="5" width="210" height="64"/>
+                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="tertiarySystemBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="Lyg-aa-RqR" secondAttribute="trailing" constant="5" id="3Lx-mD-pe2"/>
+                                    <constraint firstItem="Lyg-aa-RqR" firstAttribute="top" secondItem="Tvz-XU-rXd" secondAttribute="top" constant="5" id="5yq-II-DB5"/>
+                                    <constraint firstItem="Lyg-aa-RqR" firstAttribute="leading" secondItem="Tvz-XU-rXd" secondAttribute="leading" constant="5" id="HEt-9w-Jf0"/>
+                                    <constraint firstAttribute="bottom" secondItem="Lyg-aa-RqR" secondAttribute="bottom" constant="5" id="qJF-xH-qVZ"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                        </subviews>
+                    </stackView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Firma" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YPD-hg-uzf">
+                        <rect key="frame" x="60" y="10" width="170" height="15"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="15" id="2d0-Of-UsK"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="14"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                <constraints>
+                    <constraint firstItem="3qO-Yc-hLp" firstAttribute="leading" secondItem="Bvo-sw-Vhr" secondAttribute="leading" constant="10" id="7pS-uQ-6KW"/>
+                    <constraint firstItem="YPD-hg-uzf" firstAttribute="leading" secondItem="5ad-DF-Brs" secondAttribute="trailing" constant="10" id="91j-0q-8XZ"/>
+                    <constraint firstItem="5ad-DF-Brs" firstAttribute="top" secondItem="Bvo-sw-Vhr" secondAttribute="top" constant="10" id="AvM-eF-Rs2"/>
+                    <constraint firstItem="VAE-fP-sq0" firstAttribute="leading" secondItem="Bvo-sw-Vhr" secondAttribute="leading" constant="10" id="C9q-Ct-cyQ"/>
+                    <constraint firstItem="3qO-Yc-hLp" firstAttribute="top" secondItem="5ad-DF-Brs" secondAttribute="bottom" constant="10" id="G6W-u5-DHM"/>
+                    <constraint firstItem="70W-mC-7cy" firstAttribute="bottom" secondItem="5ad-DF-Brs" secondAttribute="bottom" id="HWx-BS-iNv"/>
+                    <constraint firstAttribute="trailing" secondItem="70W-mC-7cy" secondAttribute="trailing" constant="10" id="IrB-o0-XQj"/>
+                    <constraint firstAttribute="trailing" secondItem="VAE-fP-sq0" secondAttribute="trailing" constant="10" id="JGR-Jz-lMJ"/>
+                    <constraint firstItem="70W-mC-7cy" firstAttribute="top" secondItem="YPD-hg-uzf" secondAttribute="bottom" constant="3" id="Q3M-Ti-2XH"/>
+                    <constraint firstItem="YPD-hg-uzf" firstAttribute="top" secondItem="5ad-DF-Brs" secondAttribute="top" id="RGE-0T-GL7"/>
+                    <constraint firstItem="5ad-DF-Brs" firstAttribute="leading" secondItem="Bvo-sw-Vhr" secondAttribute="leading" constant="10" id="VVC-Mk-wOx"/>
+                    <constraint firstItem="70W-mC-7cy" firstAttribute="leading" secondItem="5ad-DF-Brs" secondAttribute="trailing" constant="10" id="WBe-76-C1H"/>
+                    <constraint firstAttribute="bottom" secondItem="3qO-Yc-hLp" secondAttribute="bottom" constant="10" id="luv-q8-i1u"/>
+                    <constraint firstItem="VAE-fP-sq0" firstAttribute="top" secondItem="Tvz-XU-rXd" secondAttribute="top" constant="-5" id="nJk-7y-wCh"/>
+                    <constraint firstAttribute="trailing" secondItem="3qO-Yc-hLp" secondAttribute="trailing" constant="10" id="rGG-18-16i"/>
+                    <constraint firstAttribute="trailing" secondItem="YPD-hg-uzf" secondAttribute="trailing" constant="10" id="ssY-3s-0OJ"/>
+                </constraints>
+            </collectionViewCellContentView>
+            <size key="customSize" width="240" height="228"/>
+            <connections>
+                <outlet property="factHeaderDescriptionLabel" destination="70W-mC-7cy" id="Cv0-7p-Oeq"/>
+                <outlet property="factHeaderTitle" destination="YPD-hg-uzf" id="7Cg-aX-R3o"/>
+                <outlet property="factImageView" destination="5ad-DF-Brs" id="mZJ-HS-EJ3"/>
+                <outlet property="firstArgumentLabel" destination="vc7-8A-ZEk" id="icz-wU-zXI"/>
+                <outlet property="secondArgumentLabel" destination="Lyg-aa-RqR" id="tTJ-1k-5TU"/>
+            </connections>
+            <point key="canvasLocation" x="128.98550724637681" y="70.3125"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="ImagineSign" width="640" height="641"/>
+    </resources>
+</document>

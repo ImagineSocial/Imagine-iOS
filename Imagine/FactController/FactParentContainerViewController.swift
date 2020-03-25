@@ -28,11 +28,12 @@ class FactParentContainerViewController: UIViewController {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var followTopicButton: DesignableButton!
     
+    
+    
     var fact:Fact?
     var proArgumentList = [Argument]()
     var contraArgumentList = [Argument]()
     var needNavigationController = false
-    var delegate: RecentTopicDelegate?
     let db = Firestore.firestore()
     let radius:CGFloat = 6
     
@@ -46,7 +47,6 @@ class FactParentContainerViewController: UIViewController {
             if fact.beingFollowed {
                 followTopicButton.setTitle("Unfollow", for: .normal)
             }
-            delegate?.topicSelected(fact: fact)
         }
 
         followTopicButton.cornerRadius = radius
@@ -58,15 +58,7 @@ class FactParentContainerViewController: UIViewController {
         followTopicButton.layer.borderWidth = 0.5
         
         getArguments()
-        setPostButton()
-        
-//        if #available(iOS 13.0, *) {
-//            self.view.backgroundColor = .secondarySystemBackground
-//            self.navigationController?.view.backgroundColor = .secondarySystemBackground
-//        } else {
-//            self.view.backgroundColor = UIColor(red: 242.0, green: 242.0, blue: 247.0, alpha: 1.0)
-//            self.navigationController?.view.backgroundColor = UIColor(red: 242.0, green: 242.0, blue: 247.0, alpha: 1.0)
-//        }
+//        setPostButton()
         
         factImageView.layer.cornerRadius = radius
         
@@ -74,6 +66,8 @@ class FactParentContainerViewController: UIViewController {
             setDismissButton()
         }
     }
+    
+    
     
     func setDismissButton() {
         let button = DesignableButton()
@@ -88,31 +82,31 @@ class FactParentContainerViewController: UIViewController {
         self.navigationItem.leftBarButtonItem = barButton
     }
     
-    func setPostButton() {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitleColor(.imagineColor, for: .normal)
-        button.setTitle("Beiträge", for: .normal)
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
-        if #available(iOS 13.0, *) {
-            button.backgroundColor = .secondarySystemBackground
-            button.layer.borderColor = UIColor.separator.cgColor
-        } else {
-            button.layer.borderColor = UIColor.darkGray.cgColor
-            button.backgroundColor = .ios12secondarySystemBackground
-        }
-        button.addTarget(self, action: #selector(toPostsTapped), for: .touchUpInside)
-//        button.layer.borderColor = Constants.imagineColor.cgColor
-        button.layer.borderWidth = 0.5
-        button.cornerRadius = radius
-        button.clipsToBounds = true
-        
-        button.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        button.widthAnchor.constraint(equalToConstant: 75).isActive = true
-        
-        let barButton = UIBarButtonItem(customView: button)
-        self.navigationItem.rightBarButtonItem = barButton
-    }
+//    func setPostButton() {
+//        let button = DesignableButton()
+//        button.translatesAutoresizingMaskIntoConstraints = false
+//        button.setTitleColor(.imagineColor, for: .normal)
+//        button.setTitle("Beiträge", for: .normal)
+//        button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
+//        if #available(iOS 13.0, *) {
+//            button.backgroundColor = .secondarySystemBackground
+//            button.layer.borderColor = UIColor.separator.cgColor
+//        } else {
+//            button.layer.borderColor = UIColor.darkGray.cgColor
+//            button.backgroundColor = .ios12secondarySystemBackground
+//        }
+//        button.addTarget(self, action: #selector(toPostsTapped), for: .touchUpInside)
+////        button.layer.borderColor = Constants.imagineColor.cgColor
+//        button.layer.borderWidth = 0.5
+//        button.cornerRadius = radius
+//        button.clipsToBounds = true
+//
+//        button.heightAnchor.constraint(equalToConstant: 25).isActive = true
+//        button.widthAnchor.constraint(equalToConstant: 75).isActive = true
+//
+//        let barButton = UIBarButtonItem(customView: button)
+//        self.navigationItem.rightBarButtonItem = barButton
+//    }
     
     @objc func toPostsTapped() {
         if let fact = self.fact {
@@ -204,7 +198,7 @@ class FactParentContainerViewController: UIViewController {
                     fact.beingFollowed = true
                 }
             }
-        }
+        } 
     }
     
     func unfollowTopic(fact: Fact) {

@@ -67,6 +67,7 @@ class Post {
     var event = Event()
     var repost: Post?
     var fact:Fact?
+    var addOnTitle: String?    // Description in the OptionalInformation Section in the topic area
     
     let handyHelper = HandyHelper()
     

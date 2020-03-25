@@ -70,7 +70,8 @@ class DataHelper {
             list = [Fact]()
             dataPath = "Facts"
             
-            orderString = "createDate"
+            orderString = "popularity"
+            descending = true
             
         case .jobOffer:
             list = [JobOffer]()
@@ -79,15 +80,7 @@ class DataHelper {
             orderString = "importance"
             descending = true
             
-            let jobOffer = JobOffer()   // Der erste Eintrag
-            jobOffer.title = "Wir brauchen dich!"
-            jobOffer.cellText = "Wenn du glaubst, mit deinem Wissen oder Erfahrung kannst du uns helfen, aber es gibt keine passende Ausschreibung, gib uns Bescheid! Wir sind auf klüge Köpfe angewiesen!"
-            jobOffer.documentID = ""
-            jobOffer.createDate = "15.05.2019"
-            jobOffer.interested = 0
-            jobOffer.category = "Allgemein"
             
-            list.append(jobOffer)
         }
         
         let ref = db.collection(dataPath).order(by: orderString, descending: descending)
@@ -122,11 +115,12 @@ class DataHelper {
                         let blogPost = BlogPost()
                         blogPost.title = title
                         blogPost.subtitle = subtitle
-                        blogPost.createDate = stringDate
+                        blogPost.stringDate = stringDate
                         blogPost.poster = poster
                         blogPost.profileImageURL = profileImageURL
                         blogPost.category = category
                         blogPost.description = description
+                        blogPost.createDate = date
                         
                         if let imageURL = documentData["imageURL"] as? String {
                             blogPost.imageURL = imageURL
@@ -182,6 +176,7 @@ class DataHelper {
                                 continue
                         }
                         
+                        let date = createTimestamp.dateValue()
                         let createDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
                         let endDate = voteTillDateTimestamp.dateValue()
                         let endOfVoteDate = endDate.formatRelativeString()
@@ -202,7 +197,7 @@ class DataHelper {
                         vote.title = title
                         vote.subtitle = subtitle
                         vote.description = description
-                        vote.createDate = createDate
+                        vote.stringDate = createDate
                         vote.endOfVoteDate = endOfVoteDate
                         vote.cost = costString
                         vote.impact = impact
@@ -211,6 +206,7 @@ class DataHelper {
                         vote.impactDescription = impactDescription
                         vote.realizationTimeDescription = realizationTimeDescription
                         vote.documentID = documentID
+                        vote.createDate = date
                         
                         list.append(vote)
                         
@@ -239,12 +235,13 @@ class DataHelper {
                         jobOffer.title = title      // Dann die Sachen zuordnen
                         jobOffer.cellText = shortBody
                         jobOffer.documentID = documentID
-                        jobOffer.createDate = stringDate
+                        jobOffer.stringDate = stringDate
                         jobOffer.interested = interestedCount
                         jobOffer.category = category
                         if let description = documentData["description"] as? String {
                             jobOffer.descriptionText = description
                         }
+                        jobOffer.createDate = date
                         
                         list.append(jobOffer)
                     }
@@ -274,6 +271,8 @@ class DataHelper {
             return "Aufruf"
         case .change:
             return "Veränderung"
+        case .topicAddOn:
+            return "Themen AddOn"
         }
     }
     
@@ -286,6 +285,8 @@ class DataHelper {
             return CampaignCategory(title: getCategoryLabelText(type: .call), type: .call)
         case "change":
             return CampaignCategory(title: getCategoryLabelText(type: .change), type: .change)
+        case "topicAddOn":
+            return CampaignCategory(title: getCategoryLabelText(type: .topicAddOn), type: .topicAddOn)
         default:
             return CampaignCategory(title: getCategoryLabelText(type: .proposal), type: .proposal)
         }
@@ -502,16 +503,17 @@ class JobOffer {
     var cellText = ""
     var descriptionText = ""
     var documentID = ""
-    var createDate = ""
+    var stringDate = ""
     var interested = 0
     var category = ""
+    var createDate = Date()
 }
 
 class Vote {
     var title = ""
     var subtitle = ""
     var description = ""
-    var createDate = ""
+    var stringDate = ""
     var endOfVoteDate = ""
     var cost = ""
     var costDescription = ""
@@ -521,6 +523,7 @@ class Vote {
     var realizationTimeDescription = ""
     var commentCount = 0
     var documentID = ""
+    var createDate = Date()
 }
 
 class BlogPost {
@@ -528,11 +531,12 @@ class BlogPost {
     var title = ""
     var subtitle = ""
     var description = ""
-    var createDate = ""
+    var stringDate = ""
     var category = ""
     var poster = ""
     var profileImageURL = ""
     var imageURL = ""
+    var createDate = Date()
 }
 
 

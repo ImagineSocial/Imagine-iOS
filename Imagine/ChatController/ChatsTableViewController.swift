@@ -305,6 +305,7 @@ class ChatsTableViewController: UITableViewController {
             if let cell = tableView.dequeueReusableCell(withIdentifier: "NibBlankCell", for: indexPath) as? BlankContentCell {
                 
                 cell.type = BlankCellType.chat
+                cell.contentView.backgroundColor = self.tableView.backgroundColor
                 
                 return cell
             }
