@@ -5,10 +5,10 @@ Currently, the iOS version is the prototype of the Imagine Network. We have all 
 You can find the app in the AppStore: https://apps.apple.com/de/app/imagine/id1480679038 (Currently just in German, sorry) 
 
 # The Network:
-Imagine tries to be a social and entertaining place. A lot of open source and decentralized networks have tried it, so will we. We do not only focus on the serious parts, but try to find a responsible and fun way to get a new network.
+Imagine tries to be a social and entertaining place that encourages a change. A lot of open source and decentralized networks have tried it, so will we. We do not only focus on the serious parts, but try to find a responsible and fun way to get a new network.
 We are young and want an up-to-date network without the nasty side effects. We want to give something back and want to build it with the community. Its more fun and effective!
 
-You can find more informations about our ways of diminishing a bad mental state, fake news/populism and echochambers on our website: www.tiny.cc/JustImagine  
+You can find more informations about our ways of diminishing a bad mental state, fake-news/populism and echochambers on our website: www.imagine.social  
 
 # Features:
 - *Endless-Feed*: 
@@ -33,6 +33,7 @@ Discussion topics have a display of pro/contra arguments on a single page and ar
 Every argument can have sources and contra arguments if you select it. 
 Topic, argument, source and contra argument can be created by a user. 
 Topics can be linked to posts (i.e. topics like "cats" but also discussions as "climate change").
+You can add optional add-ons for deeper exploration (beta).
 Optical reports and discussions are a measure to conter fake-news and populism.
 
 - *Democracy*:
@@ -50,6 +51,6 @@ Info area, where you can dream about the functions and impacts, a truly social a
 We use Firebase as a provider for the authentification process, storage and database. This has been a great solution so far.
 
 # so...
-there is a lot to do, thats true, but we are here, we already have a working network, there is no kickstarter between us and the market and we will make the necessary additions and changes together. We will find a market fit, gather smart people and keep on working for the change!
+there is a lot to do, thats true, but we are here, we already have a working network, there is no kickstarter between us and the market and we will make the necessary additions and changes together. We will find a market fit, gather smart people and keep on working for the change! 
 
 If you are interested to help, you can interact with us via the app, send us a message on Facebook/Instagram, here on GitHub or however you can reach us. We need help in so many areas: UI/UX, Programming (in Kotlin/Java, Swift/ObjectiveC, Javascript...), translations (in english for the beginning)... In short, if you are smart and/or motivated, we are happy for your help!
