@@ -10,10 +10,14 @@ import UIKit
 
 protocol CollectionViewInTableViewCellDelegate {
     func itemTapped(item: Any)
-    func newPostTapped(info: OptionalInformation)
+    func newPostTapped(addOnDocumentID: String)
 }
 
-class CollectionViewInTableViewCell: UITableViewCell {
+class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegate {
+    func done() {
+        collectionView.reloadData()
+    }
+    
     
     @IBOutlet weak var collectionView: UICollectionView!
     
@@ -21,18 +25,17 @@ class CollectionViewInTableViewCell: UITableViewCell {
     
     var info: OptionalInformation? {
         didSet {
-            
-            showPost(info: info!)
+            if let info = info {
+                info.delegate = self
+                info.getItems()
+            } else {
+                print("No Info we got")
+            }
         }
     }
     
-    func showPost(info: OptionalInformation) {
-        
-        collectionView.reloadData()
-    }
-    
-    let DIYCellIdentifier = "DIYCollectionViewCell"
-    let whyGuiltyIdentifier = "WhyGuiltyCollectionViewCell"
+    let DIYCellIdentifier = "SmallPostCollectionCell"
+    let whyGuiltyIdentifier = "SmallFactCell"
     let tableViewIdentifier = "TableViewInCollectionViewCell"
     
     override func awakeFromNib() {
@@ -40,8 +43,8 @@ class CollectionViewInTableViewCell: UITableViewCell {
         collectionView.dataSource = self
         collectionView.delegate = self
         
-        collectionView.register(UINib(nibName: "WhyGuiltyCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: whyGuiltyIdentifier)
-        collectionView.register(UINib(nibName: "DIYCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: DIYCellIdentifier)
+        collectionView.register(UINib(nibName: "SmallFactCell", bundle: nil), forCellWithReuseIdentifier: whyGuiltyIdentifier)
+        collectionView.register(UINib(nibName: "SmallPostCell", bundle: nil), forCellWithReuseIdentifier: DIYCellIdentifier)
         collectionView.register(UINib(nibName: tableViewIdentifier, bundle: nil), forCellWithReuseIdentifier: tableViewIdentifier)
         collectionView.register(UINib(nibName: "AddTopicCell", bundle: nil), forCellWithReuseIdentifier: "AddTopicCell")
         collectionView.register(AddItemCollectionViewCell.self, forCellWithReuseIdentifier: "AddPost")
@@ -49,8 +52,8 @@ class CollectionViewInTableViewCell: UITableViewCell {
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             layout.scrollDirection = .horizontal
         }
-        
     }
+    
 }
 
 extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -59,13 +62,11 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
         
         if let info = info {
             if indexPath.item != info.items.count {
-                switch info.type {
-                case .diy:
+                let item = info.items[indexPath.item]
+                if let _ = item as? Fact {
+                    return CGSize(width: 300, height: collectionView.frame.height)
+                } else {
                     return CGSize(width: 200, height: collectionView.frame.height)
-                case .avoid:
-                    return CGSize(width: 300, height: collectionView.frame.height)
-                case .guilty:
-                    return CGSize(width: 300, height: collectionView.frame.height)
                 }
             } else {
                 return CGSize(width: 50, height: 50)
@@ -79,54 +80,36 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let info = info else { return 0 }
         
-        if info.type == .avoid {
-            return (info.items.count/4)+1
-        } else {
-            return info.items.count+1
-        }
+        return info.items.count+1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let info = info {
             
             if indexPath.item != info.items.count {
-                switch info.type {
-                    
-                case .diy:
-                    if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DIYCellIdentifier, for: indexPath) as? DIYCollectionViewCell {
+                
+                let item = info.items[indexPath.item]
+                
+                if let post = item as? Post {
+                    if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DIYCellIdentifier, for: indexPath) as? SmallPostCell {
                         
-                        if let posts = info.items as? [Post] {
-                            let post = posts[indexPath.row]
-                            
-                            cell.postID = post.documentID
-                            if let title = post.addOnTitle {
-                                cell.postTitle = title
-                            }
+                        cell.postID = post.documentID
+                        
+                        if let title = post.addOnTitle {
+                            cell.postTitle = title
                         }
                         
                         return cell
                     }
-                case .guilty:
-                    if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: whyGuiltyIdentifier, for: indexPath) as? WhyGuiltyCollectionViewCell {
+                } else if let fact = item as? Fact {
+                    if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: whyGuiltyIdentifier, for: indexPath) as? SmallFactCell {
                         
-                        if let facts = info.items as? [Fact] {
-                            let fact = facts[indexPath.row]
-                            
-                            if fact.title != "" {   // Not loaded yet
-                                cell.fact = fact
-                            } else {
-                                cell.factID = fact.documentID
-                            }
+                        if fact.title != "" {   // Not loaded yet
+                            cell.fact = fact
+                        } else {
+                            cell.factID = fact.documentID
                         }
                         
-                        return cell
-                    }
-                case .avoid:
-                    if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: tableViewIdentifier, for: indexPath) as? TableViewInCollectionViewCell {
-                        
-                        if let items = info.items as? [Company] {   // TO DO: Sort them in batches of 4!
-                            cell.items = items
-                        }
                         return cell
                     }
                 }
@@ -141,6 +124,7 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
         return UICollectionViewCell()
     }
     
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let info = info {
             if info.items.count != indexPath.item {
@@ -149,18 +133,18 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                 // The Post/Fact gets fetched inside each cell, so the items list in this view is not complete
                 
                 let currentCell = collectionView.cellForItem(at: indexPath)
-                if let guiltyCell = currentCell as? WhyGuiltyCollectionViewCell {
+                if let guiltyCell = currentCell as? SmallFactCell {
                     if let fact = guiltyCell.fact {
                         delegate?.itemTapped(item: fact)
                     }
-                } else if let diyCell = currentCell as? DIYCollectionViewCell {
+                } else if let diyCell = currentCell as? SmallPostCell {
                     if let post = diyCell.post {
                         delegate?.itemTapped(item: post)
                     }
                 }
             } else {
                 // Add NewPost tapped
-                delegate?.newPostTapped(info: info)
+                delegate?.newPostTapped(addOnDocumentID: info.documentID)
             }
         }
     }

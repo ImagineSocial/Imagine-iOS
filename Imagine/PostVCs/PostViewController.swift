@@ -1774,7 +1774,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     @objc func translatePostTapped() {
-        performSegue(withIdentifier: "toTranslateSegue", sender: post)
+        if post.type == .picture {
+            performSegue(withIdentifier: "toTranslateSegue", sender: post)
+        } else {
+            self.alert(message: "Im Moment kann man leider nur Bild-Beiträge übersetzen. Reiche gerne einen Vorschlag für dieses Feature ein, damit wir wissen, dass die Nachfrage da ist. Vielen Dank für dein Verständnis!")
+        }
     }
     
     
@@ -1891,15 +1895,16 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 }
             }
         }
-        if let navVC = segue.destination as? UINavigationController {
-            if let repostVC = navVC.topViewController as? RepostViewController {
-                if let chosenPost = sender as? Post {
-                    repostVC.post = chosenPost
-                    repostVC.repost = .translation
+        if segue.identifier == "toTranslateSegue" {
+            if let navVC = segue.destination as? UINavigationController {
+                if let repostVC = navVC.topViewController as? RepostViewController {
+                    if let chosenPost = sender as? Post {
+                        repostVC.post = chosenPost
+                        repostVC.repost = .translation
+                    }
                 }
             }
         }
-        
     }
     
     //MARK:- CommentAnswerView

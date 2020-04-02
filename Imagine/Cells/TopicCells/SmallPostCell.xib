@@ -18,34 +18,34 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="DIYCollectionViewCell" id="t7G-Ff-jOe" customClass="DIYCollectionViewCell" customModule="Imagine" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="200" height="170"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SmallPostCollectionCell" id="t7G-Ff-jOe" customClass="SmallPostCell" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="237" height="210"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="lwW-LP-G32">
-                <rect key="frame" x="0.0" y="0.0" width="200" height="170"/>
+                <rect key="frame" x="0.0" y="0.0" width="237" height="210"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ydf-j5-sOJ" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="5" y="85" width="190" height="80"/>
+                        <rect key="frame" x="5" y="5" width="227" height="125"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ImagineSign" translatesAutoresizingMaskIntoConstraints="NO" id="xz4-Rz-QCY">
-                                <rect key="frame" x="145" y="5" width="40" height="40"/>
+                                <rect key="frame" x="177" y="15" width="45" height="45"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="HcN-nQ-TKB"/>
-                                    <constraint firstAttribute="width" constant="40" id="l2w-sM-zoF"/>
+                                    <constraint firstAttribute="height" constant="45" id="HcN-nQ-TKB"/>
+                                    <constraint firstAttribute="width" constant="45" id="l2w-sM-zoF"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hier steht die Beschreibung des neuen krassen DIY Prozesses: Nur bei Imagine!" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.59999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="ziZ-aO-qGZ">
-                                <rect key="frame" x="5" y="50" width="180" height="25"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.59999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="ziZ-aO-qGZ">
+                                <rect key="frame" x="5" y="85" width="217" height="35"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="Nfc-cs-PhF"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
                                 <color key="textColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hier steht die Beschreibung des neuen krassen DIY Prozesses: Nur bei Imagine!" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="wHq-pV-5uO">
-                                <rect key="frame" x="5" y="5" width="135" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="Akt-Q3-vkT"/>
-                                </constraints>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="wHq-pV-5uO">
+                                <rect key="frame" x="5" y="5" width="167" height="75"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="13"/>
                                 <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
@@ -56,12 +56,11 @@
                             <constraint firstItem="wHq-pV-5uO" firstAttribute="leading" secondItem="Ydf-j5-sOJ" secondAttribute="leading" constant="5" id="1uF-my-mn8"/>
                             <constraint firstItem="ziZ-aO-qGZ" firstAttribute="leading" secondItem="Ydf-j5-sOJ" secondAttribute="leading" constant="5" id="7ZK-s7-26E"/>
                             <constraint firstAttribute="trailing" secondItem="ziZ-aO-qGZ" secondAttribute="trailing" constant="5" id="FdF-sU-ed5"/>
+                            <constraint firstItem="ziZ-aO-qGZ" firstAttribute="top" secondItem="wHq-pV-5uO" secondAttribute="bottom" constant="5" id="K2P-Qr-Qm1"/>
                             <constraint firstItem="wHq-pV-5uO" firstAttribute="top" secondItem="Ydf-j5-sOJ" secondAttribute="top" constant="5" id="N23-Rb-jTQ"/>
                             <constraint firstAttribute="trailing" secondItem="xz4-Rz-QCY" secondAttribute="trailing" constant="5" id="XIv-rC-sos"/>
                             <constraint firstItem="xz4-Rz-QCY" firstAttribute="leading" secondItem="wHq-pV-5uO" secondAttribute="trailing" constant="5" id="d6R-mH-8u6"/>
-                            <constraint firstItem="xz4-Rz-QCY" firstAttribute="top" secondItem="Ydf-j5-sOJ" secondAttribute="top" constant="5" id="ejT-GK-Yid"/>
-                            <constraint firstAttribute="height" constant="80" id="h3p-Ec-Kkq"/>
-                            <constraint firstItem="ziZ-aO-qGZ" firstAttribute="top" secondItem="xz4-Rz-QCY" secondAttribute="bottom" constant="5" id="p5T-Hq-Li0"/>
+                            <constraint firstItem="xz4-Rz-QCY" firstAttribute="top" secondItem="Ydf-j5-sOJ" secondAttribute="top" constant="15" id="ejT-GK-Yid"/>
                             <constraint firstAttribute="bottom" secondItem="ziZ-aO-qGZ" secondAttribute="bottom" constant="5" id="vAa-ES-vVe"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
@@ -70,8 +69,11 @@
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </view>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hier steht die Beschreibung des neuen krassen DIY Prozesses: Nur bei Imagine!" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999999999999996" translatesAutoresizingMaskIntoConstraints="NO" id="kS4-V9-G8C">
-                        <rect key="frame" x="5" y="5" width="190" height="75"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999999999999996" translatesAutoresizingMaskIntoConstraints="NO" id="kS4-V9-G8C">
+                        <rect key="frame" x="5" y="135" width="227" height="70"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="70" id="im7-wb-PJi"/>
+                        </constraints>
                         <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -79,16 +81,16 @@
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                 <constraints>
-                    <constraint firstAttribute="trailing" secondItem="kS4-V9-G8C" secondAttribute="trailing" constant="5" id="5T5-q5-Ulo"/>
-                    <constraint firstItem="kS4-V9-G8C" firstAttribute="leading" secondItem="lwW-LP-G32" secondAttribute="leading" constant="5" id="Bx0-rr-91e"/>
-                    <constraint firstItem="Ydf-j5-sOJ" firstAttribute="top" secondItem="kS4-V9-G8C" secondAttribute="bottom" constant="5" id="CEa-Xn-o59"/>
-                    <constraint firstItem="kS4-V9-G8C" firstAttribute="top" secondItem="lwW-LP-G32" secondAttribute="top" constant="5" id="Rar-og-NcS"/>
+                    <constraint firstItem="kS4-V9-G8C" firstAttribute="leading" secondItem="lwW-LP-G32" secondAttribute="leading" constant="5" id="1XZ-ns-mDP"/>
+                    <constraint firstItem="Ydf-j5-sOJ" firstAttribute="top" secondItem="lwW-LP-G32" secondAttribute="top" constant="5" id="8Rr-jV-RbV"/>
+                    <constraint firstAttribute="trailing" secondItem="kS4-V9-G8C" secondAttribute="trailing" constant="5" id="Rw4-TM-oCO"/>
+                    <constraint firstItem="kS4-V9-G8C" firstAttribute="top" secondItem="Ydf-j5-sOJ" secondAttribute="bottom" constant="5" id="YTl-1A-XN5"/>
+                    <constraint firstAttribute="bottom" secondItem="kS4-V9-G8C" secondAttribute="bottom" constant="5" id="bQI-ws-2Wd"/>
                     <constraint firstAttribute="trailing" secondItem="Ydf-j5-sOJ" secondAttribute="trailing" constant="5" id="hVh-I1-hdS"/>
                     <constraint firstItem="Ydf-j5-sOJ" firstAttribute="leading" secondItem="lwW-LP-G32" secondAttribute="leading" constant="5" id="mxo-2y-5Xd"/>
-                    <constraint firstAttribute="bottom" secondItem="Ydf-j5-sOJ" secondAttribute="bottom" constant="5" id="sEA-mO-RSv"/>
                 </constraints>
             </collectionViewCellContentView>
-            <size key="customSize" width="200" height="170"/>
+            <size key="customSize" width="237" height="210"/>
             <connections>
                 <outlet property="cellImageView" destination="xz4-Rz-QCY" id="0kg-Of-CjD"/>
                 <outlet property="descriptionLabel" destination="ziZ-aO-qGZ" id="zRl-52-IH2"/>
@@ -96,7 +98,7 @@
                 <outlet property="postTitleLabel" destination="wHq-pV-5uO" id="vym-8E-xJu"/>
                 <outlet property="titleLabel" destination="kS4-V9-G8C" id="PyU-hz-1vz"/>
             </connections>
-            <point key="canvasLocation" x="66.666666666666671" y="-22.098214285714285"/>
+            <point key="canvasLocation" x="39.855072463768117" y="-35.491071428571423"/>
         </collectionViewCell>
     </objects>
     <resources>

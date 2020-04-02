@@ -47,6 +47,8 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
         self.extendedLayoutIncludesOpaqueBars = true
         navigationController?.navigationBar.prefersLargeTitles = true
         
+        
+        
         let gesture = UILongPressGestureRecognizer(target: self, action: #selector(showSecretButton))
         gesture.allowableMovement = 500
         gesture.minimumPressDuration = 3
@@ -124,7 +126,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     }
    
     @objc func showSecretButton() {
-        
+        performSegue(withIdentifier: "toSecretSegue", sender: nil)
     }
 
     // MARK: UICollectionViewDataSource

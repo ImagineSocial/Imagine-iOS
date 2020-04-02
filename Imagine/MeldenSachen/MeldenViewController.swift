@@ -246,7 +246,13 @@ class MeldenViewController: UIViewController {
     
     @IBAction func repostPressed(_ sender: Any) {
         if let _ = Auth.auth().currentUser {
-            performSegue(withIdentifier: "toRepostSegue", sender: post)
+            if let post = post {
+                if post.type == .picture {
+                    performSegue(withIdentifier: "toRepostSegue", sender: post)
+                } else {
+                    self.alert(message: "Im Moment kann man leider nur Bild-Beiträge reposten. Reiche gerne einen Vorschlag für dieses Feature ein, damit wir wissen, dass die Nachfrage da ist. Vielen Dank für dein Verständnis!")
+                }
+            }
         } else {
             self.notLoggedInAlert()
         }
@@ -254,8 +260,14 @@ class MeldenViewController: UIViewController {
     
     @IBAction func translatePressed(_ sender: Any) {
         if let _ = Auth.auth().currentUser {
-            repost = .translation
-            performSegue(withIdentifier: "toRepostSegue", sender: post)
+            self.repost = .translation
+            if let post = post {
+                if post.type == .picture {
+                    performSegue(withIdentifier: "toRepostSegue", sender: post)
+                } else {
+                    self.alert(message: "Im Moment kann man leider nur Bild-Beiträge übersetzen. Reiche gerne einen Vorschlag für dieses Feature ein, damit wir wissen, dass die Nachfrage da ist. Vielen Dank für dein Verständnis!")
+                }
+            }
         } else {
             notLoggedInAlert()
         }

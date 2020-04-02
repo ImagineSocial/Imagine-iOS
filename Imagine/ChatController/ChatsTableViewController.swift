@@ -347,6 +347,8 @@ class ChatsTableViewController: UITableViewController {
                 
                 if let url = URL(string: chat.participant.imageURL) {
                     cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
+                } else {
+                    cell.profilePictureImageView.image = UIImage(named: "default-user" )
                 }
                 
                 return cell
@@ -422,6 +424,10 @@ class ChatCell : UITableViewCell {
     @IBOutlet weak var lastMessage: UILabel!
     @IBOutlet weak var unreadMessageView: DesignablePopUp!
     @IBOutlet weak var lastMessageDateLabel: UILabel!
+    
+    override func prepareForReuse() {
+        profilePictureImageView.image = nil
+    }
     
 }
 

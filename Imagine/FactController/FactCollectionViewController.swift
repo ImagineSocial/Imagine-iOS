@@ -13,7 +13,6 @@ private let factCellIdentifier = "FactCell"
 
 protocol LinkFactWithPostDelegate {
     func selectedFact(fact: Fact, closeMenu: Bool)
-    func selectedFactForOptInfo(fact:Fact, type: OptionalInformationType)
 }
 
 protocol TopOfCollectionViewDelegate {
@@ -46,6 +45,8 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     
     var addFactToPost : AddFactToPostType?
     var delegate: LinkFactWithPostDelegate?
+    var addItemDelegate: AddItemDelegate?
+    
     var optionalInformationType: OptionalInformationType = .guilty
     
     let collectionViewSpacing:CGFloat = 30
@@ -444,7 +445,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     }
     
     func setFactForOptInfo(fact: Fact) {
-        delegate?.selectedFactForOptInfo(fact: fact, type: self.optionalInformationType)
+        addItemDelegate?.itemSelected(item: fact)
         
         if searchController.isActive {
             searchController.dismiss(animated: false) {

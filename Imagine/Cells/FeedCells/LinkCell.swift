@@ -45,7 +45,7 @@ class LinkCell : BaseFeedCell {
         
         self.initiateCell(thanksButton: thanksButton, wowButton: wowButton, haButton: haButton, niceButton: niceButton, factImageView: factImageView, profilePictureImageView: profilePictureImageView)
                 
-        linkThumbNailImageView.layer.cornerRadius = 4
+//        linkThumbNailImageView.layer.cornerRadius = 4
 
         
         titleLabel.layoutIfNeeded()
@@ -142,9 +142,7 @@ class LinkCell : BaseFeedCell {
                 
                 // Even got a Cache, would be nice for the loadingspeed
                 //https://github.com/LeonardoCardoso/SwiftLinkPreview
-                
-                print("Das ist die url: \(result.image)", result, result.images)
-                
+                                
                 if let imageURL = result.image {
                     if imageURL.isValidURL {
                         self.linkThumbNailImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "default"), options: [], completed: nil)

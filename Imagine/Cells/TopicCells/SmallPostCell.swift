@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class DIYCollectionViewCell: UICollectionViewCell {
+class SmallPostCell: UICollectionViewCell {
     
     @IBOutlet weak var cellImageView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
@@ -59,7 +59,9 @@ class DIYCollectionViewCell: UICollectionViewCell {
                 
             } else if post.type == .GIF {
                 cellImageView.image = UIImage(named: "GIFIcon")
-        } else {
+            } else if post.type == .link {
+                cellImageView.image = UIImage(named: "translate")
+            } else {
                 postImageViewWidthConstraint.constant = 0
             }
             

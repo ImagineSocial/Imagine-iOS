@@ -16,6 +16,7 @@ enum NewFactType {
     case argument
     case deepArgument
     case source
+    case addOn
 }
 
 enum ArgumentType {
@@ -32,6 +33,10 @@ enum FactDisplayName {
 enum DisplayOption {
     case fact
     case topic
+}
+
+protocol NewFactDelegate {
+    func doneWithNewAddOn()
 }
 
 class NewFactViewController: UIViewController {
@@ -64,7 +69,7 @@ class NewFactViewController: UIViewController {
     var pickedFactDisplayNames: FactDisplayName = .proContra
     var pickedDisplayOption: DisplayOption = .fact
     
-    
+    var delegate: NewFactDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,7 +98,9 @@ class NewFactViewController: UIViewController {
         switch new {
         case .deepArgument:
             headerLabel.text = "Teile dein Argument mit uns!"
-            addSourceLabel.isHidden = false
+            addSourceLabel.isHidden = true
+            sourceLabel.isHidden = true
+            seperatorView3.isHidden = true
         case .argument:
             
             if let fact = fact {
@@ -131,6 +138,11 @@ class NewFactViewController: UIViewController {
             descriptionLabel.text = factDescription
             
             setNewFactDisplayOptions()
+        case .addOn:
+            headerLabel.text = "Teile ein neues AddOn mit deinen Mitmenschen!"
+            addSourceLabel.isHidden = true
+            sourceLabel.isHidden = true
+            seperatorView3.isHidden = true
         }
     }
     
@@ -300,12 +312,35 @@ class NewFactViewController: UIViewController {
                     createNewFact()
                 case .source:
                     createNewSource()
+                case .addOn:
+                    createNewAddOn()
                 }
             } else {
                 self.alert(message: "Gib bitte einen Titel und eine Beschreibung ein", title: "Wir brauchen mehr Informationen")
             }
         } else {
             self.notLoggedInAlert()
+        }
+    }
+    
+    func createNewAddOn() {
+        
+        if let fact = fact {
+            let ref = db.collection("Facts").document(fact.documentID).collection("addOns")
+            
+            let op = Auth.auth().currentUser!
+            
+            let data: [String: Any] = ["OP": op.uid, "title": titleTextField.text, "description": descriptionTextView.text]
+            
+            ref.addDocument(data: data) { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    self.dismiss(animated: true) {
+                        self.delegate?.doneWithNewAddOn()
+                    }
+                }
+            }
         }
     }
     
@@ -329,7 +364,7 @@ class NewFactViewController: UIViewController {
     
     func createNewDeepArgument() {
         if let fact = fact, let argument = argument {
-            let ref = db.collection("Facts").document(fact.documentID).collection("arguments").document(argument.documentID)
+            let ref = db.collection("Facts").document(fact.documentID).collection("arguments").document(argument.documentID).collection("arguments").document()
             let op = Auth.auth().currentUser!
             
             let data: [String:Any] = ["title" : titleTextField.text, "description": descriptionTextView.text, "OP": op.uid]

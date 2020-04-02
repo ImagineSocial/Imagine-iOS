@@ -115,10 +115,10 @@
 		E9B85D46241165CF00960942 /* OptionalInformationForArgumentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D45241165CF00960942 /* OptionalInformationForArgumentTableViewController.swift */; };
 		E9B85D482412483500960942 /* CollectionViewInTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B85D472412483500960942 /* CollectionViewInTableViewCell.xib */; };
 		E9B85D4C24124BB500960942 /* CollectionViewInTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D4B24124BB500960942 /* CollectionViewInTableViewCell.swift */; };
-		E9B85D522412D29A00960942 /* DIYCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B85D512412D29A00960942 /* DIYCollectionViewCell.xib */; };
-		E9B85D542412D2C300960942 /* DIYCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D532412D2C300960942 /* DIYCollectionViewCell.swift */; };
-		E9B85D562412D5D000960942 /* WhyGuiltyCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B85D552412D5D000960942 /* WhyGuiltyCollectionViewCell.xib */; };
-		E9B85D582412D8E000960942 /* WhyGuiltyCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D572412D8E000960942 /* WhyGuiltyCollectionViewCell.swift */; };
+		E9B85D522412D29A00960942 /* SmallPostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B85D512412D29A00960942 /* SmallPostCell.xib */; };
+		E9B85D542412D2C300960942 /* SmallPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D532412D2C300960942 /* SmallPostCell.swift */; };
+		E9B85D562412D5D000960942 /* SmallFactCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B85D552412D5D000960942 /* SmallFactCell.xib */; };
+		E9B85D582412D8E000960942 /* SmallFactCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D572412D8E000960942 /* SmallFactCell.swift */; };
 		E9B85D5A2413BDB300960942 /* HairlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D592413BDB300960942 /* HairlineView.swift */; };
 		E9B85D5C2413C1BF00960942 /* TableViewInCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B85D5B2413C1BF00960942 /* TableViewInCollectionViewCell.xib */; };
 		E9B85D5E2413C28B00960942 /* TableViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D5D2413C28B00960942 /* TableViewInCollectionViewCell.swift */; };
@@ -287,10 +287,10 @@
 		E9B85D45241165CF00960942 /* OptionalInformationForArgumentTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalInformationForArgumentTableViewController.swift; sourceTree = "<group>"; };
 		E9B85D472412483500960942 /* CollectionViewInTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CollectionViewInTableViewCell.xib; sourceTree = "<group>"; };
 		E9B85D4B24124BB500960942 /* CollectionViewInTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewInTableViewCell.swift; sourceTree = "<group>"; };
-		E9B85D512412D29A00960942 /* DIYCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DIYCollectionViewCell.xib; sourceTree = "<group>"; };
-		E9B85D532412D2C300960942 /* DIYCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIYCollectionViewCell.swift; sourceTree = "<group>"; };
-		E9B85D552412D5D000960942 /* WhyGuiltyCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WhyGuiltyCollectionViewCell.xib; sourceTree = "<group>"; };
-		E9B85D572412D8E000960942 /* WhyGuiltyCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhyGuiltyCollectionViewCell.swift; sourceTree = "<group>"; };
+		E9B85D512412D29A00960942 /* SmallPostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SmallPostCell.xib; sourceTree = "<group>"; };
+		E9B85D532412D2C300960942 /* SmallPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallPostCell.swift; sourceTree = "<group>"; };
+		E9B85D552412D5D000960942 /* SmallFactCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SmallFactCell.xib; sourceTree = "<group>"; };
+		E9B85D572412D8E000960942 /* SmallFactCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallFactCell.swift; sourceTree = "<group>"; };
 		E9B85D592413BDB300960942 /* HairlineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HairlineView.swift; sourceTree = "<group>"; };
 		E9B85D5B2413C1BF00960942 /* TableViewInCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewInCollectionViewCell.xib; sourceTree = "<group>"; };
 		E9B85D5D2413C28B00960942 /* TableViewInCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewInCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -689,20 +689,20 @@
 				E96CE8972295A13B00BACD3B /* ArgumentCell.swift */,
 				E9F31DCA23F6D2A3001D5D25 /* FactCollectionHeader.xib */,
 				E9F31DD023F70D8A001D5D25 /* SmallTopicCell.xib */,
-				E9A02AA6232D3181000DAB69 /* AddFactTableViewCell.swift */,
 				E9F31DC723F6D109001D5D25 /* RecentTopicsCollectionCell.xib */,
 				E9F31DCE23F6D78C001D5D25 /* RecentTopicsCollectionCell.swift */,
 				E9B85D472412483500960942 /* CollectionViewInTableViewCell.xib */,
 				E9B85D4B24124BB500960942 /* CollectionViewInTableViewCell.swift */,
-				E9B85D512412D29A00960942 /* DIYCollectionViewCell.xib */,
-				E9B85D532412D2C300960942 /* DIYCollectionViewCell.swift */,
-				E9B85D552412D5D000960942 /* WhyGuiltyCollectionViewCell.xib */,
-				E9B85D572412D8E000960942 /* WhyGuiltyCollectionViewCell.swift */,
+				E9B85D512412D29A00960942 /* SmallPostCell.xib */,
+				E9B85D532412D2C300960942 /* SmallPostCell.swift */,
+				E9B85D552412D5D000960942 /* SmallFactCell.xib */,
+				E9B85D572412D8E000960942 /* SmallFactCell.swift */,
 				E9B85D5B2413C1BF00960942 /* TableViewInCollectionViewCell.xib */,
 				E9B85D5D2413C28B00960942 /* TableViewInCollectionViewCell.swift */,
 				E9B85D5F2413C36800960942 /* SmallCompanyTableViewCell.xib */,
 				E9B85D612413C46300960942 /* SmallCompanyTableViewCell.swift */,
 				E98BA591241BFF3700C62DA8 /* AddTopicCell.xib */,
+				E9A02AA6232D3181000DAB69 /* AddFactTableViewCell.swift */,
 			);
 			path = TopicCells;
 			sourceTree = "<group>";
@@ -801,7 +801,7 @@
 				E97DBED022AC1335007100E1 /* Localizable.strings in Resources */,
 				E9B9446B2259E5EC000145E2 /* PostTableViewCell.xib in Resources */,
 				E90B1918238C210000EACCC7 /* IBMPlexSans-Medium.ttf in Resources */,
-				E9B85D562412D5D000960942 /* WhyGuiltyCollectionViewCell.xib in Resources */,
+				E9B85D562412D5D000960942 /* SmallFactCell.xib in Resources */,
 				E9925A9A23D8718500E1A9D4 /* MultiPictureCollectionCell.xib in Resources */,
 				E962AC212224430600C6D6EF /* LaunchScreen.storyboard in Resources */,
 				E97D714A24223A930018E27C /* JobOfferCell.xib in Resources */,
@@ -829,7 +829,7 @@
 				E9B85D5C2413C1BF00960942 /* TableViewInCollectionViewCell.xib in Resources */,
 				E9EA7C9722E20DEB0015C0EC /* BlogPostCell.xib in Resources */,
 				E9600E9D223C0782003E5A7A /* OFL.txt in Resources */,
-				E9B85D522412D29A00960942 /* DIYCollectionViewCell.xib in Resources */,
+				E9B85D522412D29A00960942 /* SmallPostCell.xib in Resources */,
 				E9B944672258B674000145E2 /* RePostTableViewCell.xib in Resources */,
 				E98FAEA623FAD2CC0064A614 /* CommentFooter.xib in Resources */,
 				E90B1916238C210000EACCC7 /* IBMPlexSans-ExtraLight.ttf in Resources */,
@@ -961,7 +961,7 @@
 				E96CE88D22940A9F00BACD3B /* FactCollectionViewController.swift in Sources */,
 				E911EEF422DB630300EDD056 /* SideMenu.swift in Sources */,
 				E992B48F2379874800D7E8E8 /* NotificationCell.swift in Sources */,
-				E9B85D582412D8E000960942 /* WhyGuiltyCollectionViewCell.swift in Sources */,
+				E9B85D582412D8E000960942 /* SmallFactCell.swift in Sources */,
 				E9CF237F233A279200D3B295 /* TopicCell.swift in Sources */,
 				E9EA7C9B22E5F47C0015C0EC /* VoteCell.swift in Sources */,
 				E9B79CE5224EC78900166EED /* CampaignCell.swift in Sources */,
@@ -1003,7 +1003,7 @@
 				E971B8DC2247A48C001BBC1E /* LogInViewController.swift in Sources */,
 				E97C834623CDE1CE00CE3D3C /* CreativeExampleViewController.swift in Sources */,
 				E9C6C23B22980FD8003F0F16 /* SourceTableViewController.swift in Sources */,
-				E9B85D542412D2C300960942 /* DIYCollectionViewCell.swift in Sources */,
+				E9B85D542412D2C300960942 /* SmallPostCell.swift in Sources */,
 				E9B85D622413C46300960942 /* SmallCompanyTableViewCell.swift in Sources */,
 				E9E6876924167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift in Sources */,
 				E9F9B68B223D584600100F51 /* PageViewController.swift in Sources */,
@@ -1183,6 +1183,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Imagine/Imagine.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 5ZW84D49GY;
 				INFOPLIST_FILE = Imagine/Info.plist;
@@ -1191,7 +1192,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.5;
+				MARKETING_VERSION = 1.4.6;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -1206,6 +1207,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Imagine/Imagine.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5ZW84D49GY;
 				INFOPLIST_FILE = Imagine/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
@@ -1213,7 +1215,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.5;
+				MARKETING_VERSION = 1.4.6;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
