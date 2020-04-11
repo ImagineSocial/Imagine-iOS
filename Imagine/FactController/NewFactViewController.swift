@@ -36,7 +36,7 @@ enum DisplayOption {
 }
 
 protocol NewFactDelegate {
-    func doneWithNewAddOn()
+    func finishedCreatingNewInstance(item: Any?)
 }
 
 class NewFactViewController: UIViewController {
@@ -128,6 +128,7 @@ class NewFactViewController: UIViewController {
             
             headerLabel.text = "Teile dein Argument mit uns!"
             addSourceLabel.isHidden = false
+            sourceLabel.isHidden = true
         case .source:
             sourceTextField.isHidden = false
             headerLabel.text = "Teile deine Quelle mit uns!"
@@ -175,7 +176,7 @@ class NewFactViewController: UIViewController {
     let newTopicDisplayTypeSelection: UISegmentedControl = {
        let segment = UISegmentedControl()
         segment.translatesAutoresizingMaskIntoConstraints = false
-        segment.insertSegment(withTitle: "Fakten-Darstellung", at: 0, animated: false)
+        segment.insertSegment(withTitle: "Diskussions-Darstellung", at: 0, animated: false)
         segment.insertSegment(withTitle: "Themen-Darstellung", at: 1, animated: false)
         segment.selectedSegmentIndex = 0
         segment.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
@@ -336,9 +337,7 @@ class NewFactViewController: UIViewController {
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
-                    self.dismiss(animated: true) {
-                        self.delegate?.doneWithNewAddOn()
-                    }
+                    self.finished(item: nil)// Will reload the database in the delegate
                 }
             }
         }
@@ -346,17 +345,23 @@ class NewFactViewController: UIViewController {
     
     func createNewSource() {
         if let fact = fact, let argument = argument {   // Only possible to add source to specific argument
-            let argumentRef = db.collection("Facts").document(fact.documentID).collection("arguments").document(argument.documentID).collection("sources")
+            let argumentRef = db.collection("Facts").document(fact.documentID).collection("arguments").document(argument.documentID).collection("sources").document()
             
             let op = Auth.auth().currentUser!
             
             let data: [String:Any] = ["title" : titleTextField.text, "description": descriptionTextView.text, "source": sourceTextField.text, "OP": op.uid]
             
-            argumentRef.addDocument(data: data, completion: { (err) in
+            argumentRef.setData(data, completion: { (err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
-                    self.finished()
+                    let source = Source(addMoreDataCell: false)
+                    source.title = self.titleTextField.text
+                    source.description = self.descriptionTextView.text
+                    source.source = self.sourceTextField.text!
+                    source.documentID = argumentRef.documentID
+                    
+                    self.finished(item: source)
                 }
             })
         }
@@ -373,7 +378,12 @@ class NewFactViewController: UIViewController {
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
-                    self.finished()
+                    let argument = Argument(addMoreDataCell: false)
+                    argument.title  = self.titleTextField.text
+                    argument.description = self.descriptionTextView.text
+                    argument.documentID = ref.documentID
+                    
+                    self.finished(item: argument)
                 }
             }
         } else {
@@ -383,17 +393,24 @@ class NewFactViewController: UIViewController {
     
     func createNewArgument() {
         if let fact = fact {
-            let ref = db.collection("Facts").document(fact.documentID).collection("arguments")
+            let ref = db.collection("Facts").document(fact.documentID).collection("arguments").document()
             
             let op = Auth.auth().currentUser!
+            let proOrContra = getProOrContraString()
             
-            let data: [String:Any] = ["title" : titleTextField.text, "description": descriptionTextView.text, "proOrContra": getProOrContraString(), "OP": op.uid, "upvotes": 0, "downvotes": 0]
+            let data: [String:Any] = ["title" : titleTextField.text, "description": descriptionTextView.text, "proOrContra": proOrContra, "OP": op.uid, "upvotes": 0, "downvotes": 0]
             
-            ref.addDocument(data: data) { (err) in
+            ref.setData(data) { (err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
-                    self.finished()
+                    let argument = Argument(addMoreDataCell: false)
+                    argument.title  = self.titleTextField.text
+                    argument.description = self.descriptionTextView.text
+                    argument.proOrContra = proOrContra
+                    argument.documentID = ref.documentID
+                    
+                    self.finished(item: argument)
                 }
             }
         } else {
@@ -420,17 +437,22 @@ class NewFactViewController: UIViewController {
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
-                self.finished()
+                
+                self.finished(item: nil)    // Will reload the database in the delegate
             }
         }
     }
     
-    func finished() {
-        self.alert(message: "Danke für deine Unterstützung", title: "Fertig")
+    func finished(item: Any?) {
+        let alertController = UIAlertController(title: "Vielen Dank", message: "Deine Eingabe wurde erfolgreich hinzugefügt!", preferredStyle: .alert)
+        let OKAction = UIAlertAction(title: "OK", style: .default) { (_) in
+            self.dismiss(animated: true) {
+                self.delegate?.finishedCreatingNewInstance(item: item)
+            }
+        }
+        alertController.addAction(OKAction)
+        self.present(alertController, animated: true, completion: nil)
         
-        self.titleTextField.text?.removeAll()
-        self.descriptionTextView.text?.removeAll()
-        self.sourceTextField.text?.removeAll()
     }
     
     

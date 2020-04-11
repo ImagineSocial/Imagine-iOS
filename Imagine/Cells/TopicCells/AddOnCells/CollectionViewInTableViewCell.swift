@@ -63,12 +63,12 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
         if let info = info {
             if indexPath.item != info.items.count {
                 let item = info.items[indexPath.item]
-                if let _ = item as? Fact {
+                if let _ = item as? Fact {      // Fact
                     return CGSize(width: 300, height: collectionView.frame.height)
-                } else {
-                    return CGSize(width: 200, height: collectionView.frame.height)
+                } else {        // Post
+                    return CGSize(width: 245, height: collectionView.frame.height)
                 }
-            } else {
+            } else {        // AddItemCell
                 return CGSize(width: 50, height: 50)
             }
         }
@@ -93,10 +93,13 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                 if let post = item as? Post {
                     if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DIYCellIdentifier, for: indexPath) as? SmallPostCell {
                         
-                        cell.postID = post.documentID
+//                        cell.postID = post.documentID
+                        cell.loadPost(postID: post.documentID, isTopicPost: post.isTopicPost)
                         
                         if let title = post.addOnTitle {
                             cell.postTitle = title
+                        } else {
+                            cell.postTitle = "gotcha" // I know, but there is so much to do
                         }
                         
                         return cell

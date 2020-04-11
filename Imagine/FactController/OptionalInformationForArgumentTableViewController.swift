@@ -9,71 +9,13 @@
 import UIKit
 import Firebase
 
-enum OptionalInformationType {
-    case diy
-    case guilty
-    case avoid
-    case new
+enum AddOnType {
+    case normal
+    case justPosts
+    case justFacts
+    case intro
+    case steps
 }
-
-protocol OptionalInformationDelegate {
-    func done()
-}
-
-class OptionalInformation {
-    
-    var headerTitle: String
-    var description: String
-    var documentID: String
-    var fact: Fact
-    
-    var delegate: OptionalInformationDelegate?
-    
-    var items = [Any]()
-//    var type: OptionalInformationType?
-    
-    init(headerTitle: String, description: String, documentID: String, fact: Fact) {
-        self.description = description
-        self.headerTitle = headerTitle
-        self.documentID = documentID
-        self.fact = fact
-    }
-    
-    func getItems() {
-        let ref = Firestore.firestore().collection("Facts").document(fact.documentID).collection("addOns").document(documentID).collection("items")
-        
-        ref.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    for document in snap.documents {
-                        let data = document.data()
-                        guard let type = data["type"] as? String else {
-                            return
-                        }
-                        if type == "fact" {
-                            let fact = Fact(addMoreDataCell: false)
-                            fact.documentID = document.documentID
-                            
-                            self.items.append(fact)
-                        } else {    // Post
-                            let post = Post()
-                            post.documentID = document.documentID
-                            
-                            if let postDescription = data["title"] as? String {
-                                post.addOnTitle = postDescription
-                            }
-                            self.items.append(post)
-                        }
-                    }
-                    self.delegate?.done()
-                }
-            }
-        }
-    }
-}
-
 
 class ProposalForOptionalInformation {
     var headerText: String
@@ -91,7 +33,7 @@ class ProposalForOptionalInformation {
 class OptionalInformationForArgumentTableViewController: UITableViewController {
     
     var optionalInformations = [OptionalInformation]()
-    var selectedOption: OptionalInformationType = .diy
+//    var selectedOption: OptionalInformationType = .diy
     
     var addOnDocumentID: String?
     
@@ -128,28 +70,21 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
         tableView.register(AddFactCell.self, forCellReuseIdentifier: addSectionReuseIdentifier)
         tableView.separatorColor = .clear
         
-        //FooterView
-        let buttons = [addSectionButton, proposeNewSectionButton]
         
-        for button in buttons {
-            let layer = button!.layer
-            layer.cornerRadius = 6
-            if #available(iOS 13.0, *) {
-                layer.borderColor = UIColor.label.cgColor
-            } else {
-                layer.borderColor = UIColor.black.cgColor
-            }
-            layer.borderWidth = 0.75
-            
+        
+        let layer = addSectionButton.layer
+        layer.cornerRadius = 6
+        if #available(iOS 13.0, *) {
+            layer.borderColor = UIColor.label.cgColor
+        } else {
+            layer.borderColor = UIColor.black.cgColor
         }
-        proposeNewSectionButton.titleLabel?.minimumScaleFactor = 0.5
-        proposeNewSectionButton.titleLabel?.numberOfLines = 1
-        proposeNewSectionButton.titleLabel?.adjustsFontSizeToFitWidth = true
-        proposeNewSectionButton.titleLabel?.lineBreakMode = .byClipping
+        layer.borderWidth = 0.75
         
         exampleButton.imageView?.contentMode = .scaleAspectFit
     }
     
+    //MARK:- Get Data
     func getData(fact: Fact) {
         let ref = db.collection("Facts").document(fact.documentID).collection("addOns")
         
@@ -185,99 +120,6 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             }
         }
     }
-
-    
-//    func getData(fact: Fact) {
-//        let ref = db.collection("Facts").document(fact.documentID)
-//
-//        ref.getDocument { (snap, err) in
-//            if let error = err {
-//                print("We have an error: \(error.localizedDescription)")
-//            } else {
-//                if let snap = snap {
-//                    if let data = snap.data() {
-//                        if let addOns = data["addOnOptions"] as? [String] {
-//                            self.loadAddOnOptions(factID: fact.documentID, addOnStrings: addOns)
-//                        } else {
-//                            self.noOptionalInformation = true
-//                            self.tableView.reloadData()
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-//    func loadAddOnOptions(factID: String, addOnStrings: [String]) {
-//        if addOnStrings.count == 0 {
-//            self.noOptionalInformation = true
-//            self.tableView.reloadData()
-//
-//            return
-//        }
-//        for string in addOnStrings {
-//
-//            let ref = db.collection("Facts").document(factID).collection("addOn-\(string)")
-//
-//            let option = OptionalInformation(type: .diy, headerTitle: "", items: [])
-//
-//            switch string {
-//            case "avoid":
-//                option.type = .avoid
-//                option.headerTitle = avoidString
-//            case "guilty":
-//                option.type = .guilty
-//                option.headerTitle = guiltyString
-//            case "diy":
-//                option.type = .diy
-//                option.headerTitle = diyString
-//            default:
-//                option.type = .diy
-//                option.headerTitle = diyString
-//            }
-//
-//            ref.getDocuments { (snap, err) in
-//                if let error = err {
-//                    print("We have an error: \(error.localizedDescription)")
-//                } else {
-//                    if let snap = snap {
-//                        for document in snap.documents {
-//
-//                            switch option.type {
-//                            case .diy:  //For now just posts
-//                                    let post = Post()
-//                                    post.documentID = document.documentID
-//                                    let data = document.data()
-//
-//                                    if let postDescription = data["postDescription"] as? String {
-//                                        post.addOnTitle = postDescription
-//                                    }
-//
-//                                    option.items.append(post)
-//
-//                            case .avoid:    //For now nothing
-//                                print("Avoid is not implemented yet")
-//                            case .guilty:
-//                                    let fact = Fact(addMoreDataCell: false)
-//                                    fact.documentID = document.documentID
-//
-//                                    option.items.append(fact)
-//                            }
-//                        }
-//
-//                        // Cant add Options which are already there:
-//
-//                        self.pickerOptions = self.pickerOptions.filter{ $0.type != option.type }
-//
-//                        self.optionalInformations.append(option)
-//                        self.tableView.reloadData()
-//                    }
-//                }
-//            }
-//
-//        }
-//    }
-    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -345,6 +187,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
         label.frame = CGRect(x: 10, y: 5, width: headerView.frame.width-10, height: headerView.frame.height-10)
         label.font = UIFont(name: "IBMPlexSans-Medium", size: 22)
         label.minimumScaleFactor = 0.5
+        label.adjustsFontSizeToFitWidth = true
         
         headerView.addSubview(label)
         
@@ -366,16 +209,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
         if noOptionalInformation {
             return UITableView.automaticDimension
         } else {
-            return 210
-//            let info = optionalInformations[indexPath.section]
-//            switch info.type {
-//            case .diy:
-//                return 160
-//            case .guilty:
-//                return 210
-//            case .avoid:
-//                return 210
-//            }
+            return 270
         }
     }
     
@@ -425,7 +259,12 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             if let title = post.addOnTitle {    // Description of the added post
                 addOnTitle = title
             }
+            if post.isTopicPost {
+                itemTypeString = "topicPost"    // So the getData method looks in a different ref
+            }
         }
+        
+        
         
         let ref = db.collection("Facts").document(fact!.documentID).collection("addOns").document(addOnRef).collection("items").document(itemID)
         let user = Auth.auth().currentUser!
@@ -457,13 +296,10 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toTopicsSegue" {
             if let vc = segue.destination as? FactCollectionViewController {
-                if let type = sender as? OptionalInformationType {
-                    vc.optionalInformationType = type
-                    vc.addFactToPost = .optInfo
-                    vc.navigationItem.hidesSearchBarWhenScrolling = false
-                    vc.searchController.isActive = true
-                    vc.addItemDelegate = self
-                }
+                vc.addFactToPost = .optInfo
+                vc.navigationItem.hidesSearchBarWhenScrolling = false
+                vc.searchController.isActive = true
+                vc.addItemDelegate = self
             }
         }
         
@@ -486,17 +322,26 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                     }
                 }
             }
+            
+        }
+        
+        if segue.identifier == "newPostSegue" {
+            if let navCon = segue.destination as? UINavigationController {
+                if let newPostVC = navCon.topViewController as? NewPostViewController {
+                    print("Going to newPostSegue")
+                    newPostVC.comingFromAddOnVC = true
+                    newPostVC.selectedFact(fact: self.fact!, closeMenu: false)
+                    newPostVC.addItemDelegate = self
+                }
+            }
         }
         
         if segue.identifier == "toAddAPostItemSegue" {
             if let vc = segue.destination as? AddPostTableViewController {
-                if let type = sender as? OptionalInformationType {
-                    vc.type = type
                     vc.addItemDelegate = self
                     
                     if let fact = self.fact {
                         vc.fact = fact
-                    }
                 }
             }
         }
@@ -526,9 +371,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             self.tableView.reloadData()
         }
     }
-    
-    var isHeightSet = false
-    
+        
     @IBAction func addSectionTapped(_ sender: Any) {
         if let _ = Auth.auth().currentUser {
             if let fact = fact {
@@ -537,101 +380,26 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
         } else {
             self.notLoggedInAlert()
         }
-//        if !isHeightSet {
-//            var wholeSize = self.tableView.contentSize
-//            wholeSize.height = wholeSize.height+125
-//
-//            self.tableView.contentSize = wholeSize
-//            self.tableView.setContentOffset(CGPoint(x: 0, y: 150), animated: true)
-//            isHeightSet = true
-//        }
-//
-//        if isOpen {
-//
-//            UIView.animate(withDuration: 0.1) {
-//                self.footerViewPickerView.alpha = 0
-//                self.exampleButton.alpha = 1
-//                self.blueOwenImageView.alpha = 1
-//                self.proposeNewSectionButton.setTitle("Neuer Vorschlag", for: .normal)
-//                self.addSectionButton.alpha = 1
-//                self.addSectionButton.setTitle("Hinzufügen", for: .normal)
-//                self.isOpen = false
-//            }
-//        } else {
-//           UIView.animate(withDuration: 0.1) {
-//                self.footerViewPickerView.alpha = 1
-//                self.exampleButton.alpha = 0
-//            self.blueOwenImageView.alpha = 0
-//            self.addSectionButton.alpha = 0.5
-//                self.proposeNewSectionButton.setTitle("Weiter", for: .normal)
-//                self.addSectionButton.setTitle("Abbrechen", for: .normal)
-//            self.isOpen = true
-//            }
-//        }
-    }
-    @IBAction func proposeNewSectionTapped(_ sender: Any) {
-        
-        if isOpen { // Button is the next Button
-//
-//            if let _ = Auth.auth().currentUser {
-//                var postString = "einen Beitrag"
-//
-//                if selectedOption == .guilty {
-//                    postString = "ein Thema"
-//                }
-//
-//                let alert = UIAlertController(title: "Füge \(postString) hinzu", message: "Wähle im nächsten Schritt \(postString) aus um es zu dem ausgewählten Add-On hinzuzufügen und die Erstellung abzuschließen.", preferredStyle: .actionSheet)
-//
-//                alert.addAction(UIAlertAction(title: "Alles klar", style: .default, handler: { (_) in
-//                    switch self.selectedOption {
-//                    case .guilty:
-//                        self.performSegue(withIdentifier: "toTopicsSegue", sender: self.selectedOption)
-//                    default:
-//                        self.performSegue(withIdentifier: "toAddAPostItemSegue", sender: self.selectedOption)
-//                    }
-//                }))
-//                alert.addAction(UIAlertAction(title: "Abbrechen", style: .cancel, handler: { (_) in
-//                    alert.dismiss(animated: true, completion: nil)
-//                }))
-//                self.present(alert, animated: true, completion: nil)
-//
-//            } else {
-//                self.notLoggedInAlert()
-//            }
-//
-        } else {
-            performSegue(withIdentifier: "toProposalSegue", sender: nil)
-        }
     }
     
     @IBOutlet weak var footerViewPickerView: UIPickerView!
     @IBOutlet weak var exampleButton: DesignableButton!
     @IBOutlet weak var addSectionButton: DesignableButton!
-    @IBOutlet weak var proposeNewSectionButton: DesignableButton!
-    @IBOutlet weak var blueOwenImageView: UIImageView!
-    
-//    var pickerOptions = [OptionalInformation(type: .diy, headerTitle: "Was kann ich tun?", items: []), OptionalInformation(type: .guilty, headerTitle: "Wer ist daran Schuld?", items: []), OptionalInformation(type: .new, headerTitle: "Neues AddOn", items: [])]
-    var pickerOptions = [Any]()
-    //OptionalInformation(type: .avoid, headerTitle: "Wen sollte ich meiden?", items: [])
-    var isOpen = false
-    
     
 }
 
 extension OptionalInformationForArgumentTableViewController: AddItemDelegate, NewFactDelegate {
-    
-    func itemSelected(item: Any) {
-        saveItemInAddOn(item: item)
-    }
-    
-    
-    func doneWithNewAddOn() {
+    func finishedCreatingNewInstance(item: Any?) {
         self.optionalInformations.removeAll()
         self.tableView.reloadData()
         
         self.getData(fact: self.fact!)
     }
     
+    
+    func itemSelected(item: Any) {
+        saveItemInAddOn(item: item)// Should it be possible to add an title to your new topicPost?
+    }
 }
 
 extension OptionalInformationForArgumentTableViewController: CollectionViewInTableViewCellDelegate {
@@ -640,16 +408,20 @@ extension OptionalInformationForArgumentTableViewController: CollectionViewInTab
         
         if let _ = Auth.auth().currentUser {
             
-            self.addOnDocumentID = addOnDocumentID  // Set the documentID for the addOn where "new Post" was tapped
+            self.addOnDocumentID = addOnDocumentID  // Set the documentID for the addOn where "new Post" was tapped, later to be used when the item is saved in the addOn- New or old iteme
             
             let alert = UIAlertController(title: "Füge ein Item hinzu", message: "Möchtest du einen Beitrag oder ein Thema zu diesem AddOn hinzufügen?", preferredStyle: .actionSheet)
             
-            alert.addAction(UIAlertAction(title: "Beitrag (Post)", style: .default, handler: { (_) in
-                self.performSegue(withIdentifier: "toAddAPostItemSegue", sender: self.selectedOption)
+            alert.addAction(UIAlertAction(title: "Vorhandener Beitrag", style: .default, handler: { (_) in
+                self.performSegue(withIdentifier: "toAddAPostItemSegue", sender: nil)
+            }))
+            alert.addAction(UIAlertAction(title: "Neuer Beitrag (Nur im Thema)", style: .default, handler: { (_) in
+                self.performSegue(withIdentifier: "newPostSegue", sender: nil)
+//                self.performSegue(withIdentifier: "test", sender: addOnDocumentID)
             }))
             alert.addAction(UIAlertAction(title: "Thema/Diskussion", style: .default, handler: { (_) in
                 
-                self.performSegue(withIdentifier: "toTopicsSegue", sender: self.selectedOption)
+                self.performSegue(withIdentifier: "toTopicsSegue", sender: nil)
                 
             }))
             alert.addAction(UIAlertAction(title: "Abbrechen", style: .cancel, handler: { (_) in

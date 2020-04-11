@@ -47,7 +47,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     var delegate: LinkFactWithPostDelegate?
     var addItemDelegate: AddItemDelegate?
     
-    var optionalInformationType: OptionalInformationType = .guilty
+//    var optionalInformationType: OptionalInformationType = .guilty
     
     let collectionViewSpacing:CGFloat = 30
     let searchController = UISearchController(searchResultsController: nil)
@@ -424,6 +424,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             if let navCon = segue.destination as? UINavigationController {
                 if let newFactVC = navCon.topViewController as? NewFactViewController {
                     newFactVC.new = .fact
+                    newFactVC.delegate = self
                 }
             }
         }
@@ -528,7 +529,14 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     }
 }
 
-extension FactCollectionViewController: TopOfCollectionViewDelegate {
+extension FactCollectionViewController: TopOfCollectionViewDelegate, NewFactDelegate {
+    func finishedCreatingNewInstance(item: Any?) {
+        self.facts.removeAll()
+        self.collectionView.reloadData()
+        
+        self.getFacts()
+    }
+    
     
     func sortFactsTapped(option: FactCollectionDisplayOption) {
         

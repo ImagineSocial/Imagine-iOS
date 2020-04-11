@@ -59,6 +59,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var selectedDate: Date?
     var comingFromPostsOfFact = false
     
+    var comingFromAddOnVC = false   // This will create a difference reference for the post to be stored, to show it just in the topic and not in the main feed - later it will show up for those who follow this topic
+    var addItemDelegate: AddItemDelegate?
+    
     let identifier = "MultiPictureCell"
     let layout:UICollectionViewFlowLayout = UICollectionViewFlowLayout.init()
     
@@ -115,12 +118,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         setCompleteUIForThought()
         setPictureViewUI()
         setLinkViewUI()
-        setUpOptionViewUI()
+        setUpOptionViewUI() // Shows linked Fact in here, if there is one
+        
 //        setEventViewUI()
 //        setLocationViewUI()
         
-        
-        if comingFromPostsOfFact {
+        if comingFromPostsOfFact || comingFromAddOnVC {
             setDismissButton()
         }
         
@@ -726,7 +729,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         return view
     }()
     
-    let optionButton: DesignableButton = {
+    let optionButton: DesignableButton = {  // little Burger Menu
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         if #available(iOS 13.0, *) {
@@ -837,13 +840,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         anonymousNameLabel.centerYAnchor.constraint(equalTo: anonymousImageView.centerYAnchor).isActive = true
         anonymousNameLabel.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-10).isActive = true
         
-        setMarkPostViewUI()
-        setPostAnonymousViewUI()
-        
         optionStackView.addArrangedSubview(markPostView)
         optionStackView.addArrangedSubview(postAnonymousView)
         optionStackView.addArrangedSubview(addFactButton)
-        
         
         optionView.addSubview(optionStackView)
         optionStackView.leadingAnchor.constraint(equalTo: optionView.leadingAnchor).isActive = true
@@ -857,6 +856,14 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         optionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
         optionViewHeight = optionView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight)
         optionViewHeight!.isActive = true
+        
+        setMarkPostViewUI()
+        setPostAnonymousViewUI()
+        
+        // Here so it doesnt mess with the layout
+        if let fact = linkedFact {
+            self.showLinkedFact(fact: fact)
+        }
         
         let endView = UIView()
         if #available(iOS 13.0, *) {
@@ -1495,13 +1502,19 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    //MARK: SharePressed
+    //MARK: -SharePressed
     
     @IBAction func sharePressed(_ sender: Any) {
         
         if let user = Auth.auth().currentUser {
             var userID = ""
-            let postRef = db.collection("Posts").document()
+            
+            let postRef: DocumentReference?
+            if comingFromAddOnVC {
+                postRef = db.collection("TopicPosts").document() //Wie frage ich nach ob ich die im normalen oder in dem ref finde?
+            } else {
+                postRef = db.collection("Posts").document()
+            }
 
             if self.postAnonymous {
                 userID = anonymousString
@@ -1509,7 +1522,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 userID = user.uid
             }
 
-            if titleTextView.text != "" {
+            if titleTextView.text != "", let postRef = postRef {
                 self.view.activityStartAnimating()
                 self.shareButton.isEnabled = false
                 switch selectedOption {
@@ -1965,7 +1978,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             // Add the post to the specific fact, so that it can be looked into
             let ref = db.collection("Facts").document(fact.documentID).collection("posts").document(documentID)
             
-            ref.setData(["createTime": self.getDate()]) { (err) in
+            var data: [String: Any] = ["createTime": self.getDate()]
+            
+            if self.comingFromAddOnVC {
+                data["type"] = "topicPost"  // To fetch in a different ref when loading the posts of the topic
+            }
+            
+            ref.setData(data) { (err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
@@ -1986,13 +2005,21 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 print("We have an error: \(error.localizedDescription)")
                 // Inform User
             } else {
-                if let ref = userRef {
+                if let userRef = userRef {
+                    
+                    var data: [String: Any] = ["createTime": self.getDate()]
+                    
                     if self.postAnonymous {
                         if let user = Auth.auth().currentUser {
-                            ref.setData(["createTime": self.getDate(), "originalPoster": user.uid])
+                            data["originalPoster"] = user.uid
+                            
+                            userRef.setData(data)
                         }
                     } else {
-                        ref.setData(["createTime": self.getDate()])      // add the post to the user
+                        if self.comingFromAddOnVC {
+                            data["isTopicPost"] = true  // To fetch in a different ref when loading the posts of the topic
+                        }
+                        userRef.setData(data)      // add the post to the user
                     }
                 }
                 if self.camPic { // To Save on your device, not the best solution though
@@ -2001,7 +2028,15 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     }
                 }
                 
-                self.presentAlert()
+                if self.comingFromAddOnVC {
+                    let post = Post()
+                    post.documentID = documentID
+                    post.isTopicPost = true  // To fetch in a different ref when loading the posts of the topic
+                    
+                    self.presentAlert(post: post)
+                } else {
+                    self.presentAlert(post: nil)
+                }
             }
         }
     }
@@ -2024,46 +2059,54 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     }
                 }
                 
-                self.presentAlert()
+                self.presentAlert(post: nil)
             }
         }
         
     }
     
-    func presentAlert() {
+    func presentAlert(post: Post?) {
         
         // remove ActivityIndicator incl. backgroundView
         self.view.activityStopAnimating()
         self.shareButton.isEnabled = true
-        
-        let alert = UIAlertController(title: "Done!", message: "Danke für deine Weisheiten.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
-            self.descriptionTextView.text.removeAll()
-            self.linkTextField.text?.removeAll()
-            self.locationTextField.text?.removeAll()
-            self.titleTextView.text?.removeAll()
-            self.previewPictures.removeAll()
-            self.previewCollectionView.reloadData()
-            self.characterCountLabel.text = "200"
-            self.pictureViewHeight!.constant = 100
-            
-            if self.optionViewHeight?.constant != self.defaultOptionViewHeight {
-                self.optionButtonTapped()
+        if self.comingFromAddOnVC {
+            self.dismiss(animated: true) {
+                if let post = post {
+                    self.addItemDelegate?.itemSelected(item: post)  // Save the post in OptionalInformationVC
+                }
             }
-            self.addedFactDescriptionLabel.text?.removeAll()
-            self.addedFactImageView.image = nil
-            self.addedFactImageView.layer.borderColor = UIColor.clear.cgColor
-            
-            self.titleTextView.resignFirstResponder()
-            self.descriptionTextView.resignFirstResponder()
-            self.linkTextField.resignFirstResponder()
-            self.locationTextField.resignFirstResponder()
-            
-            
-            Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.switchToFeedTab), userInfo: nil, repeats: false)
-            
-        }))        
-        self.present(alert, animated: true) {
+        } else {
+            let alert = UIAlertController(title: "Done!", message: "Danke für deine Weisheiten.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
+                
+                self.descriptionTextView.text.removeAll()
+                self.linkTextField.text?.removeAll()
+                self.locationTextField.text?.removeAll()
+                self.titleTextView.text?.removeAll()
+                self.previewPictures.removeAll()
+                self.previewCollectionView.reloadData()
+                self.characterCountLabel.text = "200"
+                self.pictureViewHeight!.constant = 100
+                
+                if self.optionViewHeight?.constant != self.defaultOptionViewHeight {
+                    self.optionButtonTapped()
+                }
+                self.addedFactDescriptionLabel.text?.removeAll()
+                self.addedFactImageView.image = nil
+                self.addedFactImageView.layer.borderColor = UIColor.clear.cgColor
+                
+                self.titleTextView.resignFirstResponder()
+                self.descriptionTextView.resignFirstResponder()
+                self.linkTextField.resignFirstResponder()
+                self.locationTextField.resignFirstResponder()
+                
+                
+                Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.donePosting), userInfo: nil, repeats: false)
+                
+            }))
+            self.present(alert, animated: true) {
+            }
         }
     }
     
@@ -2113,7 +2156,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
 
-    @objc func switchToFeedTab() {
+    @objc func donePosting() {
         if comingFromPostsOfFact {
             self.dismiss(animated: true, completion: nil)
         } else {
@@ -2172,14 +2215,21 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
 }
 
 extension NewPostViewController: LinkFactWithPostDelegate {
-    func selectedFactForOptInfo(fact: Fact, type: OptionalInformationType) {
-        //too stupid to implement optional delegate functions
-    }
-    
-    func selectedFact(fact: Fact, closeMenu: Bool) {
+    func selectedFact(fact: Fact, closeMenu: Bool) {    // Link Fact with post - When posting, from postsOfFactTableVC and from OptionalInformationTableVC
         
         self.linkedFact = fact
         
+        if closeMenu {  // Means it is coming from the selection of a topic to link with, so the view is already loaded, so it doesnt crash
+            showLinkedFact(fact: fact)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.optionButtonTapped()
+            }
+        }
+        
+    }
+    
+    func showLinkedFact(fact: Fact) {
         optionView.addSubview(addedFactImageView)
         addedFactImageView.topAnchor.constraint(equalTo: optionView.topAnchor, constant: 5).isActive = true
         addedFactImageView.trailingAnchor.constraint(equalTo: optionView.trailingAnchor, constant: -20).isActive = true
@@ -2198,13 +2248,6 @@ extension NewPostViewController: LinkFactWithPostDelegate {
         }
          
         addedFactDescriptionLabel.text = "'\(fact.title)'"
-        
-        if closeMenu {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.optionButtonTapped()
-            }
-        }
-        
     }
     
     func setDismissButton() {

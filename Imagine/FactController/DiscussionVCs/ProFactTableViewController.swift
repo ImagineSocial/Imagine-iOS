@@ -1,5 +1,5 @@
 //
-//  ContraFactTableViewController.swift
+//  ProFactTableViewController.swift
 //  Imagine
 //
 //  Created by Malte Schoppe on 21.05.19.
@@ -11,16 +11,16 @@ import Firebase
 import FirebaseFirestore
 import FirebaseAuth
 
-class ContraFactTableViewController: UITableViewController {
+class ProFactTableViewController: UITableViewController {
 
     var argumentList = [Argument]()
     var fact: Fact?
-    var downVotes = 90
-    var upvotes = 140
+    var downVotes = 80
+    var upvotes = 150
     
     let identifier = "NibArgumentCell"
-    let reuseIdentifier = "AddCell"
-
+    let reuseIdentifier = "addCell"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -32,12 +32,11 @@ class ContraFactTableViewController: UITableViewController {
         
         argumentList = arguments
         tableView.reloadData()
-        
     }
     
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
+
         return argumentList.count
     }
     
@@ -59,21 +58,23 @@ class ContraFactTableViewController: UITableViewController {
                 return cell
             }
         }
-        
+
         return UITableViewCell()
     }
     
-    
+
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         let argument = argumentList[indexPath.row]
         
         if argument.addMoreData {
-            return 50
+            return 100
         } else {
-            return 203
+            return 260
         }
     }
+    
+    
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let argument = argumentList[indexPath.row]
@@ -89,17 +90,18 @@ class ContraFactTableViewController: UITableViewController {
         }
     }
     
+    //toNewArgumentSegue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toNewArgumentSegue" {
             if let nav = segue.destination as? UINavigationController {
                 if let vc = nav.topViewController as? NewFactViewController {
                     vc.fact = self.fact
                     vc.new = .argument
-                    vc.proOrContra = .contra
+                    vc.proOrContra = .pro
+                    vc.delegate = self
                 }
             }
         }
-        
         if let vc = segue.destination as? FactDetailViewController {
             if segue.identifier == "toDetailFactSegue" {
                 if let chosenArgument = sender as? Argument {
@@ -109,8 +111,17 @@ class ContraFactTableViewController: UITableViewController {
             }
         }
     }
-    
- 
 }
 
+extension ProFactTableViewController: NewFactDelegate {
+    
+    func finishedCreatingNewInstance(item: Any?) {
+        if let argument = item as? Argument {
+            let count = argumentList.count
+            
+            self.argumentList.insert(argument, at: count-1)
+            self.tableView.reloadData()
+        }
+    }
+}
 

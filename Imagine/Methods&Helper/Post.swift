@@ -68,6 +68,7 @@ class Post {
     var repost: Post?
     var fact:Fact?
     var addOnTitle: String?    // Description in the OptionalInformation Section in the topic area
+    var isTopicPost = false // Just postet in a topic, not in the main feed
     
     let handyHelper = HandyHelper()
     

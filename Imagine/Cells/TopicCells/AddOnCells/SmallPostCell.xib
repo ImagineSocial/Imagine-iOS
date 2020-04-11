@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSans-Medium.ttf">
+            <string>IBMPlexSans-Medium</string>
+        </array>
+        <array key="IBMPlexSans-Regular.ttf">
+            <string>IBMPlexSans</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SmallPostCollectionCell" id="t7G-Ff-jOe" customClass="SmallPostCell" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="230" height="250"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="lwW-LP-G32">
+                <rect key="frame" x="0.0" y="0.0" width="230" height="250"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ydf-j5-sOJ" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="5" y="5" width="220" height="190"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.75" translatesAutoresizingMaskIntoConstraints="NO" id="wHq-pV-5uO">
+                                <rect key="frame" x="5" y="5" width="210" height="58"/>
+                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="13"/>
+                                <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="savePostImage" translatesAutoresizingMaskIntoConstraints="NO" id="xz4-Rz-QCY">
+                                <rect key="frame" x="2" y="68" width="216" height="120"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="120" id="UWK-HB-f7p"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.80000000000000004" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="DYV-et-aKa" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
+                                <rect key="frame" x="180" y="73" width="30" height="30"/>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="tintColor" red="0.31537210939999999" green="0.46283984179999998" blue="0.65801352260000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="VZZ-vx-YjX"/>
+                                    <constraint firstAttribute="width" constant="30" id="lRM-ji-yM8"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="15"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="tertiarySystemBackgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="wHq-pV-5uO" firstAttribute="leading" secondItem="Ydf-j5-sOJ" secondAttribute="leading" constant="5" id="1uF-my-mn8"/>
+                            <constraint firstAttribute="bottom" secondItem="xz4-Rz-QCY" secondAttribute="bottom" constant="2" id="4lN-ps-PsB"/>
+                            <constraint firstAttribute="trailing" secondItem="DYV-et-aKa" secondAttribute="trailing" constant="10" id="62I-kv-eDZ"/>
+                            <constraint firstItem="xz4-Rz-QCY" firstAttribute="leading" secondItem="Ydf-j5-sOJ" secondAttribute="leading" constant="2" id="B7b-dz-gMD"/>
+                            <constraint firstAttribute="trailing" secondItem="wHq-pV-5uO" secondAttribute="trailing" constant="5" id="Dh9-Yg-XBa"/>
+                            <constraint firstItem="wHq-pV-5uO" firstAttribute="top" secondItem="Ydf-j5-sOJ" secondAttribute="top" constant="5" id="N23-Rb-jTQ"/>
+                            <constraint firstItem="xz4-Rz-QCY" firstAttribute="top" secondItem="wHq-pV-5uO" secondAttribute="bottom" constant="5" id="Uwe-St-9v7"/>
+                            <constraint firstItem="DYV-et-aKa" firstAttribute="top" secondItem="wHq-pV-5uO" secondAttribute="bottom" constant="10" id="ch0-6g-Y7A"/>
+                            <constraint firstAttribute="trailing" secondItem="xz4-Rz-QCY" secondAttribute="trailing" constant="2" id="nJh-zM-UGj"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="5"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999999999999996" translatesAutoresizingMaskIntoConstraints="NO" id="kS4-V9-G8C">
+                        <rect key="frame" x="5" y="197" width="220" height="50"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="50" id="im7-wb-PJi"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="13"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                <constraints>
+                    <constraint firstItem="kS4-V9-G8C" firstAttribute="leading" secondItem="lwW-LP-G32" secondAttribute="leading" constant="5" id="1XZ-ns-mDP"/>
+                    <constraint firstItem="Ydf-j5-sOJ" firstAttribute="top" secondItem="lwW-LP-G32" secondAttribute="top" constant="5" id="8Rr-jV-RbV"/>
+                    <constraint firstAttribute="trailing" secondItem="kS4-V9-G8C" secondAttribute="trailing" constant="5" id="Rw4-TM-oCO"/>
+                    <constraint firstItem="kS4-V9-G8C" firstAttribute="top" secondItem="Ydf-j5-sOJ" secondAttribute="bottom" constant="2" id="YTl-1A-XN5"/>
+                    <constraint firstAttribute="bottom" secondItem="kS4-V9-G8C" secondAttribute="bottom" constant="3" id="bQI-ws-2Wd"/>
+                    <constraint firstAttribute="trailing" secondItem="Ydf-j5-sOJ" secondAttribute="trailing" constant="5" id="hVh-I1-hdS"/>
+                    <constraint firstItem="Ydf-j5-sOJ" firstAttribute="leading" secondItem="lwW-LP-G32" secondAttribute="leading" constant="5" id="mxo-2y-5Xd"/>
+                </constraints>
+            </collectionViewCellContentView>
+            <size key="customSize" width="230" height="250"/>
+            <connections>
+                <outlet property="cellImageView" destination="xz4-Rz-QCY" id="0kg-Of-CjD"/>
+                <outlet property="postImageViewHeightConstraint" destination="UWK-HB-f7p" id="A1W-Zn-w1u"/>
+                <outlet property="postTitleLabel" destination="wHq-pV-5uO" id="vym-8E-xJu"/>
+                <outlet property="smallCellImageView" destination="DYV-et-aKa" id="u1P-fT-pIe"/>
+                <outlet property="titleHeightConstraint" destination="im7-wb-PJi" id="N0z-Ol-N7f"/>
+                <outlet property="titleLabel" destination="kS4-V9-G8C" id="PyU-hz-1vz"/>
+            </connections>
+            <point key="canvasLocation" x="34.782608695652179" y="-22.098214285714285"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="savePostImage" width="750" height="750"/>
+    </resources>
+</document>

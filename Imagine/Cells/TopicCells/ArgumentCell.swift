@@ -19,10 +19,6 @@ class ArgumentCell: UITableViewCell {
     var argument: Argument? {
         didSet {
             if let argument = argument {
-                //                if row % 2 != 0 {
-                //                    cell.backgroundColor = UIColor(red:0.96, green:0.96, blue:0.96, alpha:1.0)
-                //                    cell.layer.cornerRadius = 4
-                //                }
                 
                 headerLabel.text = argument.title
                 bodyLabel.text = argument.description
@@ -54,6 +50,13 @@ class ArgumentCell: UITableViewCell {
         
         // add corner radius on `contentView`
         contentView.layer.cornerRadius = 6
+        contentView.layer.borderWidth = 2
+        if #available(iOS 13.0, *) {
+            contentView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
+        } else {
+            contentView.layer.borderColor = UIColor.ios12secondarySystemBackground.cgColor
+        }
+        
         contentView.clipsToBounds = true
         backgroundColor =  .clear
     }

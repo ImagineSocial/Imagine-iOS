@@ -148,7 +148,7 @@ class PostHelper {
                 self.lastSnap = querySnapshot?.documents.last    // Last document for the next fetch cycle
                 
                 for document in querySnapshot!.documents {
-                    self.addThePost(document: document, forFeed: true)
+                    self.addThePost(document: document, isTopicPost: false, forFeed: true)
                 }
                 self.getCommentCount(completion: {
                     returnPosts(self.posts, self.initialFetch)
@@ -193,7 +193,7 @@ class PostHelper {
                 postListReference = "saved"
             }
 
-            var documentIDsOfPosts = [String]()
+            var documentIDsOfPosts = [Post]()
             
             if let ref = postListReference {
                 
@@ -237,28 +237,42 @@ class PostHelper {
                         case .postsFromUser:
                             for document in querySnapshot!.documents {
                                 let documentID = document.documentID
+                                let data = document.data()
                                 
-                                documentIDsOfPosts.append(documentID)
+                                let post = Post()
+                                post.documentID = documentID
+                                if let _ = data["isTopicPost"] as? Bool {
+                                    post.isTopicPost = true
+                                }
+                                documentIDsOfPosts.append(post)
                             }
                             
-                            self.getPostsFromDocumentIDs(documentIDs: documentIDsOfPosts, done: { (_) in
+                            self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in
                                 // Needs to be sorted because the posts are fetched without the date that they were added
                                 self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
                                 returnPosts(self.posts, self.initialFetch)
                             })
                         case .savedPosts:
                             for document in querySnapshot!.documents {
-                                let docData = document.data()
+                                let documentID = document.documentID
+                                let data = document.data()
                                 
-                                if let documentID = docData["documentID"] as? String {
-                                    print("DocID: ", documentID)
-                                    documentIDsOfPosts.append(documentID)
+                                let post = Post()
+                                post.documentID = documentID
+                                if let _ = data["isTopicPost"] as? Bool {
+                                    post.isTopicPost = true
                                 }
+                                if let documentID = data["documentID"] as? String {
+                                    post.documentID = documentID
+                                }
+                                documentIDsOfPosts.append(post)
+                                
+                                
                             }
                             
                             
                             
-                            self.getPostsFromDocumentIDs(documentIDs: documentIDsOfPosts, done: { (_) in
+                            self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in
                                 // Needs to be sorted because the posts are fetched without the date that they were added
                                 self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
                                 returnPosts(self.posts, self.initialFetch)
@@ -277,7 +291,7 @@ class PostHelper {
         
         let ref = db.collection("Facts").document(factID).collection("posts")
         
-        var documentIDsOfPosts = [String]()
+        var documentIDsOfPosts = [Post]()
         
         ref.getDocuments { (snap, err) in
             if let error = err {
@@ -289,18 +303,27 @@ class PostHelper {
                     posts([post])
                 } else {
                     
-                 for document in snap!.documents {
-                     let documentID = document.documentID
-                     
-                     documentIDsOfPosts.append(documentID)
-                 }
-                 
-                 self.getPostsFromDocumentIDs(documentIDs: documentIDsOfPosts, done: { (_) in
-                     // Needs to be sorted because the posts are fetched without the date that they were added
-                     self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
-                     posts(self.posts)
-                 })
+                    for document in snap!.documents {
+                        let documentID = document.documentID
+                        let data = document.data()
+                        
+                        let post = Post()
+                        post.documentID = documentID
+                        
+                        if let _ = data["type"] as? String {    // Sort between normal and "JustTopic" Posts
+                            post.isTopicPost = true
+                        }
+                        
+                        documentIDsOfPosts.append(post)
+                        
+                    }
                     
+                    self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in    // First fetch the normal Posts, then the "JustTopic" Posts
+                        print("got the normal ones")
+                        self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                        posts(self.posts)
+                        
+                    })
                 }
             }
         }
@@ -330,28 +353,39 @@ class PostHelper {
     }
     
     // MARK: Get Posts from DocumentIDs
-    func getPostsFromDocumentIDs(documentIDs: [String], done: @escaping ([Post]?) -> Void) {
+    func getPostsFromDocumentIDs(posts: [Post], done: @escaping ([Post]?) -> Void) {
         print("Get posts")
-        let endIndex = documentIDs.count
+        let endIndex = posts.count
         var startIndex = 0
         
-        // The function has to be here for the right order
-        for documentIDofPost in documentIDs {
-            self.db.collection("Posts").document(documentIDofPost).getDocument{ (document, err) in
-                if let error =  err {
-                    print("We have an error: \(error.localizedDescription)")
+        if posts.count == 0 {
+            done(self.posts)
+        } else {
+            // The function has to be here for the right order
+            for post in posts {
+                var ref: DocumentReference?
+                
+                if post.isTopicPost {
+                    ref = self.db.collection("TopicPosts").document(post.documentID)
                 } else {
-                    if let document = document {
-                        
-                        self.getTheUsersFriend { (_) in // First get the friends to check which name to fetch
-                            self.addThePost(document: document, forFeed: true)
+                    ref = self.db.collection("Posts").document(post.documentID)
+                }
+                ref!.getDocument{ (document, err) in
+                    if let error =  err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        if let document = document {
                             
-                            startIndex = startIndex+1
-                            
-                            if startIndex == endIndex {
-                                self.getCommentCount(completion: {
-                                  done(self.posts)
-                                })
+                            self.getTheUsersFriend { (_) in // First get the friends to check which name to fetch
+                                self.addThePost(document: document, isTopicPost: post.isTopicPost, forFeed: true)
+                                
+                                startIndex = startIndex+1
+                                
+                                if startIndex == endIndex {
+                                    self.getCommentCount(completion: {
+                                        done(self.posts)
+                                    })
+                                }
                             }
                         }
                     }
@@ -361,9 +395,41 @@ class PostHelper {
     }
     
     
+//    func getPostsFromDocumentIDsForTopicPosts(documentIDs: [String], done: @escaping ([Post]?) -> Void) {
+//        print("Get posts")
+//        let endIndex = documentIDs.count
+//        var startIndex = 0
+//
+//        if documentIDs.count == 0 {
+//            done(self.posts)
+//        } else {
+//            // The function has to be here for the right order
+//            for documentIDofPost in documentIDs {
+//                self.db.collection("TopicPosts").document(documentIDofPost).getDocument{ (document, err) in
+//                    if let error =  err {
+//                        print("We have an error: \(error.localizedDescription)")
+//                    } else {
+//                        if let document = document {
+//
+//                            self.addThePost(document: document, forFeed: true)
+//
+//                            startIndex = startIndex+1
+//
+//                            if startIndex == endIndex {
+//                                self.getCommentCount(completion: {
+//                                    done(self.posts)
+//                                })
+//                            }
+//
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
     
     //MARK: -add Post
-    func addThePost(document: DocumentSnapshot, forFeed: Bool) -> Post? {
+    func addThePost(document: DocumentSnapshot, isTopicPost: Bool, forFeed: Bool) -> Post? {
         
         let documentID = document.documentID
         if let documentData = document.data() {
@@ -425,6 +491,10 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
+                    if isTopicPost {
+                        post.isTopicPost = true
+                    }
+                    
                     if forFeed {
                         self.posts.append(post)
                     } else {
@@ -476,6 +546,10 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
+                    if isTopicPost {
+                        post.isTopicPost = true
+                    }
+                    
                     if forFeed {
                         self.posts.append(post)
                     } else {
@@ -525,6 +599,10 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
+                    if isTopicPost {
+                        post.isTopicPost = true
+                    }
+                    
                     if forFeed {
                         self.posts.append(post)
                     } else {
@@ -564,6 +642,10 @@ class PostHelper {
                         }
                     } else {
                         post.getUser(isAFriend: isAFriend)
+                    }
+                    
+                    if isTopicPost {
+                        post.isTopicPost = true
                     }
                     
                     if forFeed {
@@ -624,6 +706,10 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
+                    if isTopicPost {
+                        post.isTopicPost = true
+                    }
+                    
                     if forFeed {
                         self.posts.append(post)
                     } else {
@@ -671,6 +757,10 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
+                    if isTopicPost {
+                        post.isTopicPost = true
+                    }
+                    
                     if forFeed {
                         self.posts.append(post)
                     } else {
@@ -715,6 +805,10 @@ class PostHelper {
                         }
                     } else {
                         post.getUser(isAFriend: isAFriend)
+                    }
+                    
+                    if isTopicPost {
+                        post.isTopicPost = true
                     }
                     
                     post.getRepost(returnRepost: { (repost) in

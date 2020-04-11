@@ -113,31 +113,31 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     
     @objc func toUserProfileTapped() {
         print("To User")
-        handleDismiss(sideMenuButton: .toUser, id: nil)
+        handleDismiss(sideMenuButton: .toUser, comment: nil)
     }
     
     @objc func toFriendsTapped() {
         print("To Friends")
-        handleDismiss(sideMenuButton: .toFriends, id: nil)
+        handleDismiss(sideMenuButton: .toFriends, comment: nil)
     }
     
     @objc func toVotingTapped() {
         print("To Voting")
-        handleDismiss(sideMenuButton: .toVoting, id: nil)
+        handleDismiss(sideMenuButton: .toVoting, comment: nil)
     }
     
     @objc func toSavedPostsTapped() {
         print("To Saved")
-        handleDismiss(sideMenuButton: .toSavedPosts, id: nil)
+        handleDismiss(sideMenuButton: .toSavedPosts, comment: nil)
     }
     
     @objc func sideMenuDismissed() {
-        handleDismiss(sideMenuButton: .cancel, id: nil)
+        handleDismiss(sideMenuButton: .cancel, comment: nil)
     }
     
     @objc func toEulaTapped() {
         print("To EUla")
-        handleDismiss(sideMenuButton: .toEULA, id: nil)
+        handleDismiss(sideMenuButton: .toEULA, comment: nil)
     }
     
     
@@ -156,7 +156,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         
     }
     
-    func handleDismiss(sideMenuButton: SideMenuButton, id: String?) {    // Not just dismiss but also the presented options
+    func handleDismiss(sideMenuButton: SideMenuButton, comment: Comment?) {    // Not just dismiss but also the presented options
         UIView.animate(withDuration: 0.5, animations: {
             self.blackView.alpha = 0
             
@@ -169,7 +169,9 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
             case .cancel:
                 print("Just dismiss Menu")
             default:
-                self.FeedTableView?.sideMenuButtonTapped(whichButton: sideMenuButton, id: id)
+                if let comment = comment {
+                    self.FeedTableView?.sideMenuButtonTapped(whichButton: sideMenuButton, comment: comment)
+                }
             }
         })
     }
@@ -496,10 +498,10 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         
         if let _ = comment.upvotes {
             // Vote notification
-            self.handleDismiss(sideMenuButton: .toPost, id: comment.postID)
+            self.handleDismiss(sideMenuButton: .toPost, comment: comment)
         } else {
             // Comment Notification
-            self.handleDismiss(sideMenuButton: .toComment, id: comment.postID)
+            self.handleDismiss(sideMenuButton: .toComment, comment: comment)
         }
     }
     
@@ -522,6 +524,7 @@ class Comment {
     var createTime = Date()
     var author = ""
     var postID = ""
+    var isTopicPost = false
     var upvotes: Votes?
     var user: User?
     var documentID = ""

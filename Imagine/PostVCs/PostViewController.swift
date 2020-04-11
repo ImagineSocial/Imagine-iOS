@@ -158,13 +158,20 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 }
                 
                 //No post data yet
-                PostHelper().getPostsFromDocumentIDs(documentIDs: [post.documentID]) { (posts) in
-                    if let post = posts?[0] {
-                        print("1m5")
-
-                        self.post = post
-                        self.post.toComments = toComments
-                        self.checkForData()
+                PostHelper().getPostsFromDocumentIDs(posts: [post]) { (posts) in
+                    if let posts = posts {
+                        if posts.count != 0 {
+                            print("1m5")
+                            let post = posts[0]
+                            
+                            self.post = post
+                            self.post.toComments = toComments
+                            self.checkForData()
+                        } else {
+                            print("Kein Post bekommen")
+                        }
+                    } else {
+                        print("No Posts")
                     }
                 }
             } else {
@@ -190,6 +197,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if post.user.displayName != "" {
             print("2")
             self.setupViewController()
+            self.view.layoutSubviews()
         } else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 self.index+=1
@@ -259,6 +267,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                         self.imageCollectionView.reloadData()
                     }
                 }
+            } else {
+                return
             }
             
             // No Post yet
@@ -284,13 +294,12 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 imageHeightConstraint?.isActive = true
             }
         case .picture:
-            if self.imageURLs.count == 0 {
+            if self.imageURLs.count == 0 && post.imageURL != "" {
                 self.imageURLs.append(post.imageURL)
                 self.imageCollectionView.reloadData()
+            } else {
+                return
             }
-//            if let url = URL(string: post.imageURL) {
-//                postImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
-//            }
             
             // No Post yet
             if imageWidth == 0 || imageHeight == 0 {
@@ -302,7 +311,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             let newHeight = contentWidth / ratio
             
             
-//            postImageView.frame.size = CGSize(width: contentWidth, height: newHeight)
             imageCollectionView.frame.size = CGSize(width: contentWidth, height: newHeight)
             
             // Otherwise there is an error, because somehow a 0 height is set somewhere for the picture
@@ -332,10 +340,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 playLay.frame.size = imageCollectionView.frame.size
             }
             
-//            postImageView.frame.size = CGSize(width: contentWidth, height: newHeight)
-//            if let playLay = avPlayerLayer {
-//                playLay.frame.size = postImageView.frame.size
-//            }
                 
             // Otherwise there is an error, because somehow a 0 height is set somewhere for the picture
             if let _ = imageHeightConstraint {
@@ -343,38 +347,39 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 imageHeightConstraint!.isActive = true
             } else {
                 imageHeightConstraint = imageCollectionView.heightAnchor.constraint(equalToConstant: newHeight)
-//                imageHeightConstraint = postImageView.heightAnchor.constraint(equalToConstant: newHeight)
                 imageHeightConstraint?.isActive = true
             }
             
         case .link:
-            slp.preview(post.linkURL, onSuccess: { (result) in
-                if let imageURL = result.image {
-                    
-                    self.imageURLs.append(imageURL)
-                    self.imageCollectionView.reloadData()
-                    
-                    self.linkLabel.leadingAnchor.constraint(equalTo: self.imageCollectionView.leadingAnchor).isActive = true
-                    self.linkLabel.trailingAnchor.constraint(equalTo: self.imageCollectionView.trailingAnchor).isActive = true
-                    
-//                    self.postImageView.contentMode = .scaleAspectFill
-//                    self.postImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "default"), options: [], completed: nil)
-//
-//                    self.linkLabel.leadingAnchor.constraint(equalTo: self.postImageView.leadingAnchor).isActive = true
-//                    self.linkLabel.trailingAnchor.constraint(equalTo: self.postImageView.trailingAnchor).isActive = true
-                    
+            if post.linkURL != "" {
+                slp.preview(post.linkURL, onSuccess: { (result) in
+                    if let imageURL = result.image {
+                        
+                        self.imageURLs.append(imageURL)
+                        self.imageCollectionView.reloadData()
+                        
+                        self.linkLabel.leadingAnchor.constraint(equalTo: self.imageCollectionView.leadingAnchor).isActive = true
+                        self.linkLabel.trailingAnchor.constraint(equalTo: self.imageCollectionView.trailingAnchor).isActive = true
+                        
+                    }
+                    if let linkSource = result.canonicalUrl {
+                        self.linkLabel.text = linkSource
+                    }
+                }) { (error) in
+                    print("We have an Error: \(error.localizedDescription)")
                 }
-                if let linkSource = result.canonicalUrl {
-                    self.linkLabel.text = linkSource
-                }
-            }) { (error) in
-                print("We have an Error: \(error.localizedDescription)")
+            } else {
+                // No Post yet
+                return
             }
         case .repost:
             if let repost = post.repost {
                 if let url = URL(string: repost.imageURL) {
                     self.repostImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
                 }
+            } else {
+                // No Post yet
+                return
             }
         case .event:
             
@@ -1565,6 +1570,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 }
             }
             
+            imageCollectionView.reloadData()    // To load the image, when the data has to be fetched in "checkForData" 
+            
         }
         
     }
@@ -1756,10 +1763,14 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     @objc func savePostTapped() {
         if let user = Auth.auth().currentUser {
-            let ref = db.collection("Users").document(user.uid).collection("saved").document()
+            let ref = db.collection("Users").document(user.uid).collection("saved").document(post.documentID)
             
-            let data: [String:Any] = ["createTime": Timestamp(date: Date()), "documentID": post.documentID]
+            var data: [String:Any] = ["createTime": Timestamp(date: Date())]
             
+            if post.isTopicPost {
+                data["isTopicPost"] = true
+            }
+                    
             ref.setData(data) { (err) in
                 if let error = err {
                     print("We have an error saving this post: \(error.localizedDescription)")

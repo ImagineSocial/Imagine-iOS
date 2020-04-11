@@ -135,8 +135,14 @@ class HandyHelper {
     
     
     func updatePost(button: VoteButton, post: Post) {
-        let db = Firestore.firestore().collection("Posts").document(post.documentID)
-        var keyForFirestore = ""
+        var ref: DocumentReference?
+        if post.isTopicPost {
+            ref = db.collection("TopicPosts").document(post.documentID)
+        } else {
+            ref = db.collection("Posts").document(post.documentID)
+        }
+            
+        var keyForFirestore: String?
         var valueForFirestore = 0
         
         switch button {
@@ -154,8 +160,8 @@ class HandyHelper {
             keyForFirestore = "niceCount"
         }
         
-        if keyForFirestore != "" {
-            db.updateData([keyForFirestore:valueForFirestore])
+        if let keyForFirestore = keyForFirestore, let ref = ref {
+            ref.updateData([keyForFirestore:valueForFirestore])
         } else {
             print("Could not update")
         }
@@ -189,7 +195,11 @@ class HandyHelper {
         }
         
         if let button = buttonString {
-            let data = ["type": "upvote", "button": button, "postID": post.documentID, "title": post.title]
+            var data: [String: Any] = ["type": "upvote", "button": button, "postID": post.documentID, "title": post.title]
+            
+            if post.isTopicPost {
+                data["isTopicPost"] = true
+            }
             
             let ref = db.collection("Users").document(post.originalPosterUID).collection("notifications").document()
             

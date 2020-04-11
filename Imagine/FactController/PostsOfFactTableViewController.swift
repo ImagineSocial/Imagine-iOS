@@ -363,7 +363,8 @@ class PostsOfFactTableViewController: UITableViewController {
                     let imageWidth = post.mediaWidth
                     
                     let ratio = imageWidth / imageHeight
-                    var newHeight = self.view.frame.width / ratio
+                    let width = self.view.frame.width-20
+                    var newHeight = width / ratio
                     
                     if newHeight >= 500 {
                         newHeight = 500
@@ -424,7 +425,8 @@ class PostsOfFactTableViewController: UITableViewController {
                     let imageWidth = post.mediaWidth
                     
                     let ratio = imageWidth / imageHeight
-                    var newHeight = self.view.frame.width / ratio
+                    let width = self.view.frame.width-20
+                    var newHeight = width / ratio
                     
                     if newHeight >= 500 {
                         newHeight = 500

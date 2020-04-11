@@ -106,6 +106,7 @@ class SourceTableViewController: UITableViewController {
                     vc.fact = self.fact
                     vc.argument = self.argument
                     vc.new = .source
+                    vc.delegate = self
                 }
             }
         }
@@ -116,6 +117,17 @@ class SourceTableViewController: UITableViewController {
                     vc.source = source
                 }
             }
+        }
+    }
+}
+
+extension SourceTableViewController: NewFactDelegate {
+    func finishedCreatingNewInstance(item: Any?) {
+        if let source = item as? Source {
+            let count = self.sources.count
+            
+            self.sources.insert(source, at: count-1)
+            self.tableView.reloadData()
         }
     }
 }
@@ -137,7 +149,7 @@ class sourceCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         //set the values for top,left,bottom,right margins
-        let margins = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        let margins = UIEdgeInsets(top: 0, left: 5, bottom: 3, right: 5)
         contentView.frame = contentView.frame.inset(by: margins)
     }
 }

@@ -25,7 +25,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     let db = Firestore.firestore()
     let postHelper = PostHelper()
     
-    var type: OptionalInformationType = .diy
+//    var type: OptionalInformationType = .diy
     var fact: Fact?
     
     var addItemDelegate: AddItemDelegate?
@@ -82,7 +82,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
                 if let snap = snap {
                     for document in snap.documents {
                                                 
-                        if let post = self.postHelper.addThePost(document: document, forFeed: false) {
+                        if let post = self.postHelper.addThePost(document: document, isTopicPost: false, forFeed: false) {
                             self.posts.append(post)
                         }
                     }
@@ -394,66 +394,10 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     
-    
-//    if let _ = Auth.auth().currentUser {
-//        if headerTextField.text != "" {
-//            if let fact = fact {
-//                let string = "addOn-\(getAddOnString(type: self.type))"
-//                self.checkIfFirstEntry(collectionReferenceString: string, fact: fact, gotCollection: { gotCollection in
-//                    self.savePostInAddOn()
-//
-//                    if !gotCollection {
-//                        let factRef = self.db.collection("Facts").document(fact.documentID)
-//
-//                        print("No collection yet")
-//                        self.addCollectionReferenceToArray(documentRef: factRef, type: self.type)
-//                    } else {
-//                        print("Already got a collection")
-//                    }
-//                })
-//            self.view.activityStartAnimating()
-//            }
-//        } else {
-//            self.alert(message: "Je nach AddOn kann die Beschreibung z.B. als kurze Information über den ausgewählten Beitrag dienen", title: "Bitte füge eine Beschreibung hinzu")
-//        }
-//    } else {
-//        self.notLoggedInAlert()
-//    }
-    
+ 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         headerTextField.resignFirstResponder()
     }
-    
-//    func savePostInAddOn() {
-//        guard let fact = fact, let user = Auth.auth().currentUser, let post = selectedPost else {
-//            self.view.activityStopAnimating()
-//            print("Something went wrong here")
-//            return
-//        }
-//
-//        let string = "addOn-\(getAddOnString(type: self.type))"
-//        let text = headerTextField.text
-//
-//        let ref = db.collection("Facts").document(fact.documentID).collection(string).document(post.documentID)
-//        let data: [String: Any] = ["createDate": Timestamp(date: Date()), "postDescription": text, "OP": user.uid]
-//
-//        ref.setData(data) { (err) in
-//            if let error = err {
-//                print("We have an error: \(error.localizedDescription)")
-//            } else {
-//                print("Success")
-//                self.view.activityStopAnimating()
-//                let alert = UIAlertController(title: "Fertig", message: "Der Post wurde dem AddOn hinzugefügt", preferredStyle: .alert)
-//                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
-//                    self.customDelegate?.itemSelected(type: self.type)
-//                    self.navigationController?.popViewController(animated: true)
-//                }))
-//
-//                self.present(alert, animated: true)
-//            }
-//        }
-//    }
-    
     
     
     func checkIfFirstEntry(collectionReferenceString: String, fact: Fact, gotCollection: @escaping (Bool) -> Void) {
@@ -476,29 +420,6 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
             }
         }
     }
-    
-//    func addCollectionReferenceToArray(documentRef: DocumentReference, type: OptionalInformationType) {
-//        let typeString = getAddOnString(type: type)
-//
-//        documentRef.updateData([
-//        "addOnOptions": FieldValue.arrayUnion([typeString])
-//        ]) { (err) in
-//            if let error = err {
-//                print("We have an error updating the array: \(error.localizedDescription)")
-//            }
-//        }
-//    }
-    
-//    func getAddOnString(type: OptionalInformationType) -> String {
-//        switch type {
-//        case .diy:
-//            return "diy"
-//        case .avoid:
-//            return "avoid"
-//        case .guilty:
-//            return "guilty"
-//        }
-//    }
     
     @IBAction func searchButtonTapped(_ sender: Any) {
         

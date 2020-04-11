@@ -315,6 +315,9 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                                                     comment.postID =  postID
                                                     comment.upvotes = Votes()
                                                     comment.title = title
+                                                    if let _ = data["isTopicPost"] as? Bool {
+                                                        comment.isTopicPost = true
+                                                    }
                                                     
                                                     self.upvotes.append(comment)
                                                     
@@ -781,7 +784,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     
     
     
-    func sideMenuButtonTapped(whichButton: SideMenuButton, id: String?) {
+    func sideMenuButtonTapped(whichButton: SideMenuButton, comment: Comment?) {
         
         switch whichButton {
         case .toUser:
@@ -794,18 +797,20 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         case .toEULA:
             performSegue(withIdentifier: "toEULASegue", sender: nil)
         case .toPost:
-            if let id = id{
+            if let comment = comment{
                 let post = Post()
-                post.documentID = id
+                post.documentID = comment.postID
+                post.isTopicPost = comment.isTopicPost
                 if let user = Auth.auth().currentUser {     //Only works if you get notifications for your own posts
                     post.originalPosterUID = user.uid
                 }
                 performSegue(withIdentifier: "showPost", sender: post)
             }
         case .toComment:
-            if let id = id{
+            if let comment = comment {
                 let post = Post()
-                post.documentID = id
+                post.documentID = comment.postID
+                post.isTopicPost = comment.isTopicPost
                 post.toComments = true
                 if let user = Auth.auth().currentUser {
                     post.originalPosterUID = user.uid

@@ -12,6 +12,7 @@ import FirebaseFirestore
 import FirebaseAuth
 import FirebaseStorage
 
+// Worked on this at the beginning of the idea, a lot of code needs to be refusrbished
 
 class MeldenViewController: UIViewController {
     
@@ -133,8 +134,16 @@ class MeldenViewController: UIViewController {
     func deletePost() {
         guard let post = post else { return }
         
-        let postRef = db.collection("Posts").document(post.documentID)
-        postRef.delete()
+        let postRef: DocumentReference?
+        if post.isTopicPost {
+            postRef = db.collection("TopicPosts").document(post.documentID)
+        } else {
+            postRef = db.collection("Posts").document(post.documentID)
+        }
+        
+        if let postRef = postRef {
+            postRef.delete()
+        }
         
         switch post.type {
         case .multiPicture:
@@ -197,7 +206,7 @@ class MeldenViewController: UIViewController {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
                     self.dismiss(animated: true, completion: nil)
-                    self.alert(message: "Fertig", title: "Das Bild wurde erfolgreich gelöscht. Aktualisiere den Feed und es ist weg")
+                    self.alert(message: "Fertig", title: "Der Post wurde erfolgreich gelöscht. Aktualisiere den Feed und er ist weg")
                 }
             }
             print("No picture to delete")
