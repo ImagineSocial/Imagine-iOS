@@ -92,6 +92,7 @@
                 <outlet property="factDescriptionLabel" destination="Jez-8Y-1HQ" id="HBT-Wr-wQa"/>
                 <outlet property="followButton" destination="oGm-Xn-SGZ" id="aSH-pB-ClM"/>
                 <outlet property="gradientView" destination="iXk-aT-puD" id="TfR-LY-wFU"/>
+                <outlet property="imageViewHeightConstraint" destination="Dh3-AH-oBA" id="KYJ-57-RwA"/>
             </connections>
             <point key="canvasLocation" x="119.56521739130436" y="98.4375"/>
         </collectionViewCell>

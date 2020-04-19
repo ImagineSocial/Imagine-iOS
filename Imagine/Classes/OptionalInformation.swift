@@ -49,6 +49,14 @@ class OptionalInformation {
                         if type == "fact" {
                             let fact = Fact(addMoreDataCell: false)
                             fact.documentID = document.documentID
+                            if let displayOption = data["displayOption"] as? String {
+                                if displayOption == "topic" {
+                                    fact.displayOption = .topic
+                                } // else { .fact is default
+                            }
+                            if let title = data["title"] as? String {
+                                fact.addOnTitle = title
+                            }
                             
                             self.items.append(fact)
                         } else if type == "topicPost" {

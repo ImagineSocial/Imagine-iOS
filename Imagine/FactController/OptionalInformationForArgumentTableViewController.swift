@@ -249,11 +249,14 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
         
         var itemTypeString = "post"
         var addOnTitle: String?
+        var displayOption: String?
         var itemID = ""
         
         if let fact = item as? Fact {
             itemTypeString = "fact"
             itemID = fact.documentID
+            let newFactVC = NewFactViewController()
+            displayOption = newFactVC.getNewFactDisplayString(displayOption: fact.displayOption).displayOption
         } else if let post = item as? Post {
             itemID = post.documentID
             if let title = post.addOnTitle {    // Description of the added post
@@ -261,6 +264,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             }
             if post.isTopicPost {
                 itemTypeString = "topicPost"    // So the getData method looks in a different ref
+                self.updateTopicPostInFact(addOnID: addOnRef, postDocumentID: itemID)
             }
         }
         
@@ -272,6 +276,9 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
         var data: [String: Any] = ["type": itemTypeString, "OP": user.uid, "createDate": Timestamp(date: Date())]
         if let title = addOnTitle {
             data["title"] = title
+        }
+        if let mode = displayOption {
+            data["displayOption"] = mode
         }
         ref.setData(data) { (err) in
             if let error = err {
@@ -290,6 +297,14 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                 self.present(alert, animated: true)
             }
         }
+    }
+    
+    func updateTopicPostInFact(addOnID: String, postDocumentID: String) {       //Add the AddOnDocumentIDs to the fact, so we can delete every trace of the post if you choose to delete it later. Otherwise there would be empty post in an AddOn
+        let ref = db.collection("Facts").document(fact!.documentID).collection("posts").document(postDocumentID)
+        
+        ref.updateData([
+            "addOnDocumentIDs": FieldValue.arrayUnion([addOnID])
+        ])
     }
     
     //MARK:-PrepareForSegue
@@ -316,8 +331,8 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                 if let fact = sender as? Fact {
                     vc.fact = fact
                     
-                    print("Das ist der Fakt den ich übergebe: \(fact.title), fact type: \(fact.displayMode)")
-                    if fact.displayMode == .topic {
+                    print("Das ist der Fakt den ich übergebe: \(fact.title), fact type: \(fact.displayOption)")
+                    if fact.displayOption == .topic {
                         vc.displayMode = .topic
                     }
                 }

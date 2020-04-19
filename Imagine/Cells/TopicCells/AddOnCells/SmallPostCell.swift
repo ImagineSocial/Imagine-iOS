@@ -113,6 +113,7 @@ class SmallPostCell: UICollectionViewCell {
                 }
             } else if post.type == .link {
                 smallCellImageView.image = UIImage(named: "translate")
+                cellImageView.image = UIImage(named: "link-default")
                 
                 self.linkView.addSubview(linkLabel)
                 linkLabel.leadingAnchor.constraint(equalTo: linkView.leadingAnchor, constant: 2).isActive = true
@@ -129,14 +130,15 @@ class SmallPostCell: UICollectionViewCell {
                 slp.preview(post.linkURL, onSuccess: { (response) in
                     if let imageURL = response.image {
                         if imageURL.isValidURL {
-                            self.cellImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+                            self.cellImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
                         } else {
                             //Try
-                            self.cellImageView.image = UIImage(named: "savePostImage")
+                            self.cellImageView.image = UIImage(named: "link-default")
                         }
-                        if let urlString = response.canonicalUrl {
-                            self.linkLabel.text = urlString
-                        }
+                        
+                    }
+                    if let urlString = response.canonicalUrl {
+                        self.linkLabel.text = urlString
                     }
                     
                 }) { (error) in
@@ -152,7 +154,7 @@ class SmallPostCell: UICollectionViewCell {
                     if let url = URL(string: thumbnailURL) {
                         cellImageView.sd_setImage(with: url, completed: nil)
                     } else {
-                        cellImageView.image = UIImage(named: "savePostImage")
+                        cellImageView.image = UIImage(named: "link-default")
                     }
                 }
                 

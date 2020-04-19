@@ -131,12 +131,55 @@ class MeldenViewController: UIViewController {
         }
     }
     
+    func deleteTopicPost() {
+        guard let post = post else { return }
+        
+        if let fact = post.fact {
+            let ref = db.collection("Facts").document(fact.documentID).collection("posts").document(post.documentID)
+            
+            ref.getDocument { (snap, err) in
+                if let error = err {
+                    print("Error: \(error.localizedDescription)")
+                } else {
+                    if let snap = snap {
+                        ref.delete()
+                        if let data = snap.data() {
+                            if let addOnIDs = data["addOnDocumentIDs"] as? [String] {
+                                for id in addOnIDs {
+                                    self.deletePostInAddOn(addOnID: id)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }
+    }
+    
+    func deletePostInAddOn(addOnID: String) {
+        guard let post = post else { return }
+        
+        if let fact = post.fact {
+            let ref = db.collection("Facts").document(fact.documentID).collection("addOns").document(addOnID).collection("items").document(post.documentID)
+            
+            ref.delete { (err) in
+                if let error = err {
+                    print("Error when deleting post in AddOn: \(error.localizedDescription)")
+                }
+            }
+            
+        }
+    }
+    
     func deletePost() {
         guard let post = post else { return }
         
         let postRef: DocumentReference?
         if post.isTopicPost {
             postRef = db.collection("TopicPosts").document(post.documentID)
+            
+            self.deleteTopicPost()
         } else {
             postRef = db.collection("Posts").document(post.documentID)
         }
@@ -212,6 +255,8 @@ class MeldenViewController: UIViewController {
             print("No picture to delete")
         }
     }
+    
+    
     
     @objc func showAlertForDeleteOption() {
         let alert = UIAlertController(title: "Post löschen", message: "Bist du dir sicher, dass du den Post vollständig löschen möchtest?", preferredStyle: .alert)

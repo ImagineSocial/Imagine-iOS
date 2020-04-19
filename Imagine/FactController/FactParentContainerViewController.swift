@@ -28,7 +28,11 @@ class FactParentContainerViewController: UIViewController {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var followTopicButton: DesignableButton!
     
+    @IBOutlet weak var followerCountLabel: UILabel!
+    @IBOutlet weak var postCountLabel: UILabel!
     
+    var postCount = 0
+    var followerCount = 0
     
     var fact:Fact?
     var proArgumentList = [Argument]()
@@ -36,6 +40,7 @@ class FactParentContainerViewController: UIViewController {
     var needNavigationController = false
     let db = Firestore.firestore()
     let radius:CGFloat = 6
+    
     
     //MARK:-
     
@@ -133,6 +138,16 @@ class FactParentContainerViewController: UIViewController {
             
             self.view.activityStartAnimating()
             
+            fact.getPostCount { (count) in
+                self.postCountLabel.text = "Posts: \(count)"
+                self.postCount = count
+            }
+            
+            fact.getFollowerCount{ (count) in
+                self.followerCountLabel.text = "Follower: \(count)"
+                self.followerCount = count
+            }
+            
             DataHelper().getDeepData(documentID: fact.documentID) { (deepData) in // Fetch all Arguments for this fact
                 if let arguments = deepData as? [Argument] {
                     for argument in arguments {
@@ -196,6 +211,7 @@ class FactParentContainerViewController: UIViewController {
                 } else {
                     print("Succesfully subscribed to topic")
                     fact.beingFollowed = true
+                    self.updateFollowCount(fact: fact, follow: true)
                 }
             }
         } 
@@ -211,7 +227,25 @@ class FactParentContainerViewController: UIViewController {
                 } else {
                     fact.beingFollowed = false
                     print("Successfully unfollowed")
+                    self.updateFollowCount(fact: fact, follow: false)
                 }
+            }
+        }
+    }
+    
+    func updateFollowCount(fact: Fact, follow: Bool) {
+        if let user = Auth.auth().currentUser {
+            
+            let ref = db.collection("Facts").document(fact.documentID)
+            
+            if follow {
+                ref.updateData([
+                    "follower" : FieldValue.arrayUnion([user.uid])
+                ])
+            } else { //unfollowed
+                ref.updateData([
+                    "follower": FieldValue.arrayRemove([user.uid])
+                ])
             }
         }
     }
@@ -249,9 +283,15 @@ class FactParentContainerViewController: UIViewController {
             if fact.beingFollowed {
                 self.unfollowTopic(fact: fact)
                 self.followTopicButton.setTitle("Follow", for: .normal)
+                
+                self.followerCount = self.followerCount-1
+                self.followerCountLabel.text = "Follower: \(self.followerCount)"
             } else {
                 self.followTopic(fact: fact)
                 self.followTopicButton.setTitle("Unfollow", for: .normal)
+                
+                self.followerCount = self.followerCount+1
+                self.followerCountLabel.text = "Follower: \(self.followerCount)"
             }
         }
     }

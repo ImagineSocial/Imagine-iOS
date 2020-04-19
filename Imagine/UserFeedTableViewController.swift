@@ -985,7 +985,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             if let fact = sender as? Fact {
                 if let factVC = segue.destination as? ArgumentPageViewController {
                     factVC.fact = fact
-                    if fact.displayMode == .topic {
+                    if fact.displayOption == .topic {
                         factVC.displayMode = .topic
                     }
                 }

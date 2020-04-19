@@ -131,7 +131,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                 self.facts = facts
                 
                 for fact in facts {
-                    if fact.displayMode == .fact {
+                    if fact.displayOption == .fact {
                         self.factFacts.append(fact)
                     } else {
                         self.topicFacts.append(fact)
@@ -411,7 +411,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                 if let chosenFact = sender as? Fact {
                     pageVC.fact = chosenFact
                     pageVC.recentTopicDelegate = self
-                    if chosenFact.displayMode == .topic {
+                    if chosenFact.displayOption == .topic {
                         pageVC.displayMode = .topic
                     }
                     
@@ -500,11 +500,10 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                     fact.documentID = documentID
                     
                     if let displayOption = documentData["displayOption"] as? String {
-                        switch displayOption {
-                        case "topic":
-                            fact.displayMode = .topic
-                        default:
-                            fact.displayMode = .fact
+                        if displayOption == "topic" {
+                            fact.displayOption = .topic
+                        } else {
+                            fact.displayOption = .fact
                         }
                     }
                     
@@ -621,7 +620,7 @@ class FactCollectionHeader: UICollectionReusableView {
             sortFactsButton.setTitle("Nur Themen", for: .normal)
         case .justTopics:
             self.displayOption = .justFacts
-            sortFactsButton.setTitle("Nur Fakten", for: .normal)
+            sortFactsButton.setTitle("Nur Diskussionen", for: .normal)
         case .justFacts:
             self.displayOption = .all
             sortFactsButton.setTitle("Alle", for: .normal)

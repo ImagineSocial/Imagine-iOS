@@ -19,8 +19,8 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="20"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uaG-Z8-Etd" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                    <rect key="frame" x="20" y="0.0" width="87" height="20"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uaG-Z8-Etd" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                    <rect key="frame" x="46" y="0.0" width="87" height="20"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="20" id="b2N-4b-43N"/>
                     </constraints>
@@ -32,11 +32,21 @@
                         <action selector="sortFactsTapped:" destination="c9p-LA-xW1" eventType="touchUpInside" id="ZEx-nV-Pzs"/>
                     </connections>
                 </button>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="topicIcon" translatesAutoresizingMaskIntoConstraints="NO" id="f8o-OP-6t8">
+                    <rect key="frame" x="16" y="0.0" width="30" height="20"/>
+                    <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="30" id="pRw-mt-Hwu"/>
+                    </constraints>
+                </imageView>
             </subviews>
             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
             <constraints>
-                <constraint firstItem="uaG-Z8-Etd" firstAttribute="leading" secondItem="c9p-LA-xW1" secondAttribute="leading" constant="20" id="kNx-hq-nPT"/>
+                <constraint firstItem="uaG-Z8-Etd" firstAttribute="leading" secondItem="f8o-OP-6t8" secondAttribute="trailing" id="DFc-48-CP0"/>
+                <constraint firstAttribute="bottom" secondItem="f8o-OP-6t8" secondAttribute="bottom" id="X4c-uf-hc2"/>
+                <constraint firstItem="f8o-OP-6t8" firstAttribute="top" secondItem="c9p-LA-xW1" secondAttribute="top" id="c1b-g9-xeL"/>
                 <constraint firstAttribute="bottom" secondItem="uaG-Z8-Etd" secondAttribute="bottom" id="oW0-uL-LWw"/>
+                <constraint firstItem="f8o-OP-6t8" firstAttribute="leading" secondItem="c9p-LA-xW1" secondAttribute="leading" constant="16" id="sfG-bA-bHp"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="pRv-54-GRg"/>
             <connections>
@@ -45,4 +55,7 @@
             <point key="canvasLocation" x="132.60869565217394" y="90.401785714285708"/>
         </collectionReusableView>
     </objects>
+    <resources>
+        <image name="topicIcon" width="700" height="603"/>
+    </resources>
 </document>

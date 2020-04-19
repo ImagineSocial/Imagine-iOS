@@ -135,7 +135,7 @@ class SavedPostTableViewController: BaseFeedTableViewController {
                 if let factVC = segue.destination as? ArgumentPageViewController {
                     
                     factVC.fact = fact
-                    if fact.displayMode == .topic {
+                    if fact.displayOption == .topic {
                         factVC.displayMode = .topic
                     }
                 }

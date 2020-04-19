@@ -88,7 +88,7 @@
                     <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hCB-F6-YW2" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
                         <rect key="frame" x="255" y="90" width="110" height="90"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Ije-Bx-iN1">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="link-default" translatesAutoresizingMaskIntoConstraints="NO" id="Ije-Bx-iN1">
                                 <rect key="frame" x="0.0" y="0.0" width="110" height="90"/>
                                 <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </imageView>
@@ -353,6 +353,7 @@
         <image name="default-user" width="415" height="415"/>
         <image name="greenTik" width="85" height="85"/>
         <image name="haButton" width="800" height="800"/>
+        <image name="link-default" width="2360" height="1910"/>
         <image name="menu" width="30" height="30"/>
         <image name="niceButton" width="800" height="800"/>
         <image name="thanksButton" width="800" height="800"/>

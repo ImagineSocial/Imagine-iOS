@@ -67,6 +67,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     fileprivate var imageHeightConstraint : NSLayoutConstraint?
     
     //ImageCollectionView
+    let defaultLinkString = "link-default"
     var imageURLs = [String]()
     let layout:UICollectionViewFlowLayout = UICollectionViewFlowLayout.init()
     let identifier = "MultiPictureCell"
@@ -352,16 +353,25 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             
         case .link:
             if post.linkURL != "" {
+                if #available(iOS 13.0, *) {
+                    self.imageCollectionView.backgroundColor = .secondarySystemBackground
+                } else {
+                    self.imageCollectionView.backgroundColor = .ios12secondarySystemBackground
+                }
                 slp.preview(post.linkURL, onSuccess: { (result) in
                     if let imageURL = result.image {
                         
                         self.imageURLs.append(imageURL)
                         self.imageCollectionView.reloadData()
                         
-                        self.linkLabel.leadingAnchor.constraint(equalTo: self.imageCollectionView.leadingAnchor).isActive = true
-                        self.linkLabel.trailingAnchor.constraint(equalTo: self.imageCollectionView.trailingAnchor).isActive = true
-                        
+                    } else {
+                        self.imageURLs.append(self.defaultLinkString)
+                        self.imageCollectionView.reloadData()
                     }
+                    
+                    self.linkLabel.leadingAnchor.constraint(equalTo: self.imageCollectionView.leadingAnchor).isActive = true
+                    self.linkLabel.trailingAnchor.constraint(equalTo: self.imageCollectionView.trailingAnchor).isActive = true
+                    
                     if let linkSource = result.canonicalUrl {
                         self.linkLabel.text = linkSource
                     }
@@ -1864,7 +1874,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             if let fact = sender as? Fact {
                 if let factVC = segue.destination as? ArgumentPageViewController {
                     factVC.fact = fact
-                    if fact.displayMode == .topic {
+                    if fact.displayOption == .topic {
                         factVC.displayMode = .topic
                     }
                 }
@@ -1998,9 +2008,12 @@ extension PostViewController: UICollectionViewDelegate, UICollectionViewDataSour
         
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as? MultiImageCollectionCell {
             
-            cell.imageURL = image
-            cell.layoutIfNeeded()
-            
+            if image == defaultLinkString {
+                cell.image = UIImage(named: "default-link")
+            } else {
+                cell.imageURL = image
+                cell.layoutIfNeeded()
+            }
             return cell
         }
         

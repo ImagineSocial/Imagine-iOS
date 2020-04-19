@@ -25,6 +25,8 @@ class PostsOfFactTableViewController: UITableViewController {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var displayOptionButton: DesignableButton!
     @IBOutlet weak var followTopicButton: DesignableButton!
+    @IBOutlet weak var followerCountLabel: UILabel!
+    @IBOutlet weak var postCountLabel: UILabel!
     
     var fact: Fact?
     var noPostsType: BlankCellType = .postsOfFacts
@@ -43,10 +45,12 @@ class PostsOfFactTableViewController: UITableViewController {
     let defaults = UserDefaults.standard
     let smallDisplayTypeUserDefaultsPhrase = "smallDisplayType"
     
+    var postCount = 0
+    var followerCount = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
+    
         self.navigationController?.navigationBar.shadowImage = UIImage()
         tableView.separatorStyle = .none
         
@@ -85,6 +89,8 @@ class PostsOfFactTableViewController: UITableViewController {
             descriptionLabel.isHidden = true
             followTopicButton.isHidden = true
             headerSeparatorView.alpha = 0
+            followerCountLabel.isHidden = true
+            postCountLabel.isHidden = true
         }
     }
     
@@ -144,6 +150,16 @@ class PostsOfFactTableViewController: UITableViewController {
                 headerImageView.sd_setImage(with: url, completed: nil)
             } else {
                 headerImageView.image = UIImage(named: "FactStamp")
+            }
+            
+            fact.getPostCount { (count) in
+                self.postCountLabel.text = "Posts: \(count)"
+                self.postCount = count
+            }
+            
+            fact.getFollowerCount{ (count) in
+                self.followerCountLabel.text = "Follower: \(count)"
+                self.followerCount = count
             }
             
             if let user = Auth.auth().currentUser {
@@ -504,10 +520,17 @@ class PostsOfFactTableViewController: UITableViewController {
                 factParentVC.unfollowTopic(fact: fact)
                 fact.beingFollowed = false
                 self.followTopicButton.setTitle("Follow", for: .normal)
+                
+                self.followerCount = self.followerCount-1
+                self.followerCountLabel.text = "Follower: \(self.followerCount)"
+                    
             } else {
                 factParentVC.followTopic(fact: fact)
                 fact.beingFollowed = true
                 self.followTopicButton.setTitle("Unfollow", for: .normal)
+                
+                self.followerCount = self.followerCount+1
+                self.followerCountLabel.text = "Follower: \(self.followerCount)"
             }
         }
     }

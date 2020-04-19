@@ -14,6 +14,8 @@ protocol CollectionViewInTableViewCellDelegate {
 }
 
 class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegate {
+    
+    // OptionalInformationDelegate
     func done() {
         collectionView.reloadData()
     }
@@ -63,8 +65,12 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
         if let info = info {
             if indexPath.item != info.items.count {
                 let item = info.items[indexPath.item]
-                if let _ = item as? Fact {      // Fact
-                    return CGSize(width: 300, height: collectionView.frame.height)
+                if let fact = item as? Fact {      // Fact
+                    if fact.displayOption == .topic {
+                        return CGSize(width: 250, height: collectionView.frame.height)
+                    } else {
+                        return CGSize(width: 300, height: collectionView.frame.height)
+                    }
                 } else {        // Post
                     return CGSize(width: 245, height: collectionView.frame.height)
                 }
@@ -105,6 +111,7 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                         return cell
                     }
                 } else if let fact = item as? Fact {
+                    
                     if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: whyGuiltyIdentifier, for: indexPath) as? SmallFactCell {
                         
                         if fact.title != "" {   // Not loaded yet
@@ -112,6 +119,15 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                         } else {
                             cell.factID = fact.documentID
                         }
+                        
+                        if let title = fact.addOnTitle {
+                            cell.postTitle = title
+                        } else {
+                            cell.postTitle = "gotcha"
+                        }
+                        
+                        
+                        cell.setUI(displayOption: fact.displayOption)
                         
                         return cell
                     }
@@ -131,11 +147,9 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let info = info {
             if info.items.count != indexPath.item {
-//                let item = info.items[indexPath.item]
-                
-                // The Post/Fact gets fetched inside each cell, so the items list in this view is not complete
-                
+                                
                 let currentCell = collectionView.cellForItem(at: indexPath)
+                
                 if let guiltyCell = currentCell as? SmallFactCell {
                     if let fact = guiltyCell.fact {
                         delegate?.itemTapped(item: fact)

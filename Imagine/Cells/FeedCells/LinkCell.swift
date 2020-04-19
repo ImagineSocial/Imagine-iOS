@@ -145,12 +145,12 @@ class LinkCell : BaseFeedCell {
                                 
                 if let imageURL = result.image {
                     if imageURL.isValidURL {
-                        self.linkThumbNailImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+                        self.linkThumbNailImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
                     } else {
                         //Try
-                        self.linkThumbNailImageView.image = UIImage(named: "savePostImage")
+                        self.linkThumbNailImageView.image = UIImage(named: "link-default")
                     }
-                }
+                } 
                 
                 if let linkSource = result.canonicalUrl {
                     self.urlLabel.text = linkSource

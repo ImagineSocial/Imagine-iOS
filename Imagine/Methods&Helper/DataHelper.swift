@@ -327,6 +327,7 @@ class DataHelper {
         let fact = Fact(addMoreDataCell: false)
         fact.title = name
         fact.createDate = stringDate
+        
         if let imageURL = data["imageURL"] as? String { // Not mandatory (in fact not selectable)
             fact.imageURL = imageURL
         }
@@ -334,7 +335,7 @@ class DataHelper {
             fact.description = description
         }
         if let displayType = data["displayOption"] as? String { // Was introduced later on
-            fact.displayMode = self.getDisplayType(string: displayType)
+            fact.displayOption = self.getDisplayType(string: displayType)
         }
         
         if let displayNames = data["factDisplayNames"] as? String {

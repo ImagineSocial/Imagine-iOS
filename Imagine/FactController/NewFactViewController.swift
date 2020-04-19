@@ -272,8 +272,8 @@ class NewFactViewController: UIViewController {
         }
     }
     
-    func getNewFactDisplayString() -> (displayOption: String, factDisplayNames: String?) {
-        switch self.pickedDisplayOption {
+    func getNewFactDisplayString(displayOption: DisplayOption) -> (displayOption: String, factDisplayNames: String?) {
+        switch displayOption {
             case .fact:
                 switch self.pickedFactDisplayNames {
                 case .proContra:
@@ -423,7 +423,7 @@ class NewFactViewController: UIViewController {
         
         let op = Auth.auth().currentUser!
         
-        let displayOption = self.getNewFactDisplayString()
+        let displayOption = self.getNewFactDisplayString(displayOption: self.pickedDisplayOption)
         
         var data = [String: Any]()
         

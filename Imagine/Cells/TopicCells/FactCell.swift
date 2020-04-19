@@ -13,9 +13,12 @@ class FactCell:UICollectionViewCell {
     
     @IBOutlet weak var factCellLabel: UILabel!
     @IBOutlet weak var factCellImageView: UIImageView!
+    @IBOutlet weak var imageViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var gradientView: UIView!
     @IBOutlet weak var factDescriptionLabel: UILabel!
     @IBOutlet weak var followButton: DesignableButton!
+    
+    let db = Firestore.firestore()
     
     override func awakeFromNib() {
         factCellImageView.contentMode = .scaleAspectFill
@@ -53,6 +56,28 @@ class FactCell:UICollectionViewCell {
                     factCellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "FactStamp"), options: [], completed: nil)
                 } else {
                     factCellImageView.image = UIImage(named: "FactStamp")
+                }
+            }
+        }
+    }
+    
+    var factID: String? {
+        didSet {
+            let ref = db.collection("Facts").document(factID!)
+                        
+            ref.getDocument { (snap, err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    if let snap = snap {
+                        if let data = snap.data() {
+                            if let fact = DataHelper().addFact(data: data) {
+                                fact.documentID = snap.documentID
+                                
+                                self.fact = fact
+                            }
+                        }
+                    }
                 }
             }
         }

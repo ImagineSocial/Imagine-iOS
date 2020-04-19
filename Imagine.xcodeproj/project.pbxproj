@@ -501,6 +501,7 @@
 			children = (
 				E9A5F5AB2440CFE900DCCFDF /* DiscussionVCs */,
 				E96CE88C22940A9F00BACD3B /* FactCollectionViewController.swift */,
+				E96CE89322941C5C00BACD3B /* FactParentContainerViewController.swift */,
 				E9C6C236229601D8003F0F16 /* NewFactViewController.swift */,
 				E9F6030E235DE5DF00A58D08 /* PostsOfFactTableViewController.swift */,
 				E9B85D4124112DCA00960942 /* ArgumentPageViewController.swift */,
@@ -587,7 +588,6 @@
 		E9A5F5AB2440CFE900DCCFDF /* DiscussionVCs */ = {
 			isa = PBXGroup;
 			children = (
-				E96CE89322941C5C00BACD3B /* FactParentContainerViewController.swift */,
 				E96CE88F22941A1F00BACD3B /* ProFactTableViewController.swift */,
 				E96CE89122941A2D00BACD3B /* ContraFactTableViewController.swift */,
 				E9C6C2382296BEED003F0F16 /* FactDetailViewController.swift */,
@@ -723,10 +723,10 @@
 				E96CE8972295A13B00BACD3B /* ArgumentCell.swift */,
 				E9F31DCA23F6D2A3001D5D25 /* FactCollectionHeader.xib */,
 				E9F31DD023F70D8A001D5D25 /* SmallTopicCell.xib */,
-				E9F31DC723F6D109001D5D25 /* RecentTopicsCollectionCell.xib */,
 				E9F31DCE23F6D78C001D5D25 /* RecentTopicsCollectionCell.swift */,
 				E9A5F5AE2440D16200DCCFDF /* AddOnCells */,
 				E98BA591241BFF3700C62DA8 /* AddTopicCell.xib */,
+				E9F31DC723F6D109001D5D25 /* RecentTopicsCollectionCell.xib */,
 				E9A02AA6232D3181000DAB69 /* AddFactTableViewCell.swift */,
 			);
 			path = TopicCells;
@@ -1220,7 +1220,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.8;
+				MARKETING_VERSION = 1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -1243,7 +1243,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.8;
+				MARKETING_VERSION = 1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
