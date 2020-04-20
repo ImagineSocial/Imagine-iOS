@@ -57,10 +57,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var camPic = false
     var selectDate = false
     var selectedDate: Date?
-    var comingFromPostsOfFact = false
-    
-    var comingFromAddOnVC = false   // This will create a difference reference for the post to be stored, to show it just in the topic and not in the main feed - later it will show up for those who follow this topic
-    var addItemDelegate: AddItemDelegate?
     
     let identifier = "MultiPictureCell"
     let layout:UICollectionViewFlowLayout = UICollectionViewFlowLayout.init()
@@ -81,17 +77,23 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var up = false
     
     var linkedFact: Fact?
+    var comingFromPostsOfFact = false
+    var comingFromAddOnVC = false   // This will create a difference reference for the post to be stored, to show it just in the topic and not in the main feed - later it will show up for those who follow this topic
+    var addItemDelegate: AddItemDelegate?
+    var postOnlyInTopic = false
     
     var pictureViewHeight: NSLayoutConstraint?
     var linkViewHeight: NSLayoutConstraint?
     var eventViewHeight: NSLayoutConstraint?
     var locationViewHeight: NSLayoutConstraint?
     var optionViewHeight: NSLayoutConstraint?
+    var stackViewHeight: NSLayoutConstraint?
     
     var descriptionViewTopAnchor: NSLayoutConstraint?
     var pictureViewTopAnchor: NSLayoutConstraint?
     
     var delegate: JustPostedDelegate?
+    var newInstanceDelegate: NewFactDelegate?
     
     var infoView: UIView?
     
@@ -125,6 +127,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         if comingFromPostsOfFact || comingFromAddOnVC {
             setDismissButton()
+            cancelLinkedFactButton.isEnabled = false
+            cancelLinkedFactButton.alpha = 0.5
+            distributionInformationLabel.text = "Thema"
         }
         
         let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15) as Any]
@@ -147,6 +152,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.infoView = nil
         showInfoView()
     }
+    
     // MARK: - Functions for the UI Initializing
     
     func setCompleteUIForThought() {
@@ -740,12 +746,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
         button.tintColor = .imagineColor
         button.setImage(UIImage(named: "menu"), for: .normal)
-//        button.setTitle("Mehr", for: .normal)
         button.addTarget(self, action: #selector(optionButtonTapped), for: .touchUpInside)
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
-//        button.layer.borderColor = Constants.imagineColor.cgColor
-//        button.layer.borderWidth = 1
-//        button.cornerRadius = 4
         
         return button
     }()
@@ -790,6 +791,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         return label
     }()
     
+    //MARK: - Link Fact with Post UI
+    
     let addFactButton: DesignableButton = {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -798,6 +801,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         button.addTarget(self, action: #selector(linkFactToPostTapped), for: .touchUpInside)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
         button.setTitleColor(.imagineColor, for: .normal)
+        
         return button
     }()
     
@@ -822,8 +826,149 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         return label
     }()
     
+    let distributionLabel: UILabel = {
+       let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
+        label.textAlignment = .left
+        label.text = "Ziel:"
+        if #available(iOS 13.0, *) {
+            label.textColor = .label
+        } else {
+            label.textColor = .black
+        }
+        
+        return label
+    }()
+    
+    let distributionInformationLabel: UILabel = {   // Shows where the post will be posted: In a topic only or in the main Feed
+       let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
+        label.textAlignment = .left
+        label.text = "Feed"
+        if #available(iOS 13.0, *) {
+            label.textColor = .secondaryLabel
+        } else {
+            label.textColor = .lightGray
+        }
+        
+        return label
+    }()
+    
+    let distributionInformationImageView: UIImageView = {
+       let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = UIImage(named: "Feed")    //topicIcon
+        if #available(iOS 13.0, *) {
+            imageView.tintColor = .secondaryLabel
+        } else {
+            imageView.tintColor = .lightGray
+        }
+        
+        return imageView
+    }()
+    
+    let distributionInformationView: UIView = {
+       let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
+        
+        return view
+    }()
+    
+    let linkedFactView: UIView = {
+       let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
+        
+        return view
+    }()
+    
+    let linkedFactInfoButton :DesignableButton = {
+        let button = DesignableButton(type: .detailDisclosure)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = .imagineColor
+        button.addTarget(self, action: #selector(linkedFactInfoButtonTapped), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    let cancelLinkedFactButton: DesignableButton = {
+        let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "Dismiss"), for: .normal)
+        button.addTarget(self, action: #selector(cancelLinkedFactTapped), for: .touchUpInside)
+        button.isHidden = true
+        button.clipsToBounds = true
+
+        return button
+    }()
+    
+    //MARK:- Set Up Options UI
     func setUpOptionViewUI() {
         
+        //LinkedFactView
+        let distributionLabelHeight: CGFloat = 20
+        linkedFactView.addSubview(distributionLabel)
+        distributionLabel.topAnchor.constraint(equalTo: linkedFactView.topAnchor, constant: 5).isActive = true
+        distributionLabel.leadingAnchor.constraint(equalTo: linkedFactView.leadingAnchor, constant: 10).isActive = true
+        distributionLabel.heightAnchor.constraint(equalToConstant: distributionLabelHeight).isActive = true
+
+        linkedFactView.addSubview(linkedFactInfoButton)
+        linkedFactInfoButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: distributionLabelHeight/2).isActive = true
+        linkedFactInfoButton.trailingAnchor.constraint(equalTo: linkedFactView.trailingAnchor, constant: -10).isActive = true
+        linkedFactInfoButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        linkedFactInfoButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        
+        linkedFactView.addSubview(addFactButton)
+        addFactButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: distributionLabelHeight/2).isActive = true
+        addFactButton.trailingAnchor.constraint(equalTo: linkedFactInfoButton.leadingAnchor, constant: -20).isActive = true
+//        addFactButton.centerXAnchor.constraint(equalTo: linkedFactView.centerXAnchor).isActive = true
+        addFactButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        
+        distributionInformationView.addSubview(distributionInformationImageView)
+        distributionInformationImageView.leadingAnchor.constraint(equalTo: distributionInformationView.leadingAnchor).isActive = true
+        distributionInformationImageView.centerYAnchor.constraint(equalTo: distributionInformationView.centerYAnchor).isActive = true
+        distributionInformationImageView.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        distributionInformationImageView.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        
+        distributionInformationView.addSubview(distributionInformationLabel)
+        distributionInformationLabel.leadingAnchor.constraint(equalTo: distributionInformationImageView.trailingAnchor, constant: 2).isActive = true
+        distributionInformationLabel.trailingAnchor.constraint(equalTo: distributionInformationView.trailingAnchor, constant: -3).isActive = true
+        distributionInformationLabel.centerYAnchor.constraint(equalTo: distributionInformationView.centerYAnchor).isActive = true
+        
+        linkedFactView.addSubview(distributionInformationView)
+        distributionInformationView.leadingAnchor.constraint(equalTo: linkedFactView.leadingAnchor, constant: 10).isActive = true
+//        distributionInformationView.trailingAnchor.constraint(equalTo: addFactButton.leadingAnchor, constant: -3).isActive = true
+        distributionInformationView.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: distributionLabelHeight/2).isActive = true
+        distributionInformationView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-15).isActive = true
+
+        linkedFactView.addSubview(cancelLinkedFactButton)
+        cancelLinkedFactButton.trailingAnchor.constraint(equalTo: linkedFactInfoButton.leadingAnchor, constant: -10).isActive = true
+        cancelLinkedFactButton.widthAnchor.constraint(equalToConstant: 22).isActive = true
+        cancelLinkedFactButton.heightAnchor.constraint(equalToConstant: 22).isActive = true
+        cancelLinkedFactButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: distributionLabelHeight/2).isActive = true
+        
+        self.view.addSubview(linkedFactView)
+        linkedFactView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 1).isActive = true
+        linkedFactView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+        linkedFactView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        linkedFactView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight+distributionLabelHeight).isActive = true
+        
+        
+        // OptionView
         optionView.addSubview(optionButton)
         optionButton.topAnchor.constraint(equalTo: optionView.topAnchor, constant: 5).isActive = true
         optionButton.leadingAnchor.constraint(equalTo: optionView.leadingAnchor, constant: 10).isActive = true
@@ -842,16 +987,18 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         optionStackView.addArrangedSubview(markPostView)
         optionStackView.addArrangedSubview(postAnonymousView)
-        optionStackView.addArrangedSubview(addFactButton)
         
         optionView.addSubview(optionStackView)
         optionStackView.leadingAnchor.constraint(equalTo: optionView.leadingAnchor).isActive = true
         optionStackView.trailingAnchor.constraint(equalTo: optionView.trailingAnchor).isActive = true
         optionStackView.topAnchor.constraint(equalTo: optionButton.bottomAnchor, constant: 3).isActive = true
         optionStackView.bottomAnchor.constraint(equalTo: optionView.bottomAnchor, constant: -5).isActive = true
+        stackViewHeight = optionStackView.heightAnchor.constraint(equalToConstant: 0)
+        stackViewHeight!.isActive = true
                 
+        
         self.view.addSubview(optionView)
-        optionView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 1).isActive = true
+        optionView.topAnchor.constraint(equalTo: linkedFactView.bottomAnchor, constant: 1).isActive = true
         optionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
         optionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
         optionViewHeight = optionView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight)
@@ -873,17 +1020,17 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
         endView.translatesAutoresizingMaskIntoConstraints = false
         
-        endView.addSubview(blueOwenButton)
-        blueOwenButton.topAnchor.constraint(equalTo: endView.topAnchor, constant: 10).isActive = true
-        blueOwenButton.leadingAnchor.constraint(equalTo: endView.leadingAnchor, constant: 10).isActive = true
-        blueOwenButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        blueOwenButton.widthAnchor.constraint(equalToConstant: 85).isActive = true
-        
-        endView.addSubview(blueOwenImageView)
-        blueOwenImageView.centerYAnchor.constraint(equalTo: blueOwenButton.centerYAnchor).isActive = true
-        blueOwenImageView.leadingAnchor.constraint(equalTo: blueOwenButton.trailingAnchor, constant: 3).isActive = true
-        blueOwenImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        blueOwenImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
+//        endView.addSubview(blueOwenButton)
+//        blueOwenButton.topAnchor.constraint(equalTo: endView.topAnchor, constant: 10).isActive = true
+//        blueOwenButton.leadingAnchor.constraint(equalTo: endView.leadingAnchor, constant: 10).isActive = true
+//        blueOwenButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
+//        blueOwenButton.widthAnchor.constraint(equalToConstant: 85).isActive = true
+//
+//        endView.addSubview(blueOwenImageView)
+//        blueOwenImageView.centerYAnchor.constraint(equalTo: blueOwenButton.centerYAnchor).isActive = true
+//        blueOwenImageView.leadingAnchor.constraint(equalTo: blueOwenButton.trailingAnchor, constant: 3).isActive = true
+//        blueOwenImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
+//        blueOwenImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
 
         self.view.addSubview(endView)
         endView.topAnchor.constraint(equalTo: optionView.bottomAnchor, constant: 1).isActive = true
@@ -1279,7 +1426,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
         if let height = optionViewHeight {
             if height.constant <= defaultOptionViewHeight {
-                height.constant = 165
+                height.constant = 125   //Previously 165
+                stackViewHeight!.isActive = false
                 
                 UIView.animate(withDuration: 0.4, animations: {
                     self.view.layoutIfNeeded()
@@ -1290,6 +1438,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     }
                 }
             } else {
+                stackViewHeight = optionStackView.heightAnchor.constraint(equalToConstant: 0)
+                stackViewHeight!.isActive = true
+                
                 height.constant = defaultOptionViewHeight
                 
                 UIView.animate(withDuration: 0.4, animations: {
@@ -1306,8 +1457,26 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         performSegue(withIdentifier: "searchFactsSegue", sender: nil)
     }
     
+    @objc func cancelLinkedFactTapped() {
+        distributionInformationLabel.text = "Feed"
+        distributionInformationImageView.image = UIImage(named: "Feed")
+        
+        cancelLinkedFactButton.isHidden = true
+        addedFactImageView.removeFromSuperview()
+        addedFactDescriptionLabel.removeFromSuperview()
+        
+        self.linkedFact = nil
+        self.postOnlyInTopic = false
+        
+        addFactButton.isHidden = false
+    }
+    
     @objc func markPostInfoButtonPressed() {
         EasyTipView.show(forView: optionView, text: Constants.texts.markPostText)
+    }
+    
+    @objc func linkedFactInfoButtonTapped() {
+        EasyTipView.show(forView: linkedFactView, text: "Standardmäßig postest du im Imagine-Feed (Den Haupt-Feed, nachdem du die App öffnest). \nPoste hier alles, was du mit der Welt teilen möchtest.\n\nWählst du ein Thema aus, kannst du entscheiden, ob du deinen Beitrag im Imagine-Feed teilst, oder nur im Thema. Die Follower eines Themas sehen dann deinen Beitrag (ganz bald jedenfalls) in ihrem angepassten Imagine-Feed.\nPoste im Thema also alles, was sehr Themenspezifisch oder nicht für die breite Masse zugänglich ist.")
     }
     
     @objc func postAnonymousButtonPressed() {
@@ -1510,7 +1679,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             var userID = ""
             
             let postRef: DocumentReference?
-            if comingFromAddOnVC {
+            if comingFromAddOnVC || postOnlyInTopic {
                 postRef = db.collection("TopicPosts").document() //Wie frage ich nach ob ich die im normalen oder in dem ref finde?
             } else {
                 postRef = db.collection("Posts").document()
@@ -1980,7 +2149,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             var data: [String: Any] = ["createTime": self.getDate()]
             
-            if self.comingFromAddOnVC {
+            if self.comingFromAddOnVC || postOnlyInTopic {
                 data["type"] = "topicPost"  // To fetch in a different ref when loading the posts of the topic
             }
             
@@ -2016,7 +2185,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                             userRef.setData(data)
                         }
                     } else {
-                        if self.comingFromAddOnVC {
+                        if self.comingFromAddOnVC || self.postOnlyInTopic {
                             data["isTopicPost"] = true  // To fetch in a different ref when loading the posts of the topic
                         }
                         userRef.setData(data)      // add the post to the user
@@ -2095,11 +2264,14 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 self.addedFactDescriptionLabel.text?.removeAll()
                 self.addedFactImageView.image = nil
                 self.addedFactImageView.layer.borderColor = UIColor.clear.cgColor
+                self.cancelLinkedFactTapped()
                 
                 self.titleTextView.resignFirstResponder()
                 self.descriptionTextView.resignFirstResponder()
                 self.linkTextField.resignFirstResponder()
                 self.locationTextField.resignFirstResponder()
+                
+                
                 
                 
                 Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.donePosting), userInfo: nil, repeats: false)
@@ -2158,11 +2330,30 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
 
     @objc func donePosting() {
         if comingFromPostsOfFact {
-            self.dismiss(animated: true, completion: nil)
+            self.dismiss(animated: true) {
+                self.newInstanceDelegate?.finishedCreatingNewInstance(item: nil)
+            }
         } else {
             delegate?.posted()
             tabBarController?.selectedIndex = 0
         }
+    }
+    
+    func showShareAlert() {
+        let shareAlert = UIAlertController(title: "Wo möchtest du posten?", message: "Möchtest du den Beitrag mit allen im Hauptfeed teilen, oder nur im Thema posten?", preferredStyle: .actionSheet)
+        
+        shareAlert.addAction(UIAlertAction(title: "Mit allen teilen", style: .default, handler: { (_) in
+            
+        }))
+        shareAlert.addAction(UIAlertAction(title: "Nur im Thema posten", style: .default, handler: { (_) in
+            
+            self.distributionInformationLabel.text = "Thema"
+            self.distributionInformationImageView.image = UIImage(named: "topicIcon")
+            self.postOnlyInTopic = true
+            
+        }))
+        
+        self.present(shareAlert, animated: true, completion: nil)
     }
     
     func getTagsToSave() -> [String] {
@@ -2215,31 +2406,35 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
 }
 
 extension NewPostViewController: LinkFactWithPostDelegate {
-    func selectedFact(fact: Fact, closeMenu: Bool) {    // Link Fact with post - When posting, from postsOfFactTableVC and from OptionalInformationTableVC
+    
+    func selectedFact(fact: Fact, isViewAlreadyLoaded: Bool) {    // Link Fact with post - When posting, from postsOfFactTableVC and from OptionalInformationTableVC
         
         self.linkedFact = fact
         
-        if closeMenu {  // Means it is coming from the selection of a topic to link with, so the view is already loaded, so it doesnt crash
+        if isViewAlreadyLoaded {  // Means it is coming from the selection of a topic to link with, so the view is already loaded, so it doesnt crash
             showLinkedFact(fact: fact)
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.optionButtonTapped()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { //I know, I know
+                self.showShareAlert()
             }
         }
-        
     }
     
     func showLinkedFact(fact: Fact) {
-        optionView.addSubview(addedFactImageView)
-        addedFactImageView.topAnchor.constraint(equalTo: optionView.topAnchor, constant: 5).isActive = true
-        addedFactImageView.trailingAnchor.constraint(equalTo: optionView.trailingAnchor, constant: -20).isActive = true
-        addedFactImageView.widthAnchor.constraint(equalToConstant: defaultOptionViewHeight-10).isActive = true
-        addedFactImageView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-10).isActive = true
         
-        optionView.addSubview(addedFactDescriptionLabel)
+        addFactButton.isHidden = true
+        cancelLinkedFactButton.isHidden = false
+        
+        linkedFactView.addSubview(addedFactImageView)
+        addedFactImageView.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: 10).isActive = true
+        addedFactImageView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-10).isActive = true
+        addedFactImageView.trailingAnchor.constraint(equalTo: cancelLinkedFactButton.leadingAnchor, constant: -10).isActive = true
+        addedFactImageView.widthAnchor.constraint(equalToConstant: defaultOptionViewHeight-10).isActive = true
+        
+        linkedFactView.addSubview(addedFactDescriptionLabel)
         addedFactDescriptionLabel.centerYAnchor.constraint(equalTo: addedFactImageView.centerYAnchor).isActive = true
         addedFactDescriptionLabel.trailingAnchor.constraint(equalTo: addedFactImageView.leadingAnchor, constant: -10).isActive = true
-        addedFactDescriptionLabel.leadingAnchor.constraint(equalTo: anonymousNameLabel.trailingAnchor, constant: -2).isActive = true
+//        addedFactDescriptionLabel.leadingAnchor.constraint(equalTo: addFactButton.trailingAnchor, constant: -2).isActive = true
         
         if let url = URL(string: fact.imageURL) {
             addedFactImageView.sd_setImage(with: url, completed: nil)

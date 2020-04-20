@@ -500,7 +500,7 @@
                                                 <action selector="displayOptionButtonTapped:" destination="7BU-HE-H8k" eventType="touchUpInside" id="7Wz-7a-A8V"/>
                                             </connections>
                                         </button>
-                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bu3-6c-eS9" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bu3-6c-eS9" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                             <rect key="frame" x="325" y="5" width="25" height="30"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="25" id="pEl-u7-7sj"/>
@@ -550,7 +550,7 @@
                                     </connections>
                                 </button>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Posts: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NL8-ft-2cQ">
-                                    <rect key="frame" x="15" y="117" width="36" height="12"/>
+                                    <rect key="frame" x="15" y="117" width="37.5" height="12"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="12" id="jNQ-US-Bal"/>
                                     </constraints>
@@ -559,7 +559,7 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Follower:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iBT-VH-4Do">
-                                    <rect key="frame" x="15" y="100" width="50" height="12"/>
+                                    <rect key="frame" x="15" y="100" width="49" height="12"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="12" id="T3p-9h-doJ"/>
                                     </constraints>

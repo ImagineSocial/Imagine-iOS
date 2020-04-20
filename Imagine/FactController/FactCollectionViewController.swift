@@ -12,7 +12,7 @@ import Firebase
 private let factCellIdentifier = "FactCell"
 
 protocol LinkFactWithPostDelegate {
-    func selectedFact(fact: Fact, closeMenu: Bool)
+    func selectedFact(fact: Fact, isViewAlreadyLoaded: Bool)
 }
 
 protocol TopOfCollectionViewDelegate {
@@ -439,7 +439,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     //MARK: LinkFactAndPost
     
     func setFactForPost(fact: Fact) {
-        delegate?.selectedFact(fact: fact, closeMenu: true)
+        delegate?.selectedFact(fact: fact, isViewAlreadyLoaded: true) // True becaus
         
         //Can be a opt. Info!
         closeAndDismiss()

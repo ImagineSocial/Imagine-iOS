@@ -563,8 +563,10 @@ class PostsOfFactTableViewController: UITableViewController {
             if let fact = sender as? Fact {
                 if let navCon = segue.destination as? UINavigationController {
                     if let newPostVC = navCon.topViewController as? NewPostViewController {
-                        newPostVC.selectedFact(fact: fact, closeMenu: false)
+                        newPostVC.selectedFact(fact: fact, isViewAlreadyLoaded: false)
                         newPostVC.comingFromPostsOfFact = true
+                        newPostVC.postOnlyInTopic = true
+                        newPostVC.newInstanceDelegate = self
                     }
                 }
             }
@@ -575,7 +577,13 @@ class PostsOfFactTableViewController: UITableViewController {
     
 }
 
-extension PostsOfFactTableViewController: PostCellDelegate {
+extension PostsOfFactTableViewController: PostCellDelegate, NewFactDelegate {
+    
+    func finishedCreatingNewInstance(item: Any?) {
+        self.posts.removeAll()
+        self.tableView.reloadData()
+        self.getPosts()
+    }
     
     func collectionViewTapped(post: Post) {
         performSegue(withIdentifier: "showPost", sender: post)
