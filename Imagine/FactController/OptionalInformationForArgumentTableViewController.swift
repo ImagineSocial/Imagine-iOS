@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import EasyTipView
 
 enum AddOnType {
     case normal
@@ -33,8 +34,6 @@ class ProposalForOptionalInformation {
 class OptionalInformationForArgumentTableViewController: UITableViewController {
     
     var optionalInformations = [OptionalInformation]()
-//    var selectedOption: OptionalInformationType = .diy
-    
     var addOnDocumentID: String?
     
     let db = Firestore.firestore()
@@ -55,12 +54,14 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
     let reuseIdentifier = "CollectionViewInTableViewCell"
     let proposalCellIdentifier = "ProposalCell"
     let addSectionReuseIdentifier = "AddSectionCell"
+    let infoHeaderReuseIdentifier = "InfoHeaderAddOnCell"
     
     let addPostVC = AddPostTableViewController()
     
+    var tipView: EasyTipView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         if noOptionalInformation {
             self.exampleButton.isHidden = true
         }
@@ -68,9 +69,10 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
         tableView.register(UINib(nibName: "CollectionViewInTableViewCell", bundle: nil), forCellReuseIdentifier: reuseIdentifier)
         tableView.register(ProposalCell.self, forCellReuseIdentifier: proposalCellIdentifier)
         tableView.register(AddFactCell.self, forCellReuseIdentifier: addSectionReuseIdentifier)
+        tableView.register(UINib(nibName: "InfoHeaderAddOnCell", bundle: nil), forCellReuseIdentifier: infoHeaderReuseIdentifier)
         tableView.separatorColor = .clear
         
-        
+        self.tableView.estimatedSectionHeaderHeight = 50
         
         let layer = addSectionButton.layer
         layer.cornerRadius = 6
@@ -82,6 +84,12 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
         layer.borderWidth = 0.75
         
         exampleButton.imageView?.contentMode = .scaleAspectFit
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
     }
     
     //MARK:- Get Data
@@ -107,13 +115,25 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                     for document in snap.documents {
                         let data = document.data()
                         
-                        guard let title = data["title"] as? String, let description = data["description"] as? String else {
-                            return
+                        if let title = data["title"] as? String, let description = data["description"] as? String {
+                            let addOn = OptionalInformation(headerTitle: title, description: description, documentID: document.documentID, fact: self.fact!)
+                            self.optionalInformations.append(addOn)
+                            
+                        } else {
+                            guard let description = data["headerDescription"] as? String else { return }
+                            var intro: String?
+                            var source: String?
+                            if let introSentence = data["headerIntro"] as? String {
+                                intro = introSentence
+                            }
+                            if let moreInfo = data["moreInformationLink"] as? String {
+                                source = moreInfo
+                            }
+                            
+                            let addOn = OptionalInformation(introSentence: intro, description: description, moreInformationLink: source)
+                            self.optionalInformations.insert(addOn, at: 0)  // Should be on top of the vc
                         }
                         
-                        let addOn = OptionalInformation(headerTitle: title, description: description, documentID: document.documentID, fact: self.fact!)
-                        
-                        self.optionalInformations.append(addOn)
                         self.tableView.reloadData()
                     }
                 }
@@ -168,12 +188,22 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             
             let info = optionalInformations[indexPath.section]
             
-            if let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as? CollectionViewInTableViewCell {
-                
-                cell.info = info
-                cell.delegate = self
-                
-                return cell
+            if let addOnHeader = info.addOnInfoHeader {
+                if let cell = tableView.dequeueReusableCell(withIdentifier: infoHeaderReuseIdentifier, for: indexPath) as? InfoHeaderAddOnCell {
+                    cell.addOnInfo = addOnHeader
+                    cell.delegate = self
+                    
+                    return cell
+                }
+            } else {
+                if let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as? CollectionViewInTableViewCell {
+                    
+                    // if whatever { cell.isPagingEnabled = true
+                    cell.info = info
+                    cell.delegate = self
+                    
+                    return cell
+                }
             }
         }
         
@@ -181,35 +211,24 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
         
-        let label = UILabel()
-        label.frame = CGRect(x: 10, y: 5, width: headerView.frame.width-10, height: headerView.frame.height-10)
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 22)
-        label.minimumScaleFactor = 0.5
-        label.adjustsFontSizeToFitWidth = true
-        
-        headerView.addSubview(label)
-        
-        if noOptionalInformation {
-            label.text = "Erweitere das Thema"
+        if !noOptionalInformation {
+            let optInfo = optionalInformations[section]
+            
+            if let _ = optInfo.addOnInfoHeader {
+                return nil
+            } else {
+                
+                let headerView = AddOnHeaderView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
+                
+                let info = optionalInformations[section]
+                headerView.initHeader(noOptionalInformation: noOptionalInformation, info: info)
+                headerView.delegate = self
+                
+                return headerView
+            }
         } else {
-            let info = optionalInformations[section]
-            label.text = info.headerTitle
-        }
-        return headerView
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 40
-    }
-    
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if noOptionalInformation {
-            return UITableView.automaticDimension
-        } else {
-            return 270
+            return nil
         }
     }
     
@@ -223,6 +242,41 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
         }
         
         return nil
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        
+        if !noOptionalInformation {
+            let optInfo = optionalInformations[section]
+            
+            if let _ = optInfo.addOnInfoHeader {
+                return 0
+            } else {
+                //40
+                return UITableView.automaticDimension
+            }
+        } else {
+            return 0
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
+        return 50
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        
+        if noOptionalInformation {
+            return UITableView.automaticDimension
+        } else {
+            let info = optionalInformations[indexPath.section]
+            if info.addOnInfoHeader == nil {
+                return 270
+            } else {
+                return UITableView.automaticDimension
+            }
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -345,7 +399,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                 if let newPostVC = navCon.topViewController as? NewPostViewController {
                     print("Going to newPostSegue")
                     newPostVC.comingFromAddOnVC = true
-                    newPostVC.selectedFact(fact: self.fact!, closeMenu: false)
+                    newPostVC.selectedFact(fact: self.fact!, isViewAlreadyLoaded: false)
                     newPostVC.addItemDelegate = self
                 }
             }
@@ -361,15 +415,18 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             }
         }
         if segue.identifier == "toNewAddOnSegue" {
-            if let navCon = segue.destination as? UINavigationController {
-                if let vc = navCon.topViewController as? NewFactViewController {
-                    if let fact = sender as? Fact {
-                        vc.new = .addOn
-                        vc.fact = fact
-                        vc.delegate = self
-                    }
+            if let vc = segue.destination as? NewAddOnTableViewController {
+                if let fact = sender as? Fact {
+                    vc.fact = fact
+                    vc.delegate = self
                 }
             }
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let tipView = tipView {
+            tipView.dismiss()
         }
     }
     
@@ -400,6 +457,26 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
     @IBOutlet weak var footerViewPickerView: UIPickerView!
     @IBOutlet weak var exampleButton: DesignableButton!
     @IBOutlet weak var addSectionButton: DesignableButton!
+    
+}
+
+extension OptionalInformationForArgumentTableViewController: AddOnHeaderDelegate, InfoHeaderAddOnCellDelegate {
+    
+    func linkTapped(link: String) {
+        if let url = URL(string: link) {
+            UIApplication.shared.open(url)
+        }
+    }
+    
+    func showDescription(description: String, view: UIView) {
+        tipView = EasyTipView(text: description)
+        tipView!.show(forView: view)
+    }
+    
+    func showAllPosts(documentID: String) {
+        self.alert(message: "Diese funktion muss noch programmiert werden, schreib Imagine ruhig ne Nachricht, dass die sich gefälligst mal beeilen sollen^^")
+    }
+    
     
 }
 
@@ -494,5 +571,3 @@ class OptionalInfoFooterView: UITableViewHeaderFooterView {
     
     
 }
-
-

@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import FirebaseFirestore
 import FirebaseAuth
+import EasyTipView
 
 enum NewFactType {
     case fact
@@ -17,6 +18,7 @@ enum NewFactType {
     case deepArgument
     case source
     case addOn
+    case addOnHeader
 }
 
 enum ArgumentType {
@@ -48,15 +50,20 @@ class NewFactViewController: UIViewController {
     @IBOutlet weak var addSourceLabel: UILabel!
     @IBOutlet weak var sourceLabel: UILabel!
     @IBOutlet weak var doneButton: UIBarButtonItem!
+    @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var titleTextField: UITextView!
     @IBOutlet weak var proContraSegmentedControl: UISegmentedControl!
     @IBOutlet weak var seperatorView3: UIView!
+    @IBOutlet weak var titleCharacterCountLabel: UILabel!
+    @IBOutlet weak var descriptionCharacterCountLabel: UILabel!
     
     var fact: Fact?
     var argument: Argument?
     var proOrContra:ArgumentType = .pro
     var new: NewFactType = .argument
     var deepArgument: Argument?
+    
+    var tipView: EasyTipView?
     
     let db = Firestore.firestore()
     
@@ -66,6 +73,19 @@ class NewFactViewController: UIViewController {
     let factDescription = "Das Thema wird in zwei Spalten dargestellt. Die Gegenüberstellung ermöglicht es sich mit dem Thema gründlich auseinanderzusetzen. \nDie Auswahl der Überschriften der Spalten kannst du hier auswählen:"
     let topicDescripton = "Das Thema wird als Sammlung aller verlinkten Beiträge zu diesem Thema dargestellt."
     
+    let factTitleCharacterLimit = 30
+    let factDescriptionCharacterLimit = 120
+    
+    let argumentTitleCharacterLimit = 85
+    
+    let sourceTitleCharacterLimit = 50
+    
+    let addOnTitleCharacterLimit = 50
+    let addOnDescriptionCharacterLimit = 300
+    
+    let addOnHeaderTitleCharacterLimit = 50
+    let addOnHeaderDescriptionCharacterLimit = 400
+    
     var pickedFactDisplayNames: FactDisplayName = .proContra
     var pickedDisplayOption: DisplayOption = .fact
     
@@ -73,6 +93,9 @@ class NewFactViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        titleTextField.delegate = self
+        descriptionTextView.delegate = self
         
         newFactDisplayPicker.delegate = self
         newFactDisplayPicker.dataSource = self
@@ -84,15 +107,28 @@ class NewFactViewController: UIViewController {
         
         
         descriptionTextView.layer.cornerRadius = 3
-//        descriptionTextView.backgroundColor = Constants.backgroundColorForTableViews
 
         setUI()
                 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
     }
     
-    //MARK: -UI
+    override func viewWillAppear(_ animated: Bool) {
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    //MARK:- Setup
     
     func setUI() {
         switch new {
@@ -101,7 +137,11 @@ class NewFactViewController: UIViewController {
             addSourceLabel.isHidden = true
             sourceLabel.isHidden = true
             seperatorView3.isHidden = true
+            
+            
+            titleCharacterCountLabel.text = String(argumentTitleCharacterLimit)
         case .argument:
+            titleCharacterCountLabel.text = String(argumentTitleCharacterLimit)
             
             if let fact = fact {
                 switch fact.factDisplayNames {
@@ -130,9 +170,15 @@ class NewFactViewController: UIViewController {
             addSourceLabel.isHidden = false
             sourceLabel.isHidden = true
         case .source:
+            titleCharacterCountLabel.text = String(sourceTitleCharacterLimit)
+            
             sourceTextField.isHidden = false
             headerLabel.text = "Teile deine Quelle mit uns!"
         case .fact:
+            titleCharacterCountLabel.text = String(factTitleCharacterLimit)
+            descriptionCharacterCountLabel.text = String(factDescriptionCharacterLimit)
+            
+            descriptionCharacterCountLabel.isHidden = false
             seperatorView3.isHidden = true
             sourceLabel.isHidden = true
             headerLabel.text = "Erstelle einen neuen Fakt"
@@ -140,80 +186,38 @@ class NewFactViewController: UIViewController {
             
             setNewFactDisplayOptions()
         case .addOn:
+            titleCharacterCountLabel.text = String(addOnTitleCharacterLimit)
+            descriptionCharacterCountLabel.text = String(addOnDescriptionCharacterLimit)
+            
             headerLabel.text = "Teile ein neues AddOn mit deinen Mitmenschen!"
             addSourceLabel.isHidden = true
             sourceLabel.isHidden = true
             seperatorView3.isHidden = true
+            descriptionCharacterCountLabel.isHidden = false
+        case .addOnHeader:
+            titleCharacterCountLabel.text = String(addOnHeaderTitleCharacterLimit)
+            descriptionCharacterCountLabel.text = String(addOnHeaderDescriptionCharacterLimit)
+            
+            headerLabel.text = "Teile einen neuen Header mit deinen Mitmenschen!"
+            sourceLabel.text = "Link zu mehr Informationen (optional):"
+            titleLabel.text = "Kurzes Intro:"
+            sourceTextField.isHidden = false
+            descriptionCharacterCountLabel.isHidden = false
         }
     }
     
-    func setNewFactDisplayOptions() {
-        self.view.addSubview(newTopicDisplayTypeSelection)
-        newTopicDisplayTypeSelection.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10).isActive = true
-        newTopicDisplayTypeSelection.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10).isActive = true
-        newTopicDisplayTypeSelection.topAnchor.constraint(equalTo: descriptionTextView.bottomAnchor, constant: 10).isActive = true
-        newTopicDisplayTypeSelection.heightAnchor.constraint(equalToConstant: 35).isActive = true
-        
-        self.view.addSubview(descriptionImageView)
-        descriptionImageView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10).isActive = true
-        descriptionImageView.widthAnchor.constraint(equalToConstant: 120).isActive = true
-        descriptionImageView.topAnchor.constraint(equalTo: newTopicDisplayTypeSelection.bottomAnchor, constant: 10).isActive = true
-        descriptionImageView.heightAnchor.constraint(equalToConstant: 70).isActive = true
-        
-        self.view.addSubview(descriptionLabel)
-        descriptionLabel.leadingAnchor.constraint(equalTo: descriptionImageView.trailingAnchor, constant: 10).isActive = true
-        descriptionLabel.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10).isActive = true
-        descriptionLabel.topAnchor.constraint(equalTo: newTopicDisplayTypeSelection.bottomAnchor, constant: 10).isActive = true
-        descriptionLabel.bottomAnchor.constraint(equalTo: descriptionImageView.bottomAnchor).isActive = true
-        
-        self.view.addSubview(newFactDisplayPicker)
-        newFactDisplayPicker.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10).isActive = true
-        newFactDisplayPicker.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10).isActive = true
-        newFactDisplayPicker.topAnchor.constraint(equalTo: descriptionImageView.bottomAnchor, constant: 10).isActive = true
-        newFactDisplayPicker.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -25).isActive = true
-    }
     
-    let newTopicDisplayTypeSelection: UISegmentedControl = {
-       let segment = UISegmentedControl()
-        segment.translatesAutoresizingMaskIntoConstraints = false
-        segment.insertSegment(withTitle: "Diskussions-Darstellung", at: 0, animated: false)
-        segment.insertSegment(withTitle: "Themen-Darstellung", at: 1, animated: false)
-        segment.selectedSegmentIndex = 0
-        segment.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
-        
-        return segment
-    }()
-    
-    
-    let newFactDisplayPicker: UIPickerView = {
-       let picker = UIPickerView()
-        picker.translatesAutoresizingMaskIntoConstraints = false
-        picker.showsSelectionIndicator = true
-        
-        return picker
-    }()
-    
-    let descriptionLabel : UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 14)
-        label.numberOfLines = 0
-        label.minimumScaleFactor = 0.3
-        label.adjustsFontSizeToFitWidth = true
-        
-        return label
-    }()
-    
-    let descriptionImageView: UIImageView = {
-       let imgView = UIImageView()
-        imgView.translatesAutoresizingMaskIntoConstraints = false
-        imgView.contentMode = .scaleAspectFit
-        imgView.image = UIImage(named: "FactDisplay")
-        
-        return imgView
-    }()
     
     //MARK:-
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        titleTextField.resignFirstResponder()
+        descriptionTextView.resignFirstResponder()
+        sourceTextField.resignFirstResponder()
+        
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
+    }
     
     @objc func segmentChanged() {
         
@@ -248,20 +252,7 @@ class NewFactViewController: UIViewController {
             print("Wont happen")
         }
     }
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        titleTextField.resignFirstResponder()
-        descriptionTextView.resignFirstResponder()
-        sourceTextField.resignFirstResponder()
-    }
     
-    @IBAction func proContraSegmentChanged(_ sender: Any) {
-        
-        if proContraSegmentedControl.selectedSegmentIndex == 0 {
-            proOrContra = .pro
-        } else {
-            proOrContra = .contra
-        }
-    }
     
     func getProOrContraString() -> String {
         switch proOrContra {
@@ -288,39 +279,48 @@ class NewFactViewController: UIViewController {
         }
     }
     
+    //MARK: - Create Data
     
-    @IBAction func cancelTapped(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
+    func createNewInstance() {
+        switch new {
+        case .argument:
+            createNewArgument()
+        case .deepArgument:
+            createNewDeepArgument()
+        case .fact:
+            createNewFact()
+        case .source:
+            createNewSource()
+        case .addOn:
+            createNewAddOn()
+        case.addOnHeader:
+            createNewAddOnHeader()
+        }
     }
     
-
-    @IBAction func infoButtonTapped(_ sender: Any) {
-        doneButton.showEasyTipView(text: Constants.texts.addArgumentText)
-    }
-    
-    //MARK: - PostNewFact
-    
-    @IBAction func postNewFact(_ sender: Any) {
-
-        if let _ = Auth.auth().currentUser {
-            if titleTextField.text != "" && descriptionTextView.text != "" {
-                switch new {
-                case .argument:
-                    createNewArgument()
-                case .deepArgument:
-                    createNewDeepArgument()
-                case .fact:
-                    createNewFact()
-                case .source:
-                    createNewSource()
-                case .addOn:
-                    createNewAddOn()
-                }
-            } else {
-                self.alert(message: "Gib bitte einen Titel und eine Beschreibung ein", title: "Wir brauchen mehr Informationen")
+    func createNewAddOnHeader() {
+        
+        if let fact = fact {
+            let ref = db.collection("Facts").document(fact.documentID).collection("addOns")
+            
+            let op = Auth.auth().currentUser!
+            
+            var data: [String: Any] = ["OP": op.uid, "headerDescription": descriptionTextView.text]
+            
+            if sourceTextField.text != "" {
+                data["moreInformationLink"] = sourceTextField.text
             }
-        } else {
-            self.notLoggedInAlert()
+            if titleTextField.text != "" {
+                data["headerIntro"] = titleTextField.text
+            }
+            
+            ref.addDocument(data: data) { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    self.finished(item: nil)// Will reload the database in the delegate
+                }
+            }
         }
     }
     
@@ -477,13 +477,191 @@ class NewFactViewController: UIViewController {
         }
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    //MARK:- Buttons
+    @IBAction func postNewFact(_ sender: Any) {
         
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        if let _ = Auth.auth().currentUser {
+            if titleTextField.text != "" && descriptionTextView.text != "" {
+                self.createNewInstance()
+            } else {
+                self.alert(message: "Gib bitte einen Titel und eine Beschreibung ein", title: "Wir brauchen mehr Informationen")
+            }
+        } else {
+            self.notLoggedInAlert()
+        }
     }
     
+    @IBAction func proContraSegmentChanged(_ sender: Any) {
+        
+        if proContraSegmentedControl.selectedSegmentIndex == 0 {
+            proOrContra = .pro
+        } else {
+            proOrContra = .contra
+        }
+    }
+    
+    @IBAction func cancelTapped(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+
+    @IBAction func infoButtonTapped(_ sender: Any) {
+        tipView = EasyTipView(text: Constants.texts.addArgumentText)
+        tipView!.show(forItem: doneButton)
+    }
+    
+    //MARK:- UI
+    
+    func setNewFactDisplayOptions() {
+        self.view.addSubview(newTopicDisplayTypeSelection)
+        newTopicDisplayTypeSelection.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10).isActive = true
+        newTopicDisplayTypeSelection.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10).isActive = true
+        newTopicDisplayTypeSelection.topAnchor.constraint(equalTo: descriptionTextView.bottomAnchor, constant: 10).isActive = true
+        newTopicDisplayTypeSelection.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        
+        self.view.addSubview(descriptionImageView)
+        descriptionImageView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10).isActive = true
+        descriptionImageView.widthAnchor.constraint(equalToConstant: 120).isActive = true
+        descriptionImageView.topAnchor.constraint(equalTo: newTopicDisplayTypeSelection.bottomAnchor, constant: 10).isActive = true
+        descriptionImageView.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        
+        self.view.addSubview(descriptionLabel)
+        descriptionLabel.leadingAnchor.constraint(equalTo: descriptionImageView.trailingAnchor, constant: 10).isActive = true
+        descriptionLabel.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10).isActive = true
+        descriptionLabel.topAnchor.constraint(equalTo: newTopicDisplayTypeSelection.bottomAnchor, constant: 10).isActive = true
+        descriptionLabel.bottomAnchor.constraint(equalTo: descriptionImageView.bottomAnchor).isActive = true
+        
+        self.view.addSubview(newFactDisplayPicker)
+        newFactDisplayPicker.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10).isActive = true
+        newFactDisplayPicker.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10).isActive = true
+        newFactDisplayPicker.topAnchor.constraint(equalTo: descriptionImageView.bottomAnchor, constant: 10).isActive = true
+        newFactDisplayPicker.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -25).isActive = true
+    }
+    
+    let newTopicDisplayTypeSelection: UISegmentedControl = {
+       let segment = UISegmentedControl()
+        segment.translatesAutoresizingMaskIntoConstraints = false
+        segment.insertSegment(withTitle: "Diskussions-Darstellung", at: 0, animated: false)
+        segment.insertSegment(withTitle: "Themen-Darstellung", at: 1, animated: false)
+        segment.selectedSegmentIndex = 0
+        segment.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
+        
+        return segment
+    }()
+    
+    
+    let newFactDisplayPicker: UIPickerView = {
+       let picker = UIPickerView()
+        picker.translatesAutoresizingMaskIntoConstraints = false
+        picker.showsSelectionIndicator = true
+        
+        return picker
+    }()
+    
+    let descriptionLabel : UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans", size: 14)
+        label.numberOfLines = 0
+        label.minimumScaleFactor = 0.3
+        label.adjustsFontSizeToFitWidth = true
+        
+        return label
+    }()
+    
+    let descriptionImageView: UIImageView = {
+       let imgView = UIImageView()
+        imgView.translatesAutoresizingMaskIntoConstraints = false
+        imgView.contentMode = .scaleAspectFit
+        imgView.image = UIImage(named: "FactDisplay")
+        
+        return imgView
+    }()
+    
+}
+
+extension NewFactViewController: UITextViewDelegate {
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        
+        if textView == titleTextField {  // No lineBreaks in titleTextView
+            guard text.rangeOfCharacter(from: CharacterSet.newlines) == nil else {
+                return descriptionTextView.becomeFirstResponder()   // Switch to description when "continue" is hit on keyboard
+            }
+            
+            switch new { // Title no longer than x characters
+            case .fact:
+                return textView.text.count + (text.count - range.length) <= factTitleCharacterLimit
+            case .addOn:
+                return textView.text.count + (text.count - range.length) <= addOnTitleCharacterLimit
+            case .addOnHeader:
+                return textView.text.count + (text.count - range.length) <= addOnHeaderTitleCharacterLimit
+            case .argument:
+                return textView.text.count + (text.count - range.length) <= argumentTitleCharacterLimit
+            case .deepArgument:
+                return textView.text.count + (text.count - range.length) <= argumentTitleCharacterLimit
+            case .source:
+                return textView.text.count + (text.count - range.length) <= sourceTitleCharacterLimit
+            }
+            
+        } else if textView == descriptionTextView {
+            
+            switch new { // Title no longer than x characters
+            case .fact:
+                return textView.text.count + (text.count - range.length) <= factDescriptionCharacterLimit
+            case .addOn:
+                return textView.text.count + (text.count - range.length) <= addOnDescriptionCharacterLimit
+            case .addOnHeader:
+                return textView.text.count + (text.count - range.length) <= addOnHeaderDescriptionCharacterLimit
+            default:
+                print("No Limit")
+                return true
+            }
+        }
+        
+        return true
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        
+        if textView == titleTextField {
+            switch new { // Title no longer than x characters
+            case .fact:
+                let characterLeft = factTitleCharacterLimit-textView.text.count
+                self.titleCharacterCountLabel.text = String(characterLeft)
+            case .addOn:
+                let characterLeft = addOnTitleCharacterLimit-textView.text.count
+                self.titleCharacterCountLabel.text = String(characterLeft)
+            case .addOnHeader:
+                let characterLeft = addOnHeaderTitleCharacterLimit-textView.text.count
+                self.titleCharacterCountLabel.text = String(characterLeft)
+            case .argument:
+                let characterLeft = argumentTitleCharacterLimit-textView.text.count
+                self.titleCharacterCountLabel.text = String(characterLeft)
+            case .deepArgument:
+                let characterLeft = argumentTitleCharacterLimit-textView.text.count
+                self.titleCharacterCountLabel.text = String(characterLeft)
+            case .source:
+                let characterLeft = sourceTitleCharacterLimit-textView.text.count
+                self.titleCharacterCountLabel.text = String(characterLeft)
+            }
+        } else {    // DescriptionTextView
+            switch new { // Title no longer than x characters
+            case .fact:
+                let characterLeft = factDescriptionCharacterLimit-textView.text.count
+                self.descriptionCharacterCountLabel.text = String(characterLeft)
+            case .addOn:
+                let characterLeft = addOnDescriptionCharacterLimit-textView.text.count
+                self.descriptionCharacterCountLabel.text = String(characterLeft)
+            case .addOnHeader:
+                let characterLeft = addOnHeaderDescriptionCharacterLimit-textView.text.count
+                self.descriptionCharacterCountLabel.text = String(characterLeft)
+            default:
+                print("No Limit")
+                
+            }
+        }
+    }
 }
 
 extension NewFactViewController : UIPickerViewDelegate, UIPickerViewDataSource {
