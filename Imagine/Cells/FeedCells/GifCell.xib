@@ -27,7 +27,16 @@
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yGu-Wr-egj">
                         <rect key="frame" x="5" y="112" width="412" height="175"/>
+                        <subviews>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="0eP-AP-48u">
+                                <rect key="frame" x="196" y="77.5" width="20" height="20"/>
+                            </activityIndicatorView>
+                        </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="0eP-AP-48u" firstAttribute="centerY" secondItem="yGu-Wr-egj" secondAttribute="centerY" id="23m-TJ-7mj"/>
+                            <constraint firstItem="0eP-AP-48u" firstAttribute="centerX" secondItem="yGu-Wr-egj" secondAttribute="centerX" id="fgk-EZ-Ihc"/>
+                        </constraints>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999998807907104" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KaD-cK-a1w">
                         <rect key="frame" x="10" y="47" width="402" height="60"/>
@@ -244,6 +253,7 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="OPNameLabel" destination="xGw-jt-Crf" id="y5F-Vo-ezX"/>
+                <outlet property="activityIndicatorView" destination="0eP-AP-48u" id="w6K-6v-wDf"/>
                 <outlet property="createDateLabel" destination="FUi-G9-xa2" id="025-si-vU0"/>
                 <outlet property="factImageView" destination="DEp-5d-s4N" id="6z9-8W-Uzt"/>
                 <outlet property="followTopicImageView" destination="WTr-Dd-cJI" id="Nap-uG-zTw"/>

@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import EasyTipView
 
 private let factCellIdentifier = "FactCell"
 
@@ -47,7 +48,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     var delegate: LinkFactWithPostDelegate?
     var addItemDelegate: AddItemDelegate?
     
-//    var optionalInformationType: OptionalInformationType = .guilty
+    var tipView: EasyTipView?
     
     let collectionViewSpacing:CGFloat = 30
     let searchController = UISearchController(searchResultsController: nil)
@@ -104,6 +105,15 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     
     override func viewWillDisappear(_ animated: Bool) {
         self.navigationController?.navigationBar.isTranslucent = false
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
     }
     
     func setDismissButton() {
@@ -433,7 +443,8 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
 
 
     @IBAction func infoButtonTapped(_ sender: Any) {
-        infoButton.showEasyTipView(text: Constants.texts.factOverviewText)
+        tipView = EasyTipView(text: Constants.texts.factOverviewText)
+        tipView!.show(forItem: infoButton)
     }
     
     //MARK: LinkFactAndPost

@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import FirebaseFirestore
 import FirebaseAuth
+import EasyTipView
 
 class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     
@@ -33,6 +34,7 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     var fact: Fact?
     
     let db = Firestore.firestore()
+    var tipView: EasyTipView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,6 +57,10 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         if let view = floatingCommentView {
             view.removeFromSuperview()
+        }
+        
+        if let tipView = tipView {
+            tipView.dismiss()
         }
     }
     
@@ -190,7 +196,14 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        infoButton.showEasyTipView(text: Constants.texts.argumentDetailText)
+        tipView = EasyTipView(text: Constants.texts.argumentDetailText)
+        tipView!.show(forItem: infoButton)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
     }
 }
 

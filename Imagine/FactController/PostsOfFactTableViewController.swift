@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import AVKit
+import EasyTipView
 
 enum TableViewDisplayOptions {
     case small
@@ -39,6 +40,7 @@ class PostsOfFactTableViewController: UITableViewController {
     let factParentVC = FactParentContainerViewController()
     let radius:CGFloat = 6
     
+    var tipView: EasyTipView?
     
     var isMainViewController = true
     
@@ -91,6 +93,18 @@ class PostsOfFactTableViewController: UITableViewController {
             headerSeparatorView.alpha = 0
             followerCountLabel.isHidden = true
             postCountLabel.isHidden = true
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let tipView = tipView {
+            tipView.dismiss()
         }
     }
     
@@ -504,7 +518,8 @@ class PostsOfFactTableViewController: UITableViewController {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        infoButton.showEasyTipView(text: Constants.texts.postOfFactText)
+        tipView = EasyTipView(text: Constants.texts.postOfFactText)
+        tipView!.show(forItem: infoButton)
     }
     
     @IBAction func newPostTapped(_ sender: Any) {

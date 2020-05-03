@@ -34,3 +34,17 @@
 "Child of earth, what is your name?" = "Kind der Erde, welchen Namen haben dir deine Eltern zugewiesen?";
 "Glad to meet you %@. What is the name of your family?" = "Freut mich dich kennenzulernen %@. Welchen Namen führt deine Familie?";
 "BSImagePicker.Done" = "Fertig";
+"enter first name" = "Schön, dass du hier bist! Wie lautet dein Vorname?";
+"enter second name" = "Freut mich dich kennenzulernen %@. Wie ist dein Nachname?";
+"enter email" = "Wie ist deine Email-Adresse?";
+"enter password" = "Was soll dein Passwort sein?";
+"password must be safe" = "Das Passwort muss mindestens 6 Zeichen haben, und schon ein bisschen sicher sein!";
+"approve apple rules" = "Stimmst du den Apple Nutzungsbedingungen zu und lädst keine unangebrachten Inhalte hoch?";
+"approve GDPR rules" = "Mit der Registrierung akzeptierst du unsere Datenschutzerklärung und damit die Speicherung und Bearbeitung der eingegebenen Daten nach DSGVO-Vorgaben. Okay?";
+"I agree" = "Ich stimme zu";
+"next" = "Weiter";
+"ready to go" = "Jetzt kannst du loslegen! Schau dich um und vergiss nicht deine E-Mail-Adresse zu bestätigen🙏 (vielleicht im Spam Ordner)";
+"welcome to imagine" = "Herzlich Willkommen bei Imagine. Zu unseren Prinzipien gehören eine respektvolle und positive Stimmung & Respekt gegenüber anderen Meinungen und Ansichten.";
+"need your help" = "Zur Sicherstellung dieser Prinzipien benötigen wir eure Hilfe. Verstöße können bei uns gemeldet werden und werden schnellstmöglich überprüft.";
+"invalid email" = "Die angegebene Email-Adresse scheint nicht korrekt zu sein. Gib sie bitte erneut ein:";
+"email already in use" = "Die Email-Adresse wird bereits bei uns verwendet. Bitte nutze eine andere:";

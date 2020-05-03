@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import FirebaseFirestore
 import FirebaseAuth
+import EasyTipView
 
 class VoteViewController: UIViewController, ReachabilityObserverDelegate {
     
@@ -33,6 +34,8 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
     @IBOutlet weak var costView: UIView!
     @IBOutlet weak var realizationTimeView: UIView!
     
+    var tipView: EasyTipView?
+    
     var vote:Vote?
     let handyHelper = HandyHelper()
     let db = Firestore.firestore()
@@ -49,6 +52,18 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
         impactView.layer.cornerRadius = 4
         costView.layer.cornerRadius = 4
         realizationTimeView.layer.cornerRadius = 4
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
     }
     
     func presentVote() {
@@ -205,6 +220,7 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        infoButton.showEasyTipView(text: Constants.texts.voteDetailText)
+        tipView = EasyTipView(text: Constants.texts.voteDetailText)
+        tipView!.show(forItem: infoButton)
     }
 }

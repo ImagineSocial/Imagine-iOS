@@ -13,6 +13,7 @@ import AVKit
 class GifCell: BaseFeedCell {
     
     @IBOutlet weak var gifView: UIView!
+    @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     
     var avPlayer: AVPlayer?
     var avPlayerLayer: AVPlayerLayer?
@@ -21,6 +22,8 @@ class GifCell: BaseFeedCell {
     
     override func awakeFromNib() {
         selectionStyle = .none
+        
+        activityIndicatorView.hidesWhenStopped = true
         
         self.initiateCell(thanksButton: thanksButton, wowButton: wowButton, haButton: haButton, niceButton: niceButton, factImageView: factImageView, profilePictureImageView: profilePictureImageView)
         
@@ -45,6 +48,8 @@ class GifCell: BaseFeedCell {
         avPlayerLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
         avPlayer?.actionAtItemEnd = .none
         avPlayer?.isMuted = true
+        avPlayer?.addObserver(self, forKeyPath: "timeControlStatus", options: [.old, .new], context: nil)
+        
         
 //        avPlayerLayer?.frame = self.bounds
         self.gifView.layer.addSublayer(avPlayerLayer!)
@@ -60,6 +65,22 @@ class GifCell: BaseFeedCell {
         didSet {
             avPlayer?.replaceCurrentItem(with: self.videoPlayerItem)
             avPlayer?.play()
+        }
+    }
+    
+    override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "timeControlStatus", let change = change, let newValue = change[NSKeyValueChangeKey.newKey] as? Int, let oldValue = change[NSKeyValueChangeKey.oldKey] as? Int {
+            let oldStatus = AVPlayer.TimeControlStatus(rawValue: oldValue)
+            let newStatus = AVPlayer.TimeControlStatus(rawValue: newValue)
+            if newStatus != oldStatus {
+                DispatchQueue.main.async {[weak self] in
+                    if newStatus == .playing || newStatus == .paused {
+                        self?.activityIndicatorView.stopAnimating()
+                    } else {
+                        self?.activityIndicatorView.startAnimating()
+                    }
+                }
+            }
         }
     }
     

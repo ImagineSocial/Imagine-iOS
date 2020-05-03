@@ -31,6 +31,8 @@ class NewCampaignViewController: UIViewController {
     let categories: [CampaignCategory] = [CampaignCategory(title: "Vorschlag", type: .proposal), CampaignCategory(title: "Beschwerde", type: .complaint), CampaignCategory(title: "Aufruf", type: .call), CampaignCategory(title: "Veränderung", type: .change), CampaignCategory(title: "Themen AddOn", type: .topicAddOn)]
     var chosenCategory: CampaignType = .proposal
     
+    var tipView: EasyTipView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -40,22 +42,14 @@ class NewCampaignViewController: UIViewController {
         
     }
     
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         titleTextField.resignFirstResponder()
         shortBodyTextField.resignFirstResponder()
         longBodyTextField.resignFirstResponder()
-    }
-    
-    func getDate() -> Timestamp {
         
-        return Timestamp(date: Date())
-    }
-
-    
-    @objc func keyboardWillHide() {
-        if up {
-            self.view.frame.origin.y += 150
-            self.up = false
+        if let tipView = tipView {
+            tipView.dismiss()
         }
     }
     
@@ -64,6 +58,17 @@ class NewCampaignViewController: UIViewController {
         
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
+    }
+    
+    @objc func keyboardWillHide() {
+        if up {
+            self.view.frame.origin.y += 150
+            self.up = false
+        }
     }
     
     
@@ -87,7 +92,7 @@ class NewCampaignViewController: UIViewController {
             let campaignRef = Firestore.firestore().collection("Campaigns")
             
             let campaignRefDocumentID = campaignRef.document().documentID
-            var dataDictionary: [String: Any] = ["campaignTitle": titleTextField.text, "campaignShortBody": shortBodyTextField.text, "campaignType" : "normal", "category" : getCategoryString(), "campaignExplanation": longBodyTextField.text, "campaignID": campaignRefDocumentID, "campaignCreateTime": getDate(), "campaignSupporter": 0, "campaignOpposition": 0, "voters": [""]]
+            var dataDictionary: [String: Any] = ["campaignTitle": titleTextField.text, "campaignShortBody": shortBodyTextField.text, "campaignType" : "normal", "category" : getCategoryString(), "campaignExplanation": longBodyTextField.text, "campaignID": campaignRefDocumentID, "campaignCreateTime": Timestamp(date: Date()), "campaignSupporter": 0, "campaignOpposition": 0, "voters": [""]]
             
             campaignRef.document(campaignRefDocumentID).setData(dataDictionary) // Glaube macht keinen Unterschied
             
@@ -111,7 +116,8 @@ class NewCampaignViewController: UIViewController {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        doneButton.showEasyTipView(text: Constants.texts.postCampaignText)
+        tipView = EasyTipView(text: Constants.texts.postCampaignText)
+        tipView!.show(forItem: doneButton)
     }
 }
 

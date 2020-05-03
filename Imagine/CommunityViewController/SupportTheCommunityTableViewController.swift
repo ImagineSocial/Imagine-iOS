@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import FirebaseFirestore
 import FirebaseAuth
+import EasyTipView
 
 class SupportTheCommunityTableViewController: UITableViewController {
     
@@ -17,6 +18,8 @@ class SupportTheCommunityTableViewController: UITableViewController {
     
     var jobOffers = [JobOffer]()
     let reuseIdentifier = "SupportTheCommunityCell"
+    
+    var tipView: EasyTipView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +46,17 @@ class SupportTheCommunityTableViewController: UITableViewController {
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
+    }
     
     func getJobOffers() {
         DataHelper().getData(get: .jobOffer) { (jobOffers) in
@@ -130,7 +144,8 @@ class SupportTheCommunityTableViewController: UITableViewController {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        infoButton.showEasyTipView(text: Constants.texts.jobOfferText)
+        tipView = EasyTipView(text: Constants.texts.jobOfferText)
+        tipView!.show(forItem: infoButton)
     }
 }
 

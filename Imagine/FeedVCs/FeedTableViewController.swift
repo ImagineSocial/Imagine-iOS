@@ -175,6 +175,11 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                     post.type = .topTopicCell
                     self.posts.insert(post, at: 0)
                     
+//                    let adpost = Post()
+//                    adpost.title = "ad"
+//                    
+//                    self.posts.insert(adpost, at: 4)
+                    
                     self.tableView.reloadData()
                     self.fetchesPosts = false
                     
@@ -403,7 +408,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     
     func setBlogPostBadge(value: Int) {
         if let tabItems = tabBarController?.tabBar.items {
-            let tabItem = tabItems[4] //Chats
+            let tabItem = tabItems[4] //CommunityCollectionVC
             
             if value != 0 {
                 tabItem.badgeValue = String(value)
@@ -690,10 +695,14 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         var preferences = EasyTipView.Preferences()
         preferences.drawing.font = UIFont(name: "IBMPlexSans", size: 18)!
         preferences.drawing.foregroundColor = UIColor.black
-        preferences.drawing.backgroundColor = UIColor.ios12secondarySystemBackground
+        preferences.drawing.backgroundColor = UIColor.white
         preferences.drawing.arrowPosition = EasyTipView.ArrowPosition.top
         preferences.drawing.textAlignment = .left
         preferences.drawing.cornerRadius = 10
+        preferences.drawing.shadowColor = .lightGray
+        preferences.drawing.shadowOpacity = 1
+        preferences.drawing.shadowOffset = .zero
+        preferences.drawing.shadowRadius = 7
         preferences.positioning.bubbleHInset = 10
         preferences.positioning.bubbleVInset = 10
         preferences.positioning.maxWidth = self.view.frame.width-40

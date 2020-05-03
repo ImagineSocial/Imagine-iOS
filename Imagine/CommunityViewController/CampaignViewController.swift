@@ -12,12 +12,6 @@ import FirebaseFirestore
 import FirebaseAuth
 import EasyTipView
 
-extension UIBarButtonItem {
-    func showEasyTipView(text: String) {
-        EasyTipView.show(forItem: self, text: text)
-    }
-}
-
 class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
 
@@ -36,6 +30,8 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     let db = Firestore.firestore()
     
     var floatingCommentView: CommentAnswerView?
+    
+    var tipView: EasyTipView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,6 +52,16 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         if let view = floatingCommentView {
             view.removeFromSuperview()
+        }
+        
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let tipView = tipView {
+            tipView.dismiss()
         }
     }
     
@@ -198,7 +204,8 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        infoButton.showEasyTipView(text: Constants.texts.campaignDetailText)
+        tipView = EasyTipView(text: Constants.texts.campaignDetailText)
+        tipView!.show(forItem: infoButton)
     }
     
 }

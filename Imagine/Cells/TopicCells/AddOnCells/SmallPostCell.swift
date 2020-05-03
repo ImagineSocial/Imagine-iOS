@@ -41,6 +41,10 @@ class SmallPostCell: UICollectionViewCell {
     func loadPost(postID: String, isTopicPost: Bool) {
         let ref: DocumentReference?
         
+        if postID == "" {   // NewAddOnTableVC
+            return
+        }
+        
         if isTopicPost {
             ref = db.collection("TopicPosts").document(postID)
         } else {

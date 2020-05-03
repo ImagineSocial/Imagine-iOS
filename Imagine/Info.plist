@@ -40,11 +40,11 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Wir würden gerne auf deine Kamera zugreifen um ein Bild zu machen</string>
+	<string>Wir würden gerne auf deine Kamera zugreifen, damit du Bilder für den Feed oder dein Profil machen kannst.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Wir würden gerne das aufgenommene Bild in deinem Fotoalbum speichern</string>
+	<string>Wir würden gerne das aufgenommene Bild in deinem Fotoalbum speichern.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Wir würden gerne auf deine Ordner zugreifen, damit du ein Foto auswählen kannst</string>
+	<string>Wir würden gerne auf deine Ordner zugreifen, damit du ein Foto zum posten auswählen kannst.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Kalam-Regular.ttf</string>

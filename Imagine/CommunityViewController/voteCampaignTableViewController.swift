@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import FirebaseAuth
+import EasyTipView
 
 enum suggestionMode {
     case vote
@@ -36,6 +37,8 @@ class voteCampaignTableViewController: UITableViewController {
     var votes = [Vote]()
     var mode: suggestionMode = .vote
     let dataHelper = DataHelper()
+    
+    var tipView: EasyTipView?
     
     let voteCellIdentifier = "VoteCell"
     
@@ -81,8 +84,16 @@ class voteCampaignTableViewController: UITableViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-//           navigationController?.navigationBar.prefersLargeTitles = true
-       }
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
+    }
     
     lazy var infoScreen: InfoScreen = {
         let infoScreen = InfoScreen()
@@ -286,7 +297,8 @@ class voteCampaignTableViewController: UITableViewController {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        infoButton.showEasyTipView(text: Constants.texts.voteCampaignText)
+        tipView = EasyTipView(text: Constants.texts.voteCampaignText)
+        tipView!.show(forItem: infoButton)
     }
 }
 

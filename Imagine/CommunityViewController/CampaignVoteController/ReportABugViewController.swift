@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import FirebaseFirestore
 import FirebaseAuth
+import EasyTipView
 
 enum BugType {
     case bug
@@ -24,11 +25,19 @@ class ReportABugViewController: UIViewController, UITextViewDelegate {
     var type: BugType = .bug
     let db = Firestore.firestore()
     
+    var tipView: EasyTipView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         reportDescriptionTextView.delegate = self
         reportDescriptionTextView.textColor = .lightGray
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
@@ -41,6 +50,10 @@ class ReportABugViewController: UIViewController, UITextViewDelegate {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         reportDescriptionTextView.resignFirstResponder()
+        
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
     }
     
     @IBAction func doneTapped(_ sender: Any) {
@@ -114,7 +127,8 @@ class ReportABugViewController: UIViewController, UITextViewDelegate {
         }
     }
     @IBAction func infoButtonTapped(_ sender: Any) {
-        doneButton.showEasyTipView(text: Constants.texts.reportBugText)
+        tipView = EasyTipView(text: Constants.texts.reportBugText)
+        tipView!.show(forItem: doneButton)
     }
     
 }

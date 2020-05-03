@@ -731,6 +731,9 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         switch state {
         case .ownProfileWithEditing:
             settingsForPicture.showSettings(for: nil)
+//            if let user = userOfProfile {
+//                performSegue(withIdentifier: "ChangeTheProfileSegue", sender: user)
+//            }
         default:
             // Just show the Image
             let pinchVC = PinchToZoomViewController()
@@ -988,6 +991,13 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                     if fact.displayOption == .topic {
                         factVC.displayMode = .topic
                     }
+                }
+            }
+        }
+        if segue.identifier == "ChangeTheProfileSegue" {
+            if let user = sender as? User {
+                if let vc = segue.destination as? EditProfileViewController {
+                    vc.user = user
                 }
             }
         }

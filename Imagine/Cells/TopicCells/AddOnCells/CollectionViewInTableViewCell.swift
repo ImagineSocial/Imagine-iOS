@@ -15,15 +15,10 @@ protocol CollectionViewInTableViewCellDelegate {
 
 class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegate {
     
-    // OptionalInformationDelegate
-    func done() {
-        collectionView.reloadData()
-    }
-    
-    
     @IBOutlet weak var collectionView: UICollectionView!
     
     var delegate: CollectionViewInTableViewCellDelegate?
+    var isAddOnStoreCell = false
     
     var info: OptionalInformation? {
         didSet {
@@ -39,6 +34,9 @@ class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegat
     let DIYCellIdentifier = "SmallPostCollectionCell"
     let whyGuiltyIdentifier = "SmallFactCell"
     let tableViewIdentifier = "TableViewInCollectionViewCell"
+    
+    let itemCellWidth: CGFloat = 245
+    var itemCellsGap: CGFloat = 10
     
     override func awakeFromNib() {
         
@@ -56,11 +54,21 @@ class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegat
         }
     }
     
+    // OptionalInformationDelegate
+    func done() {
+        collectionView.reloadData()
+    }
+    
 }
 
 extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        if isAddOnStoreCell {
+            let width = (collectionView.frame.width/2)-15   //15 is spacing +insets/2
+            return CGSize(width: width, height: collectionView.frame.height)
+        }
         
         if let info = info {
             if indexPath.item != info.items.count {
@@ -72,17 +80,19 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                         return CGSize(width: 300, height: collectionView.frame.height)
                     }
                 } else {        // Post
-                    return CGSize(width: 245, height: collectionView.frame.height)
+                    return CGSize(width: itemCellWidth, height: collectionView.frame.height)
+//                    return CGSize(width: collectionView.frame.width-40, height: collectionView.frame.height)
                 }
             } else {        // AddItemCell
                 return CGSize(width: 50, height: 50)
             }
         }
+        
+        print("Return wrong size in collectionviewintsableviewcell")
         return CGSize(width: 300, height: collectionView.frame.height)
         
     }
-    
-    
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let info = info else { return 0 }
         
@@ -99,8 +109,11 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                 if let post = item as? Post {
                     if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DIYCellIdentifier, for: indexPath) as? SmallPostCell {
                         
-//                        cell.postID = post.documentID
-                        cell.loadPost(postID: post.documentID, isTopicPost: post.isTopicPost)
+                        if post.documentID != "" {
+                            cell.loadPost(postID: post.documentID, isTopicPost: post.isTopicPost)
+                        } else {    //NewAddOnTableVC
+                            cell.post = post
+                        }
                         
                         if let title = post.addOnTitle {
                             cell.postTitle = title
@@ -114,9 +127,9 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                     
                     if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: whyGuiltyIdentifier, for: indexPath) as? SmallFactCell {
                         
-                        if fact.title != "" {   // Not loaded yet
+                        if fact.title != "" {
                             cell.fact = fact
-                        } else {
+                        } else {    // Not loaded yet
                             cell.factID = fact.documentID
                         }
                         
@@ -161,7 +174,9 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                 }
             } else {
                 // Add NewPost tapped
-                delegate?.newPostTapped(addOnDocumentID: info.documentID)
+                if let documentID = info.documentID {
+                    delegate?.newPostTapped(addOnDocumentID: documentID)
+                }
             }
         }
     }

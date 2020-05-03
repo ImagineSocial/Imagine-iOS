@@ -150,7 +150,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             showPost()
 //            instantiateContainerView()    // Was for the event object
         default:
-            if post.user.displayName == "" {
+            if post.user.displayName == "" && !post.anonym {
                 print("1")
                 var toComments = false
                 if post.toComments {    // Comes from the SideMenu NotifactionCenter
@@ -167,7 +167,10 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                             
                             self.post = post
                             self.post.toComments = toComments
-                            self.checkForData()
+                            self.loadPost()
+                            if post.user.displayName == "" && !post.anonym {
+                                self.loadUser(post: post)
+                            }
                         } else {
                             print("Kein Post bekommen")
                         }
@@ -181,6 +184,23 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
+    var index = 0
+    func loadUser(post: Post) {
+        if post.user.displayName != "" {
+            self.nameLabel.text = post.user.displayName
+            if let url = URL(string: post.user.imageURL) {
+                self.profilePictureImageView.sd_setImage(with: url, completed: nil)
+            }
+        } else {
+            if index <= 15 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.loadUser(post: post)
+                    self.index+=1
+                }
+            }
+        }
+    }
+    
     func loadPost() {
         setupScrollView()
         setupViews()
@@ -189,31 +209,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
 //        instantiateContainerView()// Was for the event object
     }
     
-    
-    
-    var index = 0
-    func checkForData() {
-        print("Check for data")
-        if index < 20 {
-        if post.user.displayName != "" {
-            print("2")
-            self.setupViewController()
-            self.view.layoutSubviews()
-        } else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.index+=1
-                if self.post.anonym {
-                    print("Anonymous Post")
-                    self.loadPost()
-                } else {
-                    self.checkForData()
-                }
-            }
-        }
-        } else {
-            // Alert oder so
-        }
-    }
     
     func checkIfAlreadySaved() {
         if let user = Auth.auth().currentUser {
@@ -1580,7 +1575,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 }
             }
             
-            imageCollectionView.reloadData()    // To load the image, when the data has to be fetched in "checkForData" 
+            imageCollectionView.reloadData()    // To load the image, when the data has to be fetched in "setUpViewController" 
             
         }
         

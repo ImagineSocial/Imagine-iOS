@@ -41,6 +41,8 @@ class FactParentContainerViewController: UIViewController {
     let db = Firestore.firestore()
     let radius:CGFloat = 6
     
+    var tipView: EasyTipView?
+    
     
     //MARK:-
     
@@ -72,7 +74,11 @@ class FactParentContainerViewController: UIViewController {
         }
     }
     
-    
+    override func viewWillDisappear(_ animated: Bool) {
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
+    }
     
     func setDismissButton() {
         let button = DesignableButton()
@@ -274,7 +280,14 @@ class FactParentContainerViewController: UIViewController {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        EasyTipView.show(forView: self.view, text: Constants.texts.argumentOverviewText)
+        tipView = EasyTipView(text: Constants.texts.argumentOverviewText)
+        tipView!.show(forView: self.view)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
     }
     
     

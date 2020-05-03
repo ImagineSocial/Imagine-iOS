@@ -65,6 +65,8 @@ class SmallFactCell: UICollectionViewCell {
     
     var factID: String? {
         didSet {
+            if factID == "" { return }
+            
             let ref = db.collection("Facts").document(factID!)
             
             self.getArguments(documentID: factID!)
@@ -169,6 +171,8 @@ class SmallFactCell: UICollectionViewCell {
     }
     
     func getArguments(documentID: String) {
+        if documentID == "" { return }
+        
         let ref = db.collection("Facts").document(documentID).collection("arguments")
         
         let proRef = ref.whereField("proOrContra", isEqualTo: "pro").order(by: "upvotes", descending: true).limit(to: 1)

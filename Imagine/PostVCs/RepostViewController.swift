@@ -11,6 +11,7 @@ import SDWebImage
 import Firebase
 import FirebaseFirestore
 import FirebaseAuth
+import EasyTipView
 
 enum RepostType {
     case repost
@@ -32,6 +33,8 @@ class RepostViewController: UIViewController {
     var post = Post()
     var repost: RepostType = .repost
     
+    var tipView: EasyTipView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -47,6 +50,16 @@ class RepostViewController: UIViewController {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         titleTranslationTextView.resignFirstResponder()
         descriptionTranslationTextView.resignFirstResponder()
+        
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
     }
     
     func setPost() {
@@ -157,6 +170,7 @@ class RepostViewController: UIViewController {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        shareButton.showEasyTipView(text: Constants.texts.createRepostText)
+        tipView = EasyTipView(text: Constants.texts.createRepostText)
+        tipView!.show(forItem: shareButton)
     }
 }

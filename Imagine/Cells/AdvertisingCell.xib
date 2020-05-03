@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSans-Light.ttf">
+            <string>IBMPlexSans-Light</string>
+        </array>
+        <array key="IBMPlexSans-Medium.ttf">
+            <string>IBMPlexSans-Medium</string>
+        </array>
+        <array key="IBMPlexSans-Regular.ttf">
+            <string>IBMPlexSans</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AdvertisingCell" rowHeight="383" id="2iI-3n-Hnb" customClass="AdvertisingCell" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="449" height="383"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2iI-3n-Hnb" id="0Gx-dh-4di">
+                <rect key="frame" x="0.0" y="0.0" width="449" height="383"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Vorsicht, Ein bisschen Werbung" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="icI-uj-lHD">
+                        <rect key="frame" x="5" y="5" width="439" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="16" id="brX-j6-z7z"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="12"/>
+                        <color key="textColor" red="0.71764705880000002" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="farmsteadIcon" translatesAutoresizingMaskIntoConstraints="NO" id="JeP-yJ-08X" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="10" y="31" width="40" height="40"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="40" id="KPk-0D-aPU"/>
+                            <constraint firstAttribute="width" constant="40" id="xiR-6K-EiB"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="20"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Farmstead" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eNf-xk-Ous">
+                        <rect key="frame" x="60" y="31" width="62.5" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="xfU-U3-KHX"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="13"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nur ein paar Schritte entfernt" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xR2-E5-00B">
+                        <rect key="frame" x="60" y="56" width="129" height="15"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="15" id="sr6-oC-4kx"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="IBMPlexSans-Light" family="IBM Plex Sans" pointSize="10"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="farmstead" translatesAutoresizingMaskIntoConstraints="NO" id="vI7-Cc-Hd3" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="5" y="183" width="439" height="175"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="175" id="jsm-Lg-pOu"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="8"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </imageView>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sj8-J8-Mm8">
+                        <rect key="frame" x="308" y="5" width="136" height="28"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans-Light" family="IBM Plex Sans" pointSize="12"/>
+                        <state key="normal" title="Wieso sehe ich Werbung?"/>
+                    </button>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.84999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="6ZA-Xt-JlB">
+                        <rect key="frame" x="10" y="76" width="429" height="102"/>
+                        <string key="text">Unser neues Mittagsangebot: Hol dir einen Cafe mit unserem Bircher Müsli, FakeAd Edition!  Löse den Imagine Gutschein-Code ein und spare 10% auf deinen Cafe!</string>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wR8-YQ-JIB" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="5" y="298" width="439" height="60"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="trailing" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l8S-qR-CsF" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                <rect key="frame" x="25" y="15" width="389" height="45"/>
+                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
+                                <state key="normal" title="Jetzt den Gutschein einlösen">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                            </button>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="openLinkButton" translatesAutoresizingMaskIntoConstraints="NO" id="50r-Ga-yNX">
+                                <rect key="frame" x="419" y="30" width="15" height="15"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="15" id="DKA-h2-zbM"/>
+                                    <constraint firstAttribute="width" constant="15" id="Dxo-Dn-cug"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="l8S-qR-CsF" secondAttribute="bottom" id="7NN-Da-gaz"/>
+                            <constraint firstItem="l8S-qR-CsF" firstAttribute="top" secondItem="wR8-YQ-JIB" secondAttribute="top" constant="15" id="O68-MF-eRF"/>
+                            <constraint firstAttribute="trailing" secondItem="50r-Ga-yNX" secondAttribute="trailing" constant="5" id="Sxb-Iu-yGE"/>
+                            <constraint firstItem="l8S-qR-CsF" firstAttribute="leading" secondItem="wR8-YQ-JIB" secondAttribute="leading" constant="25" id="joK-hY-3aw"/>
+                            <constraint firstAttribute="height" constant="60" id="nlV-ax-BWs"/>
+                            <constraint firstItem="50r-Ga-yNX" firstAttribute="leading" secondItem="l8S-qR-CsF" secondAttribute="trailing" constant="5" id="oNi-31-D18"/>
+                            <constraint firstItem="50r-Ga-yNX" firstAttribute="centerY" secondItem="l8S-qR-CsF" secondAttribute="centerY" id="wfy-rd-I3b"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="8"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dty-6x-oUJ">
+                        <rect key="frame" x="10" y="363" width="200" height="15"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="15" id="Jqt-hO-Y2c"/>
+                            <constraint firstAttribute="width" constant="200" id="Rje-kt-SEv"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="13"/>
+                        <state key="normal" title="Was ist ein Farmstead? ">
+                            <color key="titleColor" red="0.31537210939999999" green="0.46283984179999998" blue="0.65801352260000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </state>
+                    </button>
+                </subviews>
+                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                <constraints>
+                    <constraint firstItem="eNf-xk-Ous" firstAttribute="top" secondItem="JeP-yJ-08X" secondAttribute="top" id="2Kc-i2-ShK"/>
+                    <constraint firstItem="Dty-6x-oUJ" firstAttribute="leading" secondItem="0Gx-dh-4di" secondAttribute="leading" constant="10" id="3dm-yx-XKm"/>
+                    <constraint firstItem="vI7-Cc-Hd3" firstAttribute="top" secondItem="6ZA-Xt-JlB" secondAttribute="bottom" constant="5" id="GUC-oc-PY3"/>
+                    <constraint firstAttribute="trailing" secondItem="vI7-Cc-Hd3" secondAttribute="trailing" constant="5" id="GpD-XY-Ts1"/>
+                    <constraint firstItem="wR8-YQ-JIB" firstAttribute="leading" secondItem="vI7-Cc-Hd3" secondAttribute="leading" id="HFM-Cg-MJM"/>
+                    <constraint firstAttribute="trailing" secondItem="icI-uj-lHD" secondAttribute="trailing" constant="5" id="IRm-JA-HKY"/>
+                    <constraint firstItem="Dty-6x-oUJ" firstAttribute="top" secondItem="vI7-Cc-Hd3" secondAttribute="bottom" constant="5" id="J8F-fE-jpX"/>
+                    <constraint firstItem="vI7-Cc-Hd3" firstAttribute="leading" secondItem="0Gx-dh-4di" secondAttribute="leading" constant="5" id="M9N-RM-e7S"/>
+                    <constraint firstAttribute="trailing" secondItem="6ZA-Xt-JlB" secondAttribute="trailing" constant="10" id="Maj-wt-qr7"/>
+                    <constraint firstItem="wR8-YQ-JIB" firstAttribute="bottom" secondItem="vI7-Cc-Hd3" secondAttribute="bottom" id="QW0-lb-TMP"/>
+                    <constraint firstItem="JeP-yJ-08X" firstAttribute="top" secondItem="icI-uj-lHD" secondAttribute="bottom" constant="10" id="UNh-m8-K4h"/>
+                    <constraint firstItem="xR2-E5-00B" firstAttribute="leading" secondItem="JeP-yJ-08X" secondAttribute="trailing" constant="10" id="edv-ZF-Yww"/>
+                    <constraint firstItem="icI-uj-lHD" firstAttribute="top" secondItem="0Gx-dh-4di" secondAttribute="top" constant="5" id="fdv-nJ-8rp"/>
+                    <constraint firstAttribute="trailing" secondItem="Sj8-J8-Mm8" secondAttribute="trailing" constant="5" id="hU6-XB-czb"/>
+                    <constraint firstAttribute="bottom" secondItem="Dty-6x-oUJ" secondAttribute="bottom" constant="5" id="ime-Sx-WKG"/>
+                    <constraint firstItem="xR2-E5-00B" firstAttribute="bottom" secondItem="JeP-yJ-08X" secondAttribute="bottom" id="jEN-bq-A3a"/>
+                    <constraint firstItem="6ZA-Xt-JlB" firstAttribute="leading" secondItem="0Gx-dh-4di" secondAttribute="leading" constant="10" id="oNe-zW-XWc"/>
+                    <constraint firstItem="Sj8-J8-Mm8" firstAttribute="top" secondItem="0Gx-dh-4di" secondAttribute="top" constant="5" id="rU7-lC-fMu"/>
+                    <constraint firstItem="6ZA-Xt-JlB" firstAttribute="top" secondItem="JeP-yJ-08X" secondAttribute="bottom" constant="5" id="tNg-fA-Uqz"/>
+                    <constraint firstItem="icI-uj-lHD" firstAttribute="leading" secondItem="0Gx-dh-4di" secondAttribute="leading" constant="5" id="ubR-bu-CvH"/>
+                    <constraint firstItem="JeP-yJ-08X" firstAttribute="leading" secondItem="0Gx-dh-4di" secondAttribute="leading" constant="10" id="wbj-4y-ttX"/>
+                    <constraint firstItem="eNf-xk-Ous" firstAttribute="leading" secondItem="JeP-yJ-08X" secondAttribute="trailing" constant="10" id="zA2-LU-9U3"/>
+                    <constraint firstItem="wR8-YQ-JIB" firstAttribute="trailing" secondItem="vI7-Cc-Hd3" secondAttribute="trailing" id="zuV-WJ-eyR"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="adTitleLabel" destination="6ZA-Xt-JlB" id="rPQ-wf-OX3"/>
+                <outlet property="gradientView" destination="wR8-YQ-JIB" id="XX1-hP-Fo9"/>
+            </connections>
+            <point key="canvasLocation" x="147.10144927536234" y="103.45982142857143"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="farmstead" width="1204" height="1034"/>
+        <image name="farmsteadIcon" width="450" height="304"/>
+        <image name="openLinkButton" width="89" height="91"/>
+    </resources>
+</document>

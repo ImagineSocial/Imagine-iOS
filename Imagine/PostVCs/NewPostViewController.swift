@@ -1286,10 +1286,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             return textView.text.count + (text.count - range.length) <= characterLimitForEventTitle  // Text no longer than 100 characters
         default:
             return textView.text.count + (text.count - range.length) <= characterLimitForTitle
-            
         }
-        
-        
     }
     
     func textViewDidChange(_ textView: UITextView) {
@@ -1476,7 +1473,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func linkedFactInfoButtonTapped() {
-        EasyTipView.show(forView: linkedFactView, text: "Standardmäßig postest du im Imagine-Feed (Den Haupt-Feed, nachdem du die App öffnest). \nPoste hier alles, was du mit der Welt teilen möchtest.\n\nWählst du ein Thema aus, kannst du entscheiden, ob du deinen Beitrag im Imagine-Feed teilst, oder nur im Thema. Die Follower eines Themas sehen dann deinen Beitrag (ganz bald jedenfalls) in ihrem angepassten Imagine-Feed.\nPoste im Thema also alles, was sehr Themenspezifisch oder nicht für die breite Masse zugänglich ist.")
+        EasyTipView.show(forView: linkedFactView, text: "Standardmäßig postest du im Imagine-Feed (Der Haupt-Feed, nachdem du die App öffnest). \nPoste hier alles, was du mit der Welt teilen möchtest.\n\nWählst du ein Thema aus, kannst du entscheiden, ob du deinen Beitrag im Imagine-Feed teilst, oder nur im Thema. Die Follower eines Themas sehen dann deinen Beitrag (ganz bald jedenfalls) in ihrem angepassten Imagine-Feed.\nPoste im Thema also alles, was sehr themenspezifisch oder nicht für die breite Masse zugänglich ist.")
     }
     
     @objc func postAnonymousButtonPressed() {

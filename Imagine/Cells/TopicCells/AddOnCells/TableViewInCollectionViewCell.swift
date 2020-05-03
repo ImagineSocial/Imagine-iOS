@@ -20,6 +20,7 @@ class TableViewInCollectionViewCell: UICollectionViewCell {
     let companyReuseIdentifier = "SmallCompanyTableViewCell"
     let jobOfferReuseIdentifier = "SupportTheCommunityCell"
     let voteCellIdentifier = "VoteCell"
+    let addOnHeaderIdentifier = "InfoHeaderAddOnCell"
     
     var isEverySecondCell = false       // Change Design on every second Cell
     
@@ -36,6 +37,7 @@ class TableViewInCollectionViewCell: UICollectionViewCell {
         tableView.register(UINib(nibName: "SmallCompanyTableViewCell", bundle: nil), forCellReuseIdentifier: companyReuseIdentifier)
         tableView.register(UINib(nibName: "JobOfferCell", bundle: nil), forCellReuseIdentifier: jobOfferReuseIdentifier)
         tableView.register(UINib(nibName: "VoteCell", bundle: nil), forCellReuseIdentifier: voteCellIdentifier)
+        tableView.register(UINib(nibName: "InfoHeaderAddOnCell", bundle: nil), forCellReuseIdentifier: addOnHeaderIdentifier)
         
         contentView.layer.cornerRadius = 5
     }
@@ -140,6 +142,17 @@ extension TableViewInCollectionViewCell: UITableViewDelegate, UITableViewDataSou
                 
                 cell.needInsets = false
                 cell.vote = vote[indexPath.row]
+                
+                return cell
+            }
+        } else if let info = items as? [OptionalInformation] {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: addOnHeaderIdentifier, for: indexPath) as? InfoHeaderAddOnCell {
+                
+                if info.count != 0 {
+                    if let header = info[0].addOnInfoHeader {
+                        cell.addOnInfo = header
+                    }
+                }
                 
                 return cell
             }
