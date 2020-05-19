@@ -30,7 +30,7 @@ class SearchTableViewController: UITableViewController, UISearchControllerDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.register(SearchUserCell.self, forCellReuseIdentifier: "SearchUserCell")
+//        tableView.register(SearchUserCell.self, forCellReuseIdentifier: "SearchUserCell")
         tableView.register(SearchPostCell.self, forCellReuseIdentifier: "SearchPostCell")
         tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: blankCellReuseIdentifier)
                 
@@ -95,12 +95,12 @@ class SearchTableViewController: UITableViewController, UISearchControllerDelega
             
         } else if let users = userResults {
             let user = users[indexPath.row]
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "SearchUserCell", for: indexPath) as? SearchUserCell {
-                
-                cell.user = user
-                
-                return cell
-            }
+//            if let cell = tableView.dequeueReusableCell(withIdentifier: "SearchUserCell", for: indexPath) as? SearchUserCell {
+//                
+//                cell.user = user
+//                
+//                return cell
+//            }
         } else {
             if let cell = tableView.dequeueReusableCell(withIdentifier: blankCellReuseIdentifier, for: indexPath) as? BlankContentCell {
                 

@@ -297,8 +297,12 @@ class voteCampaignTableViewController: UITableViewController {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        tipView = EasyTipView(text: Constants.texts.voteCampaignText)
-        tipView!.show(forItem: infoButton)
+        if let tipView = tipView {
+            tipView.dismiss()
+        } else {
+            tipView = EasyTipView(text: Constants.texts.voteCampaignText)
+            tipView!.show(forItem: infoButton)
+        }
     }
 }
 

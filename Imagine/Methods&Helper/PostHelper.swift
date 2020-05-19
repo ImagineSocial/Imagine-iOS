@@ -287,10 +287,9 @@ class PostHelper {
         }
     }
     
-    func getPostsForFact(factID: String, posts: @escaping ([Post]) -> Void) {
+    func getPostsForFact(factID: String, forPreviewPictures: Bool, posts: @escaping ([Post]) -> Void) {
         
         let ref = db.collection("Facts").document(factID).collection("posts")
-        
         var documentIDsOfPosts = [Post]()
         
         ref.getDocuments { (snap, err) in
@@ -319,10 +318,25 @@ class PostHelper {
                     }
                     
                     self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in    // First fetch the normal Posts, then the "JustTopic" Posts
-                        print("got the normal ones")
                         self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
-                        posts(self.posts)
-                        
+                        if forPreviewPictures {
+                            var picturePosts = [Post]()
+                            for post in self.posts {
+                                if post.type == .picture {
+                                    print("PicturePost mit namen: \(post.title), picturePostCount: ", picturePosts.count)
+                                    picturePosts.append(post)
+                                    
+                                    if picturePosts.count == 6 {
+                                        posts(picturePosts)
+                                        break
+                                    }
+                                }
+                            }
+                            print("Got less than 6")
+                            posts(picturePosts)
+                        } else {
+                            posts(self.posts)
+                        }
                     })
                 }
             }
@@ -827,7 +841,7 @@ class PostHelper {
     }
     
     func addFact(factID: String) -> Fact {
-        let fact = Fact(addMoreDataCell: false)
+        let fact = Fact()
         fact.documentID = factID
         for topic in self.followedTopics {
             if factID == topic {

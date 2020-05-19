@@ -204,8 +204,12 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        tipView = EasyTipView(text: Constants.texts.campaignDetailText)
-        tipView!.show(forItem: infoButton)
+        if let tipView = tipView {
+            tipView.dismiss()
+        } else {
+            tipView = EasyTipView(text: Constants.texts.campaignDetailText)
+            tipView!.show(forItem: infoButton)
+        }
     }
     
 }

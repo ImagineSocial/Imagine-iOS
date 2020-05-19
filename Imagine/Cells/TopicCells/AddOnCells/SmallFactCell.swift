@@ -77,8 +77,7 @@ class SmallFactCell: UICollectionViewCell {
                 } else {
                     if let snap = snap {
                         if let data = snap.data() {
-                            if let fact = self.dataHelper.addFact(data: data) {
-                                fact.documentID = snap.documentID
+                            if let fact = self.dataHelper.addFact(documentID: snap.documentID, data: data) {
                                 
                                 self.fact = fact
                             }

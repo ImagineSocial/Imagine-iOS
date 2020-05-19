@@ -18,6 +18,16 @@ enum AddOnType {
     case steps
 }
 
+class FeedSection {
+    var section: Int
+    var posts: [Post]
+    
+    init(section: Int, posts: [Post]) {
+        self.section = section
+        self.posts = posts
+    }
+}
+
 class ProposalForOptionalInformation {
     var headerText: String
     var detailText: String
@@ -38,6 +48,9 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
     
     let db = Firestore.firestore()
     
+    var feedSection: FeedSection?
+    var feedSectionData = [FeedSection]()
+    
     var fact: Fact? {
         didSet {
             getData(fact: fact!)
@@ -55,6 +68,10 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
     let proposalCellIdentifier = "ProposalCell"
     let addSectionReuseIdentifier = "AddSectionCell"
     let infoHeaderReuseIdentifier = "InfoHeaderAddOnCell"
+    let singleTopicReuseIdentifier = "SingleTopicAddOnCell"
+    
+    let addOnHeaderIdentifier = "AddOnHeaderView"
+    let postCellIdentifier = "NibPostCell"
     
     let addPostVC = AddPostTableViewController()
     
@@ -70,7 +87,11 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
         tableView.register(ProposalCell.self, forCellReuseIdentifier: proposalCellIdentifier)
         tableView.register(AddFactCell.self, forCellReuseIdentifier: addSectionReuseIdentifier)
         tableView.register(UINib(nibName: "InfoHeaderAddOnCell", bundle: nil), forCellReuseIdentifier: infoHeaderReuseIdentifier)
+        tableView.register(UINib(nibName: "SingleTopicAddOnCell", bundle: nil), forCellReuseIdentifier: singleTopicReuseIdentifier)
         tableView.separatorColor = .clear
+        tableView.register(UINib(nibName: "AddOnHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: addOnHeaderIdentifier)
+        
+        tableView.register(UINib(nibName: "PostTableViewCell", bundle: nil), forCellReuseIdentifier: postCellIdentifier)
         
         self.tableView.estimatedSectionHeaderHeight = 50
         
@@ -94,7 +115,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
     
     //MARK:- Get Data
     func getData(fact: Fact) {
-        let ref = db.collection("Facts").document(fact.documentID).collection("addOns")
+        let ref = db.collection("Facts").document(fact.documentID).collection("addOns").order(by: "popularity", descending: true)
         
         
         ref.getDocuments { (snap, err) in
@@ -116,11 +137,11 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                         let data = document.data()
                         
                         if let title = data["title"] as? String, let description = data["description"] as? String {
-                            let addOn = OptionalInformation(headerTitle: title, description: description, documentID: document.documentID, fact: self.fact!)
+                            let addOn = OptionalInformation(style: .all, headerTitle: title, description: description, documentID: document.documentID, fact: self.fact!)
+                            addOn.style = .all
                             self.optionalInformations.append(addOn)
                             
-                        } else {
-                            guard let description = data["headerDescription"] as? String else { return }
+                        } else if let description = data["headerDescription"] as? String {
                             var intro: String?
                             var source: String?
                             if let introSentence = data["headerIntro"] as? String {
@@ -130,8 +151,16 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                                 source = moreInfo
                             }
                             
-                            let addOn = OptionalInformation(introSentence: intro, description: description, moreInformationLink: source)
+                            let addOn = OptionalInformation(style: .header ,introSentence: intro, description: description, moreInformationLink: source)
+                            addOn.style = .header
                             self.optionalInformations.insert(addOn, at: 0)  // Should be on top of the vc
+                        } else if let documentID = data["linkedFactID"] as? String {
+                            if let headerTitle = data["headerTitle"] as? String, let description = data["description"] as? String {
+                                let addOn = OptionalInformation(style: .singleTopic, headerTitle: headerTitle, description: description, factDocumentID: documentID)
+                                
+                                print("Adde die info")
+                                self.optionalInformations.append(addOn)
+                            }
                         }
                         
                         self.tableView.reloadData()
@@ -153,6 +182,12 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
+        
+        if let feedSection = feedSection {
+            if section == feedSection.section {
+                return feedSection.posts.count
+            }
+        }
         if noOptionalInformation {
             return optionalInformationProposals.count
         } else {
@@ -186,28 +221,67 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             }
         } else {
             
-            let info = optionalInformations[indexPath.section]
-            
-            if let addOnHeader = info.addOnInfoHeader {
-                if let cell = tableView.dequeueReusableCell(withIdentifier: infoHeaderReuseIdentifier, for: indexPath) as? InfoHeaderAddOnCell {
-                    cell.addOnInfo = addOnHeader
-                    cell.delegate = self
+            if let feedSection = feedSection {
+                if feedSection.section == indexPath.section {
                     
-                    return cell
-                }
-            } else {
-                if let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as? CollectionViewInTableViewCell {
-                    
-                    // if whatever { cell.isPagingEnabled = true
-                    cell.info = info
-                    cell.delegate = self
-                    
-                    return cell
+                    let post = feedSection.posts[indexPath.row]
+                                        
+                    if let cell = tableView.dequeueReusableCell(withIdentifier: postCellIdentifier, for: indexPath) as? PostCell {
+                        
+                        cell.post = post
+                        
+                        return cell
+                    }
                 }
             }
+            
+            let info = optionalInformations[indexPath.section]
+            
+            
+            switch info.style {
+                case .header:
+                    if let addOnHeader = info.addOnInfoHeader {
+                        if let cell = tableView.dequeueReusableCell(withIdentifier: infoHeaderReuseIdentifier, for: indexPath) as? InfoHeaderAddOnCell {
+                            cell.addOnInfo = addOnHeader
+                            cell.delegate = self
+                            
+                            return cell
+                        }
+                    }
+                    
+                case .singleTopic:
+                    if let cell = tableView.dequeueReusableCell(withIdentifier: singleTopicReuseIdentifier, for: indexPath) as? SingleTopicAddOnCell {
+                        
+                        cell.info = info
+                        
+                        return cell
+                    }
+                default:
+                    if let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as? CollectionViewInTableViewCell {
+                        
+                        // if whatever { cell.isPagingEnabled = true
+                        cell.section = indexPath.section
+                        cell.info = info
+                        cell.delegate = self
+                        
+                        return cell
+                    }
+                }
         }
         
         return UITableViewCell()
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if !noOptionalInformation {
+            let optInfo = optionalInformations[indexPath.section]
+            
+            if optInfo.style == .singleTopic {
+                if let fact = optInfo.fact {
+                    performSegue(withIdentifier: "toFactSegue", sender: fact)
+                }
+            }
+        }
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -218,18 +292,30 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             if let _ = optInfo.addOnInfoHeader {
                 return nil
             } else {
+                if let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: addOnHeaderIdentifier) as? AddOnHeaderView {
+                    
+                    let info = optionalInformations[section]
+                    
+                    headerView.info = info
+                    headerView.section = section
+                    
+                    headerView.delegate = self
+                    
+                    return headerView
+                }
                 
-                let headerView = AddOnHeaderView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
                 
-                let info = optionalInformations[section]
-                headerView.initHeader(noOptionalInformation: noOptionalInformation, info: info)
-                headerView.delegate = self
-                
-                return headerView
+//                let headerView = AddOnHeaderView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
+//
+//                let info = optionalInformations[section]
+//                headerView.initHeader(noOptionalInformation: noOptionalInformation, info: info)
+//                headerView.delegate = self
+//                return headerView
             }
-        } else {
-            return nil
         }
+        print("Return nil")
+        return nil
+        
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -266,17 +352,26 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
+        if let feedSection = feedSection {
+            if feedSection.section == indexPath.section {
+                return UITableView.automaticDimension
+            }
+        }
         
         if noOptionalInformation {
             return UITableView.automaticDimension
         } else {
             let info = optionalInformations[indexPath.section]
-            if info.addOnInfoHeader == nil {
-                return 270
-            } else {
+            switch info.style {
+            case .header:
                 return UITableView.automaticDimension
+            case .singleTopic:
+                return UITableView.automaticDimension
+            default:
+                return 290
             }
         }
+        
     }
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -445,12 +540,8 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
     }
         
     @IBAction func addSectionTapped(_ sender: Any) {
-        if let _ = Auth.auth().currentUser {
-            if let fact = fact {
-                performSegue(withIdentifier: "toNewAddOnSegue", sender: fact)
-            }
-        } else {
-            self.notLoggedInAlert()
+        if let fact = fact {
+            performSegue(withIdentifier: "toNewAddOnSegue", sender: fact)
         }
     }
     
@@ -468,15 +559,25 @@ extension OptionalInformationForArgumentTableViewController: AddOnHeaderDelegate
         }
     }
     
-    func showDescription(description: String, view: UIView) {
-        tipView = EasyTipView(text: description)
-        tipView!.show(forView: view)
+    func showDescription() {
+        tableView.beginUpdates()
+        tableView.endUpdates()
     }
     
     func showAllPosts(documentID: String) {
         self.alert(message: "Diese funktion muss noch programmiert werden, schreib Imagine ruhig ne Nachricht, dass die sich gefälligst mal beeilen sollen^^")
     }
     
+    func showPostsAsAFeed(section: Int) {
+        self.feedSection = nil
+        
+        if let feedSection = self.feedSectionData.first(where: {$0.section == section}) {
+            self.feedSection = feedSection
+            self.tableView.reloadData()
+        } else {
+           print("Dont have the feedSection Data")
+        }
+    }
     
 }
 
@@ -495,6 +596,25 @@ extension OptionalInformationForArgumentTableViewController: AddItemDelegate, Ne
 }
 
 extension OptionalInformationForArgumentTableViewController: CollectionViewInTableViewCellDelegate {
+ 
+    func saveItems(section: Int, item: Any) {
+        
+        if let feedSection = self.feedSectionData.first(where: {$0.section == section}) {
+            if let post = item as? Post {
+                if let _ = feedSection.posts.first(where: {$0.documentID == post.documentID}) {
+                    print("Already Got the post")
+                } else {
+                    feedSection.posts.append(post)
+                }
+            }
+        } else {
+            if let post = item as? Post {
+                let feedSection = FeedSection(section: section, posts: [post])
+                feedSectionData.append(feedSection)
+            }
+        }
+        
+    }
     
     func newPostTapped(addOnDocumentID: String) {
         

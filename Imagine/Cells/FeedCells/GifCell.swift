@@ -260,6 +260,7 @@ class GifCell: BaseFeedCell {
         }
     }
     
+    
     @IBAction func thanksButtonTapped(_ sender: Any) {
         if let post = post {
             delegate?.thanksTapped(post: post)

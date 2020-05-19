@@ -18,7 +18,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gV7-q8-KXR" customClass="HairlineView" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="10" y="181" width="394" height="1"/>
+                        <rect key="frame" x="15" y="181" width="384" height="1"/>
                         <color key="backgroundColor" systemColor="separatorColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="1" id="d27-nb-2X8"/>
@@ -26,7 +26,7 @@
                         <viewLayoutGuide key="safeArea" id="KUx-nx-qzO"/>
                     </view>
                     <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="02d-mw-V8r">
-                        <rect key="frame" x="0.0" y="5" width="414" height="173"/>
+                        <rect key="frame" x="0.0" y="5" width="414" height="153"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="wj1-aP-fdB">
                             <size key="itemSize" width="50" height="50"/>
@@ -38,12 +38,12 @@
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                 <constraints>
-                    <constraint firstAttribute="trailing" secondItem="gV7-q8-KXR" secondAttribute="trailing" constant="10" id="0A9-vm-izP"/>
+                    <constraint firstAttribute="trailing" secondItem="gV7-q8-KXR" secondAttribute="trailing" constant="15" id="0A9-vm-izP"/>
                     <constraint firstAttribute="trailing" secondItem="02d-mw-V8r" secondAttribute="trailing" id="6qG-tA-6lF"/>
                     <constraint firstItem="02d-mw-V8r" firstAttribute="leading" secondItem="xAR-Iw-DCz" secondAttribute="leading" id="7MU-UL-Qev"/>
                     <constraint firstAttribute="bottom" secondItem="gV7-q8-KXR" secondAttribute="bottom" constant="1" id="9fa-mH-3zM"/>
-                    <constraint firstAttribute="bottom" secondItem="02d-mw-V8r" secondAttribute="bottom" constant="5" id="QNT-7z-LxI"/>
-                    <constraint firstItem="gV7-q8-KXR" firstAttribute="leading" secondItem="xAR-Iw-DCz" secondAttribute="leading" constant="10" id="UHt-hH-9bN"/>
+                    <constraint firstAttribute="bottom" secondItem="02d-mw-V8r" secondAttribute="bottom" constant="25" id="QNT-7z-LxI"/>
+                    <constraint firstItem="gV7-q8-KXR" firstAttribute="leading" secondItem="xAR-Iw-DCz" secondAttribute="leading" constant="15" id="UHt-hH-9bN"/>
                     <constraint firstItem="02d-mw-V8r" firstAttribute="top" secondItem="xAR-Iw-DCz" secondAttribute="top" constant="5" id="ZhE-tp-cHD"/>
                 </constraints>
             </tableViewCellContentView>

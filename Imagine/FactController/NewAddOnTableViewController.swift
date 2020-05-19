@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import EasyTipView
+import Firebase
 
 class NewAddOnTableViewController: UITableViewController {
     
@@ -16,10 +18,11 @@ class NewAddOnTableViewController: UITableViewController {
     
     var optionalInformations = [OptionalInformation]()
     var fact: Fact?
-    var selectedAddOnStyle: OptionalInformationType?
+    var selectedAddOnStyle: OptionalInformationStyle?
     
-    let collectionViewCellIdentifier = "CollectionViewInTableViewCell"
-    let infoHeaderCellIdentifier = "InfoHeaderAddOnCell"
+    let addOnStoreCellIdentifier = "AddOnStoreImageTableViewCell"
+    
+    var tipView: EasyTipView?
     
     var delegate: NewFactDelegate?
 
@@ -32,8 +35,7 @@ class NewAddOnTableViewController: UITableViewController {
             return
         }
 
-        tableView.register(UINib(nibName: "CollectionViewInTableViewCell", bundle: nil), forCellReuseIdentifier: collectionViewCellIdentifier)
-        tableView.register(UINib(nibName: "InfoHeaderAddOnCell", bundle: nil), forCellReuseIdentifier: infoHeaderCellIdentifier)
+        tableView.register(UINib(nibName: "AddOnStoreImageTableViewCell", bundle: nil), forCellReuseIdentifier: addOnStoreCellIdentifier)
         tableView.separatorColor = .clear
         
         
@@ -42,13 +44,24 @@ class NewAddOnTableViewController: UITableViewController {
         
         let header = OptionalInformation(newAddOnStyle: .header)
         let infoAll = OptionalInformation(newAddOnStyle: .all)
-//        let infoPosts = OptionalInformation(newAddOnStyle: .justPosts)
-//        let infoTopics = OptionalInformation(newAddOnStyle: .justTopics)
+        let singleTopic = OptionalInformation(newAddOnStyle: .singleTopic)
         
-        optionalInformations.append(contentsOf: [header, infoAll])
+        optionalInformations.append(contentsOf: [header, infoAll, singleTopic])
         tableView.reloadData()
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        if let tipView = tipView {
+            tipView.dismiss()
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let tipView = tipView {
+            tipView.dismiss()
+            self.tipView = nil
+        }
+    }
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -65,25 +78,21 @@ class NewAddOnTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if optionalInformations.count != indexPath.section {
+            
             let info = optionalInformations[indexPath.section]
             
-            if let addOnHeader = info.addOnInfoHeader {
-                if let cell = tableView.dequeueReusableCell(withIdentifier: infoHeaderCellIdentifier, for: indexPath) as? InfoHeaderAddOnCell {
-                    
-                    cell.addOnInfo = addOnHeader
-                    cell.selectionStyle = .none
-                    
-                    return cell
+            if let cell = tableView.dequeueReusableCell(withIdentifier: addOnStoreCellIdentifier, for: indexPath) as? AddOnStoreImageTableViewCell {
+                
+                switch info.style {
+                case .header:
+                    cell.exampleImageView.image = UIImage(named: "AddOnHeaderExample")
+                case .singleTopic:
+                    cell.exampleImageView.image = UIImage(named: "AddOnSingleTopicExample")
+                default:
+                    cell.exampleImageView.image = UIImage(named: "AddOnCollectionExample")
                 }
-            } else {
-                if let cell = tableView.dequeueReusableCell(withIdentifier: collectionViewCellIdentifier, for: indexPath) as? CollectionViewInTableViewCell {
-                    
-                    cell.info = info
-                    cell.collectionView.isUserInteractionEnabled = false
-                    cell.isAddOnStoreCell = true
-                    
-                    return cell
-                }
+                
+                return cell
             }
         } else {
             let cell: UITableViewCell = {
@@ -108,10 +117,13 @@ class NewAddOnTableViewController: UITableViewController {
         if optionalInformations.count != indexPath.section {
             let info = optionalInformations[indexPath.section]
             
-            if let _ = info.addOnInfoHeader {
-                return UITableView.automaticDimension
-            } else {
-                return 250
+            switch info.style {
+            case .singleTopic:
+                return 350
+            case .header:
+                return 225
+            default:
+                return 300
             }
         } else {
             return 50
@@ -125,12 +137,11 @@ class NewAddOnTableViewController: UITableViewController {
             let headerView = AddOnHeaderView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
             
             let info = optionalInformations[section]
-            headerView.initHeader(noOptionalInformation: false, info: info)
-            headerView.descriptionButton.isHidden = true
-            //            headerView.delegate = self
-            //
+//            headerView.initHeader(noOptionalInformation: false, info: info)
+//            headerView.delegate = self
+
             return headerView
-            //        }
+            
         } else {
             return nil
         }
@@ -142,7 +153,6 @@ class NewAddOnTableViewController: UITableViewController {
         } else {
             return 0
         }
-//        return UITableView.automaticDimension
         
     }
     
@@ -160,20 +170,21 @@ class NewAddOnTableViewController: UITableViewController {
             
             let info = optionalInformations[indexPath.section]
             
-            if let style = info.style {
-                self.selectedAddOnStyle = style
-                
-                switch style {
-                case .header:
-                    self.selectedAddOnTypeLabel.text = "AddOn Header"
-                case .all:
-                    self.selectedAddOnTypeLabel.text = "Post & Themen Kollektion"
-                case .justPosts:
-                    self.selectedAddOnTypeLabel.text = "Collection of just Posts"
-                case .justTopics:
-                    self.selectedAddOnTypeLabel.text = "Collection of just Topics"
-                }
+            self.selectedAddOnStyle = info.style
+            
+            switch info.style {
+            case .header:
+                self.selectedAddOnTypeLabel.text = "AddOn Header"
+            case .all:
+                self.selectedAddOnTypeLabel.text = "Post & Themen Kollektion"
+            case .justPosts:
+                self.selectedAddOnTypeLabel.text = "Collection of just Posts"
+            case .justTopics:
+                self.selectedAddOnTypeLabel.text = "Collection of just Topics"
+            case .singleTopic:
+                self.selectedAddOnTypeLabel.text = "Präsentation eines Themas"
             }
+            
             
             tableView.setContentOffset(.zero, animated:true)
         } else {
@@ -185,10 +196,12 @@ class NewAddOnTableViewController: UITableViewController {
         if segue.identifier == "toNewAddOnSegue" {
             if let navVC = segue.destination as? UINavigationController {
                 if let vc = navVC.topViewController as? NewFactViewController {
-                    if let style = sender as? OptionalInformationType {
+                    if let style = sender as? OptionalInformationStyle {
                         if let fact = fact {
                             if style == .header {
                                 vc.new = .addOnHeader
+                            } else if style == .singleTopic {
+                                vc.new = .singleTopicAddOn
                             } else {
                                 vc.new = .addOn
                             }
@@ -202,18 +215,73 @@ class NewAddOnTableViewController: UITableViewController {
     }
     
     @IBAction func doneTapped(_ sender: Any) {
-        if let style = self.selectedAddOnStyle {
-            performSegue(withIdentifier: "toNewAddOnSegue", sender: style)
+        if let _ = Auth.auth().currentUser {
+            if let style = self.selectedAddOnStyle {
+                performSegue(withIdentifier: "toNewAddOnSegue", sender: style)
+            }
         }
     }
     
 }
 
-extension NewAddOnTableViewController: NewFactDelegate {
+extension NewAddOnTableViewController: NewFactDelegate, AddOnHeaderDelegate {
+    func showPostsAsAFeed(section: Int) {
+        print("Coming Soon")
+    }
+    
+    
+    func showDescription() {
+        tableView.beginUpdates()
+        tableView.endUpdates()
+    }
+    
+    
+//    func showDescription(description: String, view: UIView) {
+//        if let tipView = tipView {
+//            tipView.dismiss()
+//            self.tipView = nil
+//        } else {
+//            tipView = EasyTipView(text: description)
+//            tipView!.show(forView: view)
+//        }
+//    }
+    
+    func showAllPosts(documentID: String) {
+        //nope
+    }
+    
     
     func finishedCreatingNewInstance(item: Any?) {
         delegate?.finishedCreatingNewInstance(item: item)
         self.navigationController?.popViewController(animated: true)
     }
 
+}
+
+class AddOnStoreImageTableViewCell: UITableViewCell {
+    
+    @IBOutlet weak var exampleImageView: UIImageView!
+    
+    
+    override func awakeFromNib() {
+        
+        //Cell UI
+        contentView.layer.cornerRadius = 6
+        contentView.layer.borderWidth = 2
+        if #available(iOS 13.0, *) {
+            contentView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
+        } else {
+            contentView.layer.borderColor = UIColor.ios12secondarySystemBackground.cgColor
+        }
+    
+        contentView.clipsToBounds = true
+        backgroundColor =  .clear
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        //set the values for top,left,bottom,right margins
+        let margins = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        contentView.frame = contentView.frame.inset(by: margins)
+    }
 }

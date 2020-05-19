@@ -11,6 +11,10 @@ import Firebase
 import AVFoundation
 import SwiftLinkPreview
 
+protocol SmallPostCellDelegate {
+    func sendItem(item: Any)
+}
+
 class SmallPostCell: UICollectionViewCell {
     
     @IBOutlet weak var cellImageView: UIImageView!
@@ -19,21 +23,30 @@ class SmallPostCell: UICollectionViewCell {
     @IBOutlet weak var postTitleLabel: UILabel!
     @IBOutlet weak var postImageViewHeightConstraint: NSLayoutConstraint!
     
-    @IBOutlet weak var titleHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var optionalTitleGradientViewHeightConstraint: NSLayoutConstraint!
     
+    @IBOutlet weak var showOptionalTitleButton: DesignableButton!
+    @IBOutlet weak var optionalTitleGradientView: UIView!
+    
+    var delegate: SmallPostCellDelegate?
     
     let db = Firestore.firestore()
     let postHelper = PostHelper()
     
-    let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: DisabledCache.instance)
+    var gradient: CAGradientLayer?
+    
+    let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: InMemoryCache())
     
     var postTitle: String? {
         didSet {
             if postTitle! == "gotcha" {
-                postImageViewHeightConstraint.constant = 170
-                titleHeightConstraint.constant = 0
+//                postImageViewHeightConstraint.constant = 170
+//                titleHeightConstraint.constant = 0
+                optionalTitleGradientViewHeightConstraint.constant = 0
             } else {
                 titleLabel.text = postTitle!
+                showOptionalTitleButton.isHidden = false
+                optionalTitleGradientViewHeightConstraint.constant = 0
             }
         }
     }
@@ -63,6 +76,7 @@ class SmallPostCell: UICollectionViewCell {
                                 post.isTopicPost = true
                             }
                             self.post = post
+                            self.delegate?.sendItem(item: post)
                         }
                     }
                 }
@@ -130,24 +144,18 @@ class SmallPostCell: UICollectionViewCell {
                 linkView.bottomAnchor.constraint(equalTo: cellImageView.bottomAnchor).isActive = true
                 linkView.heightAnchor.constraint(equalToConstant: 20).isActive = true
                 
-                
-                slp.preview(post.linkURL, onSuccess: { (response) in
-                    if let imageURL = response.image {
-                        if imageURL.isValidURL {
-                            self.cellImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
-                        } else {
-                            //Try
-                            self.cellImageView.image = UIImage(named: "link-default")
-                        }
+                // Show Preview of Link
+                if let cachedResult = slp.cache.slp_getCachedResponse(url: post.linkURL) {
+                    self.showLinkPreview(result: cachedResult)
+                } else {
+                    slp.preview(post.linkURL, onSuccess: { (result) in
                         
+                        self.showLinkPreview(result: result)
+                    }) { (error) in
+                        print("We have an error showing the link: \(error.localizedDescription)")
                     }
-                    if let urlString = response.canonicalUrl {
-                        self.linkLabel.text = urlString
-                    }
-                    
-                }) { (error) in
-                    print("We have an error showing the link: \(error.localizedDescription)")
                 }
+                
             } else if post.type == .youTubeVideo {
                 
                 postImageViewHeightConstraint.constant = cellImageView.frame.width*(9/16)   // Frame is 16/9 Format
@@ -173,6 +181,23 @@ class SmallPostCell: UICollectionViewCell {
         }
     }
     
+    func showLinkPreview(result: Response) {
+        //https://github.com/LeonardoCardoso/SwiftLinkPreview
+        
+        if let imageURL = result.image {
+            if imageURL.isValidURL {
+                self.cellImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
+            } else {
+                
+                self.cellImageView.image = UIImage(named: "link-default")
+            }
+        }
+        
+        if let linkSource = result.canonicalUrl {
+            self.linkLabel.text = linkSource
+        }
+    }
+    
     func generateThumbnail(url: URL) -> UIImage? {
         do {
             let asset = AVURLAsset(url: url)
@@ -190,22 +215,25 @@ class SmallPostCell: UICollectionViewCell {
         }
     }
     
-    let linkView: UIView = {
-       let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor.ios12secondarySystemBackground.withAlphaComponent(0.7)
+    func setGradientView() {
+        //Gradient
         
-        return view
-    }()
+        if let gradient = self.gradient {
+            optionalTitleGradientView.layer.mask = gradient
+        } else {
+            self.gradient = CAGradientLayer()
+            gradient!.startPoint = CGPoint(x: 0.5, y: 0.0)
+            gradient!.endPoint = CGPoint(x: 0.5, y: 0.6)
+            let whiteColor = UIColor.white
+            gradient!.colors = [whiteColor.withAlphaComponent(0.3).cgColor, whiteColor.withAlphaComponent(0.6).cgColor, whiteColor.withAlphaComponent(0.8).cgColor]
+            gradient!.locations = [0.0, 0.7, 1]
+            gradient!.frame = optionalTitleGradientView.bounds
+            
+            optionalTitleGradientView.layer.mask = gradient
+            optionalTitleGradientView.layer.cornerRadius = 4
+        }
+    }
     
-    let linkLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 12)
-        label.textColor = .darkGray
-        
-        return label
-    }()
     
     override func awakeFromNib() {
         if #available(iOS 13.0, *) {
@@ -222,10 +250,58 @@ class SmallPostCell: UICollectionViewCell {
     override func prepareForReuse() {
         smallCellImageView.isHidden = false
         
-        postImageViewHeightConstraint.constant = 120
-        titleHeightConstraint.constant = 50
+        postImageViewHeightConstraint.constant = 170
+        optionalTitleGradientViewHeightConstraint.constant = 0
         
         self.linkView.removeFromSuperview()
     }
+    
+    @IBAction func showOptionalTitleButtonTapped(_ sender: Any) {
+        
+        if optionalTitleGradientViewHeightConstraint.constant == 0 {
+            self.optionalTitleGradientViewHeightConstraint.constant = 50
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                self.smallCellImageView.alpha = 0
+                self.layoutIfNeeded()
+                self.setGradientView()
+            }) { (_) in
+                self.showOptionalTitleButton.setImage(UIImage(named: "down"), for: .normal)
+                self.optionalTitleGradientView.layoutIfNeeded()
+                self.titleLabel.layoutIfNeeded()
+                
+            }
+        } else {
+            self.optionalTitleGradientViewHeightConstraint.constant = 0
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                self.smallCellImageView.alpha = 0.75
+                self.layoutIfNeeded()
+            }) { (_) in
+                self.showOptionalTitleButton.setImage(UIImage(named: "up"), for: .normal)
+                self.optionalTitleGradientView.layoutIfNeeded()
+                self.titleLabel.layoutIfNeeded()
+            }
+        }
+    }
+    
+    //MARK:-UI
+    
+    let linkView: UIView = {
+       let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor.ios12secondarySystemBackground.withAlphaComponent(0.7)
+        
+        return view
+    }()
+    
+    let linkLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans", size: 12)
+        label.textColor = .darkGray
+        
+        return label
+    }()
     
 }

@@ -66,8 +66,7 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
             } else {
                 if let snapshot = snap {
                     if let data = snapshot.data() {
-                        if let fact = self.dataHelper.addFact(data: data) {
-                            fact.documentID = snapshot.documentID
+                        if let fact = self.dataHelper.addFact(documentID: snapshot.documentID, data: data) {
                             
                             self.facts.insert(fact, at: 0)
                             self.collectionView.reloadData()
@@ -122,16 +121,6 @@ class SmallTopicCell: UICollectionViewCell {
     override func awakeFromNib() {
             cellImageView.contentMode = .scaleAspectFill
             
-            let gradient = CAGradientLayer()
-            gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
-            gradient.endPoint = CGPoint(x: 0.5, y: 0.6)
-            let whiteColor = UIColor.white
-            gradient.colors = [whiteColor.withAlphaComponent(0.0).cgColor, whiteColor.withAlphaComponent(0.5).cgColor, whiteColor.withAlphaComponent(0.7).cgColor]
-            gradient.locations = [0.0, 0.7, 1]
-            gradient.frame = gradientView.bounds
-            
-            gradientView.layer.mask = gradient
-            
             layer.cornerRadius = 4
             layer.masksToBounds = true
         }
@@ -139,6 +128,19 @@ class SmallTopicCell: UICollectionViewCell {
         override func prepareForReuse() {
             cellImageView.image = nil
         }
+    
+    func setGradientView() {
+        //Gradient
+        let gradient = CAGradientLayer()
+        gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
+        gradient.endPoint = CGPoint(x: 0.5, y: 0.6)
+        let whiteColor = UIColor.white
+        gradient.colors = [whiteColor.withAlphaComponent(0.0).cgColor, whiteColor.withAlphaComponent(0.5).cgColor, whiteColor.withAlphaComponent(0.7).cgColor]
+        gradient.locations = [0.0, 0.7, 1]
+        gradient.frame = gradientView.bounds
+        
+        gradientView.layer.mask = gradient
+    }
         
         var fact: Fact? {
             didSet {
@@ -150,6 +152,7 @@ class SmallTopicCell: UICollectionViewCell {
                     } else {
                         cellImageView.image = UIImage(named: "FactStamp")
                     }
+                    setGradientView()
                 }
             }
         }

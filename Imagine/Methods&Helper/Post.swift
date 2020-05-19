@@ -125,7 +125,7 @@ class Post {
                         }
                         
                         if let factID = docData["linkedFactID"] as? String {
-                            let fact = Fact(addMoreDataCell: false)
+                            let fact = Fact()
                             fact.documentID = factID
                             
                             post.fact = fact

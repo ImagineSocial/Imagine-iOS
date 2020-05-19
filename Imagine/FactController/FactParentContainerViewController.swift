@@ -72,6 +72,7 @@ class FactParentContainerViewController: UIViewController {
         if needNavigationController {
             setDismissButton()
         }
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -280,8 +281,12 @@ class FactParentContainerViewController: UIViewController {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        tipView = EasyTipView(text: Constants.texts.argumentOverviewText)
-        tipView!.show(forView: self.view)
+        if let tipView = tipView {
+            tipView.dismiss()
+        } else {
+            tipView = EasyTipView(text: Constants.texts.argumentOverviewText)
+            tipView!.show(forView: self.view)
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

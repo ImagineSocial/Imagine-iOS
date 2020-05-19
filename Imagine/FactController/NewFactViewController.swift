@@ -19,6 +19,7 @@ enum NewFactType {
     case source
     case addOn
     case addOnHeader
+    case singleTopicAddOn
 }
 
 enum ArgumentType {
@@ -63,6 +64,8 @@ class NewFactViewController: UIViewController {
     var new: NewFactType = .argument
     var deepArgument: Argument?
     
+    var selectedTopicIDForSingleTopicAddOn: String?
+    
     var tipView: EasyTipView?
     
     let db = Firestore.firestore()
@@ -81,13 +84,16 @@ class NewFactViewController: UIViewController {
     let sourceTitleCharacterLimit = 50
     
     let addOnTitleCharacterLimit = 50
-    let addOnDescriptionCharacterLimit = 300
+    let addOnDescriptionCharacterLimit = 400
     
     let addOnHeaderTitleCharacterLimit = 50
     let addOnHeaderDescriptionCharacterLimit = 400
     
     var pickedFactDisplayNames: FactDisplayName = .proContra
     var pickedDisplayOption: DisplayOption = .fact
+    
+    var selectedImageFromPicker:UIImage?
+    var imagePicker = UIImagePickerController()
     
     var delegate: NewFactDelegate?
     
@@ -109,6 +115,8 @@ class NewFactViewController: UIViewController {
         descriptionTextView.layer.cornerRadius = 3
 
         setUI()
+        
+        imagePicker.delegate = self
                 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -179,11 +187,16 @@ class NewFactViewController: UIViewController {
             descriptionCharacterCountLabel.text = String(factDescriptionCharacterLimit)
             
             descriptionCharacterCountLabel.isHidden = false
-            seperatorView3.isHidden = true
-            sourceLabel.isHidden = true
-            headerLabel.text = "Erstelle einen neuen Fakt"
+            headerLabel.text = "Teile ein neues Thema mit deinen Mitmenschen."
             descriptionLabel.text = factDescription
             
+            addSourceLabel.removeFromSuperview()
+            sourceLabel.text = "Bild:"
+            selectButton.setTitle("", for: .normal)
+            selectButton.setImage(UIImage(named: "folder"), for: .normal)
+            selectButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
+            
+            setSelectionTopicAndTopicPictureUI()
             setNewFactDisplayOptions()
         case .addOn:
             titleCharacterCountLabel.text = String(addOnTitleCharacterLimit)
@@ -200,15 +213,37 @@ class NewFactViewController: UIViewController {
             
             headerLabel.text = "Teile einen neuen Header mit deinen Mitmenschen!"
             sourceLabel.text = "Link zu mehr Informationen (optional):"
-            titleLabel.text = "Kurzes Intro:"
+            titleLabel.text = "Kurzes Intro: "
             sourceTextField.isHidden = false
             descriptionCharacterCountLabel.isHidden = false
+        case .singleTopicAddOn:
+            titleCharacterCountLabel.text = String(addOnTitleCharacterLimit)
+            descriptionCharacterCountLabel.text = String(addOnDescriptionCharacterLimit)
+            descriptionCharacterCountLabel.isHidden = false
+            
+            headerLabel.text = "Teile dein AddOn mit uns!"
+            addSourceLabel.removeFromSuperview()
+            sourceLabel.text = "Thema:"
+            
+            self.setSelectionTopicAndTopicPictureUI()
         }
     }
     
     
     
     //MARK:-
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "selectFactSegue" {
+            if let navCon = segue.destination as? UINavigationController {
+                if let factVC = navCon.topViewController as? FactCollectionViewController {
+                    factVC.addFactToPost = .newPost
+                    factVC.delegate = self
+                }
+            }
+        }
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         titleTextField.resignFirstResponder()
         descriptionTextView.resignFirstResponder()
@@ -288,13 +323,46 @@ class NewFactViewController: UIViewController {
         case .deepArgument:
             createNewDeepArgument()
         case .fact:
-            createNewFact()
+            let ref = db.collection("Facts").document()
+            if selectedImageFromPicker != nil {
+                if let user = Auth.auth().currentUser {
+                    
+                    self.savePicture(userID: user.uid, topicRef: ref)
+                }
+            } else {
+                createNewFact(ref: ref, imageURL: nil)
+            }
         case .source:
             createNewSource()
         case .addOn:
             createNewAddOn()
         case.addOnHeader:
             createNewAddOnHeader()
+        case .singleTopicAddOn:
+            createNewSingleTopicAddOn()
+        }
+    }
+    
+    func createNewSingleTopicAddOn() {
+        
+        if let fact = fact {
+            if let linkedFactID = self.selectedTopicIDForSingleTopicAddOn {
+            let ref = db.collection("Facts").document(fact.documentID).collection("addOns")
+            
+            let op = Auth.auth().currentUser!
+            
+                var data: [String: Any] = ["OP": op.uid, "headerTitle": titleTextField.text, "description": descriptionTextView.text, "linkedFactID": linkedFactID, "popularity": 0]
+            
+            ref.addDocument(data: data) { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    self.finished(item: nil)// Will reload the database in the delegate
+                }
+            }
+            } else {
+                self.alert(message: "Wir haben kein Thema zum verlinken registriert!")
+            }
         }
     }
     
@@ -305,7 +373,7 @@ class NewFactViewController: UIViewController {
             
             let op = Auth.auth().currentUser!
             
-            var data: [String: Any] = ["OP": op.uid, "headerDescription": descriptionTextView.text]
+            var data: [String: Any] = ["OP": op.uid, "headerDescription": descriptionTextView.text, "popularity": 0]
             
             if sourceTextField.text != "" {
                 data["moreInformationLink"] = sourceTextField.text
@@ -331,7 +399,7 @@ class NewFactViewController: UIViewController {
             
             let op = Auth.auth().currentUser!
             
-            let data: [String: Any] = ["OP": op.uid, "title": titleTextField.text, "description": descriptionTextView.text]
+            let data: [String: Any] = ["OP": op.uid, "title": titleTextField.text, "description": descriptionTextView.text, "popularity": 0]
             
             ref.addDocument(data: data) { (err) in
                 if let error = err {
@@ -418,8 +486,7 @@ class NewFactViewController: UIViewController {
         }
     }
     
-    func createNewFact() {
-        let ref = db.collection("Facts").document()
+    func createNewFact(ref: DocumentReference, imageURL: String?) {
         
         let op = Auth.auth().currentUser!
         
@@ -427,10 +494,14 @@ class NewFactViewController: UIViewController {
         
         var data = [String: Any]()
         
+        data = ["name": titleTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "OP": op.uid, "displayOption": displayOption.displayOption, "popularity": 0]
+        
         if let factDisplayName = displayOption.factDisplayNames {
-            data = ["name": titleTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "OP": op.uid, "displayOption": displayOption.displayOption, "factDisplayNames": factDisplayName, "popularity": 0]
-        } else {
-            data = ["name": titleTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "OP": op.uid, "displayOption": displayOption.displayOption, "popularity": 0]
+            data["factDisplayNames"] = factDisplayName
+        }
+        
+        if let url = imageURL {
+            data["imageURL"] = url
         }
         
         ref.setData(data) { (err) in
@@ -444,9 +515,11 @@ class NewFactViewController: UIViewController {
     }
     
     func finished(item: Any?) {
+        self.view.activityStopAnimating()
         let alertController = UIAlertController(title: "Vielen Dank", message: "Deine Eingabe wurde erfolgreich hinzugefügt!", preferredStyle: .alert)
         let OKAction = UIAlertAction(title: "OK", style: .default) { (_) in
             self.dismiss(animated: true) {
+                self.doneButton.isEnabled = true
                 self.delegate?.finishedCreatingNewInstance(item: item)
             }
         }
@@ -482,6 +555,8 @@ class NewFactViewController: UIViewController {
         
         if let _ = Auth.auth().currentUser {
             if titleTextField.text != "" && descriptionTextView.text != "" {
+                self.view.activityStartAnimating()
+                self.doneButton.isEnabled = false
                 self.createNewInstance()
             } else {
                 self.alert(message: "Gib bitte einen Titel und eine Beschreibung ein", title: "Wir brauchen mehr Informationen")
@@ -506,18 +581,86 @@ class NewFactViewController: UIViewController {
     
 
     @IBAction func infoButtonTapped(_ sender: Any) {
-        tipView = EasyTipView(text: Constants.texts.addArgumentText)
-        tipView!.show(forItem: doneButton)
+        if let tipView = tipView {
+            tipView.dismiss()
+        } else {
+            var text = ""
+            switch new {
+            case .addOnHeader:
+                text = Constants.texts.AddOns.headerText
+            case .singleTopicAddOn:
+                text = Constants.texts.AddOns.singleTopicText
+            case .addOn:
+                text = Constants.texts.AddOns.collectionText
+            case .fact:
+                text = "Erstelle eine neue Community oder eine neue Diskussion. \nEin Bild ist dabei optional aber immer gern gesehen\n\nDu bist vorerst der Moderator der von dir erstellten Communities und Diskussionen und kannst zu einem späteren Zeitpunkt die Informationen und Metadaten bearbeiten."
+            default:
+                text = Constants.texts.addArgumentText
+            }
+            
+            tipView = EasyTipView(text: text)
+            tipView!.show(forItem: doneButton)
+        }
+    }
+    
+    @objc func selectTopicButtonTapped() {
+        if new == .singleTopicAddOn {
+            performSegue(withIdentifier: "selectFactSegue", sender: nil)
+        } else if new == .fact {
+            showImagePicker()
+        } else {
+            print("Why is a button active here")
+        }
+    }
+    
+    func showImagePicker() {
+        self.imagePicker.sourceType = .photoLibrary
+        self.present(self.imagePicker, animated: true, completion: nil)
     }
     
     //MARK:- UI
+    func setSelectionTopicAndTopicPictureUI() { //For a newTopic as a preview of the chosen Picture and for singleTopicAddOn for the selection of a topic to link to
+        
+        sourceLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true    //FML
+        
+        self.view.addSubview(topicPicturePreviewImageView)
+        topicPicturePreviewImageView.topAnchor.constraint(equalTo: sourceLabel.bottomAnchor, constant: 5).isActive = true
+        topicPicturePreviewImageView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 25).isActive = true
+        if new == .fact {
+            topicPicturePreviewImageView.widthAnchor.constraint(equalToConstant: 75).isActive = true
+            topicPicturePreviewImageView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+        } else {
+            topicPicturePreviewImageView.widthAnchor.constraint(equalToConstant: 35).isActive = true
+            topicPicturePreviewImageView.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        }
+        topicPicturePreviewImageView.bottomAnchor.constraint(equalTo: seperatorView3.topAnchor, constant: -10).isActive = true
+        
+        self.view.addSubview(selectButton)
+        selectButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10).isActive = true
+        selectButton.topAnchor.constraint(equalTo: topicPicturePreviewImageView.topAnchor, constant: 10).isActive = true
+        selectButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        
+        topicPicturePreviewImageView.image = nil
+        
+        self.view.addSubview(topicPreviewLabel)
+        topicPreviewLabel.leadingAnchor.constraint(equalTo: topicPicturePreviewImageView.trailingAnchor, constant: 10).isActive = true
+        topicPreviewLabel.centerYAnchor.constraint(equalTo: topicPicturePreviewImageView.centerYAnchor).isActive = true
+        topicPreviewLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
+    }
     
-    func setNewFactDisplayOptions() {
+    func setNewFactDisplayOptions() {   // Selection UI for a new Topic/Community
         self.view.addSubview(newTopicDisplayTypeSelection)
         newTopicDisplayTypeSelection.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10).isActive = true
         newTopicDisplayTypeSelection.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10).isActive = true
-        newTopicDisplayTypeSelection.topAnchor.constraint(equalTo: descriptionTextView.bottomAnchor, constant: 10).isActive = true
+        newTopicDisplayTypeSelection.topAnchor.constraint(equalTo: seperatorView3.bottomAnchor, constant: 10).isActive = true
         newTopicDisplayTypeSelection.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        
+        if pickedDisplayOption == .fact {
+            newTopicDisplayTypeSelection.selectedSegmentIndex = 0
+        } else if pickedDisplayOption == .topic {
+            newTopicDisplayTypeSelection.selectedSegmentIndex = 1
+            self.segmentChanged()
+        }
         
         self.view.addSubview(descriptionImageView)
         descriptionImageView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10).isActive = true
@@ -535,8 +678,19 @@ class NewFactViewController: UIViewController {
         newFactDisplayPicker.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10).isActive = true
         newFactDisplayPicker.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10).isActive = true
         newFactDisplayPicker.topAnchor.constraint(equalTo: descriptionImageView.bottomAnchor, constant: 10).isActive = true
-        newFactDisplayPicker.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -25).isActive = true
+        newFactDisplayPicker.heightAnchor.constraint(equalToConstant: 100).isActive = true
     }
+    
+    let selectButton: DesignableButton = {
+       let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Thema auswählen", for: .normal)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
+        button.setTitleColor(.imagineColor, for: .normal)
+        button.addTarget(self, action: #selector(selectTopicButtonTapped), for: .touchUpInside)
+        
+        return button
+    }()
     
     let newTopicDisplayTypeSelection: UISegmentedControl = {
        let segment = UISegmentedControl()
@@ -578,6 +732,27 @@ class NewFactViewController: UIViewController {
         return imgView
     }()
     
+    let topicPicturePreviewImageView: UIImageView = {
+       let imgView = UIImageView()
+        imgView.translatesAutoresizingMaskIntoConstraints = false
+        imgView.contentMode = .scaleAspectFill
+        imgView.image = UIImage(named: "FactDisplay")
+        imgView.layer.cornerRadius = 4
+        imgView.clipsToBounds = true
+        
+        return imgView
+    }()
+    
+    let topicPreviewLabel : UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans", size: 14)
+        label.numberOfLines = 0
+        label.minimumScaleFactor = 0.3
+        label.adjustsFontSizeToFitWidth = true
+        
+        return label
+    }()
 }
 
 extension NewFactViewController: UITextViewDelegate {
@@ -602,6 +777,8 @@ extension NewFactViewController: UITextViewDelegate {
                 return textView.text.count + (text.count - range.length) <= argumentTitleCharacterLimit
             case .source:
                 return textView.text.count + (text.count - range.length) <= sourceTitleCharacterLimit
+            case .singleTopicAddOn:
+                return textView.text.count + (text.count - range.length) <= addOnTitleCharacterLimit
             }
             
         } else if textView == descriptionTextView {
@@ -613,6 +790,8 @@ extension NewFactViewController: UITextViewDelegate {
                 return textView.text.count + (text.count - range.length) <= addOnDescriptionCharacterLimit
             case .addOnHeader:
                 return textView.text.count + (text.count - range.length) <= addOnHeaderDescriptionCharacterLimit
+            case .singleTopicAddOn:
+                return textView.text.count + (text.count - range.length) <= addOnDescriptionCharacterLimit
             default:
                 print("No Limit")
                 return true
@@ -644,6 +823,9 @@ extension NewFactViewController: UITextViewDelegate {
             case .source:
                 let characterLeft = sourceTitleCharacterLimit-textView.text.count
                 self.titleCharacterCountLabel.text = String(characterLeft)
+            case .singleTopicAddOn:
+                let characterLeft = addOnTitleCharacterLimit-textView.text.count
+                self.titleCharacterCountLabel.text = String(characterLeft)
             }
         } else {    // DescriptionTextView
             switch new { // Title no longer than x characters
@@ -655,6 +837,9 @@ extension NewFactViewController: UITextViewDelegate {
                 self.descriptionCharacterCountLabel.text = String(characterLeft)
             case .addOnHeader:
                 let characterLeft = addOnHeaderDescriptionCharacterLimit-textView.text.count
+                self.descriptionCharacterCountLabel.text = String(characterLeft)
+            case .singleTopicAddOn:
+                let characterLeft = addOnDescriptionCharacterLimit-textView.text.count
                 self.descriptionCharacterCountLabel.text = String(characterLeft)
             default:
                 print("No Limit")
@@ -694,7 +879,99 @@ extension NewFactViewController : UIPickerViewDelegate, UIPickerViewDataSource {
             print("Wrong row?")
         }
     }
+}
+
+extension NewFactViewController: LinkFactWithPostDelegate {
+    func selectedFact(fact: Fact, isViewAlreadyLoaded: Bool) {
+        self.selectedTopicIDForSingleTopicAddOn = fact.documentID
+        self.topicPreviewLabel.text = fact.title.quoted
+        if let url = URL(string: fact.imageURL) {
+            topicPicturePreviewImageView.sd_setImage(with: url, completed: nil)
+        } else {
+            topicPicturePreviewImageView.image = UIImage(named: "FactStamp")
+        }
+    }
+}
+
+extension NewFactViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        
+        if let originalImage = info[.originalImage] as? UIImage {
+            selectedImageFromPicker = originalImage
+        }
+        
+        if let image = selectedImageFromPicker {
+            setImage(image: image)
+        }
+        
+        imagePicker.dismiss(animated: true, completion: nil)
+    }
     
     
+    
+    func setImage(image: UIImage) {
+        topicPicturePreviewImageView.image = image
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    
+    
+    func savePicture(userID: String, topicRef: DocumentReference) {
+        
+        if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 1) {
+            let data = NSData(data: image)
+            
+            let imageSize = data.count/1000
+            
+            
+            if imageSize <= 500 {   // When the imageSize is under 500kB it wont be compressed, because you can see the difference
+                // No compression
+                print("No compression")
+                self.storeImage(data: image, topicRef: topicRef, userID: userID)
+            } else if imageSize <= 1000 {
+                if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.4) {
+                    
+                    self.storeImage(data: image, topicRef: topicRef, userID: userID)
+                }
+            } else if imageSize <= 2000 {
+                if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.25) {
+                    
+                    self.storeImage(data: image, topicRef: topicRef, userID: userID)
+                }
+            } else {
+                if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.1) {
+                    
+                    self.storeImage(data: image, topicRef: topicRef, userID: userID)
+                }
+            }
+            
+        }
+    }
+    
+    func storeImage(data: Data, topicRef: DocumentReference, userID: String) {
+        
+        let storageRef = Storage.storage().reference().child("factPictures").child("\(topicRef.documentID).png")
+        
+        storageRef.putData(data, metadata: nil, completion: { (metadata, error) in    //Bild speichern
+            if let error = error {
+                print(error)
+                return
+            }
+            storageRef.downloadURL(completion: { (url, err) in  // Hier wird die URL runtergezogen
+                if let err = err {
+                    print(err)
+                    return
+                }
+                if let url = url {
+                    self.createNewFact(ref: topicRef, imageURL: url.absoluteString)
+                }
+            })
+        })
+    }
     
 }

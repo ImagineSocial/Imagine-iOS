@@ -29,6 +29,8 @@ class PostsOfFactTableViewController: UITableViewController {
     @IBOutlet weak var followerCountLabel: UILabel!
     @IBOutlet weak var postCountLabel: UILabel!
     
+    @IBOutlet weak var justForTipViewView: UIView!
+    
     var fact: Fact?
     var noPostsType: BlankCellType = .postsOfFacts
     var posts = [Post]()
@@ -41,6 +43,7 @@ class PostsOfFactTableViewController: UITableViewController {
     let radius:CGFloat = 6
     
     var tipView: EasyTipView?
+    var followTopicTipView: EasyTipView?
     
     var isMainViewController = true
     
@@ -96,15 +99,39 @@ class PostsOfFactTableViewController: UITableViewController {
         }
     }
     
+    func hintTheOtherView() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            
+            UIView.animate(withDuration: 0.4, animations: {
+                self.view.frame.origin.x += 50
+            }) { (_) in
+                UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
+                    self.view.frame.origin.x -= 50
+                }) { (_) in
+                    // Do something when it is finished
+                }
+            }
+        }
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         if let tipView = tipView {
             tipView.dismiss()
+        }
+        if let tipView = followTopicTipView  {
+            tipView.dismiss()
+            followTopicTipView = nil
         }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let tipView = tipView {
             tipView.dismiss()
+            self.tipView = nil
+        }
+        if let tipView = followTopicTipView  {
+            tipView.dismiss()
+            followTopicTipView = nil
         }
     }
     
@@ -214,23 +241,56 @@ class PostsOfFactTableViewController: UITableViewController {
         if let fact = fact {
             self.view.activityStartAnimating()
             
-            postHelper.getPostsForFact(factID: fact.documentID) { (posts) in
+            postHelper.getPostsForFact(factID: fact.documentID, forPreviewPictures: false) { (posts) in
                 self.posts = posts
                 self.tableView.reloadData()
                 self.view.activityStopAnimating()
+                
+                self.explainFunctions()
             }
         }
+    }
+    
+    func explainFunctions() {
+        
+        if isMainViewController {
+            if let _ = defaults.string(forKey: "showFollowFunction") {
+                
+                let count = defaults.integer(forKey: "TimesOpenedCommunity")
+                print("THat is how many Times: \(count)")
+                
+                if count < 6 {
+                    hintTheOtherView()
+                    defaults.set(count+1, forKey: "TimesOpenedCommunity")
+                }
+                
+            } else {
+                showFollowTopicExplanation()
+                defaults.set(true, forKey: "showFollowFunction")
+                print("Community launched first time")
+            }
+        }
+    }
+    
+    func showFollowTopicExplanation() {
+        followTopicTipView = EasyTipView(text: "Bei Imagine können Beiträge mit allen geteilt, oder auch seperat in einem Thema gepostet werden.\n\nFolge einer Community, um auch diese neuen Themen-Beiträge in deinem Home-Feed zu sehen.")
+        followTopicTipView!.show(forView: justForTipViewView)
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let post = posts[indexPath.row]
         
-        switch post.type {
-        case .nothingPostedYet:
-            print("Nothing will happen")
-            tableView.deselectRow(at: indexPath, animated: true)
-        default:
-            performSegue(withIdentifier: "showPost", sender: post)
+        if let tipView = followTopicTipView  {
+            tipView.dismiss()
+            followTopicTipView = nil
+        } else {
+            switch post.type {
+            case .nothingPostedYet:
+                print("Nothing will happen")
+                tableView.deselectRow(at: indexPath, animated: true)
+            default:
+                performSegue(withIdentifier: "showPost", sender: post)
+            }
         }
     }
     
@@ -518,8 +578,12 @@ class PostsOfFactTableViewController: UITableViewController {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        tipView = EasyTipView(text: Constants.texts.postOfFactText)
-        tipView!.show(forItem: infoButton)
+        if let tipView = tipView {
+            tipView.dismiss()
+        } else {
+            tipView = EasyTipView(text: Constants.texts.postOfFactText)
+            tipView!.show(forItem: infoButton)
+        }
     }
     
     @IBAction func newPostTapped(_ sender: Any) {

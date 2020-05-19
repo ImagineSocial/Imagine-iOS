@@ -35,14 +35,15 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     
     @IBOutlet weak var infoButton: UIBarButtonItem!
     
-    var facts = [Fact]()
     var topicFacts = [Fact]()
-    var factFacts = [Fact]()
+    var discussionFacts = [Fact]()
     var filteredFacts = [Fact]()
+    var followedFacts = [Fact]()
     
-    var displayOption: FactCollectionDisplayOption = .all
+//    var displayOption: FactCollectionDisplayOption = .all
     
     let db = Firestore.firestore()
+    let dataHelper = DataHelper()
     
     var addFactToPost : AddFactToPostType?
     var delegate: LinkFactWithPostDelegate?
@@ -53,9 +54,13 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     let collectionViewSpacing:CGFloat = 30
     let searchController = UISearchController(searchResultsController: nil)
     
-    let secondHeaderIdentifier = "collectionViewView"
     let recentTopicsCellIdentifier = "RecentTopicsCollectionCell"
+    let discussionCellIdentifier = "DiscussionCell"
+    let followedTopicCellIdentifier = "FollowedTopicCell"
     
+    let topicHeaderIdentifier = "TopicCollectionHeader"
+    let topicFooterIdentifier = "TopicCollectionFooter"
+        
     var reloadRecentTopics = false
 
 
@@ -63,24 +68,21 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         super.viewDidLoad()
         
         getFacts()
-        setUpSearchController()
+//        setUpSearchController()
         
         if addFactToPost == .newPost {
             self.setDismissButton()
         }
         
-        collectionView.register((UINib(nibName: "FactCollectionHeader", bundle: nil)), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: secondHeaderIdentifier)
+        collectionView.register(UINib(nibName: "TopicCollectionHeader", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: topicHeaderIdentifier)
+        collectionView.register(UINib(nibName: "TopicCollectionFooter", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: topicFooterIdentifier)
         collectionView.register(UINib(nibName: "FactCell", bundle: nil), forCellWithReuseIdentifier: factCellIdentifier)
         collectionView.register(UINib(nibName: "RecentTopicsCollectionCell", bundle: nil), forCellWithReuseIdentifier: recentTopicsCellIdentifier)
-        collectionView.register(UINib(nibName: "AddTopicCell", bundle: nil), forCellWithReuseIdentifier: "AddTopicCell")
+        collectionView.register(UINib(nibName: "DiscussionCell", bundle: nil), forCellWithReuseIdentifier: discussionCellIdentifier)
+        collectionView.register(UINib(nibName: "FollowedTopicCell", bundle: nil), forCellWithReuseIdentifier: followedTopicCellIdentifier)
         
-        extendedLayoutIncludesOpaqueBars = true
+        self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        if #available(iOS 13.0, *) {
-            self.navigationController?.navigationBar.backgroundColor = .systemBackground
-        } else {
-            self.navigationController?.navigationBar.backgroundColor = .white
-        }
         
         self.view.activityStartAnimating()
     }
@@ -107,12 +109,14 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         self.navigationController?.navigationBar.isTranslucent = false
         if let tipView = tipView {
             tipView.dismiss()
+            self.tipView = nil
         }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let tipView = tipView {
             tipView.dismiss()
+            self.tipView = nil
         }
     }
     
@@ -135,29 +139,47 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
 
    
     func getFacts() {
-        DataHelper().getData(get: .facts) { (facts) in
+        dataHelper.getData(get: .facts) { (facts) in
             
             if let facts = facts as? [Fact] {
-                self.facts = facts
                 
                 for fact in facts {
-                    if fact.displayOption == .fact {
-                        self.factFacts.append(fact)
-                    } else {
+                    if fact.displayOption == .fact && self.discussionFacts.count < 6 {
+                        self.discussionFacts.append(fact)
+                    } else if fact.displayOption == .topic && self.topicFacts.count < 8  {
                         self.topicFacts.append(fact)
                     }
                 }
-                
-                let fact = Fact(addMoreDataCell: true)
-                self.facts.append(fact)
-                self.factFacts.append(fact)
-                self.topicFacts.append(fact)
                 
                 self.collectionView.reloadData()
                 self.view.activityStopAnimating()
             } else {
                 self.view.activityStopAnimating()
                 print("Something went wrong")
+            }
+        }
+        
+        if let user = Auth.auth().currentUser {
+            dataHelper.getFollowedTopicDocuments(userUID: user.uid) { (documents) in
+                for document in documents {
+                    let ref = self.db.collection("Facts").document(document.documentID)
+                    
+                    ref.getDocument { (snap, err) in
+                        if let error = err {
+                            print("We have an error: \(error.localizedDescription)")
+                        } else {
+                            if let snap = snap {
+                                if let data = snap.data() {
+                                    if let fact = self.dataHelper.addFact(documentID: snap.documentID, data: data) {
+                                        fact.beingFollowed = true
+                                        self.followedFacts.append(fact)
+                                        self.collectionView.reloadData()    //not the best idea i know
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -176,7 +198,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     // MARK: UICollectionViewDataSource
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 2
+        return 4
     }
     
   
@@ -186,20 +208,16 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         
         if section == 0 {
             return 1
-        } else {
+        } else if section == 1 {
             if isFiltering {
                 return filteredFacts.count
             } else {
-                
-                switch displayOption {
-                case .all:
-                    return facts.count
-                case .justTopics:
-                    return topicFacts.count
-                case .justFacts:
-                    return factFacts.count
-                }
+                return topicFacts.count
             }
+        } else if section == 2 {
+            return discussionFacts.count
+        } else {
+            return followedFacts.count
         }
     }
 
@@ -214,33 +232,41 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                 
                 return cell
             }
-        } else {    //Other cells
-            
+        } else if  indexPath.section == 1 {    //Other cells
             if isFiltering {
                 fact = filteredFacts[indexPath.row]
             } else {
-                
-                switch displayOption {
-                case .all:
-                    fact = facts[indexPath.row]
-                case .justTopics:
-                    fact = topicFacts[indexPath.row]
-                case .justFacts:
-                    fact = factFacts[indexPath.row]
-                }
+                fact = topicFacts[indexPath.row]
             }
             
-            if fact!.addMoreCell {
-                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddTopicCell", for: indexPath) as? AddTopicCell {
+        } else if  indexPath.section == 2 {
+            fact = discussionFacts[indexPath.row]
+            
+            
+        } else {
+            fact = followedFacts[indexPath.row]
+        }
+        
+        if let fact = fact {
+            
+            if indexPath.section == 1 {
+                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: factCellIdentifier, for: indexPath) as? FactCell {
                     
-                    
+                    cell.fact = fact
                     
                     return cell
                 }
-            } else {
-                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: factCellIdentifier, for: indexPath) as? FactCell {
+            } else if indexPath.section == 2 {
+                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: discussionCellIdentifier, for: indexPath) as? DiscussionCell {
                     
-                    cell.fact = fact!
+                    cell.fact = fact
+                    
+                    return cell
+                }
+            } else if indexPath.section == 3 {
+                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: followedTopicCellIdentifier, for: indexPath) as? FollowedTopicCell {
+                    
+                    cell.fact = fact
                     
                     return cell
                 }
@@ -254,55 +280,68 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
+        
         if indexPath.section == 0 {
             let newSize = CGSize(width: (collectionView.frame.size.width)-(collectionViewSpacing+10), height: (collectionView.frame.size.width/4))
             
             return newSize
+        } else if  indexPath.section == 1 {    // normal Communities
+            
+                let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: (collectionView.frame.size.width/2)-collectionViewSpacing)
+                
+                return newSize
+            
+        } else if  indexPath.section == 2 { // Discussions
+            
+                let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: (collectionView.frame.size.width/2)-(collectionViewSpacing/2))
+                
+                return newSize
+            
         } else {
-            let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: (collectionView.frame.size.width/2)-collectionViewSpacing)
+            let newSize = CGSize(width: (collectionView.frame.size.width), height: 40)
             
             return newSize
         }
+            
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         var fact: Fact?
         
-        if isFiltering {
-            fact = filteredFacts[indexPath.row]
-        } else {
-            switch displayOption {
-            case .all:
-                fact = facts[indexPath.row]
-            case .justTopics:
+        if indexPath.section == 0 {
+            
+        } else if indexPath.section == 1 {
+            if isFiltering {
+                fact = filteredFacts[indexPath.row]
+            } else {
                 fact = topicFacts[indexPath.row]
-            case .justFacts:
-                fact = factFacts[indexPath.row]
             }
+        } else if indexPath.section == 2 {
+            fact = discussionFacts[indexPath.row]
+        } else {
+            fact = followedFacts[indexPath.row]
         }
         
         if let fact = fact {
-            if fact.addMoreCell {
-                performSegue(withIdentifier: "toNewArgumentSegue", sender: nil)
-            } else {
-                if let addFactToPost = addFactToPost{
-                    if addFactToPost == .newPost {
-                        self.setFactForPost(fact: fact)
-                    } else {
-                        let factString = fact.title.quoted
-                        let alert = UIAlertController(title: "Bist du dir sicher?", message: "Möchtest du das Thema \(factString) zu dem AddOn hinzufügen?", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "Ja", style: .default, handler: { (_) in
-                            self.setFactForOptInfo(fact: fact)
-                        }))
-                        alert.addAction(UIAlertAction(title: "Abbrechen", style: .cancel, handler: { (_) in
-                            alert.dismiss(animated: true, completion: nil)
-                        }))
-                        self.present(alert, animated: true)
-                    }
+            
+            if let addFactToPost = addFactToPost{
+                
+                if addFactToPost == .newPost {
+                    self.setFactForPost(fact: fact)
                 } else {
-                    performSegue(withIdentifier: "toPageVC", sender: fact)
+                    let factString = fact.title.quoted
+                    let alert = UIAlertController(title: "Bist du dir sicher?", message: "Möchtest du das Thema \(factString) zu dem AddOn hinzufügen?", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Ja", style: .default, handler: { (_) in
+                        self.setFactForOptInfo(fact: fact)
+                    }))
+                    alert.addAction(UIAlertAction(title: "Abbrechen", style: .cancel, handler: { (_) in
+                        alert.dismiss(animated: true, completion: nil)
+                    }))
+                    self.present(alert, animated: true)
                 }
+            } else {
+                performSegue(withIdentifier: "toPageVC", sender: fact)
             }
         }
     }
@@ -321,9 +360,29 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                     return view
                 }
             } else {
-                if let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: secondHeaderIdentifier, for: indexPath) as? FactCollectionHeader {
+                if let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: topicHeaderIdentifier, for: indexPath) as? TopicCollectionHeader {
+                    
+                    if indexPath.section == 1 {
+                        view.headerLabel.text = "Angesagt"
+                    } else if indexPath.section == 2 {
+                        view.headerLabel.text = "Aktuelle Diskussionen"
+                    } else if indexPath.section == 3 {
+                        view.headerLabel.text = "Deine Communities"
+                    }
+                    
+                    return view
+                }
+            }
+        } else if kind == UICollectionView.elementKindSectionFooter {
+            if indexPath.section != 0 && indexPath.section != 3 {
+                if let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: topicFooterIdentifier, for: indexPath) as? TopicCollectionFooter {
                     
                     view.delegate = self
+                    if indexPath.section == 1 {
+                        view.type = .topic
+                    } else if indexPath.section == 2 {
+                        view.type = .fact
+                    }
                     
                     return view
                 }
@@ -337,7 +396,15 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         if section == 0 {
             return CGSize(width: collectionView.frame.width, height: 70)
         } else {
-            return CGSize(width: collectionView.frame.width, height: 20)
+            return CGSize(width: collectionView.frame.width, height: 50)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        if section != 0 && section != 3 {
+            return CGSize(width: collectionView.frame.width, height: 85)
+        } else {
+            return CGSize(width: collectionView.frame.width, height: 0)
         }
     }
 
@@ -433,8 +500,20 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         if segue.identifier == "toNewArgumentSegue" {
             if let navCon = segue.destination as? UINavigationController {
                 if let newFactVC = navCon.topViewController as? NewFactViewController {
-                    newFactVC.new = .fact
-                    newFactVC.delegate = self
+                    if let type = sender as? DisplayOption {
+                        
+                        newFactVC.pickedDisplayOption = type
+                        
+                        newFactVC.new = .fact
+                        newFactVC.delegate = self
+                    }
+                }
+            }
+        }
+        if segue.identifier == "showAllTopicsSegue" {
+            if let showAllVC = segue.destination as? ShowAllFactsCollectionViewController {
+                if let type = sender as? DisplayOption {
+                    showAllVC.type = type
                 }
             }
         }
@@ -443,14 +522,19 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
 
 
     @IBAction func infoButtonTapped(_ sender: Any) {
-        tipView = EasyTipView(text: Constants.texts.factOverviewText)
-        tipView!.show(forItem: infoButton)
+        if let tipView = tipView {
+            tipView.dismiss()
+            self.tipView = nil
+        } else {
+            tipView = EasyTipView(text: Constants.texts.factOverviewText)
+            tipView!.show(forItem: infoButton)
+        }
     }
     
     //MARK: LinkFactAndPost
     
     func setFactForPost(fact: Fact) {
-        delegate?.selectedFact(fact: fact, isViewAlreadyLoaded: true) // True becaus
+        delegate?.selectedFact(fact: fact, isViewAlreadyLoaded: true) // True because 
         
         //Can be a opt. Info!
         closeAndDismiss()
@@ -505,7 +589,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                     let date = createTimestamp.dateValue()
                     let stringDate = date.formatRelativeString()
                     
-                    let fact = Fact(addMoreDataCell: false)
+                    let fact = Fact()
                     fact.title = name
                     fact.createDate = stringDate
                     fact.documentID = documentID
@@ -527,8 +611,6 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                     
                     self.filteredFacts.append(fact)
                 }
-                let fact = Fact(addMoreDataCell: true)
-                self.filteredFacts.append(fact)
                 self.collectionView.reloadData()
             }
         }
@@ -539,9 +621,19 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     }
 }
 
-extension FactCollectionViewController: TopOfCollectionViewDelegate, NewFactDelegate {
+extension FactCollectionViewController: TopOfCollectionViewDelegate, NewFactDelegate, TopicCollectionFooterDelegate {
+    
+    func addTopicTapped(type: DisplayOption) {
+        performSegue(withIdentifier: "toNewArgumentSegue", sender: type)
+    }
+    
+    func showAllTapped(type: DisplayOption) {
+        performSegue(withIdentifier: "showAllTopicsSegue", sender: type)
+    }
+    
     func finishedCreatingNewInstance(item: Any?) {
-        self.facts.removeAll()
+        self.topicFacts.removeAll()
+        self.discussionFacts.removeAll()
         self.collectionView.reloadData()
         
         self.getFacts()
@@ -550,7 +642,7 @@ extension FactCollectionViewController: TopOfCollectionViewDelegate, NewFactDele
     
     func sortFactsTapped(option: FactCollectionDisplayOption) {
         
-        self.displayOption = option
+//        self.displayOption = option
         collectionView.reloadData()
     }
 }
@@ -612,6 +704,23 @@ class AddTopicCell: UICollectionViewCell {
     
 }
 
+class ShowAllTopicsCell: UICollectionViewCell {
+    
+    
+    override func awakeFromNib() {
+        layer.cornerRadius = 4
+        layer.masksToBounds = true
+        if #available(iOS 13.0, *) {
+            layer.borderColor = UIColor.label.cgColor
+        } else {
+            layer.borderColor = UIColor.black.cgColor
+        }
+        layer.borderWidth = 0.5
+    }
+    
+}
+
+
 class FirstCollectionHeader: UICollectionReusableView {
     @IBOutlet weak var headerLabel: UILabel!
     
@@ -640,3 +749,11 @@ class FactCollectionHeader: UICollectionReusableView {
         delegate?.sortFactsTapped(option: self.displayOption)
     }
 }
+
+class TopicCollectionHeader: UICollectionReusableView {
+    
+    @IBOutlet weak var headerLabel: UILabel!
+    
+    
+}
+

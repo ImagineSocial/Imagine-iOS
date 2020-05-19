@@ -196,8 +196,12 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        tipView = EasyTipView(text: Constants.texts.argumentDetailText)
-        tipView!.show(forItem: infoButton)
+        if let tipView = tipView {
+            tipView.dismiss()
+        } else {
+            tipView = EasyTipView(text: Constants.texts.argumentDetailText)
+            tipView!.show(forItem: infoButton)
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

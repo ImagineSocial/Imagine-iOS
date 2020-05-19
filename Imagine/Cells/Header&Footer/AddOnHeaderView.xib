@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSans-Bold.ttf">
+            <string>IBMPlexSans-Bold</string>
+        </array>
+        <array key="IBMPlexSans-Regular.ttf">
+            <string>IBMPlexSans</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="nTE-2L-dgO" customClass="AddOnHeaderView" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="370" height="150"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sqk-Vk-93r">
+                    <rect key="frame" x="10" y="10" width="310" height="106.5"/>
+                    <fontDescription key="fontDescription" name="IBMPlexSans-Bold" family="IBM Plex Sans" pointSize="16"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eMs-4E-3BA">
+                    <rect key="frame" x="10" y="121.5" width="310" height="18.5"/>
+                    <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                    <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IK2-gA-8HN" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                    <rect key="frame" x="330" y="10" width="25" height="25"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="25" id="SWP-s8-nUs"/>
+                        <constraint firstAttribute="width" constant="25" id="n88-UL-qB3"/>
+                    </constraints>
+                    <color key="tintColor" red="0.31537210939999999" green="0.46283984179999998" blue="0.65801352260000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <state key="normal" image="thanksButton"/>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="O4U-cy-ANP" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                    <rect key="frame" x="330" y="115" width="25" height="25"/>
+                    <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                    <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <state key="normal" image="down">
+                        <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                    </state>
+                    <connections>
+                        <action selector="showAllTapped:" destination="nTE-2L-dgO" eventType="touchUpInside" id="Wcn-8e-KIj"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0RO-oO-h1z" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                    <rect key="frame" x="331" y="82" width="23" height="23"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="23" id="v1s-MJ-ewA"/>
+                        <constraint firstAttribute="height" constant="23" id="vRM-xP-KgX"/>
+                    </constraints>
+                    <color key="tintColor" red="0.31537210939999999" green="0.46283984179999998" blue="0.65801352260000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <state key="normal" image="today_apps"/>
+                    <connections>
+                        <action selector="showPostsInFeedStyleTapped:" destination="nTE-2L-dgO" eventType="touchUpInside" id="R5D-Eg-2tb"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <constraints>
+                <constraint firstItem="0Au-p0-ZmM" firstAttribute="trailing" secondItem="Sqk-Vk-93r" secondAttribute="trailing" constant="50" id="2ps-vP-XI2"/>
+                <constraint firstItem="0Au-p0-ZmM" firstAttribute="bottom" secondItem="eMs-4E-3BA" secondAttribute="bottom" constant="10" id="6c2-tR-eoV"/>
+                <constraint firstItem="Sqk-Vk-93r" firstAttribute="top" secondItem="nTE-2L-dgO" secondAttribute="top" constant="10" id="8LB-s1-gZR"/>
+                <constraint firstItem="eMs-4E-3BA" firstAttribute="top" secondItem="Sqk-Vk-93r" secondAttribute="bottom" constant="5" id="HVY-gU-2CW"/>
+                <constraint firstItem="IK2-gA-8HN" firstAttribute="top" secondItem="Sqk-Vk-93r" secondAttribute="top" id="Nb8-CC-l6w"/>
+                <constraint firstItem="Sqk-Vk-93r" firstAttribute="leading" secondItem="0Au-p0-ZmM" secondAttribute="leading" constant="10" id="Ta6-MF-bCO"/>
+                <constraint firstItem="O4U-cy-ANP" firstAttribute="top" secondItem="0RO-oO-h1z" secondAttribute="bottom" constant="10" id="YtD-Fu-ZCk"/>
+                <constraint firstItem="O4U-cy-ANP" firstAttribute="width" secondItem="IK2-gA-8HN" secondAttribute="width" id="ZGo-xz-1Sh"/>
+                <constraint firstItem="IK2-gA-8HN" firstAttribute="leading" secondItem="Sqk-Vk-93r" secondAttribute="trailing" constant="10" id="Zjc-kh-Sra"/>
+                <constraint firstItem="O4U-cy-ANP" firstAttribute="height" secondItem="IK2-gA-8HN" secondAttribute="height" id="abl-CO-K7F"/>
+                <constraint firstItem="eMs-4E-3BA" firstAttribute="leading" secondItem="0Au-p0-ZmM" secondAttribute="leading" constant="10" id="beA-fF-Uq0"/>
+                <constraint firstItem="eMs-4E-3BA" firstAttribute="trailing" secondItem="Sqk-Vk-93r" secondAttribute="trailing" id="hA3-db-n60"/>
+                <constraint firstItem="O4U-cy-ANP" firstAttribute="centerX" secondItem="IK2-gA-8HN" secondAttribute="centerX" id="qTG-ea-ZLj"/>
+                <constraint firstItem="O4U-cy-ANP" firstAttribute="bottom" secondItem="eMs-4E-3BA" secondAttribute="bottom" id="xpN-0O-llp"/>
+                <constraint firstItem="0RO-oO-h1z" firstAttribute="centerX" secondItem="IK2-gA-8HN" secondAttribute="centerX" id="zZ0-lH-Mis"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="0Au-p0-ZmM"/>
+            <connections>
+                <outlet property="headerDescriptionLabel" destination="eMs-4E-3BA" id="PtB-WE-UON"/>
+                <outlet property="headerTitleLabel" destination="Sqk-Vk-93r" id="vyN-ht-Qz6"/>
+            </connections>
+            <point key="canvasLocation" x="-176.81159420289856" y="-87.723214285714278"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="down" width="200" height="200"/>
+        <image name="thanksButton" width="800" height="800"/>
+        <image name="today_apps" width="30" height="30"/>
+    </resources>
+</document>

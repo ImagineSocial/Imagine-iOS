@@ -135,7 +135,7 @@ extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageView
     func changeBarButtonItem(index: Int) {
         if index == 0 { // CommunityViewController is shown
             //show Vision bar button
-            self.factInfoSectionLabel.text = "Add-Ons"
+            self.factInfoSectionLabel.text = "Themen"
             
             UIView.animate(withDuration: 0.2) {
                 self.factInfoBarButtonItemView.alpha = 1

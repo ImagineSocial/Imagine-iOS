@@ -36,7 +36,7 @@
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Noch kein Pro-Argument verfügbar" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4tj-QR-6jR">
                                                 <rect key="frame" x="5" y="5" width="200" height="27.5"/>
-                                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
+                                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="10"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
@@ -82,9 +82,9 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="n9y-xz-uUp" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="47.5" width="226" height="37.5"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Noch kein Contra-Argument verfügbar" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YbH-Oi-ka7">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Noch kein Contra-Argument verfügbar" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="YbH-Oi-ka7">
                                                 <rect key="frame" x="5" y="5" width="200" height="27.5"/>
-                                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
+                                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="10"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
@@ -164,34 +164,19 @@
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <view alpha="0.65000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Fwf-9e-0Bj" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="212" y="2" width="26" height="26"/>
-                        <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.84999999999999998" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="topicIcon" translatesAutoresizingMaskIntoConstraints="NO" id="yqr-Jg-4kM">
-                                <rect key="frame" x="3" y="5" width="20" height="16"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                        <real key="value" value="0.0"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                            </imageView>
-                        </subviews>
-                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.84999999999999998" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="topicIcon" translatesAutoresizingMaskIntoConstraints="NO" id="yqr-Jg-4kM">
+                        <rect key="frame" x="215" y="10" width="15" height="15"/>
+                        <color key="tintColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="yqr-Jg-4kM" firstAttribute="leading" secondItem="Fwf-9e-0Bj" secondAttribute="leading" constant="3" id="C9M-VZ-nPd"/>
-                            <constraint firstItem="yqr-Jg-4kM" firstAttribute="top" secondItem="Fwf-9e-0Bj" secondAttribute="top" constant="5" id="FFX-Yc-SUb"/>
-                            <constraint firstAttribute="bottom" secondItem="yqr-Jg-4kM" secondAttribute="bottom" constant="5" id="Ojn-kW-I6j"/>
-                            <constraint firstAttribute="height" constant="26" id="Tkh-5Y-hPQ"/>
-                            <constraint firstAttribute="width" constant="26" id="Wpb-Dd-Eq8"/>
-                            <constraint firstAttribute="trailing" secondItem="yqr-Jg-4kM" secondAttribute="trailing" constant="3" id="qcQ-ZX-fGl"/>
+                            <constraint firstAttribute="height" constant="15" id="DeF-td-469"/>
+                            <constraint firstAttribute="width" constant="15" id="OMa-kk-XON"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                <real key="value" value="13"/>
+                                <real key="value" value="0.0"/>
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
-                    </view>
+                    </imageView>
                 </subviews>
                 <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 <constraints>
@@ -199,10 +184,10 @@
                     <constraint firstAttribute="trailing" secondItem="0mc-D2-Gpd" secondAttribute="trailing" constant="5" id="JZA-A4-cSm"/>
                     <constraint firstItem="Hhm-WW-bII" firstAttribute="leading" secondItem="Bvo-sw-Vhr" secondAttribute="leading" constant="5" id="NRr-JF-QrF"/>
                     <constraint firstItem="0mc-D2-Gpd" firstAttribute="leading" secondItem="Bvo-sw-Vhr" secondAttribute="leading" constant="5" id="Yib-ip-GHF"/>
-                    <constraint firstItem="Fwf-9e-0Bj" firstAttribute="top" secondItem="Bvo-sw-Vhr" secondAttribute="top" constant="2" id="bbl-0M-c65"/>
+                    <constraint firstItem="yqr-Jg-4kM" firstAttribute="top" secondItem="Bvo-sw-Vhr" secondAttribute="top" constant="10" id="alY-L4-1y1"/>
                     <constraint firstItem="0mc-D2-Gpd" firstAttribute="top" secondItem="Bvo-sw-Vhr" secondAttribute="top" constant="5" id="dSn-Fi-Bg5"/>
                     <constraint firstItem="Hhm-WW-bII" firstAttribute="top" secondItem="0mc-D2-Gpd" secondAttribute="bottom" constant="2" id="f02-zc-QaK"/>
-                    <constraint firstAttribute="trailing" secondItem="Fwf-9e-0Bj" secondAttribute="trailing" constant="2" id="jX1-dL-9f9"/>
+                    <constraint firstAttribute="trailing" secondItem="yqr-Jg-4kM" secondAttribute="trailing" constant="10" id="k2i-Ac-rqw"/>
                     <constraint firstAttribute="bottom" secondItem="Hhm-WW-bII" secondAttribute="bottom" constant="5" id="wwi-vU-Xkt"/>
                 </constraints>
             </collectionViewCellContentView>

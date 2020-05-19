@@ -18,6 +18,7 @@ enum SideMenuButton {
     case toEULA
     case toPost
     case toComment
+    case toChats
     case cancel
 }
 
@@ -62,32 +63,34 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         notificationTableView.dataSource = self
         
         if let window = UIApplication.shared.keyWindow {
-        
-        window.addSubview(blackView)
-        blackView.frame = window.frame
-        blackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(sideMenuDismissed)))
-        
-        
-        window.addSubview(sideMenuView)
-        sideMenuView.addSubview(profileButton)
-        sideMenuView.addSubview(profilePictureImageView)
-        sideMenuView.addSubview(nameLabel)
-        sideMenuView.addSubview(smallNumberLabel)
-        sideMenuView.addSubview(disclaimerView)
-        sideMenuView.addSubview(notificationTableView)
-        
-        addConstraints()
-        
-        let y = window.frame.height
-        let sideMenuWidth : CGFloat = 260
-        sideMenuView.frame = CGRect(x: -window.frame.width, y: 0, width: sideMenuWidth, height: y)
-        
-        let slideLeft = UISwipeGestureRecognizer(target: self, action: #selector(sideMenuDismissed))
-        slideLeft.direction = .left
-        window.addGestureRecognizer(slideLeft)
-        
-        
-        sideMenuView.layoutIfNeeded()
+            
+            window.addSubview(blackView)
+            blackView.frame = window.frame
+            blackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(sideMenuDismissed)))
+            
+            
+            window.addSubview(sideMenuView)
+            sideMenuView.addSubview(profileButton)
+            sideMenuView.addSubview(profilePictureImageView)
+            sideMenuView.addSubview(nameLabel)
+            sideMenuView.addSubview(smallNumberLabel)
+            sideMenuView.addSubview(smallChatNumberLabel)
+            sideMenuView.addSubview(disclaimerView)
+            sideMenuView.addSubview(notificationTableView)
+            sideMenuView.addSubview(notificationLabel)
+            
+            addConstraints()
+            
+            let y = window.frame.height
+            let sideMenuWidth : CGFloat = 260
+            sideMenuView.frame = CGRect(x: -window.frame.width, y: 0, width: sideMenuWidth, height: y)
+            
+            let slideLeft = UISwipeGestureRecognizer(target: self, action: #selector(sideMenuDismissed))
+            slideLeft.direction = .left
+            window.addGestureRecognizer(slideLeft)
+            
+            
+            sideMenuView.layoutIfNeeded()
         }
     }
     
@@ -98,17 +101,17 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     func showMenu() {
         //show menu
         
+        
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             
-            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
-                
-                self.blackView.alpha = 1
-                self.sideMenuView.frame = CGRect(x:0, y: 0, width: self.sideMenuView.frame.width, height: self.sideMenuView.frame.height)
-                
-            }, completion: { (_) in
-                
-                self.sideMenuView.layoutSubviews()
-            })
-//        }
+            self.blackView.alpha = 1
+            self.sideMenuView.frame = CGRect(x:0, y: 0, width: self.sideMenuView.frame.width, height: self.sideMenuView.frame.height)
+            
+        }, completion: { (_) in
+            
+            self.sideMenuView.layoutSubviews()
+        })
+        //        }
     }
     
     @objc func toUserProfileTapped() {
@@ -126,6 +129,10 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         handleDismiss(sideMenuButton: .toVoting, comment: nil)
     }
     
+    @objc func toChatsTapped() {
+        handleDismiss(sideMenuButton: .toChats, comment: nil)
+    }
+    
     @objc func toSavedPostsTapped() {
         print("To Saved")
         handleDismiss(sideMenuButton: .toSavedPosts, comment: nil)
@@ -141,14 +148,21 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
     
     
-    func checkNotifications(invitations: Int, notifications: [Comment]) {
+    func checkNotifications(invitations: Int, notifications: [Comment], newChats: Int) {
         if invitations != 0 {
             smallNumberLabel.text = String(invitations)
             smallNumberLabel.isHidden = false
         } else {
             smallNumberLabel.isHidden = true
         }
-                
+        
+        if newChats != 0 {
+            smallChatNumberLabel.text = String(newChats)
+            smallChatNumberLabel.isHidden = false
+        } else {
+            smallChatNumberLabel.isHidden = true
+        }
+        
         self.notifications.removeAll()
         self.notifications = notifications
         
@@ -196,23 +210,33 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         nameLabel.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor).isActive = true
         nameLabel.heightAnchor.constraint(equalToConstant: 35).isActive = true
         
+        chatButton.addTarget(self, action: #selector(toChatsTapped), for: .touchUpInside)
         profileButton.addTarget(self, action: #selector(toUserProfileTapped), for: .touchUpInside)
         friendsButton.addTarget(self, action: #selector(toFriendsTapped), for: .touchUpInside)
-//        voteButton.addTarget(self, action: #selector(toVotingTapped), for: .touchUpInside)
+        //        voteButton.addTarget(self, action: #selector(toVotingTapped), for: .touchUpInside)
         savedButton.addTarget(self, action: #selector(toSavedPostsTapped), for: .touchUpInside)
         eulaButton.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
         
         addDisclaimer()
         
+        chatStackView.addArrangedSubview(chatButton)
+        verticalStackView.addArrangedSubview(chatStackView)
         friendsStackView.addArrangedSubview(friendsButton)
         verticalStackView.addArrangedSubview(friendsStackView)
-//        votingStackView.addArrangedSubview(voteButton)
-//        verticalStackView.addArrangedSubview(votingStackView)
+        //        votingStackView.addArrangedSubview(voteButton)
+        //        verticalStackView.addArrangedSubview(votingStackView)
         savedPostsStackView.addArrangedSubview(savedButton)
         verticalStackView.addArrangedSubview(savedPostsStackView)
         sideMenuView.addSubview(verticalStackView)
         
         let heightWidthOfSmallNumber:CGFloat = 16
+        
+        smallChatNumberLabel.trailingAnchor.constraint(equalTo: chatStackView.trailingAnchor).isActive = true
+        smallChatNumberLabel.centerYAnchor.constraint(equalTo: chatStackView.centerYAnchor).isActive = true
+        smallChatNumberLabel.heightAnchor.constraint(equalToConstant: heightWidthOfSmallNumber).isActive = true
+        smallChatNumberLabel.widthAnchor.constraint(equalToConstant: heightWidthOfSmallNumber).isActive = true
+        smallChatNumberLabel.layer.cornerRadius = heightWidthOfSmallNumber/2
+        smallChatNumberLabel.layoutIfNeeded()
         
         smallNumberLabel.trailingAnchor.constraint(equalTo: friendsStackView.trailingAnchor).isActive = true
         smallNumberLabel.centerYAnchor.constraint(equalTo: friendsStackView.centerYAnchor).isActive = true
@@ -224,13 +248,17 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         verticalStackView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor, constant: 10).isActive = true
         verticalStackView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 50).isActive = true
         verticalStackView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor, constant: -10).isActive = true
-        verticalStackView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+        verticalStackView.heightAnchor.constraint(equalToConstant: 115).isActive = true
         
-        notificationTableView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor, constant: 10).isActive = true
-        notificationTableView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor, constant: -10).isActive = true
-//        notificationTableView.bottomAnchor.constraint(equalTo: disclaimerView.topAnchor, constant: 30).isActive = true
-        notificationTableView.heightAnchor.constraint(equalToConstant: 175).isActive = true
-        notificationTableView.topAnchor.constraint(equalTo: verticalStackView.bottomAnchor, constant: 30).isActive = true
+        notificationTableView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor, constant: 5).isActive = true
+        notificationTableView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor, constant: -5).isActive = true
+        //        notificationTableView.bottomAnchor.constraint(equalTo: disclaimerView.topAnchor, constant: 30).isActive = true
+//        notificationTableView.heightAnchor.constraint(equalToConstant: 175).isActive = true
+        notificationTableView.topAnchor.constraint(equalTo: verticalStackView.bottomAnchor, constant: 40).isActive = true
+        notificationTableView.bottomAnchor.constraint(equalTo: disclaimerView.topAnchor, constant: -30).isActive = true
+        
+        notificationLabel.leadingAnchor.constraint(equalTo: notificationTableView.leadingAnchor).isActive = true
+        notificationLabel.bottomAnchor.constraint(equalTo: notificationTableView.topAnchor, constant: -5).isActive = true
         
         disclaimerView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor, constant: 20).isActive = true
         disclaimerView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor, constant: -50).isActive = true
@@ -274,6 +302,36 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     
     // MARK: Instantiate UI
     
+    let notificationTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.layer.cornerRadius = 8
+        tableView.layer.masksToBounds = true
+        tableView.separatorStyle = .none
+        
+        if #available(iOS 13.0, *) {
+            tableView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
+        } else {
+            tableView.layer.borderColor = UIColor.lightGray.cgColor
+        }
+        tableView.layer.borderWidth = 1
+        
+        return tableView
+    }()
+    
+    let notificationLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans", size: 14)
+        label.text = "Benachrichtigungen:"
+        if #available(iOS 13.0, *) {
+            label.tintColor = .label
+        } else {
+            label.tintColor = .black
+        }
+        
+        return label
+    }()
     
     let profileButton: DesignableButton = {
         let btn = DesignableButton()
@@ -302,16 +360,67 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         return label
     }()
     
+    //MARK:- Chat, Friend, Saved UI
+    let chatButton: DesignableButton = {
+        let btn = DesignableButton()
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.setTitle("Chats", for: .normal)
+        btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
+        //        if #available(iOS 13.0, *) {
+        //            btn.setTitleColor(.label, for: .normal)
+        //        } else {
+        //            btn.setTitleColor(.black, for: .normal)
+        //        }
+        btn.setTitleColor(.imagineColor, for: .normal)
+        return btn
+    }()
+    
+    let chatStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis  = .horizontal
+        stackView.distribution = .fill
+        stackView.spacing   = 5
+        stackView.sizeToFit()
+        
+        
+        let iconImageView = UIImageView()
+        iconImageView.translatesAutoresizingMaskIntoConstraints = false
+        iconImageView.image = UIImage(named: "Chats")
+        iconImageView.contentMode = .scaleAspectFit
+        if #available(iOS 13.0, *) {
+            iconImageView.tintColor = .label
+        } else {
+            iconImageView.tintColor = .black
+        }
+        iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        
+        stackView.addArrangedSubview(iconImageView)
+        
+        return stackView
+    }()
+    
+    let smallChatNumberLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.backgroundColor = UIColor(red: 23/255, green: 145/255, blue: 255/255, alpha: 1)
+        label.textAlignment = .center
+        label.textColor = .white
+        label.font = UIFont(name: "IBMPlexSans", size: 12)
+        label.clipsToBounds = true
+        return label
+    }()
+    
     let friendsButton: DesignableButton = {
         let btn = DesignableButton()
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.setTitle("Freunde", for: .normal)
         btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-//        if #available(iOS 13.0, *) {
-//            btn.setTitleColor(.label, for: .normal)
-//        } else {
-//            btn.setTitleColor(.black, for: .normal)
-//        }
+        //        if #available(iOS 13.0, *) {
+        //            btn.setTitleColor(.label, for: .normal)
+        //        } else {
+        //            btn.setTitleColor(.black, for: .normal)
+        //        }
         btn.setTitleColor(.imagineColor, for: .normal)
         return btn
     }()
@@ -352,44 +461,44 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         return label
     }()
     
-//    let voteButton: DesignableButton = {
-//        let btn = DesignableButton()
-//        btn.translatesAutoresizingMaskIntoConstraints = false
-//        btn.setTitle("Abstimmungen", for: .normal)
-//        btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-//        btn.setTitleColor(.lightGray, for: .normal)
-//        return btn
-//    }()
-//
-//    let votingStackView: UIStackView = {
-//        let stackView = UIStackView()
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
-//        stackView.axis  = .horizontal
-//        stackView.spacing   = 5
-//        stackView.sizeToFit()
-//
-//        let iconImageView = UIImageView()
-//        iconImageView.translatesAutoresizingMaskIntoConstraints = false
-//        iconImageView.image = UIImage(named: "handshake")
-//        iconImageView.contentMode = .scaleAspectFit
-//        iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
-//        iconImageView.alpha = 0.5
-//
-//        stackView.addArrangedSubview(iconImageView)
-//
-//        return stackView
-//    }()
+    //    let voteButton: DesignableButton = {
+    //        let btn = DesignableButton()
+    //        btn.translatesAutoresizingMaskIntoConstraints = false
+    //        btn.setTitle("Abstimmungen", for: .normal)
+    //        btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
+    //        btn.setTitleColor(.lightGray, for: .normal)
+    //        return btn
+    //    }()
+    //
+    //    let votingStackView: UIStackView = {
+    //        let stackView = UIStackView()
+    //        stackView.translatesAutoresizingMaskIntoConstraints = false
+    //        stackView.axis  = .horizontal
+    //        stackView.spacing   = 5
+    //        stackView.sizeToFit()
+    //
+    //        let iconImageView = UIImageView()
+    //        iconImageView.translatesAutoresizingMaskIntoConstraints = false
+    //        iconImageView.image = UIImage(named: "handshake")
+    //        iconImageView.contentMode = .scaleAspectFit
+    //        iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+    //        iconImageView.alpha = 0.5
+    //
+    //        stackView.addArrangedSubview(iconImageView)
+    //
+    //        return stackView
+    //    }()
     
     let savedButton: DesignableButton = {
         let btn = DesignableButton()
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.setTitle("Gesichert", for: .normal)
         btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-//        if #available(iOS 13.0, *) {
-//            btn.setTitleColor(.label, for: .normal)
-//        } else {
-//            btn.setTitleColor(.black, for: .normal)
-//        }
+        //        if #available(iOS 13.0, *) {
+        //            btn.setTitleColor(.label, for: .normal)
+        //        } else {
+        //            btn.setTitleColor(.black, for: .normal)
+        //        }
         btn.setTitleColor(.imagineColor, for: .normal)
         return btn
     }()
@@ -442,11 +551,11 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Einstellungen", for: .normal)
-//        if #available(iOS 13.0, *) {
-//            button.setTitleColor(.label, for: .normal)
-//        } else {
-//            button.setTitleColor(.black, for: .normal)
-//        }
+        //        if #available(iOS 13.0, *) {
+        //            button.setTitleColor(.label, for: .normal)
+        //        } else {
+        //            button.setTitleColor(.black, for: .normal)
+        //        }
         button.setTitleColor(.imagineColor, for: .normal)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 16)
         button.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
@@ -474,7 +583,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return notifications.count
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let comment = notifications[indexPath.row]
         
@@ -505,15 +614,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    let notificationTableView: UITableView = {
-        let tableView = UITableView()
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.layer.cornerRadius = 4
-        tableView.layer.masksToBounds = true
-        tableView.separatorStyle = .none
-        
-        return tableView
-    }()
+    
     
 }
 

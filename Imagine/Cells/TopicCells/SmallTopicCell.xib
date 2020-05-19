@@ -21,7 +21,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="125" height="125"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="FactStamp" translatesAutoresizingMaskIntoConstraints="NO" id="O8L-fx-g6a">
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="FactStamp" translatesAutoresizingMaskIntoConstraints="NO" id="O8L-fx-g6a">
                         <rect key="frame" x="0.0" y="0.0" width="125" height="125"/>
                     </imageView>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tCQ-is-KvO">

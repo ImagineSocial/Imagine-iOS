@@ -76,8 +76,6 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     }
     
     func getData() {
-        
-        
         dataHelper.getData(get: .blogPosts) { (posts) in
             
             for post in posts {
@@ -86,9 +84,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
                     self.items.append(item)
                 }
             }
-            
-//            self.items.append(contentsOf: posts as! [BlogPost])
-            
+                        
             self.dataHelper.getData(get: .jobOffer) { (jobOffer) in
                 for offer in jobOffer {
                     if let offer = offer as? JobOffer {
@@ -96,12 +92,8 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
                         self.items.append(item)
                     }
                 }
-//                let items = jobOffer as! [JobOffer]
-                
-//                self.items.append(contentsOf: items)
                 
                 self.dataHelper.getData(get: .vote) { (votes) in
-//                    self.items.append(contentsOf: votes as! [Vote])
                     for vote in votes {
                         if let vote = vote as? Vote {
                             let item = CommunityItem(item: vote, createDate: vote.createDate)
@@ -267,7 +259,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
         
         if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "communityHeader", for: indexPath) as? CommunityHeader {
 
-                headerView.headerLabel.text = "Imagine Aktuell"
+                headerView.headerLabel.text = "Aktuell"
 
             return headerView
         

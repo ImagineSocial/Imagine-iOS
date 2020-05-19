@@ -37,14 +37,14 @@ struct Constants {
         
         static let createRepostText = "Repost mit zwei Möglichkeiten.\n\n1. Repost: Du möchtest  einen Post, der deiner Meinung nach zu wenig Aufmerksamkeit bekommen hat, erneut in den Umlauf bringen.\n\n2. Übersetzung: Übersetze einen Beitrag und stelle diesen so auch für eine andere Sprache bereit. Gedacht für einen Austausch über Länder- und Sprachgrenzen hinaus.\n\nDie Auswahl von Sprachen für seinen Feed folgt."
         
-        static let factOverviewText = "Darstellung der Fakten\n\nFakten sollen bei Imagine dazu dienen, dass sich die User objektiv eine Meinung machen können. Argumente für und gegen eine Tatsache werden übersichtlich dargestellt und können bewertet werden. Quellen sind dabei ein Muss. Man kann zudem auf allen Ebenen seine Zweifel verkünden.\n\nDie Funktionen werden stetig ausgebaut, Bewertungen von Quellen und Gegenargumenten, sowie Kommentare folgen bald."
+        static let factOverviewText = "Communities sollen bei Imagine dazu dienen, dass sich die User über verschiedene Themen, Hobbies und Interessen austauschen können. In einer Community werden alle verlinkten Beiträge und Unterthemen dargestellt. Die Communities, ihre Inhalte und Unterthemen sind alle von Usern erstellt.\n\nZusätzlich gibt es eine Diskussions-Darstellung, welche Argumente für und gegen eine Tatsache übersichtlich darstellt, inklusive Quellen und Gegenargumenten. So kann man neutral diskutieren und sich übersichtlich eine Meinung bilden."
         
         static let argumentOverviewText = "Darstellung aller bisher eingereichten Argumente für und gegen den ausgewählten Fakt.\n\nArgumente werden ausschließlich von Usern erstellt und bewertet. Fehlt hier ein Argument, füge es doch einfach am Ende der Liste hinzu. \n\nDie Bewertung der Quellen folgt in Kürze"
         
         static let argumentDetailText = "Hier werden die Quellen und Gegenargument für das ausgewählte Argument, sowie dessen Beschreibung dargestellt.\n\nAm unteren Ende findest du die Möglichkeit das Argument zu bewerten. \n\nDie Bewertung ist noch nicht abgesichert, wird aber der jetzigen Art ähneln."
         
 
-        static let addArgumentText = "Füge einen Fakt, eine Quelle, ein Argument oder Gegenargument hinzu.\n\nDenke bitte daran, die Inhalte objektiv wiederzugeben und ausführlich zu erklären."
+        static let addArgumentText = "Füge eine Quelle, ein Argument oder Gegenargument hinzu.\n\nDenke bitte daran, die Inhalte neutral wiederzugeben und ausführlich, auch für außenstehende zu erklären."
         
         static let markPostText = "Markiere einen Post, wenn du ihn mit Absicht provokant schreibst oder den Inhalt bearbeitet hast. Damit wollen wir Populismus, falschen Vorstellungen und Missverständnissen vorbeugen.\n\n'Meinung': Meinung, kein Fakt. Kann schnell von den Lesern verwechselt werden.\n\n'Sensation': Sensationalistisch gegschrieben\nEine übertriebene Darstellung der beschriebenen Ereignisse.\n\n'Bearbeitet': Inhalt eines Bildes oder Videos nachträglich verschönert."
         
@@ -57,6 +57,14 @@ struct Constants {
         static let postOfFactText = "Hier werden alle Beiträge zu dem ausgewählten Thema angezeigt.\n\nSpäter wird man diese unterteilen können in allgemeine Statements zum Thema, hilfreichen Tips zur Bekämpfung/Unterstützung etc.\n\nSiehst du das Potential?"
         
         static let introText = "Willkommen bei Imagine, Freund!\n\n\nIn unserem Netzwerk wollen wir das Medium unserer Zeit endlich nachhaltig verwenden und Unterhaltung mit einem Nutzen verbinden.\n\nSchau dich um, tausch dich aus, lass dich unterhalten und starte die nächste Generation der sozialen Netzwerke mit uns!"
+        
+        struct AddOns {
+            static let headerText = "Der Header wird den Usern als erstes in den AddOns angezeigt. Hier kannst du den Besuchern zu einem groben Überblick verhelfen und wenn nötig durch einen Link zu weiterführenden Informationen schicken."
+            
+            static let singleTopicText = "Möchtest du ein passendes Thema verlinken, bist du bei diesem AddOn richtig. Die Darstellung enthält auch bis zu sechs Bilder-Beiträgen des Themas als Vorschau."
+            
+            static let collectionText = "In diesem AddOn kann man nach belieben vorhandene oder neue Beiträge posten um ein Unterthema deiner Wahl besser zu beleuchten.\nAuch Themen kannst du hier verlinken. Möchtest du jedoch nur ein Thema hervorheben, nutze bitte das AddOn für einzelne Themen."
+        }
     }
     
 }

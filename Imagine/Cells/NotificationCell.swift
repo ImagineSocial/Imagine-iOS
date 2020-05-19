@@ -31,7 +31,7 @@ class NotificationCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         //set the values for top,left,bottom,right margins
-        let margins = UIEdgeInsets(top: 5, left: 0, bottom: 5, right: 0)
+        let margins = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         contentView.frame = contentView.frame.inset(by: margins)
     }
     

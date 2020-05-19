@@ -212,8 +212,7 @@ class DataHelper {
                         
                     case .facts:
                         
-                        if let fact = self.addFact(data: documentData) {
-                            fact.documentID = documentID
+                        if let fact = self.addFact(documentID: documentID, data: documentData) {
                             list.append(fact)
                         }
                         
@@ -249,9 +248,19 @@ class DataHelper {
             }
             if get == .facts {  // Control wether or not the fact is beeing followed by the current user
                 if let user = Auth.auth().currentUser {
-                    self.getFollowedTopics(userUID: user.uid, factList: (list as! [Fact])) { (checkedList) in
-                        returnData(checkedList)
+                    self.getFollowedTopicDocuments(userUID: user.uid) { (documents) in
+                        for document in documents {
+                            for fact in (list as! [Fact]) {
+                                if document.documentID == fact.documentID {
+                                    fact.beingFollowed = true
+                                }
+                            }
+                        }
+                        returnData(list)
                     }
+//                    self.markFollowedTopics(userUID: user.uid, factList: (list as! [Fact])) { (checkedList) in
+//                        returnData(checkedList)
+//                    }
                 } else {
                     returnData(list)
                 }
@@ -292,7 +301,21 @@ class DataHelper {
         }
     }
     
-    func getFollowedTopics(userUID: String, factList: [Fact], checkedList: @escaping ([Fact]) -> Void) {
+    func getFollowedTopicDocuments(userUID: String, documents: @escaping ([QueryDocumentSnapshot]) -> Void) {
+        let topicRef = db.collection("Users").document(userUID).collection("topics")
+        
+        topicRef.getDocuments { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    documents(snap.documents)
+                }
+            }
+        }
+    }
+    
+    func markFollowjedTopics(userUID: String, factList: [Fact], checkedList: @escaping ([Fact]) -> Void) {
         let topicRef = db.collection("Users").document(userUID).collection("topics")
         
         topicRef.getDocuments { (snap, err) in
@@ -314,7 +337,7 @@ class DataHelper {
         }
     }
     
-    func addFact(data: [String: Any]) -> Fact? {
+    func addFact(documentID: String, data: [String: Any]) -> Fact? {
         
         guard let name = data["name"] as? String,
             let createTimestamp = data["createDate"] as? Timestamp
@@ -324,7 +347,8 @@ class DataHelper {
         
         let stringDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
         
-        let fact = Fact(addMoreDataCell: false)
+        let fact = Fact()
+        fact.documentID = documentID
         fact.title = name
         fact.createDate = stringDate
         

@@ -127,8 +127,12 @@ class ReportABugViewController: UIViewController, UITextViewDelegate {
         }
     }
     @IBAction func infoButtonTapped(_ sender: Any) {
-        tipView = EasyTipView(text: Constants.texts.reportBugText)
-        tipView!.show(forItem: doneButton)
+        if let tipView = tipView {
+            tipView.dismiss()
+        } else {
+            tipView = EasyTipView(text: Constants.texts.reportBugText)
+            tipView!.show(forItem: doneButton)
+        }
     }
     
 }

@@ -13,21 +13,22 @@ protocol OptionalInformationDelegate {
     func done()
 }
 
-enum OptionalInformationType{
+enum OptionalInformationStyle {
     case justPosts
     case justTopics
     case all
     case header
+    case singleTopic
 }
 
 class OptionalInformation {
     
+    var style: OptionalInformationStyle
     var headerTitle: String?
     var description: String?
     var documentID: String?  // DocumentID of the addOn
     var fact: Fact?
     var addOnInfoHeader: AddOnInfoHeader?
-    var style: OptionalInformationType?
     
     let db = Firestore.firestore()
     
@@ -35,39 +36,36 @@ class OptionalInformation {
     
     var items = [Any]()
     
-    init(headerTitle: String, description: String, documentID: String, fact: Fact) {    /// For the normal AddOn initialization
+    init(style: OptionalInformationStyle, headerTitle: String, description: String, documentID: String, fact: Fact) {    /// For the normal AddOn initialization
         self.description = description
         self.headerTitle = headerTitle
         self.documentID = documentID
         self.fact = fact
+        self.style = style
     }
     
-    init(introSentence: String?, description: String, moreInformationLink: String?) {     /// For the InfoHeaderAddOnCell initialization
+    init(style: OptionalInformationStyle, introSentence: String?, description: String, moreInformationLink: String?) {     /// For the InfoHeaderAddOnCell initialization
         let info = AddOnInfoHeader(description: description, introSentence: introSentence, moreInformationLink: moreInformationLink)
-        
+        self.style = style
         self.addOnInfoHeader = info
     }
     
-    init(newAddOnStyle: OptionalInformationType) {
+    init(style: OptionalInformationStyle, headerTitle: String, description: String, factDocumentID: String) {
+        self.style = style
+        getFact(documentID: factDocumentID)
+        self.headerTitle = headerTitle
+        self.description = description
+    }
+    
+    init(newAddOnStyle: OptionalInformationStyle) { // For the NewAddOnTableViewController
         
         self.style = newAddOnStyle
         
         switch newAddOnStyle {
         case .all:
             self.headerTitle = "Füge eine Kollektion mit Beiträgen und Themen hinzu"
-            let post = Post()
-            post.title = "Beiträge aller Art können dein Thema mit Leben ausfüllen!"
-            post.type = .picture
-            post.imageURL = "https://firebasestorage.googleapis.com/v0/b/imagine-6214f.appspot.com/o/postPictures%2FON8vMxvYuQPJC9XXpYDc.png?alt=media&token=c5594d8a-d7f0-437a-97fd-d56f4cf77a13"
+            self.description = Constants.texts.AddOns.collectionText
             
-            let fact = Fact(addMoreDataCell: false)
-            fact.title = "So Interessant"
-            fact.displayOption = .topic
-            fact.description = "Erweitere das Wissen deiner Mitmenschen"
-            fact.imageURL = "https://firebasestorage.googleapis.com/v0/b/imagine-6214f.appspot.com/o/postPictures%2FyCP4UvE51etbGxXtspIb.png?alt=media&token=77909657-7548-432b-a5fc-d7204bb16fb9"
-            fact.addOnTitle = "Verlinke andere relevante Themen für deine Mituser"
-            
-            self.items.append(contentsOf: [post, fact])
         case .justPosts:
             self.headerTitle = "Füge eine Reihe an Posts hinzu:"
             let post = Post()
@@ -78,20 +76,72 @@ class OptionalInformation {
             self.items.append(contentsOf: [post, post2])
         case .justTopics:
             self.headerTitle = "Füge eine Reihe an Themen hinzu:"
-            let topic = Fact(addMoreDataCell: false)
+            let topic = Fact()
             topic.title = "Verbreite spannende Themen mit den Usern"
             topic.displayOption = .topic
             
             self.items.append(topic)
         case .header:
-            let info = AddOnInfoHeader(description: "Hier kann eine ausführliche Einleitung zum Thema stehen, damit die Besucher des Themas sich schnell einen überblick verschaffen können.", introSentence: "Beschreibe dein Thema genauer", moreInformationLink: "Inklusive Link-Button")
             self.headerTitle = "Füge einen Header hinzu"
+            self.description = Constants.texts.AddOns.headerText
             
-            self.addOnInfoHeader = info
+        case .singleTopic:
+            self.headerTitle = "Verlinke ein Aussagekräfigtes Thema!"
+            self.description = Constants.texts.AddOns.singleTopicText
         }
     }
     
+    func getFact(documentID: String) {
+        print("Get Fact: \(documentID)")
+        let ref = db.collection("Facts").document(documentID)
+        
+        ref.getDocument { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let document = snap {
+                    if let data = document.data() {
+                        guard let name = data["name"] as? String else {
+                                return
+                        }
+                        
+                        let fact = Fact()
+                        fact.documentID = document.documentID
+                        fact.title = name
+                        
+                        if let imageURL = data["imageURL"] as? String { // Not mandatory (in fact not selectable)
+                            fact.imageURL = imageURL
+                        }
+                        if let description = data["description"] as? String {   // Was introduced later on
+                            fact.description = description
+                        }
+                        if let displayType = data["displayOption"] as? String { // Was introduced later on
+                            if displayType == "topic" {
+                                fact.displayOption = .topic
+                            } // else { .fact
+                        }
+                        fact.fetchComplete = true
+                
+                        self.fact = fact
+                    }
+                }
+            }
+        }
+    }
+    
+    func getDisplayOptions() {
+//        if let displayType = data["displayOption"] as? String { // Was introduced later on
+//            fact.displayOption = self.getDisplayType(string: displayType)
+//        }
+//
+//        if let displayNames = data["factDisplayNames"] as? String {
+//            fact.factDisplayNames = self.getDisplayNames(string: displayNames)
+//        }
+    }
+            
     func getItems() {
+        
+        print("Get Items bei ", fact?.title)
         guard let fact = fact, let documentID = documentID else {
             print("Not enough info in OptionalInformation getItems")
             return
@@ -110,7 +160,7 @@ class OptionalInformation {
                             return
                         }
                         if type == "fact" {
-                            let fact = Fact(addMoreDataCell: false)
+                            let fact = Fact()
                             fact.documentID = document.documentID
                             if let displayOption = data["displayOption"] as? String {
                                 if displayOption == "topic" {

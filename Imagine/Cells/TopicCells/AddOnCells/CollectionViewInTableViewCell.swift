@@ -11,6 +11,7 @@ import UIKit
 protocol CollectionViewInTableViewCellDelegate {
     func itemTapped(item: Any)
     func newPostTapped(addOnDocumentID: String)
+    func saveItems(section: Int, item: Any)
 }
 
 class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegate {
@@ -20,18 +21,27 @@ class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegat
     var delegate: CollectionViewInTableViewCellDelegate?
     var isAddOnStoreCell = false
     
+    var section: Int?
+    
     var info: OptionalInformation? {
         didSet {
             if let info = info {
                 info.delegate = self
-                info.getItems()
+                if info.items.count == 0 {
+                    collectionView.reloadData() // If the cell got old Data in it
+//                    print("Would get the items now")
+                    info.getItems()
+                } else {
+                    print("Already Got Items")
+                    collectionView.reloadData()
+                }
             } else {
                 print("No Info we got")
             }
         }
     }
     
-    let DIYCellIdentifier = "SmallPostCollectionCell"
+    let DIYCellIdentifier = "SmallPostCell"
     let whyGuiltyIdentifier = "SmallFactCell"
     let tableViewIdentifier = "TableViewInCollectionViewCell"
     
@@ -52,6 +62,10 @@ class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegat
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             layout.scrollDirection = .horizontal
         }
+    }
+    
+    override func prepareForReuse() {
+        self.info = nil
     }
     
     // OptionalInformationDelegate
@@ -109,6 +123,7 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                 if let post = item as? Post {
                     if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DIYCellIdentifier, for: indexPath) as? SmallPostCell {
                         
+                        cell.delegate = self
                         if post.documentID != "" {
                             cell.loadPost(postID: post.documentID, isTopicPost: post.isTopicPost)
                         } else {    //NewAddOnTableVC
@@ -173,11 +188,19 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                     }
                 }
             } else {
-                // Add NewPost tapped
+                // AddNewItem tapped
                 if let documentID = info.documentID {
                     delegate?.newPostTapped(addOnDocumentID: documentID)
                 }
             }
+        }
+    }
+}
+
+extension CollectionViewInTableViewCell: SmallPostCellDelegate {
+    func sendItem(item: Any) {
+        if let section = section {
+            delegate?.saveItems(section: section, item: item)
         }
     }
 }

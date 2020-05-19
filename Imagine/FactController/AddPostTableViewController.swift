@@ -327,10 +327,14 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     let headerTextField: UITextField = {
        let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.placeholder = "Füge noch eine Beschreibung hinzu..."
+        textField.placeholder = "Füge optional eine Beschreibung hinzu..."
         textField.font = UIFont(name: "IBMPlexSans", size: 15)
         textField.borderStyle = .roundedRect
-        textField.backgroundColor = Constants.green.withAlphaComponent(0.5)
+        if #available(iOS 13.0, *) {
+            textField.backgroundColor = .secondarySystemBackground
+        } else {
+            textField.backgroundColor = .lightGray
+        }
         
         return textField
     }()
@@ -382,15 +386,14 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     //MARK:- SaveInstance
     
     @IBAction func doneButtonTapped(_ sender: Any) {
-        if headerTextField.text != "" {
+        
             if let post = self.selectedPost {
-                post.addOnTitle = headerTextField.text!
+                if headerTextField.text != "" {
+                    post.addOnTitle = headerTextField.text!
+                }
                 addItemDelegate?.itemSelected(item: post)
                 self.navigationController?.popViewController(animated: true)
             }
-        } else {
-            self.alert(message: "Je nach AddOn kann die Beschreibung z.B. als kurze Information über den ausgewählten Beitrag dienen", title: "Bitte füge eine Beschreibung hinzu")
-        }
     }
     
     

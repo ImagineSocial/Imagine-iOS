@@ -40,7 +40,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setUpSearchController()
+//        setUpSearchController()
         setUpEasyTipViewPreferences()
         
         // Initiliaze ScreenEdgePanRecognizer
@@ -369,9 +369,10 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                                     }
                                 }
                             }
-                            self.setBarButtonProfileBadge(value: self.newComments+self.friendRequests)
+                            let notifications = self.newComments+self.friendRequests
+                            self.setBarButtonProfileBadge(notifications: notifications, newChats: self.newMessages)
                             self.setBlogPostBadge(value: self.newBlogPost)
-                            self.setChatBadge(value: self.newMessages)
+//                            self.setChatBadge(value: self.newMessages)
                         }
                     }
                 }
@@ -397,12 +398,20 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         }
     }
     
-    func setBarButtonProfileBadge(value: Int) {
-        if value >= 1 {
-            self.smallNumberForInvitationRequest.text = String(value)
-            self.smallNumberForInvitationRequest.isHidden = false
+    func setBarButtonProfileBadge(notifications: Int, newChats: Int) {
+        
+        if notifications >= 1 {
+            self.smallNumberForNotifications.text = String(notifications)
+            self.smallNumberForNotifications.isHidden = false
         } else {
-            self.smallNumberForInvitationRequest.isHidden = true
+            self.smallNumberForNotifications.isHidden = true
+        }
+        
+        if newChats >= 1 {
+            self.smallNumberForNewChats.text = String(newChats)
+            self.smallNumberForNewChats.isHidden = false
+        } else {
+            self.smallNumberForNewChats.isHidden = true
         }
     }
     
@@ -418,16 +427,16 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         }
     }
     
-    func setChatBadge(value: Int) {
-        if let tabItems = tabBarController?.tabBar.items {
-            let tabItem = tabItems[1] //Chats
-            if value != 0 {
-                tabItem.badgeValue = String(value)
-            } else {
-                tabItem.badgeValue = nil
-            }
-        }
-    }
+//    func setChatBadge(value: Int) {
+//        if let tabItems = tabBarController?.tabBar.items {
+//            let tabItem = tabItems[1] //Chats
+//            if value != 0 {
+//                tabItem.badgeValue = String(value)
+//            } else {
+//                tabItem.badgeValue = nil
+//            }
+//        }
+//    }
 
     
     // MARK: - TableViewStuff
@@ -554,9 +563,9 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     
     func loadBarButtonItem() {
         
-        if self.navigationItem.rightBarButtonItems == nil {
-            self.createRightBarButtons()
-        }
+//        if self.navigationItem.rightBarButtonItems == nil {
+//            self.createRightBarButtons()
+//        }
         
         if isConnected() {
             
@@ -637,12 +646,14 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             }
             
             view.addSubview(button)
-            view.addSubview(self.smallNumberForInvitationRequest)
+            view.addSubview(self.smallNumberForNewChats)
+            view.addSubview(self.smallNumberForNotifications)
             
         } else {    // Wenn niemand eingeloggt
             self.loggedIn = false
             
-            self.smallNumberForInvitationRequest.isHidden = true
+            self.smallNumberForNotifications.isHidden = true
+            self.smallNumberForNewChats.isHidden = true
 
             button.layer.cornerRadius = 4
             button.addTarget(self, action: #selector(self.logInButtonTapped), for: .touchUpInside)
@@ -661,9 +672,22 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     
     
     
-    let smallNumberForInvitationRequest: UILabel = {
-        let label = UILabel.init(frame: CGRect.init(x: 25, y: 0, width: 14, height: 14))
+    let smallNumberForNotifications: UILabel = {
+        let label = UILabel.init(frame: CGRect.init(x: 27, y: 0, width: 14, height: 14))
         label.backgroundColor = .red
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 7
+        label.textColor = UIColor.white
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 10)
+        label.isHidden = true
+        
+        return label
+    }()
+    
+    let smallNumberForNewChats: UILabel = {
+        let label = UILabel.init(frame: CGRect.init(x: 16, y: 0, width: 14, height: 14))
+        label.backgroundColor = UIColor(red: 23/255, green: 145/255, blue: 255/255, alpha: 1)
         label.clipsToBounds = true
         label.layer.cornerRadius = 7
         label.textColor = UIColor.white
@@ -679,7 +703,7 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         sideMenu.showMenu()
         
         let notifications = self.notifications+self.upvotes
-        sideMenu.checkNotifications(invitations: self.friendRequests, notifications: notifications)
+        sideMenu.checkNotifications(invitations: self.friendRequests, notifications: notifications, newChats: self.newMessages)
     }
     
     @objc func logInButtonTapped() {
@@ -801,6 +825,8 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         //            self.performSegue(withIdentifier: "toUserCollection", sender: nil)    // For test Zwecke
         case .toFriends:
             performSegue(withIdentifier: "toFriendsSegue", sender: nil)
+        case .toChats:
+            performSegue(withIdentifier: "toChatsTapped", sender: nil)
         case .toSavedPosts:
             performSegue(withIdentifier: "toSavedPosts", sender: nil)
         case .toEULA:

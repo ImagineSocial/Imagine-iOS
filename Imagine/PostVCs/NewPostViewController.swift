@@ -97,6 +97,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     var infoView: UIView?
     
+    var markPostTipView: EasyTipView?
+    var linkedFactTipView: EasyTipView?
+    var postAnonymousTipView: EasyTipView?
+    var linkFactExplanationTipView: EasyTipView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -141,12 +146,14 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         //KeyboardGoesUp
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
     }
    
     override func viewWillDisappear(_ animated: Bool) {
         if let view = infoView {
             view.removeFromSuperview()
         }
+        self.removeTipViews()
     }
     override func viewWillAppear(_ animated: Bool) {
         self.infoView = nil
@@ -1037,6 +1044,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         endView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
         endView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
         endView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        
+        explainFunctionOnFirstOpen()
     }
     
     // Just for the moment, so the people get a sense of what is possible
@@ -1265,6 +1274,27 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         linkTextField.resignFirstResponder()
         descriptionTextView.resignFirstResponder()
         
+        self.removeTipViews()
+    }
+    
+    func removeTipViews() {
+        if let tipView = self.postAnonymousTipView {
+            tipView.dismiss()
+            postAnonymousTipView = nil
+        }
+        if let tipView = self.linkedFactTipView {
+            tipView.dismiss()
+            linkedFactTipView = nil
+        }
+        if let tipView = self.markPostTipView {
+            tipView.dismiss()
+            markPostTipView = nil
+        }
+        
+        if let tipView = self.linkFactExplanationTipView {
+            tipView.dismiss()
+            linkFactExplanationTipView = nil
+        }
     }
     
     // Geht einfacher
@@ -1301,6 +1331,24 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
+    func explainFunctionOnFirstOpen() {
+        let defaults = UserDefaults.standard
+        
+        if let _ = defaults.string(forKey: "showExplanationForLinkFact") {
+            
+        } else {
+            showExplanationForLinkFactToPost()
+            defaults.set(true, forKey: "showExplanationForLinkFact")
+            print("NEW Post launched first time")
+        }
+    }
+    
+    func showExplanationForLinkFactToPost() {
+         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            self.linkFactExplanationTipView = EasyTipView(text: "Bei Imagine kann man einen Beitrag mit einer passenden Community verlinken. Dein Beitrag wird dadurch im Home-Feed und auch in der verlinkten Community angezeigt.\n\nMöchtest du deinen Beitrag ausschließlich in einer Community teilen, kannst du dies nach der Auswahl der Community angeben.")
+            self.linkFactExplanationTipView!.show(forView: self.linkedFactView)
+        }
+    }
     
     //MARK: - Buttons & Stuff
     
@@ -1469,15 +1517,33 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @objc func markPostInfoButtonPressed() {
-        EasyTipView.show(forView: optionView, text: Constants.texts.markPostText)
+        if let tipView = self.markPostTipView {
+            tipView.dismiss()
+            markPostTipView = nil
+        } else {
+            self.markPostTipView = EasyTipView(text: Constants.texts.markPostText)
+            markPostTipView!.show(forView: optionView)
+        }
     }
     
     @objc func linkedFactInfoButtonTapped() {
-        EasyTipView.show(forView: linkedFactView, text: "Standardmäßig postest du im Imagine-Feed (Der Haupt-Feed, nachdem du die App öffnest). \nPoste hier alles, was du mit der Welt teilen möchtest.\n\nWählst du ein Thema aus, kannst du entscheiden, ob du deinen Beitrag im Imagine-Feed teilst, oder nur im Thema. Die Follower eines Themas sehen dann deinen Beitrag (ganz bald jedenfalls) in ihrem angepassten Imagine-Feed.\nPoste im Thema also alles, was sehr themenspezifisch oder nicht für die breite Masse zugänglich ist.")
+        if let tipView = self.linkedFactTipView {
+            tipView.dismiss()
+            linkedFactTipView = nil
+        } else {
+            self.linkedFactTipView = EasyTipView(text: "Standardmäßig postest du im Imagine-Feed (Der Haupt-Feed, nachdem du die App öffnest). \nPoste hier alles, was du mit der Welt teilen möchtest.\n\nWählst du ein Thema aus, kannst du entscheiden, ob du deinen Beitrag im Imagine-Feed teilst, oder nur im Thema. Die Follower eines Themas sehen dann deinen Beitrag (ganz bald jedenfalls) in ihrem angepassten Imagine-Feed.\nPoste im Thema also alles, was sehr themenspezifisch oder nicht für die breite Masse zugänglich ist.")
+            linkedFactTipView!.show(forView: linkedFactView)
+        }
     }
     
     @objc func postAnonymousButtonPressed() {
-        EasyTipView.show(forView: optionView, text: Constants.texts.postAnonymousText)
+        if let tipView = self.postAnonymousTipView {
+            tipView.dismiss()
+            postAnonymousTipView = nil
+        } else {
+            self.postAnonymousTipView = EasyTipView(text: Constants.texts.postAnonymousText)
+            postAnonymousTipView!.show(forView: optionView)
+        }
     }
     
     @objc func postAnonymousSwitchChanged() {
@@ -1732,7 +1798,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 self.multiImageAssets.removeAll()
             }, finish: { (asset) in
                 self.previewPictures.removeAll()
-                self.getImages(forPreview: true)
+                self.getImages(forPreview: true) { (_) in }
                 self.setImage()
             })
     }
@@ -1768,7 +1834,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         return nil
     }
     
-    func getImages(forPreview: Bool)  {
+    func getImages(forPreview: Bool, images: @escaping ([Data]) -> Void)  {
         self.selectedImagesFromPicker.removeAll()
         
         for asset in self.multiImageAssets {
@@ -1784,7 +1850,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                         self.previewPictures.append(image)
                         self.previewCollectionView.reloadData()
                     } else {
-                        if self.selectedImageWidth == 0 {
+                        if self.selectedImageWidth == 0 {   // Set the width just for the first Image
                             let size = image.size
                             
                             self.selectedImageHeight = size.height
@@ -1795,6 +1861,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                         
                         if let comImage = self.getPictureInCompressedQuality(image: image) {
                             self.selectedImagesFromPicker.append(comImage)
+                            
+                            if self.selectedImagesFromPicker.count == self.multiImageAssets.count {
+                                images(self.selectedImagesFromPicker)
+                            }
+                            
                             print("##Das ist das komprimierte Bild: \(comImage)")
                         }
                     }
@@ -1806,43 +1877,43 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     func uploadImages(postRef: DocumentReference, userID: String) {
         print("Upload Images")
         if multiImageAssets.count >= 2 && multiImageAssets.count <= 3 {
-        
-        getImages(forPreview: false)
-        
-        let count = self.selectedImagesFromPicker.count
-        var index = 0
-
-        print("##So viele im selectedimagesfrompicker: \(count)")
-
-        for image in self.selectedImagesFromPicker {
-
-            let storageRef = Storage.storage().reference().child("postPictures").child("\(postRef.documentID)-\(index).png")
-
-            index+=1
-            print("## storageRef: \(storageRef)")
-            storageRef.putData(image, metadata: nil, completion: { (metadata, error) in    //save picture
-                if let error = error {
-                    print("We have an error: \(error)")
-                    return
-                } else {
-                    storageRef.downloadURL(completion: { (url, err) in  // Hier wird die URL runtergezogen
-                        if let error = err {
+            
+            getImages(forPreview: false) { (data) in
+                
+                let count = data.count
+                var index = 0
+                
+                print("##So viele im selectedimagesfrompicker: \(count)")
+                
+                for image in data {
+                    
+                    let storageRef = Storage.storage().reference().child("postPictures").child("\(postRef.documentID)-\(index).png")
+                    
+                    index+=1
+                    print("## storageRef: \(storageRef)")
+                    storageRef.putData(image, metadata: nil, completion: { (metadata, error) in    //save picture
+                        if let error = error {
                             print("We have an error: \(error)")
                             return
                         } else {
-                            if let url = url {
-                                self.imageURLs.append(url.absoluteString)
-
-                                
-                                if index == count {
-                                    self.postMultiplePictures(postRef: postRef, userID: userID)
+                            storageRef.downloadURL(completion: { (url, err) in  // Hier wird die URL runtergezogen
+                                if let error = err {
+                                    print("We have an error: \(error)")
+                                    return
+                                } else {
+                                    if let url = url {
+                                        self.imageURLs.append(url.absoluteString)
+                                        
+                                        if self.imageURLs.count == count { // Uploaded all x Pictures and stored the urls in self.imageURLs
+                                            self.postMultiplePictures(postRef: postRef, userID: userID)
+                                        }
+                                    }
                                 }
-                            }
+                            })
                         }
                     })
                 }
-            })
-        }
+            }
         } else {
             self.alert(message: "Wähle bitte weitere Bilder aus oder wähle die Option \"Nur ein Bild\"", title: "Fehlende Bilder")
         }

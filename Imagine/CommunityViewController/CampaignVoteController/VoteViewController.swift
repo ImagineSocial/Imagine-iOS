@@ -220,7 +220,11 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        tipView = EasyTipView(text: Constants.texts.voteDetailText)
-        tipView!.show(forItem: infoButton)
+        if let tipView = tipView {
+            tipView.dismiss()
+        } else {
+            tipView = EasyTipView(text: Constants.texts.voteDetailText)
+            tipView!.show(forItem: infoButton)
+        }
     }
 }

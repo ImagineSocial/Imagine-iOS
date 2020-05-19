@@ -31,7 +31,7 @@ class LinkCell : BaseFeedCell {
     @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var urlLabel: UILabel!
     
-    let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: DisabledCache.instance)
+    let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: InMemoryCache())
     
     var preview: Cancellable?
     
@@ -137,26 +137,16 @@ class LinkCell : BaseFeedCell {
             createDateLabel.text = post.createTime
             titleLabel.text = post.title
             
-            // Preview des Links anzeigen
-            preview = slp.preview(post.linkURL, onSuccess: { (result) in
-                
-                // Even got a Cache, would be nice for the loadingspeed
-                //https://github.com/LeonardoCardoso/SwiftLinkPreview
-                                
-                if let imageURL = result.image {
-                    if imageURL.isValidURL {
-                        self.linkThumbNailImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
-                    } else {
-                        //Try
-                        self.linkThumbNailImageView.image = UIImage(named: "link-default")
-                    }
-                } 
-                
-                if let linkSource = result.canonicalUrl {
-                    self.urlLabel.text = linkSource
+            // Show Preview of Link
+            if let cachedResult = slp.cache.slp_getCachedResponse(url: post.linkURL) {
+                self.showLinkPreview(result: cachedResult)
+            } else {
+                self.preview = slp.preview(post.linkURL, onSuccess: { (result) in
+                    
+                    self.showLinkPreview(result: result)
+                }) { (error) in
+                    print("We have an error: \(error.localizedDescription)")
                 }
-            }) { (error) in
-                print("We have an error: \(error.localizedDescription)")
             }
             
             
@@ -167,6 +157,23 @@ class LinkCell : BaseFeedCell {
             reportViewButtonInTop.isHidden = reportViewOptions.buttonHidden
             reportViewLabel.text = reportViewOptions.labelText
             reportView.backgroundColor = reportViewOptions.backgroundColor
+        }
+    }
+    
+    func showLinkPreview(result: Response) {
+        //https://github.com/LeonardoCardoso/SwiftLinkPreview
+        
+        if let imageURL = result.image {
+            if imageURL.isValidURL {
+                self.linkThumbNailImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
+            } else {
+                
+                self.linkThumbNailImageView.image = UIImage(named: "link-default")
+            }
+        }
+        
+        if let linkSource = result.canonicalUrl {
+            self.urlLabel.text = linkSource
         }
     }
     

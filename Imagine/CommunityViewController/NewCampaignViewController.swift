@@ -116,8 +116,12 @@ class NewCampaignViewController: UIViewController {
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
-        tipView = EasyTipView(text: Constants.texts.postCampaignText)
-        tipView!.show(forItem: doneButton)
+        if let tipView = tipView {
+            tipView.dismiss()
+        } else {
+            tipView = EasyTipView(text: Constants.texts.postCampaignText)
+            tipView!.show(forItem: doneButton)
+        }
     }
 }
 
