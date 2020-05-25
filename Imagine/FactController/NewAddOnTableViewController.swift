@@ -21,6 +21,7 @@ class NewAddOnTableViewController: UITableViewController {
     var selectedAddOnStyle: OptionalInformationStyle?
     
     let addOnStoreCellIdentifier = "AddOnStoreImageTableViewCell"
+    let addOnHeaderIdentifier = "AddOnHeaderView"
     
     var tipView: EasyTipView?
     
@@ -36,6 +37,7 @@ class NewAddOnTableViewController: UITableViewController {
         }
 
         tableView.register(UINib(nibName: "AddOnStoreImageTableViewCell", bundle: nil), forCellReuseIdentifier: addOnStoreCellIdentifier)
+        tableView.register(UINib(nibName: "AddOnHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: addOnHeaderIdentifier)
         tableView.separatorColor = .clear
         
         
@@ -82,6 +84,7 @@ class NewAddOnTableViewController: UITableViewController {
             let info = optionalInformations[indexPath.section]
             
             if let cell = tableView.dequeueReusableCell(withIdentifier: addOnStoreCellIdentifier, for: indexPath) as? AddOnStoreImageTableViewCell {
+                
                 
                 switch info.style {
                 case .header:
@@ -134,22 +137,24 @@ class NewAddOnTableViewController: UITableViewController {
         
         if optionalInformations.count != section {
             
-            let headerView = AddOnHeaderView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
-            
             let info = optionalInformations[section]
-//            headerView.initHeader(noOptionalInformation: false, info: info)
-//            headerView.delegate = self
-
-            return headerView
             
-        } else {
-            return nil
-        }
+            if let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: addOnHeaderIdentifier) as? AddOnHeaderView {
+                
+                headerView.info = info
+                headerView.delegate = self
+                headerView.thanksButton.isHidden = true
+                
+                return headerView
+            }
+        } //else {
+        
+        return nil
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if optionalInformations.count != section {
-            return 60
+            return UITableView.automaticDimension
         } else {
             return 0
         }
@@ -225,26 +230,19 @@ class NewAddOnTableViewController: UITableViewController {
 }
 
 extension NewAddOnTableViewController: NewFactDelegate, AddOnHeaderDelegate {
+    func thanksTapped(info: OptionalInformation) {
+        print("Coming Soon maybe")
+    }
+    
     func showPostsAsAFeed(section: Int) {
         print("Coming Soon")
     }
-    
     
     func showDescription() {
         tableView.beginUpdates()
         tableView.endUpdates()
     }
     
-    
-//    func showDescription(description: String, view: UIView) {
-//        if let tipView = tipView {
-//            tipView.dismiss()
-//            self.tipView = nil
-//        } else {
-//            tipView = EasyTipView(text: description)
-//            tipView!.show(forView: view)
-//        }
-//    }
     
     func showAllPosts(documentID: String) {
         //nope

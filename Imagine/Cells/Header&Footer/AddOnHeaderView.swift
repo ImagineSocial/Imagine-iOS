@@ -12,130 +12,20 @@ protocol AddOnHeaderDelegate {
     func showDescription()
     func showAllPosts(documentID: String)
     func showPostsAsAFeed(section: Int)
+    func thanksTapped(info: OptionalInformation)
 }
-
-//class AddOnHeaderView: UIView {
-//
-//    var addOnDescription: String?
-//    var delegate: AddOnHeaderDelegate?
-//
-//    func initHeader(noOptionalInformation: Bool, info: OptionalInformation) {
-//
-//        layoutIfNeeded()
-//
-//        if let description = info.description {
-//            self.addOnDescription = description
-//        }
-//        if noOptionalInformation {
-//            label.text = "Erweitere das Thema"
-//        } else {
-//            label.text = info.headerTitle
-//        }
-//
-//        self.addSubview(descriptionButton)
-//        descriptionButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 5).isActive = true
-//        descriptionButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10).isActive = true
-//        descriptionButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
-//        descriptionButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
-//
-////        self.addSubview(thanksButton)
-////        thanksButton.topAnchor.constraint(equalTo: self.topAnchor, constant: 5).isActive = true
-////        thanksButton.trailingAnchor.constraint(equalTo: descriptionButton.leadingAnchor, constant: -10).isActive = true
-////        thanksButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
-////        thanksButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
-//
-//        self.addSubview(label)
-//        label.topAnchor.constraint(equalTo: self.topAnchor, constant: 5).isActive = true
-//        label.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -5).isActive = true
-//        label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 10 ).isActive = true
-//        label.trailingAnchor.constraint(equalTo: descriptionButton.leadingAnchor, constant: -45).isActive = true
-////        label.trailingAnchor.constraint(equalTo: thanksButton.leadingAnchor, constant: -10).isActive = true
-//
-//        if info.items.count >= 10 {
-//            self.addSubview(showAllPostsButton)
-//            showAllPostsButton.topAnchor.constraint(equalTo: descriptionButton.bottomAnchor, constant: -5).isActive = true
-//            showAllPostsButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -10).isActive = true
-//            showAllPostsButton.widthAnchor.constraint(equalToConstant: 75).isActive = true
-//            showAllPostsButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
-//            showAllPostsButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -5).isActive = true
-//        }
-//    }
-//
-//    let showAllPostsButton: DesignableButton = {
-//        let button = DesignableButton()
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        button.setTitle("Show all", for: .normal)
-//        button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
-//        button.setTitleColor(.imagineColor, for: .normal)
-//        button.addTarget(self, action: #selector(showAllTapped), for: .touchUpInside)
-//
-//        return button
-//    }()
-//
-//    let descriptionButton: DesignableButton = {
-//        let button = DesignableButton()
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        button.setImage(UIImage(named: "about"), for: .normal)
-//        button.tintColor = .imagineColor
-//        button.addTarget(self, action: #selector(showDescription), for: .touchUpInside)
-//
-//        return button
-//    }()
-//
-//    let label: UILabel = {
-//        let label = UILabel()
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        label.font = UIFont(name: "IBMPlexSans-Bold", size: 18)
-//        label.minimumScaleFactor = 0.85
-//        label.adjustsFontSizeToFitWidth = true
-//        label.numberOfLines = 0
-//
-//        return label
-//    }()
-//
-//    let thanksButton: DesignableButton = {
-//       let button = DesignableButton()
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        button.setImage(UIImage(named: "thanksButton"), for: .normal)
-//        button.tintColor = .imagineColor
-//        button.layer.cornerRadius = 4
-////        if #available(iOS 13.0, *) {
-////            button.backgroundColor = .secondarySystemBackground
-////        } else {
-////            button.backgroundColor = UIColor.lightGray.withAlphaComponent(0.75)
-////        }
-////        button.layer.borderWidth = 0.75
-////        if #available(iOS 13.0, *) {
-////            button.layer.borderColor = UIColor.label.cgColor
-////        } else {
-////            button.layer.borderColor = UIColor.black.cgColor
-////        }
-//        button.addTarget(self, action: #selector(thanksTapped), for: .touchUpInside)
-//
-//        return button
-//    }()
-//
-//    @objc func showDescription() {
-//        if let description = addOnDescription {
-//            delegate?.showDescription(description: description, view: self)
-//        }
-//    }
-//
-//    @objc func thanksTapped() {
-//        // todo
-//    }
-//
-//    @objc func showAllTapped() {
-//        //todo
-//    }
-//
-//}
-//
 
 class AddOnHeaderView: UITableViewHeaderFooterView {
     
+    @IBOutlet weak var headerImageView: DesignableImage!
     @IBOutlet weak var headerTitleLabel: UILabel!
     @IBOutlet weak var headerDescriptionLabel: UILabel!
+    @IBOutlet weak var showAsFeedButton: DesignableButton!
+    @IBOutlet weak var headerGradientView: UIView!
+    @IBOutlet weak var expandDescriptionButton: DesignableButton!
+    @IBOutlet weak var thanksButton: DesignableButton!
+    
+    @IBOutlet weak var headerImageViewHeight: NSLayoutConstraint!
     
     var delegate: AddOnHeaderDelegate?
     
@@ -144,6 +34,21 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
     var info: OptionalInformation? {
         didSet {
             if let info = info {
+                switch info.style {
+                case .header:
+                    headerImageViewHeight.constant = 0
+                case .singleTopic:
+                    headerImageViewHeight.constant = 0
+                default:
+                    if let imageURL = info.imageURL {
+                        if let url = URL(string: imageURL) {
+                            headerImageView.sd_setImage(with: url, completed: nil)
+                        }
+                    } else {
+                        headerImageViewHeight.constant = 0
+                    }
+                }
+                                
                 if let title = info.headerTitle {
                     headerTitleLabel.text = title
                 }
@@ -154,21 +59,83 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
         }
     }
     
+    override func layoutSubviews() {
+        setGradientView()
+    }
+    
+    func setGradientView() {
+        //Gradient
+        if let view = headerGradientView {
+            
+            let gradient = CAGradientLayer()
+            gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
+            gradient.endPoint = CGPoint(x: 0.5, y: 0.6)
+            let whiteColor = UIColor.white
+            gradient.colors = [whiteColor.withAlphaComponent(0.0).cgColor, whiteColor.withAlphaComponent(0.5).cgColor, whiteColor.withAlphaComponent(0.7).cgColor]
+            gradient.locations = [0.0, 0.7, 1]
+            gradient.frame = view.bounds
+            
+            view.layer.mask = gradient
+        }
+    }
+    
     override func awakeFromNib() {
-        
+        let layer = thanksButton.layer
+        layer.cornerRadius = 4
+        layer.borderWidth = 0.5
+        if #available(iOS 13.0, *) {
+            layer.borderColor = UIColor.label.cgColor
+            thanksButton.backgroundColor = .systemBackground
+        } else {
+            layer.borderColor = UIColor.black.cgColor
+            thanksButton.backgroundColor = .white
+        }
     }
     
     override func prepareForReuse() {
         headerDescriptionLabel.numberOfLines = 2
+        headerImageViewHeight.constant = 75
+        
+        expandDescriptionButton.setImage(UIImage(named: "down"), for: .normal)
+        thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
     }
     
     @IBAction func showAllTapped(_ sender: Any) {
-        headerDescriptionLabel.numberOfLines = 0
+        if headerDescriptionLabel.numberOfLines == 2 {
+            headerDescriptionLabel.numberOfLines = 0
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.expandDescriptionButton.setImage(UIImage(named: "up"), for: .normal)
+            }
+        } else {
+            headerDescriptionLabel.numberOfLines = 2
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.expandDescriptionButton.setImage(UIImage(named: "down"), for: .normal)
+            }
+        }
         
         delegate?.showDescription()
     }
     
+    @IBAction func thanksButtonTapped(_ sender: Any) {
+        if let info = info {
+            self.thanksButton.setImage(nil, for: .normal)
+            
+            if let thanksCount = info.thanksCount {
+                self.thanksButton.setTitle(String(thanksCount), for: .normal)
+                info.thanksCount = thanksCount+1
+            } else {
+                self.thanksButton.setTitle(String(1), for: .normal)
+                info.thanksCount = 1
+            }
+            delegate?.thanksTapped(info: info)
+            
+            let generator = UIImpactFeedbackGenerator(style: .light)
+            generator.impactOccurred()
+        }
+    }
+    
     @IBAction func showPostsInFeedStyleTapped(_ sender: Any) {
+        showAsFeedButton.isHidden = false
         if let section = section {
             delegate?.showPostsAsAFeed(section: section)
         }

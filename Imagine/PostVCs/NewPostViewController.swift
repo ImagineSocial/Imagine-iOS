@@ -65,6 +65,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var anonymousName: String?
     var anonymousString = "anonym"
     
+    var fakeProfileUserID: String?
+    
     let db = Firestore.firestore()
     
     var selectedOption: PostSelection = .thought
@@ -1027,6 +1029,20 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
         endView.translatesAutoresizingMaskIntoConstraints = false
         
+        if let user = Auth.auth().currentUser {
+            if user.uid == Constants.userIDs.uidMalte || user.uid == Constants.userIDs.uidSophie || user.uid == Constants.userIDs.uidYvonne {
+                endView.addSubview(fakeNameSegmentedControl)
+                fakeNameSegmentedControl.leadingAnchor.constraint(equalTo: endView.leadingAnchor, constant: 10).isActive = true
+                fakeNameSegmentedControl.trailingAnchor.constraint(equalTo: endView.trailingAnchor, constant: -10).isActive = true
+                fakeNameSegmentedControl.topAnchor.constraint(equalTo: endView.topAnchor, constant: 10).isActive = true
+                fakeNameSegmentedControl.heightAnchor.constraint(equalToConstant: 30).isActive = true
+                
+                endView.addSubview(fakeNameInfoLabel)
+                fakeNameInfoLabel.topAnchor.constraint(equalTo: fakeNameSegmentedControl.bottomAnchor, constant: 10).isActive = true
+                fakeNameInfoLabel.leadingAnchor.constraint(equalTo: endView.leadingAnchor, constant: 10).isActive = true
+            }
+        }
+        
 //        endView.addSubview(blueOwenButton)
 //        blueOwenButton.topAnchor.constraint(equalTo: endView.topAnchor, constant: 10).isActive = true
 //        blueOwenButton.leadingAnchor.constraint(equalTo: endView.leadingAnchor, constant: 10).isActive = true
@@ -1047,6 +1063,55 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         explainFunctionOnFirstOpen()
     }
+    
+    //MARK:-PostAsSomebodyElse-UI
+    //Just for Yvonne, Sophie and Malte
+    
+    
+    let fakeNameSegmentedControl: UISegmentedControl = {
+        let items = ["Me","FM", "MR", "AN", "LV", "LM"]
+       let control = UISegmentedControl(items: items)
+        control.translatesAutoresizingMaskIntoConstraints = false
+        control.addTarget(self, action: #selector(segmentControlChanged(sender:)), for: .valueChanged)
+        control.selectedSegmentIndex = 0
+        
+        return control
+    }()
+    
+    @objc func segmentControlChanged(sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            if let user = Auth.auth().currentUser {
+                fakeProfileUserID = user.uid
+                fakeNameInfoLabel.text = "Dein persönliches Profil"
+            }
+        case 1:
+            fakeProfileUserID = Constants.userIDs.FrankMeindlID
+            fakeNameInfoLabel.text = "Frank Meindl"
+        case 2:
+            fakeProfileUserID = Constants.userIDs.MarkusRiesID
+            fakeNameInfoLabel.text = "Markus Ries"
+        case 3:
+            fakeProfileUserID = Constants.userIDs.AnnaNeuhausID
+            fakeNameInfoLabel.text = "Anna Neuhaus"
+        case 4:
+            fakeProfileUserID = Constants.userIDs.LaraVoglerID
+            fakeNameInfoLabel.text = "Lara Vogler"
+        case 5:
+            fakeProfileUserID = Constants.userIDs.LenaMasgarID
+            fakeNameInfoLabel.text = "Lena Masgar"
+        default:
+            fakeProfileUserID = Constants.userIDs.FrankMeindlID
+        }
+    }
+    
+    let fakeNameInfoLabel: UILabel = {
+       let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans", size: 13)
+        
+        return label
+    }()
     
     // Just for the moment, so the people get a sense of what is possible
     let blueOwenButton :DesignableButton = {
@@ -1752,6 +1817,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 userID = anonymousString
             } else {
                 userID = user.uid
+            }
+            
+            if let id = fakeProfileUserID {
+                userID = id
             }
 
             if titleTextView.text != "", let postRef = postRef {

@@ -253,6 +253,8 @@ class SmallPostCell: UICollectionViewCell {
         postImageViewHeightConstraint.constant = 170
         optionalTitleGradientViewHeightConstraint.constant = 0
         
+        showOptionalTitleButton.setImage(UIImage(named: "up"), for: .normal)
+        
         self.linkView.removeFromSuperview()
     }
     

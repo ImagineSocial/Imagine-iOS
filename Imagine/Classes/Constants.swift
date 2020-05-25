@@ -24,6 +24,33 @@ struct Constants {
         static let textOfTheWeek = "Tauscht euch aus, seid nett und lernt neue Menschen kennen!"
     }
     
+    struct characterLimits {
+        static let factTitleCharacterLimit = 30
+        static let factDescriptionCharacterLimit = 120
+        
+        static let argumentTitleCharacterLimit = 85
+        
+        static let sourceTitleCharacterLimit = 50
+        
+        static let addOnTitleCharacterLimit = 50
+        static let addOnDescriptionCharacterLimit = 400
+        
+        static let addOnHeaderTitleCharacterLimit = 50
+        static let addOnHeaderDescriptionCharacterLimit = 400
+    }
+    
+    struct userIDs {
+        static let uidYvonne = "Im8IaMXjQxOP19vdCDjiQfJkQOO2"
+        static let uidSophie = "22PWMQjhxzP4KuHcpDUfrDylJTj1"
+        static let uidMalte = "CZOcL3VIwMemWwEfutKXGAfdlLy1"
+        
+        static let AnnaNeuhausID = "cKTJEDn6RFcZweV9t7En8zkXlnQ2"
+        static let FrankMeindlID = "ltQP45PeIFMjWN2uCb8ilTwoXb02"
+        static let MarkusRiesID = "4K0EgUqJXhXYttQABWyj39IVugu2"
+        static let LaraVoglerID = "eICxbpDmwCWo3ixpCo1L4pXL97G3"
+        static let LenaMasgarID = "mBySFkec8EZ2FWLUVyn5d8X38QF3"
+    }
+    
     struct texts {
         static let voteCampaignText = "Gestaltet Imagine \n\nBei den Kampagnen könnt ihr eure eigene Idee einreichen, oder die besten Ideen eurer Mit-User unterstützen. Erreicht eine Kampagne genügend Unterstützer, wird das Anliegen vom Team überprüft. \n\nBei den Abstimmungen werden die Kampagnen aufgeführt, welche nach verschiedene Kriterien überprüft wurden und nun zur Abstimmung freigegeben sind.\n\nPro Kampagne und Abstimmung habt ihr nur eine Stimme."
         

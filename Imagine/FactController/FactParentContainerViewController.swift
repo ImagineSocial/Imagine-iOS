@@ -27,6 +27,7 @@ class FactParentContainerViewController: UIViewController {
     @IBOutlet weak var factImageView: UIImageView!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var followTopicButton: DesignableButton!
+    @IBOutlet weak var moderatorView: DesignablePopUp!
     
     @IBOutlet weak var followerCountLabel: UILabel!
     @IBOutlet weak var postCountLabel: UILabel!
@@ -64,7 +65,10 @@ class FactParentContainerViewController: UIViewController {
         }
         followTopicButton.layer.borderWidth = 0.5
         
-        getArguments()
+        if let topic = fact {
+            self.getArguments(topic: topic)
+            self.setUI(topic: topic)
+        }
 //        setPostButton()
         
         factImageView.layer.cornerRadius = radius
@@ -130,45 +134,49 @@ class FactParentContainerViewController: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
-    func getArguments() {
-        
-        if let fact = fact {
-            
-            
-            titleLabel.text = fact.title
-            if let url = URL(string: fact.imageURL) {
-                factImageView.sd_setImage(with: url, completed: nil)
-            } else {
-                factImageView.image = UIImage(named: "FactStamp")
-            }
-            descriptionLabel.text = fact.description
-            
-            self.view.activityStartAnimating()
-            
-            fact.getPostCount { (count) in
-                self.postCountLabel.text = "Posts: \(count)"
-                self.postCount = count
-            }
-            
-            fact.getFollowerCount{ (count) in
-                self.followerCountLabel.text = "Follower: \(count)"
-                self.followerCount = count
-            }
-            
-            DataHelper().getDeepData(documentID: fact.documentID) { (deepData) in // Fetch all Arguments for this fact
-                if let arguments = deepData as? [Argument] {
-                    for argument in arguments {
-                        if argument.proOrContra == "pro" {      // Sort the Arguments
-                            self.proArgumentList.append(argument)
-                        } else {    //contra
-                            self.contraArgumentList.append(argument)
-                        }
-                    }
-                    self.sendData(ProArguments: self.proArgumentList, ContraArguments: self.contraArgumentList) // Send to ContainerViews
-                    self.setLabels()
-                    
-                    self.view.activityStopAnimating()
+    func setUI(topic: Fact) {
+        if let user = Auth.auth().currentUser {
+            for moderator in topic.moderators {
+                if moderator == user.uid {
+                    self.moderatorView.isHidden = false
                 }
+            }
+        }
+        
+        titleLabel.text = topic.title
+        if let url = URL(string: topic.imageURL) {
+            factImageView.sd_setImage(with: url, completed: nil)
+        } else {
+            factImageView.image = UIImage(named: "FactStamp")
+        }
+        descriptionLabel.text = topic.description
+        
+        topic.getPostCount { (count) in
+            self.postCountLabel.text = "Posts: \(count)"
+            self.postCount = count
+        }
+        
+        topic.getFollowerCount{ (count) in
+            self.followerCountLabel.text = "Follower: \(count)"
+            self.followerCount = count
+        }
+    }
+    
+    func getArguments(topic: Fact) {
+        
+        DataHelper().getDeepData(documentID: topic.documentID) { (deepData) in // Fetch all Arguments for this fact
+            if let arguments = deepData as? [Argument] {
+                for argument in arguments {
+                    if argument.proOrContra == "pro" {      // Sort the Arguments
+                        self.proArgumentList.append(argument)
+                    } else {    //contra
+                        self.contraArgumentList.append(argument)
+                    }
+                }
+                self.sendData(ProArguments: self.proArgumentList, ContraArguments: self.contraArgumentList) // Send to ContainerViews
+                self.setLabels()
+                
+                self.view.activityStopAnimating()
             }
         }
     }

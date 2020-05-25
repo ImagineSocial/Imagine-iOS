@@ -76,18 +76,7 @@ class NewFactViewController: UIViewController {
     let factDescription = "Das Thema wird in zwei Spalten dargestellt. Die Gegenüberstellung ermöglicht es sich mit dem Thema gründlich auseinanderzusetzen. \nDie Auswahl der Überschriften der Spalten kannst du hier auswählen:"
     let topicDescripton = "Das Thema wird als Sammlung aller verlinkten Beiträge zu diesem Thema dargestellt."
     
-    let factTitleCharacterLimit = 30
-    let factDescriptionCharacterLimit = 120
     
-    let argumentTitleCharacterLimit = 85
-    
-    let sourceTitleCharacterLimit = 50
-    
-    let addOnTitleCharacterLimit = 50
-    let addOnDescriptionCharacterLimit = 400
-    
-    let addOnHeaderTitleCharacterLimit = 50
-    let addOnHeaderDescriptionCharacterLimit = 400
     
     var pickedFactDisplayNames: FactDisplayName = .proContra
     var pickedDisplayOption: DisplayOption = .fact
@@ -147,9 +136,9 @@ class NewFactViewController: UIViewController {
             seperatorView3.isHidden = true
             
             
-            titleCharacterCountLabel.text = String(argumentTitleCharacterLimit)
+            titleCharacterCountLabel.text = String(Constants.characterLimits.argumentTitleCharacterLimit)
         case .argument:
-            titleCharacterCountLabel.text = String(argumentTitleCharacterLimit)
+            titleCharacterCountLabel.text = String(Constants.characterLimits.argumentTitleCharacterLimit)
             
             if let fact = fact {
                 switch fact.factDisplayNames {
@@ -178,13 +167,13 @@ class NewFactViewController: UIViewController {
             addSourceLabel.isHidden = false
             sourceLabel.isHidden = true
         case .source:
-            titleCharacterCountLabel.text = String(sourceTitleCharacterLimit)
+            titleCharacterCountLabel.text = String(Constants.characterLimits.sourceTitleCharacterLimit)
             
             sourceTextField.isHidden = false
             headerLabel.text = "Teile deine Quelle mit uns!"
         case .fact:
-            titleCharacterCountLabel.text = String(factTitleCharacterLimit)
-            descriptionCharacterCountLabel.text = String(factDescriptionCharacterLimit)
+            titleCharacterCountLabel.text = String(Constants.characterLimits.factTitleCharacterLimit)
+            descriptionCharacterCountLabel.text = String(Constants.characterLimits.factDescriptionCharacterLimit)
             
             descriptionCharacterCountLabel.isHidden = false
             headerLabel.text = "Teile ein neues Thema mit deinen Mitmenschen."
@@ -199,8 +188,8 @@ class NewFactViewController: UIViewController {
             setSelectionTopicAndTopicPictureUI()
             setNewFactDisplayOptions()
         case .addOn:
-            titleCharacterCountLabel.text = String(addOnTitleCharacterLimit)
-            descriptionCharacterCountLabel.text = String(addOnDescriptionCharacterLimit)
+            titleCharacterCountLabel.text = String(Constants.characterLimits.addOnTitleCharacterLimit)
+            descriptionCharacterCountLabel.text = String(Constants.characterLimits.addOnDescriptionCharacterLimit)
             
             headerLabel.text = "Teile ein neues AddOn mit deinen Mitmenschen!"
             addSourceLabel.isHidden = true
@@ -208,8 +197,8 @@ class NewFactViewController: UIViewController {
             seperatorView3.isHidden = true
             descriptionCharacterCountLabel.isHidden = false
         case .addOnHeader:
-            titleCharacterCountLabel.text = String(addOnHeaderTitleCharacterLimit)
-            descriptionCharacterCountLabel.text = String(addOnHeaderDescriptionCharacterLimit)
+            titleCharacterCountLabel.text = String(Constants.characterLimits.addOnHeaderTitleCharacterLimit)
+            descriptionCharacterCountLabel.text = String(Constants.characterLimits.addOnHeaderDescriptionCharacterLimit)
             
             headerLabel.text = "Teile einen neuen Header mit deinen Mitmenschen!"
             sourceLabel.text = "Link zu mehr Informationen (optional):"
@@ -217,8 +206,8 @@ class NewFactViewController: UIViewController {
             sourceTextField.isHidden = false
             descriptionCharacterCountLabel.isHidden = false
         case .singleTopicAddOn:
-            titleCharacterCountLabel.text = String(addOnTitleCharacterLimit)
-            descriptionCharacterCountLabel.text = String(addOnDescriptionCharacterLimit)
+            titleCharacterCountLabel.text = String(Constants.characterLimits.addOnTitleCharacterLimit)
+            descriptionCharacterCountLabel.text = String(Constants.characterLimits.addOnDescriptionCharacterLimit)
             descriptionCharacterCountLabel.isHidden = false
             
             headerLabel.text = "Teile dein AddOn mit uns!"
@@ -766,32 +755,32 @@ extension NewFactViewController: UITextViewDelegate {
             
             switch new { // Title no longer than x characters
             case .fact:
-                return textView.text.count + (text.count - range.length) <= factTitleCharacterLimit
+                return textView.text.count + (text.count - range.length) <= Constants.characterLimits.factTitleCharacterLimit
             case .addOn:
-                return textView.text.count + (text.count - range.length) <= addOnTitleCharacterLimit
+                return textView.text.count + (text.count - range.length) <= Constants.characterLimits.addOnTitleCharacterLimit
             case .addOnHeader:
-                return textView.text.count + (text.count - range.length) <= addOnHeaderTitleCharacterLimit
+                return textView.text.count + (text.count - range.length) <= Constants.characterLimits.addOnHeaderTitleCharacterLimit
             case .argument:
-                return textView.text.count + (text.count - range.length) <= argumentTitleCharacterLimit
+                return textView.text.count + (text.count - range.length) <= Constants.characterLimits.argumentTitleCharacterLimit
             case .deepArgument:
-                return textView.text.count + (text.count - range.length) <= argumentTitleCharacterLimit
+                return textView.text.count + (text.count - range.length) <= Constants.characterLimits.argumentTitleCharacterLimit
             case .source:
-                return textView.text.count + (text.count - range.length) <= sourceTitleCharacterLimit
+                return textView.text.count + (text.count - range.length) <= Constants.characterLimits.sourceTitleCharacterLimit
             case .singleTopicAddOn:
-                return textView.text.count + (text.count - range.length) <= addOnTitleCharacterLimit
+                return textView.text.count + (text.count - range.length) <= Constants.characterLimits.addOnTitleCharacterLimit
             }
             
         } else if textView == descriptionTextView {
             
             switch new { // Title no longer than x characters
             case .fact:
-                return textView.text.count + (text.count - range.length) <= factDescriptionCharacterLimit
+                return textView.text.count + (text.count - range.length) <= Constants.characterLimits.factDescriptionCharacterLimit
             case .addOn:
-                return textView.text.count + (text.count - range.length) <= addOnDescriptionCharacterLimit
+                return textView.text.count + (text.count - range.length) <= Constants.characterLimits.addOnDescriptionCharacterLimit
             case .addOnHeader:
-                return textView.text.count + (text.count - range.length) <= addOnHeaderDescriptionCharacterLimit
+                return textView.text.count + (text.count - range.length) <= Constants.characterLimits.addOnHeaderDescriptionCharacterLimit
             case .singleTopicAddOn:
-                return textView.text.count + (text.count - range.length) <= addOnDescriptionCharacterLimit
+                return textView.text.count + (text.count - range.length) <= Constants.characterLimits.addOnDescriptionCharacterLimit
             default:
                 print("No Limit")
                 return true
@@ -806,40 +795,40 @@ extension NewFactViewController: UITextViewDelegate {
         if textView == titleTextField {
             switch new { // Title no longer than x characters
             case .fact:
-                let characterLeft = factTitleCharacterLimit-textView.text.count
+                let characterLeft = Constants.characterLimits.factTitleCharacterLimit-textView.text.count
                 self.titleCharacterCountLabel.text = String(characterLeft)
             case .addOn:
-                let characterLeft = addOnTitleCharacterLimit-textView.text.count
+                let characterLeft = Constants.characterLimits.addOnTitleCharacterLimit-textView.text.count
                 self.titleCharacterCountLabel.text = String(characterLeft)
             case .addOnHeader:
-                let characterLeft = addOnHeaderTitleCharacterLimit-textView.text.count
+                let characterLeft = Constants.characterLimits.addOnHeaderTitleCharacterLimit-textView.text.count
                 self.titleCharacterCountLabel.text = String(characterLeft)
             case .argument:
-                let characterLeft = argumentTitleCharacterLimit-textView.text.count
+                let characterLeft = Constants.characterLimits.argumentTitleCharacterLimit-textView.text.count
                 self.titleCharacterCountLabel.text = String(characterLeft)
             case .deepArgument:
-                let characterLeft = argumentTitleCharacterLimit-textView.text.count
+                let characterLeft = Constants.characterLimits.argumentTitleCharacterLimit-textView.text.count
                 self.titleCharacterCountLabel.text = String(characterLeft)
             case .source:
-                let characterLeft = sourceTitleCharacterLimit-textView.text.count
+                let characterLeft = Constants.characterLimits.sourceTitleCharacterLimit-textView.text.count
                 self.titleCharacterCountLabel.text = String(characterLeft)
             case .singleTopicAddOn:
-                let characterLeft = addOnTitleCharacterLimit-textView.text.count
+                let characterLeft = Constants.characterLimits.addOnTitleCharacterLimit-textView.text.count
                 self.titleCharacterCountLabel.text = String(characterLeft)
             }
         } else {    // DescriptionTextView
             switch new { // Title no longer than x characters
             case .fact:
-                let characterLeft = factDescriptionCharacterLimit-textView.text.count
+                let characterLeft = Constants.characterLimits.factDescriptionCharacterLimit-textView.text.count
                 self.descriptionCharacterCountLabel.text = String(characterLeft)
             case .addOn:
-                let characterLeft = addOnDescriptionCharacterLimit-textView.text.count
+                let characterLeft = Constants.characterLimits.addOnDescriptionCharacterLimit-textView.text.count
                 self.descriptionCharacterCountLabel.text = String(characterLeft)
             case .addOnHeader:
-                let characterLeft = addOnHeaderDescriptionCharacterLimit-textView.text.count
+                let characterLeft = Constants.characterLimits.addOnHeaderDescriptionCharacterLimit-textView.text.count
                 self.descriptionCharacterCountLabel.text = String(characterLeft)
             case .singleTopicAddOn:
-                let characterLeft = addOnDescriptionCharacterLimit-textView.text.count
+                let characterLeft = Constants.characterLimits.addOnDescriptionCharacterLimit-textView.text.count
                 self.descriptionCharacterCountLabel.text = String(characterLeft)
             default:
                 print("No Limit")

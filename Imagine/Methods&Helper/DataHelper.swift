@@ -340,7 +340,8 @@ class DataHelper {
     func addFact(documentID: String, data: [String: Any]) -> Fact? {
         
         guard let name = data["name"] as? String,
-            let createTimestamp = data["createDate"] as? Timestamp
+            let createTimestamp = data["createDate"] as? Timestamp,
+            let OP = data["OP"] as? String
             else {
                 return nil
         }
@@ -351,6 +352,7 @@ class DataHelper {
         fact.documentID = documentID
         fact.title = name
         fact.createDate = stringDate
+        fact.moderators.append(OP)  //Later there will be more moderators, so it is an array
         
         if let imageURL = data["imageURL"] as? String { // Not mandatory (in fact not selectable)
             fact.imageURL = imageURL
@@ -364,6 +366,10 @@ class DataHelper {
         
         if let displayNames = data["factDisplayNames"] as? String {
             fact.factDisplayNames = self.getDisplayNames(string: displayNames)
+        }
+        
+        if let isAddOnFirstView = data["isAddOnFirstView"] as? Bool {
+            fact.isAddOnFirstView = isAddOnFirstView
         }
         
         fact.fetchComplete = true

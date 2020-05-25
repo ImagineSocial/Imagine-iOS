@@ -101,7 +101,6 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     func showMenu() {
         //show menu
         
-        
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             
             self.blackView.alpha = 1

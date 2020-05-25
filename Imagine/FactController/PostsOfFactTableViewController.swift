@@ -28,6 +28,7 @@ class PostsOfFactTableViewController: UITableViewController {
     @IBOutlet weak var followTopicButton: DesignableButton!
     @IBOutlet weak var followerCountLabel: UILabel!
     @IBOutlet weak var postCountLabel: UILabel!
+    @IBOutlet weak var moderatorView: DesignablePopUp!
     
     @IBOutlet weak var justForTipViewView: UIView!
     
@@ -182,6 +183,14 @@ class PostsOfFactTableViewController: UITableViewController {
             
             if fact.beingFollowed {
                 followTopicButton.setTitle("Unfollow", for: .normal)
+            }
+            
+            if let user = Auth.auth().currentUser {
+                for moderator in fact.moderators {
+                    if moderator == user.uid {
+                        self.moderatorView.isHidden = false
+                    }
+                }
             }
             
             headerLabel.text = fact.title
@@ -650,8 +659,22 @@ class PostsOfFactTableViewController: UITableViewController {
                 }
             }
         }
+        
+        if segue.identifier == "toSettingSegue" {
+            if let fact = sender as? Fact {
+                if let vc = segue.destination as? SettingTableViewController {
+                    vc.topic = fact
+                    vc.settingFor = .community
+                }
+            }
+        }
     }
     
+    @IBAction func toSettingsTapped(_ sender: Any) {
+        if let fact = fact {
+            performSegue(withIdentifier: "toSettingSegue", sender: fact)
+        }
+    }
     //MARK:- PostCell Delegate
     
 }

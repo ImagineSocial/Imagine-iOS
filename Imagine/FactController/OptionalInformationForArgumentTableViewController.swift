@@ -47,6 +47,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
     var addOnDocumentID: String?
     
     let db = Firestore.firestore()
+    let handyHelper = HandyHelper()
     
     var feedSection: FeedSection?
     var feedSectionData = [FeedSection]()
@@ -136,12 +137,20 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                     for document in snap.documents {
                         let data = document.data()
                         
-                        if let title = data["title"] as? String, let description = data["description"] as? String {
+                        if let title = data["title"] as? String, let description = data["description"] as? String { //Normal collection
                             let addOn = OptionalInformation(style: .all, headerTitle: title, description: description, documentID: document.documentID, fact: self.fact!)
+                            
+                            if let imageURL = data["imageURL"] as? String {
+                                addOn.imageURL = imageURL
+                            }
+                            if let thanksCount = data["thanksCount"] as? Int {
+                                addOn.thanksCount = thanksCount
+                            }
+                            
                             addOn.style = .all
                             self.optionalInformations.append(addOn)
                             
-                        } else if let description = data["headerDescription"] as? String {
+                        } else if let description = data["headerDescription"] as? String {  // Header
                             var intro: String?
                             var source: String?
                             if let introSentence = data["headerIntro"] as? String {
@@ -154,11 +163,14 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                             let addOn = OptionalInformation(style: .header ,introSentence: intro, description: description, moreInformationLink: source)
                             addOn.style = .header
                             self.optionalInformations.insert(addOn, at: 0)  // Should be on top of the vc
-                        } else if let documentID = data["linkedFactID"] as? String {
+                        } else if let documentID = data["linkedFactID"] as? String {    //SingleTopic
                             if let headerTitle = data["headerTitle"] as? String, let description = data["description"] as? String {
                                 let addOn = OptionalInformation(style: .singleTopic, headerTitle: headerTitle, description: description, factDocumentID: documentID)
                                 
-                                print("Adde die info")
+                                if let thanksCount = data["thanksCount"] as? Int {
+                                    addOn.thanksCount = thanksCount
+                                }
+                                
                                 self.optionalInformations.append(addOn)
                             }
                         }
@@ -303,19 +315,9 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                     
                     return headerView
                 }
-                
-                
-//                let headerView = AddOnHeaderView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 40))
-//
-//                let info = optionalInformations[section]
-//                headerView.initHeader(noOptionalInformation: noOptionalInformation, info: info)
-//                headerView.delegate = self
-//                return headerView
             }
         }
-        print("Return nil")
         return nil
-        
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -354,7 +356,29 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
         
         if let feedSection = feedSection {
             if feedSection.section == indexPath.section {
-                return UITableView.automaticDimension
+                
+                let post = feedSection.posts[indexPath.item]
+                if post.type == .picture {
+                    
+                    let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
+                    
+                    let imageHeight = post.mediaHeight
+                    let imageWidth = post.mediaWidth
+                    
+                    let ratio = imageWidth / imageHeight
+                    let width = self.view.frame.width-20  // 5+5 from contentView and 5+5 from inset
+                    var newHeight = width / ratio
+                    
+                    if newHeight >= 500 {
+                        newHeight = 500
+                    }
+                    
+                    return newHeight+100+labelHeight // 105 weil Höhe von StackView & Rest
+                    
+                
+                } else {
+                    return UITableView.automaticDimension
+                }
             }
         }
         
@@ -479,14 +503,8 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             if let vc = segue.destination as? ArgumentPageViewController {
                 if let fact = sender as? Fact {
                     vc.fact = fact
-                    
-                    print("Das ist der Fakt den ich übergebe: \(fact.title), fact type: \(fact.displayOption)")
-                    if fact.displayOption == .topic {
-                        vc.displayMode = .topic
-                    }
                 }
             }
-            
         }
         
         if segue.identifier == "newPostSegue" {
@@ -553,6 +571,28 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
 
 extension OptionalInformationForArgumentTableViewController: AddOnHeaderDelegate, InfoHeaderAddOnCellDelegate {
     
+    func thanksTapped(info: OptionalInformation) {
+        if let _ = Auth.auth().currentUser {
+            if let fact = fact, let addOnDocumentID = info.documentID {
+                let ref = db.collection("Facts").document(fact.documentID).collection("addOns").document(addOnDocumentID)
+                
+                var thanksCount = 1
+                if let count = info.thanksCount {
+                    thanksCount = count
+                }
+                ref.updateData(["thanksCount": thanksCount]) { (err) in
+                    if let error = err {
+                        print("We have an error liking this addOn: \(error.localizedDescription)")
+                    } else {
+                        print("Successfully liked this addOn")
+                    }
+                }
+            }
+        } else {
+            self.notLoggedInAlert()
+        }
+    }
+    
     func linkTapped(link: String) {
         if let url = URL(string: link) {
             UIApplication.shared.open(url)
@@ -569,11 +609,29 @@ extension OptionalInformationForArgumentTableViewController: AddOnHeaderDelegate
     }
     
     func showPostsAsAFeed(section: Int) {
-        self.feedSection = nil
         
+        if let feedSection = feedSection {
+            if feedSection.section == section {
+                self.feedSection = nil  //Hide the feedSection
+                self.tableView.reloadData()
+                
+            } else {
+                self.showFeedSection(section: section)
+            }
+        } else {
+            //no feed section
+            self.showFeedSection(section: section)
+        }
+    }
+
+        
+    
+    func showFeedSection(section: Int) {
         if let feedSection = self.feedSectionData.first(where: {$0.section == section}) {
             self.feedSection = feedSection
-            self.tableView.reloadData()
+            let range = NSMakeRange(0, self.tableView.numberOfSections)
+            let sections = NSIndexSet(indexesIn: range)
+            self.tableView.reloadSections(sections as IndexSet, with: .automatic)
         } else {
            print("Dont have the feedSection Data")
         }

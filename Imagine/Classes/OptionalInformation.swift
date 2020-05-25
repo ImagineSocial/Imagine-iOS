@@ -29,6 +29,9 @@ class OptionalInformation {
     var documentID: String?  // DocumentID of the addOn
     var fact: Fact?
     var addOnInfoHeader: AddOnInfoHeader?
+    var imageURL: String?
+    
+    var thanksCount:Int?
     
     let db = Firestore.firestore()
     
@@ -141,13 +144,12 @@ class OptionalInformation {
             
     func getItems() {
         
-        print("Get Items bei ", fact?.title)
         guard let fact = fact, let documentID = documentID else {
             print("Not enough info in OptionalInformation getItems")
             return
         }
         
-        let ref = db.collection("Facts").document(fact.documentID).collection("addOns").document(documentID).collection("items").limit(to: 10)
+        let ref = db.collection("Facts").document(fact.documentID).collection("addOns").document(documentID).collection("items").order(by: "createDate", descending: true).limit(to: 10)
         
         ref.getDocuments { (snap, err) in
             if let error = err {

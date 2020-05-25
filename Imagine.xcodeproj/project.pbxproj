@@ -22,6 +22,7 @@
 		E911EEF222DB173E00EDD056 /* SettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEF122DB173E00EDD056 /* SettingCell.swift */; };
 		E911EEF422DB630300EDD056 /* SideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEF322DB630300EDD056 /* SideMenu.swift */; };
 		E91A2B5E2473B9DC00B42353 /* AddOnHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E91A2B5D2473B9DC00B42353 /* AddOnHeaderView.xib */; };
+		E91A2B6124794EAE00B42353 /* SettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91A2B6024794EAE00B42353 /* SettingTableViewController.swift */; };
 		E91D5092245EF8A500907821 /* SingleTopicAddOnCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E91D5091245EF8A500907821 /* SingleTopicAddOnCell.xib */; };
 		E91D5094245EFE6C00907821 /* SingleTopicAddOnCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91D5093245EFE6C00907821 /* SingleTopicAddOnCell.swift */; };
 		E9211AB9223FCBB100185A00 /* NewCampaignViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9211AB8223FCBB100185A00 /* NewCampaignViewController.swift */; };
@@ -186,6 +187,8 @@
 		E9EE0E3122D21C0E0039F32C /* SwipeCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EE0E3022D21C0E0039F32C /* SwipeCollectionViewController.swift */; };
 		E9EE0E3522D234DA0039F32C /* VisionPitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EE0E3422D234DA0039F32C /* VisionPitchCell.swift */; };
 		E9EE9D852316922E0033748E /* VoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EE9D842316922E0033748E /* VoteViewController.swift */; };
+		E9F1F225247A9E77004E1E90 /* SettingHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9F1F224247A9E77004E1E90 /* SettingHeaderView.xib */; };
+		E9F1F227247A9F42004E1E90 /* SettingFooterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9F1F226247A9F42004E1E90 /* SettingFooterView.xib */; };
 		E9F31DC523F6C334001D5D25 /* FactCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9F31DC423F6C334001D5D25 /* FactCell.xib */; };
 		E9F31DC823F6D109001D5D25 /* RecentTopicsCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9F31DC723F6D109001D5D25 /* RecentTopicsCollectionCell.xib */; };
 		E9F31DCB23F6D2A3001D5D25 /* FactCollectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9F31DCA23F6D2A3001D5D25 /* FactCollectionHeader.xib */; };
@@ -216,6 +219,7 @@
 		E911EEF122DB173E00EDD056 /* SettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingCell.swift; sourceTree = "<group>"; };
 		E911EEF322DB630300EDD056 /* SideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenu.swift; sourceTree = "<group>"; };
 		E91A2B5D2473B9DC00B42353 /* AddOnHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddOnHeaderView.xib; sourceTree = "<group>"; };
+		E91A2B6024794EAE00B42353 /* SettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewController.swift; sourceTree = "<group>"; };
 		E91D5091245EF8A500907821 /* SingleTopicAddOnCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SingleTopicAddOnCell.xib; sourceTree = "<group>"; };
 		E91D5093245EFE6C00907821 /* SingleTopicAddOnCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleTopicAddOnCell.swift; sourceTree = "<group>"; };
 		E9211AB8223FCBB100185A00 /* NewCampaignViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NewCampaignViewController.swift; path = ../NewCampaignViewController.swift; sourceTree = "<group>"; };
@@ -385,6 +389,8 @@
 		E9EE0E3022D21C0E0039F32C /* SwipeCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeCollectionViewController.swift; sourceTree = "<group>"; };
 		E9EE0E3422D234DA0039F32C /* VisionPitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionPitchCell.swift; sourceTree = "<group>"; };
 		E9EE9D842316922E0033748E /* VoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoteViewController.swift; sourceTree = "<group>"; };
+		E9F1F224247A9E77004E1E90 /* SettingHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingHeaderView.xib; sourceTree = "<group>"; };
+		E9F1F226247A9F42004E1E90 /* SettingFooterView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingFooterView.xib; sourceTree = "<group>"; };
 		E9F31DC423F6C334001D5D25 /* FactCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FactCell.xib; sourceTree = "<group>"; };
 		E9F31DC723F6D109001D5D25 /* RecentTopicsCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RecentTopicsCollectionCell.xib; sourceTree = "<group>"; };
 		E9F31DCA23F6D2A3001D5D25 /* FactCollectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FactCollectionHeader.xib; sourceTree = "<group>"; };
@@ -424,6 +430,14 @@
 				41B6ABEE519CECD54D4C7F4F /* Pods_Imagine.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E91A2B5F24794E8400B42353 /* SettingViewController */ = {
+			isa = PBXGroup;
+			children = (
+				E91A2B6024794EAE00B42353 /* SettingTableViewController.swift */,
+			);
+			path = SettingViewController;
 			sourceTree = "<group>";
 		};
 		E933553324705C740060E331 /* SearchViewController */ = {
@@ -527,6 +541,7 @@
 				E9E531FA229E9191004D0654 /* FeedVCs */,
 				E988284E23105241005ECB40 /* PostVCs */,
 				E933553324705C740060E331 /* SearchViewController */,
+				E91A2B5F24794E8400B42353 /* SettingViewController */,
 				E971B8DB2247A48C001BBC1E /* LogInViewController.swift */,
 				E9B79CE822510F1900166EED /* TabBarViewController.swift */,
 				E9F9B68A223D584600100F51 /* PageViewController.swift */,
@@ -548,7 +563,6 @@
 				E962AC2E222448F800C6D6EF /* BounceButton.swift */,
 				E962AC35222DA19700C6D6EF /* DesignablePopUp.swift */,
 				E9B9445C2257C37D000145E2 /* DesignableImage.swift */,
-				E929516923328D4B006C37E3 /* Constants.swift */,
 				E9D6FA6C23A3B63A00EFEE8F /* VerticalButton.swift */,
 				E9B85D592413BDB300960942 /* HairlineView.swift */,
 			);
@@ -593,6 +607,7 @@
 				E9332A9A23FE8A63004078FC /* CommentTableView.swift */,
 				E9B85D632413C67E00960942 /* Company.swift */,
 				E97E7262243603AC0012F105 /* OptionalInformation.swift */,
+				E929516923328D4B006C37E3 /* Constants.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -747,6 +762,8 @@
 				E97FDFBB246A9E970049E1E4 /* TopicCollectionHeader.xib */,
 				E97FDFC5246C00890049E1E4 /* TopicCollectionFooter.xib */,
 				E97FDFCB246C33F80049E1E4 /* TopicCollectionFooter.swift */,
+				E9F1F224247A9E77004E1E90 /* SettingHeaderView.xib */,
+				E9F1F226247A9F42004E1E90 /* SettingFooterView.xib */,
 			);
 			path = "Header&Footer";
 			sourceTree = "<group>";
@@ -931,6 +948,7 @@
 				E962AC212224430600C6D6EF /* LaunchScreen.storyboard in Resources */,
 				E97D714A24223A930018E27C /* JobOfferCell.xib in Resources */,
 				E90B1917238C210000EACCC7 /* IBMPlexSans-SemiBold.ttf in Resources */,
+				E9F1F227247A9F42004E1E90 /* SettingFooterView.xib in Resources */,
 				E9E6876724167AB600CB7AF8 /* CurrentProjectsCollectionCell.xib in Resources */,
 				E9925A9823D86F4C00E1A9D4 /* MultiPictureCell.xib in Resources */,
 				E9CF2381233A27A500D3B295 /* TopicCell.xib in Resources */,
@@ -966,6 +984,7 @@
 				E90B1916238C210000EACCC7 /* IBMPlexSans-ExtraLight.ttf in Resources */,
 				E94F29BE22B2F7E60015A8CC /* EventCell.xib in Resources */,
 				E91D5092245EF8A500907821 /* SingleTopicAddOnCell.xib in Resources */,
+				E9F1F225247A9E77004E1E90 /* SettingHeaderView.xib in Resources */,
 				E9F31DD123F70D8A001D5D25 /* SmallTopicCell.xib in Resources */,
 				E9F31DCB23F6D2A3001D5D25 /* FactCollectionHeader.xib in Resources */,
 				E962AC3222244C7B00C6D6EF /* GoogleService-Info.plist in Resources */,
@@ -1107,6 +1126,7 @@
 				E9EA7C9B22E5F47C0015C0EC /* VoteCell.swift in Sources */,
 				E9B79CE5224EC78900166EED /* CampaignCell.swift in Sources */,
 				E9B79CE1224EC6D200166EED /* RepostCell.swift in Sources */,
+				E91A2B6124794EAE00B42353 /* SettingTableViewController.swift in Sources */,
 				E9E6876C2416AFD500CB7AF8 /* CommunityCollectionCell.swift in Sources */,
 				E97E7263243603AC0012F105 /* OptionalInformation.swift in Sources */,
 				E9B85D5E2413C28B00960942 /* TableViewInCollectionViewCell.swift in Sources */,
@@ -1340,7 +1360,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.5;
+				MARKETING_VERSION = 1.5.6;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -1363,7 +1383,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.5;
+				MARKETING_VERSION = 1.5.6;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;

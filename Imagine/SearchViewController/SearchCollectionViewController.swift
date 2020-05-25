@@ -280,9 +280,9 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
             if let pageVC = segue.destination as? ArgumentPageViewController {
                 if let chosenFact = sender as? Fact {
                     pageVC.fact = chosenFact
-                    if chosenFact.displayOption == .topic {
-                        pageVC.displayMode = .topic
-                    }
+//                    if chosenFact.displayOption == .topic {
+//                        pageVC.displayMode = .topic
+//                    }
                 }
             }
         }

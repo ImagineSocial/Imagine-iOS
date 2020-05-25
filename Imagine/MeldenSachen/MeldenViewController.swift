@@ -124,6 +124,11 @@ class MeldenViewController: UIViewController {
     func checkIfItsYourPost() {
         if let user = Auth.auth().currentUser {
             if let post = post {
+                if user.uid == Constants.userIDs.uidMalte || user.uid == Constants.userIDs.uidSophie || user.uid == Constants.userIDs.uidYvonne {
+                    if post.originalPosterUID == Constants.userIDs.FrankMeindlID || post.originalPosterUID == Constants.userIDs.MarkusRiesID || post.originalPosterUID == Constants.userIDs.AnnaNeuhausID || post.originalPosterUID == Constants.userIDs.LaraVoglerID || post.originalPosterUID == Constants.userIDs.LenaMasgarID  {
+                        insertDeleteView()
+                    }
+                }
                 if post.originalPosterUID == user.uid {
                     insertDeleteView()
                 }

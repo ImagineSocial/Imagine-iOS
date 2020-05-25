@@ -488,9 +488,6 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                 if let chosenFact = sender as? Fact {
                     pageVC.fact = chosenFact
                     pageVC.recentTopicDelegate = self
-                    if chosenFact.displayOption == .topic {
-                        pageVC.displayMode = .topic
-                    }
                     
                     self.logUser(fact: chosenFact)
                 }
