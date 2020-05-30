@@ -87,6 +87,7 @@
 		E97FDFCA246C1A770049E1E4 /* FollowedTopicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FDFC9246C1A770049E1E4 /* FollowedTopicCell.swift */; };
 		E97FDFCC246C33F80049E1E4 /* TopicCollectionFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FDFCB246C33F80049E1E4 /* TopicCollectionFooter.swift */; };
 		E97FDFCE246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FDFCD246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift */; };
+		E981B25C2482E23100F6C724 /* surveyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E981B25B2482E23100F6C724 /* surveyCell.xib */; };
 		E983F51C23C1FBC2005F7FDE /* GifCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E983F51B23C1FBC2005F7FDE /* GifCell.xib */; };
 		E983F51E23C1FEA5005F7FDE /* GifCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983F51D23C1FEA5005F7FDE /* GifCell.swift */; };
 		E988285023141AC8005ECB40 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E988284F23141AC8005ECB40 /* Extensions.swift */; };
@@ -288,6 +289,7 @@
 		E97FDFC9246C1A770049E1E4 /* FollowedTopicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowedTopicCell.swift; sourceTree = "<group>"; };
 		E97FDFCB246C33F80049E1E4 /* TopicCollectionFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicCollectionFooter.swift; sourceTree = "<group>"; };
 		E97FDFCD246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowAllFactsCollectionViewController.swift; sourceTree = "<group>"; };
+		E981B25B2482E23100F6C724 /* surveyCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = surveyCell.xib; path = ../../../../../.Trash/surveyCell.xib; sourceTree = "<group>"; };
 		E983F51B23C1FBC2005F7FDE /* GifCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GifCell.xib; sourceTree = "<group>"; };
 		E983F51D23C1FEA5005F7FDE /* GifCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifCell.swift; sourceTree = "<group>"; };
 		E988284F23141AC8005ECB40 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -726,6 +728,7 @@
 				E98FAEA523FAD2CC0064A614 /* CommentFooter.xib */,
 				E9A57A9C24535C8200665007 /* AdvertisingCell.xib */,
 				E9A57A9E245360D100665007 /* AdvertisingCell.swift */,
+				E981B25B2482E23100F6C724 /* surveyCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -976,6 +979,7 @@
 				E9600E9D223C0782003E5A7A /* OFL.txt in Resources */,
 				E9B85D522412D29A00960942 /* SmallPostCell.xib in Resources */,
 				E9B944672258B674000145E2 /* RePostTableViewCell.xib in Resources */,
+				E981B25C2482E23100F6C724 /* surveyCell.xib in Resources */,
 				E98FAEA623FAD2CC0064A614 /* CommentFooter.xib in Resources */,
 				E90B1916238C210000EACCC7 /* IBMPlexSans-ExtraLight.ttf in Resources */,
 				E94F29BE22B2F7E60015A8CC /* EventCell.xib in Resources */,
