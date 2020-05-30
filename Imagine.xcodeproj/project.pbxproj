@@ -77,7 +77,6 @@
 		E97DBED922AEA81A007100E1 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97DBED822AEA81A007100E1 /* Post.swift */; };
 		E97E7263243603AC0012F105 /* OptionalInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97E7262243603AC0012F105 /* OptionalInformation.swift */; };
 		E97E902822464B4700BA0295 /* JobOfferingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97E902722464B4700BA0295 /* JobOfferingViewController.swift */; };
-		E97FDFB724618B550049E1E4 /* surveyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E97FDFB624618B550049E1E4 /* surveyCell.xib */; };
 		E97FDFB924695FA40049E1E4 /* AddOnStoreImageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E97FDFB824695FA40049E1E4 /* AddOnStoreImageTableViewCell.xib */; };
 		E97FDFBC246A9E970049E1E4 /* TopicCollectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = E97FDFBB246A9E970049E1E4 /* TopicCollectionHeader.xib */; };
 		E97FDFBE246AA4130049E1E4 /* ShowAllTopicsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E97FDFBD246AA4130049E1E4 /* ShowAllTopicsCell.xib */; };
@@ -279,7 +278,6 @@
 		E97E7262243603AC0012F105 /* OptionalInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalInformation.swift; sourceTree = "<group>"; };
 		E97E902722464B4700BA0295 /* JobOfferingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobOfferingViewController.swift; sourceTree = "<group>"; };
 		E97EE6D122AC12A400EC9D68 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
-		E97FDFB624618B550049E1E4 /* surveyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = surveyCell.xib; sourceTree = "<group>"; };
 		E97FDFB824695FA40049E1E4 /* AddOnStoreImageTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddOnStoreImageTableViewCell.xib; sourceTree = "<group>"; };
 		E97FDFBB246A9E970049E1E4 /* TopicCollectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TopicCollectionHeader.xib; sourceTree = "<group>"; };
 		E97FDFBD246AA4130049E1E4 /* ShowAllTopicsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ShowAllTopicsCell.xib; sourceTree = "<group>"; };
@@ -656,7 +654,6 @@
 				E9CF237E233A279200D3B295 /* TopicCell.swift */,
 				E94F29BD22B2F7E60015A8CC /* EventCell.xib */,
 				E94F29BF22B375610015A8CC /* EventCell.swift */,
-				E97FDFB624618B550049E1E4 /* surveyCell.xib */,
 			);
 			path = FeedCells;
 			sourceTree = "<group>";
@@ -934,7 +931,6 @@
 				E9E49D2D2349E8AB002E371E /* NotificationCell.xib in Resources */,
 				E9600E9B223C0782003E5A7A /* Kalam-Light.ttf in Resources */,
 				E96CE89622959E6D00BACD3B /* ArgumentCell.xib in Resources */,
-				E97FDFB724618B550049E1E4 /* surveyCell.xib in Resources */,
 				E98FAEA223FAB8760064A614 /* CommentCell.xib in Resources */,
 				E97FDFBE246AA4130049E1E4 /* ShowAllTopicsCell.xib in Resources */,
 				E991CCDA2273474F00940834 /* ThoughtPostCell.xib in Resources */,
