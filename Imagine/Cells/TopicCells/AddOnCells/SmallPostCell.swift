@@ -65,18 +65,22 @@ class SmallPostCell: UICollectionViewCell {
         }
         
         if let ref = ref {
-            ref.getDocument { (snap, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    if let snap = snap {
-                        if let post = self.postHelper.addThePost(document: snap, isTopicPost: isTopicPost, forFeed: false){
-                            
-                            if isTopicPost {
-                                post.isTopicPost = true
+            DispatchQueue.global(qos: .default).async {
+                ref.getDocument { (snap, err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        if let snap = snap {
+                            if let post = self.postHelper.addThePost(document: snap, isTopicPost: isTopicPost, forFeed: false){
+                                
+                                if isTopicPost {
+                                    post.isTopicPost = true
+                                }
+                                DispatchQueue.main.async {
+                                    self.post = post
+                                    self.delegate?.sendItem(item: post)
+                                }
                             }
-                            self.post = post
-                            self.delegate?.sendItem(item: post)
                         }
                     }
                 }
@@ -118,12 +122,12 @@ class SmallPostCell: UICollectionViewCell {
                 smallCellImageView.image = UIImage(named: "GIFIcon")
                 
                 if let url = URL(string: post.linkURL) {
-                    DispatchQueue.global().async {  // Quite some work to do apparently
+                    DispatchQueue.global(qos: .default).async {  // Quite some work to do apparently
                         let image = self.generateThumbnail(url: url)
-                        DispatchQueue.main.sync {
-                            if let image = image {    // Not on this thread
+                        DispatchQueue.main.async {
+                            if let image = image {
                                 self.cellImageView.image = image
-                            } else {
+                            } else { // Not in this cell
                                 self.postImageViewHeightConstraint.constant = 0
                             }
                         }
@@ -148,12 +152,17 @@ class SmallPostCell: UICollectionViewCell {
                 if let cachedResult = slp.cache.slp_getCachedResponse(url: post.linkURL) {
                     self.showLinkPreview(result: cachedResult)
                 } else {
-                    slp.preview(post.linkURL, onSuccess: { (result) in
-                        
-                        self.showLinkPreview(result: result)
-                    }) { (error) in
-                        print("We have an error showing the link: \(error.localizedDescription)")
+                    DispatchQueue.global(qos: .default).async {
+                        self.slp.preview(post.linkURL, onSuccess: { (result) in
+                            
+                            DispatchQueue.main.async {
+                                self.showLinkPreview(result: result)
+                            }
+                        }) { (error) in
+                            print("We have an error showing the link: \(error.localizedDescription)")
+                        }
                     }
+                    
                 }
                 
             } else if post.type == .youTubeVideo {
@@ -177,7 +186,7 @@ class SmallPostCell: UICollectionViewCell {
             }
             
             postTitleLabel.text = post.title
-//            descriptionLabel.text = post.description
+            //            descriptionLabel.text = post.description
         }
     }
     

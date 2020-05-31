@@ -409,39 +409,6 @@ class PostHelper {
     }
     
     
-//    func getPostsFromDocumentIDsForTopicPosts(documentIDs: [String], done: @escaping ([Post]?) -> Void) {
-//        print("Get posts")
-//        let endIndex = documentIDs.count
-//        var startIndex = 0
-//
-//        if documentIDs.count == 0 {
-//            done(self.posts)
-//        } else {
-//            // The function has to be here for the right order
-//            for documentIDofPost in documentIDs {
-//                self.db.collection("TopicPosts").document(documentIDofPost).getDocument{ (document, err) in
-//                    if let error =  err {
-//                        print("We have an error: \(error.localizedDescription)")
-//                    } else {
-//                        if let document = document {
-//
-//                            self.addThePost(document: document, forFeed: true)
-//
-//                            startIndex = startIndex+1
-//
-//                            if startIndex == endIndex {
-//                                self.getCommentCount(completion: {
-//                                    done(self.posts)
-//                                })
-//                            }
-//
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-    
     //MARK: -add Post
     func addThePost(document: DocumentSnapshot, isTopicPost: Bool, forFeed: Bool) -> Post? {
         
@@ -463,7 +430,54 @@ class PostHelper {
                     let niceCount = documentData["niceCount"] as? Int
                     
                     else {
-                        return nil
+                        if postType == "survey" {
+                            
+                            guard let surveyType = documentData["surveyType"] as? String,
+                            let question = documentData["question"] as? String
+                                else { return nil }
+                            
+                            let defaults = UserDefaults.standard
+                            let hiddenSurveyArrayString = Constants.userDefaultsStrings.hideSurveyString+"s"
+                            let surveyStrings = defaults.stringArray(forKey: hiddenSurveyArrayString) ?? [String]()
+                            
+                            for surveyID in surveyStrings {
+                                if documentID == surveyID {
+                                    print("Survey is hidden")
+                                    return nil
+                                }
+                            }
+                            
+                            let post = Post()
+                            post.documentID = documentID
+                            var surveyTypeEnum: SurveyType = .pickOrder
+                            
+                            if surveyType == "pickOne" {
+                                surveyTypeEnum = .pickOne
+                            } else if surveyType == "comment" {
+                                surveyTypeEnum = .comment
+                            }
+                            
+                            let survey = Survey(type: surveyTypeEnum, question: question)
+                            post.survey = survey
+                            
+                            if let firstAnswer = documentData["firstAnswer"] as? String, let secondAnswer = documentData["secondAnswer"] as? String, let thirdAnswer = documentData["thirdAnswer"] as? String, let fourthAnswer = documentData["fourthAnswer"] as? String {
+                                
+                                survey.firstAnswer = firstAnswer
+                                survey.secondAnswer = secondAnswer
+                                survey.thirdAnswer = thirdAnswer
+                                survey.fourthAnswer = fourthAnswer
+                            }
+                                                        
+                            if forFeed {
+                                self.posts.append(post)
+                                return nil
+                            } else {
+                                return post
+                            }
+                        } else {
+                            
+                           return nil
+                        }
                 }
                 
                 
@@ -1040,7 +1054,9 @@ class PostHelper {
 
 class ReportOptions {
     // Optical change
-    let opticOptionArray = ["Spoiler", NSLocalizedString("Opinion, not a fact", comment: "When it seems like the post is presenting a fact, but is just an opinion"), NSLocalizedString("Sensationalism", comment: "When the given facts are presented more important, than they are in reality"), "Circlejerk", NSLocalizedString("Pretentious", comment: "When the poster is just posting to sell themself"), NSLocalizedString("Edited Content", comment: "If the person shares something that is corrected or changed with photoshop or whatever"), NSLocalizedString("Ignorant Thinking", comment: "If the poster is just looking at one side of the matter or problem"), NSLocalizedString("Not listed", comment: "Something besides the given options")]
+    // not now: "Circlejerk",NSLocalizedString("Pretentious", comment: "When the poster is just posting to sell themself"),, NSLocalizedString("Ignorant Thinking", comment: "If the poster is just looking at one side of the matter or problem")
+    
+    let opticOptionArray = ["Satire", "Spoiler", NSLocalizedString("Opinion, not a fact", comment: "When it seems like the post is presenting a fact, but is just an opinion"), NSLocalizedString("Sensationalism", comment: "When the given facts are presented more important, than they are in reality"), NSLocalizedString("Edited Content", comment: "If the person shares something that is corrected or changed with photoshop or whatever"), NSLocalizedString("Not listed", comment: "Something besides the given options")]
     // Bad Intentions
     let badIntentionArray = [NSLocalizedString("Hate against...", comment: "Expressing hat against a certain type of people"),NSLocalizedString("Disrespectful", comment: "If a person thinks he shouldnt care about another person's opinion"), NSLocalizedString("Offensive", comment: "Using slurs"), NSLocalizedString("Harassment", comment: "Keep on asking for something, even if the other person is knowingly annoyed"), NSLocalizedString("Racist", comment: "Not accepting another persons heritage"), NSLocalizedString("Homophobic", comment: "Not accepting another persons gender or sexual preferences"), NSLocalizedString("Violance Supporting", comment: "support the use of violance"), NSLocalizedString("Belittlement of suicide", comment: "Tough topic, no belittlement of suicide or joking about it"), NSLocalizedString("Disrespectful against religions", comment: "Disrespectful against religions"), NSLocalizedString("Not listed", comment: "Something besides the given options")]
     // Lie & Deception

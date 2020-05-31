@@ -88,6 +88,7 @@
 		E97FDFCC246C33F80049E1E4 /* TopicCollectionFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FDFCB246C33F80049E1E4 /* TopicCollectionFooter.swift */; };
 		E97FDFCE246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FDFCD246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift */; };
 		E981B25C2482E23100F6C724 /* surveyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E981B25B2482E23100F6C724 /* surveyCell.xib */; };
+		E981B25E2483AFCC00F6C724 /* SurveyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E981B25D2483AFCC00F6C724 /* SurveyCell.swift */; };
 		E983F51C23C1FBC2005F7FDE /* GifCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E983F51B23C1FBC2005F7FDE /* GifCell.xib */; };
 		E983F51E23C1FEA5005F7FDE /* GifCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983F51D23C1FEA5005F7FDE /* GifCell.swift */; };
 		E988285023141AC8005ECB40 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E988284F23141AC8005ECB40 /* Extensions.swift */; };
@@ -290,6 +291,7 @@
 		E97FDFCB246C33F80049E1E4 /* TopicCollectionFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicCollectionFooter.swift; sourceTree = "<group>"; };
 		E97FDFCD246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowAllFactsCollectionViewController.swift; sourceTree = "<group>"; };
 		E981B25B2482E23100F6C724 /* surveyCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = surveyCell.xib; path = ../../../../../.Trash/surveyCell.xib; sourceTree = "<group>"; };
+		E981B25D2483AFCC00F6C724 /* SurveyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyCell.swift; sourceTree = "<group>"; };
 		E983F51B23C1FBC2005F7FDE /* GifCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GifCell.xib; sourceTree = "<group>"; };
 		E983F51D23C1FEA5005F7FDE /* GifCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifCell.swift; sourceTree = "<group>"; };
 		E988284F23141AC8005ECB40 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -729,6 +731,7 @@
 				E9A57A9C24535C8200665007 /* AdvertisingCell.xib */,
 				E9A57A9E245360D100665007 /* AdvertisingCell.swift */,
 				E981B25B2482E23100F6C724 /* surveyCell.xib */,
+				E981B25D2483AFCC00F6C724 /* SurveyCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -1068,6 +1071,7 @@
 				E90C892B23F29407005CE1D0 /* SettingViewController.swift in Sources */,
 				E96CE89422941C5C00BACD3B /* FactParentContainerViewController.swift in Sources */,
 				E938105022E708510086F199 /* YouTubeCell.swift in Sources */,
+				E981B25E2483AFCC00F6C724 /* SurveyCell.swift in Sources */,
 				E9211AB9223FCBB100185A00 /* NewCampaignViewController.swift in Sources */,
 				E933553524705CD00060E331 /* SearchCollectionViewController.swift in Sources */,
 				E97FDFCE246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift in Sources */,

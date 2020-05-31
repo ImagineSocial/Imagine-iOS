@@ -110,6 +110,9 @@ class HandyHelper {
         case .spoiler:
             reportViewLabelText = "Spoiler" // I think always the same excet arabic or whatever
             reportViewBackgroundColor = .red
+        case .satire:
+            reportViewLabelText = "Satire" // I think always the same excet arabic or whatever
+            reportViewBackgroundColor = .orange
         case .opinion:
             reportViewLabelText = NSLocalizedString("Opinion, not a fact", comment: "When it seems like the post is presenting a fact, but is just an opinion")
             reportViewBackgroundColor = UIColor(red:0.27, green:0.00, blue:0.01, alpha:1.0)

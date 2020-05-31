@@ -276,7 +276,9 @@ class PostCell : BaseFeedCell {
         if let post = post {
             delegate?.niceTapped(post: post)
             post.votes.nice = post.votes.nice+1
-            showButtonText(post: post, button: niceButton)
+            DispatchQueue.main.async {  //Doesnt make a difference apparently, but I wish it would because it lags a bit
+                self.showButtonText(post: post, button: self.niceButton)
+            }
         }
     }
     

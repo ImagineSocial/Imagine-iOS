@@ -64,6 +64,10 @@ class MeldeAgreeViewController: UIViewController {
             reportOptionForDatabase = "edited"
         case "Schwarz-Weiß-Denken":
             reportOptionForDatabase = "ignorant"
+        case "Satire":
+            reportOptionForDatabase = "satire"
+        case "Spoiler":
+            reportOptionForDatabase = "spoiler"
         default:
             reportOptionForDatabase = "normal"
         }

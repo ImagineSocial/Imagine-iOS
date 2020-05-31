@@ -55,44 +55,25 @@ class SingleTopicAddOnCell: UITableViewCell {
     func getPreviewPictures(documentID: String) {
         if documentID != "" {
             if self.previewPosts == nil {
-                postHelper.getPostsForFact(factID: documentID, forPreviewPictures: true) { (posts) in
-                    if posts.count != 0 {
-                        print("Got the singleTopicPosts")
-                        self.previewPosts = posts
-                        self.topicPreviewCollectionView.reloadData()
-                        self.setGradientView()
-                        self.isFetchingPreviewPosts = false
-                    } else {
-                        self.topicPreviewCollectionViewHeightConstraint.constant = 0
-                        self.layoutIfNeeded()
+                DispatchQueue.global(qos: .default).async {
+                    self.postHelper.getPostsForFact(factID: documentID, forPreviewPictures: true) { (posts) in
+                        DispatchQueue.main.async {
+                            if posts.count != 0 {
+                                print("Got the singleTopicPosts")
+                                self.previewPosts = posts
+                                self.topicPreviewCollectionView.reloadData()
+                                self.setGradientView()
+                                self.isFetchingPreviewPosts = false
+                            } else {
+                                self.topicPreviewCollectionViewHeightConstraint.constant = 0
+                                self.layoutIfNeeded()
+                            }
+                        }
                     }
                 }
             }
         } else {    // AddOnStoreViewController
-            var posts = [Post]()
-            let url = "https://firebasestorage.googleapis.com/v0/b/imagine-6214f.appspot.com/o/postPictures%2FON8vMxvYuQPJC9XXpYDc.png?alt=media&token=c5594d8a-d7f0-437a-97fd-d56f4cf77a13"
-            let post = Post()
-            post.title = "Hier sind 3 Beiträge des Themas."
-            post.type = .picture
-            post.imageURL = url
             
-            let post1 = Post()
-            post1.title = "Als kleiner Preview."
-            post1.type = .picture
-            post1.imageURL = url
-            
-            let post2 = Post()
-            post2.title = "Wie schön!"
-            post2.type = .picture
-            post2.imageURL = url
-            
-            posts.append(contentsOf: [post, post1, post2])
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { //FML
-                self.previewPosts = posts
-                self.topicPreviewCollectionView.reloadData()
-                self.setGradientView()
-            }
         }
     }
     
@@ -135,15 +116,21 @@ class SingleTopicAddOnCell: UITableViewCell {
     
     func setGradientView() {
         //Gradient
-        let gradient = CAGradientLayer()
-        gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
-        gradient.endPoint = CGPoint(x: 0.5, y: 0.6)
-        let whiteColor = UIColor.white
-        gradient.colors = [whiteColor.withAlphaComponent(0.0).cgColor, whiteColor.withAlphaComponent(0.5).cgColor, whiteColor.withAlphaComponent(0.7).cgColor]
-        gradient.locations = [0.0, 0.5, 1]
-        gradient.frame = gradientView.bounds
-        
-        gradientView.layer.mask = gradient
+        DispatchQueue.global(qos: .default).async {
+            
+            let gradient = CAGradientLayer()
+            gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
+            gradient.endPoint = CGPoint(x: 0.5, y: 0.6)
+            let whiteColor = UIColor.white
+            gradient.colors = [whiteColor.withAlphaComponent(0.0).cgColor, whiteColor.withAlphaComponent(0.5).cgColor, whiteColor.withAlphaComponent(0.7).cgColor]
+            gradient.locations = [0.0, 0.5, 1]
+            gradient.frame = self.gradientView.bounds
+            
+            DispatchQueue.main.async {
+                
+                self.gradientView.layer.mask = gradient
+            }
+        }
     }
 }
 

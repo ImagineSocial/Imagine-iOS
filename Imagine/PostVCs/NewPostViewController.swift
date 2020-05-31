@@ -1808,7 +1808,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             let postRef: DocumentReference?
             if comingFromAddOnVC || postOnlyInTopic {
-                postRef = db.collection("TopicPosts").document() //Wie frage ich nach ob ich die im normalen oder in dem ref finde?
+                postRef = db.collection("TopicPosts").document()
             } else {
                 postRef = db.collection("Posts").document()
             }
@@ -1938,6 +1938,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                             print("##Das ist das komprimierte Bild: \(comImage)")
                         }
                     }
+                } else {
+                    self.alert(message: "Es ist ein Fehler bei der Auswahl der Bilder aufgetreten. Womöglich ist/sind ein oder mehrere Bilder in der Cloud gespeichert. In diesem Falle wähle das Bild in der Fotos-App aus und zoome ein wenig heran, unten rechts erscheint dann ein kleiner Ladekreis. Mache auf diesen Fehler aufmerksam indem du einen Bug-Report im Imagine-Bereich unter \"Mithilfe\" einreichst, dann wissen wir, das jemand auf dieses Problem gestoßen ist.", title: "Wir haben einen Fehler")
+                    self.view.activityStopAnimating()
                 }
             }
         }

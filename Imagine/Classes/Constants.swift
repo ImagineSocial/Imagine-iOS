@@ -50,6 +50,9 @@ struct Constants {
         static let LaraVoglerID = "eICxbpDmwCWo3ixpCo1L4pXL97G3"
         static let LenaMasgarID = "mBySFkec8EZ2FWLUVyn5d8X38QF3"
     }
+    struct userDefaultsStrings {
+        static let hideSurveyString = "hiddenSurveysArray"
+    }
     
     struct texts {
         static let voteCampaignText = "Gestaltet Imagine \n\nBei den Kampagnen könnt ihr eure eigene Idee einreichen, oder die besten Ideen eurer Mit-User unterstützen. Erreicht eine Kampagne genügend Unterstützer, wird das Anliegen vom Team überprüft. \n\nBei den Abstimmungen werden die Kampagnen aufgeführt, welche nach verschiedene Kriterien überprüft wurden und nun zur Abstimmung freigegeben sind.\n\nPro Kampagne und Abstimmung habt ihr nur eine Stimme."

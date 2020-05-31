@@ -66,6 +66,7 @@ class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegat
     
     override func prepareForReuse() {
         self.info = nil
+        collectionView.setContentOffset(CGPoint.zero, animated: false)
     }
     
     // OptionalInformationDelegate
