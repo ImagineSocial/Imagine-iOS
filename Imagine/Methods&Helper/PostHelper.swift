@@ -437,7 +437,7 @@ class PostHelper {
                                 else { return nil }
                             
                             let defaults = UserDefaults.standard
-                            let hiddenSurveyArrayString = Constants.userDefaultsStrings.hideSurveyString+"s"
+                            let hiddenSurveyArrayString = Constants.userDefaultsStrings.hideSurveyString
                             let surveyStrings = defaults.stringArray(forKey: hiddenSurveyArrayString) ?? [String]()
                             
                             for surveyID in surveyStrings {

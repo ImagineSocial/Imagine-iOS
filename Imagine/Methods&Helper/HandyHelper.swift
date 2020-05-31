@@ -146,25 +146,22 @@ class HandyHelper {
         }
             
         var keyForFirestore: String?
-        var valueForFirestore = 0
         
         switch button {
         case .thanks:
-            valueForFirestore = post.votes.thanks+1
             keyForFirestore = "thanksCount"
         case .wow:
-            valueForFirestore = post.votes.wow+1
             keyForFirestore = "wowCount"
         case .ha:
-            valueForFirestore = post.votes.ha+1
             keyForFirestore = "haCount"
         case .nice:
-            valueForFirestore = post.votes.nice+1
             keyForFirestore = "niceCount"
         }
         
         if let keyForFirestore = keyForFirestore, let ref = ref {
-            ref.updateData([keyForFirestore:valueForFirestore])
+            ref.updateData([
+                keyForFirestore :  FirebaseFirestore.FieldValue.increment(Int64(1))
+            ])
         } else {
             print("Could not update")
         }

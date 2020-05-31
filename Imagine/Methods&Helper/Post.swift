@@ -199,4 +199,28 @@ public class User {
     public var image = UIImage(named: "default-user")
     public var blocked: [String]?
     public var statusQuote = ""
+    
+    let db = Firestore.firestore()
+    
+    func getBadges(returnBadges: @escaping ([String]) -> Void) {
+        
+        if userUID != "" {
+            let ref = db.collection("Users").document(userUID)
+            ref.getDocument { (snap, err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    if let snap = snap {
+                        if let data = snap.data() {
+                            if let badges = data["badges"] as? [String] {
+                                returnBadges(badges)
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            print("Got no UID for badges")
+        }
+    }
 }

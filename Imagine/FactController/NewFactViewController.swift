@@ -477,28 +477,52 @@ class NewFactViewController: UIViewController {
     
     func createNewFact(ref: DocumentReference, imageURL: String?) {
         
-        let op = Auth.auth().currentUser!
-        
-        let displayOption = self.getNewFactDisplayString(displayOption: self.pickedDisplayOption)
-        
-        var data = [String: Any]()
-        
-        data = ["name": titleTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "OP": op.uid, "displayOption": displayOption.displayOption, "popularity": 0]
-        
-        if let factDisplayName = displayOption.factDisplayNames {
-            data["factDisplayNames"] = factDisplayName
+        if let op = Auth.auth().currentUser {
+            
+            let displayOption = self.getNewFactDisplayString(displayOption: self.pickedDisplayOption)
+            
+            var data = [String: Any]()
+            
+            data = ["follower": [op.uid],"name": titleTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "OP": op.uid, "displayOption": displayOption.displayOption, "popularity": 0]
+            
+            if let factDisplayName = displayOption.factDisplayNames {
+                data["factDisplayNames"] = factDisplayName
+            }
+            
+            if let url = imageURL {
+                data["imageURL"] = url
+            }
+            
+            self.setUserChanges(documentID: ref.documentID) //Follow Topic and set Mod Badge
+            
+            ref.setData(data) { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    
+                    self.finished(item: nil)    // Will reload the database in the delegate
+                }
+            }
         }
+    }
+    
+    func setUserChanges(documentID: String) {
+        let factParentVC = FactParentContainerViewController()
+        let fact = Fact()
+        fact.documentID = documentID
         
-        if let url = imageURL {
-            data["imageURL"] = url
-        }
+        factParentVC.followTopic(fact: fact)
         
-        ref.setData(data) { (err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                
-                self.finished(item: nil)    // Will reload the database in the delegate
+        if let user = Auth.auth().currentUser {
+            let ref = db.collection("Users").document(user.uid)
+            ref.updateData([
+                "badges" : FieldValue.arrayUnion(["mod"])
+            ]) { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    print("Succesfully added badge")
+                }
             }
         }
     }

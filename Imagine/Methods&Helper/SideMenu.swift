@@ -39,6 +39,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     var notifications = [Comment]()
     
     let reuseIdentifier = "notificationCell"
+    let db = Firestore.firestore()
     
     let sideMenuView: UIView = {
         let vc = UIView()
@@ -78,6 +79,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
             sideMenuView.addSubview(disclaimerView)
             sideMenuView.addSubview(notificationTableView)
             sideMenuView.addSubview(notificationLabel)
+            sideMenuView.addSubview(badgeStackView)
             
             addConstraints()
             
@@ -200,6 +202,14 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         profilePictureImageView.layer.cornerRadius = profilePictureImageView.frame.height/2
         profilePictureImageView.layoutIfNeeded()
         
+        badgeStackView.addArrangedSubview(firstBadgeImageView)
+        badgeStackView.addArrangedSubview(secondBadgeImageView)
+        
+        badgeStackView.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor).isActive = true
+        badgeStackView.topAnchor.constraint(equalTo: profilePictureImageView.bottomAnchor, constant: -5).isActive = true
+        badgeStackView.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        badgeStackView.widthAnchor.constraint(equalToConstant: 55).isActive = true
+        
         profileButton.leadingAnchor.constraint(equalTo: profilePictureImageView.leadingAnchor).isActive = true
         profileButton.topAnchor.constraint(equalTo: profilePictureImageView.topAnchor).isActive = true
         profileButton.trailingAnchor.constraint(equalTo: profilePictureImageView.trailingAnchor).isActive = true
@@ -295,8 +305,21 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
             nameLabel.text = user.displayName
             profilePictureImageView.layer.cornerRadius = profilePictureImageView.frame.height/2
             profilePictureImageView.layoutIfNeeded()
+       
+            let userObject = User()
+            userObject.userUID = user.uid
+            userObject.getBadges { (badges) in
+                for badge in badges {
+                    if badge == "first500" {
+                        self.firstBadgeImageView.image = UIImage(named: "First500Badge")
+                    } else if badge == "mod" {
+                        self.secondBadgeImageView.image = UIImage(named: "ModBadge")
+                    }
+                }
+            }
         }
     }
+    
     
     
     // MARK: Instantiate UI
@@ -357,6 +380,36 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         label.textColor = .imagineColor
         
         return label
+    }()
+    
+    //MARK:-BadgeUI
+    let badgeStackView: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .horizontal
+        stack.alignment = .fill
+        stack.distribution = .fillEqually
+        stack.spacing = 5
+        
+        return stack
+    }()
+    
+    let firstBadgeImageView: UIImageView = {
+        let imgView = UIImageView()
+        imgView.translatesAutoresizingMaskIntoConstraints = false
+        imgView.contentMode = .scaleAspectFit
+        imgView.image = nil
+        
+        return imgView
+    }()
+    
+    let secondBadgeImageView: UIImageView = {
+        let imgView = UIImageView()
+        imgView.translatesAutoresizingMaskIntoConstraints = false
+        imgView.contentMode = .scaleAspectFit
+        imgView.image = nil
+        
+        return imgView
     }()
     
     //MARK:- Chat, Friend, Saved UI

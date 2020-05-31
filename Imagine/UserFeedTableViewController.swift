@@ -41,6 +41,8 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var messageBubbleImageView: UIImageView!
     @IBOutlet weak var totalPostCountLabel: UILabel!
+    @IBOutlet weak var firstBadgeImageView: UIImageView!
+    @IBOutlet weak var secondBadgeImageView: UIImageView!
     
     
     /* You have to set currentState and userOfProfile when you call this VC - Couldnt get the init to work */
@@ -292,7 +294,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             let currentUser = User()
             currentUser.userUID = user.uid
             
+            
             self.userOfProfile = currentUser
+            
+            self.getBadges(user: currentUser)
             
             self.getPosts(getMore: true)
             
@@ -313,7 +318,6 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         }
     }
     
-    
     func setCurrentProfile() {
         
         //        self.userOfProfile = user
@@ -328,7 +332,21 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 self.profilePictureImageView.image = UIImage(named: "default-user")
             }
             
+            self.getBadges(user: userOfProfile)
+            
             getPosts(getMore: true)
+        }
+    }
+    
+    func getBadges(user: User) {
+        user.getBadges { (badges) in
+            for badge in badges {
+                if badge == "first500" {
+                    self.firstBadgeImageView.image = UIImage(named: "First500Badge")
+                } else if badge == "mod" {
+                    self.secondBadgeImageView.image = UIImage(named: "ModBadge")
+                }
+            }
         }
     }
     
@@ -658,7 +676,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                     print("changeRequest hat geklappt")
                 }
             }
-            let userRef = Firestore.firestore().collection("Users").document(user.uid)
+            let userRef = db.collection("Users").document(user.uid)
             userRef.setData(["profilePictureURL": imageURL], mergeFields:["profilePictureURL"]) // MergeFields, so the other data wont be overridden
         }
         
@@ -766,6 +784,8 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     @IBAction func blogPostTapped(_ sender: Any) {
         performSegue(withIdentifier: "toBlogPost", sender: nil)
     }
+    
+    
     
     @IBAction func addAsFriendTapped(_ sender: Any) {
         
