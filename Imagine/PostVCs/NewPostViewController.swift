@@ -525,6 +525,21 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         return button
     }()
     
+    let removePictureButton :DesignableButton = {
+       let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "DismissTemplate"), for: .normal)
+        button.alpha = 0
+        button.tintColor = .systemRed
+        button.backgroundColor = .white
+        button.cornerRadius = 9
+        button.addTarget(self, action: #selector(removePictureTapped), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    
+    
     let previewCollectionView: UICollectionView = {
        let collectView = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout.init())
         collectView.translatesAutoresizingMaskIntoConstraints = false
@@ -576,6 +591,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         previewCollectionView.leadingAnchor.constraint(equalTo: cameraButton.trailingAnchor, constant: 75).isActive = true
         previewCollectionView.widthAnchor.constraint(equalToConstant: 125).isActive = true
         previewCollectionView.bottomAnchor.constraint(equalTo: pictureView.bottomAnchor).isActive = true
+        
+        pictureView.addSubview(removePictureButton)
+        removePictureButton.topAnchor.constraint(equalTo: previewCollectionView.topAnchor, constant: -5).isActive = true
+        removePictureButton.trailingAnchor.constraint(equalTo: previewCollectionView.trailingAnchor, constant: 5).isActive = true
+        removePictureButton.widthAnchor.constraint(equalToConstant: 18).isActive = true
+        removePictureButton.heightAnchor.constraint(equalToConstant: 18).isActive = true
         
         self.view.addSubview(pictureView)
         pictureView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
@@ -1463,6 +1484,22 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
+    @objc func removePictureTapped() {
+        
+        self.multiImageAssets.removeAll()
+        self.previewPictures.removeAll()
+        self.previewCollectionView.reloadData()
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.removePictureButton.alpha = 0
+            self.removePictureButton.isEnabled = true
+        }) { (_) in
+            self.decreasePictureUI()
+            self.selectedImageFromPicker = nil
+            self.selectedImagesFromPicker = []
+        }
+    }
+    
     @objc func timeButtonTapped() {
         if selectDate {
             selectDate = false
@@ -1857,18 +1894,19 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func openMultiPictureImagePicker() {
         self.multiImageAssets.removeAll()
-            //TODo: change the selection
-        self.presentImagePicker(self.multiImagePicker, select: { (asset) in
-                self.multiImageAssets.append(asset)
-                
-            }, deselect: { (asset) in
-                self.multiImageAssets = self.multiImageAssets.filter{ $0 != asset}
-            }, cancel: { (asset) in
-                self.multiImageAssets.removeAll()
-            }, finish: { (asset) in
-                self.previewPictures.removeAll()
-                self.getImages(forPreview: true) { (_) in }
-                self.setImage()
+        //TODo: change the selection
+        self.presentImagePicker(self.multiImagePicker,
+                                
+        select: { (asset) in
+            self.multiImageAssets.append(asset)
+        }, deselect: { (asset) in
+            self.multiImageAssets = self.multiImageAssets.filter{ $0 != asset}
+        }, cancel: { (asset) in
+            self.multiImageAssets.removeAll()
+        }, finish: { (asset) in
+            self.previewPictures.removeAll()
+            self.getImages(forPreview: true) { (_) in }
+            self.increasePictureUI()
             })
     }
     
@@ -1918,6 +1956,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     if forPreview {
                         self.previewPictures.append(image)
                         self.previewCollectionView.reloadData()
+                        UIView.animate(withDuration: 0.3) {
+                            self.removePictureButton.alpha = 1
+                            self.removePictureButton.isEnabled = true
+                        }
                     } else {
                         if self.selectedImageWidth == 0 {   // Set the width just for the first Image
                             let size = image.size
@@ -1941,6 +1983,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 } else {
                     self.alert(message: "Es ist ein Fehler bei der Auswahl der Bilder aufgetreten. Womöglich ist/sind ein oder mehrere Bilder in der Cloud gespeichert. In diesem Falle wähle das Bild in der Fotos-App aus und zoome ein wenig heran, unten rechts erscheint dann ein kleiner Ladekreis. Mache auf diesen Fehler aufmerksam indem du einen Bug-Report im Imagine-Bereich unter \"Mithilfe\" einreichst, dann wissen wir, das jemand auf dieses Problem gestoßen ist.", title: "Wir haben einen Fehler")
                     self.view.activityStopAnimating()
+                    self.shareButton.isEnabled = true
                 }
             }
         }
@@ -1988,6 +2031,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
         } else {
             self.alert(message: "Wähle bitte weitere Bilder aus oder wähle die Option \"Nur ein Bild\"", title: "Fehlende Bilder")
+            self.view.activityStopAnimating()
+            self.shareButton.isEnabled = true
         }
         
     }
@@ -2015,10 +2060,15 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
         
         if let image = selectedImageFromPicker {
-            setImage()
+            self.increasePictureUI()
             self.previewPictures.removeAll()
             self.previewPictures.append(image)
             self.previewCollectionView.reloadData()
+            
+            UIView.animate(withDuration: 0.3) {
+                self.removePictureButton.alpha = 1
+                self.removePictureButton.isEnabled = true
+            }
         }
         
         imagePicker.dismiss(animated: true, completion: nil)
@@ -2026,15 +2076,24 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     
-    func setImage() {
-//        previewImageView.image = image
-        
-        self.pictureViewHeight!.constant = 150        // Absichern
-        
-        UIView.animate(withDuration: 1) {
-            self.view.layoutIfNeeded()
+    func increasePictureUI() {
+        if let pictureHeight = self.pictureViewHeight {
+            pictureHeight.constant = 150
+            
+            UIView.animate(withDuration: 0.6) {
+                self.view.layoutIfNeeded()
+            }
         }
-        
+    }
+    
+    func decreasePictureUI() {
+        if let pictureHeight = self.pictureViewHeight {
+            pictureHeight.constant = 100
+            
+            UIView.animate(withDuration: 0.6) {
+                self.view.layoutIfNeeded()
+            }
+        }
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -2074,6 +2133,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             
         } else {
             self.alert(message: "Du hast kein Bild hochgeladen. Möchtest du kein Bild hochladen, wähle bitte eine andere Post-Option aus", title: "Kein Bild")
+            self.view.activityStopAnimating()
+            self.shareButton.isEnabled = true
         }
     }
     
@@ -2395,6 +2456,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 self.titleTextView.text?.removeAll()
                 self.previewPictures.removeAll()
                 self.previewCollectionView.reloadData()
+                
+                self.removePictureButton.alpha = 0
+                self.removePictureButton.isEnabled = false
+                
                 self.characterCountLabel.text = "200"
                 self.pictureViewHeight!.constant = 100
                 

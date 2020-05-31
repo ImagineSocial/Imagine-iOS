@@ -40,6 +40,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     
     let reuseIdentifier = "notificationCell"
     let db = Firestore.firestore()
+    let handyHelper = HandyHelper()
     
     let sideMenuView: UIView = {
         let vc = UIView()
@@ -80,6 +81,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
             sideMenuView.addSubview(notificationTableView)
             sideMenuView.addSubview(notificationLabel)
             sideMenuView.addSubview(badgeStackView)
+            sideMenuView.addSubview(deleteAllNotificationsButton)
             
             addConstraints()
             
@@ -148,6 +150,36 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         handleDismiss(sideMenuButton: .toEULA, comment: nil)
     }
     
+    @objc func deleteAllTapped() {
+        if let user = Auth.auth().currentUser {
+            let ref = db.collection("Users").document(user.uid).collection("notifications").whereField("type", isEqualTo: "upvote")
+            
+            ref.getDocuments { (snap, err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    if let snap = snap {
+                        self.hideDeleteAllButton()
+                        for document in snap.documents {
+                            let data = document.data()
+                            if let postID = data["postID"] as? String {
+                                self.handyHelper.deleteNotifications(type: .upvote, id: postID)
+                                
+                                self.notifications = self.notifications.filter{ $0.postID != postID }
+                                self.notificationTableView.reloadData()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func hideDeleteAllButton() {
+        UIView.animate(withDuration: 0.5) {
+            self.deleteAllNotificationsButton.alpha = 0
+        }
+    }
     
     func checkNotifications(invitations: Int, notifications: [Comment], newChats: Int) {
         if invitations != 0 {
@@ -166,6 +198,9 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         
         self.notifications.removeAll()
         self.notifications = notifications
+        if notifications.count != 0 {
+            self.deleteAllNotificationsButton.alpha = 1
+        }
         
         self.notificationTableView.reloadData()
         
@@ -193,22 +228,16 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     
     
     
-    // -MARK: Constraints
+    // MARK:- Constraints
     func addConstraints() {
+        addTargetsForButtons()
+        
         profilePictureImageView.centerXAnchor.constraint(equalTo: sideMenuView.centerXAnchor).isActive = true
         profilePictureImageView.topAnchor.constraint(equalTo: sideMenuView.topAnchor, constant: 50).isActive = true
         profilePictureImageView.widthAnchor.constraint(equalToConstant: 110).isActive = true
         profilePictureImageView.heightAnchor.constraint(equalToConstant: 110).isActive = true
         profilePictureImageView.layer.cornerRadius = profilePictureImageView.frame.height/2
         profilePictureImageView.layoutIfNeeded()
-        
-        badgeStackView.addArrangedSubview(firstBadgeImageView)
-        badgeStackView.addArrangedSubview(secondBadgeImageView)
-        
-        badgeStackView.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor).isActive = true
-        badgeStackView.topAnchor.constraint(equalTo: profilePictureImageView.bottomAnchor, constant: -5).isActive = true
-        badgeStackView.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        badgeStackView.widthAnchor.constraint(equalToConstant: 55).isActive = true
         
         profileButton.leadingAnchor.constraint(equalTo: profilePictureImageView.leadingAnchor).isActive = true
         profileButton.topAnchor.constraint(equalTo: profilePictureImageView.topAnchor).isActive = true
@@ -219,12 +248,14 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         nameLabel.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor).isActive = true
         nameLabel.heightAnchor.constraint(equalToConstant: 35).isActive = true
         
-        chatButton.addTarget(self, action: #selector(toChatsTapped), for: .touchUpInside)
-        profileButton.addTarget(self, action: #selector(toUserProfileTapped), for: .touchUpInside)
-        friendsButton.addTarget(self, action: #selector(toFriendsTapped), for: .touchUpInside)
-        //        voteButton.addTarget(self, action: #selector(toVotingTapped), for: .touchUpInside)
-        savedButton.addTarget(self, action: #selector(toSavedPostsTapped), for: .touchUpInside)
-        eulaButton.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
+        badgeStackView.addArrangedSubview(firstBadgeImageView)
+        badgeStackView.addArrangedSubview(secondBadgeImageView)
+        
+        badgeStackView.leadingAnchor.constraint(equalTo: profilePictureImageView.leadingAnchor).isActive = true
+        badgeStackView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor).isActive = true
+        badgeStackView.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        badgeStackView.widthAnchor.constraint(equalToConstant: 55).isActive = true
+        
         
         addDisclaimer()
         
@@ -266,6 +297,11 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         notificationTableView.topAnchor.constraint(equalTo: verticalStackView.bottomAnchor, constant: 40).isActive = true
         notificationTableView.bottomAnchor.constraint(equalTo: disclaimerView.topAnchor, constant: -30).isActive = true
         
+        deleteAllNotificationsButton.trailingAnchor.constraint(equalTo: notificationTableView.trailingAnchor, constant: -2).isActive = true
+        deleteAllNotificationsButton.bottomAnchor.constraint(equalTo: notificationTableView.bottomAnchor, constant: -2).isActive = true
+        deleteAllNotificationsButton.widthAnchor.constraint(equalToConstant: 75).isActive = true
+        deleteAllNotificationsButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
         notificationLabel.leadingAnchor.constraint(equalTo: notificationTableView.leadingAnchor).isActive = true
         notificationLabel.bottomAnchor.constraint(equalTo: notificationTableView.topAnchor, constant: -5).isActive = true
         
@@ -295,6 +331,16 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         eulaButton.heightAnchor.constraint(equalTo: disclaimerView.heightAnchor).isActive = true
     }
     
+    func addTargetsForButtons() {   // Doesnt work when I add the target on creation of the buttons
+        chatButton.addTarget(self, action: #selector(toChatsTapped), for: .touchUpInside)
+        profileButton.addTarget(self, action: #selector(toUserProfileTapped), for: .touchUpInside)
+        friendsButton.addTarget(self, action: #selector(toFriendsTapped), for: .touchUpInside)
+        //        voteButton.addTarget(self, action: #selector(toVotingTapped), for: .touchUpInside)
+        savedButton.addTarget(self, action: #selector(toSavedPostsTapped), for: .touchUpInside)
+        eulaButton.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
+        deleteAllNotificationsButton.addTarget(self, action: #selector(deleteAllTapped), for: .touchUpInside)
+    }
+    
     func showUser() {
         if let user = Auth.auth().currentUser {
             if let url = user.photoURL {
@@ -322,7 +368,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     
     
     
-    // MARK: Instantiate UI
+    // MARK:- Instantiate UI
     
     let notificationTableView: UITableView = {
         let tableView = UITableView()
@@ -353,6 +399,23 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         }
         
         return label
+    }()
+    
+    let deleteAllNotificationsButton: DesignableButton = {
+       let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Alle löschen", for: .normal)
+        button.setTitleColor(.systemRed, for: .normal)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 11)
+        button.alpha = 0
+        button.cornerRadius = 8
+        if #available(iOS 13.0, *) {
+            button.backgroundColor = .systemBackground
+        } else {
+            button.backgroundColor = .white
+        }
+        
+        return button
     }()
     
     let profileButton: DesignableButton = {
