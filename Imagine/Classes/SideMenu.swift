@@ -246,7 +246,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         
         nameLabel.topAnchor.constraint(equalTo: profilePictureImageView.bottomAnchor, constant: 15).isActive = true
         nameLabel.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor).isActive = true
-        nameLabel.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        nameLabel.heightAnchor.constraint(equalToConstant: 25).isActive = true
         
         badgeStackView.addArrangedSubview(firstBadgeImageView)
         badgeStackView.addArrangedSubview(secondBadgeImageView)
@@ -254,7 +254,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         badgeStackView.leadingAnchor.constraint(equalTo: profilePictureImageView.leadingAnchor).isActive = true
         badgeStackView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor).isActive = true
         badgeStackView.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        badgeStackView.widthAnchor.constraint(equalToConstant: 55).isActive = true
+        badgeStackView.widthAnchor.constraint(equalToConstant: 50).isActive = true
         
         
         addDisclaimer()
@@ -452,7 +452,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         stack.axis = .horizontal
         stack.alignment = .fill
         stack.distribution = .fillEqually
-        stack.spacing = 5
+        stack.spacing = 3
         
         return stack
     }()

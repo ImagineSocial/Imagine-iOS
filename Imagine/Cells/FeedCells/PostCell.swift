@@ -50,8 +50,12 @@ class PostCell : BaseFeedCell {
         
         // add corner radius on `contentView`
         contentView.layer.cornerRadius = 8
+//        titleLabel.layer.masksToBounds = true
         cellImageView.layer.cornerRadius = 8
-        backgroundColor = .clear
+        contentView.layer.masksToBounds = true
+//        backgroundColor = .clear
+        kleines View was rausfährt von Username zu Name und Icon
+        
     }
     
     override func prepareForReuse() {

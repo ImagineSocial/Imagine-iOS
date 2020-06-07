@@ -33,6 +33,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
     
     let communityPostCellIdentifier = "SearchCollectionViewPostCell"
     let searchHeaderIdentifier = "SearchCollectionViewHeader"
+    let placeHolderIdentifier = "PlaceHolderCell"
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +41,8 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
         collectionView.register(UINib(nibName: "SmallPostCell", bundle: nil), forCellWithReuseIdentifier: postCellIdentifier)
         collectionView.register(UINib(nibName: "FactCell", bundle: nil), forCellWithReuseIdentifier: topicCellIdentifier)
         collectionView.register(SearchUserCell.self, forCellWithReuseIdentifier: userCellIdentifier)
+        collectionView.layoutIfNeeded()
+        collectionView.setNeedsLayout()
         
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.navigationBar.shadowImage = UIImage()
@@ -73,15 +76,9 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
        self.navigationItem.hidesSearchBarWhenScrolling = true
        searchController.isActive = true
        definesPresentationContext = true
-        
-//        searchController.searchResultsUpdater = self
-//            searchController.obscuresBackgroundDuringPresentation = false
-//            searchController.searchBar.placeholder = "Durchsuche die Themen..."
-//
-//            self.navigationItem.searchController = searchController
-//            self.navigationItem.hidesSearchBarWhenScrolling = true
-//            definesPresentationContext = true
     }
+    
+    
     
     func getCommunityPosts() {
         let ref = db.collection("TopicPosts").whereField("type", isEqualTo: "picture").order(by: "createTime", descending: true).limit(to: 50)
@@ -101,7 +98,6 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
                         }
                     }
                     self.communityPosts = posts
-                    self.collectionView.reloadData()
                 }
             }
         }
@@ -115,25 +111,20 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
                 print("We have an error: \(error.localizedDescription)")
             } else {
                 if let snap = snap {
-//                    var posts = [Post]()
+
                     var i = 3
                     for document in snap.documents {
                         
                         if let post = self.postHelper.addThePost(document: document, isTopicPost: true, forFeed: false) {
                             if self.communityPosts != nil {
                                 self.communityPosts!.insert(post, at: i)
-                                self.collectionView.reloadData()
                             } else {
                                 print("Noch keine Posts da")
                             }
-                            
                             i = i+4
                         }
                     }
-//                    if let _ = self.communityPosts {
-//                        self.communityPosts!.append(contentsOf: posts)
-//                        self.collectionView.reloadData()
-//                    }
+                    self.collectionView.reloadData()
                 }
             }
         }
@@ -158,7 +149,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
         } else if let topics = topicResults {
             return topics.count
         } else {
-            return 0
+            return 15
         }
     }
 
@@ -174,6 +165,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
                         cell.searchCellImageView.sd_setImage(with: url, completed: nil)
                     }
                 } else if post.type == .GIF {
+                    cell.avPlayerLayer?.removeFromSuperlayer()
                     cell.GIFLink = post.linkURL
                 }
                 return cell
@@ -209,12 +201,17 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
             }
             
         } else {
-            
             // Blank Cell
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: placeHolderIdentifier, for: indexPath) as? PlaceHolderCell {
+                
+                
+                return cell
+            }
         }
             
         return collectionView.dequeueReusableCell(withReuseIdentifier: "reuseIdentifier", for: indexPath)
     }
+    
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: searchHeaderIdentifier, for: indexPath) as? SearchCollectionViewHeader {
@@ -246,7 +243,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
         } else if let _ = userResults {
             return CGSize(width: width, height: 65)
         } else {
-            return CGSize(width: width/3, height: width/3)
+            return CGSize(width: (width-2)/3, height: (width-2)/3)
         }
     }
     
@@ -280,9 +277,6 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
             if let pageVC = segue.destination as? ArgumentPageViewController {
                 if let chosenFact = sender as? Fact {
                     pageVC.fact = chosenFact
-//                    if chosenFact.displayOption == .topic {
-//                        pageVC.displayMode = .topic
-//                    }
                 }
             }
         }
@@ -645,7 +639,7 @@ class SearchCollectionViewPostCell: UICollectionViewCell {
         }
     }
     
-    var videoPlayerItem: AVPlayerItem? = nil {
+    var videoPlayerItem: AVPlayerItem? {
         didSet {
             avPlayer?.replaceCurrentItem(with: self.videoPlayerItem)
             avPlayer?.play()
@@ -730,5 +724,10 @@ class SearchCollectionViewPostCell: UICollectionViewCell {
     override func prepareForReuse() {
         searchCellImageView.image = nil
         avPlayerLayer?.removeFromSuperlayer()
+        
     }
+}
+
+class PlaceHolderCell: UICollectionViewCell {
+    
 }

@@ -827,6 +827,12 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         imageView.image = UIImage(named: "default-user")
         imageView.layer.masksToBounds = true
         imageView.contentMode = .scaleAspectFill
+        imageView.isOpaque = true
+        if #available(iOS 13.0, *) {
+            imageView.backgroundColor = .systemBackground
+        } else {
+            imageView.backgroundColor = .white
+        }
         
         return imageView
     }()
@@ -843,6 +849,14 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans", size: 14)
+        label.clipsToBounds = true
+        label.isOpaque = true
+        if #available(iOS 13.0, *) {
+            label.backgroundColor = .systemBackground
+        } else {
+            label.backgroundColor = .white
+        }
+        
         
         return label
     }()
@@ -853,9 +867,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         label.font = UIFont(name: "IBMPlexSans-Light", size: 10)
         if #available(iOS 13.0, *) {
             label.textColor = .secondaryLabel
+            label.backgroundColor = .systemBackground
         } else {
             label.textColor = .lightGray
+            label.backgroundColor = .white
         }
+        label.isOpaque = true
+        label.layer.masksToBounds = true
         
         return label
     }()
@@ -868,6 +886,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         label.textAlignment = .left
         label.minimumScaleFactor = 0.8
         label.sizeToFit()
+        label.isOpaque = true
+        label.clipsToBounds = true
+        if #available(iOS 13.0, *) {
+            label.backgroundColor = .systemBackground
+        } else {
+            label.backgroundColor = .white
+        }
         
         return label
     }()
@@ -1000,6 +1025,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         label.dataDetectorTypes = .all
         label.backgroundColor = .clear
         
+        
         return label
     }()
     
@@ -1007,6 +1033,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 8
+        view.isOpaque = true
         
         if #available(iOS 13.0, *) {
             view.backgroundColor = .secondarySystemBackground

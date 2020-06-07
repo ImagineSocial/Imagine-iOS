@@ -30,6 +30,8 @@ class PostsOfFactTableViewController: UITableViewController {
     @IBOutlet weak var postCountLabel: UILabel!
     @IBOutlet weak var moderatorView: DesignablePopUp!
     
+    @IBOutlet weak var toModerationOptionsButton: DesignableButton!
+    @IBOutlet weak var youAreModeratorLabel: UILabel!
     @IBOutlet weak var justForTipViewView: UIView!
     
     var fact: Fact?
@@ -97,6 +99,7 @@ class PostsOfFactTableViewController: UITableViewController {
             headerSeparatorView.alpha = 0
             followerCountLabel.isHidden = true
             postCountLabel.isHidden = true
+            moderatorView.isHidden = true
         }
     }
     

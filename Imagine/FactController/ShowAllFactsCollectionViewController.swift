@@ -69,17 +69,31 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
                             facts.append(fact)
                         }
                     }
-                    switch type {
-                    case .fact:
-                        self.discussionFacts = facts
-                    case .topic:
-                        self.topicFacts = facts
-                    }
-                    print("Reload collectionView with these facts: ", "DiscussionFacts: \(self.discussionFacts?.count) ,", "topicFacts: \(self.topicFacts?.count)")
-                    self.collectionView.reloadData()
+                    self.getCheckedTopics(type: type, topics: facts)
                 }
             }
         }
+    }
+    
+    func getCheckedTopics(type: DisplayOption, topics: [Fact]) {
+        
+        if let user = Auth.auth().currentUser {
+            self.dataHelper.markFollowedTopics(userUID: user.uid, factList: topics) { (facts) in
+                self.showTopics(type: type, topics: facts)
+            }
+        } else {
+            showTopics(type: type, topics: topics)
+        }
+    }
+    
+    func showTopics(type: DisplayOption, topics: [Fact]) {
+        switch type {
+        case .fact:
+            self.discussionFacts = topics
+        case .topic:
+            self.topicFacts = topics
+        }
+        self.collectionView.reloadData()
     }
     
     func getDisplayOptionString(type: DisplayOption) -> String {
@@ -97,9 +111,6 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
                 if let chosenFact = sender as? Fact {
                     pageVC.fact = chosenFact
                     pageVC.recentTopicDelegate = self
-//                    if chosenFact.displayOption == .topic {
-//                        pageVC.displayMode = .topic
-//                    }
                 }
             }
         }
@@ -173,17 +184,17 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let topics = topicFacts {
-            
+
             let fact = topics[indexPath.item]
-            
+
             performSegue(withIdentifier: "toPageVC", sender: fact)
-            
+
         } else if let discussions = discussionFacts {
-            
+
             let fact = discussions[indexPath.item]
             performSegue(withIdentifier: "toPageVC", sender: fact)
-            
-            
+
+
         }
     }
     

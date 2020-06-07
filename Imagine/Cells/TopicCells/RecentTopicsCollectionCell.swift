@@ -100,7 +100,15 @@ extension RecentTopicsCollectionCell: UICollectionViewDataSource, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let fact = facts[indexPath.item]
         
-        delegate?.topicTapped(fact: fact)
+        fact.getFollowStatus { (isFollowed) in
+            if isFollowed {
+                fact.beingFollowed = true
+                self.delegate?.topicTapped(fact: fact)
+            } else {
+                self.delegate?.topicTapped(fact: fact)
+            }
+        }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

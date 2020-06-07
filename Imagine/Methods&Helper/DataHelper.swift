@@ -315,7 +315,7 @@ class DataHelper {
         }
     }
     
-    func markFollowjedTopics(userUID: String, factList: [Fact], checkedList: @escaping ([Fact]) -> Void) {
+    func markFollowedTopics(userUID: String, factList: [Fact], checkedList: @escaping ([Fact]) -> Void) {
         let topicRef = db.collection("Users").document(userUID).collection("topics")
         
         topicRef.getDocuments { (snap, err) in
@@ -331,7 +331,6 @@ class DataHelper {
                         }
                     }
                     checkedList(factList)
-                    
                 }
             }
         }

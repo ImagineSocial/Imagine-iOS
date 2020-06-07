@@ -31,7 +31,7 @@ enum AddFactToPostType {
     case newPost
 }
 
-class FactCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RecentTopicCellDelegate, RecentTopicDelegate {
+class FactCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RecentTopicDelegate {
     
     @IBOutlet weak var infoButton: UIBarButtonItem!
     
@@ -162,21 +162,28 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         if let user = Auth.auth().currentUser {
             dataHelper.getFollowedTopicDocuments(userUID: user.uid) { (documents) in
                 for document in documents {
-                    let ref = self.db.collection("Facts").document(document.documentID)
-                    
-                    ref.getDocument { (snap, err) in
-                        if let error = err {
-                            print("We have an error: \(error.localizedDescription)")
-                        } else {
-                            if let snap = snap {
-                                if let data = snap.data() {
-                                    if let fact = self.dataHelper.addFact(documentID: snap.documentID, data: data) {
-                                        fact.beingFollowed = true
-                                        self.followedFacts.append(fact)
-                                        self.collectionView.reloadData()    //not the best idea i know
-                                    }
-                                }
+                    self.addFact(documentID: document.documentID)
+                }
+            }
+        }
+    }
+    
+    func addFact(documentID: String) {
+        let ref = self.db.collection("Facts").document(documentID)
+        
+        ref.getDocument { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    if let data = snap.data() {
+                        if let fact = self.dataHelper.addFact(documentID: snap.documentID, data: data) {
+                            fact.beingFollowed = true
+                            self.followedFacts.append(fact)
+                            self.followedFacts.sort {
+                                $0.title.localizedCompare($1.title) == .orderedAscending //Not case sensitive
                             }
+                            self.collectionView.reloadData()    //not the best idea i know
                         }
                     }
                 }
@@ -445,19 +452,6 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     }
     
     //MARK: -Recent Topics
-    //Topic in the recentTopic collectionView is tapped
-    func topicTapped(fact: Fact) {
-        
-        if let addFactToPost = addFactToPost {
-            if addFactToPost == .newPost {
-                self.setFactForPost(fact: fact)
-            } else {
-                self.setFactForOptInfo(fact: fact)
-            }
-        } else {
-            performSegue(withIdentifier: "toPageVC", sender: fact)
-        }
-    }
     
     func topicSelected(fact: Fact) {
         print("TopicSelected")
@@ -618,7 +612,21 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     }
 }
 
-extension FactCollectionViewController: TopOfCollectionViewDelegate, NewFactDelegate, TopicCollectionFooterDelegate {
+extension FactCollectionViewController: TopOfCollectionViewDelegate, NewFactDelegate, TopicCollectionFooterDelegate, RecentTopicCellDelegate {
+    
+    //Topic in the recentTopic collectionView is tapped
+    func topicTapped(fact: Fact) {
+        
+        if let addFactToPost = addFactToPost {
+            if addFactToPost == .newPost {
+                self.setFactForPost(fact: fact)
+            } else {
+                self.setFactForOptInfo(fact: fact)
+            }
+        } else {
+            performSegue(withIdentifier: "toPageVC", sender: fact)
+        }
+    }
     
     func addTopicTapped(type: DisplayOption) {
         performSegue(withIdentifier: "toNewArgumentSegue", sender: type)
