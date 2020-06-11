@@ -37,6 +37,8 @@ struct Constants {
         
         static let addOnHeaderTitleCharacterLimit = 50
         static let addOnHeaderDescriptionCharacterLimit = 400
+        
+        static let userStatusTextCharacterLimit = 150
     }
     
     struct userIDs {

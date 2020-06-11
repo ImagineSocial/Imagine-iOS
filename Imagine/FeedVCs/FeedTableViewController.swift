@@ -471,16 +471,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             }
         }
         
-        if segue.identifier == "toUserCollection" {
-            if let userVC = segue.destination as? UserFeedCollectionViewController {
-                if let chosenUser = sender as? User {   // Another User
-                    userVC.userOfProfile = chosenUser
-                    userVC.currentState = .otherUser
-                } else { // The CurrentUser
-                    userVC.currentState = .ownProfileWithEditing
-                }
-            }
-        }
         if segue.identifier == "meldenSegue" {
             if let chosenPost = sender as? Post {
                 if let reportVC = segue.destination as? MeldenViewController {
@@ -822,7 +812,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         switch whichButton {
         case .toUser:
             self.performSegue(withIdentifier: "toUserSegue", sender: nil)
-        //            self.performSegue(withIdentifier: "toUserCollection", sender: nil)    // For test Zwecke
         case .toFriends:
             performSegue(withIdentifier: "toFriendsSegue", sender: nil)
         case .toChats:

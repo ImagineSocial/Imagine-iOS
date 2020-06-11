@@ -286,6 +286,15 @@ class FactParentContainerViewController: UIViewController {
                 }
             }
         }
+        
+        if segue.identifier == "toSettingSegue" {
+            if let fact = sender as? Fact {
+                if let vc = segue.destination as? SettingTableViewController {
+                    vc.topic = fact
+                    vc.settingFor = .community
+                }
+            }
+        }
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {

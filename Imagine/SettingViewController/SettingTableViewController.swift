@@ -28,10 +28,26 @@ class TopicSetting {
     }
 }
 
+class UserSetting {
+    var name: String
+    var statusText: String?
+    var OP: String
+    var imageURL: String?
+    
+    var youTubeLink: String?
+    var patreonLink: String?
+    var instagramLink: String?
+    var twitterLink: String?
+    
+    init(name: String, OP: String) {
+        self.name = name
+        self.OP = OP
+    }
+}
+
 class TableViewSetting {
     var headerText: String?
     var footerText: String?
-    
     var cells = [TableViewSettingCell]()
 }
 
@@ -47,7 +63,6 @@ class TableViewSettingCell {
         self.type = type
         self.settingChange = settingChange
     }
-    
 }
 
 enum SettingCellType {
@@ -61,19 +76,31 @@ enum SettingChangeType {
     case changeTopicAddOnsAsFirstView
     case changeTopicPicture
     case changeTopicDescription
+    case changeUserPicture
+    case changeUserStatusText
+    case changeUserInstagramLink
+    case changeUserPatreonLink
+    case changeUserYouTubeLink
+    case changeUserTwitterLink
 }
 
 enum DestinationForSettings {
     case community
+    case userProfile
 }
 
 class SettingTableViewController: UITableViewController {
     
     let db = Firestore.firestore()
+    let storDB = Storage.storage().reference()
+    
     var imagePicker = UIImagePickerController()
     
     var topic: Fact?
     var topicSetting: TopicSetting?
+    
+    var user: User?
+    var userSetting: UserSetting?
 
     let imageSettingIdentifier = "SettingImageCell"
     let textSettingIdentifier = "SettingTextCell"
@@ -94,6 +121,7 @@ class SettingTableViewController: UITableViewController {
         imagePicker.delegate = self
         tableView.register(UINib(nibName: "SettingHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: settingHeaderIdentifier)
         tableView.register(UINib(nibName: "SettingFooterView", bundle: nil), forHeaderFooterViewReuseIdentifier: settingFooterIdentifier)
+        
         getData()
     }
     
@@ -124,6 +152,37 @@ class SettingTableViewController: UITableViewController {
                     }
                 }
             }
+        } else if let user = user {
+            let userSetting = UserSetting(name: user.displayName, OP: user.userUID)
+            
+            let ref = db.collection("Users").document(user.userUID)
+            ref.getDocument { (snap, err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    if let snap = snap {
+                        if let data = snap.data() {
+                                                        
+                            if let instagramLink = data["instagramLink"] as? String {
+                                userSetting.instagramLink = instagramLink
+                            }
+                            if let patreonLink = data["patreonLink"] as? String {
+                                userSetting.patreonLink = patreonLink
+                            }
+                            if let youTubeLink = data["youTubeLink"] as? String {
+                                userSetting.youTubeLink = youTubeLink
+                            }
+                            if let twitterLink = data["twitterLink"] as? String {
+                                userSetting.twitterLink = twitterLink
+                            }
+                            userSetting.imageURL = user.imageURL
+                            userSetting.statusText = user.statusQuote
+                            self.userSetting = userSetting
+                            self.setUpViewController()
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -144,10 +203,38 @@ class SettingTableViewController: UITableViewController {
                 
                 let addOnAsFirstViewCell = TableViewSettingCell(value: topicSetting.isAddOnFirstView, type: .switchCell, settingChange: .changeTopicAddOnsAsFirstView)
                 addOnAsFirstViewCell.titleText = "Themen Ansicht als Startbildschirm"
-                setting.footerText = "Wird deine Community besser von den Unterthemen repräsentiert, als von den Beiträgen, wähle diese Option aus"
+                setting.footerText = "Wird deine Community besser von den Unterthemen repräsentiert, als von den Beiträgen, wähle diese Option aus."
                 
                 setting.cells.append(contentsOf: [imageCell, nameCell, descriptionCell, addOnAsFirstViewCell])
                 self.settings.append(setting)
+                tableView.reloadData()
+            }
+        case .userProfile:
+            let setting = TableViewSetting()
+            setting.headerText = "Profil-Einstellungen"
+            if let userSetting = userSetting {
+                let imageCell = TableViewSettingCell(value: userSetting.imageURL, type: .imageCell, settingChange: .changeUserPicture)
+                
+                let statusCell = TableViewSettingCell(value: userSetting.statusText, type: .textCell, settingChange: .changeUserStatusText)
+                statusCell.characterLimit = Constants.characterLimits.userStatusTextCharacterLimit
+                statusCell.titleText = "Steckbrief:"
+                
+                let socialMediaSetting = TableViewSetting()
+                socialMediaSetting.headerText = "Social Media Button"
+                let instaCell = TableViewSettingCell(value: userSetting.instagramLink, type: .textCell, settingChange: .changeUserInstagramLink)
+                instaCell.titleText = "Instagram:"
+                let patreonCell = TableViewSettingCell(value: userSetting.patreonLink, type: .textCell, settingChange: .changeUserPatreonLink)
+                patreonCell.titleText = "Patreon:"
+                let youTubeCell = TableViewSettingCell(value: userSetting.youTubeLink, type: .textCell, settingChange: .changeUserYouTubeLink)
+                youTubeCell.titleText = "YouTube:"
+                let twitterCell = TableViewSettingCell(value: userSetting.twitterLink, type: .textCell, settingChange: .changeUserTwitterLink)
+                twitterCell.titleText = "Twitter:"
+                socialMediaSetting.footerText = "Gib einen Link zu den jeweiligen Profilen ein, um einen Button in deinem Profil zu erhalten. Weise so die Besucher auf deine anderen Social-Media Profile hin oder promote so deine persönlichen Favoriten."
+                
+                socialMediaSetting.cells.append(contentsOf: [patreonCell, youTubeCell, instaCell, twitterCell])
+                setting.cells.append(contentsOf: [imageCell, statusCell])
+                
+                self.settings.append(contentsOf: [setting, socialMediaSetting])
                 tableView.reloadData()
             }
         }
@@ -205,8 +292,10 @@ class SettingTableViewController: UITableViewController {
             switch cell.settingChange {
             case .changeTopicDescription:
                 return 80
+            case .changeUserStatusText:
+                return 80
             default:
-                return 30
+                return 35
             }
         default:
             return UITableView.automaticDimension
@@ -263,7 +352,7 @@ class SettingTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         let setting = settings[section]
-        if let _ = setting.headerText {
+        if let _ = setting.footerText {
             return UITableView.automaticDimension
         } else {
             return 50
@@ -292,6 +381,13 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
                 } else {    // If the community got no picture
                     compressImage(image: image)
                 }
+            } else if let user = user {
+                if user.imageURL != "" {
+                    deletePicture()
+                    compressImage(image: image)
+                } else {    // If the user got no picture
+                    compressImage(image: image)
+                }
             }
         }
         
@@ -303,19 +399,27 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
     }
     
     func deletePicture() {  // In Firebase Storage
-        
         if let topic = topic {
-            let imageName = "\(topic.documentID)"
-            let storageRef = Storage.storage().reference().child("factPictures").child("\(imageName).png")
+            let imageName = "\(topic.documentID).png"
+            let storageRef = storDB.child("factPictures").child(imageName)
         
-        storageRef.delete { (err) in
+            self.deletePictureInStorage(storageReference: storageRef)
+        
+        } else if let user = user {
+            let imageName = "\(user.userUID).profilePicture.png"
+            let storageRef = storDB.child("profilePictures").child(imageName)
+            
+            self.deletePictureInStorage(storageReference: storageRef)
+        }
+    }
+    
+    func deletePictureInStorage(storageReference: StorageReference) {
+        storageReference.delete { (err) in
             if let err = err {
                 print("We have an error deleting the old profile Picture: \(err.localizedDescription)")
             } else {
                 print("Picture Deleted")
             }
-        }
-        
         }
     }
     
@@ -351,31 +455,41 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
     
     func savePicture(imageData: Data) {
         if let topic = topic {
-            let imageName = "\(topic.documentID)"
-            let storageRef = Storage.storage().reference().child("factPictures").child("\(imageName).png")
+            let imageName = "\(topic.documentID).png"
+            let storageRef = storDB.child("factPictures").child(imageName)
             
+            savePictureInStorage(storageReference: storageRef, imageData: imageData)
             
-            storageRef.putData(imageData, metadata: nil, completion: { (metadata, error) in    //Bild speichern
-                if let error = error {
-                    print(error)
+        } else if let user = user {
+            let imageName = "\(user.userUID).profilePicture.png"
+            let storageRef = storDB.child("profilePictures").child(imageName)
+            
+            savePictureInStorage(storageReference: storageRef, imageData: imageData)
+        }
+    }
+    
+    func savePictureInStorage(storageReference: StorageReference, imageData: Data) {
+        
+        storageReference.putData(imageData, metadata: nil, completion: { (metadata, error) in
+            if let error = error {
+                print(error)
+                return
+            } else {
+                print("Picture Saved")
+            }
+            storageReference.downloadURL(completion: { (url, err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
                     return
                 } else {
-                    print("Picture Saved")
-                }
-                storageRef.downloadURL(completion: { (url, err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                        return
-                    } else {
-                        if let url = url {
-                            if let type = self.changeTypeOfImageSettingCell {
-                                self.gotChanged(type: type, value: url.absoluteString)
-                            }
+                    if let url = url {
+                        if let type = self.changeTypeOfImageSettingCell {
+                            self.gotChanged(type: type, value: url.absoluteString)
                         }
                     }
-                })
+                }
             })
-        }
+        })
     }
     
     func selectPicture(type: SettingChangeType, forIndexPath: IndexPath) {
@@ -421,6 +535,42 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             } else {
                 return
             }
+        case .changeUserPicture:
+            firestoreKey = "profilePictureURL"
+            
+            if let string = value as? String {
+                firestoreValue = string
+            }
+        case .changeUserStatusText:
+            firestoreKey = "statusText"
+            
+            if let string = value as? String {
+                firestoreValue = string
+            }
+        case .changeUserInstagramLink:
+            firestoreKey = "instagramLink"
+            
+            if let string = value as? String {
+                firestoreValue = string
+            }
+        case .changeUserPatreonLink:
+            firestoreKey = "patreonLink"
+            
+            if let string = value as? String {
+                firestoreValue = string
+            }
+        case .changeUserYouTubeLink:
+            firestoreKey = "youTubeLink"
+            
+            if let string = value as? String {
+                firestoreValue = string
+            }
+        case .changeUserTwitterLink:
+            firestoreKey = "twitterLink"
+            
+            if let string = value as? String {
+                firestoreValue = string
+            }
         }
         
         if firestoreKey != "" {
@@ -440,8 +590,17 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
                     self.view.activityStopAnimating()
                 }
             }
+        } else if let user = user {
+            let ref = db.collection("Users").document(user.userUID)
+            ref.updateData(data) { (err) in
+                if let error = err {
+                    print("We could not update the data: \(error.localizedDescription)")
+                } else {
+                    self.view.activityStopAnimating()
+                }
+            }
         } else {
-            print("We got no mfn topic")
+            print("We got no mfn topic nor user")
         }
     }
 }
@@ -504,6 +663,8 @@ class SettingTextCell: UITableViewCell, UITextViewDelegate {
                         let characterLeft = maxCharacter-value.count
                         characterLimitLabel.text = String(characterLeft)
                     }
+                } else {
+                    characterLimitLabel.isHidden = true
                 }
                 if let value = setting.value as? String {
                     settingTextView.text = value
@@ -542,7 +703,7 @@ class SettingTextCell: UITableViewCell, UITextViewDelegate {
                 return textView.text.count + (text.count - range.length) <= maxCharacter  // Text no longer than x characters
             }
         }
-        return false
+        return true
     }
     
     func textViewDidChange(_ textView: UITextView) {
@@ -571,9 +732,6 @@ class SettingSwitchCell: UITableViewCell {
                 if let value = setting.value as? Bool {
                     settingSwitch.isOn = value
                 }
-//                if setting.topicSetting.isAddOnFirstView {
-//                    settingSwitch.isOn = true
-//                }
             }
         }
     }

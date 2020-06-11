@@ -23,6 +23,23 @@ enum AccessState{
     case blockedToInteract
 }
 
+enum SocialMediaType {
+    case patreon
+    case youTube
+    case instagram
+    case twitter
+}
+
+class SocialMediaObject {
+    var type: SocialMediaType
+    var link: String
+    
+    init(type: SocialMediaType, link: String) {
+        self.type = type
+        self.link = link
+    }
+}
+
 protocol LogOutDelegate {
     func deleteListener()
 }
@@ -35,15 +52,20 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     @IBOutlet weak var profilePictureButton: DesignableButton!
     @IBOutlet weak var blogPostButton: DesignableButton!
     @IBOutlet weak var chatWithUserButton: DesignableButton!
-    @IBOutlet weak var statusTextView: UITextView!
+//    @IBOutlet weak var statusTextView: UITextView!
     @IBOutlet weak var cameraView: UIView!
     @IBOutlet weak var moreButton: DesignableButton!
     @IBOutlet weak var headerView: UIView!
-    @IBOutlet weak var messageBubbleImageView: UIImageView!
     @IBOutlet weak var totalPostCountLabel: UILabel!
     @IBOutlet weak var firstBadgeImageView: UIImageView!
     @IBOutlet weak var secondBadgeImageView: UIImageView!
+    @IBOutlet weak var interactionBarHeightConstraint: NSLayoutConstraint!
     
+    @IBOutlet weak var socialMediaInteractionStackView: UIStackView!
+    @IBOutlet weak var socialMediaInteractionBarHeightConstraint: NSLayoutConstraint!
+    
+    @IBOutlet weak var statusLabel: UILabel!
+    @IBOutlet weak var settingButton: UIButton!
     
     /* You have to set currentState and userOfProfile when you call this VC - Couldnt get the init to work */
     
@@ -55,9 +77,13 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     var currentState:AccessState?
     
+    var socialMediaObjects: [SocialMediaObject]?
+    
     var delegate: LogOutDelegate?
     
     let defaultStatusText = "Hier steht dein Status"
+    var tableViewHeaderHeight: CGFloat = 240
+    let socialMediaStackViewHeight: CGFloat = 30
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,13 +101,6 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             self.navigationController?.view.backgroundColor = .ios12secondarySystemBackground
         }
         
-        
-        self.moreButton.isHidden = true
-        cameraView.isHidden = true
-        blogPostButton.isHidden = true
-        statusTextView.isEditable = false
-        statusTextView.delegate = self
-        
         let layer = profilePictureImageView.layer
         layer.masksToBounds = true
         layer.cornerRadius = 8
@@ -92,13 +111,31 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             layer.borderColor = UIColor.lightGray.cgColor
         }
         
-        checkIfBlocked()
+        if #available(iOS 13.0, *) {
+            chatWithUserButton.layer.borderColor = UIColor.tertiaryLabel.cgColor
+            addAsFriendButton.layer.borderColor = UIColor.tertiaryLabel.cgColor
+        } else {
+            chatWithUserButton.layer.borderColor = UIColor.lightGray.cgColor
+            addAsFriendButton.layer.borderColor = UIColor.lightGray.cgColor
+        }
+        chatWithUserButton.layer.borderWidth = 0.75
+        addAsFriendButton.layer.borderWidth = 0.75
+        
+        setCurrentState()   // check if blocked or own profile
         setBarButtonItem()
         
         imagePicker.delegate = self
     }
     
-    func checkIfBlocked() {
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        self.navigationController?.navigationBar.shadowImage = nil
+    }
+    
+    func setCurrentState() {
         if let user = Auth.auth().currentUser {
             if let profileUser = userOfProfile {
                 if let blocked = profileUser.blocked {
@@ -123,6 +160,12 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         } else {    // Nobody logged in
             getUserDetails()
         }
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        tableView.updateHeaderViewHeight()
     }
     
     override func getPosts(getMore: Bool) {
@@ -155,7 +198,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                             self.fetchesPosts = false
                             
                             self.totalCountOfPosts = self.postHelper.getTotalCount()
-                            self.totalPostCountLabel.text = String("\(self.totalCountOfPosts) Beiträge")
+                            self.totalPostCountLabel.text = String(self.totalCountOfPosts)
                             
                             self.refreshControl?.endRefreshing()
                         } else {    // Append the next batch to the existing
@@ -194,6 +237,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             }
         }
     }
+    
     
     // MARK: - SetUI
     
@@ -241,16 +285,16 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             self.setOwnProfile()
             self.noPostsType = .userProfile
         case .ownProfileWithEditing:
-            self.statusTextView.isEditable = true
+            self.settingButton.isHidden = false
             self.noPostsType = .ownProfile
             self.setOwnProfile()
         case .otherUser:
             self.checkIfAlreadyFriends()
-            self.setCurrentProfile()
+            self.setUserProfile()
             self.noPostsType = .userProfile
         case .friendOfCurrentUser:
             self.addAsFriendButton.setTitle("Freund entfernen", for: .normal)
-            self.setCurrentProfile()
+            self.setUserProfile()
             self.noPostsType = .userProfile
         case .blockedToInteract:
             self.profilePictureImageView.image = UIImage(named: "default-user")
@@ -263,11 +307,12 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     func setOwnProfile() {
         
         chatWithUserButton.isHidden = true // Not possible to message yourself
-        messageBubbleImageView.isHidden = true
         addAsFriendButton.isHidden = true
         profilePictureButton.isEnabled = true
         
         if let user = Auth.auth().currentUser {
+            let currentUser = User()
+            currentUser.userUID = user.uid
             
             let ref = db.collection("Users").document(user.uid)
             ref.getDocument { (doc, err) in
@@ -276,14 +321,38 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 } else {
                     if let doc = doc {
                         if let docData = doc.data() {
+                            var medias = [SocialMediaObject]()
+                            
+                            if let instagramLink = docData["instagramLink"] as? String {
+                                let media = SocialMediaObject(type: .instagram, link: instagramLink)
+                                medias.append(media)
+                            }
+                            if let patreonLink = docData["patreonLink"] as? String {
+                                let media = SocialMediaObject(type: .patreon, link: patreonLink)
+                                medias.append(media)
+                            }
+                            if let youTubeLink = docData["youTubeLink"] as? String {
+                                let media = SocialMediaObject(type: .youTube, link: youTubeLink)
+                                medias.append(media)
+                            }
+                            if let twitterLink = docData["twitterLink"] as? String {
+                                let media = SocialMediaObject(type: .twitter, link: twitterLink)
+                                medias.append(media)
+                            }
+                            
+                            if medias.count != 0 {
+                                self.socialMediaObjects = medias
+                                self.setSocialMediaBar(socialMediaObjects: medias)
+                            }
                             if let statusQuote = docData["statusText"] as? String {
                                 if statusQuote != "" {
-                                    self.statusTextView.text = statusQuote
+                                    self.statusLabel.text = statusQuote
+                                    currentUser.statusQuote = statusQuote
                                 } else {
-                                    self.statusTextView.text = self.defaultStatusText
+                                    self.statusLabel.text = self.defaultStatusText
                                 }
                             } else {
-                                self.statusTextView.text = self.defaultStatusText
+                                self.statusLabel.text = self.defaultStatusText
                             }
                         }
                     }
@@ -291,8 +360,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 }
             }
             
-            let currentUser = User()
-            currentUser.userUID = user.uid
+            self.updateTopViewUIOfOwnProfile()
             
             
             self.userOfProfile = currentUser
@@ -318,13 +386,13 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         }
     }
     
-    func setCurrentProfile() {
+    func setUserProfile() {
         
         //        self.userOfProfile = user
         if let userOfProfile = userOfProfile {
             self.nameLabel.text = userOfProfile.displayName
             self.imageURL = userOfProfile.imageURL
-            self.statusTextView.text = userOfProfile.statusQuote
+            self.statusLabel.text = userOfProfile.statusQuote
             
             if let url = URL(string: userOfProfile.imageURL) {
                 self.profilePictureImageView.sd_setImage(with: url, completed: nil)
@@ -335,8 +403,137 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             self.getBadges(user: userOfProfile)
             
             getPosts(getMore: true)
+            
+            //Social Media Buttons
+            var medias = [SocialMediaObject]()
+            
+            if let instagramLink = userOfProfile.instagramLink {
+                let media = SocialMediaObject(type: .instagram, link: instagramLink)
+                medias.append(media)
+            }
+            if let patreonLink = userOfProfile.patreonLink {
+                let media = SocialMediaObject(type: .patreon, link: patreonLink)
+                medias.append(media)
+            }
+            if let youTubeLink = userOfProfile.youTubeLink {
+                let media = SocialMediaObject(type: .youTube, link: youTubeLink)
+                medias.append(media)
+            }
+            if let twitterLink = userOfProfile.twitterLink {
+                let media = SocialMediaObject(type: .twitter, link: twitterLink)
+                medias.append(media)
+            }
+            
+            if medias.count != 0 {
+                self.socialMediaObjects = medias
+                self.setSocialMediaBar(socialMediaObjects: medias)
+            }
         }
     }
+    
+    func setSocialMediaBar(socialMediaObjects: [SocialMediaObject]) {
+        
+        for media in socialMediaObjects {
+            setUpSocialMediaButton(media: media)
+        }
+        
+        socialMediaInteractionBarHeightConstraint.constant = socialMediaStackViewHeight
+    }
+    
+    func setUpSocialMediaButton(media: SocialMediaObject) {
+        
+        let button = DesignableButton(frame: CGRect(x: 0, y: 0, width: socialMediaStackViewHeight, height: socialMediaStackViewHeight))
+        if #available(iOS 13.0, *) {
+            button.backgroundColor = .secondarySystemBackground
+            button.tintColor = .label
+        } else {
+            button.backgroundColor = .clear
+            button.tintColor = .black
+        }
+        button.isOpaque = true
+        button.imageEdgeInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
+        button.cornerRadius = 6
+        button.imageView?.contentMode = .scaleAspectFit
+        
+        switch media.type {
+        case .instagram:
+            button.addTarget(self, action: #selector(instagramButtonTapped), for: .touchUpInside)
+            button.setImage(UIImage(named: "InstagramIcon"), for: .normal)
+        case .patreon:
+            button.addTarget(self, action: #selector(patreonButtonTapped), for: .touchUpInside)
+            button.setImage(UIImage(named: "PatreonIcon"), for: .normal)
+        case .youTube:
+            button.addTarget(self, action: #selector(youTubeButtonTapped), for: .touchUpInside)
+            button.setImage(UIImage(named: "YouTubeButtonIcon"), for: .normal)
+        case .twitter:
+            button.addTarget(self, action: #selector(twitterButtonTapped), for: .touchUpInside)
+            button.setImage(UIImage(named: "TwitterIcon"), for: .normal)
+        }
+        
+        socialMediaInteractionStackView.addArrangedSubview(button)
+    }
+    
+    @objc func patreonButtonTapped() {
+        if let medias = socialMediaObjects {
+            for media in medias {
+                if media.type == .patreon {
+                    if let url = URL(string: media.link) {
+                        UIApplication.shared.open(url)
+                    } else {
+                        self.alert(message: "Kein gültiger Link verfügbar")
+                    }
+                }
+            }
+        }
+    }
+    
+    @objc func instagramButtonTapped() {
+        if let medias = socialMediaObjects {
+            for media in medias {
+                if media.type == .instagram {
+                    if let url = URL(string: media.link) {
+                        UIApplication.shared.open(url)
+                    } else {
+                        self.alert(message: "Kein gültiger Link verfügbar")
+                    }
+                }
+            }
+        }
+    }
+    
+    @objc func youTubeButtonTapped() {
+        if let medias = socialMediaObjects {
+            for media in medias {
+                if media.type == .youTube {
+                    if let url = URL(string: media.link) {
+                        UIApplication.shared.open(url)
+                    } else {
+                        self.alert(message: "Kein gültiger Link verfügbar")
+                    }
+                }
+            }
+        }
+    }
+    
+    @objc func twitterButtonTapped() {
+        if let medias = socialMediaObjects {
+            for media in medias {
+                if media.type == .twitter {
+                    if let url = URL(string: media.link) {
+                        UIApplication.shared.open(url)
+                    } else {
+                        self.alert(message: "Kein gültiger Link verfügbar")
+                    }
+                }
+            }
+        }
+    }
+    
+    func updateTopViewUIOfOwnProfile() {
+        interactionBarHeightConstraint.constant = 0
+        view.layoutIfNeeded()
+    }
+    
     
     func getBadges(user: User) {
         user.getBadges { (badges) in
@@ -357,7 +554,6 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 if user.uid == currentProfile.userUID {    // Your profile but you view it as a stranger, the people want to see a difference, like: "Well this is how other people see my profile..."
                     self.addAsFriendButton.isHidden = true
                     self.chatWithUserButton.isHidden = true
-                    self.messageBubbleImageView.isHidden = true
                     
                     self.currentState = .ownProfile
                 } else { // Check if you are already friends or you have requested it
@@ -734,7 +930,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             textView.resignFirstResponder()
             return false
         }
-        return textView.text.count + (text.count - range.length) <= 45  // Text no longer than 45 characters
+        return textView.text.count + (text.count - range.length) <= Constants.characterLimits.userStatusTextCharacterLimit  // Text no longer than 150 characters
     }
     
     
@@ -786,6 +982,12 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     }
     
     
+    @IBAction func toSettingsTapped(_ sender: Any) {
+        
+        if let user = userOfProfile {
+            performSegue(withIdentifier: "toSettingSegue", sender: user)
+        }
+    }
     
     @IBAction func addAsFriendTapped(_ sender: Any) {
         
@@ -1018,6 +1220,14 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 }
             }
         }
+        if segue.identifier == "toSettingSegue" {
+            if let user = sender as? User {
+                if let vc = segue.destination as? SettingTableViewController {
+                    vc.user = user
+                    vc.settingFor = .userProfile
+                }
+            }
+        }
     }
 }
 
@@ -1028,3 +1238,12 @@ extension UIImagePickerController {
 }
 
 
+
+extension UITableView {
+    func updateHeaderViewHeight() {
+        if let header = self.tableHeaderView {
+            let newSize = header.systemLayoutSizeFitting(CGSize(width: self.bounds.width, height: 0))
+            header.frame.size.height = newSize.height
+        }
+    }
+}

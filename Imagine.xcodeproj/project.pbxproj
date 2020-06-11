@@ -109,6 +109,7 @@
 		E992B48F2379874800D7E8E8 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E992B48E2379874800D7E8E8 /* NotificationCell.swift */; };
 		E995E99E23A5414F005E81B4 /* RunderProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = E995E99D23A5414F005E81B4 /* RunderProgress.swift */; };
 		E997F761248CE90300BF7F88 /* SurveyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E997F760248CE90200BF7F88 /* SurveyCell.xib */; };
+		E997F763248CF21B00BF7F88 /* UserTableViewHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = E997F762248CF21B00BF7F88 /* UserTableViewHeader.xib */; };
 		E9A02AA32326580B000DAB69 /* BlankContentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9A02AA22326580B000DAB69 /* BlankContentCell.xib */; };
 		E9A02AA523265822000DAB69 /* BlankContentFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A02AA423265822000DAB69 /* BlankContentFile.swift */; };
 		E9A02AA7232D3181000DAB69 /* AddFactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A02AA6232D3181000DAB69 /* AddFactTableViewCell.swift */; };
@@ -151,7 +152,6 @@
 		E9B9445F225800EE000145E2 /* UserFeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B9445E225800EE000145E2 /* UserFeedTableViewController.swift */; };
 		E9B944672258B674000145E2 /* RePostTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B944662258B674000145E2 /* RePostTableViewCell.xib */; };
 		E9B9446B2259E5EC000145E2 /* PostTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B9446A2259E5EC000145E2 /* PostTableViewCell.xib */; };
-		E9BA724A23238FCD00DF3FB3 /* UserFeedCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BA724923238FCD00DF3FB3 /* UserFeedCollectionViewController.swift */; };
 		E9BA724C232557D100DF3FB3 /* InfoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BA724B232557D100DF3FB3 /* InfoTableViewController.swift */; };
 		E9BFA6CE2450B16C00E43826 /* InfoHeaderAddOnCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9BFA6CD2450B16C00E43826 /* InfoHeaderAddOnCell.xib */; };
 		E9BFA6D02451764700E43826 /* InfoHeaderAddOnCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BFA6CF2451764700E43826 /* InfoHeaderAddOnCell.swift */; };
@@ -312,6 +312,7 @@
 		E992B48E2379874800D7E8E8 /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCell.swift; sourceTree = "<group>"; };
 		E995E99D23A5414F005E81B4 /* RunderProgress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RunderProgress.swift; path = "../../../../Versuch57/Versuch57/Design- & Ordnungssachen/RunderProgress.swift"; sourceTree = "<group>"; };
 		E997F760248CE90200BF7F88 /* SurveyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SurveyCell.xib; sourceTree = "<group>"; };
+		E997F762248CF21B00BF7F88 /* UserTableViewHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UserTableViewHeader.xib; sourceTree = "<group>"; };
 		E9A02AA22326580B000DAB69 /* BlankContentCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BlankContentCell.xib; sourceTree = "<group>"; };
 		E9A02AA423265822000DAB69 /* BlankContentFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlankContentFile.swift; sourceTree = "<group>"; };
 		E9A02AA6232D3181000DAB69 /* AddFactTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFactTableViewCell.swift; sourceTree = "<group>"; };
@@ -354,7 +355,6 @@
 		E9B9445E225800EE000145E2 /* UserFeedTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserFeedTableViewController.swift; path = ../UserFeedTableViewController.swift; sourceTree = "<group>"; };
 		E9B944662258B674000145E2 /* RePostTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RePostTableViewCell.xib; sourceTree = "<group>"; };
 		E9B9446A2259E5EC000145E2 /* PostTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PostTableViewCell.xib; sourceTree = "<group>"; };
-		E9BA724923238FCD00DF3FB3 /* UserFeedCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserFeedCollectionViewController.swift; sourceTree = "<group>"; };
 		E9BA724B232557D100DF3FB3 /* InfoTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoTableViewController.swift; sourceTree = "<group>"; };
 		E9BFA6CD2450B16C00E43826 /* InfoHeaderAddOnCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InfoHeaderAddOnCell.xib; sourceTree = "<group>"; };
 		E9BFA6CF2451764700E43826 /* InfoHeaderAddOnCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoHeaderAddOnCell.swift; sourceTree = "<group>"; };
@@ -477,7 +477,6 @@
 				E9B9445E225800EE000145E2 /* UserFeedTableViewController.swift */,
 				E98B22F522CB5F26000F965F /* FriendsTableViewController.swift */,
 				E9530C5222DDE94D007D6A00 /* SavedPostTableViewController.swift */,
-				E9BA724923238FCD00DF3FB3 /* UserFeedCollectionViewController.swift */,
 				E990A8A22456F4A60013C8CE /* EditProfileViewController.swift */,
 			);
 			path = User;
@@ -768,6 +767,7 @@
 				E97FDFCB246C33F80049E1E4 /* TopicCollectionFooter.swift */,
 				E9F1F224247A9E77004E1E90 /* SettingHeaderView.xib */,
 				E9F1F226247A9F42004E1E90 /* SettingFooterView.xib */,
+				E997F762248CF21B00BF7F88 /* UserTableViewHeader.xib */,
 			);
 			path = "Header&Footer";
 			sourceTree = "<group>";
@@ -945,6 +945,7 @@
 				E97DBED022AC1335007100E1 /* Localizable.strings in Resources */,
 				E9B9446B2259E5EC000145E2 /* PostTableViewCell.xib in Resources */,
 				E90B1918238C210000EACCC7 /* IBMPlexSans-Medium.ttf in Resources */,
+				E997F763248CF21B00BF7F88 /* UserTableViewHeader.xib in Resources */,
 				E9B85D562412D5D000960942 /* SmallFactCell.xib in Resources */,
 				E97FDFC6246C00890049E1E4 /* TopicCollectionFooter.xib in Resources */,
 				E9925A9A23D8718500E1A9D4 /* MultiPictureCollectionCell.xib in Resources */,
@@ -1159,7 +1160,6 @@
 				E9C42EEF2364393400FC50BA /* SearchPostCell.swift in Sources */,
 				E97C834C23D0945300CE3D3C /* CurrentProjectsCell.swift in Sources */,
 				E9A9FAE122A50ED90088BD37 /* CobraViewController.swift in Sources */,
-				E9BA724A23238FCD00DF3FB3 /* UserFeedCollectionViewController.swift in Sources */,
 				E95A6FC8232E80E8008B32CC /* Reachability.swift in Sources */,
 				E9B79CDF224EC68500166EED /* PostCell.swift in Sources */,
 				E91D5094245EFE6C00907821 /* SingleTopicAddOnCell.swift in Sources */,

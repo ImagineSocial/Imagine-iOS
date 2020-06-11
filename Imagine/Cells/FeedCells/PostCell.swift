@@ -54,7 +54,7 @@ class PostCell : BaseFeedCell {
         cellImageView.layer.cornerRadius = 8
         contentView.layer.masksToBounds = true
 //        backgroundColor = .clear
-        kleines View was rausfährt von Username zu Name und Icon
+//        kleines View was rausfährt von Username zu Name und Icon
         
     }
     

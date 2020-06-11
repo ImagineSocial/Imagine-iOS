@@ -177,6 +177,19 @@ class Post {
                             user.displayName = userName
                         }
                         
+                        if let instagramLink = docData["instagramLink"] as? String {
+                            user.instagramLink = instagramLink
+                        }
+                        if let patreonLink = docData["patreonLink"] as? String {
+                            user.patreonLink = patreonLink
+                        }
+                        if let youTubeLink = docData["youTubeLink"] as? String {
+                            user.youTubeLink = youTubeLink
+                        }
+                        if let twitterLink = docData["twitterLink"] as? String {
+                            user.twitterLink = twitterLink
+                        }
+                        
                         user.imageURL = docData["profilePictureURL"] as? String ?? ""
                         user.userUID = self.originalPosterUID
                         user.statusQuote = docData["statusText"] as? String ?? ""
@@ -199,6 +212,12 @@ public class User {
     public var image = UIImage(named: "default-user")
     public var blocked: [String]?
     public var statusQuote = ""
+    
+    //Social Media Links
+    public var instagramLink: String?
+    public var patreonLink: String?
+    public var youTubeLink: String?
+    public var twitterLink: String?
     
     let db = Firestore.firestore()
     
