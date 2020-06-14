@@ -45,7 +45,7 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
         scrollViewTap.cancelsTouchesInView = false  // Otherwise the tap on the TableViews are not recognized
         scrollView.addGestureRecognizer(scrollViewTap)
         
-        commentTableView.initializeCommentTableView(section: .argument)
+        commentTableView.initializeCommentTableView(section: .argument, notificationRecipients: nil)
         commentTableView.commentDelegate = self
         if let argument = argument {
             commentTableView.argument = argument
@@ -212,6 +212,11 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
 }
 
 extension FactDetailViewController: CommentTableViewDelegate, CommentViewDelegate {
+    
+    func recipientChanged(isActive: Bool, userUID: String) {
+        print("COming soon")
+    }
+    
     func sendButtonTapped(text: String, isAnonymous: Bool) {
         floatingCommentView!.resignFirstResponder()
         commentTableView.saveCommentInDatabase(bodyString: text, isAnonymous: isAnonymous)

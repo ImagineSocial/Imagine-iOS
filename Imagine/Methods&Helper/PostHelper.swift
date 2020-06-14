@@ -502,8 +502,13 @@ class PostHelper {
                     post.votes.nice = niceCount
                     post.createDate = dateToSort
                     
+                    //Tried to export these extra values because they repeat themself in every "type" case but because of my async func "getFact" if a factID exists and move the post afterwards
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
+                    }
+                    
+                    if let notificationRecipients = documentData["notificationRecipients"] as? [String] {
+                        post.notificationRecipients = notificationRecipients
                     }
                     
                     if let factID = documentData[factJSONString] as? String {
@@ -561,6 +566,10 @@ class PostHelper {
                         post.report = report
                     }
                     
+                    if let notificationRecipients = documentData["notificationRecipients"] as? [String] {
+                        post.notificationRecipients = notificationRecipients
+                    }
+                    
                     if let factID = documentData[factJSONString] as? String {
                         post.fact = self.addFact(factID: factID)
                     }
@@ -614,6 +623,10 @@ class PostHelper {
                         post.report = report
                     }
                     
+                    if let notificationRecipients = documentData["notificationRecipients"] as? [String] {
+                        post.notificationRecipients = notificationRecipients
+                    }
+                    
                     if let factID = documentData[factJSONString] as? String {
                         post.fact = self.addFact(factID: factID)
                     }
@@ -657,6 +670,10 @@ class PostHelper {
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
+                    }
+                    
+                    if let notificationRecipients = documentData["notificationRecipients"] as? [String] {
+                        post.notificationRecipients = notificationRecipients
                     }
                     
                     if let factID = documentData[factJSONString] as? String {
@@ -707,6 +724,10 @@ class PostHelper {
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
+                    }
+                    
+                    if let notificationRecipients = documentData["notificationRecipients"] as? [String] {
+                        post.notificationRecipients = notificationRecipients
                     }
                     
                     if let factID = documentData[factJSONString] as? String {
@@ -772,6 +793,10 @@ class PostHelper {
                         post.report = report
                     }
                     
+                    if let notificationRecipients = documentData["notificationRecipients"] as? [String] {
+                        post.notificationRecipients = notificationRecipients
+                    }
+                    
                     if let factID = documentData[factJSONString] as? String {
                         post.fact = self.addFact(factID: factID)
                     }
@@ -822,6 +847,10 @@ class PostHelper {
                         post.report = report
                     }
                     
+                    if let notificationRecipients = documentData["notificationRecipients"] as? [String] {
+                        post.notificationRecipients = notificationRecipients
+                    }
+                    
                     if let factID = documentData[factJSONString] as? String {
                         post.fact = self.addFact(factID: factID)
                     }
@@ -863,6 +892,35 @@ class PostHelper {
             }
         }
         return fact
+    }
+    
+    func loadPost(postID: String, isTopicPost: Bool, loadedPost: @escaping (Post?) -> Void) {
+        let ref: DocumentReference!
+        
+        if postID == "" {   // NewAddOnTableVC
+            loadedPost(nil)
+        }
+        
+        if isTopicPost {
+            ref = db.collection("TopicPosts").document(postID)
+        } else {
+            ref = db.collection("Posts").document(postID)
+        }
+        
+        ref.getDocument { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    if let post = self.addThePost(document: snap, isTopicPost: isTopicPost, forFeed: false){
+                        if isTopicPost {
+                            post.isTopicPost = true
+                        }
+                        loadedPost(post)
+                    }
+                }
+            }
+        }
     }
     
     func getEvent(completion: @escaping (Post) -> Void) {

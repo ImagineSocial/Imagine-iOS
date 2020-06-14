@@ -19,6 +19,10 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="113"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="o6x-4s-4xK">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="113"/>
+                    <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                </view>
                 <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Beschreibung" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xQ6-KK-MOh">
                     <rect key="frame" x="15" y="5" width="384" height="103"/>
                     <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -29,10 +33,14 @@
             </subviews>
             <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstAttribute="bottom" secondItem="o6x-4s-4xK" secondAttribute="bottom" id="2Bf-Cp-Mrd"/>
                 <constraint firstAttribute="bottom" secondItem="xQ6-KK-MOh" secondAttribute="bottom" constant="5" id="3eN-OK-fTm"/>
                 <constraint firstAttribute="trailing" secondItem="xQ6-KK-MOh" secondAttribute="trailing" constant="15" id="8YO-JS-8dj"/>
+                <constraint firstItem="329-Ty-dx3" firstAttribute="trailing" secondItem="o6x-4s-4xK" secondAttribute="trailing" id="TO3-4G-0lo"/>
+                <constraint firstItem="o6x-4s-4xK" firstAttribute="top" secondItem="bd2-P0-dh3" secondAttribute="top" id="pPn-BD-f0H"/>
                 <constraint firstItem="xQ6-KK-MOh" firstAttribute="leading" secondItem="bd2-P0-dh3" secondAttribute="leading" constant="15" id="qsN-rC-prA"/>
                 <constraint firstItem="xQ6-KK-MOh" firstAttribute="top" secondItem="bd2-P0-dh3" secondAttribute="top" constant="5" id="tfr-yH-6fK"/>
+                <constraint firstItem="o6x-4s-4xK" firstAttribute="leading" secondItem="329-Ty-dx3" secondAttribute="leading" id="uva-aU-Pwj"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="329-Ty-dx3"/>

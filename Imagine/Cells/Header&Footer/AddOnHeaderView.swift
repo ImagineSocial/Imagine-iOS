@@ -7,12 +7,14 @@
 //
 
 import UIKit
+import Firebase
 
 protocol AddOnHeaderDelegate {
     func showDescription()
     func showAllPosts(documentID: String)
     func showPostsAsAFeed(section: Int)
     func thanksTapped(info: OptionalInformation)
+    func settingsTapped(section: Int)
 }
 
 class AddOnHeaderView: UITableViewHeaderFooterView {
@@ -20,12 +22,14 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
     @IBOutlet weak var headerImageView: DesignableImage!
     @IBOutlet weak var headerTitleLabel: UILabel!
     @IBOutlet weak var headerDescriptionLabel: UILabel!
-    @IBOutlet weak var showAsFeedButton: DesignableButton!
+//    @IBOutlet weak var showAsFeedButton: DesignableButton!
     @IBOutlet weak var headerGradientView: UIView!
     @IBOutlet weak var expandDescriptionButton: DesignableButton!
     @IBOutlet weak var thanksButton: DesignableButton!
     
     @IBOutlet weak var headerImageViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var settingButton: DesignableButton!
+    
     
     var delegate: AddOnHeaderDelegate?
     
@@ -48,12 +52,17 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
                         headerImageViewHeight.constant = 0
                     }
                 }
-                                
+                
+                headerDescriptionLabel.text = info.description
+                
                 if let title = info.headerTitle {
                     headerTitleLabel.text = title
                 }
-                if let description = info.description {
-                    headerDescriptionLabel.text = description
+                
+                if let user = Auth.auth().currentUser {
+                    if user.uid == info.OP {
+                        self.settingButton.isHidden = false
+                    }
                 }
             }
         }
@@ -93,10 +102,13 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
     }
     
     override func prepareForReuse() {
+        self.settingButton.isHidden = true
+        
         headerDescriptionLabel.numberOfLines = 2
         headerImageViewHeight.constant = 75
         
         expandDescriptionButton.setImage(UIImage(named: "down"), for: .normal)
+        thanksButton.setTitle(nil, for: .normal)
         thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
     }
     
@@ -134,10 +146,17 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
         }
     }
     
-    @IBAction func showPostsInFeedStyleTapped(_ sender: Any) {
-        showAsFeedButton.isHidden = false
+    @IBAction func settingButtonTapped(_ sender: Any) {
         if let section = section {
-            delegate?.showPostsAsAFeed(section: section)
+            delegate?.settingsTapped(section: section)
         }
     }
+    
+    
+//    @IBAction func showPostsInFeedStyleTapped(_ sender: Any) {
+//        showAsFeedButton.isHidden = false
+//        if let section = section {
+//            delegate?.showPostsAsAFeed(section: section)
+//        }
+//    }
 }

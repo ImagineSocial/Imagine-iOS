@@ -11,7 +11,7 @@ import UIKit
 protocol CollectionViewInTableViewCellDelegate {
     func itemTapped(item: Any)
     func newPostTapped(addOnDocumentID: String)
-    func saveItems(section: Int, item: Any)
+    func saveItems(section: Int, item: Any) //Return the fetched Posts
 }
 
 class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegate {
@@ -71,7 +71,20 @@ class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegat
     
     // OptionalInformationDelegate
     func done() {
-        collectionView.reloadData()
+        if let info = info {
+            if let orderList = info.itemOrder {
+                let items = info.items
+                
+                let sorted = items.compactMap { obj in
+                    orderList.index(of: obj.documentID).map { idx in (obj, idx) }
+                }.sorted(by: { $0.1 < $1.1 } ).map { $0.0 }
+                
+                info.items = sorted
+                collectionView.reloadData()
+            } else {
+                collectionView.reloadData()
+            }
+        }
     }
     
 }
@@ -88,7 +101,7 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
         if let info = info {
             if indexPath.item != info.items.count {
                 let item = info.items[indexPath.item]
-                if let fact = item as? Fact {      // Fact
+                if let fact = item.item as? Fact {      // Fact
                     if fact.displayOption == .topic {
                         return CGSize(width: 250, height: collectionView.frame.height)
                     } else {
@@ -121,7 +134,7 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                 
                 let item = info.items[indexPath.item]
                 
-                if let post = item as? Post {
+                if let post = item.item as? Post {
                     if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DIYCellIdentifier, for: indexPath) as? SmallPostCell {
                         
                         cell.delegate = self
@@ -139,7 +152,7 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                         
                         return cell
                     }
-                } else if let fact = item as? Fact {
+                } else if let fact = item.item as? Fact {
                     
                     if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: whyGuiltyIdentifier, for: indexPath) as? SmallFactCell {
                         
@@ -190,9 +203,7 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                 }
             } else {
                 // AddNewItem tapped
-                if let documentID = info.documentID {
-                    delegate?.newPostTapped(addOnDocumentID: documentID)
-                }
+                delegate?.newPostTapped(addOnDocumentID: info.documentID)
             }
         }
     }

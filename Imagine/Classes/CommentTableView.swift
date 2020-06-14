@@ -24,9 +24,10 @@ protocol CommentTableViewDelegate {
     func notLoggedIn()
     func notAllowedToComment()
     func commentGotReported(comment: Comment)
+    func recipientChanged(isActive: Bool, userUID: String)
 }
 
-class CommentTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
+class CommentTableView: UITableView {
 
     var comments = [Comment]()
     var allowedToComment = true
@@ -38,6 +39,8 @@ class CommentTableView: UITableView, UITableViewDataSource, UITableViewDelegate 
     let db = Firestore.firestore()
     
     var commentDelegate: CommentTableViewDelegate?
+    
+    var headerView: CommentTableViewHeader?
     
     var post: Post? {
         didSet {
@@ -67,7 +70,7 @@ class CommentTableView: UITableView, UITableViewDataSource, UITableViewDelegate 
     }
     
     // I'm to stupid to get the normal initializers to work with custom variables
-    func initializeCommentTableView(section: CommentSection) {
+    func initializeCommentTableView(section: CommentSection, notificationRecipients: [String]?) {
         self.section = section
         setCurrentUser()
         
@@ -79,6 +82,15 @@ class CommentTableView: UITableView, UITableViewDataSource, UITableViewDelegate 
         rowHeight = UITableView.automaticDimension
         separatorStyle = .none
         
+        self.headerView = CommentTableViewHeader(frame: CGRect(x: 0, y: 0, width: 276, height: 30))
+        self.headerView!.delegate = self
+        if let user = Auth.auth().currentUser, let recipients = notificationRecipients {
+            for recipient in recipients {
+                if user.uid == recipient {
+                    self.headerView!.showNotificationButton()
+                }
+            }
+        }
         self.tableHeaderView = self.headerView
     }
     
@@ -221,14 +233,13 @@ class CommentTableView: UITableView, UITableViewDataSource, UITableViewDelegate 
                 
                 switch section {
                 case .post:
-                    ref = db.collection("Comments").document(post!.documentID).collection("threads").document()
-                    
-                    if user.uid != post!.originalPosterUID && post!.originalPosterUID != "" {
-                        self.setNotification(post: post!, bodyString: bodyString, displayName: displayName)
-                    } else {
-                        print("No notification if you comment your own post")
+                    if let post = post {
+                        ref = db.collection("Comments").document(post.documentID).collection("threads").document()
+                        
+                        if post.originalPosterUID != "" {
+                            self.getNotificationRecipients(post: post, bodyString: bodyString, displayName: displayName, commenterUID: userID)
+                        }
                     }
-                    
                 case .argument:
                     ref = db.collection("Comments").document("arguments").collection("comments").document(argument!.documentID).collection("threads").document()
                 case .source:
@@ -308,9 +319,87 @@ class CommentTableView: UITableView, UITableViewDataSource, UITableViewDelegate 
         
     }
     
-    func setNotification(post: Post, bodyString: String, displayName: String) {
-        let notificationRef = db.collection("Users").document(post.originalPosterUID).collection("notifications").document()
-        let notificationData: [String: Any] = ["type": "comment", "comment": bodyString, "name": displayName, "postID": post.documentID]
+    func getNotificationRecipients(post: Post, bodyString: String, displayName: String, commenterUID: String) {
+        let ref: DocumentReference!
+        
+        if post.isTopicPost {
+            ref = db.collection("TopicPosts").document(post.documentID)
+        } else {
+            ref = db.collection("Posts").document(post.documentID)
+        }
+        
+        ref.getDocument { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    if let data = snap.data() {
+                        if let recipients = data["notificationRecipients"] as? [String] {
+                            
+                            self.checkIfUserNeedsToBeAdded(post: post, recipients: recipients, commenterUID: commenterUID)
+                            
+                            for recipient in recipients {
+                                if recipient == commenterUID {
+                                    continue // No notification for your own comment
+                                } else {
+                                    if recipient == post.originalPosterUID {
+                                        self.setNotification(post: post, userID: recipient, bodyString: bodyString, displayName: displayName, forOP: true)
+                                    } else {
+                                        self.setNotification(post: post, userID: recipient, bodyString: bodyString, displayName: displayName, forOP: false)
+                                    }
+                                }
+                            }
+                        } else {
+                            self.addUserAsNotificationRecipient(post: post, userUID: commenterUID)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func checkIfUserNeedsToBeAdded(post: Post, recipients: [String], commenterUID: String) {
+        if commenterUID != "anonym" {
+            
+            for recipient in recipients {
+                if commenterUID == recipient {  // If User is already notificationRecipient
+                    return
+                }
+            }
+            self.addUserAsNotificationRecipient(post: post, userUID: commenterUID)
+        }
+    }
+    
+    func addUserAsNotificationRecipient(post: Post, userUID: String) {
+        
+        let ref = db.collection("Posts").document(post.documentID)
+        ref.updateData([
+            "notificationRecipients" : FieldValue.arrayUnion([userUID])
+        ])
+        
+        self.commentDelegate?.recipientChanged(isActive: true, userUID: userUID)
+        
+        if let header = self.tableHeaderView as? CommentTableViewHeader {
+            header.showNotificationButton()
+        }
+    }
+    
+    
+    func removeUserAsNotificationRecipient(post: Post, userUID: String) {
+        let ref = db.collection("Posts").document(post.documentID)
+        ref.updateData([
+            "notificationRecipients" : FieldValue.arrayRemove([userUID])
+        ])
+        
+        self.commentDelegate?.recipientChanged(isActive: false, userUID: userUID)
+        
+    }
+    
+    func setNotification(post: Post, userID: String, bodyString: String, displayName: String, forOP: Bool) {
+        
+        let notificationRef = db.collection("Users").document(userID).collection("notifications").document()
+        
+        let notificationData: [String: Any] = ["type": "comment", "comment": bodyString, "name": displayName, "postID": post.documentID, "isTopicPost": post.isTopicPost, "forOP": forOP]   //"forOP" changes the message in the notification: "You got a comment: " vs "X-Post got a comment"
         
         notificationRef.setData(notificationData) { (err) in
             if let error = err {
@@ -321,6 +410,9 @@ class CommentTableView: UITableView, UITableViewDataSource, UITableViewDelegate 
         }
     }
     
+}
+
+extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
     //MARK:-TableViewDelegate/DataSource
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -358,38 +450,6 @@ class CommentTableView: UITableView, UITableViewDataSource, UITableViewDelegate 
     func numberOfSections(in tableView: UITableView) -> Int {
         1
     }
-    
-    //MARK: HeaderView
-    
-    let headerView: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: 276, height: 30))
-        
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 15)
-        label.textAlignment = .left
-        label.text = "Kommentare:"
-
-        let separator = UIView()
-        separator.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            separator.backgroundColor = .separator
-        } else {
-            separator.backgroundColor = .lightGray
-        }
-
-        view.addSubview(label)
-        label.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -2).isActive = true
-        label.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15).isActive = true
-
-        view.addSubview(separator)
-        separator.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 1).isActive = true
-        separator.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15).isActive = true
-        separator.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15).isActive = true
-        separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
-
-        return view
-    }()
 
     //MARK:- TableView Height
     //Turn height of TableView to the height of all comments Combined
@@ -403,5 +463,123 @@ class CommentTableView: UITableView, UITableViewDataSource, UITableViewDelegate 
         layoutIfNeeded()
         return CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
     }
+}
+
+extension CommentTableView: CommentTableViewHeaderDelegate {
     
+    func switchChanged(isOn: Bool) {
+        if let user = Auth.auth().currentUser, let post = post {
+            if isOn {
+                self.addUserAsNotificationRecipient(post: post, userUID: user.uid)
+            } else {
+                self.removeUserAsNotificationRecipient(post: post, userUID: user.uid)
+            }
+        }
+    }
+}
+
+protocol CommentTableViewHeaderDelegate {
+    func switchChanged(isOn: Bool)
+}
+
+class CommentTableViewHeader: UIView {
+    
+    var delegate: CommentTableViewHeaderDelegate?
+        
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        setLayouts()
+    }
+    
+    func setLayouts() {
+        addSubview(label)
+        label.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -2).isActive = true
+        label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15).isActive = true
+
+        addSubview(separator)
+        separator.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 1).isActive = true
+        separator.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15).isActive = true
+        separator.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -15).isActive = true
+        separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        
+        addSubview(notificationSwitch)
+        notificationSwitch.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        notificationSwitch.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -30).isActive = true
+        notificationSwitch.bottomAnchor.constraint(equalTo: separator.topAnchor, constant: 3).isActive = true
+        
+        addSubview(notificationLabel)
+        notificationLabel.trailingAnchor.constraint(equalTo: notificationSwitch.leadingAnchor, constant: -5).isActive = true
+        notificationLabel.bottomAnchor.constraint(equalTo: separator.topAnchor, constant: 0).isActive = true
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func showNotificationButton() {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.notificationLabel.alpha = 1
+            self.notificationSwitch.alpha = 1
+            self.notificationSwitch.isEnabled = true
+        }) { (_) in
+            
+        }
+    }
+    
+    @objc func switchChanged() {
+        delegate?.switchChanged(isOn: self.notificationSwitch.isOn)
+    }
+    
+    //MARK:UI
+    
+    let label: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans", size: 15)
+        label.textAlignment = .left
+        label.text = "Kommentare:"
+        
+        return label
+    }()
+    
+    let separator: UIView = {
+        let separator = UIView()
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        if #available(iOS 13.0, *) {
+            separator.backgroundColor = .separator
+        } else {
+            separator.backgroundColor = .lightGray
+        }
+        
+        return separator
+    }()
+    
+    lazy var notificationSwitch: UISwitch = {
+       let notSwitch = UISwitch()
+        notSwitch.translatesAutoresizingMaskIntoConstraints = false
+        notSwitch.transform = CGAffineTransform(scaleX: 0.7, y: 0.7)
+        notSwitch.isOn = true
+        notSwitch.addTarget(self, action: #selector(switchChanged), for: .valueChanged)
+        notSwitch.alpha = 0
+        notSwitch.isEnabled = false
+        
+        return notSwitch
+    }()
+    
+    let notificationLabel: UILabel = {
+       let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans", size: 14)
+        if #available(iOS 13.0, *) {
+            label.textColor = .secondaryLabel
+        } else {
+            label.textColor = .darkGray
+        }
+        label.textAlignment = .left
+        label.text = "Benachrichtigungen:"
+        label.alpha = 0
+
+        return label
+    }()
 }

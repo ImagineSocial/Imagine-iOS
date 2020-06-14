@@ -21,15 +21,28 @@ enum OptionalInformationStyle {
     case singleTopic
 }
 
+class AddOnItem {   // Otherwise it is a pain in the ass to compare Any to the documentIDs in the itemOrder Array
+    var documentID: String
+    var item: Any
+    
+    init(documentID: String, item: Any) {
+        self.documentID = documentID
+        self.item = item
+    }
+}
+
 class OptionalInformation {
     
     var style: OptionalInformationStyle
     var headerTitle: String?
-    var description: String?
-    var documentID: String?  // DocumentID of the addOn
-    var fact: Fact?
+    var description: String
+    var documentID: String  // DocumentID of the addOn
+    var fact: Fact
     var addOnInfoHeader: AddOnInfoHeader?
     var imageURL: String?
+    var OP: String
+    
+    var itemOrder: [String]?    // Order of the items in the addOn by DocumentID
     
     var thanksCount:Int?
     
@@ -37,62 +50,33 @@ class OptionalInformation {
     
     var delegate: OptionalInformationDelegate?
     
-    var items = [Any]()
+    var items = [AddOnItem]()
     
-    init(style: OptionalInformationStyle, headerTitle: String, description: String, documentID: String, fact: Fact) {    /// For the normal AddOn initialization
+    init(style: OptionalInformationStyle, OP: String, documentID: String, fact: Fact, headerTitle: String, description: String) {    /// For the normal AddOn & singleTopic initialization
         self.description = description
         self.headerTitle = headerTitle
         self.documentID = documentID
         self.fact = fact
         self.style = style
+        self.OP = OP
+        
+        if style == .singleTopic {
+            if fact.documentID != "" {
+                self.getFact(documentID: fact.documentID)
+            }
+        }
     }
     
-    init(style: OptionalInformationStyle, introSentence: String?, description: String, moreInformationLink: String?) {     /// For the InfoHeaderAddOnCell initialization
+    init(style: OptionalInformationStyle, OP: String, documentID: String, fact: Fact, introSentence: String?, description: String, moreInformationLink: String?) {     /// For the InfoHeaderAddOnCell initialization
         let info = AddOnInfoHeader(description: description, introSentence: introSentence, moreInformationLink: moreInformationLink)
         self.style = style
         self.addOnInfoHeader = info
-    }
-    
-    init(style: OptionalInformationStyle, headerTitle: String, description: String, factDocumentID: String) {
-        self.style = style
-        getFact(documentID: factDocumentID)
-        self.headerTitle = headerTitle
+        self.documentID = documentID
         self.description = description
+        self.fact = fact
+        self.OP = OP
     }
     
-    init(newAddOnStyle: OptionalInformationStyle) { // For the NewAddOnTableViewController
-        
-        self.style = newAddOnStyle
-        
-        switch newAddOnStyle {
-        case .all:
-            self.headerTitle = "Füge eine Kollektion mit Beiträgen und Themen hinzu"
-            self.description = Constants.texts.AddOns.collectionText
-            
-        case .justPosts:
-            self.headerTitle = "Füge eine Reihe an Posts hinzu:"
-            let post = Post()
-            post.title = "Beiträge für Beginner zum lernen"
-            let post2 = Post()
-            post2.title = "Beiträge zum lernen für Beginner"
-            
-            self.items.append(contentsOf: [post, post2])
-        case .justTopics:
-            self.headerTitle = "Füge eine Reihe an Themen hinzu:"
-            let topic = Fact()
-            topic.title = "Verbreite spannende Themen mit den Usern"
-            topic.displayOption = .topic
-            
-            self.items.append(topic)
-        case .header:
-            self.headerTitle = "Füge einen Header hinzu"
-            self.description = Constants.texts.AddOns.headerText
-            
-        case .singleTopic:
-            self.headerTitle = "Verlinke ein Aussagekräfigtes Thema!"
-            self.description = Constants.texts.AddOns.singleTopicText
-        }
-    }
     
     func getFact(documentID: String) {
         print("Get Fact: \(documentID)")
@@ -105,7 +89,7 @@ class OptionalInformation {
                 if let document = snap {
                     if let data = document.data() {
                         guard let name = data["name"] as? String else {
-                                return
+                            return
                         }
                         
                         let fact = Fact()
@@ -124,7 +108,7 @@ class OptionalInformation {
                             } // else { .fact
                         }
                         fact.fetchComplete = true
-                
+                        
                         self.fact = fact
                     }
                 }
@@ -133,66 +117,71 @@ class OptionalInformation {
     }
     
     func getDisplayOptions() {
-//        if let displayType = data["displayOption"] as? String { // Was introduced later on
-//            fact.displayOption = self.getDisplayType(string: displayType)
-//        }
-//
-//        if let displayNames = data["factDisplayNames"] as? String {
-//            fact.factDisplayNames = self.getDisplayNames(string: displayNames)
-//        }
+        //        if let displayType = data["displayOption"] as? String { // Was introduced later on
+        //            fact.displayOption = self.getDisplayType(string: displayType)
+        //        }
+        //
+        //        if let displayNames = data["factDisplayNames"] as? String {
+        //            fact.factDisplayNames = self.getDisplayNames(string: displayNames)
+        //        }
     }
-            
+    
     func getItems() {
         
-        guard let fact = fact, let documentID = documentID else {
-            print("Not enough info in OptionalInformation getItems")
-            return
-        }
-        
-        let ref = db.collection("Facts").document(fact.documentID).collection("addOns").document(documentID).collection("items").order(by: "createDate", descending: true).limit(to: 10)
-        
-        ref.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    for document in snap.documents {
-                        let data = document.data()
-                        guard let type = data["type"] as? String else {
-                            return
+        if fact.documentID != "" && documentID != "" {
+            let ref = db.collection("Facts").document(fact.documentID).collection("addOns").document(documentID).collection("items").order(by: "createDate", descending: true).limit(to: 10)
+            
+            ref.getDocuments { (snap, err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    if let snap = snap {
+                        for document in snap.documents {
+                            let data = document.data()
+                            guard let type = data["type"] as? String else {
+                                return
+                            }
+                            if type == "fact" {
+                                let fact = Fact()
+                                fact.documentID = document.documentID
+                                if let displayOption = data["displayOption"] as? String {
+                                    if displayOption == "topic" {
+                                        fact.displayOption = .topic
+                                    } // else { .fact is default
+                                }
+                                if let title = data["title"] as? String {
+                                    fact.addOnTitle = title
+                                }
+                                
+                                let item = AddOnItem(documentID: document.documentID, item: fact)
+                                
+                                self.items.append(item)
+                            } else if type == "topicPost" {
+                                let post = Post()
+                                post.documentID = document.documentID
+                                post.isTopicPost = true
+                                
+                                let item = AddOnItem(documentID: document.documentID, item: post)
+                                self.items.append(item)
+                            } else {    // Post
+                                let post = Post()
+                                post.documentID = document.documentID
+                                
+                                if let postDescription = data["title"] as? String {
+                                    post.addOnTitle = postDescription
+                                }
+                                
+                                let item = AddOnItem(documentID: document.documentID, item: post)
+                                self.items.append(item)
+                            }
                         }
-                        if type == "fact" {
-                            let fact = Fact()
-                            fact.documentID = document.documentID
-                            if let displayOption = data["displayOption"] as? String {
-                                if displayOption == "topic" {
-                                    fact.displayOption = .topic
-                                } // else { .fact is default
-                            }
-                            if let title = data["title"] as? String {
-                                fact.addOnTitle = title
-                            }
-                            
-                            self.items.append(fact)
-                        } else if type == "topicPost" {
-                            let post = Post()
-                            post.documentID = document.documentID
-                            post.isTopicPost = true
-                            
-                            self.items.append(post)
-                        } else {    // Post
-                            let post = Post()
-                            post.documentID = document.documentID
-                            
-                            if let postDescription = data["title"] as? String {
-                                post.addOnTitle = postDescription
-                            }
-                            self.items.append(post)
-                        }
+                        self.delegate?.done()
                     }
-                    self.delegate?.done()
                 }
             }
+        } else {
+            print("Not enough info in OptionalInformation getItems")
+                       return
         }
     }
 }

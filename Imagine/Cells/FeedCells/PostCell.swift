@@ -128,7 +128,7 @@ class PostCell : BaseFeedCell {
                         self.getFact(beingFollowed: false)
                     }
                 } else {
-                    self.loadFact()
+                    self.loadFact(post: post)
                 }
             }
             
@@ -203,17 +203,17 @@ class PostCell : BaseFeedCell {
                 (fact) in
                 post.fact = fact
                 
-                self.loadFact()
+                self.loadFact(post: post)
             }
         }
     }
     
-    func loadFact() {
-        if post!.fact!.beingFollowed {
+    func loadFact(post: Post) {
+        if post.fact!.beingFollowed {
             followTopicImageView.isHidden = false
         }
         
-        if let url = URL(string: post!.fact!.imageURL) {
+        if let url = URL(string: post.fact!.imageURL) {
             self.factImageView.sd_setImage(with: url, completed: nil)
         } else {
             print("Set default Picture")

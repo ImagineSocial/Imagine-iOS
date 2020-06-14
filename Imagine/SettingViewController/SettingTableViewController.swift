@@ -45,10 +45,42 @@ class UserSetting {
     }
 }
 
+class AddOnSetting {
+    var fact: Fact
+    var addOnDocumentID: String
+    var description: String
+    var items: [AddOnItem]
+    var imageURL: String?
+    var title: String?
+    var itemOrder: [String]?
+    
+    init(fact: Fact, addOnDocumentID: String, description: String, items: [AddOnItem]) {
+        self.fact = fact
+        self.addOnDocumentID = addOnDocumentID
+        self.description = description
+        self.items = items
+    }
+}
+
+enum TableViewSettingType {
+    case normal
+    case changeOrder
+}
+
 class TableViewSetting {
-    var headerText: String?
+    var headerText: String
+    var type: TableViewSettingType
     var footerText: String?
     var cells = [TableViewSettingCell]()
+    
+    var addOnItems = [AddOnItem]()
+    
+    init(type: TableViewSettingType, headerText: String) {
+        self.headerText = headerText
+        self.type = type
+    }
+    
+    
 }
 
 class TableViewSettingCell {
@@ -72,20 +104,28 @@ enum SettingCellType {
 }
 
 enum SettingChangeType {
+    //Topic
     case changeTopicTitle
     case changeTopicAddOnsAsFirstView
     case changeTopicPicture
     case changeTopicDescription
+    //User
     case changeUserPicture
     case changeUserStatusText
     case changeUserInstagramLink
     case changeUserPatreonLink
     case changeUserYouTubeLink
     case changeUserTwitterLink
+    //AddOn
+    case changeAddOnPicture
+    case changeAddOnTitle
+    case changeAddOnDescription
+    case changeAddOnItemOrderArray
 }
 
 enum DestinationForSettings {
     case community
+    case addOn
     case userProfile
 }
 
@@ -94,6 +134,8 @@ class SettingTableViewController: UITableViewController {
     let db = Firestore.firestore()
     let storDB = Storage.storage().reference()
     
+    let postHelper = PostHelper()
+    let dataHelper = DataHelper()
     var imagePicker = UIImagePickerController()
     
     var topic: Fact?
@@ -101,10 +143,16 @@ class SettingTableViewController: UITableViewController {
     
     var user: User?
     var userSetting: UserSetting?
+    
+    var addOn: OptionalInformation?
+    var addOnSetting: AddOnSetting?
+    
+    var addOnItemsOrderArray: [String]?
 
     let imageSettingIdentifier = "SettingImageCell"
     let textSettingIdentifier = "SettingTextCell"
     let switchSettingIdentifier = "SettingSwitchCell"
+    let pickOrderSettingIdentifier = "SettingPickOrderCell"
     
     let settingHeaderIdentifier = "SettingHeader"
     let settingFooterIdentifier = "SettingFooter"
@@ -126,6 +174,9 @@ class SettingTableViewController: UITableViewController {
     }
     
     func getData() {
+        
+        // Set the custom settings and fetch additional information if neccessarry
+        
         if let topic = topic {
             let ref = db.collection("Facts").document(topic.documentID)
             ref.getDocument { (snap, err) in
@@ -183,14 +234,28 @@ class SettingTableViewController: UITableViewController {
                     }
                 }
             }
+        } else if let addOn = addOn {
+            let addOnSetting = AddOnSetting(fact: addOn.fact, addOnDocumentID: addOn.documentID, description: addOn.description, items: addOn.items)
+            
+            addOnSetting.title = addOn.headerTitle
+            addOnSetting.imageURL = addOn.imageURL
+            addOnSetting.itemOrder = addOn.itemOrder
+            
+            self.addOnSetting = addOnSetting
+            self.setUpViewController()
+            
+//            neuen indexPath row in datenbank speichern
+//            fetchen nach row und nicht createTime
         }
     }
     
     func setUpViewController() {
+        
+        // Add the custom SettingCells with the current database data
         switch settingFor {
         case .community:
-            let setting = TableViewSetting()
-            setting.headerText = "Community-Einstellungen"
+            let setting = TableViewSetting(type: .normal, headerText: "Community-Einstellungen")
+            
             if let topicSetting = topicSetting {
                 let imageCell = TableViewSettingCell(value: topicSetting.imageURL, type: .imageCell, settingChange: .changeTopicPicture)
                 let nameCell = TableViewSettingCell(value: topicSetting.title, type: .textCell, settingChange: .changeTopicTitle)
@@ -210,8 +275,8 @@ class SettingTableViewController: UITableViewController {
                 tableView.reloadData()
             }
         case .userProfile:
-            let setting = TableViewSetting()
-            setting.headerText = "Profil-Einstellungen"
+            let setting = TableViewSetting(type: .normal, headerText: "Profil-Einstellungen")
+
             if let userSetting = userSetting {
                 let imageCell = TableViewSettingCell(value: userSetting.imageURL, type: .imageCell, settingChange: .changeUserPicture)
                 
@@ -219,8 +284,8 @@ class SettingTableViewController: UITableViewController {
                 statusCell.characterLimit = Constants.characterLimits.userStatusTextCharacterLimit
                 statusCell.titleText = "Steckbrief:"
                 
-                let socialMediaSetting = TableViewSetting()
-                socialMediaSetting.headerText = "Social Media Button"
+                let socialMediaSetting = TableViewSetting(type: .normal, headerText: "Social Media Buttons")
+                
                 let instaCell = TableViewSettingCell(value: userSetting.instagramLink, type: .textCell, settingChange: .changeUserInstagramLink)
                 instaCell.titleText = "Instagram:"
                 let patreonCell = TableViewSettingCell(value: userSetting.patreonLink, type: .textCell, settingChange: .changeUserPatreonLink)
@@ -237,6 +302,98 @@ class SettingTableViewController: UITableViewController {
                 self.settings.append(contentsOf: [setting, socialMediaSetting])
                 tableView.reloadData()
             }
+        case .addOn:
+            let setting = TableViewSetting(type: .normal, headerText: "Themen-Einstellungen:")
+
+            if let addOnSetting = addOnSetting {
+                let imageCell = TableViewSettingCell(value: addOnSetting.imageURL, type: .imageCell, settingChange: .changeAddOnPicture)
+                
+                let titleCell = TableViewSettingCell(value: addOnSetting.title, type: .textCell, settingChange: .changeAddOnTitle)
+                titleCell.characterLimit = Constants.characterLimits.addOnTitleCharacterLimit
+                titleCell.titleText = "Titel:"
+                
+                let descriptionCell = TableViewSettingCell(value: addOnSetting.description, type: .textCell, settingChange: .changeAddOnDescription)
+                descriptionCell.characterLimit = Constants.characterLimits.addOnDescriptionCharacterLimit
+                descriptionCell.titleText = "Beschreibung"
+                
+                let orderSetting = TableViewSetting(type: .changeOrder, headerText: "Arrangiere die Beiträge:")
+                orderSetting.addOnItems = addOnSetting.items
+                self.getAddOnItemsForOrderArrangement(items: orderSetting.addOnItems)
+                
+                self.tableView.isEditing = true
+                
+                setting.cells.append(contentsOf: [imageCell, titleCell, descriptionCell])
+                self.settings.append(contentsOf: [setting, orderSetting])
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
+    
+    //MARK: -AddOnData for Ordering
+    var itemList = [AddOnItem]()
+    var listCount = 0
+    
+    func getAddOnItemsForOrderArrangement(items: [AddOnItem]) {
+        self.listCount = items.count
+        
+        for item in items {
+            if let post = item.item as? Post {
+                self.postHelper.loadPost(postID: post.documentID, isTopicPost: post.isTopicPost) { (post) in
+                    if let post = post {
+                        let item = AddOnItem(documentID: post.documentID, item: post)
+                        self.itemList.append(item)
+                        self.addNewList()
+                    } else {
+                        print("Aint nobody got a post!")
+                    }
+                }
+            } else if let fact = item.item as? Fact {
+                self.dataHelper.loadFact(factID: fact.documentID) { (fact) in
+                    if let fact = fact {
+                        let item = AddOnItem(documentID: fact.documentID, item: fact)
+                        self.itemList.append(item)
+                        self.addNewList()
+                    } else {
+                        print(" Aint nobody got a fact!")
+                    }
+                }
+            }
+        }
+    }
+    
+    func addNewList() {
+        if itemList.count == listCount {        //When ready
+            if let setting = self.settings.first(where: {$0.type == .changeOrder}) {
+                
+                if let addOnSetting = addOnSetting {
+                    if let orderList = addOnSetting.itemOrder {
+                        let sorted = itemList.compactMap { obj in   // Compare the orderList against the documentIDs
+                        orderList.index(of: obj.documentID).map { idx in (obj, idx) }
+                        }.sorted(by: { $0.1 < $1.1 } ).map { $0.0 }
+                        
+                        setting.addOnItems = sorted
+                        self.tableView.reloadData()
+                    } else {
+                        var newOrderArray = [String]()
+                        
+                        itemList = itemList.reversed()
+                        for item in itemList {
+                            newOrderArray.append(item.documentID)
+                        }
+                        
+                        addOnSetting.itemOrder = newOrderArray
+                        self.gotChanged(type: .changeAddOnItemOrderArray, value: newOrderArray)
+                        
+                        setting.addOnItems = itemList
+                        self.tableView.reloadData()
+                    }
+                }
+            } else {
+                print(" Aint nobody got a changeOrder Section!")
+            }
+        } else {
+            print("Not high enough")
         }
     }
 
@@ -248,58 +405,147 @@ class SettingTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let setting = settings[section]
-        return setting.cells.count
+        switch setting.type {
+        case .normal:
+            return setting.cells.count
+        case .changeOrder:
+            return setting.addOnItems.count
+        }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let setting = settings[indexPath.section]
-        let config = setting.cells[indexPath.row]
         
-        switch config.type {
-        case .imageCell:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: imageSettingIdentifier, for: indexPath) as? SettingImageCell {
-                cell.delegate = self
-                cell.config = config
-                cell.indexPath = indexPath
-                
-                return cell
+        switch setting.type {
+        case .normal:
+            let config = setting.cells[indexPath.row]
+            
+            switch config.type {
+            case .imageCell:
+                if let cell = tableView.dequeueReusableCell(withIdentifier: imageSettingIdentifier, for: indexPath) as? SettingImageCell {
+                    cell.delegate = self
+                    cell.settingFor = settingFor
+                    cell.config = config
+                    cell.indexPath = indexPath
+                    
+                    return cell
+                }
+            case .textCell:
+                if let cell = tableView.dequeueReusableCell(withIdentifier: textSettingIdentifier, for: indexPath) as? SettingTextCell {
+                    cell.delegate = self
+                    cell.config = config
+                    
+                    return cell
+                }
+            case .switchCell:
+                if let cell = tableView.dequeueReusableCell(withIdentifier: switchSettingIdentifier, for: indexPath) as? SettingSwitchCell {
+                    cell.delegate = self
+                    cell.config = config
+                    
+                    return cell
+                }
             }
-        case .textCell:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: textSettingIdentifier, for: indexPath) as? SettingTextCell {
-                cell.delegate = self
-                cell.config = config
-                
-                return cell
-            }
-        case .switchCell:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: switchSettingIdentifier, for: indexPath) as? SettingSwitchCell {
-                cell.delegate = self
-                cell.config = config
+        case .changeOrder:
+            let item = setting.addOnItems[indexPath.row]
+            
+            print("Das ist das Item: \(item)")
+            if let cell = tableView.dequeueReusableCell(withIdentifier: pickOrderSettingIdentifier, for: indexPath) as? SettingPickOrderCell {
+                if let post = item.item as? Post {
+                    cell.post = post
+                } else if let fact = item.item as? Fact {
+                    cell.fact = fact
+                }
                 
                 return cell
             }
         }
+        
         
         return UITableViewCell()
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let setting = settings[indexPath.section]
-        let cell = setting.cells[indexPath.row]
         
-        switch cell.type {
-        case .textCell:
-            switch cell.settingChange {
-            case .changeTopicDescription:
-                return 80
-            case .changeUserStatusText:
-                return 80
+        switch setting.type {
+        case .normal:
+            let cell = setting.cells[indexPath.row]
+        
+            switch cell.type {
+            case .textCell:
+                switch cell.settingChange {
+                case .changeTopicDescription:
+                    return 100
+                case .changeUserStatusText:
+                    return 100
+                case .changeAddOnTitle:
+                    return 75
+                case .changeAddOnDescription:
+                    return 100
+                default:
+                    return 40
+                }
             default:
-                return 35
+                return UITableView.automaticDimension
             }
-        default:
-            return UITableView.automaticDimension
+        case .changeOrder:
+            return 50
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .none
+    }
+
+    override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return false
+    }
+    
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        let setting = settings[indexPath.section]
+        
+        if setting.type == .changeOrder {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let reorderedRow = self.settings[sourceIndexPath.section].addOnItems.remove(at: sourceIndexPath.row)
+        self.settings[destinationIndexPath.section].addOnItems.insert(reorderedRow, at: destinationIndexPath.row)
+
+        if let addOnSetting = addOnSetting {
+            if var orderArray = addOnSetting.itemOrder {
+                var array = [String]()
+                
+                for item in settings[destinationIndexPath.section].addOnItems {
+                    array.append(item.documentID)
+                }
+                print("Das ist der removedS, das ist der ganze Array: \(array)")
+                self.gotChanged(type: .changeAddOnItemOrderArray, value: array)
+//                let movedObject = orderArray[sourceIndexPath.row]
+//                orderArray.remove(at: sourceIndexPath.row)
+//                orderArray.insert(movedObject, at: destinationIndexPath.row)
+//
+//                print("Das ist der removedString: \(movedObject), das ist der ganze Array: \(orderArray)")
+//                self.gotChanged(type: .changeAddOnItemOrderArray, value: orderArray)
+            }
+        }
+   }
+    
+    override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        
+        let sourceSection = sourceIndexPath.section
+        let destSection = proposedDestinationIndexPath.section
+
+        if destSection < sourceSection {
+            return IndexPath(row: 0, section: sourceSection)
+        } else if destSection > sourceSection {
+            return IndexPath(row: self.tableView(tableView, numberOfRowsInSection:sourceSection)-1, section: sourceSection)
+        }
+
+        return proposedDestinationIndexPath
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -307,11 +553,10 @@ class SettingTableViewController: UITableViewController {
         
         if let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: settingHeaderIdentifier) as? SettingHeaderView {
                         
-            if let headerText = setting.headerText {
-                headerView.settingTitleLabel.text = headerText
-            } else {
-                headerView.settingTitleLabel.text = ""
-            }
+            
+            headerView.settingTitleLabel.text = setting.headerText
+            
+            
             return headerView
         }
         
@@ -319,12 +564,8 @@ class SettingTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        let setting = settings[section]
-        if let _ = setting.headerText {
-            return UITableView.automaticDimension
-        } else {
-            return 50
-        }
+        
+        return UITableView.automaticDimension
     }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
@@ -388,6 +629,13 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
                 } else {    // If the user got no picture
                     compressImage(image: image)
                 }
+            } else if let addOn = addOn {
+                if addOn.imageURL != "" {
+                    deletePicture()
+                    compressImage(image: image)
+                } else {
+                    compressImage(image: image)
+                }
             }
         }
         
@@ -408,6 +656,11 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
         } else if let user = user {
             let imageName = "\(user.userUID).profilePicture.png"
             let storageRef = storDB.child("profilePictures").child(imageName)
+            
+            self.deletePictureInStorage(storageReference: storageRef)
+        } else if let addOn = addOn {
+            let imageName = "\(addOn.documentID).png"
+            let storageRef = storDB.child("factPictures").child("addOnPictures").child(imageName)
             
             self.deletePictureInStorage(storageReference: storageRef)
         }
@@ -465,6 +718,11 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             let storageRef = storDB.child("profilePictures").child(imageName)
             
             savePictureInStorage(storageReference: storageRef, imageData: imageData)
+        } else if let addOn = addOn {
+            let imageName = "\(addOn.documentID).png"
+            let storageRef = storDB.child("factPictures").child("addOnPictures").child(imageName)
+            
+            savePictureInStorage(storageReference: storageRef, imageData: imageData)
         }
     }
     
@@ -509,6 +767,7 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
         switch type {
         case .changeTopicPicture:
             firestoreKey = "imageURL"
+            
             if let string = value as? String {
                 firestoreValue = string
             } else {
@@ -516,6 +775,7 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             }
         case .changeTopicTitle:
             firestoreKey = "name"
+            
             if let string = value as? String {
                 firestoreValue = string
             } else {
@@ -523,6 +783,7 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             }
         case .changeTopicDescription:
             firestoreKey = "description"
+            
             if let string = value as? String {
                 firestoreValue = string
             } else {
@@ -530,6 +791,7 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             }
         case .changeTopicAddOnsAsFirstView:
             firestoreKey = "isAddOnFirstView"
+            
             if let bool = value as? Bool {
                 firestoreValue = bool
             } else {
@@ -540,36 +802,80 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             
             if let string = value as? String {
                 firestoreValue = string
+            } else {
+                return
             }
         case .changeUserStatusText:
             firestoreKey = "statusText"
             
             if let string = value as? String {
                 firestoreValue = string
+            } else {
+                return
             }
         case .changeUserInstagramLink:
             firestoreKey = "instagramLink"
             
             if let string = value as? String {
                 firestoreValue = string
+            } else {
+                return
             }
         case .changeUserPatreonLink:
             firestoreKey = "patreonLink"
             
             if let string = value as? String {
                 firestoreValue = string
+            } else {
+                return
             }
         case .changeUserYouTubeLink:
             firestoreKey = "youTubeLink"
             
             if let string = value as? String {
                 firestoreValue = string
+            } else {
+                return
             }
         case .changeUserTwitterLink:
             firestoreKey = "twitterLink"
             
             if let string = value as? String {
                 firestoreValue = string
+            } else {
+                return
+            }
+        case .changeAddOnPicture:
+            firestoreKey = "imageURL"
+            
+            if let string = value as? String {
+                firestoreValue = string
+            } else {
+                return
+            }
+        case .changeAddOnTitle:
+            firestoreKey = "title"
+            
+            if let string = value as? String {
+                firestoreValue = string
+            } else {
+                return
+            }
+        case .changeAddOnDescription:
+            firestoreKey = "description"
+            
+            if let string = value as? String {
+                firestoreValue = string
+            } else {
+                return
+            }
+        case .changeAddOnItemOrderArray:
+            firestoreKey = "itemOrder"
+            
+            if let array = value as? [String] {
+                firestoreValue = array
+            } else {
+                return
             }
         }
         
@@ -599,7 +905,17 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
                     self.view.activityStopAnimating()
                 }
             }
-        } else {
+        } else if let addOn = addOn {
+            let ref = db.collection("Facts").document(addOn.fact.documentID).collection("addOns").document(addOn.documentID)
+            ref.updateData(data) { (err) in
+                if let error = err {
+                    print("We could not update the data: \(error.localizedDescription)")
+                } else {
+                    self.view.activityStopAnimating()
+                }
+            }
+        }
+        else {
             print("We got no mfn topic nor user")
         }
     }
@@ -618,6 +934,21 @@ class SettingImageCell: UITableViewCell {
         }
     }
     
+    var settingFor: DestinationForSettings? {
+        didSet {
+            if let settingFor = settingFor  {
+                switch settingFor {
+                case .community:
+                    settingImageView.image = UIImage(named: "default")
+                case .userProfile:
+                    settingImageView.image = UIImage(named: "default-user")
+                case .addOn:
+                    settingImageView.image = UIImage(named: "default")
+                }
+            }
+        }
+    }
+    
     var config: TableViewSettingCell? {
         didSet {
             if let setting = config {
@@ -631,6 +962,7 @@ class SettingImageCell: UITableViewCell {
             }
         }
     }
+    
     
     @IBAction func changePictureTapped(_ sender: Any) {
         if let indexPath = indexPath, let setting = config {
@@ -743,6 +1075,111 @@ class SettingSwitchCell: UITableViewCell {
         }
     }
 }
+
+//class SettingPickOrderCell: UITableViewCell {
+//
+//
+//    override func awakeFromNib() {
+//        print(" awaken")
+//        textLabel?.font = UIFont(name: "IBMPlexSans", size: 14)
+//        if let imageView = imageView {
+//            imageView.layer.cornerRadius = imageView.frame.width/2
+//        }
+//    }
+//
+//    override func layoutSubviews() {
+//        self.imageView?.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+//    }
+//
+//    var post: Post? {
+//        didSet {
+//            if let post = post {
+//                self.textLabel?.text = post.title
+//                print("Set text in cell: \(post.title), textLabel: \(self.textLabel)")
+//                if post.imageURL != "" {
+//                    if let url = URL(string: post.imageURL) {
+//                        self.imageView?.sd_setImage(with: url, completed: nil)
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    var fact: Fact? {
+//        didSet {
+//            if let fact = fact {
+//                self.textLabel?.text = fact.title
+//
+//                if fact.imageURL != "" {
+//                    if let url = URL(string: fact.imageURL) {
+//                        self.imageView?.sd_setImage(with: url, completed: nil)
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    override func prepareForReuse() {
+//        self.fact = nil
+//        self.post = nil
+//
+//        self.imageView?.image = nil
+//        self.textLabel?.text = ""
+//    }
+//
+//}
+
+class SettingPickOrderCell: UITableViewCell {
+    
+    @IBOutlet weak var pickOrderLabel: UILabel!
+    @IBOutlet weak var pickOrderImageView: UIImageView!
+    
+    override func awakeFromNib() {
+        print(" awaken")
+        pickOrderLabel.font = UIFont(name: "IBMPlexSans", size: 14)
+        
+        pickOrderImageView.layer.cornerRadius = 6
+        
+    }
+    
+    var post: Post? {
+        didSet {
+            if let post = post {
+                self.pickOrderLabel.text = post.title
+
+                if post.imageURL != "" {
+                    if let url = URL(string: post.imageURL) {
+                        self.pickOrderImageView.sd_setImage(with: url, completed: nil)
+                    }
+                }
+            }
+        }
+    }
+    
+    var fact: Fact? {
+        didSet {
+            if let fact = fact {
+                self.pickOrderLabel.text = fact.title
+                
+                if fact.imageURL != "" {
+                    if let url = URL(string: fact.imageURL) {
+                        self.pickOrderImageView.sd_setImage(with: url, completed: nil)
+                    }
+                }
+            }
+        }
+    }
+    
+    override func prepareForReuse() {
+        self.fact = nil
+        self.post = nil
+        
+        self.pickOrderImageView.image = nil
+        self.pickOrderLabel.text = ""
+    }
+    
+}
+
 
 class SettingHeaderView: UITableViewHeaderFooterView {
     @IBOutlet weak var settingTitleLabel: UILabel!

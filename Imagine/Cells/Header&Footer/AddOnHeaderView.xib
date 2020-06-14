@@ -71,16 +71,17 @@
                         <action selector="thanksButtonTapped:" destination="nTE-2L-dgO" eventType="touchUpInside" id="G4l-2e-zF5"/>
                     </connections>
                 </button>
-                <button hidden="YES" opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0RO-oO-h1z" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                <button hidden="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0RO-oO-h1z" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                     <rect key="frame" x="295" y="121" width="25" height="25"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="25" id="imB-7w-dAB"/>
                         <constraint firstAttribute="width" constant="25" id="rxl-i1-3qg"/>
                     </constraints>
-                    <color key="tintColor" red="0.31537210939999999" green="0.46283984179999998" blue="0.65801352260000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <state key="normal" image="today_apps"/>
+                    <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <inset key="imageEdgeInsets" minX="1" minY="1" maxX="1" maxY="1"/>
+                    <state key="normal" image="settings"/>
                     <connections>
-                        <action selector="showPostsInFeedStyleTapped:" destination="nTE-2L-dgO" eventType="touchUpInside" id="R5D-Eg-2tb"/>
+                        <action selector="settingButtonTapped:" destination="nTE-2L-dgO" eventType="touchUpInside" id="Hv9-cs-E0Z"/>
                     </connections>
                 </button>
                 <button clipsSubviews="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="O4U-cy-ANP" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
@@ -131,7 +132,7 @@
                 <outlet property="headerImageView" destination="KHh-h8-9Sy" id="u6j-t6-A3A"/>
                 <outlet property="headerImageViewHeight" destination="E2t-Rh-MWY" id="9jO-Dz-Vm6"/>
                 <outlet property="headerTitleLabel" destination="Sqk-Vk-93r" id="vyN-ht-Qz6"/>
-                <outlet property="showAsFeedButton" destination="0RO-oO-h1z" id="Wlf-bG-B7N"/>
+                <outlet property="settingButton" destination="0RO-oO-h1z" id="oTG-XY-KOa"/>
                 <outlet property="thanksButton" destination="IK2-gA-8HN" id="AjD-Kk-NMu"/>
             </connections>
             <point key="canvasLocation" x="-176.81159420289856" y="-84.709821428571431"/>
@@ -140,7 +141,7 @@
     <resources>
         <image name="down" width="200" height="200"/>
         <image name="farmstead" width="1204" height="1034"/>
+        <image name="settings" width="30" height="30"/>
         <image name="thanksButton" width="800" height="800"/>
-        <image name="today_apps" width="30" height="30"/>
     </resources>
 </document>

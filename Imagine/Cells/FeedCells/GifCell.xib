@@ -25,7 +25,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="422" height="320"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yGu-Wr-egj">
+                    <view contentMode="scaleToFill" horizontalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="yGu-Wr-egj">
                         <rect key="frame" x="5" y="112" width="412" height="175"/>
                         <subviews>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="0eP-AP-48u">
@@ -35,6 +35,7 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="0eP-AP-48u" firstAttribute="centerY" secondItem="yGu-Wr-egj" secondAttribute="centerY" id="23m-TJ-7mj"/>
+                            <constraint firstAttribute="height" priority="250" constant="175" id="efh-G8-awd"/>
                             <constraint firstItem="0eP-AP-48u" firstAttribute="centerX" secondItem="yGu-Wr-egj" secondAttribute="centerX" id="fgk-EZ-Ihc"/>
                         </constraints>
                     </view>
@@ -260,6 +261,7 @@
             <connections>
                 <outlet property="OPNameLabel" destination="xGw-jt-Crf" id="y5F-Vo-ezX"/>
                 <outlet property="activityIndicatorView" destination="0eP-AP-48u" id="w6K-6v-wDf"/>
+                <outlet property="commentCountLabel" destination="KXr-Zb-hiu" id="jQy-In-bUC"/>
                 <outlet property="createDateLabel" destination="FUi-G9-xa2" id="025-si-vU0"/>
                 <outlet property="factImageView" destination="DEp-5d-s4N" id="6z9-8W-Uzt"/>
                 <outlet property="followTopicImageView" destination="WTr-Dd-cJI" id="Nap-uG-zTw"/>
@@ -271,6 +273,7 @@
                 <outlet property="reportButton" destination="JYE-wr-VKL" id="Id5-QD-lCM"/>
                 <outlet property="thanksButton" destination="30h-ya-zIH" id="7Vp-9F-cXT"/>
                 <outlet property="titleLabel" destination="KaD-cK-a1w" id="xs0-ll-oeo"/>
+                <outlet property="titleLabelHeightConstraint" destination="zfF-Df-RfF" id="jCs-QY-Iyw"/>
                 <outlet property="wowButton" destination="dCb-NX-Hfg" id="xEM-SE-LoS"/>
             </connections>
             <point key="canvasLocation" x="159.42028985507247" y="87.053571428571431"/>

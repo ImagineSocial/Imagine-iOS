@@ -44,9 +44,9 @@ class NewAddOnTableViewController: UITableViewController {
         self.doneBarButtonItem.isEnabled = false
         self.doneBarButtonItem.tintColor = UIColor.blue.withAlphaComponent(0.5)
         
-        let header = OptionalInformation(newAddOnStyle: .header)
-        let infoAll = OptionalInformation(newAddOnStyle: .all)
-        let singleTopic = OptionalInformation(newAddOnStyle: .singleTopic)
+        let header = OptionalInformation(style: .header, OP: "", documentID: "", fact: Fact(), headerTitle: "Füge einen Header hinzu.", description: Constants.texts.AddOns.headerText)
+        let infoAll = OptionalInformation(style: .all, OP: "", documentID: "", fact: Fact(), headerTitle: "Füge eine Kollektion mit Beiträgen und Themen hinzu.", description: Constants.texts.AddOns.collectionText)
+        let singleTopic = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Fact(), headerTitle: "Verlinke ein aussagekräftiges Thema.", description: Constants.texts.AddOns.singleTopicText)
         
         optionalInformations.append(contentsOf: [header, infoAll, singleTopic])
         tableView.reloadData()
@@ -230,6 +230,11 @@ class NewAddOnTableViewController: UITableViewController {
 }
 
 extension NewAddOnTableViewController: NewFactDelegate, AddOnHeaderDelegate {
+    
+    func settingsTapped(section: Int) {
+        print("Wont happen")
+    }
+    
     func thanksTapped(info: OptionalInformation) {
         print("Coming Soon maybe")
     }

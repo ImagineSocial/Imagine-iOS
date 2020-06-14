@@ -41,6 +41,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
         collectionView.register(UINib(nibName: "SmallPostCell", bundle: nil), forCellWithReuseIdentifier: postCellIdentifier)
         collectionView.register(UINib(nibName: "FactCell", bundle: nil), forCellWithReuseIdentifier: topicCellIdentifier)
         collectionView.register(SearchUserCell.self, forCellWithReuseIdentifier: userCellIdentifier)
+        collectionView.register(UINib(nibName: "PlaceHolderCell", bundle: nil), forCellWithReuseIdentifier: placeHolderIdentifier)
         collectionView.layoutIfNeeded()
         collectionView.setNeedsLayout()
         

@@ -34,6 +34,7 @@
 		E938104E22E707A90086F199 /* YouTubeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E938104D22E707A90086F199 /* YouTubeCell.xib */; };
 		E938105022E708510086F199 /* YouTubeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E938104F22E708510086F199 /* YouTubeCell.swift */; };
 		E938325022F7198E0002DF8C /* BlogPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E938324F22F7198E0002DF8C /* BlogPostViewController.swift */; };
+		E940D8D4249676AB00018EF3 /* PlaceHolderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E940D8D3249676AA00018EF3 /* PlaceHolderCell.xib */; };
 		E948AC5222C77BA400DB9E69 /* Repost.swift in Sources */ = {isa = PBXBuildFile; fileRef = E948AC5122C77BA400DB9E69 /* Repost.swift */; };
 		E94F29BE22B2F7E60015A8CC /* EventCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E94F29BD22B2F7E60015A8CC /* EventCell.xib */; };
 		E94F29C022B375610015A8CC /* EventCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94F29BF22B375610015A8CC /* EventCell.swift */; };
@@ -233,6 +234,7 @@
 		E938104D22E707A90086F199 /* YouTubeCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = YouTubeCell.xib; sourceTree = "<group>"; };
 		E938104F22E708510086F199 /* YouTubeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeCell.swift; sourceTree = "<group>"; };
 		E938324F22F7198E0002DF8C /* BlogPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogPostViewController.swift; sourceTree = "<group>"; };
+		E940D8D3249676AA00018EF3 /* PlaceHolderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlaceHolderCell.xib; sourceTree = "<group>"; };
 		E948AC5122C77BA400DB9E69 /* Repost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repost.swift; sourceTree = "<group>"; };
 		E94F29BD22B2F7E60015A8CC /* EventCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EventCell.xib; sourceTree = "<group>"; };
 		E94F29BF22B375610015A8CC /* EventCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCell.swift; sourceTree = "<group>"; };
@@ -732,6 +734,7 @@
 				E9A57A9E245360D100665007 /* AdvertisingCell.swift */,
 				E997F760248CE90200BF7F88 /* SurveyCell.xib */,
 				E981B25D2483AFCC00F6C724 /* SurveyCell.swift */,
+				E940D8D3249676AA00018EF3 /* PlaceHolderCell.xib */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -836,9 +839,9 @@
 				E96CE89522959E6D00BACD3B /* ArgumentCell.xib */,
 				E96CE8972295A13B00BACD3B /* ArgumentCell.swift */,
 				E9F31DD023F70D8A001D5D25 /* SmallTopicCell.xib */,
+				E9F31DC723F6D109001D5D25 /* RecentTopicsCollectionCell.xib */,
 				E9F31DCE23F6D78C001D5D25 /* RecentTopicsCollectionCell.swift */,
 				E98BA591241BFF3700C62DA8 /* AddTopicCell.xib */,
-				E9F31DC723F6D109001D5D25 /* RecentTopicsCollectionCell.xib */,
 				E9A02AA6232D3181000DAB69 /* AddFactTableViewCell.swift */,
 				E97FDFBD246AA4130049E1E4 /* ShowAllTopicsCell.xib */,
 				E97FDFBF246BE9BB0049E1E4 /* DiscussionCell.xib */,
@@ -940,6 +943,7 @@
 				E96CE89622959E6D00BACD3B /* ArgumentCell.xib in Resources */,
 				E98FAEA223FAB8760064A614 /* CommentCell.xib in Resources */,
 				E97FDFBE246AA4130049E1E4 /* ShowAllTopicsCell.xib in Resources */,
+				E940D8D4249676AB00018EF3 /* PlaceHolderCell.xib in Resources */,
 				E991CCDA2273474F00940834 /* ThoughtPostCell.xib in Resources */,
 				E91A2B5E2473B9DC00B42353 /* AddOnHeaderView.xib in Resources */,
 				E97DBED022AC1335007100E1 /* Localizable.strings in Resources */,

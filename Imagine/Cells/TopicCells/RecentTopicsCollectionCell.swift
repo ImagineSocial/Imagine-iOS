@@ -19,6 +19,8 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
     
     var facts = [Fact]()
     let identifier = "SmallTopicCell"
+    let placeHolderIdentifier = "PlaceHolderCell"
+    
     let db = Firestore.firestore()
     let dataHelper = DataHelper()
     
@@ -29,6 +31,7 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
         collectionView.dataSource = self
         
         collectionView.register(UINib(nibName: "SmallTopicCell", bundle: nil), forCellWithReuseIdentifier: identifier)
+        collectionView.register(UINib(nibName: "PlaceHolderCell", bundle: nil), forCellWithReuseIdentifier: placeHolderIdentifier)
         
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             layout.scrollDirection = .horizontal
@@ -79,36 +82,52 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
 }
 
 extension RecentTopicsCollectionCell: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        facts.count
+        
+        if facts.count != 0 {
+            return facts.count
+        } else {
+            return 4
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let fact = facts[indexPath.item]
-        
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as? SmallTopicCell {
+        if facts.count != 0 {
+            let fact = facts[indexPath.item]
             
-            cell.fact = fact
-            
-            return cell
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as? SmallTopicCell {
+                
+                cell.fact = fact
+                
+                return cell
+            }
+        } else {
+            // Blank Cell
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: placeHolderIdentifier, for: indexPath) as? PlaceHolderCell {
+                
+                
+                return cell
+            }
         }
         
         return UICollectionViewCell()
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let fact = facts[indexPath.item]
-        
-        fact.getFollowStatus { (isFollowed) in
-            if isFollowed {
-                fact.beingFollowed = true
-                self.delegate?.topicTapped(fact: fact)
-            } else {
-                self.delegate?.topicTapped(fact: fact)
+        if facts.count != 0 {
+            let fact = facts[indexPath.item]
+            
+            fact.getFollowStatus { (isFollowed) in
+                if isFollowed {
+                    fact.beingFollowed = true
+                    self.delegate?.topicTapped(fact: fact)
+                } else {
+                    self.delegate?.topicTapped(fact: fact)
+                }
             }
         }
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

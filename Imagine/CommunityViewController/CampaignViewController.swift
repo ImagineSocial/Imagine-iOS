@@ -42,7 +42,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         scrollViewTap.cancelsTouchesInView = false  // Otherwise the tap on the TableViews are not recognized
         scrollView.addGestureRecognizer(scrollViewTap)
         
-        commentTableView.initializeCommentTableView(section: .proposal)
+        commentTableView.initializeCommentTableView(section: .proposal, notificationRecipients: nil)
         commentTableView.commentDelegate = self
         commentTableView.proposal = campaign
         
@@ -215,6 +215,11 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
 }
 
 extension CampaignViewController: CommentViewDelegate, CommentTableViewDelegate {
+    
+    func recipientChanged(isActive: Bool, userUID: String) {
+        print("COming soon")
+    }
+    
     func sendButtonTapped(text: String, isAnonymous: Bool) {
         floatingCommentView!.resignFirstResponder()
         commentTableView.saveCommentInDatabase(bodyString: text, isAnonymous: isAnonymous)

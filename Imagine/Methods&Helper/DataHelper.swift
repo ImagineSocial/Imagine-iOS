@@ -376,6 +376,30 @@ class DataHelper {
         return fact
     }
     
+    func loadFact(factID: String, loadedFact: @escaping (Fact?) -> Void) {
+        
+        if factID == "" {
+            loadedFact(nil)
+        }
+        
+        let ref = db.collection("Facts").document(factID)
+        
+        ref.getDocument { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    if let data = snap.data() {
+                        if let fact = self.addFact(documentID: snap.documentID, data: data) {
+                            
+                            loadedFact(fact)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     func getDisplayType(string: String) -> DisplayOption {
         switch string {
         case "topic":

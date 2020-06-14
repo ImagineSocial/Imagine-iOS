@@ -57,12 +57,13 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     let recentTopicsCellIdentifier = "RecentTopicsCollectionCell"
     let discussionCellIdentifier = "DiscussionCell"
     let followedTopicCellIdentifier = "FollowedTopicCell"
+    let placeHolderIdentifier = "PlaceHolderCell"
     
     let topicHeaderIdentifier = "TopicCollectionHeader"
     let topicFooterIdentifier = "TopicCollectionFooter"
         
     var reloadRecentTopics = false
-
+    var isLoading = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,6 +81,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         collectionView.register(UINib(nibName: "RecentTopicsCollectionCell", bundle: nil), forCellWithReuseIdentifier: recentTopicsCellIdentifier)
         collectionView.register(UINib(nibName: "DiscussionCell", bundle: nil), forCellWithReuseIdentifier: discussionCellIdentifier)
         collectionView.register(UINib(nibName: "FollowedTopicCell", bundle: nil), forCellWithReuseIdentifier: followedTopicCellIdentifier)
+        collectionView.register(UINib(nibName: "PlaceHolderCell", bundle: nil), forCellWithReuseIdentifier: placeHolderIdentifier)
         
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.navigationBar.shadowImage = UIImage()
@@ -150,7 +152,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                         self.topicFacts.append(fact)
                     }
                 }
-                
+                self.isLoading = false
                 self.collectionView.reloadData()
                 self.view.activityStopAnimating()
             } else {
@@ -204,7 +206,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
 
     // MARK: UICollectionViewDataSource
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
+        
         return 4
     }
     
@@ -216,10 +218,14 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         if section == 0 {
             return 1
         } else if section == 1 {
-            if isFiltering {
-                return filteredFacts.count
+            if isLoading {
+                return 10
             } else {
-                return topicFacts.count
+                if isFiltering {
+                    return filteredFacts.count
+                } else {
+                    return 10
+                }
             }
         } else if section == 2 {
             return discussionFacts.count
@@ -240,12 +246,19 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                 return cell
             }
         } else if  indexPath.section == 1 {    //Other cells
-            if isFiltering {
-                fact = filteredFacts[indexPath.row]
+            if isLoading {
+                // Blank Cell
+                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: placeHolderIdentifier, for: indexPath) as? PlaceHolderCell {
+                    
+                    return cell
+                }
             } else {
-                fact = topicFacts[indexPath.row]
+                if isFiltering {
+                    fact = filteredFacts[indexPath.row]
+                } else {
+                    fact = topicFacts[indexPath.row]
+                }
             }
-            
         } else if  indexPath.section == 2 {
             fact = discussionFacts[indexPath.row]
             

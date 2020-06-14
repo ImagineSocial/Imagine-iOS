@@ -30,10 +30,12 @@ class SingleTopicAddOnCell: UITableViewCell {
     
     var info: OptionalInformation? {
         didSet {
-            if let fact = info!.fact {
+            if let info = info {
+                let fact = info.fact
+                
                 if !isFetchingPreviewPosts {
                     self.isFetchingPreviewPosts = true
-                   self.getPreviewPictures(documentID: fact.documentID)
+                    self.getPreviewPictures(documentID: fact.documentID)
                     
                 }
                 self.topicTitleLabel.text = fact.title

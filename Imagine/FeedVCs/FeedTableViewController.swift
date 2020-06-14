@@ -297,6 +297,10 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
                                         case "comment":
                                             if let text = data["comment"] as? String, let author = data["name"] as? String, let postID = data["postID"] as? String {
                                                 let comment = Comment()
+                                                
+                                                if let isTopicPost = data["isTopicPist"] as? Bool {
+                                                    comment.isTopicPost = isTopicPost
+                                                }
                                                 comment.postID = change.document.documentID
                                                 comment.author = author
                                                 comment.postID = postID

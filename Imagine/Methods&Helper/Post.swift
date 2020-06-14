@@ -71,6 +71,8 @@ class Post {
     var addOnTitle: String?    // Description in the OptionalInformation Section in the topic area
     var isTopicPost = false // Just postet in a topic, not in the main feed
     
+    var notificationRecipients = [String]()
+    
     var survey: Survey?
     
     let handyHelper = HandyHelper()

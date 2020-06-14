@@ -12,6 +12,7 @@ import AVKit
 
 class GifCell: BaseFeedCell {
     
+    @IBOutlet weak var titleLabelHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var gifView: UIView!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     
@@ -121,8 +122,11 @@ class GifCell: BaseFeedCell {
                 
                 createDateLabel.text = post.createTime
                 titleLabel.text = post.title
-//                commentCountLabel.text = String(post.commentCount)
+                commentCountLabel.text = String(post.commentCount)
                 
+                // LabelHeight calculated by the number of letters
+                let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
+                titleLabelHeightConstraint.constant = labelHeight
                 
                 if let fact = post.fact {
                     if #available(iOS 13.0, *) {

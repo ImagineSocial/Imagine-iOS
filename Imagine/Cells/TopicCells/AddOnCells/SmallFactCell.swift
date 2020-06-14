@@ -65,25 +65,14 @@ class SmallFactCell: UICollectionViewCell {
     
     var factID: String? {
         didSet {
-            if factID == "" { return }
-            
-            let ref = db.collection("Facts").document(factID!)
-            
-            self.getArguments(documentID: factID!)
-            
-            ref.getDocument { (snap, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    if let snap = snap {
-                        if let data = snap.data() {
-                            if let fact = self.dataHelper.addFact(documentID: snap.documentID, data: data) {
-                                
-                                self.fact = fact
-                            }
-                        }
+            if let factID = factID {
+                self.dataHelper.loadFact(factID: factID) { (fact) in
+                    if let fact = fact {
+                        self.fact = fact
                     }
                 }
+            } else {
+                return
             }
         }
     }

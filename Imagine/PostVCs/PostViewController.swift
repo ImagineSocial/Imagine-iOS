@@ -95,7 +95,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         self.view.activityStartAnimating()
         
-        commentTableView.initializeCommentTableView(section: .post)
+        commentTableView.initializeCommentTableView(section: .post, notificationRecipients: self.post.notificationRecipients)
         commentTableView.commentDelegate = self
         commentTableView.post = self.post
         
@@ -542,8 +542,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         descriptionView.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: 10).isActive = true
         
         let voteButtonWidth = ((self.view.frame.width-(6*15))/5)    // To match the width of 2 Buttons, which vary with the screensize
-        let commentButtonWidth = voteButtonWidth*2+15
+        let notificationViewWidth = voteButtonWidth*2+15
         let linkedFactViewWidth = voteButtonWidth*3+30
+        
         let buttonHeight: CGFloat = 35
         
         linkedFactView.addSubview(linkedFactImageView)
@@ -1986,9 +1987,17 @@ extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
     }
     
     func sendButtonTapped(text: String, isAnonymous: Bool) {
-        print("Button tapped")
         
         commentTableView.saveCommentInDatabase(bodyString: text, isAnonymous: isAnonymous)
+    }
+    
+    func recipientChanged(isActive: Bool, userUID: String) {
+        if isActive {
+            self.post.notificationRecipients.append(userUID)
+        } else {
+            let newList = self.post.notificationRecipients.filter { $0 != userUID }
+            self.post.notificationRecipients = newList
+        }
     }
     
     func notAllowedToComment() {

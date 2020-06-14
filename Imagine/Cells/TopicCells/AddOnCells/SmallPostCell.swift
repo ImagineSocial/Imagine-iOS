@@ -39,54 +39,33 @@ class SmallPostCell: UICollectionViewCell {
     
     var postTitle: String? {
         didSet {
-            if postTitle! == "gotcha" {
-//                postImageViewHeightConstraint.constant = 170
-//                titleHeightConstraint.constant = 0
-                optionalTitleGradientViewHeightConstraint.constant = 0
+            if let postTitle = postTitle {
+                if postTitle == "gotcha" {
+                    //                postImageViewHeightConstraint.constant = 170
+                    //                titleHeightConstraint.constant = 0
+                    optionalTitleGradientViewHeightConstraint.constant = 0
+                } else {
+                    titleLabel.text = postTitle
+                    showOptionalTitleButton.isHidden = false
+                    optionalTitleGradientViewHeightConstraint.constant = 0
+                }
             } else {
-                titleLabel.text = postTitle!
-                showOptionalTitleButton.isHidden = false
+                showOptionalTitleButton.isHidden = true
                 optionalTitleGradientViewHeightConstraint.constant = 0
             }
         }
     }
     
     func loadPost(postID: String, isTopicPost: Bool) {
-        let ref: DocumentReference?
-        
-        if postID == "" {   // NewAddOnTableVC
-            return
-        }
-        
-        if isTopicPost {
-            ref = db.collection("TopicPosts").document(postID)
-        } else {
-            ref = db.collection("Posts").document(postID)
-        }
-        
-        if let ref = ref {
-            DispatchQueue.global(qos: .default).async {
-                ref.getDocument { (snap, err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        if let snap = snap {
-                            if let post = self.postHelper.addThePost(document: snap, isTopicPost: isTopicPost, forFeed: false){
-                                
-                                if isTopicPost {
-                                    post.isTopicPost = true
-                                }
-                                DispatchQueue.main.async {
-                                    self.post = post
-                                    self.delegate?.sendItem(item: post)
-                                }
-                            }
-                        }
-                    }
-                }
+    
+        self.postHelper.loadPost(postID: postID, isTopicPost: isTopicPost) { (post) in
+            if let post = post {
+                self.post = post
+                self.delegate?.sendItem(item: post)
             }
         }
     }
+    
     
     var post: Post? {
         didSet {
@@ -261,6 +240,9 @@ class SmallPostCell: UICollectionViewCell {
         
         postImageViewHeightConstraint.constant = 170
         optionalTitleGradientViewHeightConstraint.constant = 0
+        
+        postTitle = nil
+        cellImageView.image = nil
         
         showOptionalTitleButton.setImage(UIImage(named: "up"), for: .normal)
         

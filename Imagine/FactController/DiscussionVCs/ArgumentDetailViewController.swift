@@ -30,11 +30,11 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
         setUpView()
         
         if let source = source {
-            commentTableView.initializeCommentTableView(section: .source)
+            commentTableView.initializeCommentTableView(section: .source, notificationRecipients: nil)
             commentTableView.commentDelegate = self
             commentTableView.source = source
         } else if let argument = argument {
-            commentTableView.initializeCommentTableView(section: .counterArgument)
+            commentTableView.initializeCommentTableView(section: .counterArgument, notificationRecipients: nil)
             commentTableView.commentDelegate = self
             commentTableView.counterArgument = argument
         }
@@ -110,6 +110,10 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
 }
 
 extension ArgumentDetailViewController: CommentViewDelegate, CommentTableViewDelegate {
+    
+    func recipientChanged(isActive: Bool, userUID: String) {
+        print("COming soon")
+    }
     
     func sendButtonTapped(text: String, isAnonymous: Bool) {
         floatingCommentView!.resignFirstResponder()

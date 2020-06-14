@@ -137,8 +137,8 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                     for document in snap.documents {
                         let data = document.data()
                         
-                        if let title = data["title"] as? String, let description = data["description"] as? String { //Normal collection
-                            let addOn = OptionalInformation(style: .all, headerTitle: title, description: description, documentID: document.documentID, fact: self.fact!)
+                        if let title = data["title"] as? String, let OP = data["OP"] as? String, let description = data["description"] as? String { //Normal collection
+                            let addOn = OptionalInformation(style: .all, OP: OP, documentID: document.documentID, fact: fact, headerTitle: title, description: description)
                             
                             if let imageURL = data["imageURL"] as? String {
                                 addOn.imageURL = imageURL
@@ -147,10 +147,13 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                                 addOn.thanksCount = thanksCount
                             }
                             
-                            addOn.style = .all
+                            if let itemOrder = data["itemOrder"] as? [String] {
+                                addOn.itemOrder = itemOrder
+                            }
+                            
                             self.optionalInformations.append(addOn)
                             
-                        } else if let description = data["headerDescription"] as? String {  // Header
+                        } else if let description = data["headerDescription"] as? String, let OP = data["OP"] as? String {  // Header
                             var intro: String?
                             var source: String?
                             if let introSentence = data["headerIntro"] as? String {
@@ -160,13 +163,16 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                                 source = moreInfo
                             }
                             
-                            let addOn = OptionalInformation(style: .header ,introSentence: intro, description: description, moreInformationLink: source)
-                            addOn.style = .header
+                            let addOn = OptionalInformation(style: .header, OP: OP, documentID: document.documentID, fact: fact ,introSentence: intro, description: description, moreInformationLink: source)
+                            
                             self.optionalInformations.insert(addOn, at: 0)  // Should be on top of the vc
                         } else if let documentID = data["linkedFactID"] as? String {    //SingleTopic
-                            if let headerTitle = data["headerTitle"] as? String, let description = data["description"] as? String {
-                                let addOn = OptionalInformation(style: .singleTopic, headerTitle: headerTitle, description: description, factDocumentID: documentID)
+                            if let headerTitle = data["headerTitle"] as? String, let description = data["description"] as? String,  let OP = data["OP"] as? String {
+                                let addOn = OptionalInformation(style: .singleTopic, OP: OP, documentID: document.documentID, fact: fact, headerTitle: headerTitle, description: description)
                                 
+                                if let itemOrder = data["itemOrder"] as? [String] {
+                                    addOn.itemOrder = itemOrder
+                                }
                                 if let thanksCount = data["thanksCount"] as? Int {
                                     addOn.thanksCount = thanksCount
                                 }
@@ -174,6 +180,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                                 self.optionalInformations.append(addOn)
                             }
                         }
+                    
                         
                         self.tableView.reloadData()
                     }
@@ -289,9 +296,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             let optInfo = optionalInformations[indexPath.section]
             
             if optInfo.style == .singleTopic {
-                if let fact = optInfo.fact {
-                    performSegue(withIdentifier: "toFactSegue", sender: fact)
-                }
+                performSegue(withIdentifier: "toFactSegue", sender: optInfo.fact)
             }
         }
     }
@@ -306,9 +311,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             } else {
                 if let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: addOnHeaderIdentifier) as? AddOnHeaderView {
                     
-                    let info = optionalInformations[section]
-                    
-                    headerView.info = info
+                    headerView.info = optInfo
                     headerView.section = section
                     
                     headerView.delegate = self
@@ -439,6 +442,9 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                 itemTypeString = "topicPost"    // So the getData method looks in a different ref
                 self.updateTopicPostInFact(addOnID: addOnRef, postDocumentID: itemID)
             }
+        } else {
+            print("Dont got an item ID")
+            return
         }
         
         
@@ -460,9 +466,8 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                 let alert = UIAlertController(title: "Fertig", message: "Das AddOn wurde erweitert. Vielen Dank für deinen Beitrag!", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
                     
-                    self.optionalInformations.removeAll()
-                    self.tableView.reloadData()
-                    self.getData(fact: self.fact!)
+                    let docRef = self.db.collection("Facts").document(self.fact!.documentID).collection("addOns").document(addOnRef)
+                    self.checkIfOrderArrayExists(documentReference: docRef, documentIDOfItem: itemID)
                     
                     alert.dismiss(animated: true, completion: nil)
                 }))
@@ -470,6 +475,46 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                 self.present(alert, animated: true)
             }
         }
+    }
+    
+    func checkIfOrderArrayExists(documentReference: DocumentReference, documentIDOfItem: String) {
+        documentReference.getDocument { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    if let data = snap.data() {
+                        if let array = data["itemOrder"] as? [String] {
+                            self.updateOrderArray(documentReference: documentReference, documentIDOfItem: documentIDOfItem, array: array)
+                        } else {
+                            self.renewTableView()
+                            print("No itemOrder yet")
+                            return
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func updateOrderArray(documentReference: DocumentReference, documentIDOfItem: String, array: [String]) {
+        var newArray = array
+        newArray.insert(documentIDOfItem, at: 0)
+        documentReference.updateData([
+            "itemOrder": newArray
+        ]) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                self.renewTableView()
+            }
+        }
+    }
+    
+    func renewTableView() {
+        self.optionalInformations.removeAll()
+        self.tableView.reloadData()
+        self.getData(fact: self.fact!)
     }
     
     func updateTopicPostInFact(addOnID: String, postDocumentID: String) {       //Add the AddOnDocumentIDs to the fact, so we can delete every trace of the post if you choose to delete it later. Otherwise there would be empty post in an AddOn
@@ -535,6 +580,15 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                 }
             }
         }
+        
+        if segue.identifier == "toSettingSegue" {
+            if let vc = segue.destination as? SettingTableViewController {
+                if let addOn = sender as? OptionalInformation {
+                    vc.addOn = addOn
+                    vc.settingFor = .addOn
+                }
+            }
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -571,10 +625,16 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
 
 extension OptionalInformationForArgumentTableViewController: AddOnHeaderDelegate, InfoHeaderAddOnCellDelegate {
     
+    func settingsTapped(section: Int) {
+        let info = optionalInformations[section]
+        performSegue(withIdentifier: "toSettingSegue", sender: info)
+    }
+    
+    
     func thanksTapped(info: OptionalInformation) {
         if let _ = Auth.auth().currentUser {
-            if let fact = fact, let addOnDocumentID = info.documentID {
-                let ref = db.collection("Facts").document(fact.documentID).collection("addOns").document(addOnDocumentID)
+            if let fact = fact, info.documentID != "" {
+                let ref = db.collection("Facts").document(fact.documentID).collection("addOns").document(info.documentID)
                 
                 var thanksCount = 1
                 if let count = info.thanksCount {
