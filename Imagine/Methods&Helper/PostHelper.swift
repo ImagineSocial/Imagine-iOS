@@ -10,6 +10,7 @@ import Foundation
 import Firebase
 import FirebaseFirestore
 import SDWebImage
+import PromiseKit
 
 
 // This enum differentiates between savedPosts or posts for the "getTheSavedPosts" function
@@ -287,6 +288,27 @@ class PostHelper {
         }
     }
     
+    //MARK:-Test Beginn
+    
+//    func getPosts(_ ids: [String]) -> Promise<Void> {
+//        return Promise.value(ids).thenMap { id in
+//            Promise<Data> { resolver in
+//                db.collection("data").whereField("id", isEqualTo: id).getDocuments { dataForId, error in
+//                    guard let error = error else { resolver.fulfill(dataForId) }
+//                    resolver.reject(error)
+//                }
+//            }
+//        }
+//        .done { allDataForIds in
+//            self.arr = allDataForIds
+//        }
+//        .catch { error in
+//            // handle error
+//        }
+//    }
+    
+    //MARK:- Test Ende
+    
     func getPostsForFact(factID: String, forPreviewPictures: Bool, posts: @escaping ([Post]) -> Void) {
         
         let ref = db.collection("Facts").document(factID).collection("posts")
@@ -430,54 +452,7 @@ class PostHelper {
                     let niceCount = documentData["niceCount"] as? Int
                     
                     else {
-                        if postType == "survey" {
-                            
-                            guard let surveyType = documentData["surveyType"] as? String,
-                            let question = documentData["question"] as? String
-                                else { return nil }
-                            
-                            let defaults = UserDefaults.standard
-                            let hiddenSurveyArrayString = Constants.userDefaultsStrings.hideSurveyString
-                            let surveyStrings = defaults.stringArray(forKey: hiddenSurveyArrayString) ?? [String]()
-                            
-                            for surveyID in surveyStrings {
-                                if documentID == surveyID {
-                                    print("Survey is hidden")
-                                    return nil
-                                }
-                            }
-                            
-                            let post = Post()
-                            post.documentID = documentID
-                            var surveyTypeEnum: SurveyType = .pickOrder
-                            
-                            if surveyType == "pickOne" {
-                                surveyTypeEnum = .pickOne
-                            } else if surveyType == "comment" {
-                                surveyTypeEnum = .comment
-                            }
-                            
-                            let survey = Survey(type: surveyTypeEnum, question: question)
-                            post.survey = survey
-                            
-                            if let firstAnswer = documentData["firstAnswer"] as? String, let secondAnswer = documentData["secondAnswer"] as? String, let thirdAnswer = documentData["thirdAnswer"] as? String, let fourthAnswer = documentData["fourthAnswer"] as? String {
-                                
-                                survey.firstAnswer = firstAnswer
-                                survey.secondAnswer = secondAnswer
-                                survey.thirdAnswer = thirdAnswer
-                                survey.fourthAnswer = fourthAnswer
-                            }
-                                                        
-                            if forFeed {
-                                self.posts.append(post)
-                                return nil
-                            } else {
-                                return post
-                            }
-                        } else {
-                            
-                           return nil
-                        }
+                        return nil
                 }
                 
                 
@@ -485,8 +460,53 @@ class PostHelper {
                 let stringDate = createTimestamp.dateValue().formatForFeed()
                 let isAFriend: Bool = self.checkIfOPIsAFriend(userUID: originalPoster)
                 
-                // Thought
-                if postType == "thought" {
+                if postType == "survey" {
+                    
+                    guard let surveyType = documentData["surveyType"] as? String,
+                    let question = documentData["question"] as? String
+                        else { return nil }
+                    
+                    let defaults = UserDefaults.standard
+                    let hiddenSurveyArrayString = Constants.userDefaultsStrings.hideSurveyString
+                    let surveyStrings = defaults.stringArray(forKey: hiddenSurveyArrayString) ?? [String]()
+                    
+                    for surveyID in surveyStrings {
+                        if documentID == surveyID {
+                            print("Survey is hidden")
+                            return nil
+                        }
+                    }
+                    
+                    let post = Post()
+                    post.documentID = documentID
+                    var surveyTypeEnum: SurveyType = .pickOrder
+                    
+                    if surveyType == "pickOne" {
+                        surveyTypeEnum = .pickOne
+                    } else if surveyType == "comment" {
+                        surveyTypeEnum = .comment
+                    }
+                    
+                    let survey = Survey(type: surveyTypeEnum, question: question)
+                    post.survey = survey
+                    
+                    if let firstAnswer = documentData["firstAnswer"] as? String, let secondAnswer = documentData["secondAnswer"] as? String, let thirdAnswer = documentData["thirdAnswer"] as? String, let fourthAnswer = documentData["fourthAnswer"] as? String {
+                        
+                        survey.firstAnswer = firstAnswer
+                        survey.secondAnswer = secondAnswer
+                        survey.thirdAnswer = thirdAnswer
+                        survey.fourthAnswer = fourthAnswer
+                    }
+                                                
+                    if forFeed {
+                        self.posts.append(post)
+                        return nil
+                    } else {
+                        return post
+                    }
+                    
+                    // Thought
+                } else if postType == "thought" {
                     
                     
                     let post = Post()

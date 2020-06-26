@@ -219,12 +219,12 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             return 1
         } else if section == 1 {
             if isLoading {
-                return 10
+                return 8
             } else {
                 if isFiltering {
                     return filteredFacts.count
                 } else {
-                    return 10
+                    return 8
                 }
             }
         } else if section == 2 {
@@ -650,11 +650,15 @@ extension FactCollectionViewController: TopOfCollectionViewDelegate, NewFactDele
     }
     
     func finishedCreatingNewInstance(item: Any?) {
-        self.topicFacts.removeAll()
-        self.discussionFacts.removeAll()
-        self.collectionView.reloadData()
+//        self.topicFacts.removeAll()
+//        self.discussionFacts.removeAll()
+//        self.collectionView.reloadData()
+//
+//        self.getFacts()
         
-        self.getFacts()
+        if let fact = item as? Fact {
+            performSegue(withIdentifier: "toPageVC", sender: fact)
+        }
     }
     
     

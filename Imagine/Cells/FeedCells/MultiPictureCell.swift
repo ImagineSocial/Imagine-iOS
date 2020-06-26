@@ -254,27 +254,34 @@ extension MultiPictureCell: UICollectionViewDelegate, UICollectionViewDataSource
     
     @IBAction func thanksButtonTapped(_ sender: Any) {
         if let post = post {
+            thanksButton.isEnabled = false
             delegate?.thanksTapped(post: post)
             post.votes.thanks = post.votes.thanks+1
             showButtonText(post: post, button: thanksButton)
         }
     }
+    
     @IBAction func wowButtonTapped(_ sender: Any) {
         if let post = post {
+            wowButton.isEnabled = false
             delegate?.wowTapped(post: post)
             post.votes.wow = post.votes.wow+1
             showButtonText(post: post, button: wowButton)
         }
     }
+    
     @IBAction func haButtonTapped(_ sender: Any) {
         if let post = post {
+            haButton.isEnabled = false
             delegate?.haTapped(post: post)
             post.votes.ha = post.votes.ha+1
             showButtonText(post: post, button: haButton)
         }
     }
+    
     @IBAction func niceButtonTapped(_ sender: Any) {
         if let post = post {
+            niceButton.isEnabled = false
             delegate?.niceTapped(post: post)
             post.votes.nice = post.votes.nice+1
             showButtonText(post: post, button: niceButton)

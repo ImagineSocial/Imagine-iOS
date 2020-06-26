@@ -31,24 +31,24 @@ class SingleTopicAddOnCell: UITableViewCell {
     var info: OptionalInformation? {
         didSet {
             if let info = info {
-                let fact = info.fact
-                
-                if !isFetchingPreviewPosts {
-                    self.isFetchingPreviewPosts = true
-                    self.getPreviewPictures(documentID: fact.documentID)
+                if let fact = info.singleTopic {
                     
-                }
-                self.topicTitleLabel.text = fact.title
-                self.topicDescriptionLabel.text = fact.description
-                if let url = URL(string: fact.imageURL) {
-                    topicImageView.sd_setImage(with: url, completed: nil)
-                }
-                
-                fact.getPostCount { (count) in
-                    self.topicPostCountLabel.text = "Beiträge: \(count)"
-                }
-                fact.getFollowerCount { (count) in
-                    self.topicFollowerLabel.text = "Follower: \(count)"
+                    if !isFetchingPreviewPosts {
+                        self.isFetchingPreviewPosts = true
+                        self.getPreviewPictures(documentID: fact.documentID)
+                    }
+                    self.topicTitleLabel.text = fact.title
+                    self.topicDescriptionLabel.text = fact.description
+                    if let url = URL(string: fact.imageURL) {
+                        topicImageView.sd_setImage(with: url, completed: nil)
+                    }
+                    
+                    fact.getPostCount { (count) in
+                        self.topicPostCountLabel.text = "Beiträge: \(count)"
+                    }
+                    fact.getFollowerCount { (count) in
+                        self.topicFollowerLabel.text = "Follower: \(count)"
+                    }
                 }
             }
         }
@@ -108,7 +108,7 @@ class SingleTopicAddOnCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         //set the values for top,left,bottom,right margins
-        let margins = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        let margins = UIEdgeInsets(top: 5, left: 5, bottom: 20, right: 5)
         contentView.frame = contentView.frame.inset(by: margins)
     }
     

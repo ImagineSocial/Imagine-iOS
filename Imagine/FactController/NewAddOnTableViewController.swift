@@ -35,6 +35,10 @@ class NewAddOnTableViewController: UITableViewController {
             navigationController?.popViewController(animated: false)
             return
         }
+        
+        Analytics.logEvent("AddOnStoreOpened", parameters: [
+            AnalyticsParameterTerm: ""
+        ])
 
         tableView.register(UINib(nibName: "AddOnStoreImageTableViewCell", bundle: nil), forCellReuseIdentifier: addOnStoreCellIdentifier)
         tableView.register(UINib(nibName: "AddOnHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: addOnHeaderIdentifier)
@@ -44,9 +48,9 @@ class NewAddOnTableViewController: UITableViewController {
         self.doneBarButtonItem.isEnabled = false
         self.doneBarButtonItem.tintColor = UIColor.blue.withAlphaComponent(0.5)
         
-        let header = OptionalInformation(style: .header, OP: "", documentID: "", fact: Fact(), headerTitle: "Füge einen Header hinzu.", description: Constants.texts.AddOns.headerText)
-        let infoAll = OptionalInformation(style: .all, OP: "", documentID: "", fact: Fact(), headerTitle: "Füge eine Kollektion mit Beiträgen und Themen hinzu.", description: Constants.texts.AddOns.collectionText)
-        let singleTopic = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Fact(), headerTitle: "Verlinke ein aussagekräftiges Thema.", description: Constants.texts.AddOns.singleTopicText)
+        let header = OptionalInformation(style: .header, OP: "", documentID: "", fact: Fact(), headerTitle: "Füge einen Header hinzu.", description: Constants.texts.AddOns.headerText, singleTopic: nil)
+        let infoAll = OptionalInformation(style: .all, OP: "", documentID: "", fact: Fact(), headerTitle: "Füge eine Kollektion mit Beiträgen und Themen hinzu.", description: Constants.texts.AddOns.collectionText, singleTopic: nil)
+        let singleTopic = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Fact(), headerTitle: "Verlinke ein aussagekräftiges Thema.", description: Constants.texts.AddOns.singleTopicText, singleTopic: nil)
         
         optionalInformations.append(contentsOf: [header, infoAll, singleTopic])
         tableView.reloadData()

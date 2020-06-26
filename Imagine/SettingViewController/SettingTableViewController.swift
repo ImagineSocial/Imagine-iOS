@@ -33,6 +33,7 @@ class UserSetting {
     var statusText: String?
     var OP: String
     var imageURL: String?
+    var birthday: Date?
     
     var youTubeLink: String?
     var patreonLink: String?
@@ -46,6 +47,7 @@ class UserSetting {
 }
 
 class AddOnSetting {
+    var style: OptionalInformationStyle
     var fact: Fact
     var addOnDocumentID: String
     var description: String
@@ -54,7 +56,8 @@ class AddOnSetting {
     var title: String?
     var itemOrder: [String]?
     
-    init(fact: Fact, addOnDocumentID: String, description: String, items: [AddOnItem]) {
+    init(style: OptionalInformationStyle, fact: Fact, addOnDocumentID: String, description: String, items: [AddOnItem]) {
+        self.style = style
         self.fact = fact
         self.addOnDocumentID = addOnDocumentID
         self.description = description
@@ -101,6 +104,7 @@ enum SettingCellType {
     case imageCell
     case textCell
     case switchCell
+    case datePickerCell
 }
 
 enum SettingChangeType {
@@ -116,6 +120,7 @@ enum SettingChangeType {
     case changeUserPatreonLink
     case changeUserYouTubeLink
     case changeUserTwitterLink
+    case changeUserAge
     //AddOn
     case changeAddOnPicture
     case changeAddOnTitle
@@ -151,6 +156,7 @@ class SettingTableViewController: UITableViewController {
 
     let imageSettingIdentifier = "SettingImageCell"
     let textSettingIdentifier = "SettingTextCell"
+    let dateSettingIdentifier = "SettingDateCell"
     let switchSettingIdentifier = "SettingSwitchCell"
     let pickOrderSettingIdentifier = "SettingPickOrderCell"
     
@@ -179,6 +185,11 @@ class SettingTableViewController: UITableViewController {
         
         if let topic = topic {
             let ref = db.collection("Facts").document(topic.documentID)
+            
+            Analytics.logEvent("SettingOpened", parameters: [
+                AnalyticsParameterTerm: "topic"
+            ])
+            
             ref.getDocument { (snap, err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
@@ -206,6 +217,10 @@ class SettingTableViewController: UITableViewController {
         } else if let user = user {
             let userSetting = UserSetting(name: user.displayName, OP: user.userUID)
             
+            Analytics.logEvent("SettingOpened", parameters: [
+                AnalyticsParameterTerm: "user"
+            ])
+            
             let ref = db.collection("Users").document(user.userUID)
             ref.getDocument { (snap, err) in
                 if let error = err {
@@ -226,6 +241,12 @@ class SettingTableViewController: UITableViewController {
                             if let twitterLink = data["twitterLink"] as? String {
                                 userSetting.twitterLink = twitterLink
                             }
+                            
+                            if let birthday = data["birthday"] as? Timestamp {
+                                let date = birthday.dateValue()
+                                userSetting.birthday = date
+                            }
+                            
                             userSetting.imageURL = user.imageURL
                             userSetting.statusText = user.statusQuote
                             self.userSetting = userSetting
@@ -235,7 +256,11 @@ class SettingTableViewController: UITableViewController {
                 }
             }
         } else if let addOn = addOn {
-            let addOnSetting = AddOnSetting(fact: addOn.fact, addOnDocumentID: addOn.documentID, description: addOn.description, items: addOn.items)
+            let addOnSetting = AddOnSetting(style: addOn.style, fact: addOn.fact, addOnDocumentID: addOn.documentID, description: addOn.description, items: addOn.items)
+            
+            Analytics.logEvent("SettingOpened", parameters: [
+                AnalyticsParameterTerm: "addOn"
+            ])
             
             addOnSetting.title = addOn.headerTitle
             addOnSetting.imageURL = addOn.imageURL
@@ -294,12 +319,20 @@ class SettingTableViewController: UITableViewController {
                 youTubeCell.titleText = "YouTube:"
                 let twitterCell = TableViewSettingCell(value: userSetting.twitterLink, type: .textCell, settingChange: .changeUserTwitterLink)
                 twitterCell.titleText = "Twitter:"
-                socialMediaSetting.footerText = "Gib einen Link zu den jeweiligen Profilen ein, um einen Button in deinem Profil zu erhalten. Weise so die Besucher auf deine anderen Social-Media Profile hin oder promote so deine persönlichen Favoriten."
+                socialMediaSetting.footerText = "Gib einen Link zu den jeweiligen Profilen ein, um einen Button in deinem Profil zu erhalten. Weise so die Besucher auf deine anderen Social-Media Profile hin oder promote deine persönlichen Favoriten."
+                
+                let voluntarySettings = TableViewSetting(type: .normal, headerText: "Persönliche Angaben")
+                voluntarySettings.footerText = "Mit diesen Angaben unterstützt du Imagine. Wir können diese Angaben nutzen, um unsere User besser zu verstehen und unsere kommenden Werbevorhaben zu optimieren."
+                
+                let ageCell = TableViewSettingCell(value: userSetting.birthday, type: .datePickerCell, settingChange: .changeUserAge)
+                ageCell.titleText = "Geburtsjahr:"
+                
+                voluntarySettings.cells.append(ageCell)
                 
                 socialMediaSetting.cells.append(contentsOf: [patreonCell, youTubeCell, instaCell, twitterCell])
                 setting.cells.append(contentsOf: [imageCell, statusCell])
                 
-                self.settings.append(contentsOf: [setting, socialMediaSetting])
+                self.settings.append(contentsOf: [setting, socialMediaSetting, voluntarySettings])
                 tableView.reloadData()
             }
         case .addOn:
@@ -316,14 +349,19 @@ class SettingTableViewController: UITableViewController {
                 descriptionCell.characterLimit = Constants.characterLimits.addOnDescriptionCharacterLimit
                 descriptionCell.titleText = "Beschreibung"
                 
-                let orderSetting = TableViewSetting(type: .changeOrder, headerText: "Arrangiere die Beiträge:")
-                orderSetting.addOnItems = addOnSetting.items
-                self.getAddOnItemsForOrderArrangement(items: orderSetting.addOnItems)
-                
-                self.tableView.isEditing = true
-                
                 setting.cells.append(contentsOf: [imageCell, titleCell, descriptionCell])
-                self.settings.append(contentsOf: [setting, orderSetting])
+                self.settings.append(setting)
+                
+                if addOnSetting.style == .all {
+                    let orderSetting = TableViewSetting(type: .changeOrder, headerText: "Arrangiere die Beiträge:")
+                    orderSetting.addOnItems = addOnSetting.items
+                    self.getAddOnItemsForOrderArrangement(items: orderSetting.addOnItems)
+                    
+                    self.tableView.isEditing = true
+                    
+                    self.settings.append(orderSetting)
+                }
+                
                 self.tableView.reloadData()
             }
         }
@@ -444,6 +482,13 @@ class SettingTableViewController: UITableViewController {
                     
                     return cell
                 }
+            case .datePickerCell:
+                if let cell = tableView.dequeueReusableCell(withIdentifier: dateSettingIdentifier, for: indexPath) as? SettingDateCell {
+                    cell.delegate = self
+                    cell.config = config
+                    
+                    return cell
+                }
             }
         case .changeOrder:
             let item = setting.addOnItems[indexPath.row]
@@ -485,6 +530,8 @@ class SettingTableViewController: UITableViewController {
                 default:
                     return 40
                 }
+            case .datePickerCell:
+                return 100
             default:
                 return UITableView.automaticDimension
             }
@@ -877,6 +924,15 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             } else {
                 return
             }
+        case .changeUserAge:
+            firestoreKey = "birthday"
+            
+            if let date = value as? Date {
+                let timestamp = Timestamp(date: date)
+                firestoreValue = timestamp
+            } else {
+                return
+            }
         }
         
         if firestoreKey != "" {
@@ -1049,6 +1105,42 @@ class SettingTextCell: UITableViewCell, UITextViewDelegate {
     
 }
 
+class SettingDateCell: UITableViewCell {
+    
+    @IBOutlet weak var settingTitleLabel: UILabel!
+    @IBOutlet weak var datePicker: UIDatePicker!
+    
+    var delegate: SettingCellDelegate?
+    
+    var config: TableViewSettingCell? {
+        didSet {
+            if let setting = config {
+                settingTitleLabel.text = setting.titleText
+                if let value = setting.value as? Date {
+                    datePicker.setDate(value, animated: true)
+                }
+            }
+        }
+    }
+    
+    func newTextReady(text: String) {
+        if let setting = config {
+            delegate?.gotChanged(type: setting.settingChange, value: text)
+        }
+    }
+    
+    override func awakeFromNib() {
+
+    }
+    
+    @IBAction func datePickerChanged(_ sender: Any) {
+        if let setting = config {
+            delegate?.gotChanged(type: setting.settingChange, value: datePicker.date)
+        }
+    }
+}
+
+
 class SettingSwitchCell: UITableViewCell {
     
     @IBOutlet weak var settingTitleLabel: UILabel!
@@ -1075,59 +1167,6 @@ class SettingSwitchCell: UITableViewCell {
         }
     }
 }
-
-//class SettingPickOrderCell: UITableViewCell {
-//
-//
-//    override func awakeFromNib() {
-//        print(" awaken")
-//        textLabel?.font = UIFont(name: "IBMPlexSans", size: 14)
-//        if let imageView = imageView {
-//            imageView.layer.cornerRadius = imageView.frame.width/2
-//        }
-//    }
-//
-//    override func layoutSubviews() {
-//        self.imageView?.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
-//    }
-//
-//    var post: Post? {
-//        didSet {
-//            if let post = post {
-//                self.textLabel?.text = post.title
-//                print("Set text in cell: \(post.title), textLabel: \(self.textLabel)")
-//                if post.imageURL != "" {
-//                    if let url = URL(string: post.imageURL) {
-//                        self.imageView?.sd_setImage(with: url, completed: nil)
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    var fact: Fact? {
-//        didSet {
-//            if let fact = fact {
-//                self.textLabel?.text = fact.title
-//
-//                if fact.imageURL != "" {
-//                    if let url = URL(string: fact.imageURL) {
-//                        self.imageView?.sd_setImage(with: url, completed: nil)
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    override func prepareForReuse() {
-//        self.fact = nil
-//        self.post = nil
-//
-//        self.imageView?.image = nil
-//        self.textLabel?.text = ""
-//    }
-//
-//}
 
 class SettingPickOrderCell: UITableViewCell {
     

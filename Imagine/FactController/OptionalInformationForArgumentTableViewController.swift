@@ -84,6 +84,10 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             self.exampleButton.isHidden = true
         }
         
+        Analytics.logEvent("AddOnVCOpened", parameters: [
+            AnalyticsParameterTerm: ""
+        ])
+        
         tableView.register(UINib(nibName: "CollectionViewInTableViewCell", bundle: nil), forCellReuseIdentifier: reuseIdentifier)
         tableView.register(ProposalCell.self, forCellReuseIdentifier: proposalCellIdentifier)
         tableView.register(AddFactCell.self, forCellReuseIdentifier: addSectionReuseIdentifier)
@@ -138,7 +142,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                         let data = document.data()
                         
                         if let title = data["title"] as? String, let OP = data["OP"] as? String, let description = data["description"] as? String { //Normal collection
-                            let addOn = OptionalInformation(style: .all, OP: OP, documentID: document.documentID, fact: fact, headerTitle: title, description: description)
+                            let addOn = OptionalInformation(style: .all, OP: OP, documentID: document.documentID, fact: fact, headerTitle: title, description: description, singleTopic: nil)
                             
                             if let imageURL = data["imageURL"] as? String {
                                 addOn.imageURL = imageURL
@@ -168,7 +172,11 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                             self.optionalInformations.insert(addOn, at: 0)  // Should be on top of the vc
                         } else if let documentID = data["linkedFactID"] as? String {    //SingleTopic
                             if let headerTitle = data["headerTitle"] as? String, let description = data["description"] as? String,  let OP = data["OP"] as? String {
-                                let addOn = OptionalInformation(style: .singleTopic, OP: OP, documentID: document.documentID, fact: fact, headerTitle: headerTitle, description: description)
+                                
+                                let singleTopic = Fact()
+                                singleTopic.documentID = documentID
+                                
+                                let addOn = OptionalInformation(style: .singleTopic, OP: OP, documentID: document.documentID, fact: fact, headerTitle: headerTitle, description: description, singleTopic: singleTopic)
                                 
                                 if let itemOrder = data["itemOrder"] as? [String] {
                                     addOn.itemOrder = itemOrder
@@ -343,7 +351,6 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             if let _ = optInfo.addOnInfoHeader {
                 return 0
             } else {
-                //40
                 return UITableView.automaticDimension
             }
         } else {
@@ -395,7 +402,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             case .singleTopic:
                 return UITableView.automaticDimension
             default:
-                return 290
+                return 300
             }
         }
         

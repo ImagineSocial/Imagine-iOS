@@ -271,12 +271,18 @@ class FactParentContainerViewController: UIViewController {
             if segue.identifier == "toProSegue" {
                 vc.fact = self.fact
             }
+            Analytics.logEvent("TappedOnArgument", parameters: [
+                AnalyticsParameterTerm: ""
+            ])
         }
         
         if let contraVC = segue.destination as? ContraFactTableViewController {
             if segue.identifier == "toContraSegue" {
                 contraVC.fact = self.fact
             }
+            Analytics.logEvent("TappedOnArgument", parameters: [
+                AnalyticsParameterTerm: ""
+            ])
         }
         
         if segue.identifier == "toPostsSegue" {

@@ -139,6 +139,7 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
                 self.thanksButton.setTitle(String(1), for: .normal)
                 info.thanksCount = 1
             }
+            self.thanksButton.isEnabled = false
             delegate?.thanksTapped(info: info)
             
             let generator = UIImpactFeedbackGenerator(style: .light)

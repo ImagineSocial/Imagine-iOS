@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class ArgumentPageViewController: UIPageViewController {
     
@@ -116,7 +117,9 @@ class ArgumentPageViewController: UIPageViewController {
             self.barButtonPageControl.currentPage = 1
             
             if fact.displayOption == .fact {
-                
+                Analytics.logEvent("DiscussionOpened", parameters: [
+                    AnalyticsParameterTerm: ""
+                ])
                 if let secondVC = argumentVCs[1] as? FactParentContainerViewController {
                     setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
                 }
@@ -159,6 +162,10 @@ extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageView
 //    }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        
+        Analytics.logEvent("SwipedThroughCommunity", parameters: [
+            AnalyticsParameterTerm: ""
+        ])
         
         if let currentViewController = pageViewController.viewControllers?.first
             ,let index = argumentVCs.index(of: currentViewController){

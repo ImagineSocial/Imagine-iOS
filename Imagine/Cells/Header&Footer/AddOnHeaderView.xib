@@ -42,20 +42,20 @@
                     </constraints>
                 </view>
                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sqk-Vk-93r">
-                    <rect key="frame" x="10" y="95" width="280" height="76.5"/>
+                    <rect key="frame" x="10" y="95" width="280" height="71.5"/>
                     <fontDescription key="fontDescription" name="IBMPlexSans-Bold" family="IBM Plex Sans" pointSize="16"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eMs-4E-3BA">
-                    <rect key="frame" x="10" y="176.5" width="290" height="18.5"/>
+                    <rect key="frame" x="10" y="171.5" width="290" height="18.5"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
                     <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <button clipsSubviews="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IK2-gA-8HN" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                    <rect key="frame" x="330" y="118.5" width="30" height="30"/>
+                    <rect key="frame" x="330" y="116" width="30" height="30"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="30" id="HxK-vi-zav"/>
@@ -72,7 +72,7 @@
                     </connections>
                 </button>
                 <button hidden="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0RO-oO-h1z" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                    <rect key="frame" x="295" y="121" width="25" height="25"/>
+                    <rect key="frame" x="295" y="118.5" width="25" height="25"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="25" id="imB-7w-dAB"/>
                         <constraint firstAttribute="width" constant="25" id="rxl-i1-3qg"/>
@@ -85,7 +85,7 @@
                     </connections>
                 </button>
                 <button clipsSubviews="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="O4U-cy-ANP" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                    <rect key="frame" x="332.5" y="170" width="25" height="25"/>
+                    <rect key="frame" x="332.5" y="165" width="25" height="25"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="25" id="Pjr-vN-f6y"/>
@@ -103,7 +103,7 @@
             </subviews>
             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
             <constraints>
-                <constraint firstItem="0Au-p0-ZmM" firstAttribute="bottom" secondItem="eMs-4E-3BA" secondAttribute="bottom" constant="10" id="6c2-tR-eoV"/>
+                <constraint firstItem="0Au-p0-ZmM" firstAttribute="bottom" secondItem="eMs-4E-3BA" secondAttribute="bottom" constant="15" id="6c2-tR-eoV"/>
                 <constraint firstItem="Sqk-Vk-93r" firstAttribute="top" secondItem="T1I-S6-P8b" secondAttribute="top" constant="5" id="916-xc-oh6"/>
                 <constraint firstItem="KHh-h8-9Sy" firstAttribute="leading" secondItem="nTE-2L-dgO" secondAttribute="leading" id="A7Q-Gq-kXe"/>
                 <constraint firstItem="T1I-S6-P8b" firstAttribute="leading" secondItem="nTE-2L-dgO" secondAttribute="leading" id="G3o-yw-B1L"/>

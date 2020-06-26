@@ -2239,6 +2239,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             if text.contains(".mp4") {
                 link = text
             } else {
+                
+                Analytics.logEvent("FailedToPostGIF", parameters: [
+                    AnalyticsParameterTerm: ""
+                ])
                 self.alert(message: "Im Moment sind nur Links mit Endung '.mp4' möglich. Die Endung .GIF ist veraltet, wird aus Speichergründen nicht mehr benutzt. Sag uns aber gerne bescheid, wie du deine GIFs verbreiten möchtest!", title: "Wir können dein GIF leider nicht hochladen")
                 return
                 

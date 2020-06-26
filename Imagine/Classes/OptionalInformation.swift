@@ -42,6 +42,8 @@ class OptionalInformation {
     var imageURL: String?
     var OP: String
     
+    var singleTopic: Fact?
+    
     var itemOrder: [String]?    // Order of the items in the addOn by DocumentID
     
     var thanksCount:Int?
@@ -52,7 +54,7 @@ class OptionalInformation {
     
     var items = [AddOnItem]()
     
-    init(style: OptionalInformationStyle, OP: String, documentID: String, fact: Fact, headerTitle: String, description: String) {    /// For the normal AddOn & singleTopic initialization
+    init(style: OptionalInformationStyle, OP: String, documentID: String, fact: Fact, headerTitle: String, description: String, singleTopic: Fact?) {    /// For the normal AddOn & singleTopic initialization
         self.description = description
         self.headerTitle = headerTitle
         self.documentID = documentID
@@ -61,8 +63,11 @@ class OptionalInformation {
         self.OP = OP
         
         if style == .singleTopic {
-            if fact.documentID != "" {
-                self.getFact(documentID: fact.documentID)
+            if let singleTopic = singleTopic {
+                self.singleTopic = singleTopic
+                if singleTopic.documentID != "" {
+                    self.getFact(documentID: singleTopic.documentID)
+                }
             }
         }
     }
@@ -96,7 +101,7 @@ class OptionalInformation {
                         fact.documentID = document.documentID
                         fact.title = name
                         
-                        if let imageURL = data["imageURL"] as? String { // Not mandatory (in fact not selectable)
+                        if let imageURL = data["imageURL"] as? String { // Not mandatory
                             fact.imageURL = imageURL
                         }
                         if let description = data["description"] as? String {   // Was introduced later on
@@ -109,7 +114,7 @@ class OptionalInformation {
                         }
                         fact.fetchComplete = true
                         
-                        self.fact = fact
+                        self.singleTopic = fact
                     }
                 }
             }

@@ -89,6 +89,10 @@ class NewFactViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        Analytics.logEvent("NewFactOpened", parameters: [
+            AnalyticsParameterTerm: ""
+        ])
+        
         titleTextField.delegate = self
         descriptionTextView.delegate = self
         
@@ -482,15 +486,26 @@ class NewFactViewController: UIViewController {
             let displayOption = self.getNewFactDisplayString(displayOption: self.pickedDisplayOption)
             
             var data = [String: Any]()
+            let name = titleTextField.text!
+            let description = descriptionTextView.text!
+            let fact = Fact()
             
-            data = ["follower": [op.uid],"name": titleTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "OP": op.uid, "displayOption": displayOption.displayOption, "popularity": 0]
+            data = ["follower": [op.uid],"name": name, "description": description, "createDate": Timestamp(date: Date()), "OP": op.uid, "displayOption": displayOption.displayOption, "popularity": 0]
             
             if let factDisplayName = displayOption.factDisplayNames {
                 data["factDisplayNames"] = factDisplayName
             }
             
+            fact.title = name
+            fact.description = description
+            fact.beingFollowed = true
+            fact.documentID = ref.documentID
+            fact.displayOption = self.pickedDisplayOption
+            fact.moderators = [op.uid]
+            
             if let url = imageURL {
                 data["imageURL"] = url
+                fact.imageURL = url
             }
             
             self.setUserChanges(documentID: ref.documentID) //Follow Topic and set Mod Badge
@@ -500,7 +515,7 @@ class NewFactViewController: UIViewController {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
                     
-                    self.finished(item: nil)    // Will reload the database in the delegate
+                    self.finished(item: fact)    // Will reload the database in the delegate
                 }
             }
         }

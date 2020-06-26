@@ -577,10 +577,10 @@
 			children = (
 				E9A5F5AB2440CFE900DCCFDF /* DiscussionVCs */,
 				E96CE88C22940A9F00BACD3B /* FactCollectionViewController.swift */,
+				E9B85D4124112DCA00960942 /* ArgumentPageViewController.swift */,
 				E96CE89322941C5C00BACD3B /* FactParentContainerViewController.swift */,
 				E9C6C236229601D8003F0F16 /* NewFactViewController.swift */,
 				E9F6030E235DE5DF00A58D08 /* PostsOfFactTableViewController.swift */,
-				E9B85D4124112DCA00960942 /* ArgumentPageViewController.swift */,
 				E9B85D45241165CF00960942 /* OptionalInformationForArgumentTableViewController.swift */,
 				E904BF0124264525003EC8DF /* AddPostTableViewController.swift */,
 				E9E521B92458477F002585A2 /* NewAddOnTableViewController.swift */,

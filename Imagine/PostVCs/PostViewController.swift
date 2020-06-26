@@ -1714,8 +1714,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     func showButtonText(post: Post, button: DesignableButton) {
         buttonLabel.alpha = 1
-        button.titleLabel?.textColor = .black
-        button.setTitleColor(.black, for: .normal)
+        if #available(iOS 13.0, *) {
+            button.setTitleColor(.label, for: .normal)
+        } else {
+            button.setTitleColor(.black, for: .normal)
+        }
         
         if let _ = centerX {
             centerX!.isActive = false
@@ -1866,18 +1869,22 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     @objc func thanksTapped() {
+        thanksButton.isEnabled = false
         updatePost(button: .thanks)
     }
     
     @objc func wowTapped() {
+        wowButton.isEnabled = false
         updatePost(button: .wow)
     }
     
     @objc func haTapped() {
+        haButton.isEnabled = false
         updatePost(button: .ha)
     }
     
     @objc func niceTapped() {
+        niceButton.isEnabled = false
         updatePost(button: .nice)
     }
     

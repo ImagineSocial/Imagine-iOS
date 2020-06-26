@@ -257,6 +257,7 @@ class PostCell : BaseFeedCell {
     
     @IBAction func thanksButtonTapped(_ sender: Any) {
         if let post = post {
+            thanksButton.isEnabled = false
             delegate?.thanksTapped(post: post)
             post.votes.thanks = post.votes.thanks+1
             showButtonText(post: post, button: thanksButton)
@@ -264,6 +265,7 @@ class PostCell : BaseFeedCell {
     }
     @IBAction func wowButtonTapped(_ sender: Any) {
         if let post = post {
+            wowButton.isEnabled = false
             delegate?.wowTapped(post: post)
             post.votes.wow = post.votes.wow+1
             showButtonText(post: post, button: wowButton)
@@ -271,6 +273,7 @@ class PostCell : BaseFeedCell {
     }
     @IBAction func haButtonTapped(_ sender: Any) {
         if let post = post {
+            haButton.isEnabled = false
             delegate?.haTapped(post: post)
             post.votes.ha = post.votes.ha+1
             showButtonText(post: post, button: haButton)
@@ -278,11 +281,10 @@ class PostCell : BaseFeedCell {
     }
     @IBAction func niceButtonTapped(_ sender: Any) {
         if let post = post {
+            niceButton.isEnabled = false
             delegate?.niceTapped(post: post)
             post.votes.nice = post.votes.nice+1
-            DispatchQueue.main.async {  //Doesnt make a difference apparently, but I wish it would because it lags a bit
-                self.showButtonText(post: post, button: self.niceButton)
-            }
+            self.showButtonText(post: post, button: self.niceButton)
         }
     }
     

@@ -15,7 +15,7 @@ import Reachability
 import EasyTipView
 
 
-class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDelegate, DismissDelegate, UNUserNotificationCenterDelegate {
+class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNUserNotificationCenterDelegate {
     
     @IBOutlet weak var sortPostsButton: DesignableButton!
     @IBOutlet weak var viewAboveTableView: UIView!
@@ -557,9 +557,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
     
     func loadBarButtonItem() {
         
-//        if self.navigationItem.rightBarButtonItems == nil {
-//            self.createRightBarButtons()
-//        }
         
         if isConnected() {
             
@@ -585,13 +582,6 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
         }
     }
     
-    
-    
-    func createRightBarButtons() {
-        
-        let searchBarButton = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(self.searchBarTapped))
-        self.navigationItem.rightBarButtonItem = searchBarButton
-    }
     
     func createBarButton() {
         // View so I there can be a small number for Invitations
@@ -909,57 +899,9 @@ class FeedTableViewController: BaseFeedTableViewController, UISearchControllerDe
             return true
         }
     }
-    
-    // MARK: - SearchBar
-    
-    func setUpSearchController() {
-        
-        // I think it is unnecessary to set the searchResultsUpdater and searchcontroller Delegate here, but I couldnt work out an alone standing SearchViewController
-        
-        searchTableVC.customDelegate = self
-        
-        searchController = UISearchController(searchResultsController: searchTableVC)
-        
-        // Setup the Search Controller
-        searchController.searchResultsUpdater = self
-        searchController.obscuresBackgroundDuringPresentation = true
-        searchController.searchBar.placeholder = "Durchsuche Imagine"
-        searchController.delegate = self
-        
-        searchController.searchBar.scopeButtonTitles = ["Posts", "User"]
-        searchController.searchBar.delegate = self
-        
-        if #available(iOS 11.0, *) {
-            // For iOS 11 and later, place the search bar in the navigation bar.
-            self.navigationItem.searchController = searchController
-        } else {
-            // For iOS 10 and earlier, place the search controller's search bar in the table view's header.
-            tableView.tableHeaderView = searchController.searchBar
-        }
-        self.navigationItem.hidesSearchBarWhenScrolling = true
-        self.searchController.isActive = false
-        definesPresentationContext = true
-     }
-    
-    @objc func searchBarTapped() {
-        // Show search bar
-        self.fetchesPosts = true // Otherwise the view thinks it scrolled to the button via the function scrollViewDidScroll in BaseFeedTableViewController, couldn't figure a better way
-
-        //        self.searchController.isActive = true   // Not perfekt but works
-        self.searchController.searchBar.becomeFirstResponder()
-    }
-    
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        self.fetchesPosts = true // Otherwise the view thinks it scrolled to the button via the function scrollViewDidScroll in BaseFeedTableViewController, could figure a better way
-    }
-    
-    func didDismissSearchController(_ searchController: UISearchController) {
-        self.fetchesPosts = false   // Otherwise the view thinks it scrolled to the button via the function scrollViewDidScroll in BaseFeedTableViewController, could figure a better way
-    }
 }
 
-
-// MARK: - UISearchResultsUpdating Delegate, UISearchBar Delegate, CustomDelegate
+// MARK: - UISearchResultsUpdating Delegate, UISearchBar Delegate, CustomDelegate kann weg
 extension FeedTableViewController: UISearchResultsUpdating, UISearchBarDelegate, CustomSearchViewControllerDelegate {
     
     func didSelectItem(item: Any) {

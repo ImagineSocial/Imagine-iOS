@@ -82,15 +82,13 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
     
     
     func getCommunityPosts() {
-        let ref = db.collection("TopicPosts").whereField("type", isEqualTo: "picture").order(by: "createTime", descending: true).limit(to: 50)
-        
+        let ref = db.collection("TopicPosts").whereField("type", in: ["picture", "multiPicture", "GIF"]).order(by: "createTime", descending: true).limit(to: 50)
+        //.whereField("type", isEqualTo: "picture").order(by: "createTime", descending: true).limit(to: 50)
         ref.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
                 if let snap = snap {
-                    self.addGIFPosts()
-                    
                     var posts = [Post]()
                     for document in snap.documents {
                         
@@ -99,37 +97,12 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
                         }
                     }
                     self.communityPosts = posts
-                }
-            }
-        }
-    }
-    
-    func addGIFPosts() {
-        let gifRef = db.collection("TopicPosts").whereField("type", isEqualTo: "GIF").order(by: "createTime", descending: true).limit(to: 50)
-        
-        gifRef.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-
-                    var i = 3
-                    for document in snap.documents {
-                        
-                        if let post = self.postHelper.addThePost(document: document, isTopicPost: true, forFeed: false) {
-                            if self.communityPosts != nil {
-                                self.communityPosts!.insert(post, at: i)
-                            } else {
-                                print("Noch keine Posts da")
-                            }
-                            i = i+4
-                        }
-                    }
                     self.collectionView.reloadData()
                 }
             }
         }
     }
+    
 
     // MARK: UICollectionViewDataSource
 
@@ -161,13 +134,19 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: communityPostCellIdentifier, for: indexPath) as? SearchCollectionViewPostCell {
                 
                 if post.type == .picture {
-                    
                     if let url = URL(string: post.imageURL) {
                         cell.searchCellImageView.sd_setImage(with: url, completed: nil)
                     }
                 } else if post.type == .GIF {
                     cell.avPlayerLayer?.removeFromSuperlayer()
                     cell.GIFLink = post.linkURL
+                } else if post.type == .multiPicture {
+                    if let images = post.imageURLs {
+                        if let url = URL(string: images[0]) {
+                            cell.searchCellImageView.sd_setImage(with: url, completed: nil)
+                        }
+                    }
+                    cell.SearchCellMultiPictureIcon.isHidden = false
                 }
                 return cell
             }
@@ -252,6 +231,10 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
         if let posts = communityPosts {
             let post = posts[indexPath.item]
             performSegue(withIdentifier: "toPostSegue", sender: post)
+            
+            Analytics.logEvent("PostTappedInSearchVC", parameters: [
+                AnalyticsParameterTerm: post.title
+            ])
         } else if let posts = postResults {
             let post = posts[indexPath.item]
             performSegue(withIdentifier: "toPostSegue", sender: post)
@@ -623,6 +606,7 @@ class SearchCollectionViewPostCell: UICollectionViewCell {
     
     
     @IBOutlet weak var searchCellImageView: UIImageView!
+    @IBOutlet weak var SearchCellMultiPictureIcon: UIImageView!
     
     var avPlayer: AVPlayer? {
         didSet {
@@ -726,6 +710,7 @@ class SearchCollectionViewPostCell: UICollectionViewCell {
         searchCellImageView.image = nil
         avPlayerLayer?.removeFromSuperlayer()
         
+        SearchCellMultiPictureIcon.isHidden = true
     }
 }
 

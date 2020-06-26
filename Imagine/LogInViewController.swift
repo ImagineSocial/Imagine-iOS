@@ -934,6 +934,11 @@ class LogInViewController: UIViewController {
             let alertController = UIAlertController(title: "Anmeldung abbrechen?", message: "Möchtest du die Anmeldung abbrechen? Die aktuellen Eingaben gehen verloren.", preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Anmeldung abbrechen", style: .destructive, handler: { (_) in
                 self.dismiss(animated: true, completion: nil)
+                
+                Analytics.logEvent("RegistrationAborted", parameters: [
+                    AnalyticsParameterTerm: ""
+                ])
+                
             })
             let stayAction = UIAlertAction(title: "Hier bleiben", style: .cancel) { (_) in
                 alertController.dismiss(animated: true, completion: nil)
