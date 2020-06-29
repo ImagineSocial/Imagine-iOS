@@ -13,6 +13,7 @@ import FirebaseFirestore
 import FirebaseAuth
 import FirebaseStorage
 import AVKit
+import WebKit
 
 // This enum represents the different states, when accessing the UserFeedTableVC
 enum AccessState{
@@ -28,6 +29,7 @@ enum SocialMediaType {
     case youTube
     case instagram
     case twitter
+    case songwhip
 }
 
 class SocialMediaObject {
@@ -339,6 +341,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                                 let media = SocialMediaObject(type: .twitter, link: twitterLink)
                                 medias.append(media)
                             }
+                            if let songwhipLink = docData["songwhipLink"] as? String {
+                                let media = SocialMediaObject(type: .songwhip, link: songwhipLink)
+                                medias.append(media)
+                            }
                             
                             if medias.count != 0 {
                                 self.socialMediaObjects = medias
@@ -423,6 +429,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 let media = SocialMediaObject(type: .twitter, link: twitterLink)
                 medias.append(media)
             }
+            if let songwhipLink = userOfProfile.songwhipLink {
+                let media = SocialMediaObject(type: .songwhip, link: songwhipLink)
+                medias.append(media)
+            }
             
             if medias.count != 0 {
                 self.socialMediaObjects = medias
@@ -468,6 +478,9 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         case .twitter:
             button.addTarget(self, action: #selector(twitterButtonTapped), for: .touchUpInside)
             button.setImage(UIImage(named: "TwitterIcon"), for: .normal)
+        case .songwhip:
+            button.addTarget(self, action: #selector(songwhipButtonTapped), for: .touchUpInside)
+            button.setImage(UIImage(named: "MusicIcon"), for: .normal)
         }
         
         socialMediaInteractionStackView.addArrangedSubview(button)
@@ -529,6 +542,19 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         }
     }
     
+    @objc func songwhipButtonTapped() {
+        if let medias = socialMediaObjects {
+            for media in medias {
+                if media.type == .songwhip {
+                    if let url = URL(string: media.link) {
+                        performSegue(withIdentifier: "showLeanLink", sender: url)
+                    } else {
+                        self.alert(message: "Kein gültiger Link verfügbar")
+                    }
+                }
+            }
+        }
+    }
     func updateTopViewUIOfOwnProfile() {
         interactionBarHeightConstraint.constant = 0
         view.layoutIfNeeded()
@@ -1225,6 +1251,13 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 if let vc = segue.destination as? SettingTableViewController {
                     vc.user = user
                     vc.settingFor = .userProfile
+                }
+            }
+        }
+        if segue.identifier == "showLeanLink" {
+            if let url = sender as? URL {
+                if let vc = segue.destination as? LeanWebViewViewController {
+                    vc.link = url
                 }
             }
         }

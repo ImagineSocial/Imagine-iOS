@@ -21,6 +21,7 @@
 		E911EEF022DB157500EDD056 /* SettingsLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEEF22DB157500EDD056 /* SettingsLauncher.swift */; };
 		E911EEF222DB173E00EDD056 /* SettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEF122DB173E00EDD056 /* SettingCell.swift */; };
 		E911EEF422DB630300EDD056 /* SideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEF322DB630300EDD056 /* SideMenu.swift */; };
+		E919EFE724A6787500ED7D4F /* LeanWebViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E919EFE624A6787400ED7D4F /* LeanWebViewViewController.swift */; };
 		E91A2B5E2473B9DC00B42353 /* AddOnHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E91A2B5D2473B9DC00B42353 /* AddOnHeaderView.xib */; };
 		E91A2B6124794EAE00B42353 /* SettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91A2B6024794EAE00B42353 /* SettingTableViewController.swift */; };
 		E91D5092245EF8A500907821 /* SingleTopicAddOnCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E91D5091245EF8A500907821 /* SingleTopicAddOnCell.xib */; };
@@ -220,6 +221,7 @@
 		E911EEEF22DB157500EDD056 /* SettingsLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLauncher.swift; sourceTree = "<group>"; };
 		E911EEF122DB173E00EDD056 /* SettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingCell.swift; sourceTree = "<group>"; };
 		E911EEF322DB630300EDD056 /* SideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenu.swift; sourceTree = "<group>"; };
+		E919EFE624A6787400ED7D4F /* LeanWebViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeanWebViewViewController.swift; sourceTree = "<group>"; };
 		E91A2B5D2473B9DC00B42353 /* AddOnHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddOnHeaderView.xib; sourceTree = "<group>"; };
 		E91A2B6024794EAE00B42353 /* SettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewController.swift; sourceTree = "<group>"; };
 		E91D5091245EF8A500907821 /* SingleTopicAddOnCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SingleTopicAddOnCell.xib; sourceTree = "<group>"; };
@@ -624,6 +626,7 @@
 				E9B79CE6224F88CD00166EED /* RepostViewController.swift */,
 				E9E531FB229E9298004D0654 /* PostCommentChatViewController.swift */,
 				E9530C4D22DCBF20007D6A00 /* PinchToZoomViewController.swift */,
+				E919EFE624A6787400ED7D4F /* LeanWebViewViewController.swift */,
 			);
 			path = PostVCs;
 			sourceTree = "<group>";
@@ -1181,6 +1184,7 @@
 				E9B85D622413C46300960942 /* SmallCompanyTableViewCell.swift in Sources */,
 				E9E6876924167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift in Sources */,
 				E9F9B68B223D584600100F51 /* PageViewController.swift in Sources */,
+				E919EFE724A6787500ED7D4F /* LeanWebViewViewController.swift in Sources */,
 				E9EE0E3122D21C0E0039F32C /* SwipeCollectionViewController.swift in Sources */,
 				E97FDFCC246C33F80049E1E4 /* TopicCollectionFooter.swift in Sources */,
 				E9F31DCF23F6D78C001D5D25 /* RecentTopicsCollectionCell.swift in Sources */,

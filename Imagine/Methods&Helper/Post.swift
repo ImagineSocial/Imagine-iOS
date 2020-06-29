@@ -191,6 +191,9 @@ class Post {
                         if let twitterLink = docData["twitterLink"] as? String {
                             user.twitterLink = twitterLink
                         }
+                        if let songwhipLink = docData["songwhipLink"] as? String {
+                            user.songwhipLink = songwhipLink
+                        }
                         
                         user.imageURL = docData["profilePictureURL"] as? String ?? ""
                         user.userUID = self.originalPosterUID
@@ -220,6 +223,7 @@ public class User {
     public var patreonLink: String?
     public var youTubeLink: String?
     public var twitterLink: String?
+    public var songwhipLink: String?
     
     let db = Firestore.firestore()
     

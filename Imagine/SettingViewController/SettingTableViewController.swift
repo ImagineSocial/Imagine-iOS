@@ -39,6 +39,7 @@ class UserSetting {
     var patreonLink: String?
     var instagramLink: String?
     var twitterLink: String?
+    var songwhipLink: String?
     
     init(name: String, OP: String) {
         self.name = name
@@ -120,6 +121,7 @@ enum SettingChangeType {
     case changeUserPatreonLink
     case changeUserYouTubeLink
     case changeUserTwitterLink
+    case changeUserSongwhipLink
     case changeUserAge
     //AddOn
     case changeAddOnPicture
@@ -241,6 +243,9 @@ class SettingTableViewController: UITableViewController {
                             if let twitterLink = data["twitterLink"] as? String {
                                 userSetting.twitterLink = twitterLink
                             }
+                            if let songwhipLink = data["songwhipLink"] as? String {
+                                userSetting.songwhipLink = songwhipLink
+                            }
                             
                             if let birthday = data["birthday"] as? Timestamp {
                                 let date = birthday.dateValue()
@@ -319,6 +324,8 @@ class SettingTableViewController: UITableViewController {
                 youTubeCell.titleText = "YouTube:"
                 let twitterCell = TableViewSettingCell(value: userSetting.twitterLink, type: .textCell, settingChange: .changeUserTwitterLink)
                 twitterCell.titleText = "Twitter:"
+                let songwhipCell = TableViewSettingCell(value: userSetting.songwhipLink, type: .textCell, settingChange: .changeUserSongwhipLink)
+                songwhipCell.titleText = "Songwhip:"
                 socialMediaSetting.footerText = "Gib einen Link zu den jeweiligen Profilen ein, um einen Button in deinem Profil zu erhalten. Weise so die Besucher auf deine anderen Social-Media Profile hin oder promote deine persönlichen Favoriten."
                 
                 let voluntarySettings = TableViewSetting(type: .normal, headerText: "Persönliche Angaben")
@@ -329,7 +336,7 @@ class SettingTableViewController: UITableViewController {
                 
                 voluntarySettings.cells.append(ageCell)
                 
-                socialMediaSetting.cells.append(contentsOf: [patreonCell, youTubeCell, instaCell, twitterCell])
+                socialMediaSetting.cells.append(contentsOf: [patreonCell, youTubeCell, instaCell, twitterCell, songwhipCell])
                 setting.cells.append(contentsOf: [imageCell, statusCell])
                 
                 self.settings.append(contentsOf: [setting, socialMediaSetting, voluntarySettings])
@@ -563,7 +570,7 @@ class SettingTableViewController: UITableViewController {
         self.settings[destinationIndexPath.section].addOnItems.insert(reorderedRow, at: destinationIndexPath.row)
 
         if let addOnSetting = addOnSetting {
-            if var orderArray = addOnSetting.itemOrder {
+            if let _ = addOnSetting.itemOrder {
                 var array = [String]()
                 
                 for item in settings[destinationIndexPath.section].addOnItems {
@@ -807,6 +814,26 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
         }
     }
     
+    func savePictureURLInUserAuth(imageURL: String) {
+        let user = Auth.auth().currentUser
+        if let user = user {
+            let changeRequest = user.createProfileChangeRequest()
+            
+            if let url = URL(string: imageURL) {
+                changeRequest.photoURL = url
+            }
+            changeRequest.commitChanges { error in
+                if error != nil {
+                    // An error happened.
+                    print("Wir haben einen error beim changeRequest: \(String(describing: error?.localizedDescription))")
+                } else {
+                    // Profile updated.
+                    print("changeRequest hat geklappt")
+                }
+            }
+        }
+    }
+    
     func gotChanged(type: SettingChangeType, value: Any) {
         var firestoreKey = ""
         var firestoreValue: Any = ""
@@ -849,6 +876,7 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             
             if let string = value as? String {
                 firestoreValue = string
+                self.savePictureURLInUserAuth(imageURL: string)
             } else {
                 return
             }
@@ -886,6 +914,14 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             }
         case .changeUserTwitterLink:
             firestoreKey = "twitterLink"
+            
+            if let string = value as? String {
+                firestoreValue = string
+            } else {
+                return
+            }
+        case .changeUserSongwhipLink:
+            firestoreKey = "songwhipLink"
             
             if let string = value as? String {
                 firestoreValue = string

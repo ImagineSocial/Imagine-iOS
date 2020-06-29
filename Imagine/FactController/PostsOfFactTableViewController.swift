@@ -285,7 +285,7 @@ class PostsOfFactTableViewController: UITableViewController {
     }
     
     func showFollowTopicExplanation() {
-        followTopicTipView = EasyTipView(text: "Bei Imagine können Beiträge mit allen geteilt, oder auch seperat in einem Thema gepostet werden.\n\nFolge einer Community, um auch diese neuen Themen-Beiträge in deinem Home-Feed zu sehen.")
+        followTopicTipView = EasyTipView(text: "Bei Imagine können Beiträge mit allen geteilt, oder auch seperat in einem Thema gepostet werden.\n\nFolge einer Community, um auch diese neuen Themen-Beiträge in deinem Home-Feed zu sehen. Ganz bald jedenfalls, wir sind dabei :)")
         followTopicTipView!.show(forView: justForTipViewView)
     }
     

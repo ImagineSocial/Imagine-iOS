@@ -103,7 +103,24 @@ class PostCell : BaseFeedCell {
                 haButton.setImage(UIImage(named: "haButton"), for: .normal)
                 niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
             }
+           /*
+            let imageHeight = post.mediaHeight
+            let imageWidth = post.mediaWidth
             
+            let ratio = imageWidth / imageHeight
+            let width = self.contentView.frame.width
+            
+            let newHeight = width / ratio
+            
+                    
+            if newHeight <= 300 {
+                let newWidth = 300*ratio
+                pictureScrollView.contentSize = CGSize(width: newWidth, height: 300)
+                print("Set ScrollViewContent Wide: \(newWidth), Height: \(newHeight), ratio: \(ratio), originalHeight: \(imageHeight), originalWidth: \(imageWidth), imageWidth: \(cellImageView.frame.width), scrollviewWidth: \(pictureScrollView.frame.width)")
+            } else {
+                print("Normal Picture")
+            }
+            */
             if post.user.displayName == "" {
                 if post.anonym {
                     self.setUser()
