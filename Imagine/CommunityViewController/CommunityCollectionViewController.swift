@@ -169,8 +169,6 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
                 if blogPost.isCurrentProjectsCell {
                     if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: currentProjectsIdentifier, for: indexPath) as? CurrentProjectsCollectionCell {
                         
-                        cell.delegate = self
-                        
                         return cell
                     }
                 } else {
@@ -343,7 +341,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     
 }
 
-extension CommunityCollectionViewController: CommunityCollectionCellDelegate, CurrentProjectDelegate, TableViewInCollectionViewCellDelegate {
+extension CommunityCollectionViewController: CommunityCollectionCellDelegate, TableViewInCollectionViewCellDelegate {
     
     func itemTapped(item: Any) {
         if let jobOffer = item as? JobOffer {
@@ -351,10 +349,6 @@ extension CommunityCollectionViewController: CommunityCollectionCellDelegate, Cu
         } else if let vote = item as? Vote {
             performSegue(withIdentifier: "toVoteDetailSegue", sender: vote)
         }
-    }
-    
-    func sourceTapped(link: String) {
-        performSegue(withIdentifier: "linkTapped", sender: link)
     }
     
     func buttonTapped(button: CommunityCellButtonType) {

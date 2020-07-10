@@ -165,7 +165,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
                             if let postID = data["postID"] as? String {
                                 self.handyHelper.deleteNotifications(type: .upvote, id: postID)
                                 
-                                self.notifications = self.notifications.filter{ $0.postID != postID }
+                                self.notifications = self.notifications.filter{ $0.sectionItemID != postID }
                                 self.notificationTableView.reloadData()
                             }
                         }
@@ -734,12 +734,17 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
 }
 
 class Comment {
+    init(commentSection: CommentSection) {
+        self.section = commentSection
+    }
+    
+    var section: CommentSection
     var title = ""
     var text = ""
     var createTimeString = ""
     var createTime = Date()
     var author = ""
-    var postID = ""
+    var sectionItemID = ""
     var isTopicPost = false
     var upvotes: Votes?
     var user: User?

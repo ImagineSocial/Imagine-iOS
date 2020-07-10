@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol CommentCellDelegate {
+    func userTapped(user: User)
+}
+
 class CommentCell: UITableViewCell {
     
     @IBOutlet weak var profilePictureImageView: DesignableImage!
@@ -15,6 +19,7 @@ class CommentCell: UITableViewCell {
     @IBOutlet weak var bodyLabel: UILabel!
     @IBOutlet weak var createDateLabel: UILabel!
     
+    var delegate: CommentCellDelegate?
     
     var comment: Comment? {
         didSet {
@@ -34,5 +39,9 @@ class CommentCell: UITableViewCell {
         }
     }
     
-    
+    @IBAction func toUserTapped(_ sender: Any) {
+        if let comment = comment, let user = comment.user {
+            delegate?.userTapped(user: user)
+        }
+    }
 }

@@ -24,6 +24,8 @@ protocol CommentTableViewDelegate {
     func notLoggedIn()
     func notAllowedToComment()
     func commentGotReported(comment: Comment)
+    func commentGotDeleteRequest(comment: Comment)
+    func toUserTapped(user: User)
     func recipientChanged(isActive: Bool, userUID: String)
 }
 
@@ -99,17 +101,24 @@ class CommentTableView: UITableView {
         
         guard let section = section else { return }
         
+        var sectionItemID: String?
+        
         switch section {
         case .post:
             ref = db.collection("Comments").document(post!.documentID).collection("threads").order(by: "sentAt", descending: false)
+            sectionItemID = post!.documentID
         case .argument:
             ref = db.collection("Comments").document("arguments").collection("comments").document(argument!.documentID).collection("threads").order(by: "sentAt", descending: false)
+            sectionItemID = argument!.documentID
         case .source:
             ref = db.collection("Comments").document("sources").collection("comments").document(source!.documentID).collection("threads").order(by: "sentAt", descending: false)
+            sectionItemID = source!.documentID
         case .proposal:
             ref = db.collection("Comments").document("proposals").collection("comments").document(proposal!.documentID).collection("threads").order(by: "sentAt", descending: false)
+            sectionItemID = proposal!.documentID
         case .counterArgument:
             ref = db.collection("Comments").document("arguments").collection("comments").document(counterArgument!.documentID).collection("threads").order(by: "sentAt", descending: false)
+            sectionItemID = counterArgument!.documentID
             
         }
         
@@ -131,11 +140,16 @@ class CommentTableView: UITableView {
                             }
                             
                             self.getUser(userUID: userUID) { (user) in
-                                let comment = Comment()
+                                let comment = Comment(commentSection: section)
                                 comment.createTime = sentAtTimestamp.dateValue()
                                 comment.user = user
                                 comment.text = body
                                 comment.documentID = document.documentID
+                                if let id = sectionItemID {
+                                    comment.sectionItemID = id
+                                } else {
+                                    print("No ID for Comment")
+                                }
                                 
                                 self.addCommentToTableView(comment: comment)
                             }
@@ -162,6 +176,7 @@ class CommentTableView: UITableView {
                             let user = User()
                             user.displayName = data["name"] as? String ?? ""
                             user.imageURL = data["profilePictureURL"] as? String ?? ""
+                            user.userUID = userUID
                             
                             returnUser(user)
                         }
@@ -175,6 +190,18 @@ class CommentTableView: UITableView {
         self.comments.append(comment)
         self.comments.sort(by: { $0.createTime.compare($1.createTime) == .orderedAscending })
         self.reloadData()
+    }
+    
+    func deleteCommentFromTableView(comment: Comment) {
+        if let index = comments.firstIndex(where: { (comm) -> Bool in
+            comm.sectionItemID == comment.sectionItemID
+        }) {
+            self.beginUpdates()
+            let indexPath = IndexPath(row: index, section: 0)
+            self.comments.remove(at: index)
+            self.deleteRows(at: [indexPath], with: .automatic)
+            self.endUpdates()
+        }
     }
     
     func checkIfTheCurrentUserIsBlocked(post: Post) {
@@ -260,7 +287,7 @@ class CommentTableView: UITableView {
                             return
                         } else {
                             
-                            let comment = Comment()
+                            let comment = Comment(commentSection: section)
                             comment.createTime = Date()
                             
                             if isAnonymous {
@@ -425,6 +452,7 @@ extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
         
         if let cell = dequeueReusableCell(withIdentifier: commentIdentifier, for: indexPath) as? CommentCell {
             
+            cell.delegate = self
             cell.comment = comment
             return cell
         }
@@ -433,14 +461,33 @@ extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let comment = self.comments[indexPath.row]
+        
         let editAction = UITableViewRowAction(style: .normal, title: "Melden") { (rowAction, indexPath) in
-            let comment = self.comments[indexPath.row]
             
             self.commentDelegate?.commentGotReported(comment: comment)
         }
         editAction.backgroundColor = .imagineColor
         
-        return [editAction]
+        if let user = Auth.auth().currentUser {
+            if let commentAuthor = comment.user {
+                if user.uid == commentAuthor.userUID {
+                    let deleteAction = UITableViewRowAction(style: .destructive, title: "Löschen") { (rowAction, indexPath) in
+                        
+                        self.commentDelegate?.commentGotDeleteRequest(comment: comment)
+                    }
+                    
+                    return [deleteAction, editAction]
+                } else {
+                    return [editAction]
+                }
+            } else {
+                return [editAction]
+            }
+        } else {
+            
+            return [editAction]
+        }
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -465,7 +512,12 @@ extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-extension CommentTableView: CommentTableViewHeaderDelegate {
+extension CommentTableView: CommentTableViewHeaderDelegate, CommentCellDelegate {
+    
+    func userTapped(user: User) {
+        commentDelegate?.toUserTapped(user: user)
+    }
+    
     
     func switchChanged(isOn: Bool) {
         if let user = Auth.auth().currentUser, let post = post {

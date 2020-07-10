@@ -337,4 +337,9 @@ class FactParentContainerViewController: UIViewController {
         }
     }
     
+    @IBAction func toSettingsTapped(_ sender: Any) {
+        if let fact = fact {
+            performSegue(withIdentifier: "toSettingSegue", sender: fact)
+        }
+    }
 }

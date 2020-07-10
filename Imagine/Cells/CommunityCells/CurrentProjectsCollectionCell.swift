@@ -9,10 +9,6 @@
 import UIKit
 import Firebase
 
-protocol CurrentProjectDelegate {
-    func sourceTapped(link: String)
-}
-
 class CurrentProjectsCollectionCell: UICollectionViewCell {
     
     @IBOutlet weak var firstLabel: UILabel!
@@ -30,9 +26,7 @@ class CurrentProjectsCollectionCell: UICollectionViewCell {
     let db = Firestore.firestore()
     var donationSource: String?
     var donationRecipient: String?
-    
-    var delegate: CurrentProjectDelegate?
-    
+        
     override func awakeFromNib() {
         
         let views = [firstView!, secondView!, thirdView!, fourthView!]
@@ -86,7 +80,9 @@ class CurrentProjectsCollectionCell: UICollectionViewCell {
     @IBAction func donationSourceButtonTapped(_ sender: Any) {
         if let source = self.donationSource {
             
-            delegate?.sourceTapped(link: source)
+            if let url = URL(string: source) {
+                UIApplication.shared.open(url)
+            }
         }
     }
 }

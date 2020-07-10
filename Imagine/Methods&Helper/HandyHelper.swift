@@ -348,8 +348,6 @@ class HandyHelper {
                 self.deleteInFirebase(ref: notRef)
                 
             }
-            
-            
         }
     }
     
@@ -366,5 +364,14 @@ class HandyHelper {
         }
     }
     
+    func deleteCommentInFirebase(comment: Comment) {
+        let ref = db.collection("Comments").document(comment.sectionItemID).collection("threads").document(comment.documentID)
+        
+        ref.delete { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            }
+        }
+    }
     
 }

@@ -198,6 +198,17 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         self.present(alertController, animated: true, completion: nil)
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toUserSegue" {
+            if let chosenUser = sender as? User {
+                if let userVC = segue.destination as? UserFeedTableViewController {
+                    userVC.userOfProfile = chosenUser
+                    userVC.currentState = .otherUser
+                }
+            }
+        }
+    }
+    
     @IBAction func reportPressed(_ sender: Any) {
     }
     
@@ -216,6 +227,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
 
 extension CampaignViewController: CommentViewDelegate, CommentTableViewDelegate {
     
+    
     func recipientChanged(isActive: Bool, userUID: String) {
         print("COming soon")
     }
@@ -230,9 +242,8 @@ extension CampaignViewController: CommentViewDelegate, CommentTableViewDelegate 
     }
     
     func doneSaving() {
-        print("Done")
         if let view = floatingCommentView {
-            view.answerTextField.text = ""
+            view.doneSaving()
         }
     }
     
@@ -254,6 +265,19 @@ extension CampaignViewController: CommentViewDelegate, CommentTableViewDelegate 
         reportViewController.modalTransitionStyle = .coverVertical
         reportViewController.modalPresentationStyle = .overFullScreen
         self.present(reportViewController, animated: true, completion: nil)
+    }
+    
+    func commentGotDeleteRequest(comment: Comment) {
+        self.deleteAlert(title: "Kommentar löschen?", message: "Möchtest du das Kommentar wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.", delete:  { (delete) in
+            if delete {
+                
+                HandyHelper().deleteCommentInFirebase(comment: comment)
+            }
+        })
+    }
+    
+    func toUserTapped(user: User) {
+        performSegue(withIdentifier: "toUserSegue", sender: user)
     }
     
 }

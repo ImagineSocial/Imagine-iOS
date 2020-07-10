@@ -1898,6 +1898,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
+    //MARK:-
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "toFactSegue" {
@@ -1989,7 +1991,7 @@ extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
     
     func doneSaving() {
         if let view = self.floatingCommentView {
-            view.answerTextField.text = ""
+            view.doneSaving()
         }
     }
     
@@ -2026,6 +2028,19 @@ extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
         reportViewController.modalTransitionStyle = .coverVertical
         reportViewController.modalPresentationStyle = .overFullScreen
         self.present(reportViewController, animated: true, completion: nil)
+    }
+    
+    func commentGotDeleteRequest(comment: Comment) {
+        self.deleteAlert(title: "Kommentar löschen?", message: "Möchtest du das Kommentar wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.", delete:  { (delete) in
+            if delete {
+                HandyHelper().deleteCommentInFirebase(comment: comment)
+                self.commentTableView.deleteCommentFromTableView(comment: comment)
+            }
+        })
+    }
+    
+    func toUserTapped(user: User) {
+        performSegue(withIdentifier: "toUserSegue", sender: user)
     }
     
 }

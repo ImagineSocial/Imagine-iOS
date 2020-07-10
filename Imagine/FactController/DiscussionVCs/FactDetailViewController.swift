@@ -181,16 +181,25 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? SourceTableViewController {
-            if segue.identifier == "toSourceTableView" {
+        if segue.identifier == "toSourceTableView" {
+            if let vc = segue.destination as? SourceTableViewController {
                 vc.argument = self.argument
                 vc.fact = self.fact
             }
         }
-        if let argumentVC = segue.destination as? ArgumentTableViewController {
-            if segue.identifier == "toArgumentTableView" {
+        if segue.identifier == "toArgumentTableView" {
+            if let argumentVC = segue.destination as? ArgumentTableViewController {
                 argumentVC.argument = self.argument
                 argumentVC.fact = self.fact
+            }
+        }
+        if segue.identifier == "toUserSegue" {
+            if let chosenUser = sender as? User {
+                if let userVC = segue.destination as? UserFeedTableViewController {
+                    userVC.userOfProfile = chosenUser
+                    userVC.currentState = .otherUser
+                    
+                }
             }
         }
     }
@@ -233,9 +242,8 @@ extension FactDetailViewController: CommentTableViewDelegate, CommentViewDelegat
     }
     
     func doneSaving() {
-        print("Done")
         if let view = floatingCommentView {
-            view.answerTextField.text = ""
+            view.doneSaving()
         }
     }
     
@@ -251,6 +259,19 @@ extension FactDetailViewController: CommentTableViewDelegate, CommentViewDelegat
         reportViewController.modalTransitionStyle = .coverVertical
         reportViewController.modalPresentationStyle = .overFullScreen
         self.present(reportViewController, animated: true, completion: nil)
+    }
+    
+    func commentGotDeleteRequest(comment: Comment) {
+        self.deleteAlert(title: "Kommentar löschen?", message: "Möchtest du das Kommentar wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.", delete:  { (delete) in
+            if delete {
+                
+                HandyHelper().deleteCommentInFirebase(comment: comment)
+            }
+        })
+    }
+    
+    func toUserTapped(user: User) {
+        performSegue(withIdentifier: "toUserSegue", sender: user)
     }
     
 }

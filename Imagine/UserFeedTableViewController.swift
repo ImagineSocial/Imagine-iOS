@@ -576,38 +576,39 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     func checkIfAlreadyFriends() {
         if let user = Auth.auth().currentUser {
             if let currentProfile = userOfProfile {
-                
-                if user.uid == currentProfile.userUID {    // Your profile but you view it as a stranger, the people want to see a difference, like: "Well this is how other people see my profile..."
-                    self.addAsFriendButton.isHidden = true
-                    self.chatWithUserButton.isHidden = true
+                if currentProfile.userUID == "" {
                     
-                    self.currentState = .ownProfile
-                } else { // Check if you are already friends or you have requested it
-                    let friendsRef = db.collection("Users").document(user.uid).collection("friends").document(currentProfile.userUID)
-                    
-                    friendsRef.getDocument { (document, err) in
-                        if let err = err {
-                            print("We have an error getting the friends of our user: \(err.localizedDescription)")
-                        } else {
-                            if let document = document {
-                                // Got a document with this uid
-                                if let docData = document.data() {
-                                    
-                                    if let accepted = docData["accepted"] as? Bool {
-                                        if accepted {
-                                            self.currentState = .friendOfCurrentUser
-                                            self.addAsFriendButton.setTitle("Freund entfernen", for: .normal)
-                                        } else {
-                                            self.addAsFriendButton.setTitle("Angefragt", for: .normal)
-                                            self.addAsFriendButton.isEnabled = false
+                    if user.uid == currentProfile.userUID {    // Your profile but you view it as a stranger, the people want to see a difference, like: "Well this is how other people see my profile..."
+                        self.addAsFriendButton.isHidden = true
+                        self.chatWithUserButton.isHidden = true
+                        
+                        self.currentState = .ownProfile
+                    } else { // Check if you are already friends or you have requested it
+                        let friendsRef = db.collection("Users").document(user.uid).collection("friends").document(currentProfile.userUID)
+                        
+                        friendsRef.getDocument { (document, err) in
+                            if let err = err {
+                                print("We have an error getting the friends of our user: \(err.localizedDescription)")
+                            } else {
+                                if let document = document {
+                                    // Got a document with this uid
+                                    if let docData = document.data() {
+                                        
+                                        if let accepted = docData["accepted"] as? Bool {
+                                            if accepted {
+                                                self.currentState = .friendOfCurrentUser
+                                                self.addAsFriendButton.setTitle("Freund entfernen", for: .normal)
+                                            } else {
+                                                self.addAsFriendButton.setTitle("Angefragt", for: .normal)
+                                                self.addAsFriendButton.isEnabled = false
+                                            }
                                         }
                                     }
+                                    
+                                } else {
+                                    // not yet befriended
                                 }
-                                
-                            } else {
-                                // not yet befriended
                             }
-                            
                         }
                     }
                 }

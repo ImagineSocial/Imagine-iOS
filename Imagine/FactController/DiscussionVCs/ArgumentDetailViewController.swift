@@ -94,6 +94,15 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
                 }
             }
         }
+        if segue.identifier == "toUserSegue" {
+            if let chosenUser = sender as? User {
+                if let userVC = segue.destination as? UserFeedTableViewController {
+                    userVC.userOfProfile = chosenUser
+                    userVC.currentState = .otherUser
+                    
+                }
+            }
+        }
     }
     
     
@@ -125,9 +134,8 @@ extension ArgumentDetailViewController: CommentViewDelegate, CommentTableViewDel
     }
     
     func doneSaving() {
-        print("Done")
         if let view = floatingCommentView {
-            view.answerTextField.text = ""
+            view.doneSaving()
         }
     }
     
@@ -149,6 +157,19 @@ extension ArgumentDetailViewController: CommentViewDelegate, CommentTableViewDel
         reportViewController.modalTransitionStyle = .coverVertical
         reportViewController.modalPresentationStyle = .overFullScreen
         self.present(reportViewController, animated: true, completion: nil)
+    }
+    
+    func commentGotDeleteRequest(comment: Comment) {
+        self.deleteAlert(title: "Kommentar löschen?", message: "Möchtest du das Kommentar wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.", delete:  { (delete) in
+            if delete {
+                
+                HandyHelper().deleteCommentInFirebase(comment: comment)
+            }
+        })
+    }
+    
+    func toUserTapped(user: User) {
+        performSegue(withIdentifier: "toUserSegue", sender: user)
     }
     
 }

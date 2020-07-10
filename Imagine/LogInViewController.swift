@@ -28,7 +28,6 @@ private enum SignUpFrame {
     case enterPassword
     case ourPrinciples
     case ready
-    case acceptEULA
     case acceptPrivacyAgreement
     case wait
     case error
@@ -162,19 +161,9 @@ class LogInViewController: UIViewController {
             nextButton.alpha = 1
         case .error:
             questionLabel.text = "Irgendwas ist hier kaputt, versuch es bitte später nochmal!"
-        case .acceptEULA:
-            answerTextfield.resignFirstResponder()
-            self.nextButton.alpha = 1
-            self.nextButton.isEnabled = true
-            self.answerTextfield.alpha = 0
-            self.informationLabel.alpha = 0
-            self.answerTextfield.isEnabled = false
-            questionLabel.text = NSLocalizedString("approve apple rules", comment: "Dont upload child porn or whatever")
-            nextButton.setTitle(NSLocalizedString("I agree", comment: "I agree"), for: .normal)
-            
-            showEulaButton()
         case .acceptPrivacyAgreement:
             answerTextfield.resignFirstResponder()
+            answerTextfieldTwo.resignFirstResponder()
             self.nextButton.alpha = 1
             self.nextButton.isEnabled = true
             self.answerTextfield.alpha = 0
@@ -217,9 +206,6 @@ class LogInViewController: UIViewController {
             case .ready:
                 self.answerTextfield.alpha = 0
             case .acceptPrivacyAgreement:
-                self.eulaButton.alpha = 1
-                self.answerTextfield.alpha = 0
-            case .acceptEULA:
                 self.eulaButton.alpha = 1
                 self.answerTextfield.alpha = 0
             case .wait:
@@ -339,8 +325,6 @@ class LogInViewController: UIViewController {
                 case .ourPrinciples:
                     signUpFrame = .ready
                 case .acceptPrivacyAgreement:
-                    self.signUpFrame = .acceptEULA
-                case .acceptEULA:
                     tryToSignUp()
                     self.signUpFrame = .wait
                     print("Zu dings schicken")

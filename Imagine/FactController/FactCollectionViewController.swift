@@ -152,6 +152,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                         self.topicFacts.append(fact)
                     }
                 }
+                print("#Reload ")
                 self.isLoading = false
                 self.collectionView.reloadData()
                 self.view.activityStopAnimating()
@@ -185,6 +186,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                             self.followedFacts.sort {
                                 $0.title.localizedCompare($1.title) == .orderedAscending //Not case sensitive
                             }
+                            print("##Reload ")
                             self.collectionView.reloadData()    //not the best idea i know
                         }
                     }

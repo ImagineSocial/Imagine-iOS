@@ -74,11 +74,6 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
        let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "sendButton"), for: .normal)
-//        if #available(iOS 13.0, *) {
-//            button.setImage(UIImage(systemName: "paperplane.fill"), for: .normal)
-//        } else {
-//            button.setImage(UIImage(named: "upvote"), for: .normal)
-//        }
         button.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         button.tintColor = .imagineColor
         button.addTarget(self, action: #selector(sendTapped), for: .touchUpInside)
@@ -101,10 +96,16 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
     }
     
     @objc func sendTapped() {
-        if let answer = answerTextField.text {
+        if let answer = answerTextField.text, answer != "" {
+            sendButton.isEnabled = false
             delegate?.sendButtonTapped(text: answer, isAnonymous: isAnonymous)
             answerTextField.resignFirstResponder()
         }
+    }
+    
+    func doneSaving() {
+        sendButton.isEnabled = true
+        answerTextField.text = ""
     }
     
     override func layoutSubviews() {

@@ -296,14 +296,14 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                                             self.friendRequests = self.friendRequests+1
                                         case "comment":
                                             if let text = data["comment"] as? String, let author = data["name"] as? String, let postID = data["postID"] as? String {
-                                                let comment = Comment()
+                                                let comment = Comment(commentSection: .post)
                                                 
                                                 if let isTopicPost = data["isTopicPist"] as? Bool {
                                                     comment.isTopicPost = isTopicPost
                                                 }
-                                                comment.postID = change.document.documentID
+//                                                comment.postID = change.document.documentID
                                                 comment.author = author
-                                                comment.postID = postID
+                                                comment.sectionItemID = postID
                                                 comment.text = text
                                                 self.notifications.append(comment)
                                             }
@@ -315,13 +315,13 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                                         case "upvote":
                                             if let postID = data["postID"] as? String, let button = data["button"] as? String, let title = data["title"] as? String {
                                                 
-                                                if let upvote = self.upvotes.first(where: {$0.postID == postID}) {
+                                                if let upvote = self.upvotes.first(where: {$0.sectionItemID == postID}) {
                                                     
                                                     self.addUpvote(comment: upvote, buttonType: button)
                                                 } else {
-                                                    let comment = Comment()
+                                                    let comment = Comment(commentSection: .post)
                             
-                                                    comment.postID =  postID
+                                                    comment.sectionItemID =  postID
                                                     comment.upvotes = Votes()
                                                     comment.title = title
                                                     if let _ = data["isTopicPost"] as? Bool {
@@ -347,7 +347,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                                             self.newComments = self.newComments-1
                                             if let postID = data["postID"] as? String {
                                                 print("Delete notification out of array")
-                                                self.notifications = self.notifications.filter{$0.postID != postID}
+                                                self.notifications = self.notifications.filter{$0.sectionItemID != postID}
                                             }
                                         case "message":
                                             self.newMessages = self.newMessages-1
@@ -358,7 +358,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                                                 print("Delete upvote out of array")
                                                 
                                                 let count = self.upvotes.count
-                                                self.upvotes = self.upvotes.filter{$0.postID != postID}
+                                                self.upvotes = self.upvotes.filter{$0.sectionItemID != postID}
                                                 
                                                 if count != self.upvotes.count {
                                                     self.newComments = self.newComments-1   
@@ -817,7 +817,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         case .toPost:
             if let comment = comment{
                 let post = Post()
-                post.documentID = comment.postID
+                post.documentID = comment.sectionItemID
                 post.isTopicPost = comment.isTopicPost
                 if let user = Auth.auth().currentUser {     //Only works if you get notifications for your own posts
                     post.originalPosterUID = user.uid
@@ -827,7 +827,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         case .toComment:
             if let comment = comment {
                 let post = Post()
-                post.documentID = comment.postID
+                post.documentID = comment.sectionItemID
                 post.isTopicPost = comment.isTopicPost
                 post.toComments = true
                 if let user = Auth.auth().currentUser {

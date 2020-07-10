@@ -101,6 +101,9 @@ class SettingViewController: UIViewController {
     }
     
     @IBAction func deleteAccountTapped(_ sender: Any) {
+        deleteAccountButton.isEnabled = false
+        deleteAccountButton.alpha = 0.5
+        
         if let user = Auth.auth().currentUser {
             let maltesUID = "CZOcL3VIwMemWwEfutKXGAfdlLy1"
             let notificationRef = db.collection("Users").document(maltesUID).collection("notifications").document()
@@ -109,6 +112,8 @@ class SettingViewController: UIViewController {
             notificationRef.setData(notificationData) { (err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
+                    self.deleteAccountButton.isEnabled = true
+                    self.deleteAccountButton.alpha =  1
                 } else {
                     self.alert(message: "Dein Account wird innerhalb von 48h gelöscht. Du kannst dich jetzt ausloggen, wir machen den Rest.")
                     print("Successfully set notification")
