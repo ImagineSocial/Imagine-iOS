@@ -615,7 +615,6 @@ class PostHelper {
                     
                     // YouTubeVideo
                 } else if postType == "multiPicture" {
-                    
                     guard let images = documentData["imageURLs"] as? [String],
                         let picHeight = documentData["imageHeight"] as? Double,
                         let picWidth = documentData["imageWidth"] as? Double

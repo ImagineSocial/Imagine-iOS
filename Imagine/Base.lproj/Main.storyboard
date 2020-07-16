@@ -146,7 +146,7 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Zuletzt angesehen" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q7M-Rf-Xmo">
-                                    <rect key="frame" x="20" y="50.5" width="124" height="19.5"/>
+                                    <rect key="frame" x="20" y="52.5" width="124" height="17.5"/>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                     <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
                                     <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
@@ -902,7 +902,7 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.84999999999999998" translatesAutoresizingMaskIntoConstraints="NO" id="pcS-HB-L7n">
-                                    <rect key="frame" x="10" y="45" width="355" height="62.5"/>
+                                    <rect key="frame" x="10" y="45" width="355" height="56"/>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                     <string key="text">Wähle eine Erweiterung aus, um das Thema auf deine Weise zu vervollständigen.  Biete einen detaillierten Einblick, eine andere Sichtweise oder einen einfachen Einstieg. Es sind dir keine Grenzen gesetzt.</string>
                                     <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
@@ -910,7 +910,7 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="l7O-2H-hib" customClass="HairlineView" customModule="Imagine" customModuleProvider="target">
-                                    <rect key="frame" x="10" y="122.5" width="355" height="1"/>
+                                    <rect key="frame" x="10" y="116" width="355" height="1"/>
                                     <color key="backgroundColor" systemColor="separatorColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="1" id="5K2-J1-nIu"/>
@@ -924,10 +924,10 @@
                                     </constraints>
                                 </view>
                                 <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7n5-Up-p49" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                    <rect key="frame" x="10" y="133.5" width="355" height="65.5"/>
+                                    <rect key="frame" x="10" y="127" width="355" height="72"/>
                                     <subviews>
                                         <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Gewähltes AddOn:" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="0Kg-Pq-c84">
-                                            <rect key="frame" x="5" y="5" width="95.5" height="20"/>
+                                            <rect key="frame" x="5" y="5" width="93" height="20"/>
                                             <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="lQz-yn-1gl"/>
@@ -1374,13 +1374,13 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Quellen:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LzG-hc-Gcp">
-                                                        <rect key="frame" x="10" y="83.5" width="59" height="19"/>
+                                                        <rect key="frame" x="10" y="83.5" width="60.5" height="21"/>
                                                         <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vlg-7s-Ekb" customClass="HairlineView" customModule="Imagine" customModuleProvider="target">
-                                                        <rect key="frame" x="5" y="104.5" width="177.5" height="1"/>
+                                                        <rect key="frame" x="5" y="106.5" width="177.5" height="1"/>
                                                         <color key="backgroundColor" systemColor="separatorColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="1" id="IhO-c2-03g"/>
@@ -1391,7 +1391,7 @@
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                                     </tableView>
                                                     <stackView contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="wsG-Tr-ZMO">
-                                                        <rect key="frame" x="0.0" y="107.5" width="375" height="300"/>
+                                                        <rect key="frame" x="0.0" y="109.5" width="375" height="300"/>
                                                         <subviews>
                                                             <containerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9iU-zM-47d">
                                                                 <rect key="frame" x="0.0" y="0.0" width="187.5" height="300"/>
@@ -1414,13 +1414,13 @@
                                                         </constraints>
                                                     </stackView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Gegenargumente:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KcV-S6-Fm3">
-                                                        <rect key="frame" x="197.5" y="83.5" width="128.5" height="19"/>
+                                                        <rect key="frame" x="197.5" y="83.5" width="128.5" height="21"/>
                                                         <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3bX-P9-f2m" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                                        <rect key="frame" x="10" y="412.5" width="355" height="35"/>
+                                                        <rect key="frame" x="10" y="414.5" width="355" height="35"/>
                                                         <subviews>
                                                             <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H3p-YU-oAF" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                                                 <rect key="frame" x="5" y="5" width="30" height="25"/>
@@ -1510,7 +1510,7 @@
                                                         </connections>
                                                     </button>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rls-oQ-EnZ" customClass="HairlineView" customModule="Imagine" customModuleProvider="target">
-                                                        <rect key="frame" x="192.5" y="104.5" width="177.5" height="1"/>
+                                                        <rect key="frame" x="192.5" y="106.5" width="177.5" height="1"/>
                                                         <color key="backgroundColor" systemColor="separatorColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="1" id="ghC-ek-eQp"/>
@@ -1712,7 +1712,7 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" textContentType="url"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Welche Seite vertritt dein Argument?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LDE-vp-ph4">
-                                <rect key="frame" x="10" y="416" width="196" height="14"/>
+                                <rect key="frame" x="10" y="416" width="197.5" height="16"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -1789,7 +1789,7 @@
                                 <viewLayoutGuide key="safeArea" id="PSc-rX-R8C"/>
                             </view>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="EZV-oJ-t7C">
-                                <rect key="frame" x="50" y="440" width="275" height="31"/>
+                                <rect key="frame" x="50" y="442" width="275" height="31"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="Iwr-rx-K5a"/>
                                 </constraints>
@@ -3656,7 +3656,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019 10:00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gi8-k5-WQT">
-                                            <rect key="frame" x="256" y="154" width="109" height="21"/>
+                                            <rect key="frame" x="249" y="154" width="116" height="21"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="21" id="B3u-If-vwJ"/>
                                             </constraints>
@@ -3682,7 +3682,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="AbK-to-aSh">
-                                            <rect key="frame" x="108" y="155" width="75" height="14"/>
+                                            <rect key="frame" x="108" y="153" width="75" height="16"/>
                                             <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -4149,7 +4149,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kurze Zusammenfassung:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h0s-sQ-2Ir">
-                                <rect key="frame" x="10" y="198" width="198.5" height="25"/>
+                                <rect key="frame" x="10" y="198" width="197.5" height="25"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="25" id="iWJ-j6-nWN"/>
                                 </constraints>
@@ -4158,7 +4158,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Deine Idee:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ll6-Rb-0B3">
-                                <rect key="frame" x="10" y="301" width="86" height="25"/>
+                                <rect key="frame" x="10" y="301" width="88.5" height="25"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="25" id="Sai-hY-uzl"/>
                                 </constraints>
@@ -4640,22 +4640,22 @@
                                 </constraints>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="aQW-7E-9g9">
-                                <rect key="frame" x="10" y="267" width="150" height="93"/>
+                                <rect key="frame" x="10" y="267" width="150" height="87"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Persönliche Angaben" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sOF-m2-dLd">
-                                        <rect key="frame" x="0.0" y="0.0" width="150" height="21"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="150" height="19"/>
                                         <fontDescription key="fontDescription" name="IBMPlexSans-Bold" family="IBM Plex Sans" pointSize="14"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.85000002384185791" translatesAutoresizingMaskIntoConstraints="NO" id="jFC-Jm-VZa">
-                                        <rect key="frame" x="0.0" y="36" width="150" height="21"/>
+                                        <rect key="frame" x="0.0" y="34" width="150" height="19"/>
                                         <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Email:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.85000002384185791" translatesAutoresizingMaskIntoConstraints="NO" id="uP6-I5-hRw">
-                                        <rect key="frame" x="0.0" y="72" width="150" height="21"/>
+                                        <rect key="frame" x="0.0" y="68" width="150" height="19"/>
                                         <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -4666,40 +4666,40 @@
                                 </constraints>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="sxn-fL-T4l">
-                                <rect key="frame" x="10" y="385" width="150" height="198.5"/>
+                                <rect key="frame" x="10" y="379" width="150" height="186.5"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Werbeangaben" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VPT-Ki-qSY">
-                                        <rect key="frame" x="0.0" y="0.0" width="150" height="18.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="150" height="16.5"/>
                                         <fontDescription key="fontDescription" name="IBMPlexSans-Bold" family="IBM Plex Sans" pointSize="14"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Alter:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qR2-1x-BBi">
-                                        <rect key="frame" x="0.0" y="33.5" width="150" height="21"/>
+                                        <rect key="frame" x="0.0" y="31.5" width="150" height="19"/>
                                         <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Geschlecht:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kTy-7X-Jn7">
-                                        <rect key="frame" x="0.0" y="69.5" width="150" height="21"/>
+                                        <rect key="frame" x="0.0" y="65.5" width="150" height="19"/>
                                         <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Standort:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iXd-Y5-gL1">
-                                        <rect key="frame" x="0.0" y="105.5" width="150" height="21"/>
+                                        <rect key="frame" x="0.0" y="99.5" width="150" height="19"/>
                                         <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hobbies:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y21-XN-4f7">
-                                        <rect key="frame" x="0.0" y="141.5" width="150" height="21"/>
+                                        <rect key="frame" x="0.0" y="133.5" width="150" height="19"/>
                                         <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Musikrichtung:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EbN-ZL-mz5">
-                                        <rect key="frame" x="0.0" y="177.5" width="150" height="21"/>
+                                        <rect key="frame" x="0.0" y="167.5" width="150" height="19"/>
                                         <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -4707,74 +4707,74 @@
                                 </subviews>
                             </stackView>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Malte Schoppe" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7XL-sc-Wz8">
-                                <rect key="frame" x="170" y="305.5" width="195" height="18.5"/>
+                                <rect key="frame" x="170" y="301.5" width="195" height="18.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TEi-qG-0Z2">
-                                <rect key="frame" x="170" y="323" width="195" height="1"/>
+                                <rect key="frame" x="170" y="319" width="195" height="1"/>
                                 <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="8hR-FH-798"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HwX-Sj-Cmz">
-                                <rect key="frame" x="170" y="438.5" width="195" height="1"/>
+                                <rect key="frame" x="170" y="428.5" width="195" height="1"/>
                                 <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="B4C-IK-lFZ"/>
                                 </constraints>
                             </view>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="23" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="oU7-is-yhE">
-                                <rect key="frame" x="170" y="421" width="195" height="18.5"/>
+                                <rect key="frame" x="170" y="411" width="195" height="18.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="numberPad" textContentType="tel"/>
                             </textField>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qdx-kr-hp8">
-                                <rect key="frame" x="170" y="474.5" width="195" height="1"/>
+                                <rect key="frame" x="170" y="462.5" width="195" height="1"/>
                                 <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="OU6-Ou-7xC"/>
                                 </constraints>
                             </view>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="männlich" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="AmT-Op-C8t">
-                                <rect key="frame" x="170" y="457" width="195" height="18.5"/>
+                                <rect key="frame" x="170" y="445" width="195" height="18.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qqg-S6-77i">
-                                <rect key="frame" x="170" y="510.5" width="195" height="1"/>
+                                <rect key="frame" x="170" y="496.5" width="195" height="1"/>
                                 <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="1zq-6k-KqA"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lnk-By-t2B">
-                                <rect key="frame" x="170" y="546.5" width="195" height="1"/>
+                                <rect key="frame" x="170" y="530.5" width="195" height="1"/>
                                 <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="Zhg-9S-jJt"/>
                                 </constraints>
                             </view>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Wandern, Fahrrad, Swift, Reisen, Klassische Literatur" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="re2-W4-cbt">
-                                <rect key="frame" x="170" y="529" width="195" height="18.5"/>
+                                <rect key="frame" x="170" y="513" width="195" height="18.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Z1F-au-Fio">
-                                <rect key="frame" x="170" y="582.5" width="195" height="1"/>
+                                <rect key="frame" x="170" y="564.5" width="195" height="1"/>
                                 <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="xQr-1c-kYH"/>
                                 </constraints>
                             </view>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Hip-Hop, R&amp;B, Psychedelic, Synth-Pop" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="BQy-aA-Gsw">
-                                <rect key="frame" x="170" y="565" width="195" height="18.5"/>
+                                <rect key="frame" x="170" y="547" width="195" height="18.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Passau, Bayern" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Ugb-ju-1VS">
-                                <rect key="frame" x="170" y="493" width="195" height="18.5"/>
+                                <rect key="frame" x="170" y="479" width="195" height="18.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
@@ -4789,20 +4789,20 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wofür braucht ihr meine Werbeangaben?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YXr-st-b5o">
-                                <rect key="frame" x="10" y="603.5" width="244" height="17"/>
+                                <rect key="frame" x="10" y="585.5" width="238" height="15.5"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="13"/>
                                 <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VAt-M0-PFV">
-                                <rect key="frame" x="10" y="622.5" width="355" height="135.5"/>
+                                <rect key="frame" x="10" y="603" width="355" height="106.5"/>
                                 <string key="text">Wir finanzieren uns durch personalisierte Werbung, möchten dir aber nicht deine Daten mithlfe von Cookies nehmen.  Mit deinen Angaben unterstützt du das Netzwerk, da die angezeigte Werbung deinen Interessen entspricht. Möchtest du das Netzwerk unterstützen, aber magst keine Online-Werbung, kannst du in Zukunft einen werbelosen Premium-Zugang erstehen.</string>
                                 <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="13"/>
                                 <color key="textColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.85000002384185791" translatesAutoresizingMaskIntoConstraints="NO" id="ATP-Wo-T3d">
-                                <rect key="frame" x="150" y="105" width="52.5" height="21"/>
+                                <rect key="frame" x="150" y="105" width="50.5" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="4SM-6d-RO4"/>
                                 </constraints>
@@ -4811,12 +4811,12 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="mustermann@gmail.com" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Ckf-6q-st1">
-                                <rect key="frame" x="170" y="341.5" width="195" height="18.5"/>
+                                <rect key="frame" x="170" y="335.5" width="195" height="18.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aZw-Y4-EGS">
-                                <rect key="frame" x="170" y="360" width="195" height="1"/>
+                                <rect key="frame" x="170" y="354" width="195" height="1"/>
                                 <color key="backgroundColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="RAG-XV-iSj"/>
@@ -4918,18 +4918,18 @@
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Wm0-Pi-bg8" userLabel="backgroundView">
-                                    <rect key="frame" x="0.0" y="67" width="375" height="173"/>
+                                    <rect key="frame" x="0.0" y="65.5" width="375" height="174.5"/>
                                     <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Eqg-CD-i1X" userLabel="seperatorView" customClass="HairlineView" customModule="Imagine" customModuleProvider="target">
-                                    <rect key="frame" x="0.0" y="66" width="375" height="1"/>
+                                    <rect key="frame" x="0.0" y="64.5" width="375" height="1"/>
                                     <color key="backgroundColor" systemColor="separatorColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="1" id="kXv-Rl-Ab9"/>
                                     </constraints>
                                 </view>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.64999997615814209" translatesAutoresizingMaskIntoConstraints="NO" id="Tbh-0m-tI1">
-                                    <rect key="frame" x="125" y="36.5" width="240" height="27.5"/>
+                                    <rect key="frame" x="125" y="38" width="240" height="24.5"/>
                                     <fontDescription key="fontDescription" name="IBMPlexSans-SemiBold" family="IBM Plex Sans" pointSize="21"/>
                                     <nil key="highlightedColor"/>
                                 </label>
@@ -5095,13 +5095,13 @@
                                     </constraints>
                                 </view>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0 " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a5Z-MT-1ay">
-                                    <rect key="frame" x="142" y="84" width="10.5" height="16"/>
+                                    <rect key="frame" x="142.5" y="86" width="10.5" height="14"/>
                                     <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Beiträge" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jNS-pZ-nzY">
-                                    <rect key="frame" x="125" y="100" width="44.5" height="20"/>
+                                    <rect key="frame" x="125" y="100" width="45" height="20"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="20" id="edP-Yo-rJL"/>
                                     </constraints>
@@ -6667,7 +6667,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Titel:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eUy-GB-Cgp">
-                                <rect key="frame" x="20" y="65" width="38" height="25"/>
+                                <rect key="frame" x="20" y="65" width="39" height="25"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="25" id="gBt-ax-nC5"/>
                                 </constraints>
@@ -6676,7 +6676,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kurze Zusammenfassung für Cell:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oRp-RE-YQa">
-                                <rect key="frame" x="20" y="137" width="256.5" height="25"/>
+                                <rect key="frame" x="20" y="137" width="272" height="25"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="25" id="cNu-OK-kpr"/>
                                 </constraints>
@@ -6685,7 +6685,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Genaue Beschreibung:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Z1-V1-3dY">
-                                <rect key="frame" x="20" y="274" width="165.5" height="25"/>
+                                <rect key="frame" x="20" y="274" width="184" height="25"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="25" id="iq1-s3-6JB"/>
                                 </constraints>
@@ -6694,7 +6694,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kategorie:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bzN-Gz-yTR">
-                                <rect key="frame" x="20" y="421" width="74" height="25"/>
+                                <rect key="frame" x="20" y="421" width="82.5" height="25"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="25" id="5h9-oI-Dwx"/>
                                 </constraints>
@@ -6749,7 +6749,7 @@
                                 </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="TiL-Vq-01C">
-                                <rect key="frame" x="104" y="418.5" width="251" height="30"/>
+                                <rect key="frame" x="112.5" y="418.5" width="242.5" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="qRb-2f-amX"/>
                                 </constraints>
@@ -7433,7 +7433,7 @@
                                     <rect key="frame" x="0.0" y="40" width="375" height="80"/>
                                 </pickerView>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aG3-gq-NBm" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                    <rect key="frame" x="105" y="4.5" width="165" height="31"/>
+                                    <rect key="frame" x="105" y="5.5" width="165" height="29"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="165" id="5k1-Nj-Vs8"/>
                                     </constraints>
@@ -7544,7 +7544,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <pageControl clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="T3k-LP-snO">
-                                        <rect key="frame" x="103" y="10.5" width="39" height="37"/>
+                                        <rect key="frame" x="103" y="10.5" width="6" height="37"/>
                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="pageIndicatorTintColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
                                         <color key="currentPageIndicatorTintColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>

@@ -92,6 +92,8 @@
 		E981B25E2483AFCC00F6C724 /* SurveyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E981B25D2483AFCC00F6C724 /* SurveyCell.swift */; };
 		E983F51C23C1FBC2005F7FDE /* GifCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E983F51B23C1FBC2005F7FDE /* GifCell.xib */; };
 		E983F51E23C1FEA5005F7FDE /* GifCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983F51D23C1FEA5005F7FDE /* GifCell.swift */; };
+		E9879A2124BDB4C1004B497F /* MusicCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9879A2024BDB4C0004B497F /* MusicCell.xib */; };
+		E9879A2324BDB57A004B497F /* MusicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9879A2224BDB57A004B497F /* MusicCell.swift */; };
 		E988285023141AC8005ECB40 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E988284F23141AC8005ECB40 /* Extensions.swift */; };
 		E98B22EE22CA396B000F965F /* ChatsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B22ED22CA396B000F965F /* ChatsTableViewController.swift */; };
 		E98B22F022CA6499000F965F /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B22EF22CA6499000F965F /* ChatViewController.swift */; };
@@ -297,6 +299,8 @@
 		E981B25D2483AFCC00F6C724 /* SurveyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyCell.swift; sourceTree = "<group>"; };
 		E983F51B23C1FBC2005F7FDE /* GifCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GifCell.xib; sourceTree = "<group>"; };
 		E983F51D23C1FEA5005F7FDE /* GifCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifCell.swift; sourceTree = "<group>"; };
+		E9879A2024BDB4C0004B497F /* MusicCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MusicCell.xib; sourceTree = "<group>"; };
+		E9879A2224BDB57A004B497F /* MusicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicCell.swift; sourceTree = "<group>"; };
 		E988284F23141AC8005ECB40 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E98B22ED22CA396B000F965F /* ChatsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsTableViewController.swift; sourceTree = "<group>"; };
 		E98B22EF22CA6499000F965F /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
@@ -663,6 +667,8 @@
 				E9CF237E233A279200D3B295 /* TopicCell.swift */,
 				E94F29BD22B2F7E60015A8CC /* EventCell.xib */,
 				E94F29BF22B375610015A8CC /* EventCell.swift */,
+				E9879A2024BDB4C0004B497F /* MusicCell.xib */,
+				E9879A2224BDB57A004B497F /* MusicCell.swift */,
 			);
 			path = FeedCells;
 			sourceTree = "<group>";
@@ -944,6 +950,7 @@
 				E9E49D2D2349E8AB002E371E /* NotificationCell.xib in Resources */,
 				E9600E9B223C0782003E5A7A /* Kalam-Light.ttf in Resources */,
 				E96CE89622959E6D00BACD3B /* ArgumentCell.xib in Resources */,
+				E9879A2124BDB4C1004B497F /* MusicCell.xib in Resources */,
 				E98FAEA223FAB8760064A614 /* CommentCell.xib in Resources */,
 				E97FDFBE246AA4130049E1E4 /* ShowAllTopicsCell.xib in Resources */,
 				E940D8D4249676AB00018EF3 /* PlaceHolderCell.xib in Resources */,
@@ -1170,6 +1177,7 @@
 				E95A6FC8232E80E8008B32CC /* Reachability.swift in Sources */,
 				E9B79CDF224EC68500166EED /* PostCell.swift in Sources */,
 				E91D5094245EFE6C00907821 /* SingleTopicAddOnCell.swift in Sources */,
+				E9879A2324BDB57A004B497F /* MusicCell.swift in Sources */,
 				E9A57A9F245360D100665007 /* AdvertisingCell.swift in Sources */,
 				E991CCDC2273476C00940834 /* ThoughtCell.swift in Sources */,
 				E98B22F022CA6499000F965F /* ChatViewController.swift in Sources */,

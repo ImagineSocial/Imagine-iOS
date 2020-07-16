@@ -136,29 +136,26 @@ class MeldenViewController: UIViewController {
         }
     }
     
-    func deleteTopicPost() {
+    func deleteTopicPost(fact: Fact) {
         guard let post = post else { return }
         
-        if let fact = post.fact {
-            let ref = db.collection("Facts").document(fact.documentID).collection("posts").document(post.documentID)
-            
-            ref.getDocument { (snap, err) in
-                if let error = err {
-                    print("Error: \(error.localizedDescription)")
-                } else {
-                    if let snap = snap {
-                        ref.delete()
-                        if let data = snap.data() {
-                            if let addOnIDs = data["addOnDocumentIDs"] as? [String] {
-                                for id in addOnIDs {
-                                    self.deletePostInAddOn(addOnID: id)
-                                }
+        let ref = db.collection("Facts").document(fact.documentID).collection("posts").document(post.documentID)
+        
+        ref.getDocument { (snap, err) in
+            if let error = err {
+                print("Error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    ref.delete()
+                    if let data = snap.data() {
+                        if let addOnIDs = data["addOnDocumentIDs"] as? [String] {
+                            for id in addOnIDs {
+                                self.deletePostInAddOn(addOnID: id)
                             }
                         }
                     }
                 }
             }
-            
         }
     }
     
@@ -183,12 +180,13 @@ class MeldenViewController: UIViewController {
         let postRef: DocumentReference?
         if post.isTopicPost {
             postRef = db.collection("TopicPosts").document(post.documentID)
-            
-            self.deleteTopicPost()
         } else {
             postRef = db.collection("Posts").document(post.documentID)
         }
         
+        if let fact = post.fact {
+            self.deleteTopicPost(fact: fact)
+        }
         if let postRef = postRef {
             postRef.delete()
         }
