@@ -10,6 +10,7 @@ import UIKit
 
 protocol CommentCellDelegate {
     func userTapped(user: User)
+    func answerCommentTapped(comment: Comment)
 }
 
 class CommentCell: UITableViewCell {
@@ -18,6 +19,9 @@ class CommentCell: UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var bodyLabel: UILabel!
     @IBOutlet weak var createDateLabel: UILabel!
+    @IBOutlet weak var inlineSeparatorView: UIView!
+    @IBOutlet weak var niceButton: DesignableButton!
+    @IBOutlet weak var answerButton: UIButton!
     
     var delegate: CommentCellDelegate?
     
@@ -34,7 +38,12 @@ class CommentCell: UITableViewCell {
                     profilePictureImageView.image = UIImage(named: "anonym-user")
                 }
                 createDateLabel.text = comment.createTime.formatRelativeString()
-                bodyLabel.text = comment.text
+                
+                if comment.isIndented {
+                    answerButton.isHidden = true
+                } else {
+                    bodyLabel.text = comment.text
+                }
             }
         }
     }
@@ -43,5 +52,43 @@ class CommentCell: UITableViewCell {
         if let comment = comment, let user = comment.user {
             delegate?.userTapped(user: user)
         }
+    }
+    
+    override func awakeFromNib() {
+        let layer = niceButton.layer
+        if #available(iOS 13.0, *) {
+            layer.borderColor = UIColor.label.cgColor
+        } else {
+            layer.borderColor = UIColor.black.cgColor
+        }
+        layer.borderWidth = 0.5
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        if let comment = comment {
+            if comment.isIndented {
+                let margins = UIEdgeInsets(top: 0, left: 65, bottom: 0, right: 0)
+                contentView.frame = contentView.frame.inset(by: margins)
+                
+                bodyLabel.text = comment.text
+                inlineSeparatorView.isHidden = false
+            }
+        }
+    }
+    
+    override func prepareForReuse() {
+        inlineSeparatorView.isHidden = true
+        answerButton.isHidden = false
+    }
+    
+    @IBAction func answerButtonTapped(_ sender: Any) {
+        if let comment = comment {
+            delegate?.answerCommentTapped(comment: comment)
+        }
+    }
+    
+    @IBAction func niceButtonTapped(_ sender: Any) {
+        
     }
 }

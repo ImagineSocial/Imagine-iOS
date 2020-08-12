@@ -134,7 +134,7 @@ class NewFactViewController: UIViewController {
     func setUI() {
         switch new {
         case .deepArgument:
-            headerLabel.text = "Teile dein Argument mit uns!"
+            headerLabel.text = "Erstelle ein neues Argument"
             addSourceLabel.isHidden = true
             sourceLabel.isHidden = true
             seperatorView3.isHidden = true
@@ -167,20 +167,20 @@ class NewFactViewController: UIViewController {
             proContraSegmentedControl.isHidden = false
             ProContraLabel.isHidden = false
             
-            headerLabel.text = "Teile dein Argument mit uns!"
+            headerLabel.text = "Erstelle ein neues Argument"
             addSourceLabel.isHidden = false
             sourceLabel.isHidden = true
         case .source:
             titleCharacterCountLabel.text = String(Constants.characterLimits.sourceTitleCharacterLimit)
             
             sourceTextField.isHidden = false
-            headerLabel.text = "Teile deine Quelle mit uns!"
+            headerLabel.text = "Erstelle eine neue Quelle"
         case .fact:
             titleCharacterCountLabel.text = String(Constants.characterLimits.factTitleCharacterLimit)
             descriptionCharacterCountLabel.text = String(Constants.characterLimits.factDescriptionCharacterLimit)
             
             descriptionCharacterCountLabel.isHidden = false
-            headerLabel.text = "Teile ein neues Thema mit deinen Mitmenschen."
+            headerLabel.text = "Erstelle eine neue Community"
             descriptionLabel.text = factDescription
             
             addSourceLabel.removeFromSuperview()
@@ -195,7 +195,7 @@ class NewFactViewController: UIViewController {
             titleCharacterCountLabel.text = String(Constants.characterLimits.addOnTitleCharacterLimit)
             descriptionCharacterCountLabel.text = String(Constants.characterLimits.addOnDescriptionCharacterLimit)
             
-            headerLabel.text = "Teile ein neues AddOn mit deinen Mitmenschen!"
+            headerLabel.text = "Erstelle ein neues AddOn"
             addSourceLabel.isHidden = true
             sourceLabel.isHidden = true
             seperatorView3.isHidden = true
@@ -204,7 +204,7 @@ class NewFactViewController: UIViewController {
             titleCharacterCountLabel.text = String(Constants.characterLimits.addOnHeaderTitleCharacterLimit)
             descriptionCharacterCountLabel.text = String(Constants.characterLimits.addOnHeaderDescriptionCharacterLimit)
             
-            headerLabel.text = "Teile einen neuen Header mit deinen Mitmenschen!"
+            headerLabel.text = "Erstelle einen neuen AddOn-Header"
             sourceLabel.text = "Link zu mehr Informationen (optional):"
             titleLabel.text = "Kurzes Intro: "
             sourceTextField.isHidden = false
@@ -214,7 +214,7 @@ class NewFactViewController: UIViewController {
             descriptionCharacterCountLabel.text = String(Constants.characterLimits.addOnDescriptionCharacterLimit)
             descriptionCharacterCountLabel.isHidden = false
             
-            headerLabel.text = "Teile dein AddOn mit uns!"
+            headerLabel.text = "Erstelle ein neues AddOn"
             addSourceLabel.removeFromSuperview()
             sourceLabel.text = "Thema:"
             
@@ -677,10 +677,15 @@ class NewFactViewController: UIViewController {
     }
     
     func setNewFactDisplayOptions() {   // Selection UI for a new Topic/Community
+        self.view.addSubview(newTopicLabel)
+        newTopicLabel.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10).isActive = true
+        newTopicLabel.topAnchor.constraint(equalTo: seperatorView3.bottomAnchor, constant: 10).isActive = true
+        newTopicLabel.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        
         self.view.addSubview(newTopicDisplayTypeSelection)
         newTopicDisplayTypeSelection.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10).isActive = true
         newTopicDisplayTypeSelection.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10).isActive = true
-        newTopicDisplayTypeSelection.topAnchor.constraint(equalTo: seperatorView3.bottomAnchor, constant: 10).isActive = true
+        newTopicDisplayTypeSelection.topAnchor.constraint(equalTo: newTopicLabel.bottomAnchor, constant: 10).isActive = true
         newTopicDisplayTypeSelection.heightAnchor.constraint(equalToConstant: 35).isActive = true
         
         if pickedDisplayOption == .fact {
@@ -720,11 +725,25 @@ class NewFactViewController: UIViewController {
         return button
     }()
     
+    let newTopicLabel: UILabel = {
+       let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Darstellung:"
+        label.font = UIFont(name: "IBMPlexSans-Medium", size: 16)
+        if #available(iOS 13.0, *) {
+            label.textColor = .secondaryLabel
+        } else {
+            label.textColor = .lightGray
+        }
+        
+        return label
+    }()
+    
     let newTopicDisplayTypeSelection: UISegmentedControl = {
        let segment = UISegmentedControl()
         segment.translatesAutoresizingMaskIntoConstraints = false
-        segment.insertSegment(withTitle: "Diskussions-Darstellung", at: 0, animated: false)
-        segment.insertSegment(withTitle: "Themen-Darstellung", at: 1, animated: false)
+        segment.insertSegment(withTitle: "Diskussion", at: 0, animated: false)
+        segment.insertSegment(withTitle: "Community", at: 1, animated: false)
         segment.selectedSegmentIndex = 0
         segment.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
         

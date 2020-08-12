@@ -733,23 +733,4 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     
 }
 
-class Comment {
-    init(commentSection: CommentSection) {
-        self.section = commentSection
-    }
-    
-    var section: CommentSection
-    var title = ""
-    var text = ""
-    var createTimeString = ""
-    var createTime = Date()
-    var author = ""
-    var sectionItemID = ""
-    var isTopicPost = false
-    var upvotes: Votes?
-    var user: User?
-    var documentID = ""
-}
-
-
 

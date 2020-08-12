@@ -1,4 +1,4 @@
-/* 
+/*
   Localizable.strings
   Imagine
 
@@ -6,11 +6,7 @@
   Copyright © 2019 Malte Schoppe. All rights reserved.
 */
 
-"back up" = "Nach oben";
-"consent: %d" = "Zustimmen: %d";
-"doubt: %d" = "Zweifel: %d";
-"%d days ago" = "Vor %d Tagen";
-"%d hours ago" = "Vor %d Stunden";
+//Report options
 "Opinion, not a fact" = "Meinung, kein Fakt";
 "Sensationalism" = "Sensationalismus";
 "Pretentious" = "Angeberisch";
@@ -31,20 +27,79 @@
 "Pornography" = "Pornografie";
 "Pedophilia" = "Pädophilie";
 "Presentation of violance" = "Gewaltdarstellung";
-"Child of earth, what is your name?" = "Kind der Erde, welchen Namen haben dir deine Eltern zugewiesen?";
-"Glad to meet you %@. What is the name of your family?" = "Freut mich dich kennenzulernen %@. Welchen Namen führt deine Familie?";
-"BSImagePicker.Done" = "Fertig";
-"enter first name" = "Schön, dass du hier bist! Wie lautet dein Vorname?";
-"enter second name" = "Freut mich dich kennenzulernen %@. Wie ist dein Nachname?";
-"enter email" = "Wie ist deine Email-Adresse?";
+
+//Date Format
+"%d days ago" = "Vor %d Tagen";
+"%d hours ago" = "Vor %d Stunden";
+
+//SignUp
+"enter_first_name" = "Schön, dass du hier bist! Wie lautet dein Vorname?";
+"enter_second_name" = "Freut mich dich kennenzulernen %@. Wie ist dein Nachname?";
+"enter_email" = "Wie ist deine Email-Adresse?";
 "enter password" = "Was soll dein Passwort sein?";
 "password must be safe" = "Das Passwort muss mindestens 6 Zeichen haben, und schon ein bisschen sicher sein!";
 "approve apple rules" = "Stimmst du den Apple Nutzungsbedingungen zu und lädst keine unangebrachten Inhalte hoch?";
 "approve GDPR rules" = "Mit der Registrierung akzeptierst du unsere Datenschutzerklärung und damit die Speicherung und Bearbeitung der eingegebenen Daten nach DSGVO-Vorgaben. Okay?";
-"I agree" = "Ich stimme zu";
-"next" = "Weiter";
 "ready to go" = "Jetzt kannst du loslegen! Schau dich um und vergiss nicht deine E-Mail-Adresse zu bestätigen🙏 (vielleicht im Spam Ordner)";
 "welcome to imagine" = "Herzlich Willkommen bei Imagine. Zu unseren Prinzipien gehören eine respektvolle und positive Stimmung & Respekt gegenüber anderen Meinungen und Ansichten.";
 "need your help" = "Zur Sicherstellung dieser Prinzipien benötigen wir eure Hilfe. Verstöße können bei uns gemeldet werden und werden schnellstmöglich überprüft.";
 "invalid email" = "Die angegebene Email-Adresse scheint nicht korrekt zu sein. Gib sie bitte erneut ein:";
 "email already in use" = "Die Email-Adresse wird bereits bei uns verwendet. Bitte nutze eine andere:";
+"signup_error" = "Irgendwas ist hier kaputt, versuch es bitte später nochmal!";
+"signup_error_repeat_password" = "Deine beiden Passwörter stimmen nicht überein. Versuch es bitte noch einmal:";
+"signup_error_weak_password" = "Das Passwort muss mindestens 6 Zeichen haben, und schon ein bisschen sicher sein!";
+
+"cancel_signup_title" = "Anmeldung abbrechen?";
+"cancel_signup_message" = "Möchtest du die Anmeldung abbrechen? Die aktuellen Eingaben gehen verloren.";
+"cancel_stay_here" = "Hier bleiben";
+
+"go_to_gdpr" = "Zur Vereinbarung";
+"go_to_imagine" = "Zu Imagine";
+
+//SignUp Placeholder
+"name_placeholder" = "Dein gewählter Vorname wird auf deinem Profil & in deinen Beiträgen für \"Fremde\" sichtbar sein";
+"surname_placeholder" = "Dein Nachname wird nur für deine Freunde auf Imagine sichtbar sein" ;
+"name_example_placeholder" = "Max"; //John
+"surname_example_placeholder" = "Mustermann";//Doe
+"email_example_placeholder" = "mustermann@gmail.com";//JohnDoe@gmail.com
+"password_placeholder" = "Passwort";
+"repeat_password_placeholder" = "Passwort wiederholen";
+
+//Login
+"login_password" = "Nun noch dein Kennwort und wir können loslegen!";
+"login_error_email" = "Deine eingegebene Email-Adresse ist nicht korrekt";
+"login_error_password" = "Dein Passwort ist nicht korrekt, versuche es erneut:";
+"login_forgot_password" = "Gib deine EmailAdresse ein, damit wir dir eine Mail zum zurücksetzen deines Passwortes senden können.";
+
+"forgot_password" = "Passwort vergessen";
+"reset_password_title" = "Die E-Mail wurde gesendet";
+"reset_password_message" = "Schau in dein Postfach, ändere dein Passwort und versuche es erneut. Bis gleich!";
+
+"login_verify_email" = "Deine Email Adresse wurde noch nicht verifiziert. Sollen wir dir erneut eine Bestätigungs Email an %@ senden?";
+"verify_email_send_again" = "Der Link wurde verschickt.";
+
+
+"I agree" = "Ich stimme zu";
+"next" = "Weiter";
+"cancel" = "Abbrechen";
+
+
+//Vote
+"consent: %d" = "Zustimmen: %d";
+"doubt: %d" = "Zweifel: %d";
+
+
+
+"back up" = "Nach oben";
+"BSImagePicker.Done" = "Fertig";
+
+
+//Feed VC
+"tap_blue_owen_title" = "Schau dir mal an was wir aus dem Netzwerk so alles machen könnten...";
+"tap_blue_owen_message" = "Hast du schon auf den blauen Owen ↑ geklickt?";
+"accept_cookies_title" = "Wir haben 'Cookies' bei Imagine";
+"accept_cookies_message" = "Gemäß unseren Datenschutzrichtlinien möchten wir damit herausfinden, wie die User unsere App nutzen und welche Features beliebt sind. Anonymisiert natürlich! Du kannst die Einstellung auch jederzeit ändern.";
+"to_gdpr" = "Zu den Datenschutzrichtlinien";
+"accept_cookies" = "Ich akzeptiere Cookies";
+"no_cookies" = "Keine Cookies";
+

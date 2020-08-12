@@ -119,8 +119,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         scrollViewTap.cancelsTouchesInView = false  // Otherwise the tap on the TableViews are not recognized
         scrollView.addGestureRecognizer(scrollViewTap)
         
-        
-        self.view.addSubview(buttonLabel)
         setupViewController()
         
         handyHelper.deleteNotifications(type: .comment, id: post.documentID)
@@ -133,15 +131,16 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
     }
     
+    
+    
     override func viewWillDisappear(_ animated: Bool) {
-        if let view = floatingCommentView {
-            view.removeFromSuperview()
-        }
+//        if let view = floatingCommentView {
+//            view.removeFromSuperview()
+//        }
+        //removeobserver
     }
     
     func setupViewController() {
-        
-        createFloatingCommentView()
         
         switch post.type {
         case .event:
@@ -207,6 +206,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         showPost()
         showRepost()
 //        instantiateContainerView()// Was for the event object
+        createFloatingCommentView()
     }
     
     
@@ -246,6 +246,14 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
                 
+        
+        if contentView.frame.height != 0 {  //ScrollView got set
+            if scrollView.frame.height > contentView.frame.height {
+                //To get the contentView up to the bottom, so the keyboard works even when small pictures or just a link without comments is displayed
+                contentView.heightAnchor.constraint(equalToConstant: scrollView.frame.height).isActive = true
+            }
+        }
+        
         profilePictureImageView.layer.cornerRadius = profilePictureImageView.bounds.size.width / 2
         repostProfilePictureImageView.layer.cornerRadius = profilePictureImageView.bounds.size.width / 2
 
@@ -418,6 +426,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
         
         contentView.layoutIfNeeded()        // Der hier sorgt dafür, dass das Bild auch beim zweiten Mal angezeigt wird. Da das Bild den Contentview braucht um die Höhe einzustellen. Das callt dann nämlich ViewDidLayoutSubviews
+        self.contentView.addSubview(buttonLabel)
     }
     
     func setupViews(){
@@ -581,10 +590,21 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         commentTableView.topAnchor.constraint(equalTo: commentView.bottomAnchor, constant: 10).isActive = true
         commentTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         commentTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        commentTableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30).isActive = true
         
-        //Not possible in ViewWillAppear because the view is not layed out yet I guess
-//        createFloatingCommentView()
+        //To get the contentView up to the bottom, so the keyboard works even when small pictures or just a link without comments is displayed
+        let endView = UIView()
+        if #available(iOS 13.0, *) {
+            endView.backgroundColor = .systemBackground
+        } else {
+            endView.backgroundColor = .white
+        }
+        endView.translatesAutoresizingMaskIntoConstraints = false
+        
+        contentView.addSubview(endView)
+        endView.topAnchor.constraint(equalTo: commentTableView.bottomAnchor, constant: 30).isActive = true
+        endView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        endView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        endView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
     }
     
     
@@ -1778,6 +1798,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
 
     @objc func scrollViewTapped() {
         if let view = floatingCommentView {
+            print("ScrollViewTap")
             view.answerTextField.resignFirstResponder()
         }
     }
@@ -1962,12 +1983,29 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     //MARK:- CommentAnswerView
     func createFloatingCommentView() {
-        if floatingCommentView == nil {
-            let height = UIScreen.main.bounds.height
-            floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: height-60, width: self.view.frame.width, height: 60))
-            floatingCommentView!.delegate = self
-            if let window = UIApplication.shared.keyWindow {
-                window.addSubview(floatingCommentView!)
+        let viewHeight = self.view.frame.height
+        let screenHeight = UIScreen.main.bounds.height
+        
+        if viewHeight == screenHeight { // I dont know why, but they are the same for one cyrcle, probably the view is not loaded right
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.createFloatingCommentView()
+                
+                return
+            }
+        } else {
+            if floatingCommentView == nil {
+                
+                let commentViewHeight: CGFloat = 60
+                floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: viewHeight-commentViewHeight, width: self.view.frame.width, height: commentViewHeight))
+                floatingCommentView!.delegate = self
+                print("Add Subview1: \(viewHeight-commentViewHeight), viewHeight: \(viewHeight), full height: \(UIScreen.main.bounds.height)")
+                self.contentView.addSubview(floatingCommentView!)
+                self.contentView.bringSubviewToFront(floatingCommentView!)
+                self.contentView.layoutIfNeeded()
+                
+                //            if let window = UIApplication.shared.keyWindow {
+                //                window.addSubview(floatingCommentView!)
+                //            }
             }
         }
     }
@@ -1982,9 +2020,27 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     func scrollToBottom() {
         // Scroll to the end of the view
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        if let view = floatingCommentView {
+            let offset = scrollView.contentOffset.y
+            let screenHeight = self.view.frame.height
+            let commentViewHeight = view.frame.height
+            let height = screenHeight-commentViewHeight
+            
+            if !view.answerTextField.isFirstResponder { //If the answerview is open                
+                view.frame = CGRect(x: 0, y: offset+height, width: view.frame.width, height: commentViewHeight)
+            } else {
+                let keyboardSize = view.keyboardheight
+                view.frame = CGRect(x: 0, y: offset+height-keyboardSize, width: view.frame.width, height: commentViewHeight)
+            }
+        }
+    }
 }
 
 extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
+    
     func notLoggedIn() {
         self.notLoggedInAlert()
     }
@@ -1995,9 +2051,9 @@ extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
         }
     }
     
-    func sendButtonTapped(text: String, isAnonymous: Bool) {
+    func sendButtonTapped(text: String, isAnonymous: Bool, answerToComment: Comment?) {
         
-        commentTableView.saveCommentInDatabase(bodyString: text, isAnonymous: isAnonymous)
+        commentTableView.saveCommentInDatabase(bodyString: text, isAnonymous: isAnonymous, answerToComment: answerToComment)
     }
     
     func recipientChanged(isActive: Bool, userUID: String) {
@@ -2041,6 +2097,12 @@ extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
     
     func toUserTapped(user: User) {
         performSegue(withIdentifier: "toUserSegue", sender: user)
+    }
+    
+    func answerCommentTapped(comment: Comment) {
+        if let answerView = self.floatingCommentView {
+            answerView.addRecipientField(comment: comment)
+        }
     }
     
 }

@@ -365,7 +365,7 @@ class HandyHelper {
     }
     
     func deleteCommentInFirebase(comment: Comment) {
-        let ref = db.collection("Comments").document(comment.sectionItemID).collection("threads").document(comment.documentID)
+        let ref = db.collection("Comments").document(comment.sectionItemID).collection("threads").document(comment.commentID)
         
         ref.delete { (err) in
             if let error = err {

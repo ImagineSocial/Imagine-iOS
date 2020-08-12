@@ -93,24 +93,71 @@
                             <action selector="toUserTapped:" destination="aj4-eF-TBR" eventType="touchUpInside" id="MgS-ZR-WqN"/>
                         </connections>
                     </button>
+                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tPf-AQ-EYz">
+                        <rect key="frame" x="1" y="0.0" width="1" height="102"/>
+                        <color key="backgroundColor" systemColor="separatorColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="1" id="4iB-I7-EgJ"/>
+                        </constraints>
+                    </view>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fPQ-BU-yi6" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="295" y="79" width="59" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="ogo-np-GjN"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="12"/>
+                        <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <state key="normal" title="Antworten"/>
+                        <connections>
+                            <action selector="answerButtonTapped:" destination="aj4-eF-TBR" eventType="touchUpInside" id="r6c-Hy-v6o"/>
+                        </connections>
+                    </button>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xzT-im-IUE" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="374" y="74" width="25" height="25"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="25" id="kso-vH-nAv"/>
+                            <constraint firstAttribute="height" constant="25" id="xz1-N1-b8Q"/>
+                        </constraints>
+                        <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <state key="normal" image="niceButton"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="4"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                        <connections>
+                            <action selector="niceButtonTapped:" destination="aj4-eF-TBR" eventType="touchUpInside" id="34r-Xf-h5n"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="FTS-vc-yco" firstAttribute="top" secondItem="xtk-iA-AdD" secondAttribute="top" id="Czg-8y-qC8"/>
                     <constraint firstItem="xtk-iA-AdD" firstAttribute="leading" secondItem="0Vg-xH-S4S" secondAttribute="leading" constant="15" id="DsM-Le-12k"/>
                     <constraint firstAttribute="bottom" secondItem="FTS-vc-yco" secondAttribute="bottom" constant="20" id="Eb5-8I-ypH"/>
+                    <constraint firstItem="xzT-im-IUE" firstAttribute="trailing" secondItem="FTS-vc-yco" secondAttribute="trailing" constant="-5" id="Hwy-Lv-W8n"/>
+                    <constraint firstItem="fPQ-BU-yi6" firstAttribute="bottom" secondItem="xzT-im-IUE" secondAttribute="bottom" id="Q6U-WF-7OV"/>
                     <constraint firstItem="FaG-Zv-mHD" firstAttribute="width" secondItem="xtk-iA-AdD" secondAttribute="width" id="RbH-ca-1ec"/>
                     <constraint firstItem="FaG-Zv-mHD" firstAttribute="top" secondItem="xtk-iA-AdD" secondAttribute="top" id="Wgx-0d-Gss"/>
                     <constraint firstItem="xtk-iA-AdD" firstAttribute="top" secondItem="0Vg-xH-S4S" secondAttribute="top" constant="10" id="Wx8-UX-mAf"/>
                     <constraint firstItem="FaG-Zv-mHD" firstAttribute="leading" secondItem="xtk-iA-AdD" secondAttribute="leading" id="Zs9-HE-sb5"/>
+                    <constraint firstItem="tPf-AQ-EYz" firstAttribute="leading" secondItem="0Vg-xH-S4S" secondAttribute="leading" constant="1" id="chV-Ek-H1f"/>
+                    <constraint firstItem="tPf-AQ-EYz" firstAttribute="top" secondItem="0Vg-xH-S4S" secondAttribute="top" id="dn9-jH-1VP"/>
+                    <constraint firstItem="xzT-im-IUE" firstAttribute="bottom" secondItem="FTS-vc-yco" secondAttribute="bottom" constant="17" id="dvc-em-xnB"/>
+                    <constraint firstAttribute="bottom" secondItem="tPf-AQ-EYz" secondAttribute="bottom" id="iJu-2o-yHJ"/>
                     <constraint firstAttribute="trailing" secondItem="FTS-vc-yco" secondAttribute="trailing" constant="20" id="iXu-by-2Py"/>
                     <constraint firstItem="FaG-Zv-mHD" firstAttribute="height" secondItem="xtk-iA-AdD" secondAttribute="height" id="rpg-jD-lS8"/>
                     <constraint firstItem="FTS-vc-yco" firstAttribute="leading" secondItem="xtk-iA-AdD" secondAttribute="trailing" constant="15" id="sa5-IS-oYI"/>
+                    <constraint firstItem="xzT-im-IUE" firstAttribute="leading" secondItem="fPQ-BU-yi6" secondAttribute="trailing" constant="20" id="v06-8l-2Sl"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
+                <outlet property="answerButton" destination="fPQ-BU-yi6" id="xFp-gy-D8X"/>
                 <outlet property="bodyLabel" destination="Q22-uC-mgD" id="UQg-qs-E2W"/>
                 <outlet property="createDateLabel" destination="Ym3-1M-box" id="8c1-qr-un2"/>
+                <outlet property="inlineSeparatorView" destination="tPf-AQ-EYz" id="s6b-ud-70d"/>
                 <outlet property="nameLabel" destination="VMh-oN-jNZ" id="6Qw-Py-xGB"/>
+                <outlet property="niceButton" destination="xzT-im-IUE" id="Byi-r2-GTQ"/>
                 <outlet property="profilePictureImageView" destination="xtk-iA-AdD" id="P7D-1l-DGx"/>
             </connections>
             <point key="canvasLocation" x="18.840579710144929" y="18.080357142857142"/>
@@ -118,5 +165,6 @@
     </objects>
     <resources>
         <image name="default-user" width="415" height="415"/>
+        <image name="niceButton" width="800" height="800"/>
     </resources>
 </document>

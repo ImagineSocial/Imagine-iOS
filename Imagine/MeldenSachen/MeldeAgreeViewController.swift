@@ -110,7 +110,7 @@ class MeldeAgreeViewController: UIViewController {
                 saveReportInDatabase(data: data)
                 
             } else if let comment = comment {
-                let data: [String:Any] = ["category": reportCategory, "reason": choosenReportOption, "reportingUser": user.uid, "reported post": comment.documentID]
+                let data: [String:Any] = ["category": reportCategory, "reason": choosenReportOption, "reportingUser": user.uid, "reported post": comment.commentID]
                 
                 saveReportInDatabase(data: data)
             }

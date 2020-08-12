@@ -93,7 +93,6 @@ class LogInViewController: UIViewController {
     
     func startSignUpSession() {
         
-        print("Start Fucking SignUp Session")
         signUpInProgress = true
         answerTextfield.text = ""
         nextButton.alpha = 0.5
@@ -104,32 +103,32 @@ class LogInViewController: UIViewController {
         switch signUpFrame {
         case .enterFirstName:
             answerTextfield.textContentType = .givenName
-            questionLabel.text = NSLocalizedString("enter first name", comment: "Enter your name (with a 'too much' touch)")
-            informationLabel.text = "Dein gewählter Vorname wird auf deinem Profil & in deinen Beiträgen für \"Fremde\" sichtbar sein"
+            questionLabel.text = NSLocalizedString("enter_first_name", comment: "Enter your name (with a 'too much' touch)")
+            informationLabel.text = NSLocalizedString("name_placeholder", comment: "Visible for everybody")
             self.informationLabel.alpha = 1
-            self.answerTextfield.placeholder = "Max"
+            self.answerTextfield.placeholder = NSLocalizedString("name_example_placeholder", comment: "John/Max")
         case .enterLastName:
             answerTextfield.textContentType = .familyName
-            self.answerTextfield.placeholder = "Mustermann"
-                let surnameText = NSLocalizedString("enter second name", comment: "Enter your surname (with a 'too much' touch)")
+            self.answerTextfield.placeholder = NSLocalizedString("surname_example_placeholder", comment: "Doe/Mustermann")
+                let surnameText = NSLocalizedString("enter_second_name", comment: "Enter your surname (with a 'too much' touch)")
             questionLabel.text = String.localizedStringWithFormat(surnameText, name)
-            informationLabel.text = "Dein Nachname wird nur für deine Freunde auf Imagine sichtbar sein" //und in der User-Suche (um Freunde zu finden)
+            informationLabel.text = NSLocalizedString("surname_placeholder", comment: "Just visible for friends")
         case .enterEmail:
             answerTextfield.textContentType = .emailAddress
             answerTextfield.isSecureTextEntry = false
-            answerTextfield.placeholder = "mustermann@gmail.com"
-            questionLabel.text = NSLocalizedString("enter email", comment: "Enter the email adress")
+            answerTextfield.placeholder = NSLocalizedString("email_example_placeholder", comment: "")
+            questionLabel.text = NSLocalizedString("enter_email", comment: "Enter the email adress")
         case .invalidEmail:
             answerTextfield.textContentType = .emailAddress
             answerTextfield.isSecureTextEntry = false
-            answerTextfield.placeholder = "mustermann@gmail.com"
+            answerTextfield.placeholder = NSLocalizedString("email_example_placeholder", comment: "")
             questionLabel.text = NSLocalizedString("invalid email", comment: "invalid email")
             nextButton.setTitle(NSLocalizedString("next", comment: "next"), for: .normal)
             answerTextfield.isEnabled = true
         case .EmailAlreadyInUse:
             answerTextfield.textContentType = .emailAddress
             answerTextfield.isSecureTextEntry = false
-            answerTextfield.placeholder = "mustermann@gmail.com"
+            answerTextfield.placeholder = NSLocalizedString("email_example_placeholder", comment: "")
             questionLabel.text = NSLocalizedString("email already in use", comment: "email already in use, use a different one")
             nextButton.setTitle(NSLocalizedString("next", comment: "next"), for: .normal)
             answerTextfield.isEnabled = true
@@ -137,7 +136,7 @@ class LogInViewController: UIViewController {
             answerTextfield.textContentType = .newPassword
             answerTextfield.isSecureTextEntry = true
             answerTextfieldTwo.alpha = 1
-            answerTextfield.placeholder = "Passwort"
+            answerTextfield.placeholder = NSLocalizedString("password_placeholder", comment: "")
             questionLabel.text = NSLocalizedString("enter password", comment: "Enter password")
             informationLabel.text = NSLocalizedString("password must be safe", comment: "Hint that the password must be safe and at least 6 characters")
             newStackView.insertArrangedSubview(answerTextfieldTwo, at: 3)
@@ -156,11 +155,11 @@ class LogInViewController: UIViewController {
         case .ready:
             answerTextfield.alpha = 0
             questionLabel.text = NSLocalizedString("ready to go", comment: "Ready to go and confirm email")
-            nextButton.setTitle("Zu Imagine", for: .normal)
+            nextButton.setTitle(NSLocalizedString("go_to_imagine", comment: "to imagine"), for: .normal)
             nextButton.isEnabled = true
             nextButton.alpha = 1
         case .error:
-            questionLabel.text = "Irgendwas ist hier kaputt, versuch es bitte später nochmal!"
+            questionLabel.text = NSLocalizedString("signup_error", comment: "Something is wrong, try later")
         case .acceptPrivacyAgreement:
             answerTextfield.resignFirstResponder()
             answerTextfieldTwo.resignFirstResponder()
@@ -221,7 +220,6 @@ class LogInViewController: UIViewController {
 
     func showInformationLabel() {
         UIView.animate(withDuration: 0.2) {
-            print("Show informationLabel")
             self.informationLabel.alpha = 1
             self.view.layoutIfNeeded()
         }
@@ -236,25 +234,25 @@ class LogInViewController: UIViewController {
         
         switch logInFrame {
         case .enterEmail:
-            questionLabel.text = NSLocalizedString("enter email", comment: "enter email")
+            questionLabel.text = NSLocalizedString("enter_email", comment: "enter email")
             answerTextfield.textContentType = .emailAddress
             answerTextfield.isSecureTextEntry = false
         case .enterPassword:
-            questionLabel.text = "Nun noch dein Kennwort und wir können loslegen!"
+            questionLabel.text = NSLocalizedString("login_password", comment: "enter password")
             answerTextfield.textContentType = .password
             answerTextfield.isSecureTextEntry = true
             resetPasswordButton.isHidden = false
         case .wrongEmail:
-            self.questionLabel.text = "Deine eingegebene Email-Adresse ist nicht korrekt"
+            self.questionLabel.text = NSLocalizedString("login_error_email", comment: "wrong email")
             answerTextfield.textContentType = .emailAddress
             answerTextfield.isSecureTextEntry = false
         case .wrongPassword:
-            self.questionLabel.text = "Dein Passwort ist nicht korrekt, versuche es erneut:"
+            self.questionLabel.text = NSLocalizedString("login_error_password", comment: "wrong password")
             answerTextfield.textContentType = .password
             answerTextfield.isSecureTextEntry = true
             resetPasswordButton.isHidden = false
         case .forgotPassword:
-            questionLabel.text = "Gib deine EmailAdresse ein, damit wir dir eine Mail zum zurücksetzen deines Passwortes senden können."
+            questionLabel.text = NSLocalizedString("login_forgot_password", comment: "forgot password")
             answerTextfield.textContentType = .emailAddress
             answerTextfield.isSecureTextEntry = false
         }
@@ -277,11 +275,11 @@ class LogInViewController: UIViewController {
                 if answerTextfield.text == answerTextfieldTwo.text {
                     return true
                 } else {
-                    questionLabel.text = "Deine beiden Passwörter stimmen nicht überein. Versuch es bitte noch einmal:"
+                    questionLabel.text = NSLocalizedString("signup_error_repeat_password", comment: "not the same")
                     return false
                 }
             } else {
-                questionLabel.text = "Dein Passwort ist zu schwach. Es muss mindestens 6 Buchstaben haben und sollte schon ein bisschen sicher sein!"
+                questionLabel.text = NSLocalizedString("signup_error_weak_password", comment: "at least 6 signs")
                 return false
             }
         } else {
@@ -302,7 +300,6 @@ class LogInViewController: UIViewController {
             if let input = answerTextfield.text {
                 
                 let answer = input.trimmingCharacters(in: .whitespaces)
-                print("Bin jetzt im Schritt nach Button Push: \(self.signUpFrame)")
                 switch signUpFrame{
                 case .enterFirstName:
                     name = answer
@@ -327,7 +324,6 @@ class LogInViewController: UIViewController {
                 case .acceptPrivacyAgreement:
                     tryToSignUp()
                     self.signUpFrame = .wait
-                    print("Zu dings schicken")
                     self.view.activityStartAnimating()
                 case .ready:
                     self.delegate?.loadUser()
@@ -341,7 +337,6 @@ class LogInViewController: UIViewController {
                 UIView.animate(withDuration: 0.7, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
                     self.answerTextfield.alpha = 0
                     self.answerTextfieldTwo.alpha = 0
-                    print("#3 Setze auf 0")
                     self.informationLabel.alpha = 0
                     self.nextButton.alpha = 0
                     self.questionLabel.alpha = 0
@@ -386,7 +381,6 @@ class LogInViewController: UIViewController {
             }
             UIView.animate(withDuration: 0.9, delay: 0.2, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.7, options: .curveEaseOut, animations: {
                 self.answerTextfield.alpha = 0
-                print("#4 Setze auf 0")
                 self.informationLabel.alpha = 0
                 self.nextButton.alpha = 0.5
                 self.questionLabel.alpha = 0
@@ -402,7 +396,6 @@ class LogInViewController: UIViewController {
     //MARK: - Try to Sign Up
     
     func tryToSignUp() {
-        print("Hier zum registrieren")
         Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
             if let error = error {
                 print("We have an error: \(error.localizedDescription)")
@@ -515,7 +508,10 @@ class LogInViewController: UIViewController {
                         print("Not yet verified")
                         self.tryToLogOut()
                         
-                        let alertVC = UIAlertController(title: "Error", message: "Deine Email Adresse wurde noch nicht verifiziert. Sollen wir dir erneut eine Bestätigungs Email an \(self.email) senden?", preferredStyle: .alert)
+                        let emailText = NSLocalizedString("login_verify_email", comment: "verify email first, should send again?")
+                        
+                        
+                        let alertVC = UIAlertController(title: "Error", message: String.localizedStringWithFormat(emailText, self.email), preferredStyle: .alert)
                         let alertActionOkay = UIAlertAction(title: "Okay", style: .default) {
                             (_) in
                             result.user.sendEmailVerification { (err) in
@@ -523,12 +519,12 @@ class LogInViewController: UIViewController {
                                 if let error = err {
                                     print("We have an error: \(error.localizedDescription)")
                                 } else {
-                                    self.alert(message: "Der Link wurde verschickt")
+                                    self.alert(message: NSLocalizedString("verify_email_send_again", comment: ""))
                                     self.dismiss(animated: true, completion: nil)
                                 }
                             }
                         }
-                        let alertActionCancel = UIAlertAction(title: "Abbrechen", style: .cancel) { (_) in
+                        let alertActionCancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel) { (_) in
                             self.dismiss(animated: true, completion: nil)
                         }
 
@@ -566,8 +562,7 @@ class LogInViewController: UIViewController {
                     self.startLogIn()
                 }
             } else {
-                self.alert(message: "Die E-Mail wurde gesendet", title: "Schau in dein Postfach, ändere dein Passwort und versuche es erneut. Bis gleich!")
-                
+                self.alert(message: NSLocalizedString("reset_password_title", comment: "email was sent"), title: NSLocalizedString("reset_password_message", comment: "change and come back"))
             }
         }
     }
@@ -595,7 +590,7 @@ class LogInViewController: UIViewController {
     @objc func toEulaTapped() {
         
         if self.signUpFrame == .acceptPrivacyAgreement {
-            if let url = URL(string: "https://donmalte.github.io") {
+            if let url = URL(string: "https://www.imagine.social/datenschutzerklärung-app") {
                 UIApplication.shared.open(url)
             }
         } else {
@@ -657,7 +652,7 @@ class LogInViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.cornerRadius = 6
         button.backgroundColor = .imagineColor
-        button.setTitle("Zur Vereinbarung", for: .normal)
+        button.setTitle(NSLocalizedString("go_to_gdpr", comment: ""), for: .normal)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 14)
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
@@ -670,7 +665,7 @@ class LogInViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.cornerRadius = 4
         button.clipsToBounds = true
-        button.setTitle("Passwort vergessen", for: .normal)
+        button.setTitle(NSLocalizedString("forgot_password", comment: ""), for: .normal)
         button.setTitleColor(.imagineColor, for: .normal)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 10)
         button.addTarget(self, action: #selector(resetPasswordTapped), for: .touchUpInside)
@@ -722,7 +717,7 @@ class LogInViewController: UIViewController {
         textField.textAlignment = .left
         textField.borderStyle = .none
         textField.font = UIFont(name: "IBMPlexSans", size: 18)
-        textField.placeholder = "Passwort wiederholen"
+        textField.placeholder = NSLocalizedString("repeat_password_placeholder", comment: "")
         textField.autocorrectionType = .no
         textField.isSecureTextEntry = true
         
@@ -772,7 +767,7 @@ class LogInViewController: UIViewController {
             button.setTitleColor(.black, for: .normal)
         }
         button.tag = 0
-        button.setTitle("Weiter", for: .normal)
+        button.setTitle(NSLocalizedString("next", comment: ""), for: .normal)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 18)
         button.alpha = 0
         button.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
@@ -915,7 +910,7 @@ class LogInViewController: UIViewController {
     
     @IBAction func cancelTapped(_ sender: Any) {
         if signUpInProgress && signUpFrame != .enterFirstName {
-            let alertController = UIAlertController(title: "Anmeldung abbrechen?", message: "Möchtest du die Anmeldung abbrechen? Die aktuellen Eingaben gehen verloren.", preferredStyle: .alert)
+            let alertController = UIAlertController(title: NSLocalizedString("cancel_signup_title", comment: ""), message: NSLocalizedString("cancel_signup_message", comment: "all data is lost.."), preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Anmeldung abbrechen", style: .destructive, handler: { (_) in
                 self.dismiss(animated: true, completion: nil)
                 
@@ -924,7 +919,7 @@ class LogInViewController: UIViewController {
                 ])
                 
             })
-            let stayAction = UIAlertAction(title: "Hier bleiben", style: .cancel) { (_) in
+            let stayAction = UIAlertAction(title: NSLocalizedString("cancel_stay_here", comment: ""), style: .cancel) { (_) in
                 alertController.dismiss(animated: true, completion: nil)
             }
             alertController.addAction(cancelAction)

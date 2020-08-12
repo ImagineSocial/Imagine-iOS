@@ -72,7 +72,7 @@ class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegat
     // OptionalInformationDelegate
     func done() {
         if let info = info {
-            if let orderList = info.itemOrder {
+            if let orderList = info.itemOrder { // If an itemOrder exists (set in addOn-settings), order according to it
                 let items = info.items
                 
                 let sorted = items.compactMap { obj in

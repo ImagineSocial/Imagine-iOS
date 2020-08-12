@@ -232,9 +232,9 @@ extension CampaignViewController: CommentViewDelegate, CommentTableViewDelegate 
         print("COming soon")
     }
     
-    func sendButtonTapped(text: String, isAnonymous: Bool) {
+    func sendButtonTapped(text: String, isAnonymous: Bool, answerToComment: Comment?) {
         floatingCommentView!.resignFirstResponder()
-        commentTableView.saveCommentInDatabase(bodyString: text, isAnonymous: isAnonymous)
+        commentTableView.saveCommentInDatabase(bodyString: text, isAnonymous: isAnonymous, answerToComment: answerToComment)
     }
     
     func commentTypingBegins() {
@@ -278,6 +278,12 @@ extension CampaignViewController: CommentViewDelegate, CommentTableViewDelegate 
     
     func toUserTapped(user: User) {
         performSegue(withIdentifier: "toUserSegue", sender: user)
+    }
+    
+    func answerCommentTapped(comment: Comment) {
+        if let answerView = self.floatingCommentView {
+            answerView.addRecipientField(comment: comment)
+        }
     }
     
 }

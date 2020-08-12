@@ -94,6 +94,7 @@
 		E983F51E23C1FEA5005F7FDE /* GifCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983F51D23C1FEA5005F7FDE /* GifCell.swift */; };
 		E9879A2124BDB4C1004B497F /* MusicCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9879A2024BDB4C0004B497F /* MusicCell.xib */; };
 		E9879A2324BDB57A004B497F /* MusicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9879A2224BDB57A004B497F /* MusicCell.swift */; };
+		E9879A2524C2276B004B497F /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9879A2424C2276A004B497F /* Comment.swift */; };
 		E988285023141AC8005ECB40 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E988284F23141AC8005ECB40 /* Extensions.swift */; };
 		E98B22EE22CA396B000F965F /* ChatsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B22ED22CA396B000F965F /* ChatsTableViewController.swift */; };
 		E98B22F022CA6499000F965F /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B22EF22CA6499000F965F /* ChatViewController.swift */; };
@@ -301,6 +302,7 @@
 		E983F51D23C1FEA5005F7FDE /* GifCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifCell.swift; sourceTree = "<group>"; };
 		E9879A2024BDB4C0004B497F /* MusicCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MusicCell.xib; sourceTree = "<group>"; };
 		E9879A2224BDB57A004B497F /* MusicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicCell.swift; sourceTree = "<group>"; };
+		E9879A2424C2276A004B497F /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		E988284F23141AC8005ECB40 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E98B22ED22CA396B000F965F /* ChatsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsTableViewController.swift; sourceTree = "<group>"; };
 		E98B22EF22CA6499000F965F /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
@@ -618,6 +620,7 @@
 				E97E7262243603AC0012F105 /* OptionalInformation.swift */,
 				E929516923328D4B006C37E3 /* Constants.swift */,
 				E911EEF322DB630300EDD056 /* SideMenu.swift */,
+				E9879A2424C2276A004B497F /* Comment.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -1162,6 +1165,7 @@
 				E97CC1D322A028C800A23490 /* EmojiExtension.swift in Sources */,
 				E9B79CE7224F88CD00166EED /* RepostViewController.swift in Sources */,
 				E9B85D46241165CF00960942 /* OptionalInformationForArgumentTableViewController.swift in Sources */,
+				E9879A2524C2276B004B497F /* Comment.swift in Sources */,
 				E9F31DCD23F6D6D2001D5D25 /* FactCell.swift in Sources */,
 				E9A02AA523265822000DAB69 /* BlankContentFile.swift in Sources */,
 				E97E902822464B4700BA0295 /* JobOfferingViewController.swift in Sources */,

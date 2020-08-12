@@ -20,13 +20,14 @@ enum CommentSection {
 }
 
 protocol CommentTableViewDelegate {
-    func doneSaving()
+    func doneSaving() //// Tells the parent that the input text was successfully saved
     func notLoggedIn()
     func notAllowedToComment()
     func commentGotReported(comment: Comment)
     func commentGotDeleteRequest(comment: Comment)
     func toUserTapped(user: User)
     func recipientChanged(isActive: Bool, userUID: String)
+    func answerCommentTapped(comment: Comment)
 }
 
 class CommentTableView: UITableView {
@@ -97,11 +98,39 @@ class CommentTableView: UITableView {
     }
     
     func getcomments() {
-        var ref: Query?
         
-        guard let section = section else { return }
+        guard let section = section,
+            let refAndID = getCommentRefAndID()
+            else { return }
         
-        var sectionItemID: String?
+        refAndID.commentReference.getDocuments { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    for document in snap.documents {
+                        
+                        let docData = document.data()
+                        
+                        let comment = Comment(commentSection: section, sectionItemID: refAndID.sectionItemID, commentID: document.documentID)
+                        comment.initializeCommentFromData(sectionItemID: refAndID.sectionItemID, commentID: document.documentID, data: docData) { (comment) in
+                            
+                            comment.getChildren()
+                            comment.delegate = self
+                            self.addCommentToTableView(comment: comment, answerToComment: nil)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func getCommentRefAndID() -> (commentReference: Query, sectionItemID: String)? {
+        
+        guard let section = section else { return nil}
+        
+        var ref: Query!
+        var sectionItemID: String!
         
         switch section {
         case .post:
@@ -119,77 +148,29 @@ class CommentTableView: UITableView {
         case .counterArgument:
             ref = db.collection("Comments").document("arguments").collection("comments").document(counterArgument!.documentID).collection("threads").order(by: "sentAt", descending: false)
             sectionItemID = counterArgument!.documentID
-            
         }
         
-        if let reference = ref {
-            reference.getDocuments { (snap, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    if let snap = snap {
-                        for document in snap.documents {
-                            
-                            let docData = document.data()
-                            
-                            guard let body = docData["body"] as? String,
-                                let sentAtTimestamp = docData["sentAt"] as? Timestamp,
-                                let userUID = docData["userID"] as? String
-                                else {
-                                    continue    // Falls er das nicht zuordnen kann
-                            }
-                            
-                            self.getUser(userUID: userUID) { (user) in
-                                let comment = Comment(commentSection: section)
-                                comment.createTime = sentAtTimestamp.dateValue()
-                                comment.user = user
-                                comment.text = body
-                                comment.documentID = document.documentID
-                                if let id = sectionItemID {
-                                    comment.sectionItemID = id
-                                } else {
-                                    print("No ID for Comment")
-                                }
-                                
-                                self.addCommentToTableView(comment: comment)
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        return (ref, sectionItemID)
     }
     
-    func getUser(userUID: String, returnUser: @escaping (User?) -> Void) {
-        let ref = db.collection("Users").document(userUID)
-        
-        if userUID == "anonym" {
-            returnUser(nil)
+    func addCommentToTableView(comment: Comment, answerToComment: Comment?) {
+        if let answerToComment = answerToComment {
+            if let rightComment = self.comments.first(where: {$0.commentID == answerToComment.commentID}) {
+                comment.isIndented = true
+                let children = [comment]
+                rightComment.children = children
+                self.reloadData()
+            } else {
+               // item could not be found
+                self.comments.append(comment)
+                self.comments.sort(by: { $0.createTime.compare($1.createTime) == .orderedAscending })
+                self.reloadData()
+            }
         } else {
-            ref.getDocument { (snap, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    if let document = snap {
-                        if let data = document.data() {
-                            
-                            let user = User()
-                            user.displayName = data["name"] as? String ?? ""
-                            user.imageURL = data["profilePictureURL"] as? String ?? ""
-                            user.userUID = userUID
-                            
-                            returnUser(user)
-                        }
-                    }
-                }
-            }
+            self.comments.append(comment)
+            self.comments.sort(by: { $0.createTime.compare($1.createTime) == .orderedAscending })
+            self.reloadData()
         }
-    }
-    
-    func addCommentToTableView(comment: Comment) {
-        self.comments.append(comment)
-        self.comments.sort(by: { $0.createTime.compare($1.createTime) == .orderedAscending })
-        self.reloadData()
     }
     
     func deleteCommentFromTableView(comment: Comment) {
@@ -234,9 +215,37 @@ class CommentTableView: UITableView {
         }
     }
     
-    func saveCommentInDatabase(bodyString: String, isAnonymous: Bool) {
+    func getUser(userUID: String, returnUser: @escaping (User?) -> Void) {
+        let ref = db.collection("Users").document(userUID)
+        
+        if userUID == "anonym" {
+            returnUser(nil)
+        } else {
+            ref.getDocument { (snap, err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    if let document = snap {
+                        if let data = document.data() {
+                            
+                            let user = User()
+                            user.displayName = data["name"] as? String ?? ""
+                            user.imageURL = data["profilePictureURL"] as? String ?? ""
+                            user.userUID = userUID
+                            
+                            returnUser(user)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func saveCommentInDatabase(bodyString: String, isAnonymous: Bool, answerToComment: Comment?) {
         
         guard let section = section else { return }
+        
+        var sectionItemID: String!
         
         if let user = Auth.auth().currentUser {
             
@@ -245,7 +254,7 @@ class CommentTableView: UITableView {
                     return
                 }
                 
-                var ref: DocumentReference?
+                var ref: DocumentReference!
                 
                 var displayName = ""
                 var userID = ""
@@ -261,48 +270,73 @@ class CommentTableView: UITableView {
                 switch section {
                 case .post:
                     if let post = post {
-                        ref = db.collection("Comments").document(post.documentID).collection("threads").document()
+                        if let comment = answerToComment {
+                            ref = db.collection("Comments").document(post.documentID).collection("threads").document(comment.commentID).collection("children").document()
+                        } else {
+                            ref = db.collection("Comments").document(post.documentID).collection("threads").document()
+                        }
                         
                         if post.originalPosterUID != "" {
                             self.getNotificationRecipients(post: post, bodyString: bodyString, displayName: displayName, commenterUID: userID)
                         }
+                        sectionItemID = post.documentID
                     }
                 case .argument:
-                    ref = db.collection("Comments").document("arguments").collection("comments").document(argument!.documentID).collection("threads").document()
+                    if let comment = answerToComment {
+                        ref = db.collection("Comments").document("arguments").collection("comments").document(argument!.documentID).collection("threads").document(comment.commentID).collection("children").document()
+                    } else {
+                        ref = db.collection("Comments").document("arguments").collection("comments").document(argument!.documentID).collection("threads").document()
+                    }
+                    sectionItemID = argument!.documentID
                 case .source:
-                    ref = db.collection("Comments").document("sources").collection("comments").document(source!.documentID).collection("threads").document()
+                    if let comment = answerToComment {
+                        ref = db.collection("Comments").document("sources").collection("comments").document(source!.documentID).collection("threads").document(comment.commentID).collection("children").document()
+                    } else {
+                        ref = db.collection("Comments").document("sources").collection("comments").document(source!.documentID).collection("threads").document()
+                    }
+                    sectionItemID = source!.documentID
                 case .proposal:
-                    ref = db.collection("Comments").document("proposals").collection("comments").document(proposal!.documentID).collection("threads").document()
+                    if let comment = answerToComment {
+                        ref = db.collection("Comments").document("proposals").collection("comments").document(proposal!.documentID).collection("threads").document(comment.commentID).collection("children").document()
+                    } else {
+                        ref = db.collection("Comments").document("proposals").collection("comments").document(proposal!.documentID).collection("threads").document()
+                    }
+                    sectionItemID = proposal!.documentID
                 case .counterArgument:
-                    ref = db.collection("Comments").document("arguments").collection("comments").document(counterArgument!.documentID).collection("threads").document()
+                    if let comment = answerToComment {
+                        ref = db.collection("Comments").document("arguments").collection("comments").document(counterArgument!.documentID).collection("threads").document(comment.commentID).collection("children").document()
+                    } else {
+                        ref = db.collection("Comments").document("arguments").collection("comments").document(counterArgument!.documentID).collection("threads").document()
+                    }
+                    sectionItemID = counterArgument!.documentID
                 }
                 
                 let data : [String: Any] = ["body": bodyString, "id": 0, "sentAt": Timestamp(date: Date()), "userID": userID]
+                 
                 
-                if let reference = ref {
-                    
-                    reference.setData(data) { (err) in
-                        if let error = err {
-                            print("Error sending message: \(error.localizedDescription)")
-                            return
+                
+                ref.setData(data) { (err) in
+                    if let error = err {
+                        print("Error sending message: \(error.localizedDescription)")
+                        return
+                    } else {
+                        
+                        let comment = Comment(commentSection: section, sectionItemID: sectionItemID, commentID: ref.documentID)
+                        comment.createTime = Date()
+                        
+                        if isAnonymous {
+                            self.saveAnonymousCommentReference(documentID: ref.documentID, userUID: user.uid, section: section)
                         } else {
-                            
-                            let comment = Comment(commentSection: section)
-                            comment.createTime = Date()
-                            
-                            if isAnonymous {
-                                self.saveAnonymousCommentReference(documentID: reference.documentID, userUID: user.uid, section: section)
-                            } else {
-                                comment.user = currentUser  // No User if its anonymous
-                            }
-                            comment.text = bodyString
-                            
-                            self.addCommentToTableView(comment: comment)
-                            
-                            self.commentDelegate?.doneSaving() //// Tells the parent that the input text was successfully saved
+                            comment.user = currentUser  // No User if its anonymous
                         }
+                        comment.text = bodyString
+                        
+                        self.addCommentToTableView(comment: comment, answerToComment: answerToComment)
+                        
+                        self.commentDelegate?.doneSaving()
                     }
                 }
+                
             } else {
                 self.commentDelegate?.notAllowedToComment()
             }
@@ -442,18 +476,37 @@ class CommentTableView: UITableView {
 extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
     //MARK:-TableViewDelegate/DataSource
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return comments.count
     }
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        print("numberOfRows")
+        let comment = comments[section]
+        if let children = comment.children {
+            return children.count+1
+        } else {
+            return 1
+        }
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let comment = comments[indexPath.row]
+        print("CellForRow")
+        var comment = comments[indexPath.section]
+        print("Comment: ", comment.text)
+        if let children = comment.children {
+            print("IndexPath.row: ", indexPath.row-1, "comments: ", children)
+            if indexPath.row != 0 { //Not Top level Comment
+                
+                comment = children[indexPath.row-1]
+            }
+        }
         
         if let cell = dequeueReusableCell(withIdentifier: commentIdentifier, for: indexPath) as? CommentCell {
             
             cell.delegate = self
             cell.comment = comment
+            
             return cell
         }
         
@@ -493,10 +546,6 @@ extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        1
-    }
 
     //MARK:- TableView Height
     //Turn height of TableView to the height of all comments Combined
@@ -513,6 +562,11 @@ extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
 }
 
 extension CommentTableView: CommentTableViewHeaderDelegate, CommentCellDelegate {
+   
+    func answerCommentTapped(comment: Comment) {
+        commentDelegate?.answerCommentTapped(comment: comment)
+    }
+    
     
     func userTapped(user: User) {
         commentDelegate?.toUserTapped(user: user)
@@ -527,6 +581,12 @@ extension CommentTableView: CommentTableViewHeaderDelegate, CommentCellDelegate 
                 self.removeUserAsNotificationRecipient(post: post, userUID: user.uid)
             }
         }
+    }
+}
+
+extension CommentTableView: CommentDelegate {
+    func childrenLoaded() {
+        self.reloadData()
     }
 }
 

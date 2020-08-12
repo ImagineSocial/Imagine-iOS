@@ -125,7 +125,7 @@ class SettingViewController: UIViewController {
     
     @IBAction func dataControlTapped(_ sender: Any) {
         
-        if let url = URL(string: "https://donmalte.github.io") {
+        if let url = URL(string: "https://www.imagine.social/datenschutzerklärung-app") {
             UIApplication.shared.open(url)
         }
     }

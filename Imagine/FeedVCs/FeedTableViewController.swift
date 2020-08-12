@@ -165,7 +165,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                     if !self.isAppAlreadyLaunchedOnce() {
                         
                     } else if self.isItTheSecondTimeTheAppLaunches() {
-                        self.alert(message: "Schau dir mal an was wir aus dem Netzwerk so alles machen könnten...", title: "Hast du schon auf den blauen Owen ↑ geklickt?")
+                        self.alert(message: NSLocalizedString("tap_blue_owen_title", comment: "go and tap it to see what this could be"), title: NSLocalizedString("tap_blue_owen_message", comment: ""))
                     } else if !self.alreadyAcceptedPrivacyPolicy() {
                         self.showGDPRAlert()
                     }
@@ -296,14 +296,12 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                                             self.friendRequests = self.friendRequests+1
                                         case "comment":
                                             if let text = data["comment"] as? String, let author = data["name"] as? String, let postID = data["postID"] as? String {
-                                                let comment = Comment(commentSection: .post)
+                                                let comment = Comment(commentSection: .post, sectionItemID: postID, commentID: change.document.documentID)
                                                 
                                                 if let isTopicPost = data["isTopicPist"] as? Bool {
                                                     comment.isTopicPost = isTopicPost
                                                 }
-//                                                comment.postID = change.document.documentID
                                                 comment.author = author
-                                                comment.sectionItemID = postID
                                                 comment.text = text
                                                 self.notifications.append(comment)
                                             }
@@ -319,7 +317,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                                                     
                                                     self.addUpvote(comment: upvote, buttonType: button)
                                                 } else {
-                                                    let comment = Comment(commentSection: .post)
+                                                    let comment = Comment(commentSection: .post, sectionItemID: postID, commentID: change.document.documentID)
                             
                                                     comment.sectionItemID =  postID
                                                     comment.upvotes = Votes()
@@ -361,7 +359,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                                                 self.upvotes = self.upvotes.filter{$0.sectionItemID != postID}
                                                 
                                                 if count != self.upvotes.count {
-                                                    self.newComments = self.newComments-1   
+                                                    self.newComments = self.newComments-1
                                                 }
                                             }
                                         default:
@@ -861,17 +859,17 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     }
     
     func showGDPRAlert() {
-        let alert = UIAlertController(title: "Wir haben 'Cookies' bei Imagine", message: "Gemäß unseren Datenschutzrichtlinien möchten wir damit herausfinden, wie die User unsere App nutzen und welche Features beliebt sind. Anonymisiert natürlich! Du kannst die Einstellung auch jederzeit ändern.", preferredStyle: .alert)
+        let alert = UIAlertController(title: NSLocalizedString("accept_cookies_title", comment: "we got cookies"), message: NSLocalizedString("accept_cookies_message", comment: "what are out cookies about"), preferredStyle: .alert)
         
-        alert.addAction(UIAlertAction(title: "Zu den Datenschutzrichtlinien", style: .default, handler: { (_) in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("to_gdpr", comment: ""), style: .default, handler: { (_) in
             
-            if let url = URL(string: "https://donmalte.github.io") {
+            if let url = URL(string: "https://www.imagine.social/datenschutzerklärung-app") {
                 UIApplication.shared.open(url)
             }
             
         }))
         
-        alert.addAction(UIAlertAction(title: "Ich akzeptiere Cookies", style: .default, handler: { (_) in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("accept_cookies", comment: ""), style: .default, handler: { (_) in
             
             self.defaults.set(true, forKey: "acceptedCookies")
             self.defaults.set(true, forKey: "askedAboutCookies")
@@ -879,7 +877,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
             self.dismiss(animated: true, completion: nil)
         }))
         
-        alert.addAction(UIAlertAction(title: "Keine Cookies", style: .cancel, handler: { (_) in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("no_cookies", comment: ""), style: .cancel, handler: { (_) in
             
             //Already set to false
             self.defaults.set(false, forKey: "acceptedCookies")

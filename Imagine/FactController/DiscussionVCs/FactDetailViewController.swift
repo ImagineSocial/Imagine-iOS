@@ -226,9 +226,9 @@ extension FactDetailViewController: CommentTableViewDelegate, CommentViewDelegat
         print("COming soon")
     }
     
-    func sendButtonTapped(text: String, isAnonymous: Bool) {
+    func sendButtonTapped(text: String, isAnonymous: Bool, answerToComment: Comment?) {
         floatingCommentView!.resignFirstResponder()
-        commentTableView.saveCommentInDatabase(bodyString: text, isAnonymous: isAnonymous)
+        commentTableView.saveCommentInDatabase(bodyString: text, isAnonymous: isAnonymous, answerToComment: answerToComment)
     }
     
     func commentTypingBegins() {
@@ -274,4 +274,9 @@ extension FactDetailViewController: CommentTableViewDelegate, CommentViewDelegat
         performSegue(withIdentifier: "toUserSegue", sender: user)
     }
     
+    func answerCommentTapped(comment: Comment) {
+        if let answerView = self.floatingCommentView {
+            answerView.addRecipientField(comment: comment)
+        }
+    }
 }
