@@ -17,6 +17,7 @@ protocol CollectionViewInTableViewCellDelegate {
 class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegate {
     
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var backgroundBorderView: DesignablePopUp!
     
     var delegate: CollectionViewInTableViewCellDelegate?
     var isAddOnStoreCell = false
@@ -50,6 +51,13 @@ class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegat
     
     override func awakeFromNib() {
         
+        backgroundBorderView.layer.borderWidth = 0.5
+        if #available(iOS 13.0, *) {
+            backgroundBorderView.layer.borderColor = UIColor.separator.cgColor
+        } else {
+            backgroundBorderView.layer.borderColor = UIColor.lightGray.cgColor
+        }
+        
         collectionView.dataSource = self
         collectionView.delegate = self
         
@@ -74,13 +82,17 @@ class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegat
         if let info = info {
             if let orderList = info.itemOrder { // If an itemOrder exists (set in addOn-settings), order according to it
                 let items = info.items
-                
-                let sorted = items.compactMap { obj in
-                    orderList.index(of: obj.documentID).map { idx in (obj, idx) }
-                }.sorted(by: { $0.1 < $1.1 } ).map { $0.0 }
-                
-                info.items = sorted
-                collectionView.reloadData()
+                DispatchQueue.global(qos: .default).async {
+                    let sorted = items.compactMap { obj in
+                        orderList.index(of: obj.documentID).map { idx in (obj, idx) }
+                    }.sorted(by: { $0.1 < $1.1 } ).map { $0.0 }
+                    
+                    info.items = sorted
+                    
+                    DispatchQueue.main.async {
+                        self.collectionView.reloadData()
+                    }
+                }
             } else {
                 collectionView.reloadData()
             }

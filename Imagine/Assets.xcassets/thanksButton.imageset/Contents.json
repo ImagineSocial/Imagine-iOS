@@ -1,22 +1,24 @@
 {
   "images" : [
     {
+      "filename" : "thanksButton.png",
       "idiom" : "universal",
-      "filename" : "thanksButton.pdf",
       "scale" : "1x"
     },
     {
+      "filename" : "thanksButton@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "thanksButton@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
   },
   "properties" : {
     "template-rendering-intent" : "template"

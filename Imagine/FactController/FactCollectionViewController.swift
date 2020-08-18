@@ -141,55 +141,92 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
 
    
     func getFacts() {
-        dataHelper.getData(get: .facts) { (facts) in
-            
+        dataHelper.getData(get: .facts) { (facts) in    // gets the first 8 topic communities by popularity
             if let facts = facts as? [Fact] {
                 
-                for fact in facts {
-                    if fact.displayOption == .fact && self.discussionFacts.count < 6 {
-                        self.discussionFacts.append(fact)
-                    } else if fact.displayOption == .topic && self.topicFacts.count < 8  {
-                        self.topicFacts.append(fact)
+                self.topicFacts = facts
+                self.collectionView.reloadData()    //The user thinks it is loaded
+                print("#Reload 1")
+                
+                let ref = self.db.collection("Facts").whereField("displayOption", isEqualTo: "fact").order(by: "popularity", descending: true).limit(to: 6)
+                
+                ref.getDocuments { (snap, err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        if let snap = snap {
+                            var discussionCount = snap.documents.count
+                            print("so viele documents gibts: \(discussionCount)")
+                            for document in snap.documents {
+                                let data = document.data()
+                                
+                                if let fact = self.dataHelper.addFact(documentID: document.documentID, data: data) {
+                                    self.discussionFacts.append(fact)
+                                } else {
+                                    discussionCount-=1
+                                }
+                                
+                                if self.discussionFacts.count == discussionCount {
+                                    print("#Reload 2")
+                                    self.collectionView.reloadData()
+                                    self.getFollowedCommunities()
+                                    self.isLoading = false
+                                    self.view.activityStopAnimating()
+                                }
+                            }
+                        }
                     }
                 }
-                print("#Reload ")
-                self.isLoading = false
-                self.collectionView.reloadData()
-                self.view.activityStopAnimating()
             } else {
                 self.view.activityStopAnimating()
                 print("Something went wrong")
             }
         }
-        
-        if let user = Auth.auth().currentUser {
-            dataHelper.getFollowedTopicDocuments(userUID: user.uid) { (documents) in
-                for document in documents {
-                    self.addFact(documentID: document.documentID)
-                }
-            }
-        }
     }
     
-    func addFact(documentID: String) {
-        let ref = self.db.collection("Facts").document(documentID)
-        
-        ref.getDocument { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    if let data = snap.data() {
-                        if let fact = self.dataHelper.addFact(documentID: snap.documentID, data: data) {
+    func getFollowedCommunities() {
+        if let user = Auth.auth().currentUser {
+            dataHelper.getFollowedTopicDocuments(userUID: user.uid) { (documents) in
+                var topicCount = documents.count
+                for document in documents {
+                    self.addFact(documentID: document.documentID) { (fact) in
+                        if let fact = fact {
                             fact.beingFollowed = true
                             self.followedFacts.append(fact)
                             self.followedFacts.sort {
                                 $0.title.localizedCompare($1.title) == .orderedAscending //Not case sensitive
                             }
-                            print("##Reload ")
-                            self.collectionView.reloadData()    //not the best idea i know
+                        } else {
+                            topicCount-=1
+                        }
+                        if self.followedFacts.count == topicCount {
+                            self.collectionView.reloadData()
+                            print("#Reload 3")
                         }
                     }
+                }
+            }
+        }
+    }
+    
+    func addFact(documentID: String, returnedFact: @escaping (Fact?) -> Void) {
+        let ref = self.db.collection("Facts").document(documentID)
+        
+        ref.getDocument { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+                returnedFact(nil)
+            } else {
+                if let snap = snap {
+                    if let data = snap.data() {
+                        if let fact = self.dataHelper.addFact(documentID: snap.documentID, data: data) {
+                            returnedFact(fact)
+                        }
+                    } else {
+                        returnedFact(nil)
+                    }
+                } else {
+                    returnedFact(nil)
                 }
             }
         }

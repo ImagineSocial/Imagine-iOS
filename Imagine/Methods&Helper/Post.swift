@@ -35,6 +35,8 @@ enum ReportType {
     case pretentious
     case edited
     case ignorant
+    case misinformation
+    case misleading
 }
 
 class Votes {
@@ -76,10 +78,10 @@ class Post {
     var survey: Survey?
     
     let handyHelper = HandyHelper()
+    let db = Firestore.firestore()
     
     
     func getRepost(returnRepost: @escaping (Post) -> Void) {
-        let db = Firestore.firestore()
         if let repostID = OGRepostDocumentID {
             let postRef = db.collection("Posts").document(repostID)
             
@@ -158,7 +160,6 @@ class Post {
     
     func getUser(isAFriend: Bool) {
         
-        let db = Firestore.firestore()
         // User Daten raussuchen
         let userRef = db.collection("Users").document(originalPosterUID)
         
@@ -205,6 +206,22 @@ class Post {
                 }
             }
         })
+    }
+    
+    func getCommentCount() {
+        
+        if self.documentID != "" {
+            let commentRef = db.collection("Comments").document(self.documentID).collection("threads")
+            
+            commentRef.getDocuments { (snap, err) in
+                if let err = err {
+                    print("Wir haben einen Error beim User: \(err.localizedDescription)")
+                }
+                if let snapshot = snap {
+                    self.commentCount = snapshot.count
+                }
+            }
+        }
     }
 }
 

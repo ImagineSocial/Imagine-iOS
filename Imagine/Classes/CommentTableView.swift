@@ -24,7 +24,7 @@ protocol CommentTableViewDelegate {
     func notLoggedIn()
     func notAllowedToComment()
     func commentGotReported(comment: Comment)
-    func commentGotDeleteRequest(comment: Comment)
+    func commentGotDeleteRequest(comment: Comment, answerToComment: Comment?)
     func toUserTapped(user: User)
     func recipientChanged(isActive: Bool, userUID: String)
     func answerCommentTapped(comment: Comment)
@@ -156,9 +156,16 @@ class CommentTableView: UITableView {
     func addCommentToTableView(comment: Comment, answerToComment: Comment?) {
         if let answerToComment = answerToComment {
             if let rightComment = self.comments.first(where: {$0.commentID == answerToComment.commentID}) {
+                
                 comment.isIndented = true
-                let children = [comment]
-                rightComment.children = children
+                
+                if var children = answerToComment.children {
+                    children.append(comment)
+                    answerToComment.children = children
+                } else {
+                    let children = [comment]
+                    rightComment.children = children
+                }
                 self.reloadData()
             } else {
                // item could not be found
@@ -173,16 +180,62 @@ class CommentTableView: UITableView {
         }
     }
     
-    func deleteCommentFromTableView(comment: Comment) {
-        if let index = comments.firstIndex(where: { (comm) -> Bool in
-            comm.sectionItemID == comment.sectionItemID
-        }) {
-            self.beginUpdates()
-            let indexPath = IndexPath(row: index, section: 0)
-            self.comments.remove(at: index)
-            self.deleteRows(at: [indexPath], with: .automatic)
-            self.endUpdates()
+    func deleteCommentFromTableView(comment: Comment, answerToComment: Comment?) {
+        if let answerToComment = answerToComment {
+            if let section = comments.firstIndex(where: { (comm) -> Bool in
+                comm.commentID == answerToComment.commentID
+            }) {
+                let sectionComment = comments[section]
+                print("In der Section löschen: \(section), das Kommentar: \(sectionComment.text)")
+                if let children = sectionComment.children {
+                    if let row = children.firstIndex(where: { (comm) -> Bool in
+                        comm.commentID == comment.commentID
+                    }) {
+                        print("In der row löschen: \(row), das Kommentar: \(children[row].text)")
+                        let indexPath = IndexPath(row: row, section: section)
+                        self.updateTableView(indexPath: indexPath)
+                    }
+                }
+            }
+        } else {
+            if let index = comments.firstIndex(where: { (comm) -> Bool in
+                comm.commentID == comment.commentID
+            }) {
+                let indexPath = IndexPath(row: 0, section: index)
+                print("Hier wollen wir das toplevel comm löschen: \(indexPath.section), row: \(indexPath.row)")
+                self.updateTableView(indexPath: indexPath)
+            }
         }
+        
+        
+        
+    }
+    
+    /*
+     self.beginUpdates()
+     let indexPath = IndexPath(row: index, section: 0)
+     self.comments.remove(at: index)
+     self.deleteRows(at: [indexPath], with: .automatic)
+     self.endUpdates()
+     */
+    
+    func updateTableView(indexPath: IndexPath) {
+        self.beginUpdates()
+        if indexPath.row == 0 { // Top Level got deleted
+            self.comments.remove(at: indexPath.section)
+            let indexSet = IndexSet(arrayLiteral: indexPath.section)
+            self.deleteSections(indexSet, with: .automatic)
+        } else {
+            let comment = self.comments[indexPath.section]
+            
+            if var children = comment.children {
+                children.remove(at: indexPath.row)
+                comment.children = children
+                
+                self.deleteRows(at: [indexPath], with: .automatic)
+            }
+        }
+        self.endUpdates()
     }
     
     func checkIfTheCurrentUserIsBlocked(post: Post) {
@@ -481,7 +534,6 @@ extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("numberOfRows")
         let comment = comments[section]
         if let children = comment.children {
             return children.count+1
@@ -491,13 +543,9 @@ extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("CellForRow")
         var comment = comments[indexPath.section]
-        print("Comment: ", comment.text)
         if let children = comment.children {
-            print("IndexPath.row: ", indexPath.row-1, "comments: ", children)
             if indexPath.row != 0 { //Not Top level Comment
-                
                 comment = children[indexPath.row-1]
             }
         }
@@ -514,7 +562,12 @@ extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        let comment = self.comments[indexPath.row]
+        var comment = comments[indexPath.section]
+        if let children = comment.children {
+            if indexPath.row != 0 { //Not Top level Comment
+                comment = children[indexPath.row-1]
+            }
+        }
         
         let editAction = UITableViewRowAction(style: .normal, title: "Melden") { (rowAction, indexPath) in
             
@@ -527,7 +580,12 @@ extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
                 if user.uid == commentAuthor.userUID {
                     let deleteAction = UITableViewRowAction(style: .destructive, title: "Löschen") { (rowAction, indexPath) in
                         
-                        self.commentDelegate?.commentGotDeleteRequest(comment: comment)
+                        if comment.isIndented {
+                            let answerToComment = self.comments[indexPath.section]
+                            self.commentDelegate?.commentGotDeleteRequest(comment: comment, answerToComment: answerToComment)
+                        } else {
+                            self.commentDelegate?.commentGotDeleteRequest(comment: comment, answerToComment: nil)
+                        }
                     }
                     
                     return [deleteAction, editAction]

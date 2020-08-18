@@ -108,7 +108,7 @@ class SingleTopicAddOnCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         //set the values for top,left,bottom,right margins
-        let margins = UIEdgeInsets(top: 5, left: 5, bottom: 20, right: 5)
+        let margins = UIEdgeInsets(top: 5, left: 10, bottom: 20, right: 10)
         contentView.frame = contentView.frame.inset(by: margins)
     }
     

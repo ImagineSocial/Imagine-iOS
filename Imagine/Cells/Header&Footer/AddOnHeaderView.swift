@@ -29,6 +29,7 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
     
     @IBOutlet weak var headerImageViewHeight: NSLayoutConstraint!
     @IBOutlet weak var settingButton: DesignableButton!
+    @IBOutlet weak var backgroundBorderView: DesignablePopUp!
     
     
     var delegate: AddOnHeaderDelegate?
@@ -89,6 +90,15 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
     }
     
     override func awakeFromNib() {
+        backgroundBorderView.layer.borderWidth = 0.5
+        if #available(iOS 13.0, *) {
+            backgroundBorderView.layer.borderColor = UIColor.separator.cgColor
+        } else {
+            backgroundBorderView.layer.borderColor = UIColor.lightGray.cgColor
+        }
+        contentView.clipsToBounds = true
+        backgroundBorderView.clipsToBounds = true
+        
         let layer = thanksButton.layer
         layer.cornerRadius = 4
         layer.borderWidth = 0.5

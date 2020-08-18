@@ -94,7 +94,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
             
             self.navigationController?.navigationBar.standardAppearance = navBarAppearance
             self.navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
-                        
+            
         } else {
             self.navigationController?.navigationBar.isTranslucent = false
             self.navigationController?.navigationBar.backgroundColor = .white
@@ -105,7 +105,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         // Add View for statusBar background
         if let window = UIApplication.shared.keyWindow {
             let view = UIView()
-
+            
             var height:CGFloat = 40
             if #available(iOS 13.0, *) {
                 height = window.windowScene?.statusBarManager?.statusBarFrame.height ?? 40
@@ -136,7 +136,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         //                restoredState.wasFirstResponder = false
         //            }
         //        } Aus dem apple tutorial für die suche
-    
+        
     }
     
     
@@ -155,72 +155,79 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         print("Get Posts")
         
         if isConnected() {
-        
+            
             self.view.activityStartAnimating()
-            postHelper.getPostsForMainFeed(getMore: getMore, sort: self.sortBy) { (posts,initialFetch)  in
+            
+            DispatchQueue.global(qos: .default).async {
                 
-                print("\(posts.count) neue dazu")
-                if initialFetch {   // Get the first batch of posts
+                self.postHelper.getPostsForMainFeed(getMore: getMore, sort: self.sortBy) { (posts,initialFetch)  in
                     
-                    if !self.isAppAlreadyLaunchedOnce() {
+                    print("\(posts.count) neue dazu")
+                    if initialFetch {   // Get the first batch of posts
                         
-                    } else if self.isItTheSecondTimeTheAppLaunches() {
-                        self.alert(message: NSLocalizedString("tap_blue_owen_title", comment: "go and tap it to see what this could be"), title: NSLocalizedString("tap_blue_owen_message", comment: ""))
-                    } else if !self.alreadyAcceptedPrivacyPolicy() {
-                        self.showGDPRAlert()
-                    }
-                    
-                    self.posts = posts
-                    let post = Post()
-                    post.type = .topTopicCell
-                    self.posts.insert(post, at: 0)
-                    
-//                    let adpost = Post()
-//                    adpost.title = "ad"
-//                    
-//                    self.posts.insert(adpost, at: 4)
-                    
-                    self.tableView.reloadData()
-                    self.fetchesPosts = false
-                    
-//                    self.postHelper.getEvent(completion: { (post) in
-//                        self.posts.insert(post, at: 8)
-//                        self.tableView.reloadData()
-//                    })
-                    
-                    // remove ActivityIndicator incl. backgroundView
-                    self.view.activityStopAnimating()
-                    
-                    self.refreshControl?.endRefreshing()
-                } else {    // Append the next batch to the existing
-                    var indexes : [IndexPath] = [IndexPath]()
-                    
-                    for result in posts {
-                        let row = self.posts.count
+                        DispatchQueue.main.async {
+                            if !self.isAppAlreadyLaunchedOnce() {
+                                
+                            } else if self.isItTheSecondTimeTheAppLaunches() {
+                                
+                                self.alert(message: NSLocalizedString("tap_blue_owen_title", comment: "go and tap it to see what this could be"), title: NSLocalizedString("tap_blue_owen_message", comment: ""))
+                            } else if !self.alreadyAcceptedPrivacyPolicy() {
+                                self.showGDPRAlert()
+                            }
+                        }
                         
-                        indexes.append(IndexPath(row: row, section: 0))
-                        self.posts.append(result)
-                    }
-                    
-                    if #available(iOS 11.0, *) {
-                        self.tableView.performBatchUpdates({
-                            self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                            self.tableView.insertRows(at: indexes, with: .bottom)
-                        }, completion: { (_) in
+                        self.posts = posts
+                        let post = Post()
+                        post.type = .topTopicCell
+                        self.posts.insert(post, at: 0)
+                        
+                        //                    let adpost = Post()
+                        //                    adpost.title = "ad"
+                        //
+                        //                    self.posts.insert(adpost, at: 4)
+                        
+                        DispatchQueue.main.async {
+                            self.tableView.reloadData()
+                            
                             self.fetchesPosts = false
-                        })
-                    } else {
-                        // Fallback on earlier versions
-                        self.tableView.beginUpdates()
-                        self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                        self.tableView.insertRows(at: indexes, with: .right)
-                        self.tableView.endUpdates()
+                            
+                            // remove ActivityIndicator incl. backgroundView
+                            self.view.activityStopAnimating()
+                            
+                            self.refreshControl?.endRefreshing()
+                        }
+                    } else {    // Append the next batch to the existing
+                        var indexes : [IndexPath] = [IndexPath]()
                         
-                        self.fetchesPosts = false
+                        for result in posts {
+                            let row = self.posts.count
+                            
+                            indexes.append(IndexPath(row: row, section: 0))
+                            self.posts.append(result)
+                        }
+                        
+                        DispatchQueue.main.async {
+                            
+                            if #available(iOS 11.0, *) {
+                                self.tableView.performBatchUpdates({
+                                    self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                                    self.tableView.insertRows(at: indexes, with: .bottom)
+                                }, completion: { (_) in
+                                    self.fetchesPosts = false
+                                })
+                            } else {
+                                self.tableView.beginUpdates()
+                                self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                                self.tableView.insertRows(at: indexes, with: .right)
+                                self.tableView.endUpdates()
+                                
+                                self.fetchesPosts = false
+                            }
+                            
+                            self.view.activityStopAnimating()
+                            print("Jetzt haben wir \(self.posts.count)")
+                        }
                     }
-                    
-                    self.view.activityStopAnimating()
-                    print("Jetzt haben wir \(self.posts.count)")
                 }
             }
         } else {

@@ -49,6 +49,7 @@ class Comment {
     var sectionItemID: String
     var isTopicPost = false
     var upvotes: Votes?
+    var likes = 0
     var user: User?
     var commentID: String
     var isIndented = false
@@ -61,23 +62,9 @@ class Comment {
             delegate?.childrenLoaded()
         }
     }
+    var parent: Comment?
     
     private let db = Firestore.firestore()
-    
-    func addTwoChildren() {
-        let comment = Comment(commentSection: .post, sectionItemID: "", commentID: "")
-        comment.isIndented = true
-        comment.text = "Jahoooo"
-        comment.createTimeString = "15.Egal"
-        
-        let ccomment = Comment(commentSection: .post, sectionItemID: "", commentID: "")
-        ccomment.isIndented = true
-        ccomment.text = "Jahoooo Das ist  aber ein Aber das Jayooo aber das jajaj adhadhasdhshebfjhbwejhbrhg"
-        ccomment.createTimeString = "15.Egal"
-        
-        let childrenList = [comment, ccomment]
-        self.children = childrenList
-    }
     
     func getChildren() {
 
@@ -107,8 +94,9 @@ class Comment {
                     for document in snap.documents {
                         let data = document.data()
 
-                        self.initializeCommentFromData(sectionItemID: self.sectionItemID, commentID: self.commentID, data: data) { (comment) in
+                        self.initializeCommentFromData(sectionItemID: self.sectionItemID, commentID: document.documentID, data: data) { (comment) in
                             comment.isIndented = true
+                            comment.parent = self
                             children.append(comment)
                             
                             if children.count == snap.documents.count {
@@ -132,6 +120,9 @@ class Comment {
         
         self.getUser(userUID: userUID) { (user) in
             let comment = Comment(commentSection: self.section, sectionItemID: sectionItemID, commentID: commentID)
+            if let likes = data["likes"] as? [String] {
+                comment.likes = likes.count
+            }
             comment.createTime = sentAtTimestamp.dateValue()
             comment.user = user
             comment.text = body

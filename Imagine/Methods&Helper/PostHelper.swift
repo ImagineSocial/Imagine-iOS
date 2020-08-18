@@ -30,6 +30,7 @@ class PostHelper {
     var initialFetch = true
     
     var lastSnap: QueryDocumentSnapshot?
+    var startBeforeSnap: QueryDocumentSnapshot?
     var lastEventSnap: QueryDocumentSnapshot?
     var lastSavedPostsSnap: QueryDocumentSnapshot?
     
@@ -93,6 +94,21 @@ class PostHelper {
         }
     }
     
+    /*
+     The Structure at the moment for the main feed:
+     getTheUsersFriend("friends", saved in this View) { // to get the right name for the feed
+        getLast15Posts() {
+            getFollowedTopicIDs() { //Is called inside "getFollowedTopicPosts"
+                getFollowedTopicPosts() {   // They are limited to the last date of the getLast15Posts fetch, if getMore, there is also a startAfter query, so the 15 posts fetched from the main query always limit the topicPosts
+                   
+     
+                    func orderIt() by createTime and return the posts
+                }
+            }
+        }
+     }
+     */
+    
     
     //MARK: - Main Feed
     func getPostsForMainFeed(getMore:Bool,sort: PostSortOptions, returnPosts: @escaping ([Post], _ InitialFetch:Bool) -> Void) {
@@ -128,14 +144,15 @@ class PostHelper {
         }
         
         if initialFetch {
-            self.getFollowedTopics()
+            self.getFollowedTopics()    // Do I need it anymore?
         }
         
-        var postRef = db.collection("Posts").order(by: orderBy, descending: descending).limit(to: 20)
+        var postRef = db.collection("Posts").order(by: orderBy, descending: descending).limit(to: 15)
                 
-        if getMore {    // If you want to get More Posts or it is the initalFetch
+        if getMore {    // If you want to get More Posts
             if let lastSnap = lastSnap {        // For the next loading batch of 20, that will start after this snapshot
                 postRef = postRef.start(afterDocument: lastSnap)
+                self.startBeforeSnap = lastSnap
                 self.initialFetch = false
             }
         } else { // Else: you want to refresh the feed
@@ -151,10 +168,104 @@ class PostHelper {
                 for document in querySnapshot!.documents {
                     self.addThePost(document: document, isTopicPost: false, forFeed: true)
                 }
-                self.getCommentCount(completion: {
-                    returnPosts(self.posts, self.initialFetch)
-                })
+                
+                self.getFollowedTopicPosts(startSnap: self.startBeforeSnap, endSnap: self.lastSnap!) { (posts) in
+                    var combinedPosts: [Post] = posts
+                    combinedPosts.append(contentsOf: self.posts)
+                    let finalPosts = combinedPosts.sorted(by: { $0.createDate ?? Date() > $1.createDate ?? Date() })
+                    returnPosts(finalPosts, self.initialFetch)
+                }
             }
+        }
+    }
+    
+    
+    
+    func getFollowedTopicPosts(startSnap: QueryDocumentSnapshot?, endSnap: QueryDocumentSnapshot, returnTopicPosts: @escaping ([Post]) -> Void) {
+        
+        var topicPosts = [Post]()
+        
+        var startTimestamp = Timestamp(date: Date()) //now, i.e. the first fetch
+        
+        if let startSnap = startSnap {  // If there is a startSnap, the fetch starts after that
+            let data = startSnap.data()
+            
+            if let startStamp = data["createTime"] as? Timestamp {
+                startTimestamp = startStamp
+            }
+        }
+        
+        let data = endSnap.data()
+        if let endTimestamp = data["createTime"] as? Timestamp {
+            
+            self.getFollowedTopicIDs { (topics) in
+                let topicTotalCount = topics.count
+                var topicCount = 0
+                
+                if topics.count == 0 {
+                    returnTopicPosts(topicPosts)
+                }
+                
+                for topicID in topics {
+                    
+                    let ref = self.db.collection("TopicPosts")
+                        .whereField("linkedFactID", isEqualTo: topicID)
+                        .whereField("createTime", isLessThanOrEqualTo: startTimestamp)
+                        .whereField("createTime", isGreaterThanOrEqualTo: endTimestamp)
+                    
+                    ref.getDocuments { (snap, err) in
+                        if let error = err {
+                            print("We have an error: \(error.localizedDescription)")
+                            topicCount+=1
+                        } else {
+                            topicCount+=1
+                            if let snap = snap {
+                                let totalPostCount = snap.documents.count
+                                var postCount = 0
+                                
+                                for document in snap.documents {
+                                    postCount+=1
+                                    
+                                    if let post = self.addThePost(document: document, isTopicPost: true, forFeed: false) {
+                                        topicPosts.append(post)
+                                    }
+                                }
+                                
+                                if topicCount == topicTotalCount && postCount == totalPostCount {
+                                    returnTopicPosts(topicPosts)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            print("We got no date")
+        }
+    }
+    
+    func getFollowedTopicIDs(returnTopicIDs: @escaping ([String]) -> Void) {
+        var topics = [String]()
+        if let user = Auth.auth().currentUser {
+            
+            let topicRef = db.collection("Users").document(user.uid).collection("topics")
+            
+            topicRef.getDocuments { (snap, err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    if let snap = snap {
+                        for document in snap.documents {
+                            topics.append(document.documentID)
+                        }
+                        returnTopicIDs(topics)
+                    } else {
+                        returnTopicIDs(topics)
+                    }
+                }
+            }
+        } else {
+            returnTopicIDs(topics)
         }
     }
     
@@ -415,12 +526,10 @@ class PostHelper {
                             self.getTheUsersFriend { (_) in // First get the friends to check which name to fetch
                                 self.addThePost(document: document, isTopicPost: post.isTopicPost, forFeed: true)
                                 
-                                startIndex = startIndex+1
+                                startIndex+=1
                                 
                                 if startIndex == endIndex {
-                                    self.getCommentCount(completion: {
-                                        done(self.posts)
-                                    })
+                                    done(self.posts)
                                 }
                             }
                         }
@@ -544,9 +653,8 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    if isTopicPost {
-                        post.isTopicPost = true
-                    }
+                    post.getCommentCount()
+                    post.isTopicPost = isTopicPost
                     
                     if forFeed {
                         self.posts.append(post)
@@ -603,9 +711,8 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    if isTopicPost {
-                        post.isTopicPost = true
-                    }
+                    post.getCommentCount()
+                    post.isTopicPost = isTopicPost
                     
                     if forFeed {
                         self.posts.append(post)
@@ -659,9 +766,8 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    if isTopicPost {
-                        post.isTopicPost = true
-                    }
+                    post.getCommentCount()
+                    post.isTopicPost = isTopicPost
                     
                     if forFeed {
                         self.posts.append(post)
@@ -708,9 +814,8 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    if isTopicPost {
-                        post.isTopicPost = true
-                    }
+                    post.getCommentCount()
+                    post.isTopicPost = isTopicPost
                     
                     if forFeed {
                         self.posts.append(post)
@@ -774,9 +879,8 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    if isTopicPost {
-                        post.isTopicPost = true
-                    }
+                    post.getCommentCount()
+                    post.isTopicPost = isTopicPost
                     
                     if forFeed {
                         self.posts.append(post)
@@ -829,9 +933,8 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    if isTopicPost {
-                        post.isTopicPost = true
-                    }
+                    post.getCommentCount()
+                    post.isTopicPost = isTopicPost
                     
                     if forFeed {
                         self.posts.append(post)
@@ -883,9 +986,8 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    if isTopicPost {
-                        post.isTopicPost = true
-                    }
+                    post.getCommentCount()
+                    post.isTopicPost = isTopicPost
                     
                     post.getRepost(returnRepost: { (repost) in
                         post.repost = repost
@@ -1048,30 +1150,30 @@ class PostHelper {
 //    }
     
     
-    func getCommentCount(completion: () -> Void) {
-        //Wenn die Funktion fertig ist soll returnPosts bei der anderen losgehen
-        
-        for post in self.posts {
-            // Comment Count raussuchen wenn Post
-            
-            if post.type != .event { // Wenn kein Event
-                
-                let commentRef = db.collection("Comments").document(post.documentID).collection("threads")
-                
-                commentRef.getDocuments { (snapshot, err) in
-                    if let err = err {
-                        print("Wir haben einen Error beim User: \(err.localizedDescription)")
-                    }
-                    if let snapshot = snapshot {
-                        let number = snapshot.count
-                        post.commentCount = number
-                    }
-                }
-            }
-        }
-        print("Set Completed")
-        completion()
-    }
+//    func getCommentCount(completion: () -> Void) {
+//        //Wenn die Funktion fertig ist soll returnPosts bei der anderen losgehen
+//
+//        for post in self.posts {
+//            // Comment Count raussuchen wenn Post
+//
+//            if post.type != .event { // Wenn kein Event
+//
+//                let commentRef = db.collection("Comments").document(post.documentID).collection("threads")
+//
+//                commentRef.getDocuments { (snapshot, err) in
+//                    if let err = err {
+//                        print("Wir haben einen Error beim User: \(err.localizedDescription)")
+//                    }
+//                    if let snapshot = snapshot {
+//                        let number = snapshot.count
+//                        post.commentCount = number
+//                    }
+//                }
+//            }
+//        }
+//        print("Set Completed")
+//        completion()
+//    }
     
     
     

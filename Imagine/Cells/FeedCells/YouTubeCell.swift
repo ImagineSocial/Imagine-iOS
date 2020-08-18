@@ -9,59 +9,7 @@
 import UIKit
 import YoutubePlayer_in_WKWebView
 
-extension String {
-    var youtubeID: String? {
-        let pattern = "((?<=(v|V)/)|(?<=be/)|(?<=(\\?|\\&)v=)|(?<=embed/))([\\w-]++)"
-        
-        let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
-        let range = NSRange(location: 0, length: count)
-        
-        guard let result = regex?.firstMatch(in: self, range: range) else {
-            return nil
-        }
-        
-        return (self as NSString).substring(with: result.range)
-    }
-    
-    var imgurID: String? {
-        // Better pattern possible, couldnt find solution for an "logical or" for "gallery/" und ".com/"
-        
-        if self.contains("imgur") {
-            if self.contains("gallery") {
-                print("Eine Galerie")
-                
-                let pattern = "(?<=gallery/)([\\w-]++)" //|(?<=.com/)
-                
-                let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
-                let range = NSRange(location: 0, length: count)
-                
-                guard let result = regex?.firstMatch(in: self, range: range) else {
-                    return nil
-                }
-                //https://i.imgur.com/CmxSTlU.mp4
-                print("Klappt: \((self as NSString).substring(with: result.range))")
-                return (self as NSString).substring(with: result.range)
-            } else {
-                print("Keine Galerie")
-                
-                let pattern = "(?<=.com/)([\\w-]++)" //|(?<=.com/)
-                
-                let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
-                let range = NSRange(location: 0, length: count)
-                
-                guard let result = regex?.firstMatch(in: self, range: range) else {
-                    return nil
-                }
-                //https://i.imgur.com/CmxSTlU.mp4
-                print("Klappt: \((self as NSString).substring(with: result.range))")
-                return (self as NSString).substring(with: result.range)
-            }
-        } else {
-            print("Not an Imgur link")
-            return nil
-        }
-    }
-}
+
 
 class YouTubeCell: BaseFeedCell {
     
@@ -103,6 +51,11 @@ class YouTubeCell: BaseFeedCell {
         factImageView.image = nil
         factImageView.backgroundColor = .clear
         followTopicImageView.isHidden = true
+        
+        thanksButton.isEnabled = true
+        wowButton.isEnabled = true
+        haButton.isEnabled = true
+        niceButton.isEnabled = true
     }
     
     
@@ -236,7 +189,7 @@ class YouTubeCell: BaseFeedCell {
     }
     
     func loadFact() {
-        if post!.fact!.beingFollowed {
+        if post!.isTopicPost {
             followTopicImageView.isHidden = false
         }
         

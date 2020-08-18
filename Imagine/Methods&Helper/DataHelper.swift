@@ -83,10 +83,13 @@ class DataHelper {
             
         }
         
-        let ref = db.collection(dataPath).order(by: orderString, descending: descending)
+        var ref = db.collection(dataPath).order(by: orderString, descending: descending)
+        
+        if get == .facts {
+            ref = db.collection("Facts").whereField("displayOption", isEqualTo: "topic").order(by: "popularity", descending: true).limit(to: 8)
+        }
         
         ref.getDocuments { (querySnapshot, err) in
-            
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
@@ -211,11 +214,9 @@ class DataHelper {
                         list.append(vote)
                         
                     case .facts:
-                        
                         if let fact = self.addFact(documentID: documentID, data: documentData) {
                             list.append(fact)
                         }
-                        
                         
                     case .jobOffer:
                         guard let title = documentData["jobTitle"] as? String,
@@ -248,19 +249,16 @@ class DataHelper {
             }
             if get == .facts {  // Control wether or not the fact is beeing followed by the current user
                 if let user = Auth.auth().currentUser {
-                    self.getFollowedTopicDocuments(userUID: user.uid) { (documents) in
-                        for document in documents {
-                            for fact in (list as! [Fact]) {
-                                if document.documentID == fact.documentID {
+                    self.getFollowedTopicDocuments(userUID: user.uid) { (topicIDs) in
+                        for fact in (list as! [Fact]) {
+                            for topicID in topicIDs {
+                                if topicID.documentID == fact.documentID {
                                     fact.beingFollowed = true
                                 }
                             }
                         }
                         returnData(list)
                     }
-//                    self.markFollowedTopics(userUID: user.uid, factList: (list as! [Fact])) { (checkedList) in
-//                        returnData(checkedList)
-//                    }
                 } else {
                     returnData(list)
                 }
@@ -342,6 +340,7 @@ class DataHelper {
             let createTimestamp = data["createDate"] as? Timestamp,
             let OP = data["OP"] as? String
             else {
+                print("Der will nicht: \(documentID), mit den Daten: \(data)")
                 return nil
         }
         

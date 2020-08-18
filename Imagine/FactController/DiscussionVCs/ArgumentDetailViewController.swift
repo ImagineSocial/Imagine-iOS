@@ -159,11 +159,11 @@ extension ArgumentDetailViewController: CommentViewDelegate, CommentTableViewDel
         self.present(reportViewController, animated: true, completion: nil)
     }
     
-    func commentGotDeleteRequest(comment: Comment) {
+    func commentGotDeleteRequest(comment: Comment, answerToComment: Comment?) {
         self.deleteAlert(title: "Kommentar löschen?", message: "Möchtest du das Kommentar wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.", delete:  { (delete) in
             if delete {
                 
-                HandyHelper().deleteCommentInFirebase(comment: comment)
+                HandyHelper().deleteCommentInFirebase(comment: comment, answerToComment: answerToComment)
             }
         })
     }

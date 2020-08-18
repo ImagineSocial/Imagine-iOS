@@ -72,6 +72,11 @@ class LinkCell : BaseFeedCell {
         if let preview = preview {
             preview.cancel()
         }
+        
+        thanksButton.isEnabled = true
+        wowButton.isEnabled = true
+        haButton.isEnabled = true
+        niceButton.isEnabled = true
     }
     
     var post :Post? {
@@ -225,7 +230,7 @@ class LinkCell : BaseFeedCell {
     }
     
     func loadFact() {
-        if post!.fact!.beingFollowed {
+        if post!.isTopicPost {
             followTopicImageView.isHidden = false
         }
         

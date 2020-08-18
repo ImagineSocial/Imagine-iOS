@@ -283,13 +283,19 @@
                             <constraint firstAttribute="width" constant="25" id="TWI-cZ-rSl"/>
                         </constraints>
                     </imageView>
-                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="ehk-ck-mRO" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="313" y="49" width="14" height="14"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="topicIcon" translatesAutoresizingMaskIntoConstraints="NO" id="ehk-ck-mRO" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="312" y="46" width="16" height="16"/>
+                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="14" id="NfL-dE-FtP"/>
-                            <constraint firstAttribute="width" constant="14" id="NmU-8i-yxL"/>
+                            <constraint firstAttribute="height" constant="16" id="NfL-dE-FtP"/>
+                            <constraint firstAttribute="width" constant="16" id="NmU-8i-yxL"/>
                         </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="8"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
                     </imageView>
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
@@ -308,7 +314,7 @@
                     <constraint firstItem="brU-fD-KQ3" firstAttribute="leading" secondItem="j0G-2f-t98" secondAttribute="trailing" constant="15" id="IC7-qF-ofC"/>
                     <constraint firstItem="sha-wU-sGx" firstAttribute="leading" secondItem="XDl-QE-Tuq" secondAttribute="leading" id="JcN-kJ-cdE"/>
                     <constraint firstItem="UAd-Ez-vM7" firstAttribute="top" secondItem="uRR-6c-6J1" secondAttribute="top" id="JzL-91-efX"/>
-                    <constraint firstItem="ehk-ck-mRO" firstAttribute="trailing" secondItem="j0G-2f-t98" secondAttribute="trailing" constant="2" id="Lk6-1Z-Dmj"/>
+                    <constraint firstItem="ehk-ck-mRO" firstAttribute="trailing" secondItem="j0G-2f-t98" secondAttribute="trailing" constant="3" id="Lk6-1Z-Dmj"/>
                     <constraint firstAttribute="trailing" secondItem="yGo-8c-MKu" secondAttribute="trailing" id="Mhe-If-pLQ"/>
                     <constraint firstItem="yGo-8c-MKu" firstAttribute="leading" secondItem="uRR-6c-6J1" secondAttribute="leading" id="OUi-7e-6Ju"/>
                     <constraint firstItem="eiJ-lf-DwH" firstAttribute="top" secondItem="XDl-QE-Tuq" secondAttribute="bottom" constant="5" id="RkS-rd-FsK"/>
@@ -319,7 +325,7 @@
                     <constraint firstAttribute="trailing" secondItem="brU-fD-KQ3" secondAttribute="trailing" constant="10" id="hR7-4W-JjJ"/>
                     <constraint firstItem="c74-TK-Xp0" firstAttribute="leading" secondItem="sha-wU-sGx" secondAttribute="trailing" constant="10" id="lcW-iS-71V"/>
                     <constraint firstAttribute="bottom" secondItem="yGo-8c-MKu" secondAttribute="bottom" id="nSq-3x-9NF"/>
-                    <constraint firstItem="ehk-ck-mRO" firstAttribute="bottom" secondItem="j0G-2f-t98" secondAttribute="bottom" constant="4" id="sHq-VW-x7P"/>
+                    <constraint firstItem="ehk-ck-mRO" firstAttribute="bottom" secondItem="j0G-2f-t98" secondAttribute="bottom" constant="3" id="sHq-VW-x7P"/>
                     <constraint firstAttribute="trailing" secondItem="UAd-Ez-vM7" secondAttribute="trailing" id="vFb-oz-9dn"/>
                     <constraint firstItem="RRe-IJ-Hz8" firstAttribute="top" secondItem="sha-wU-sGx" secondAttribute="top" id="z5m-YA-z9U"/>
                 </constraints>
@@ -354,11 +360,11 @@
     <resources>
         <image name="comments" width="30" height="30"/>
         <image name="default-user" width="415" height="415"/>
-        <image name="greenTik" width="85" height="85"/>
-        <image name="haButton" width="800" height="800"/>
+        <image name="haButton" width="100" height="100"/>
         <image name="menu" width="30" height="30"/>
-        <image name="niceButton" width="800" height="800"/>
-        <image name="thanksButton" width="800" height="800"/>
-        <image name="wowButton" width="615" height="596"/>
+        <image name="niceButton" width="100" height="100"/>
+        <image name="thanksButton" width="100" height="100"/>
+        <image name="topicIcon" width="78" height="67"/>
+        <image name="wowButton" width="100" height="100"/>
     </resources>
 </document>

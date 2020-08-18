@@ -537,7 +537,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
         stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
         stackView.topAnchor.constraint(equalTo: topAnchorEqualTo, constant: 10).isActive = true
-        stackView.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        stackView.heightAnchor.constraint(equalToConstant: 23).isActive = true
         
         descriptionView.addSubview(descriptionLabel)
         descriptionLabel.leadingAnchor.constraint(equalTo: descriptionView.leadingAnchor, constant: 0).isActive = true
@@ -590,6 +590,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         commentTableView.topAnchor.constraint(equalTo: commentView.bottomAnchor, constant: 10).isActive = true
         commentTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         commentTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        commentTableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -60).isActive = true
         
         //To get the contentView up to the bottom, so the keyboard works even when small pictures or just a link without comments is displayed
         let endView = UIView()
@@ -987,6 +988,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(savePostTapped), for: .touchUpInside)
         button.setImage(UIImage(named: "save"), for: .normal)
+        button.imageEdgeInsets = UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1)
         if #available(iOS 13.0, *) {
             button.setTitleColor(.label, for: .normal)
             button.tintColor = .label
@@ -1004,6 +1006,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         button.addTarget(self, action: #selector(translatePostTapped), for: .touchUpInside)
         button.setImage(UIImage(named: "translate"), for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
+        button.imageEdgeInsets = UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1)
         
         if #available(iOS 13.0, *) {
             button.setTitleColor(.label, for: .normal)
@@ -1080,7 +1083,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     let linkedFactLabel: UILabel = {
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 15)
+        label.font = UIFont(name: "IBMPlexSans", size: 14)
         label.minimumScaleFactor = 0.5
         label.textAlignment = .center
 
@@ -1142,7 +1145,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if #available(iOS 13.0, *) {
             thanksButton.setTitleColor(.label, for: .normal)
             thanksButton.tintColor = .label
-            thanksButton.layer.borderColor = UIColor.label.cgColor
+            thanksButton.layer.borderColor = UIColor.secondaryLabel.cgColor
         } else {
             thanksButton.setTitleColor(.black, for: .normal)
             thanksButton.tintColor = .black
@@ -1164,7 +1167,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if #available(iOS 13.0, *) {
             wowButton.setTitleColor(.label, for: .normal)
             wowButton.tintColor = .label
-            wowButton.layer.borderColor = UIColor.label.cgColor
+            wowButton.layer.borderColor = UIColor.secondaryLabel.cgColor
         } else {
             wowButton.setTitleColor(.black, for: .normal)
             wowButton.tintColor = .black
@@ -1187,7 +1190,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if #available(iOS 13.0, *) {
             haButton.setTitleColor(.label, for: .normal)
             haButton.tintColor = .label
-            haButton.layer.borderColor = UIColor.label.cgColor
+            haButton.layer.borderColor = UIColor.secondaryLabel.cgColor
         } else {
             haButton.setTitleColor(.black, for: .normal)
             haButton.tintColor = .black
@@ -1211,7 +1214,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if #available(iOS 13.0, *) {
             niceButton.setTitleColor(.label, for: .normal)
             niceButton.tintColor = .label
-            niceButton.layer.borderColor = UIColor.label.cgColor
+            niceButton.layer.borderColor = UIColor.secondaryLabel.cgColor
         } else {
             niceButton.setTitleColor(.black, for: .normal)
             niceButton.tintColor = .black
@@ -2086,11 +2089,11 @@ extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
         self.present(reportViewController, animated: true, completion: nil)
     }
     
-    func commentGotDeleteRequest(comment: Comment) {
+    func commentGotDeleteRequest(comment: Comment, answerToComment: Comment?) {
         self.deleteAlert(title: "Kommentar löschen?", message: "Möchtest du das Kommentar wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.", delete:  { (delete) in
             if delete {
-                HandyHelper().deleteCommentInFirebase(comment: comment)
-                self.commentTableView.deleteCommentFromTableView(comment: comment)
+                HandyHelper().deleteCommentInFirebase(comment: comment, answerToComment: answerToComment)
+                self.commentTableView.deleteCommentFromTableView(comment: comment, answerToComment: answerToComment)
             }
         })
     }

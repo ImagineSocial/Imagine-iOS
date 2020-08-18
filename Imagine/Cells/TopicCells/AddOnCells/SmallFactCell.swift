@@ -66,9 +66,13 @@ class SmallFactCell: UICollectionViewCell {
     var factID: String? {
         didSet {
             if let factID = factID {
-                self.dataHelper.loadFact(factID: factID) { (fact) in
-                    if let fact = fact {
-                        self.fact = fact
+                DispatchQueue.global(qos: .default).async {
+                    self.dataHelper.loadFact(factID: factID) { (fact) in
+                        if let fact = fact {
+                            DispatchQueue.main.async {
+                                self.fact = fact
+                            }
+                        }
                     }
                 }
             } else {

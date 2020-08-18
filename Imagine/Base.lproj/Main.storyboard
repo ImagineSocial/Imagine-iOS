@@ -2341,7 +2341,6 @@
                                             <segment title="Text"/>
                                             <segment title="Bild"/>
                                             <segment title="Link "/>
-                                            <segment title="GIF"/>
                                         </segments>
                                         <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <color key="selectedSegmentTintColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>

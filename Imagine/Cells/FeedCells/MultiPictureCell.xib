@@ -213,16 +213,17 @@
                         <color key="pageIndicatorTintColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="currentPageIndicatorTintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                     </pageControl>
-                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="qho-96-Dbb" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="445" y="31.5" width="16" height="16"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="topicIcon" translatesAutoresizingMaskIntoConstraints="NO" id="qho-96-Dbb" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="444" y="30.5" width="18" height="18"/>
+                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="16" id="TkF-mj-GsM"/>
-                            <constraint firstAttribute="width" constant="16" id="e1N-kO-SPM"/>
+                            <constraint firstAttribute="height" constant="18" id="TkF-mj-GsM"/>
+                            <constraint firstAttribute="width" constant="18" id="e1N-kO-SPM"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                <real key="value" value="8"/>
+                                <real key="value" value="9"/>
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </imageView>
@@ -252,8 +253,8 @@
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                 <constraints>
-                    <constraint firstItem="qho-96-Dbb" firstAttribute="trailing" secondItem="1KF-jL-Zsb" secondAttribute="trailing" constant="2" id="7m1-3C-dqN"/>
-                    <constraint firstItem="qho-96-Dbb" firstAttribute="bottom" secondItem="1KF-jL-Zsb" secondAttribute="bottom" constant="2" id="Cos-i4-HeV"/>
+                    <constraint firstItem="qho-96-Dbb" firstAttribute="trailing" secondItem="1KF-jL-Zsb" secondAttribute="trailing" constant="3" id="7m1-3C-dqN"/>
+                    <constraint firstItem="qho-96-Dbb" firstAttribute="bottom" secondItem="1KF-jL-Zsb" secondAttribute="bottom" constant="3" id="Cos-i4-HeV"/>
                     <constraint firstItem="nEl-se-MJg" firstAttribute="centerY" secondItem="UAC-Bf-dhI" secondAttribute="centerY" id="CuA-0g-JWq"/>
                     <constraint firstItem="0jw-O2-2VF" firstAttribute="top" secondItem="UAC-Bf-dhI" secondAttribute="top" constant="-3" id="Esh-at-AA2"/>
                     <constraint firstItem="WNh-fx-gtD" firstAttribute="bottom" secondItem="UAC-Bf-dhI" secondAttribute="bottom" constant="-2" id="FTf-fv-38p"/>
@@ -312,11 +313,11 @@
     <resources>
         <image name="comments" width="30" height="30"/>
         <image name="default-user" width="415" height="415"/>
-        <image name="greenTik" width="85" height="85"/>
-        <image name="haButton" width="800" height="800"/>
+        <image name="haButton" width="100" height="100"/>
         <image name="menu" width="30" height="30"/>
-        <image name="niceButton" width="800" height="800"/>
-        <image name="thanksButton" width="800" height="800"/>
-        <image name="wowButton" width="615" height="596"/>
+        <image name="niceButton" width="100" height="100"/>
+        <image name="thanksButton" width="100" height="100"/>
+        <image name="topicIcon" width="78" height="67"/>
+        <image name="wowButton" width="100" height="100"/>
     </resources>
 </document>

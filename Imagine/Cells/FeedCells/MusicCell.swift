@@ -167,7 +167,7 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
     }
     
     func loadFact() {
-        if post!.fact!.beingFollowed {
+        if post!.isTopicPost {
             followTopicImageView.isHidden = false
         }
         
@@ -235,6 +235,11 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         viewAboveWebView.isHidden = false
         expandViewButton.isHidden = false
         expandViewButton.alpha = 1
+        
+        thanksButton.isEnabled = true
+        wowButton.isEnabled = true
+        haButton.isEnabled = true
+        niceButton.isEnabled = true
     }
     
 

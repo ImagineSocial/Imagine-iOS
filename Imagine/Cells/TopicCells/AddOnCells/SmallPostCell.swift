@@ -57,11 +57,16 @@ class SmallPostCell: UICollectionViewCell {
     }
     
     func loadPost(postID: String, isTopicPost: Bool) {
-    
-        self.postHelper.loadPost(postID: postID, isTopicPost: isTopicPost) { (post) in
-            if let post = post {
-                self.post = post
-                self.delegate?.sendItem(item: post)
+        DispatchQueue.global(qos: .default).async {
+            
+            self.postHelper.loadPost(postID: postID, isTopicPost: isTopicPost) { (post) in
+                if let post = post {
+                    
+                    DispatchQueue.main.async {
+                        self.post = post
+                        self.delegate?.sendItem(item: post)
+                    }
+                }
             }
         }
     }

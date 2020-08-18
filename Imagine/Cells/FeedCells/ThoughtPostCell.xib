@@ -240,7 +240,7 @@
                     </imageView>
                     <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cmm-4T-QCs">
                         <rect key="frame" x="282" y="33.5" width="36" height="36"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <connections>
                             <action selector="linkedFactTapped:" destination="NWi-6t-gW8" eventType="touchUpInside" id="oV9-au-bbw"/>
                         </connections>
@@ -251,16 +251,17 @@
                         <fontDescription key="fontDescription" name="IBMPlexSans-Thin" family="IBM Plex Sans" pointSize="9"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="s5Z-R4-AXa" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="304" y="55.5" width="16" height="16"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="topicIcon" translatesAutoresizingMaskIntoConstraints="NO" id="s5Z-R4-AXa" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="303" y="54.5" width="18" height="18"/>
+                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="16" id="53K-2E-gWn"/>
-                            <constraint firstAttribute="height" constant="16" id="h5U-fB-ado"/>
+                            <constraint firstAttribute="width" constant="18" id="53K-2E-gWn"/>
+                            <constraint firstAttribute="height" constant="18" id="h5U-fB-ado"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                <real key="value" value="8"/>
+                                <real key="value" value="9"/>
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </imageView>
@@ -276,7 +277,7 @@
                     <constraint firstAttribute="bottom" secondItem="MNa-2b-cCa" secondAttribute="bottom" id="Axi-SX-5dm"/>
                     <constraint firstItem="Cmm-4T-QCs" firstAttribute="top" secondItem="ZpZ-35-AXl" secondAttribute="top" constant="-3" id="AzJ-WG-mxh"/>
                     <constraint firstItem="8E1-kJ-UGl" firstAttribute="bottom" secondItem="uCe-Ix-sJZ" secondAttribute="bottom" constant="-2" id="CTU-IP-OvZ"/>
-                    <constraint firstItem="s5Z-R4-AXa" firstAttribute="bottom" secondItem="Cmm-4T-QCs" secondAttribute="bottom" constant="2" id="CU3-k4-PtW"/>
+                    <constraint firstItem="s5Z-R4-AXa" firstAttribute="bottom" secondItem="Cmm-4T-QCs" secondAttribute="bottom" constant="3" id="CU3-k4-PtW"/>
                     <constraint firstItem="ryF-3m-jEl" firstAttribute="top" secondItem="uCe-Ix-sJZ" secondAttribute="top" constant="-3" id="D7d-b4-jDu"/>
                     <constraint firstItem="8MQ-OR-jCt" firstAttribute="leading" secondItem="qO7-Fk-1O6" secondAttribute="leading" constant="10" id="FkE-fn-Xk7"/>
                     <constraint firstItem="olk-UE-oeI" firstAttribute="trailing" secondItem="mFV-d2-I4Q" secondAttribute="trailing" id="GTi-MC-bfG"/>
@@ -301,7 +302,7 @@
                     <constraint firstAttribute="trailing" secondItem="8MQ-OR-jCt" secondAttribute="trailing" constant="10" id="hvU-LV-ftv"/>
                     <constraint firstAttribute="trailing" secondItem="mFV-d2-I4Q" secondAttribute="trailing" constant="10" id="nDy-ZN-nTo"/>
                     <constraint firstItem="mFV-d2-I4Q" firstAttribute="leading" secondItem="qO7-Fk-1O6" secondAttribute="leading" constant="10" id="nJ8-CY-zKe"/>
-                    <constraint firstItem="s5Z-R4-AXa" firstAttribute="trailing" secondItem="Cmm-4T-QCs" secondAttribute="trailing" constant="2" id="usq-W6-xbm"/>
+                    <constraint firstItem="s5Z-R4-AXa" firstAttribute="trailing" secondItem="Cmm-4T-QCs" secondAttribute="trailing" constant="3" id="usq-W6-xbm"/>
                     <constraint firstItem="MNa-2b-cCa" firstAttribute="leading" secondItem="qO7-Fk-1O6" secondAttribute="leading" id="wFZ-Gn-9r6"/>
                     <constraint firstItem="uCe-Ix-sJZ" firstAttribute="top" secondItem="RaW-Aw-aXK" secondAttribute="bottom" constant="10" id="wdB-Pg-hiQ"/>
                 </constraints>
@@ -332,11 +333,11 @@
     <resources>
         <image name="comments" width="30" height="30"/>
         <image name="default-user" width="415" height="415"/>
-        <image name="greenTik" width="85" height="85"/>
-        <image name="haButton" width="800" height="800"/>
+        <image name="haButton" width="100" height="100"/>
         <image name="menu" width="30" height="30"/>
-        <image name="niceButton" width="800" height="800"/>
-        <image name="thanksButton" width="800" height="800"/>
-        <image name="wowButton" width="615" height="596"/>
+        <image name="niceButton" width="100" height="100"/>
+        <image name="thanksButton" width="100" height="100"/>
+        <image name="topicIcon" width="78" height="67"/>
+        <image name="wowButton" width="100" height="100"/>
     </resources>
 </document>

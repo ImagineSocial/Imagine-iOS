@@ -18,9 +18,8 @@ import Photos
 
 enum PostSelection {
     case picture
-    case linkYTVideo
+    case link
     case thought
-    case GIF
     case event
     case multiPicture
 }
@@ -76,6 +75,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let characterLimitForEventTitle = 100
     let defaultOptionViewHeight: CGFloat = 45
     
+    let infoButtonSize: CGFloat = 22
+    
     var up = false
     
     var linkedFact: Fact?
@@ -100,6 +101,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var infoView: UIView?
     
     var markPostTipView: EasyTipView?
+    var postLinkTipView: EasyTipView?
     var linkedFactTipView: EasyTipView?
     var postAnonymousTipView: EasyTipView?
     var linkFactExplanationTipView: EasyTipView?
@@ -123,6 +125,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
+        
+        linkTextField.addTarget(self, action: #selector(self.textFieldDidChange(_:)), for: .editingChanged)
         
         setCompleteUIForThought()
         setPictureViewUI()
@@ -182,25 +186,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     func insertUIForLink() {
         self.descriptionViewTopAnchor!.isActive = false
         
-//        if let linkViewHeight = self.linkViewHeight {
-//            linkViewHeight.isActive = false
-//        }
-        
-        switch selectedOption {
-        case .linkYTVideo:
-            self.linkLabel.text = "Link:"
-            self.linkTextField.placeholder = "Link: https://..."
-        case .GIF:
-            self.linkLabel.text = "GIF-Link:"
-            self.linkTextField.placeholder = "Link: ...whatever.mp4"
-        default:
-            print("Wont happen")
-        }
         
         self.descriptionViewTopAnchor! = descriptionView.topAnchor.constraint(equalTo: linkView.bottomAnchor, constant: 1)
         self.descriptionViewTopAnchor!.isActive = true
         
-        self.linkViewHeight!.constant = 65
+        self.linkViewHeight!.constant = 75
         
         UIView.animate(withDuration: 0.4, animations: {
             self.view.layoutIfNeeded()
@@ -209,6 +199,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             UIView.animate(withDuration: 0.1, animations: {
                 self.linkLabel.alpha = 1
                 self.linkTextField.alpha = 1
+                self.webImageViewStackView.alpha = 1
+                self.linkInfoButton.alpha = 1
             }, completion: { (_) in
                 self.postSelectionSegmentedControl.isEnabled = true
             })
@@ -433,7 +425,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let linkLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Link oder YouTube-Video:"
+        label.text = "Link:"
         label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
         label.alpha = 0
         
@@ -450,16 +442,126 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         return textField
     }()
     
+    let youTubeImageView: UIImageView = {
+       let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "YouTubeButtonIcon")
+        imageView.contentMode = .scaleAspectFit
+        if #available(iOS 13.0, *) {
+            imageView.tintColor = .secondaryLabel
+        } else {
+            imageView.tintColor = .black
+        }
+        imageView.alpha = 0.4
+        
+        return imageView
+    }()
+    
+    let GIFImageView: UIImageView = {
+       let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "GIFIcon")
+        imageView.contentMode = .scaleAspectFit
+        if #available(iOS 13.0, *) {
+            imageView.tintColor = .secondaryLabel
+        } else {
+            imageView.tintColor = .black
+        }
+        imageView.alpha = 0.4
+        
+        return imageView
+    }()
+    
+    let songWhipImageView: UIImageView = {
+       let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "MusicIcon")
+        imageView.contentMode = .scaleAspectFit
+        if #available(iOS 13.0, *) {
+            imageView.tintColor = .secondaryLabel
+        } else {
+            imageView.tintColor = .black
+        }
+        imageView.alpha = 0.4
+        
+        return imageView
+    }()
+    
+    let internetImageView: UIImageView = {
+       let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "translate")
+        imageView.contentMode = .scaleAspectFill
+        if #available(iOS 13.0, *) {
+            imageView.tintColor = .secondaryLabel
+        } else {
+            imageView.tintColor = .black
+        }
+        imageView.alpha = 0.4
+        
+        return imageView
+    }()
+    
+    let linkInfoButton: DesignableButton = {
+        let button = DesignableButton(type: .detailDisclosure)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = .imagineColor
+        button.addTarget(self, action: #selector(linkInfoButtonTapped), for: .touchUpInside)
+        button.alpha = 0
+        
+        return button
+    }()
+    
+    let webImageViewStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.spacing = 10
+        stackView.clipsToBounds = true
+        stackView.alpha = 0
+        
+        return stackView
+    }()
+    
     func setLinkViewUI() {   // have to set descriptionview topanchor
         linkView.addSubview(linkLabel)
-        linkLabel.topAnchor.constraint(equalTo: linkView.topAnchor, constant: 5).isActive = true
+        linkLabel.topAnchor.constraint(equalTo: linkView.topAnchor, constant: 7).isActive = true
         linkLabel.leadingAnchor.constraint(equalTo: linkView.leadingAnchor, constant: 10).isActive = true
         linkLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
+        webImageViewStackView.addArrangedSubview(internetImageView)
+        webImageViewStackView.addArrangedSubview(youTubeImageView)
+        webImageViewStackView.addArrangedSubview(GIFImageView)
+        webImageViewStackView.addArrangedSubview(songWhipImageView)
+        
+        internetImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        internetImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        youTubeImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        youTubeImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        GIFImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        GIFImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        songWhipImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        songWhipImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
+        
+        linkView.addSubview(webImageViewStackView)
+        webImageViewStackView.trailingAnchor.constraint(equalTo: linkView.trailingAnchor, constant: -10).isActive = true
+        webImageViewStackView.centerYAnchor.constraint(equalTo: linkLabel.centerYAnchor).isActive = true
+        webImageViewStackView.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        webImageViewStackView.widthAnchor.constraint(equalToConstant: 110).isActive = true
+        
+        linkView.addSubview(linkInfoButton)
         linkView.addSubview(linkTextField)
-        linkTextField.topAnchor.constraint(equalTo: linkLabel.bottomAnchor, constant: 5).isActive = true
+        
+        linkInfoButton.centerYAnchor.constraint(equalTo: linkTextField.centerYAnchor).isActive = true
+        linkInfoButton.trailingAnchor.constraint(equalTo: linkView.trailingAnchor, constant: -10).isActive = true
+        linkInfoButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
+        linkInfoButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
+        
+        linkTextField.topAnchor.constraint(equalTo: linkLabel.bottomAnchor, constant: 10).isActive = true
         linkTextField.leadingAnchor.constraint(equalTo: linkView.leadingAnchor, constant: 10).isActive = true
-        linkTextField.trailingAnchor.constraint(equalTo: linkView.trailingAnchor, constant: -10).isActive = true
+        linkTextField.trailingAnchor.constraint(equalTo: linkInfoButton.leadingAnchor, constant: -5).isActive = true
         linkTextField.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
         self.view.addSubview(linkView)
@@ -470,7 +572,38 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.linkViewHeight!.isActive = true
     }
     
+    @objc func textFieldDidChange(_ textField: UITextField) {
+        if let text = textField.text {
+            
+            internetImageView.alpha = 0.4
+            youTubeImageView.alpha = 0.4
+            songWhipImageView.alpha = 0.4
+            GIFImageView.alpha = 0.4
+            
+            if text.isValidURL {
+                if let _ = text.youtubeID {
+                    youTubeImageView.alpha = 1
+                } else if text.contains("songwhip.com") {
+                    songWhipImageView.alpha = 1
+                } else if text.contains(".mp4") {
+                    GIFImageView.alpha = 1
+                    print("Got mp4")
+                } else {
+                    internetImageView.alpha = 1
+                }
+            }
+        }
+    }
     
+    @objc func linkInfoButtonTapped() {
+        if let tipView = self.postLinkTipView {
+            tipView.dismiss()
+            postLinkTipView = nil
+        } else {
+            self.postLinkTipView = EasyTipView(text: "Teile deine Links bei Imagine mit verschiedenen Darstellungsformen:\n\nNormale Websiten werden mit einer Preview und deinem gewählten Titel angezeigt. Teilst du ein YouTube Video wird dieses im bekannten YouTube Format präsentiert. \nHat dein Link die Endung \".mp4\", wird das Video direkt im Feed abgespielt.\nTeilst du einen Songwhip.com Link, wird die geteilte Musik für andere zugänglicher, durch das schnelle Auswählen eines Streamingdienstes.\n\nHast du weitere Ideen für besondere Formate, wie z.B. Netflix oder IMDB, stelle deine Idee im Imagine Tab den anderen Usern vor!")
+            postLinkTipView!.show(forView: linkView)
+        }
+    }
     
     // MARK: - PictureViewUI
     let pictureView: UIView = {
@@ -959,8 +1092,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         linkedFactView.addSubview(linkedFactInfoButton)
         linkedFactInfoButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: distributionLabelHeight/2).isActive = true
         linkedFactInfoButton.trailingAnchor.constraint(equalTo: linkedFactView.trailingAnchor, constant: -10).isActive = true
-        linkedFactInfoButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
-        linkedFactInfoButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        linkedFactInfoButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
+        linkedFactInfoButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
         
         linkedFactView.addSubview(addFactButton)
         addFactButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: distributionLabelHeight/2).isActive = true
@@ -1232,8 +1365,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         markPostButton.centerYAnchor.constraint(equalTo: markPostView.centerYAnchor).isActive = true
         markPostButton.trailingAnchor.constraint(equalTo: markPostView.trailingAnchor, constant: -10).isActive = true
         markPostButton.leadingAnchor.constraint(equalTo: markPostSegmentControl.trailingAnchor, constant: 5).isActive = true
-        markPostButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
-        markPostButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        markPostButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
+        markPostButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
         
     }
     
@@ -1289,8 +1422,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         postAnonymousView.addSubview(postAnonymousButton)
         postAnonymousButton.centerYAnchor.constraint(equalTo: postAnonymousView.centerYAnchor).isActive = true
         postAnonymousButton.trailingAnchor.constraint(equalTo: postAnonymousView.trailingAnchor, constant: -10).isActive = true
-        postAnonymousButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
-        postAnonymousButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        postAnonymousButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
+        postAnonymousButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
         
     }
     
@@ -1311,9 +1444,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                         offset = 50
                     case .picture:
                         offset = 125
-                    case .linkYTVideo:
-                        offset = 100
-                    case .GIF:
+                    case .link:
                         offset = 100
                     case .event:
                         offset = 175
@@ -1340,9 +1471,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 offset = 50
             case .picture:
                 offset = 125
-            case .linkYTVideo:
-                offset = 100
-            case .GIF:
+            case .link:
                 offset = 100
             case .event:
                 offset = 175
@@ -1375,6 +1504,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         if let tipView = self.markPostTipView {
             tipView.dismiss()
             markPostTipView = nil
+        }
+        
+        if let tipView = self.postLinkTipView {
+            tipView.dismiss()
+            postLinkTipView = nil
         }
         
         if let tipView = self.linkFactExplanationTipView {
@@ -1697,26 +1831,14 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     self.setTheChange()
                 }
             }
-        case .linkYTVideo:
+        case .link:
             
             // Let the LinkView disappear
             UIView.animate(withDuration: 0.1, animations: {
                 self.linkLabel.alpha = 0
                 self.linkTextField.alpha = 0
-            }) { (_) in
-                self.linkViewHeight!.constant = 0
-                
-                UIView.animate(withDuration: 0.4, animations: {
-                    self.view.layoutIfNeeded()
-                }) { (_) in
-                    self.setTheChange()
-                }
-            }
-        case .GIF:
-            // Let the LinkView disappear
-            UIView.animate(withDuration: 0.1, animations: {
-                self.linkLabel.alpha = 0
-                self.linkTextField.alpha = 0
+                self.webImageViewStackView.alpha = 0
+                self.linkInfoButton.alpha = 0
             }) { (_) in
                 self.linkViewHeight!.constant = 0
                 
@@ -1784,11 +1906,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             insertUIForPicture()
         }
         if postSelectionSegmentedControl.selectedSegmentIndex == 2 {
-            self.selectedOption = .linkYTVideo
-            insertUIForLink()
-        }
-        if postSelectionSegmentedControl.selectedSegmentIndex == 3 {
-            self.selectedOption = .GIF
+            self.selectedOption = .link
             insertUIForLink()
         }
         if postSelectionSegmentedControl.selectedSegmentIndex == 4 {
@@ -1870,14 +1988,18 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     self.uploadImages(postRef: postRef, userID: userID)
                 case .picture:
                     self.savePicture(userID: userID, postRef: postRef)
-                case .linkYTVideo:
-                    if let _ = linkTextField.text?.youtubeID {
-                        self.postYTVideo(postRef: postRef, userID: userID)
+                case .link:
+                    if let text = linkTextField.text {
+                        if text.contains(".mp4") {
+                            self.postGIF(postRef: postRef, userID: userID)
+                        } else if let _ = text.youtubeID {
+                            self.postYTVideo(postRef: postRef, userID: userID)
+                        } else {
+                            self.postLink(postRef: postRef, userID: userID)
+                        }
                     } else {
-                        self.postLink(postRef: postRef, userID: userID)
+                        self.alert(message: "Gib bitte einen Link ein.")
                     }
-                case .GIF:
-                    self.postGIF(postRef: postRef, userID: userID)
                 case .event:
                     self.postEvent(postRef: postRef, userID: userID)
                 }
@@ -2556,7 +2678,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }))
         shareAlert.addAction(UIAlertAction(title: "Nur im Thema posten", style: .default, handler: { (_) in
             
-            self.distributionInformationLabel.text = "Thema"
+            self.distributionInformationLabel.text = "Community"
             self.distributionInformationImageView.image = UIImage(named: "topicIcon")
             self.postOnlyInTopic = true
             

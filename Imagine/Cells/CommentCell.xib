@@ -101,7 +101,7 @@
                         </constraints>
                     </view>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fPQ-BU-yi6" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="295" y="79" width="59" height="20"/>
+                        <rect key="frame" x="293" y="79" width="59" height="20"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="ogo-np-GjN"/>
                         </constraints>
@@ -113,14 +113,20 @@
                         </connections>
                     </button>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xzT-im-IUE" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="374" y="74" width="25" height="25"/>
+                        <rect key="frame" x="372" y="72" width="27" height="27"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="25" id="kso-vH-nAv"/>
-                            <constraint firstAttribute="height" constant="25" id="xz1-N1-b8Q"/>
+                            <constraint firstAttribute="width" constant="27" id="kso-vH-nAv"/>
+                            <constraint firstAttribute="height" constant="27" id="xz1-N1-b8Q"/>
                         </constraints>
+                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="13"/>
                         <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                        <state key="normal" image="niceButton"/>
+                        <inset key="contentEdgeInsets" minX="1" minY="1" maxX="1" maxY="1"/>
+                        <inset key="titleEdgeInsets" minX="1" minY="1" maxX="1" maxY="1"/>
+                        <inset key="imageEdgeInsets" minX="1" minY="1" maxX="1" maxY="1"/>
+                        <state key="normal" title="2" image="niceButton">
+                            <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                        </state>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
                                 <real key="value" value="4"/>

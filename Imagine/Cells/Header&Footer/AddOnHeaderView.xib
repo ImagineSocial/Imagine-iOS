@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -8,11 +8,11 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
-        <array key="IBMPlexSans-Bold.ttf">
-            <string>IBMPlexSans-Bold</string>
-        </array>
         <array key="IBMPlexSans-Regular.ttf">
             <string>IBMPlexSans</string>
+        </array>
+        <array key="IBMPlexSans-SemiBold.ttf">
+            <string>IBMPlexSans-SemiBold</string>
         </array>
     </customFonts>
     <objects>
@@ -22,118 +22,167 @@
             <rect key="frame" x="0.0" y="0.0" width="370" height="205"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
-                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="farmstead" translatesAutoresizingMaskIntoConstraints="NO" id="KHh-h8-9Sy" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
-                    <rect key="frame" x="0.0" y="15" width="370" height="100"/>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nYR-GN-6Az" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
+                    <rect key="frame" x="10" y="15" width="350" height="189"/>
+                    <subviews>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="farmstead" translatesAutoresizingMaskIntoConstraints="NO" id="prw-5I-YcC" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="350" height="100"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="100" id="6oJ-Ww-cBI"/>
+                            </constraints>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                    <real key="value" value="2"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                        </imageView>
+                        <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FYJ-aG-aCB">
+                            <rect key="frame" x="5" y="155" width="312.5" height="28"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="13"/>
+                            <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button hidden="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uqH-Ne-coA" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                            <rect key="frame" x="275" y="107.5" width="25" height="25"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="25" id="eZb-ha-QNB"/>
+                                <constraint firstAttribute="width" constant="25" id="lhB-vC-gjv"/>
+                            </constraints>
+                            <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <inset key="imageEdgeInsets" minX="1" minY="1" maxX="1" maxY="1"/>
+                            <state key="normal" image="settings"/>
+                            <connections>
+                                <action selector="settingButtonTapped:" destination="nTE-2L-dgO" eventType="touchUpInside" id="wY9-lo-axg"/>
+                            </connections>
+                        </button>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tCN-lQ-iwb">
+                            <rect key="frame" x="0.0" y="75" width="350" height="25"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="25" id="T9B-fT-XqE"/>
+                            </constraints>
+                        </view>
+                        <button clipsSubviews="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zrt-NR-jqX" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                            <rect key="frame" x="312.5" y="158" width="25" height="25"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="25" id="3bz-hb-gap"/>
+                                <constraint firstAttribute="width" constant="25" id="s8m-W4-1aS"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                            <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <state key="normal" image="down">
+                                <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                            </state>
+                            <connections>
+                                <action selector="showAllTapped:" destination="nTE-2L-dgO" eventType="touchUpInside" id="1TE-xP-0Lh"/>
+                            </connections>
+                        </button>
+                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="500" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sZn-Fe-Ozc">
+                            <rect key="frame" x="5" y="85" width="265" height="70"/>
+                            <fontDescription key="fontDescription" name="IBMPlexSans-SemiBold" family="IBM Plex Sans" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button clipsSubviews="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Oe-Vq-z7H" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                            <rect key="frame" x="310" y="105" width="30" height="30"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="30" id="nX0-tP-uIe"/>
+                                <constraint firstAttribute="width" constant="30" id="zty-x7-9kn"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                            <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <inset key="imageEdgeInsets" minX="2" minY="2" maxX="2" maxY="2"/>
+                            <state key="normal" image="thanksButton">
+                                <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                            </state>
+                            <connections>
+                                <action selector="thanksButtonTapped:" destination="nTE-2L-dgO" eventType="touchUpInside" id="l5o-44-Pxx"/>
+                            </connections>
+                        </button>
+                    </subviews>
                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="100" id="E2t-Rh-MWY"/>
+                        <constraint firstItem="FYJ-aG-aCB" firstAttribute="leading" secondItem="nYR-GN-6Az" secondAttribute="leading" constant="5" id="2PN-ue-aPX"/>
+                        <constraint firstItem="Zrt-NR-jqX" firstAttribute="centerX" secondItem="0Oe-Vq-z7H" secondAttribute="centerX" id="BNR-qX-Lft"/>
+                        <constraint firstItem="0Oe-Vq-z7H" firstAttribute="leading" secondItem="uqH-Ne-coA" secondAttribute="trailing" constant="10" id="DI1-bN-j91"/>
+                        <constraint firstItem="tCN-lQ-iwb" firstAttribute="bottom" secondItem="prw-5I-YcC" secondAttribute="bottom" id="FmI-I1-G9K"/>
+                        <constraint firstItem="FYJ-aG-aCB" firstAttribute="trailing" secondItem="Zrt-NR-jqX" secondAttribute="leading" constant="5" id="LGH-wn-ket"/>
+                        <constraint firstItem="prw-5I-YcC" firstAttribute="top" secondItem="nYR-GN-6Az" secondAttribute="top" id="Lu2-gX-5YH"/>
+                        <constraint firstItem="0Oe-Vq-z7H" firstAttribute="top" secondItem="tCN-lQ-iwb" secondAttribute="bottom" constant="5" id="P3R-4h-fxf"/>
+                        <constraint firstAttribute="trailing" secondItem="tCN-lQ-iwb" secondAttribute="trailing" id="PJr-61-iv1"/>
+                        <constraint firstAttribute="bottom" secondItem="FYJ-aG-aCB" secondAttribute="bottom" constant="6" id="TIO-zG-qhL"/>
+                        <constraint firstItem="sZn-Fe-Ozc" firstAttribute="leading" secondItem="nYR-GN-6Az" secondAttribute="leading" constant="5" id="YKG-JG-g74"/>
+                        <constraint firstItem="Zrt-NR-jqX" firstAttribute="bottom" secondItem="FYJ-aG-aCB" secondAttribute="bottom" id="adi-eN-md4"/>
+                        <constraint firstItem="uqH-Ne-coA" firstAttribute="centerY" secondItem="0Oe-Vq-z7H" secondAttribute="centerY" id="bgS-8U-mTx"/>
+                        <constraint firstItem="uqH-Ne-coA" firstAttribute="leading" secondItem="sZn-Fe-Ozc" secondAttribute="trailing" constant="5" id="dCX-3V-w3E"/>
+                        <constraint firstItem="tCN-lQ-iwb" firstAttribute="leading" secondItem="nYR-GN-6Az" secondAttribute="leading" id="h7Z-J2-cfd"/>
+                        <constraint firstItem="FYJ-aG-aCB" firstAttribute="top" secondItem="sZn-Fe-Ozc" secondAttribute="bottom" id="hyg-o8-l9a"/>
+                        <constraint firstItem="prw-5I-YcC" firstAttribute="leading" secondItem="nYR-GN-6Az" secondAttribute="leading" id="kJI-ih-Fae"/>
+                        <constraint firstItem="0Oe-Vq-z7H" firstAttribute="centerY" secondItem="sZn-Fe-Ozc" secondAttribute="centerY" id="pEd-fx-Ef5"/>
+                        <constraint firstAttribute="trailing" secondItem="0Oe-Vq-z7H" secondAttribute="trailing" constant="10" id="sKm-gl-gK5"/>
+                        <constraint firstItem="sZn-Fe-Ozc" firstAttribute="top" secondItem="tCN-lQ-iwb" secondAttribute="top" constant="10" id="xrW-nf-zO6"/>
+                        <constraint firstAttribute="trailing" secondItem="prw-5I-YcC" secondAttribute="trailing" id="zKY-X2-e3J"/>
                     </constraints>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                            <real key="value" value="2"/>
+                            <real key="value" value="8"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
-                </imageView>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="T1I-S6-P8b">
-                    <rect key="frame" x="0.0" y="90" width="370" height="25"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WVK-1U-sgK">
+                    <rect key="frame" x="9" y="197" width="352" height="8"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="25" id="4UN-4v-8OL"/>
+                        <constraint firstAttribute="height" constant="8" id="qAW-zP-YO0"/>
                     </constraints>
                 </view>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sqk-Vk-93r">
-                    <rect key="frame" x="10" y="95" width="280" height="71.5"/>
-                    <fontDescription key="fontDescription" name="IBMPlexSans-Bold" family="IBM Plex Sans" pointSize="16"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eMs-4E-3BA">
-                    <rect key="frame" x="10" y="171.5" width="290" height="18.5"/>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                    <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
-                    <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <button clipsSubviews="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IK2-gA-8HN" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                    <rect key="frame" x="330" y="116" width="30" height="30"/>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mxz-69-yfB" customClass="HairlineView" customModule="Imagine" customModuleProvider="target">
+                    <rect key="frame" x="10" y="165" width="1" height="40"/>
+                    <color key="backgroundColor" systemColor="separatorColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="30" id="HxK-vi-zav"/>
-                        <constraint firstAttribute="height" constant="30" id="jv0-tj-MnH"/>
+                        <constraint firstAttribute="width" constant="1" id="PLb-Or-rYx"/>
+                        <constraint firstAttribute="height" constant="40" id="xz6-HE-2hX"/>
                     </constraints>
-                    <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
-                    <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <inset key="imageEdgeInsets" minX="2" minY="2" maxX="2" maxY="2"/>
-                    <state key="normal" image="thanksButton">
-                        <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                    </state>
-                    <connections>
-                        <action selector="thanksButtonTapped:" destination="nTE-2L-dgO" eventType="touchUpInside" id="G4l-2e-zF5"/>
-                    </connections>
-                </button>
-                <button hidden="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0RO-oO-h1z" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                    <rect key="frame" x="295" y="118.5" width="25" height="25"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uWQ-Q3-IQ9" customClass="HairlineView" customModule="Imagine" customModuleProvider="target">
+                    <rect key="frame" x="359" y="185" width="1" height="20"/>
+                    <color key="backgroundColor" systemColor="separatorColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="25" id="imB-7w-dAB"/>
-                        <constraint firstAttribute="width" constant="25" id="rxl-i1-3qg"/>
+                        <constraint firstAttribute="height" constant="20" id="NlA-nl-KV5"/>
+                        <constraint firstAttribute="width" constant="1" id="pkZ-h3-hFj"/>
                     </constraints>
-                    <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <inset key="imageEdgeInsets" minX="1" minY="1" maxX="1" maxY="1"/>
-                    <state key="normal" image="settings"/>
-                    <connections>
-                        <action selector="settingButtonTapped:" destination="nTE-2L-dgO" eventType="touchUpInside" id="Hv9-cs-E0Z"/>
-                    </connections>
-                </button>
-                <button clipsSubviews="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="O4U-cy-ANP" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                    <rect key="frame" x="332.5" y="165" width="25" height="25"/>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="25" id="Pjr-vN-f6y"/>
-                        <constraint firstAttribute="height" constant="25" id="r3b-ea-WKW"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
-                    <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <state key="normal" image="down">
-                        <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                    </state>
-                    <connections>
-                        <action selector="showAllTapped:" destination="nTE-2L-dgO" eventType="touchUpInside" id="Wcn-8e-KIj"/>
-                    </connections>
-                </button>
+                </view>
             </subviews>
             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
             <constraints>
-                <constraint firstItem="0Au-p0-ZmM" firstAttribute="bottom" secondItem="eMs-4E-3BA" secondAttribute="bottom" constant="15" id="6c2-tR-eoV"/>
-                <constraint firstItem="Sqk-Vk-93r" firstAttribute="top" secondItem="T1I-S6-P8b" secondAttribute="top" constant="5" id="916-xc-oh6"/>
-                <constraint firstItem="KHh-h8-9Sy" firstAttribute="leading" secondItem="nTE-2L-dgO" secondAttribute="leading" id="A7Q-Gq-kXe"/>
-                <constraint firstItem="T1I-S6-P8b" firstAttribute="leading" secondItem="nTE-2L-dgO" secondAttribute="leading" id="G3o-yw-B1L"/>
-                <constraint firstItem="eMs-4E-3BA" firstAttribute="top" secondItem="Sqk-Vk-93r" secondAttribute="bottom" constant="5" id="HVY-gU-2CW"/>
-                <constraint firstAttribute="trailing" secondItem="IK2-gA-8HN" secondAttribute="trailing" constant="10" id="Jlg-iH-d4A"/>
-                <constraint firstItem="IK2-gA-8HN" firstAttribute="centerY" secondItem="Sqk-Vk-93r" secondAttribute="centerY" id="KbQ-Vs-EWP"/>
-                <constraint firstItem="0RO-oO-h1z" firstAttribute="leading" secondItem="Sqk-Vk-93r" secondAttribute="trailing" constant="5" id="Lmk-Lc-MQI"/>
-                <constraint firstItem="IK2-gA-8HN" firstAttribute="leading" secondItem="0RO-oO-h1z" secondAttribute="trailing" constant="10" id="OMa-mJ-W7B"/>
-                <constraint firstItem="O4U-cy-ANP" firstAttribute="centerX" secondItem="IK2-gA-8HN" secondAttribute="centerX" id="QSG-F1-mPa"/>
-                <constraint firstItem="O4U-cy-ANP" firstAttribute="bottom" secondItem="eMs-4E-3BA" secondAttribute="bottom" id="Sy7-LN-aEQ"/>
-                <constraint firstItem="Sqk-Vk-93r" firstAttribute="leading" secondItem="0Au-p0-ZmM" secondAttribute="leading" constant="10" id="Ta6-MF-bCO"/>
-                <constraint firstItem="eMs-4E-3BA" firstAttribute="leading" secondItem="0Au-p0-ZmM" secondAttribute="leading" constant="10" id="beA-fF-Uq0"/>
-                <constraint firstItem="0RO-oO-h1z" firstAttribute="centerY" secondItem="IK2-gA-8HN" secondAttribute="centerY" id="edM-fe-FSR"/>
-                <constraint firstItem="eMs-4E-3BA" firstAttribute="trailing" secondItem="Sqk-Vk-93r" secondAttribute="trailing" constant="10" id="hA3-db-n60"/>
-                <constraint firstItem="KHh-h8-9Sy" firstAttribute="top" secondItem="nTE-2L-dgO" secondAttribute="top" constant="15" id="j0i-SW-nXG"/>
-                <constraint firstItem="T1I-S6-P8b" firstAttribute="bottom" secondItem="KHh-h8-9Sy" secondAttribute="bottom" id="np8-hq-jpQ"/>
-                <constraint firstAttribute="trailing" secondItem="T1I-S6-P8b" secondAttribute="trailing" id="oE2-IL-CwL"/>
-                <constraint firstAttribute="trailing" secondItem="KHh-h8-9Sy" secondAttribute="trailing" id="smo-YB-xGi"/>
+                <constraint firstItem="WVK-1U-sgK" firstAttribute="bottom" secondItem="0Au-p0-ZmM" secondAttribute="bottom" id="9vg-M0-255"/>
+                <constraint firstItem="nYR-GN-6Az" firstAttribute="top" secondItem="nTE-2L-dgO" secondAttribute="top" constant="15" id="O9P-UW-nyq"/>
+                <constraint firstAttribute="bottom" secondItem="mxz-69-yfB" secondAttribute="bottom" id="bn9-9T-18d"/>
+                <constraint firstAttribute="bottom" secondItem="nYR-GN-6Az" secondAttribute="bottom" constant="1" id="e3t-Ur-RP6"/>
+                <constraint firstItem="0Au-p0-ZmM" firstAttribute="trailing" secondItem="WVK-1U-sgK" secondAttribute="trailing" constant="9" id="evN-Pv-wwL"/>
+                <constraint firstItem="WVK-1U-sgK" firstAttribute="leading" secondItem="0Au-p0-ZmM" secondAttribute="leading" constant="9" id="gKe-KG-hch"/>
+                <constraint firstItem="nYR-GN-6Az" firstAttribute="leading" secondItem="0Au-p0-ZmM" secondAttribute="leading" constant="10" id="gNx-fB-ZcX"/>
+                <constraint firstItem="mxz-69-yfB" firstAttribute="leading" secondItem="0Au-p0-ZmM" secondAttribute="leading" constant="10" id="lWh-dZ-cbZ"/>
+                <constraint firstItem="0Au-p0-ZmM" firstAttribute="trailing" secondItem="uWQ-Q3-IQ9" secondAttribute="trailing" constant="10" id="luE-I5-5Ko"/>
+                <constraint firstAttribute="bottom" secondItem="uWQ-Q3-IQ9" secondAttribute="bottom" id="tQL-RC-JAN"/>
+                <constraint firstAttribute="trailing" secondItem="nYR-GN-6Az" secondAttribute="trailing" constant="10" id="wwi-0L-r2p"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="0Au-p0-ZmM"/>
             <connections>
-                <outlet property="expandDescriptionButton" destination="O4U-cy-ANP" id="Hxt-oK-KAF"/>
-                <outlet property="headerDescriptionLabel" destination="eMs-4E-3BA" id="PtB-WE-UON"/>
-                <outlet property="headerGradientView" destination="T1I-S6-P8b" id="MnB-Pe-Zls"/>
-                <outlet property="headerImageView" destination="KHh-h8-9Sy" id="u6j-t6-A3A"/>
-                <outlet property="headerImageViewHeight" destination="E2t-Rh-MWY" id="9jO-Dz-Vm6"/>
-                <outlet property="headerTitleLabel" destination="Sqk-Vk-93r" id="vyN-ht-Qz6"/>
-                <outlet property="settingButton" destination="0RO-oO-h1z" id="oTG-XY-KOa"/>
-                <outlet property="thanksButton" destination="IK2-gA-8HN" id="AjD-Kk-NMu"/>
+                <outlet property="backgroundBorderView" destination="nYR-GN-6Az" id="nDt-uw-maA"/>
+                <outlet property="expandDescriptionButton" destination="Zrt-NR-jqX" id="Ptj-ch-ZWi"/>
+                <outlet property="headerDescriptionLabel" destination="FYJ-aG-aCB" id="jAT-oV-zxe"/>
+                <outlet property="headerGradientView" destination="tCN-lQ-iwb" id="lqq-Se-xXx"/>
+                <outlet property="headerImageView" destination="prw-5I-YcC" id="OJe-9u-AKY"/>
+                <outlet property="headerImageViewHeight" destination="6oJ-Ww-cBI" id="xLN-ig-Nxj"/>
+                <outlet property="headerTitleLabel" destination="sZn-Fe-Ozc" id="ZQZ-fG-JoY"/>
+                <outlet property="settingButton" destination="uqH-Ne-coA" id="Dyh-A8-TqG"/>
+                <outlet property="thanksButton" destination="0Oe-Vq-z7H" id="R1n-g9-JxJ"/>
             </connections>
             <point key="canvasLocation" x="-176.81159420289856" y="-84.709821428571431"/>
         </view>

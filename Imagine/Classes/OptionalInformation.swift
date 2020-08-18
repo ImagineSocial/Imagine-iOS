@@ -134,59 +134,64 @@ class OptionalInformation {
     func getItems() {
         
         if fact.documentID != "" && documentID != "" {
-            let ref = db.collection("Facts").document(fact.documentID).collection("addOns").document(documentID).collection("items").order(by: "createDate", descending: true).limit(to: 10)
             
-            ref.getDocuments { (snap, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    if let snap = snap {
-                        for document in snap.documents {
-                            let data = document.data()
-                            guard let type = data["type"] as? String else {
-                                return
+            DispatchQueue.global(qos: .default).async {
+                let ref = self.db.collection("Facts").document(self.fact.documentID).collection("addOns").document(self.documentID).collection("items").order(by: "createDate", descending: true).limit(to: 10)
+                
+                ref.getDocuments { (snap, err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        if let snap = snap {
+                            for document in snap.documents {
+                                let data = document.data()
+                                guard let type = data["type"] as? String else {
+                                    return
+                                }
+                                if type == "fact" {
+                                    let fact = Fact()
+                                    fact.documentID = document.documentID
+                                    if let displayOption = data["displayOption"] as? String {
+                                        if displayOption == "topic" {
+                                            fact.displayOption = .topic
+                                        } // else { .fact is default
+                                    }
+                                    if let title = data["title"] as? String {
+                                        fact.addOnTitle = title
+                                    }
+                                    
+                                    let item = AddOnItem(documentID: document.documentID, item: fact)
+                                    
+                                    self.items.append(item)
+                                } else if type == "topicPost" {
+                                    let post = Post()
+                                    post.documentID = document.documentID
+                                    post.isTopicPost = true
+                                    
+                                    let item = AddOnItem(documentID: document.documentID, item: post)
+                                    self.items.append(item)
+                                } else {    // Post
+                                    let post = Post()
+                                    post.documentID = document.documentID
+                                    
+                                    if let postDescription = data["title"] as? String {
+                                        post.addOnTitle = postDescription
+                                    }
+                                    
+                                    let item = AddOnItem(documentID: document.documentID, item: post)
+                                    self.items.append(item)
+                                }
                             }
-                            if type == "fact" {
-                                let fact = Fact()
-                                fact.documentID = document.documentID
-                                if let displayOption = data["displayOption"] as? String {
-                                    if displayOption == "topic" {
-                                        fact.displayOption = .topic
-                                    } // else { .fact is default
-                                }
-                                if let title = data["title"] as? String {
-                                    fact.addOnTitle = title
-                                }
-                                
-                                let item = AddOnItem(documentID: document.documentID, item: fact)
-                                
-                                self.items.append(item)
-                            } else if type == "topicPost" {
-                                let post = Post()
-                                post.documentID = document.documentID
-                                post.isTopicPost = true
-                                
-                                let item = AddOnItem(documentID: document.documentID, item: post)
-                                self.items.append(item)
-                            } else {    // Post
-                                let post = Post()
-                                post.documentID = document.documentID
-                                
-                                if let postDescription = data["title"] as? String {
-                                    post.addOnTitle = postDescription
-                                }
-                                
-                                let item = AddOnItem(documentID: document.documentID, item: post)
-                                self.items.append(item)
+                            DispatchQueue.main.async {
+                                self.delegate?.done()
                             }
                         }
-                        self.delegate?.done()
                     }
                 }
             }
         } else {
             print("Not enough info in OptionalInformation getItems")
-                       return
+            return
         }
     }
 }

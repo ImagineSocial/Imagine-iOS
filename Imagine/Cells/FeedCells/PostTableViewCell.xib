@@ -11,11 +11,11 @@
         <array key="IBMPlexSans-ExtraLight.ttf">
             <string>IBMPlexSans-ExtraLight</string>
         </array>
+        <array key="IBMPlexSans-Medium.ttf">
+            <string>IBMPlexSans-Medium</string>
+        </array>
         <array key="IBMPlexSans-Regular.ttf">
             <string>IBMPlexSans</string>
-        </array>
-        <array key="Kalam-Regular.ttf">
-            <string>Kalam-Regular</string>
         </array>
     </customFonts>
     <objects>
@@ -36,14 +36,14 @@
                         </constraints>
                     </view>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="MKy-RD-AEt">
-                        <rect key="frame" x="5" y="131" width="365" height="393"/>
+                        <rect key="frame" x="5" y="147" width="365" height="377"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="height" priority="250" constant="388" id="Mj9-6P-Y8A"/>
+                            <constraint firstAttribute="height" priority="250" constant="387" id="Mj9-6P-Y8A"/>
                         </constraints>
                     </imageView>
                     <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999999999999996" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dmS-xc-Exh">
-                        <rect key="frame" x="10" y="71" width="355" height="60"/>
+                        <rect key="frame" x="10" y="87" width="355" height="60"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="60" id="hfq-nC-vq2"/>
@@ -52,7 +52,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wga-Yj-hL1">
-                        <rect key="frame" x="55" y="55" width="48.5" height="12"/>
+                        <rect key="frame" x="55" y="71" width="48.5" height="12"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="9"/>
                         <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
@@ -162,18 +162,22 @@
                         </constraints>
                     </stackView>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1j9-xB-qIH" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="24"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RaD-5X-deS">
-                                <rect key="frame" x="15" y="0.0" width="328" height="24"/>
-                                <fontDescription key="fontDescription" name="Kalam-Regular" family="Kalam" pointSize="18"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fehlinformation" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RaD-5X-deS">
+                                <rect key="frame" x="10" y="4" width="333" height="18"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="18" id="HPV-Hc-sM4"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="15"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iU9-bH-zHN" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="345" y="2" width="20" height="20"/>
+                                <rect key="frame" x="345" y="10" width="20" height="20"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="UmI-Kr-OKM"/>
                                     <constraint firstAttribute="width" constant="20" id="gfR-6M-fG4"/>
                                 </constraints>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -181,17 +185,25 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Der dargestellte Inhalt enthält fragwürdige Aussagen!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nkF-cW-Qma">
+                                <rect key="frame" x="10" y="24" width="333" height="14"/>
+                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="9"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="RaD-5X-deS" secondAttribute="bottom" id="Cg6-mh-dj3"/>
-                            <constraint firstItem="iU9-bH-zHN" firstAttribute="top" secondItem="1j9-xB-qIH" secondAttribute="top" priority="999" constant="2" id="Ve8-CB-Y1o"/>
+                            <constraint firstItem="nkF-cW-Qma" firstAttribute="top" secondItem="RaD-5X-deS" secondAttribute="bottom" constant="2" id="XUB-f8-QEy"/>
                             <constraint firstItem="iU9-bH-zHN" firstAttribute="leading" secondItem="RaD-5X-deS" secondAttribute="trailing" constant="2" id="ZAh-Oi-hTL"/>
-                            <constraint firstItem="RaD-5X-deS" firstAttribute="top" secondItem="1j9-xB-qIH" secondAttribute="top" id="dgT-mV-d0X"/>
-                            <constraint firstAttribute="bottom" secondItem="iU9-bH-zHN" secondAttribute="bottom" priority="999" constant="2" id="e13-gw-MZ2"/>
-                            <constraint firstItem="RaD-5X-deS" firstAttribute="leading" secondItem="1j9-xB-qIH" secondAttribute="leading" constant="15" id="iat-O4-xAd"/>
+                            <constraint firstItem="iU9-bH-zHN" firstAttribute="centerY" secondItem="1j9-xB-qIH" secondAttribute="centerY" id="dZ6-4b-X8n"/>
+                            <constraint firstItem="RaD-5X-deS" firstAttribute="top" secondItem="1j9-xB-qIH" secondAttribute="top" constant="4" id="dgT-mV-d0X"/>
+                            <constraint firstAttribute="bottom" secondItem="nkF-cW-Qma" secondAttribute="bottom" constant="2" id="fNl-sv-UVJ"/>
+                            <constraint firstItem="iU9-bH-zHN" firstAttribute="leading" secondItem="nkF-cW-Qma" secondAttribute="trailing" constant="2" id="hiT-nA-kjq"/>
+                            <constraint firstItem="RaD-5X-deS" firstAttribute="leading" secondItem="1j9-xB-qIH" secondAttribute="leading" constant="10" id="iat-O4-xAd"/>
                             <constraint firstAttribute="trailing" secondItem="iU9-bH-zHN" secondAttribute="trailing" constant="10" id="kdB-S1-ZPq"/>
-                            <constraint firstAttribute="height" constant="24" id="lwO-5w-xbA"/>
+                            <constraint firstAttribute="height" constant="40" id="lwO-5w-xbA"/>
+                            <constraint firstItem="nkF-cW-Qma" firstAttribute="leading" secondItem="1j9-xB-qIH" secondAttribute="leading" constant="10" id="qSg-pC-EaP"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -200,7 +212,7 @@
                         </userDefinedRuntimeAttributes>
                     </view>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="default-user" translatesAutoresizingMaskIntoConstraints="NO" id="nHa-Ll-Wga">
-                        <rect key="frame" x="10" y="34" width="35" height="35"/>
+                        <rect key="frame" x="10" y="50" width="35" height="35"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="35" id="St3-sV-zCY"/>
@@ -208,14 +220,14 @@
                         </constraints>
                     </imageView>
                     <label userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="253" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4sj-iy-eAd">
-                        <rect key="frame" x="55" y="34" width="0.0" height="0.0"/>
+                        <rect key="frame" x="55" y="50" width="0.0" height="0.0"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="W55-Nt-60d" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="330" y="39" width="25" height="25"/>
+                        <rect key="frame" x="330" y="55" width="25" height="25"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="25" id="6l5-99-8Gn"/>
@@ -235,13 +247,13 @@
                         </connections>
                     </button>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="81d-az-FW4" userLabel="userButton">
-                        <rect key="frame" x="7" y="31" width="51" height="41"/>
+                        <rect key="frame" x="7" y="47" width="51" height="41"/>
                         <connections>
                             <action selector="userButtonTapped:" destination="ZUo-e7-XZo" eventType="touchUpInside" id="M2u-Kr-wZJ"/>
                         </connections>
                     </button>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="eMC-cj-MGI">
-                        <rect key="frame" x="275" y="36.5" width="30" height="30"/>
+                        <rect key="frame" x="275" y="52.5" width="30" height="30"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="30" id="FOT-sD-mam"/>
@@ -249,21 +261,22 @@
                         </constraints>
                     </imageView>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uI7-vd-add">
-                        <rect key="frame" x="272" y="33.5" width="36" height="36"/>
+                        <rect key="frame" x="272" y="49.5" width="36" height="36"/>
                         <connections>
                             <action selector="linkedFactTapped:" destination="ZUo-e7-XZo" eventType="touchUpInside" id="ZzU-LB-mvF"/>
                         </connections>
                     </button>
-                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="greenTik" translatesAutoresizingMaskIntoConstraints="NO" id="k6j-91-qWT" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="294" y="55.5" width="16" height="16"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="topicIcon" translatesAutoresizingMaskIntoConstraints="NO" id="k6j-91-qWT" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="293" y="70.5" width="18" height="18"/>
+                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="16" id="Vsv-CW-noP"/>
-                            <constraint firstAttribute="height" constant="16" id="nuf-FT-lI0"/>
+                            <constraint firstAttribute="width" constant="18" id="Vsv-CW-noP"/>
+                            <constraint firstAttribute="height" constant="18" id="nuf-FT-lI0"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                <real key="value" value="8"/>
+                                <real key="value" value="9"/>
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </imageView>
@@ -275,7 +288,7 @@
                     <constraint firstItem="69N-o1-EfT" firstAttribute="top" secondItem="MKy-RD-AEt" secondAttribute="bottom" constant="6" id="7hB-is-urN"/>
                     <constraint firstItem="81d-az-FW4" firstAttribute="top" secondItem="nHa-Ll-Wga" secondAttribute="top" constant="-3" id="9WY-8w-UQe"/>
                     <constraint firstItem="nHa-Ll-Wga" firstAttribute="leading" secondItem="dmS-xc-Exh" secondAttribute="leading" id="BWM-sO-cAr"/>
-                    <constraint firstItem="k6j-91-qWT" firstAttribute="bottom" secondItem="uI7-vd-add" secondAttribute="bottom" constant="2" id="E8B-U3-7Cf"/>
+                    <constraint firstItem="k6j-91-qWT" firstAttribute="bottom" secondItem="uI7-vd-add" secondAttribute="bottom" constant="3" id="E8B-U3-7Cf"/>
                     <constraint firstItem="wga-Yj-hL1" firstAttribute="bottom" secondItem="nHa-Ll-Wga" secondAttribute="bottom" constant="-2" id="ERN-X1-teb"/>
                     <constraint firstItem="4sj-iy-eAd" firstAttribute="top" secondItem="nHa-Ll-Wga" secondAttribute="top" id="EwS-5c-4iS"/>
                     <constraint firstItem="69N-o1-EfT" firstAttribute="leading" secondItem="S1H-Cn-Se8" secondAttribute="leading" constant="10" id="FDK-L3-CKa"/>
@@ -283,7 +296,7 @@
                     <constraint firstItem="eMC-cj-MGI" firstAttribute="centerY" secondItem="nHa-Ll-Wga" secondAttribute="centerY" id="H8b-mj-dpg"/>
                     <constraint firstItem="uI7-vd-add" firstAttribute="width" secondItem="eMC-cj-MGI" secondAttribute="width" constant="6" id="Icr-sj-SZc"/>
                     <constraint firstAttribute="trailing" secondItem="MNU-VP-taA" secondAttribute="trailing" id="MsY-L0-ZxU"/>
-                    <constraint firstItem="k6j-91-qWT" firstAttribute="trailing" secondItem="uI7-vd-add" secondAttribute="trailing" constant="2" id="Ohz-c0-A3F"/>
+                    <constraint firstItem="k6j-91-qWT" firstAttribute="trailing" secondItem="uI7-vd-add" secondAttribute="trailing" constant="3" id="Ohz-c0-A3F"/>
                     <constraint firstAttribute="trailing" secondItem="MKy-RD-AEt" secondAttribute="trailing" constant="5" id="Qpb-HE-cc8"/>
                     <constraint firstItem="uI7-vd-add" firstAttribute="height" secondItem="eMC-cj-MGI" secondAttribute="height" constant="6" id="RTA-EM-b9y"/>
                     <constraint firstItem="1j9-xB-qIH" firstAttribute="leading" secondItem="S1H-Cn-Se8" secondAttribute="leading" id="SKE-Fe-r1t"/>
@@ -336,11 +349,11 @@
     <resources>
         <image name="comments" width="30" height="30"/>
         <image name="default-user" width="415" height="415"/>
-        <image name="greenTik" width="85" height="85"/>
         <image name="haButton" width="800" height="800"/>
         <image name="menu" width="30" height="30"/>
         <image name="niceButton" width="800" height="800"/>
         <image name="thanksButton" width="800" height="800"/>
+        <image name="topicIcon" width="78" height="67"/>
         <image name="wowButton" width="615" height="596"/>
     </resources>
 </document>

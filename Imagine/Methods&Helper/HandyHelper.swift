@@ -98,10 +98,12 @@ class HandyHelper {
     
     func setReportView(post: Post) -> (heightConstant:CGFloat, buttonHidden: Bool, labelText: String, backgroundColor: UIColor) {
         
-        var reportViewHeightConstraint:CGFloat = 24
+        var reportViewHeightConstraint:CGFloat = 40
         var reportViewButtonInTopBoolean = false
         var reportViewLabelText = ""
         var reportViewBackgroundColor = UIColor.white
+        
+        let beautifulRed = UIColor(red: 0.75, green: 0.07, blue: 0.07, alpha: 1.00)
         
         switch post.report {
         case .normal:
@@ -109,10 +111,16 @@ class HandyHelper {
             reportViewButtonInTopBoolean = true
         case .spoiler:
             reportViewLabelText = "Spoiler" // I think always the same excet arabic or whatever
-            reportViewBackgroundColor = .red
+            reportViewBackgroundColor = beautifulRed
         case .satire:
             reportViewLabelText = "Satire" // I think always the same excet arabic or whatever
             reportViewBackgroundColor = .orange
+        case .misinformation:
+            reportViewLabelText = "Fehlinformation"
+            reportViewBackgroundColor = beautifulRed
+        case .misleading:
+            reportViewLabelText = "Irreführender Inhalt"
+            reportViewBackgroundColor = beautifulRed
         case .opinion:
             reportViewLabelText = NSLocalizedString("Opinion, not a fact", comment: "When it seems like the post is presenting a fact, but is just an opinion")
             reportViewBackgroundColor = UIColor(red:0.27, green:0.00, blue:0.01, alpha:1.0)
@@ -272,6 +280,12 @@ class HandyHelper {
         case "spoiler":
             report = .spoiler
             return report
+        case "misleading":
+            report = .misleading
+            return report
+        case "misinformation":
+            report = .misinformation
+            return report
         default:
             print("Hier stimmt was nicht")
             return ReportType.normal
@@ -364,13 +378,59 @@ class HandyHelper {
         }
     }
     
-    func deleteCommentInFirebase(comment: Comment) {
-        let ref = db.collection("Comments").document(comment.sectionItemID).collection("threads").document(comment.commentID)
+    func deleteCommentInFirebase(comment: Comment, answerToComment: Comment?) {
+        
+        let ref = getCommentRef(comment: comment, answerToComment: answerToComment)
         
         ref.delete { (err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             }
+        }
+    }
+    
+    func getCommentRef(comment: Comment, answerToComment: Comment?) -> DocumentReference {
+        let ref: DocumentReference!
+        
+        switch comment.section {
+        case .post:
+            if let answerToComment = answerToComment {
+                ref = db.collection("Comments").document(answerToComment.sectionItemID).collection("threads").document(answerToComment.commentID).collection("children").document(comment.commentID)
+            } else {
+                ref = db.collection("Comments").document(comment.sectionItemID).collection("threads").document(comment.commentID)
+            }
+        case .proposal:
+            if let answerToComment = answerToComment {
+                ref = db.collection("Comments").document("proposals").collection("comments").document(answerToComment.sectionItemID).collection("threads").document(answerToComment.commentID).collection("children").document(comment.commentID)
+            } else {
+                ref = db.collection("Comments").document("proposals").collection("comments").document(comment.sectionItemID).collection("threads").document(comment.commentID)
+            }
+        case .source:
+            if let answerToComment = answerToComment {
+                ref = db.collection("Comments").document("sources").collection("comments").document(answerToComment.sectionItemID).collection("threads").document(answerToComment.commentID).collection("children").document(comment.commentID)
+            } else {
+                ref = db.collection("Comments").document("sources").collection("comments").document(comment.sectionItemID).collection("threads").document(comment.commentID)
+            }
+        default:    //argument and counterargument
+            if let answerToComment = answerToComment {
+                ref = db.collection("Comments").document("arguments").collection("comments").document(answerToComment.sectionItemID).collection("threads").document(answerToComment.commentID).collection("children").document(comment.commentID)
+            } else {
+                ref = db.collection("Comments").document("arguments").collection("comments").document(comment.sectionItemID).collection("threads").document(comment.commentID)
+            }
+        }
+        
+        return ref
+    }
+    
+    func setLikeOnComment(comment: Comment, answerToComment: Comment?) {
+        if let user = Auth.auth().currentUser {
+            let ref = getCommentRef(comment: comment, answerToComment: answerToComment)
+            
+            ref.updateData([
+                "likes" : FieldValue.arrayUnion([user.uid])
+            ])
+        } else {
+            return
         }
     }
     

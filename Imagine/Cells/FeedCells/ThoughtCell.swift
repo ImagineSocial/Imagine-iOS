@@ -48,6 +48,11 @@ class ThoughtCell : BaseFeedCell {
         factImageView.image = nil
         factImageView.backgroundColor = .clear
         followTopicImageView.isHidden = true
+        
+        thanksButton.isEnabled = true
+        wowButton.isEnabled = true
+        haButton.isEnabled = true
+        niceButton.isEnabled = true
     }
     
     var post:Post? {
@@ -180,7 +185,7 @@ class ThoughtCell : BaseFeedCell {
     }
     
     func loadFact() {
-        if post!.fact!.beingFollowed {
+        if post!.isTopicPost {
             followTopicImageView.isHidden = false
         }
         
