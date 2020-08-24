@@ -79,10 +79,22 @@
 "verify_email_send_again" = "Der Link wurde verschickt.";
 
 
+//General
 "I agree" = "Ich stimme zu";
 "next" = "Weiter";
 "cancel" = "Abbrechen";
-
+"error_title" = "Es ist ein Fehler aufgetreten";
+"yes" = "Ja";
+"no" = "Nein";
+"back" = "Zurück";
+"thanks" = "Vielen Dank!";
+"easy" = "Leicht";
+"medium" = "Mittel";
+"strong" = "Stark";
+"i_am_sure" = "Ich bin mir sicher!";
+"thanks_for_support" = "Danke für deine Unterstützung!";
+"done" = "Fertig!";
+"not_sure" = "Ich bin mir sicher!";
 
 //Vote
 "consent: %d" = "Zustimmen: %d";
@@ -102,4 +114,127 @@
 "to_gdpr" = "Zu den Datenschutzrichtlinien";
 "accept_cookies" = "Ich akzeptiere Cookies";
 "no_cookies" = "Keine Cookies";
+
+//NewPost
+"decriptionLabelText" = "Beschreibung:";
+"postLinkTipViewText" = "Teile deine Links bei Imagine mit verschiedenen Darstellungsformen:\n\nNormale Websiten werden mit einer Preview und deinem gewählten Titel angezeigt. Teilst du ein YouTube Video wird dieses im bekannten YouTube Format präsentiert. \nHat dein Link die Endung \".mp4\", wird das Video direkt im Feed abgespielt.\nTeilst du einen Songwhip.com Link, wird die geteilte Musik für andere zugänglicher, durch das schnelle Auswählen eines Streamingdienstes.\n\nHast du weitere Ideen für besondere Formate, wie z.B. Netflix oder IMDB, stelle deine Idee im Imagine Tab den anderen Usern vor!";
+"pictureLabelText" = "Bild:";
+"markPostButtonText" = "Post Markieren";
+"opinion" = "Meinung";
+"sansational" = "Sensation";
+"edited" = "Bearbeitet";
+"post_anonymous_label" = "Anonym posten";
+"link_fact_first_open_tip_view_text" = "Bei Imagine kann man einen Beitrag mit einer passenden Community verlinken. Dein Beitrag wird dadurch im Home-Feed und auch in der verlinkten Community angezeigt.\n\nMöchtest du deinen Beitrag ausschließlich in einer Community teilen, kannst du dies nach der Auswahl der Community angeben.";
+"how_many_pics_alert_header" = "Wie viele Bilder willst du posten?";
+"how_many_pics_alert_message" = "Wähle aus, ob du ein einziges Bild, oder eine Reihe von bis zu 3 Bildern hochladen möchtest";
+"how_many_just_one" = "Nur ein Bild";
+"how_many_three" = "Mehrere Bilder";
+"linked_fact_tip_view_text" = "Standardmäßig postest du im Imagine-Feed (Der Haupt-Feed, nachdem du die App öffnest). \nPoste hier alles, was du mit der Welt teilen möchtest.\n\nWählst du eine Community aus, kannst du entscheiden, ob du deinen Beitrag im Imagine-Feed teilst, oder nur in der Community. Die Follower einer Community sehen dann deinen Beitrag (ganz bald jedenfalls) in ihrem angepassten Imagine-Feed.\nPoste in der Community also alles, was sehr themenspezifisch oder nicht für die breite Masse zugänglich ist.";
+"anonymous_name_alert_title" = "Anonymer Name";
+"anonymous_name_alert_message" = "Gib an, welcher Name bei diesem anonymen Post angezeigt werden soll. Der Name darf keine reale Person sein.";
+"anonymous_name_placeholder" = "Max Mustermann";
+"missing_info_alert_link" = "Gib bitte einen Link ein.";
+"missing_info_alert_title" = "Gib bitte einen Titel ein.";
+"error_uploading_multiple_pictures_message" = "Es ist ein Fehler bei der Auswahl der Bilder aufgetreten. Womöglich ist/sind ein oder mehrere Bilder in der Cloud gespeichert. In diesem Falle wähle das Bild in der Fotos-App aus und zoome ein wenig heran, unten rechts erscheint dann ein kleiner Ladekreis. Mache auf diesen Fehler aufmerksam indem du einen Bug-Report im Imagine-Bereich unter \"Mithilfe\" einreichst, dann wissen wir, das jemand auf dieses Problem gestoßen ist.";
+"error_choosing_multiple_pictures_message" = "Wähle bitte weitere Bilder aus oder wähle die Option \"Nur ein Bild\"";
+"error_choosing_picture" = "Du hast kein Bild hochgeladen. Möchtest du kein Bild hochladen, wähle bitte eine andere Post-Option aus";
+"error_link_not_valid" = "Unser Programm sagt uns, dass die URL nicht korrekt ist. Bitte überprüfe den Link";
+"error_no_link" = "Du hast kein Link angegeben. Möchtest du kein Link posten, wähle bitte eine andere Post-Option aus";
+"error_no_picture" = "Du hast kein Bild hochgeladen. Möchtest du kein Bild hochladen, wähle bitte eine andere Post-Option aus";
+"error_gif_wrong_ending" = "Im Moment sind nur Links mit Endung '.mp4' möglich. Die Endung .GIF ist veraltet, wird aus Speichergründen nicht mehr benutzt. Sag uns aber gerne bescheid, wie du deine GIFs verbreiten möchtest!";
+"message_after_done_posting" = "Danke für deine Weisheiten!";
+"just_name_info_message" = "Beim posten wird nur dein Vorname im Feed sichtbar sein!";
+"link_fact_destination_alert_header" = "Wo möchtest du posten?";
+"link_fact_destination_alert_message" = "Möchtest du den Beitrag mit allen im Hauptfeed teilen, oder nur in der Community posten?";
+"link_fact_destination_everybody" = "Mit allen teilen";
+"link_fact_destination_community" = "Mit der Community teilen";
+"location_label_text" = "Location:";
+
+
+//PostViewController
+"error_translate_not_supported" = "Im Moment kann man leider nur Bild-Beiträge übersetzen. Reiche gerne einen Vorschlag für dieses Feature ein, damit wir wissen, dass die Nachfrage da ist. Vielen Dank für dein Verständnis!";
+"delete_comment_alert_title" = "Kommentar löschen?";
+"delete_comment_alert_message" = "Möchtest du das Kommentar wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.";
+
+//FactCollectionViewController
+"choose_topic_for_addOn_header" = "Wähle ein Thema aus:";
+"popular" = "Angesagt";
+"current_discussions" = "Aktuelle Diskussionen";
+"followed_communities" = "Deine Communities";
+"add_item_label" = "Neues Item hinzufügen";
+"add_item_alert_message" = "Möchtest du das Thema %@ zu dem AddOn hinzufügen?";
+"add_item_alert_title" = "Bist du dir sicher?";
+
+//SearchCollectionViewController
+"search_input_placeholder" = "Suche nach Beiträgen, Themen & Usern";
+"posts" = "Beiträge:";
+"search_input_header" = "Community-Beiträge:";
+
+//SettingViewController
+"push_alert_message" = "Push Benachrichtigungen aktiviert!";
+"delete_account_alert_message" = "Dein Account wird innerhalb von 48h gelöscht. Du kannst dich jetzt ausloggen, wir machen den Rest.";
+
+//BaseFeedTableViewController
+"one_moment_placeholder" = "Moment";
+"date_descending" = "Datum ↓";
+"date_ascending" = "Datum ↑";
+"thanks_descending" = "Danke ↓";
+
+//ReportABugViewController
+"more_information_alert" = "Ein bisschen genauer bitte";
+"thanks_alert_message" = "Nett, dass du uns unterstützt! Wir versuchen das Netzwerk durchgehend zu verbessern.";
+
+//VoteViewController
+"time_till_completion_in_month" = "%d Monate";
+"already_voted_message" = "Jeder User hat nur eine Stimme für jede Abstimmung!";
+"already_voted_title" = "Du hast bereits gewählt";
+"sure_to_vote_title" = "Bereit zum wählen?";
+"sure_to_vote_message" = "Du kannst nur einmal an einer Abstimmung teilnehmen und kannst deine Meinung im Nachhinein nicht ändern!";
+"vote_successfull_alert_message" = "Deine Stimme wurde angenommen.";
+
+//NewCampaignViewController
+"campaign_category_proposal" = "Vorschlag";
+"campaign_category_complaint" = "Beschwerde";
+"campaign_category_call" = "Aufruf";
+"campaign_category_change" = "Veränderung";
+"campaign_category_addOn" = "Community AddOn";
+"submit_successfull_alert_message" = "Danke, dass du hilfst die Seite zu einer besseren zu machen!";
+
+//CampaignViewController
+"thanks_for_vote_message" = "Deine Stimme wurde angenommen.";
+"sure_to_vote_title" = "Bereit zum wählen?";
+"sure_to_vote_message" = "Du hast nur eine Stimme und kannst deine Meinung im Nachhinein nicht ändern!";
+
+//Comment Delegates
+"delete_comment_alert_title" = "Kommentar löschen?";
+"delete_comment_alert_message" = "Möchtest du das Kommentar wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.";
+
+//voteCampaignTableViewController
+"proposal_header" = "Vorschläge";
+"recent_campaign_header" = "Aktuelle Kampagnen:";
+"votes_header" = "Votes";
+"recent_votes_header" = "Aktuelle Abstimmungen:";
+
+//Ordner CommunityViewController bis VisionVCs geskipped
+
+//ShowAllFactsCollectionViewController
+"discussions" = "Diskussionen";
+
+//NewAddOnTableViewController
+"new_addOn_header_header" = "Füge einen Header hinzu.";
+"new_addOn_collection_header" = "Füge eine Kollektion mit Beiträgen und Themen hinzu.";
+"new_addOn_singleTopic_header" = "Verlinke ein aussagekräftiges Thema.";
+"addOn_type_collection" = "Post & Themen Kollektion";
+"addOn_type_singleTopic" = "Präsentation einer Community";
+
+//AddPostTableViewController
+"search_placeholder" = "Durchsuche Imagine";
+"optional_explanation_placeholder" = "Füge optional eine Beschreibung hinzu...";
+
+//OptionalInformationForArgumentTableViewController
+//proposals:
+"proposal_header_guilty" = "Wer ist daran Schuld?";
+"proposal_detail_guilty" = "In objektiven Diskussionen kann der Einfluss von Firmen & Einzelpersonen auf das Thema diskutiert werden";
+
+//SettingTableViewController
 

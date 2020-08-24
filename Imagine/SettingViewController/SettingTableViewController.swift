@@ -8,10 +8,16 @@
 
 import UIKit
 import Firebase
+import MapKit
 
 protocol SettingCellDelegate {
     func gotChanged(type: SettingChangeType, value: Any)
     func selectPicture(type: SettingChangeType, forIndexPath: IndexPath)
+    func selectLocation(location: Location?, type: SettingChangeType, forIndexPath: IndexPath)
+}
+
+protocol ChoosenLocationDelegate {
+    func gotLocation(location: Location)
 }
 
 class TopicSetting {
@@ -34,6 +40,8 @@ class UserSetting {
     var OP: String
     var imageURL: String?
     var birthday: Date?
+    var location: Location?
+    var locationIsPublic = false
     
     var youTubeLink: String?
     var patreonLink: String?
@@ -83,8 +91,6 @@ class TableViewSetting {
         self.headerText = headerText
         self.type = type
     }
-    
-    
 }
 
 class TableViewSettingCell {
@@ -106,6 +112,7 @@ enum SettingCellType {
     case textCell
     case switchCell
     case datePickerCell
+    case locationCell
 }
 
 enum SettingChangeType {
@@ -123,6 +130,8 @@ enum SettingChangeType {
     case changeUserTwitterLink
     case changeUserSongwhipLink
     case changeUserAge
+    case changeUserLocation
+    case changeUserLocationPublicity
     //AddOn
     case changeAddOnPicture
     case changeAddOnTitle
@@ -161,6 +170,7 @@ class SettingTableViewController: UITableViewController {
     let dateSettingIdentifier = "SettingDateCell"
     let switchSettingIdentifier = "SettingSwitchCell"
     let pickOrderSettingIdentifier = "SettingPickOrderCell"
+    let locationSettingIdentifier = "SettingLocationCell"
     
     let settingHeaderIdentifier = "SettingHeader"
     let settingFooterIdentifier = "SettingFooter"
@@ -170,6 +180,9 @@ class SettingTableViewController: UITableViewController {
     
     var indexPathOfImageSettingCell: IndexPath?
     var changeTypeOfImageSettingCell: SettingChangeType?
+    
+    var locationChangeType: SettingChangeType?
+    var locationIndexPath: IndexPath?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -252,6 +265,19 @@ class SettingTableViewController: UITableViewController {
                                 userSetting.birthday = date
                             }
                             
+                            if let locationName = data["locationName"] as? String, let locationCoordinate = data["locationCoordinate"] as? GeoPoint {
+                                
+                                let latitude = CLLocationDegrees(locationCoordinate.latitude)
+                                let longitude = CLLocationDegrees(locationCoordinate.longitude)
+                                let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                                let location = Location(title: locationName, coordinate: coordinate)
+                                
+                                userSetting.location = location
+                            }
+                            if let locationIsPublic = data["locationIsPublic"] as? Bool {
+                                userSetting.locationIsPublic = locationIsPublic
+                            }
+                            
                             userSetting.imageURL = user.imageURL
                             userSetting.statusText = user.statusQuote
                             self.userSetting = userSetting
@@ -329,12 +355,16 @@ class SettingTableViewController: UITableViewController {
                 socialMediaSetting.footerText = "Gib einen Link zu den jeweiligen Profilen ein, um einen Button in deinem Profil zu erhalten. Weise so die Besucher auf deine anderen Social-Media Profile hin oder promote deine persönlichen Favoriten."
                 
                 let voluntarySettings = TableViewSetting(type: .normal, headerText: "Persönliche Angaben")
-                voluntarySettings.footerText = "Mit diesen Angaben unterstützt du Imagine. Wir können diese Angaben nutzen, um unsere User besser zu verstehen und unsere kommenden Werbevorhaben zu optimieren."
+                voluntarySettings.footerText = "Mit der Altersangabe unterstützt du Imagine. Wir können diese Angaben nutzen, um unsere User besser zu verstehen und unsere kommenden Werbevorhaben zu optimieren. Das Alter wird nicht öffentlich angezeigt.\nDie Location sorgt für eine bessere Auswahl an Communities und passendere Werbung (später). Im Profil kann es ebenfalls angezeigt werden, um anderen zu zeigen, wo die Mituser herkommen.\nAlle Daten werden bei uns mit Vorsicht gehandhabt und nicht an dritte weitergegeben."
                 
                 let ageCell = TableViewSettingCell(value: userSetting.birthday, type: .datePickerCell, settingChange: .changeUserAge)
                 ageCell.titleText = "Geburtsjahr:"
+                let locationCell = TableViewSettingCell(value: userSetting.location, type: .locationCell, settingChange: .changeUserLocation)
+                locationCell.titleText = "Location:"
+                let locationIsPublicCell = TableViewSettingCell(value: userSetting.locationIsPublic, type: .switchCell, settingChange: .changeUserLocationPublicity)
+                locationIsPublicCell.titleText = "Ort in Profil anzeigen?"
                 
-                voluntarySettings.cells.append(ageCell)
+                voluntarySettings.cells.append(contentsOf: [ageCell, locationCell, locationIsPublicCell])
                 
                 socialMediaSetting.cells.append(contentsOf: [patreonCell, youTubeCell, instaCell, twitterCell, songwhipCell])
                 setting.cells.append(contentsOf: [imageCell, statusCell])
@@ -441,6 +471,17 @@ class SettingTableViewController: UITableViewController {
             print("Not high enough")
         }
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toMapVCSegue" {
+            if let vc = segue.destination as? MapViewController {
+                if let location = sender as? Location {
+                    vc.location = location
+                }
+                vc.locationDelegate = self
+            }
+        }
+    }
 
     // MARK: - Table view data source
 
@@ -496,6 +537,14 @@ class SettingTableViewController: UITableViewController {
                     
                     return cell
                 }
+            case .locationCell:
+                if let cell = tableView.dequeueReusableCell(withIdentifier: locationSettingIdentifier, for: indexPath) as? SettingLocationCell {
+                    cell.delegate = self
+                    cell.config = config
+                    cell.indexPath = indexPath
+                    
+                    return cell
+                }
             }
         case .changeOrder:
             let item = setting.addOnItems[indexPath.row]
@@ -539,6 +588,8 @@ class SettingTableViewController: UITableViewController {
                 }
             case .datePickerCell:
                 return 100
+            case .locationCell:
+                return 50
             default:
                 return UITableView.automaticDimension
             }
@@ -656,7 +707,28 @@ class SettingTableViewController: UITableViewController {
 
 }
 
+extension SettingTableViewController: ChoosenLocationDelegate {
+    
+    func gotLocation(location: Location) {
+        if let type = self.locationChangeType {
+            gotChanged(type: type, value: location)
+            if let indexPath = locationIndexPath {
+                if let cell = tableView.cellForRow(at: indexPath) as? SettingLocationCell {
+                    cell.choosenLocationLabel.text = location.title
+                }
+            }
+        }
+    }
+}
+
 extension SettingTableViewController: SettingCellDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        
+    func selectLocation(location: Location?, type: SettingChangeType, forIndexPath: IndexPath) {
+        performSegue(withIdentifier: "toMapVCSegue", sender: location)
+        self.locationChangeType = type
+        self.locationIndexPath = forIndexPath
+    }
+    
     
     //MARK: - ImagePicker
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -766,7 +838,6 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             let storageRef = storDB.child("factPictures").child(imageName)
             
             savePictureInStorage(storageReference: storageRef, imageData: imageData)
-            
         } else if let user = user {
             let imageName = "\(user.userUID).profilePicture.png"
             let storageRef = storDB.child("profilePictures").child(imageName)
@@ -804,16 +875,6 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
         })
     }
     
-    func selectPicture(type: SettingChangeType, forIndexPath: IndexPath) {
-        self.indexPathOfImageSettingCell = forIndexPath
-        self.changeTypeOfImageSettingCell = type
-        
-        imagePicker.sourceType = .photoLibrary
-        self.present(imagePicker, animated: true) {
-            //Complete
-        }
-    }
-    
     func savePictureURLInUserAuth(imageURL: String) {
         let user = Auth.auth().currentUser
         if let user = user {
@@ -831,6 +892,16 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
                     print("changeRequest hat geklappt")
                 }
             }
+        }
+    }
+    
+    func selectPicture(type: SettingChangeType, forIndexPath: IndexPath) {
+        self.indexPathOfImageSettingCell = forIndexPath
+        self.changeTypeOfImageSettingCell = type
+        
+        imagePicker.sourceType = .photoLibrary
+        self.present(imagePicker, animated: true) {
+            //Complete
         }
     }
     
@@ -966,6 +1037,30 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             if let date = value as? Date {
                 let timestamp = Timestamp(date: date)
                 firestoreValue = timestamp
+            } else {
+                return
+            }
+        case .changeUserLocation:
+            
+            if let location = value as? Location {
+                firestoreKey = "locationName"
+                firestoreValue = location.title
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.gotChanged(type: .changeUserLocation, value: location.coordinate)
+                }
+            } else if let coordinate = value as? CLLocationCoordinate2D {
+                firestoreKey = "locationCoordinate"
+                let geoPoint = GeoPoint(latitude: coordinate.latitude, longitude: coordinate.longitude)
+                firestoreValue = geoPoint
+            } else {
+                return
+            }
+        case .changeUserLocationPublicity:
+            firestoreKey = "locationIsPublic"
+            
+            if let isIt = value as? Bool {
+                firestoreValue = isIt
             } else {
                 return
             }
@@ -1210,7 +1305,6 @@ class SettingPickOrderCell: UITableViewCell {
     @IBOutlet weak var pickOrderImageView: UIImageView!
     
     override func awakeFromNib() {
-        print(" awaken")
         pickOrderLabel.font = UIFont(name: "IBMPlexSans", size: 14)
         
         pickOrderImageView.layer.cornerRadius = 6
@@ -1253,6 +1347,37 @@ class SettingPickOrderCell: UITableViewCell {
         self.pickOrderLabel.text = ""
     }
     
+}
+
+class SettingLocationCell: UITableViewCell {
+    @IBOutlet weak var setLocationTitleLabel: UILabel!
+    @IBOutlet weak var choosenLocationLabel: UILabel!
+    
+    var delegate: SettingCellDelegate?
+    var indexPath: IndexPath?
+    
+    var config: TableViewSettingCell? {
+        didSet {
+            if let setting = config {
+                setLocationTitleLabel.text = setting.titleText
+                if let value = setting.value as? Location {
+                    choosenLocationLabel.text = value.title
+                } else {
+                    choosenLocationLabel.text = "Wähle einen Standort aus"
+                }
+            }
+        }
+    }
+    
+    @IBAction func setLocationButtonTapped(_ sender: Any) {
+        if let setting = config, let indexPath = indexPath {
+            if let location = setting.value as? Location{
+                delegate?.selectLocation(location: location, type: setting.settingChange, forIndexPath: indexPath)
+            } else {
+                delegate?.selectLocation(location: nil, type: setting.settingChange, forIndexPath: indexPath)
+            }
+        }
+    }
 }
 
 

@@ -209,7 +209,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
                 if type == .topic {
                     view.headerLabel.text = "Communities"
                 } else {
-                    view.headerLabel.text = "Diskussionen"
+                    view.headerLabel.text = NSLocalizedString("discussions", comment: "discussions")
                 }
             }
             

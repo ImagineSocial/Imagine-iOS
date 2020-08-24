@@ -103,7 +103,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
        // Setup the Search Controller
        searchController.searchResultsUpdater = self
        searchController.obscuresBackgroundDuringPresentation = true
-       searchController.searchBar.placeholder = "Durchsuche Imagine"
+       searchController.searchBar.placeholder = NSLocalizedString("search_placeholder", comment: "")
        searchController.delegate = self
        searchController.searchBar.delegate = self
        
@@ -327,7 +327,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     let headerTextField: UITextField = {
        let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.placeholder = "Füge optional eine Beschreibung hinzu..."
+        textField.placeholder = NSLocalizedString("optional_explanation_placeholder", comment: "")
         textField.font = UIFont(name: "IBMPlexSans", size: 15)
         textField.borderStyle = .roundedRect
         if #available(iOS 13.0, *) {

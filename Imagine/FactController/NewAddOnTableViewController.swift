@@ -48,9 +48,9 @@ class NewAddOnTableViewController: UITableViewController {
         self.doneBarButtonItem.isEnabled = false
         self.doneBarButtonItem.tintColor = UIColor.blue.withAlphaComponent(0.5)
         
-        let header = OptionalInformation(style: .header, OP: "", documentID: "", fact: Fact(), headerTitle: "Füge einen Header hinzu.", description: Constants.texts.AddOns.headerText, singleTopic: nil)
-        let infoAll = OptionalInformation(style: .all, OP: "", documentID: "", fact: Fact(), headerTitle: "Füge eine Kollektion mit Beiträgen und Themen hinzu.", description: Constants.texts.AddOns.collectionText, singleTopic: nil)
-        let singleTopic = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Fact(), headerTitle: "Verlinke ein aussagekräftiges Thema.", description: Constants.texts.AddOns.singleTopicText, singleTopic: nil)
+        let header = OptionalInformation(style: .header, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_header_header", comment: "new header text"), description: Constants.texts.AddOns.headerText, singleTopic: nil)
+        let infoAll = OptionalInformation(style: .all, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_collection_header", comment: "new collection text"), description: Constants.texts.AddOns.collectionText, singleTopic: nil)
+        let singleTopic = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_singleTopic_header", comment: "new singleTopicText"), description: Constants.texts.AddOns.singleTopicText, singleTopic: nil)
         
         optionalInformations.append(contentsOf: [header, infoAll, singleTopic])
         tableView.reloadData()
@@ -185,13 +185,13 @@ class NewAddOnTableViewController: UITableViewController {
             case .header:
                 self.selectedAddOnTypeLabel.text = "AddOn Header"
             case .all:
-                self.selectedAddOnTypeLabel.text = "Post & Themen Kollektion"
+                self.selectedAddOnTypeLabel.text = NSLocalizedString("addOn_type_collection", comment: "adde a normal collection")
             case .justPosts:
                 self.selectedAddOnTypeLabel.text = "Collection of just Posts"
             case .justTopics:
                 self.selectedAddOnTypeLabel.text = "Collection of just Topics"
             case .singleTopic:
-                self.selectedAddOnTypeLabel.text = "Präsentation eines Themas"
+                self.selectedAddOnTypeLabel.text = NSLocalizedString("addOn_type_singleTopic", comment: "adde a singleTopic")
             }
             
             

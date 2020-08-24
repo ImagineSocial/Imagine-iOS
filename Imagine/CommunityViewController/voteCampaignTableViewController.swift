@@ -231,11 +231,11 @@ class voteCampaignTableViewController: UITableViewController {
                 
                 self.segmentedControl.selectedSegmentIndex = 0
                 self.headerLabel.fadeTransition(0.5)
-                self.headerLabel.text = "Vorschläge"
+                self.headerLabel.text = NSLocalizedString("proposal_header", comment: "")
                 self.subHeaderLabel.fadeTransition(0.5)
 //                self.subHeaderLabel.text = "Teile uns deine Ideen für ein besseres Erlebnis mit!"
                 self.descriptionLabel.fadeTransition(0.5)
-                self.descriptionLabel.text = "Aktuelle Kampagnen:"
+                self.descriptionLabel.text = NSLocalizedString("recent_campaign_header", comment: "")
                 self.tableView.reloadData()
                 
             }) { (_) in
@@ -262,11 +262,11 @@ class voteCampaignTableViewController: UITableViewController {
                 self.segmentedControl.selectedSegmentIndex = 1
 //                self.spaceBetweenSubheaderAndDescriptionLabel.constant = 10
                 self.headerLabel.fadeTransition(0.5)
-                self.headerLabel.text = "Votes"
+                self.headerLabel.text = NSLocalizedString("votes_header", comment: "")
                 self.subHeaderLabel.fadeTransition(0.5)
 //                self.subHeaderLabel.text = "Du entscheidest mit, wie sich dein Netzwerk verändert!"
                 self.descriptionLabel.fadeTransition(0.5)
-                self.descriptionLabel.text = "Aktuelle Abstimmungen:"
+                self.descriptionLabel.text = NSLocalizedString("recent_votes_header", comment: "")
                 self.tableView.reloadData()
                 
             }) { (_) in

@@ -28,7 +28,7 @@ class NewCampaignViewController: UIViewController {
     @IBOutlet weak var categoryPickerView: UIPickerView!
     
     var up = false
-    let categories: [CampaignCategory] = [CampaignCategory(title: "Vorschlag", type: .proposal), CampaignCategory(title: "Beschwerde", type: .complaint), CampaignCategory(title: "Aufruf", type: .call), CampaignCategory(title: "Veränderung", type: .change), CampaignCategory(title: "Themen AddOn", type: .topicAddOn)]
+    let categories: [CampaignCategory] = [CampaignCategory(title: NSLocalizedString("campaign_category_proposal", comment: "proposal"), type: .proposal), CampaignCategory(title: NSLocalizedString("campaign_category_complaint", comment: "complaint"), type: .complaint), CampaignCategory(title: NSLocalizedString("campaign_category_call", comment: "call for action"), type: .call), CampaignCategory(title: NSLocalizedString("campaign_category_change", comment: "change"), type: .change), CampaignCategory(title: NSLocalizedString("campaign_category_addOn", comment: "comm addOn"), type: .topicAddOn)]
     var chosenCategory: CampaignType = .proposal
     
     var tipView: EasyTipView?
@@ -98,7 +98,7 @@ class NewCampaignViewController: UIViewController {
             
             
             
-            let alert = UIAlertController(title: "Fertig!", message: "Danke, dass du hilfst die Seite zu einer besseren zu machen!", preferredStyle: .alert)
+            let alert = UIAlertController(title: NSLocalizedString("done", comment: "done"), message: NSLocalizedString("submit_successfull_alert_message", comment: "thanks"), preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
                 
             }))

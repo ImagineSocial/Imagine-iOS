@@ -77,20 +77,21 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
         descriptionLabel.text = vote.description
         switch vote.impact {
         case .light:
-            impactLabel.text = "Leicht"
+            impactLabel.text = NSLocalizedString("easy", comment: "easy")
             impactLabel.textColor = .green
         case .medium:
-            impactLabel.text = "Mittel"
+            impactLabel.text = NSLocalizedString("medium", comment: "medium")
             impactLabel.textColor = .orange
         case .strong:
-            impactLabel.text = "Stark"
+            impactLabel.text = NSLocalizedString("strong", comment: "strong")
             impactLabel.textColor = .red
         
         }
         impactDescriptionLabel.text = vote.impactDescription
         costLabel.text = vote.cost
         costDescriptionLabel.text = vote.costDescription
-        timeToRealizationLabel.text = "\(vote.timeToRealization) Monate"
+        let string = NSLocalizedString("time_till_completion_in_month", comment: "... month")
+        timeToRealizationLabel.text = String.localizedStringWithFormat(string, vote.timeToRealization)
         realizationTimeDescriptionLabel.text = vote.realizationTimeDescription
     }
     
@@ -120,7 +121,7 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
                                 if let voters = docData["voters"] as? [String] {
                                     for voter in voters {
                                         if voter == user.uid {
-                                            self.alert(message: "Jeder User hat nur eine Stimme für jede Abstimmung!", title: "Du hast bereits gewählt")
+                                            self.alert(message: NSLocalizedString("already_voted_message", comment: "just one vote"), title: NSLocalizedString("already_voted_title", comment: "just one"))
                                             return
                                         }
                                     }
@@ -141,11 +142,11 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     func allowedToVote(supporter: Bool) {
-        let alertController = UIAlertController(title: "Bereit zum wählen?", message: "Du kannst nur einmal an einer Abstimmung teilnehmen und kannst deine Meinung im Nachhinein nicht ändern!", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Abbrechen", style: .destructive, handler: { (_) in
+        let alertController = UIAlertController(title: NSLocalizedString("sure_to_vote_title", comment: "you sure?"), message: NSLocalizedString("sure_to_vote_message", comment: "just once and such"), preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: NSLocalizedString("cancel", comment: "cancle"), style: .destructive, handler: { (_) in
             alertController.dismiss(animated: true, completion: nil)
         })
-        let stayAction = UIAlertAction(title: "Ich bin mir sicher!", style: .cancel) { (_) in
+        let stayAction = UIAlertAction(title: NSLocalizedString("i_am_sure", comment: "i am sure"), style: .cancel) { (_) in
             self.voted(supporter: supporter)
         }
         alertController.addAction(stayAction)
@@ -211,7 +212,7 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
                     self.view.activityStopAnimating()
-                    self.alert(message: "Deine Stimme wurde angenommen.", title: "Danke für deine Unterstützung!")
+                    self.alert(message: NSLocalizedString("vote_successfull_alert_message", comment: ""), title: NSLocalizedString("thanks_for_support", comment: "thanks for support"))
                     self.vetoButton.isEnabled = false
                     self.supportButton.isEnabled = false
                 }

@@ -42,11 +42,10 @@
 		E9530C4E22DCBF20007D6A00 /* PinchToZoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9530C4D22DCBF20007D6A00 /* PinchToZoomViewController.swift */; };
 		E9530C5322DDE94D007D6A00 /* SavedPostTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9530C5222DDE94D007D6A00 /* SavedPostTableViewController.swift */; };
 		E95A6FC8232E80E8008B32CC /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95A6FC7232E80E8008B32CC /* Reachability.swift */; };
+		E95B6B8724EECD2F0089BB19 /* SearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95B6B8624EECD2F0089BB19 /* SearchTableViewController.swift */; };
+		E95B6B8924EFC3460089BB19 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95B6B8824EFC3460089BB19 /* MapViewController.swift */; };
+		E95B6B8B24EFD2550089BB19 /* LocationSearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95B6B8A24EFD2550089BB19 /* LocationSearchTableViewController.swift */; };
 		E9600E882235076C003E5A7A /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9600E872235076B003E5A7A /* PostViewController.swift */; };
-		E9600E9A223C0782003E5A7A /* Kalam-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9600E96223C0781003E5A7A /* Kalam-Regular.ttf */; };
-		E9600E9B223C0782003E5A7A /* Kalam-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9600E97223C0781003E5A7A /* Kalam-Light.ttf */; };
-		E9600E9C223C0782003E5A7A /* Kalam-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9600E98223C0781003E5A7A /* Kalam-Bold.ttf */; };
-		E9600E9D223C0782003E5A7A /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = E9600E99223C0781003E5A7A /* OFL.txt */; };
 		E962AC172224430400C6D6EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E962AC162224430400C6D6EF /* AppDelegate.swift */; };
 		E962AC1C2224430400C6D6EF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E962AC1A2224430400C6D6EF /* Main.storyboard */; };
 		E962AC1E2224430600C6D6EF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E962AC1D2224430600C6D6EF /* Assets.xcassets */; };
@@ -131,7 +130,6 @@
 		E9A9FAE122A50ED90088BD37 /* CobraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A9FAE022A50ED90088BD37 /* CobraViewController.swift */; };
 		E9B1872A222E981000923037 /* MeldeAgreeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B18729222E981000923037 /* MeldeAgreeViewController.swift */; };
 		E9B1872F222ECC4E00923037 /* NewPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B1872E222ECC4E00923037 /* NewPostViewController.swift */; };
-		E9B5B25222D7592A004155DA /* SearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B5B25122D7592A004155DA /* SearchTableViewController.swift */; };
 		E9B79CDF224EC68500166EED /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B79CDE224EC68500166EED /* PostCell.swift */; };
 		E9B79CE1224EC6D200166EED /* RepostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B79CE0224EC6D200166EED /* RepostCell.swift */; };
 		E9B79CE3224EC72000166EED /* JobOfferCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B79CE2224EC72000166EED /* JobOfferCell.swift */; };
@@ -151,7 +149,6 @@
 		E9B85D5E2413C28B00960942 /* TableViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D5D2413C28B00960942 /* TableViewInCollectionViewCell.swift */; };
 		E9B85D602413C36800960942 /* SmallCompanyTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B85D5F2413C36800960942 /* SmallCompanyTableViewCell.xib */; };
 		E9B85D622413C46300960942 /* SmallCompanyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D612413C46300960942 /* SmallCompanyTableViewCell.swift */; };
-		E9B85D642413C67E00960942 /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D632413C67E00960942 /* Company.swift */; };
 		E9B85D66241626DA00960942 /* CommunityCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D65241626DA00960942 /* CommunityCollectionViewController.swift */; };
 		E9B9445D2257C37D000145E2 /* DesignableImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B9445C2257C37D000145E2 /* DesignableImage.swift */; };
 		E9B9445F225800EE000145E2 /* UserFeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B9445E225800EE000145E2 /* UserFeedTableViewController.swift */; };
@@ -180,7 +177,6 @@
 		E9E521C3245AE6B8002585A2 /* AnimatedWaveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E521C0245AE6B5002585A2 /* AnimatedWaveView.swift */; };
 		E9E521C4245AE6B8002585A2 /* RadialGradientLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E521C1245AE6B6002585A2 /* RadialGradientLayer.swift */; };
 		E9E521C6245AE6EE002585A2 /* TrippyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E521C5245AE6EE002585A2 /* TrippyViewController.swift */; };
-		E9E531FC229E9298004D0654 /* PostCommentChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E531FB229E9298004D0654 /* PostCommentChatViewController.swift */; };
 		E9E531FE229EA242004D0654 /* ChatModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E531FD229EA242004D0654 /* ChatModels.swift */; };
 		E9E6876724167AB600CB7AF8 /* CurrentProjectsCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9E6876624167AB600CB7AF8 /* CurrentProjectsCollectionCell.xib */; };
 		E9E6876924167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E6876824167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift */; };
@@ -246,11 +242,10 @@
 		E9530C4D22DCBF20007D6A00 /* PinchToZoomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinchToZoomViewController.swift; sourceTree = "<group>"; };
 		E9530C5222DDE94D007D6A00 /* SavedPostTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPostTableViewController.swift; sourceTree = "<group>"; };
 		E95A6FC7232E80E8008B32CC /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		E95B6B8624EECD2F0089BB19 /* SearchTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableViewController.swift; sourceTree = "<group>"; };
+		E95B6B8824EFC3460089BB19 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		E95B6B8A24EFD2550089BB19 /* LocationSearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchTableViewController.swift; sourceTree = "<group>"; };
 		E9600E872235076B003E5A7A /* PostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
-		E9600E96223C0781003E5A7A /* Kalam-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Kalam-Regular.ttf"; sourceTree = "<group>"; };
-		E9600E97223C0781003E5A7A /* Kalam-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Kalam-Light.ttf"; sourceTree = "<group>"; };
-		E9600E98223C0781003E5A7A /* Kalam-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Kalam-Bold.ttf"; sourceTree = "<group>"; };
-		E9600E99223C0781003E5A7A /* OFL.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 		E962AC132224430400C6D6EF /* Imagine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Imagine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E962AC162224430400C6D6EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E962AC1B2224430400C6D6EF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -339,7 +334,6 @@
 		E9A9FAE022A50ED90088BD37 /* CobraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CobraViewController.swift; sourceTree = "<group>"; };
 		E9B18729222E981000923037 /* MeldeAgreeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeldeAgreeViewController.swift; sourceTree = "<group>"; };
 		E9B1872E222ECC4E00923037 /* NewPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostViewController.swift; sourceTree = "<group>"; };
-		E9B5B25122D7592A004155DA /* SearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchTableViewController.swift; path = ../SearchTableViewController.swift; sourceTree = "<group>"; };
 		E9B79CDE224EC68500166EED /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
 		E9B79CE0224EC6D200166EED /* RepostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepostCell.swift; sourceTree = "<group>"; };
 		E9B79CE2224EC72000166EED /* JobOfferCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobOfferCell.swift; sourceTree = "<group>"; };
@@ -359,7 +353,6 @@
 		E9B85D5D2413C28B00960942 /* TableViewInCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewInCollectionViewCell.swift; sourceTree = "<group>"; };
 		E9B85D5F2413C36800960942 /* SmallCompanyTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SmallCompanyTableViewCell.xib; sourceTree = "<group>"; };
 		E9B85D612413C46300960942 /* SmallCompanyTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallCompanyTableViewCell.swift; sourceTree = "<group>"; };
-		E9B85D632413C67E00960942 /* Company.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Company.swift; sourceTree = "<group>"; };
 		E9B85D65241626DA00960942 /* CommunityCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityCollectionViewController.swift; sourceTree = "<group>"; };
 		E9B9445C2257C37D000145E2 /* DesignableImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignableImage.swift; sourceTree = "<group>"; };
 		E9B9445E225800EE000145E2 /* UserFeedTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserFeedTableViewController.swift; path = ../UserFeedTableViewController.swift; sourceTree = "<group>"; };
@@ -388,7 +381,6 @@
 		E9E521C0245AE6B5002585A2 /* AnimatedWaveView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnimatedWaveView.swift; path = "../../../../../../Downloads/AnimatedWaveView-master/AnimatedWaveViewExample/AnimatedWaveView.swift"; sourceTree = "<group>"; };
 		E9E521C1245AE6B6002585A2 /* RadialGradientLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RadialGradientLayer.swift; path = "../../../../../../Downloads/AnimatedWaveView-master/AnimatedWaveViewExample/RadialGradientLayer.swift"; sourceTree = "<group>"; };
 		E9E521C5245AE6EE002585A2 /* TrippyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrippyViewController.swift; sourceTree = "<group>"; };
-		E9E531FB229E9298004D0654 /* PostCommentChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCommentChatViewController.swift; sourceTree = "<group>"; };
 		E9E531FD229EA242004D0654 /* ChatModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModels.swift; sourceTree = "<group>"; };
 		E9E6876624167AB600CB7AF8 /* CurrentProjectsCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentProjectsCollectionCell.xib; sourceTree = "<group>"; };
 		E9E6876824167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentProjectsCollectionCell.swift; sourceTree = "<group>"; };
@@ -448,6 +440,8 @@
 			isa = PBXGroup;
 			children = (
 				E91A2B6024794EAE00B42353 /* SettingTableViewController.swift */,
+				E95B6B8824EFC3460089BB19 /* MapViewController.swift */,
+				E95B6B8A24EFD2550089BB19 /* LocationSearchTableViewController.swift */,
 			);
 			path = SettingViewController;
 			sourceTree = "<group>";
@@ -502,10 +496,6 @@
 				E90B190E238C210000EACCC7 /* IBMPlexSans-Regular.ttf */,
 				E90B1910238C210000EACCC7 /* IBMPlexSans-SemiBold.ttf */,
 				E90B1912238C210000EACCC7 /* IBMPlexSans-Thin.ttf */,
-				E9600E96223C0781003E5A7A /* Kalam-Regular.ttf */,
-				E9600E97223C0781003E5A7A /* Kalam-Light.ttf */,
-				E9600E98223C0781003E5A7A /* Kalam-Bold.ttf */,
-				E9600E99223C0781003E5A7A /* OFL.txt */,
 			);
 			path = Kalam;
 			sourceTree = "<group>";
@@ -616,11 +606,11 @@
 				E95A6FC7232E80E8008B32CC /* Reachability.swift */,
 				E98FAEA723FAD4780064A614 /* CommentAnswerView.swift */,
 				E9332A9A23FE8A63004078FC /* CommentTableView.swift */,
-				E9B85D632413C67E00960942 /* Company.swift */,
 				E97E7262243603AC0012F105 /* OptionalInformation.swift */,
 				E929516923328D4B006C37E3 /* Constants.swift */,
 				E911EEF322DB630300EDD056 /* SideMenu.swift */,
 				E9879A2424C2276A004B497F /* Comment.swift */,
+				E9CF17C323CB3F41000E5149 /* Campaign.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -631,7 +621,6 @@
 				E9600E872235076B003E5A7A /* PostViewController.swift */,
 				E9B1872E222ECC4E00923037 /* NewPostViewController.swift */,
 				E9B79CE6224F88CD00166EED /* RepostViewController.swift */,
-				E9E531FB229E9298004D0654 /* PostCommentChatViewController.swift */,
 				E9530C4D22DCBF20007D6A00 /* PinchToZoomViewController.swift */,
 				E919EFE624A6787400ED7D4F /* LeanWebViewViewController.swift */,
 			);
@@ -803,8 +792,8 @@
 			children = (
 				E9EA7C9222E1DA210015C0EC /* BaseFeedTableViewController.swift */,
 				E962AC282224442000C6D6EF /* FeedTableViewController.swift */,
-				E9B5B25122D7592A004155DA /* SearchTableViewController.swift */,
 				E991CCD72270972F00940834 /* WebViewController.swift */,
+				E95B6B8624EECD2F0089BB19 /* SearchTableViewController.swift */,
 				E90C892A23F29407005CE1D0 /* SettingViewController.swift */,
 			);
 			path = FeedVCs;
@@ -831,7 +820,6 @@
 		E9EE9D83231692000033748E /* CampaignVoteController */ = {
 			isa = PBXGroup;
 			children = (
-				E9CF17C323CB3F41000E5149 /* Campaign.swift */,
 				E9F9B68C223D6C9500100F51 /* voteCampaignTableViewController.swift */,
 				E9211ABA223FF9C700185A00 /* CampaignViewController.swift */,
 				E9211AB8223FCBB100185A00 /* NewCampaignViewController.swift */,
@@ -951,7 +939,6 @@
 				E9B85D482412483500960942 /* CollectionViewInTableViewCell.xib in Resources */,
 				E997F761248CE90300BF7F88 /* SurveyCell.xib in Resources */,
 				E9E49D2D2349E8AB002E371E /* NotificationCell.xib in Resources */,
-				E9600E9B223C0782003E5A7A /* Kalam-Light.ttf in Resources */,
 				E96CE89622959E6D00BACD3B /* ArgumentCell.xib in Resources */,
 				E9879A2124BDB4C1004B497F /* MusicCell.xib in Resources */,
 				E98FAEA223FAB8760064A614 /* CommentCell.xib in Resources */,
@@ -982,12 +969,10 @@
 				E97FDFB924695FA40049E1E4 /* AddOnStoreImageTableViewCell.xib in Resources */,
 				E97FDFC8246C19CA0049E1E4 /* FollowedTopicCell.xib in Resources */,
 				E9A02AA32326580B000DAB69 /* BlankContentCell.xib in Resources */,
-				E9600E9A223C0782003E5A7A /* Kalam-Regular.ttf in Resources */,
 				E90B1915238C210000EACCC7 /* IBMPlexSans-Regular.ttf in Resources */,
 				E98BA592241BFF3700C62DA8 /* AddTopicCell.xib in Resources */,
 				E97FDFBC246A9E970049E1E4 /* TopicCollectionHeader.xib in Resources */,
 				E90B191A238C210000EACCC7 /* IBMPlexSans-Bold.ttf in Resources */,
-				E9600E9C223C0782003E5A7A /* Kalam-Bold.ttf in Resources */,
 				E97D714C242255A50018E27C /* VoteCell.xib in Resources */,
 				E983F51C23C1FBC2005F7FDE /* GifCell.xib in Resources */,
 				E938104E22E707A90086F199 /* YouTubeCell.xib in Resources */,
@@ -998,7 +983,6 @@
 				E9EA7C9722E20DEB0015C0EC /* BlogPostCell.xib in Resources */,
 				E9BFA6CE2450B16C00E43826 /* InfoHeaderAddOnCell.xib in Resources */,
 				E97FDFC0246BE9BC0049E1E4 /* DiscussionCell.xib in Resources */,
-				E9600E9D223C0782003E5A7A /* OFL.txt in Resources */,
 				E9B85D522412D29A00960942 /* SmallPostCell.xib in Resources */,
 				E9B944672258B674000145E2 /* RePostTableViewCell.xib in Resources */,
 				E98FAEA623FAD2CC0064A614 /* CommentFooter.xib in Resources */,
@@ -1103,7 +1087,7 @@
 				E9BFA6D02451764700E43826 /* InfoHeaderAddOnCell.swift in Sources */,
 				E9B85D4224112DCA00960942 /* ArgumentPageViewController.swift in Sources */,
 				E962AC34222DA04E00C6D6EF /* MeldenViewController.swift in Sources */,
-				E9B85D642413C67E00960942 /* Company.swift in Sources */,
+				E95B6B8724EECD2F0089BB19 /* SearchTableViewController.swift in Sources */,
 				E9530C4E22DCBF20007D6A00 /* PinchToZoomViewController.swift in Sources */,
 				E9EE0E3522D234DA0039F32C /* VisionPitchCell.swift in Sources */,
 				E9EA7C9322E1DA210015C0EC /* BaseFeedTableViewController.swift in Sources */,
@@ -1116,7 +1100,6 @@
 				E9B1872F222ECC4E00923037 /* NewPostViewController.swift in Sources */,
 				E9B85D4C24124BB500960942 /* CollectionViewInTableViewCell.swift in Sources */,
 				E9B79CE3224EC72000166EED /* JobOfferCell.swift in Sources */,
-				E9B5B25222D7592A004155DA /* SearchTableViewController.swift in Sources */,
 				E929516A23328D4B006C37E3 /* Constants.swift in Sources */,
 				E9E521C3245AE6B8002585A2 /* AnimatedWaveView.swift in Sources */,
 				E9EA7C9922E5BC320015C0EC /* InfoScreen.swift in Sources */,
@@ -1125,6 +1108,7 @@
 				E911EEF022DB157500EDD056 /* SettingsLauncher.swift in Sources */,
 				E96CE8982295A13B00BACD3B /* ArgumentCell.swift in Sources */,
 				E97C834823D0883000CE3D3C /* MaltesZentraleTableViewController.swift in Sources */,
+				E95B6B8B24EFD2550089BB19 /* LocationSearchTableViewController.swift in Sources */,
 				E9B85D66241626DA00960942 /* CommunityCollectionViewController.swift in Sources */,
 				E98B22EE22CA396B000F965F /* ChatsTableViewController.swift in Sources */,
 				E9EA2CFA22AFCA0800207702 /* NewBlogPostViewController.swift in Sources */,
@@ -1161,10 +1145,10 @@
 				E9A360E52240FDCA008027CD /* SupportTheCommunityTableViewController.swift in Sources */,
 				E9E531FE229EA242004D0654 /* ChatModels.swift in Sources */,
 				E995E99E23A5414F005E81B4 /* RunderProgress.swift in Sources */,
-				E9E531FC229E9298004D0654 /* PostCommentChatViewController.swift in Sources */,
 				E97CC1D322A028C800A23490 /* EmojiExtension.swift in Sources */,
 				E9B79CE7224F88CD00166EED /* RepostViewController.swift in Sources */,
 				E9B85D46241165CF00960942 /* OptionalInformationForArgumentTableViewController.swift in Sources */,
+				E95B6B8924EFC3460089BB19 /* MapViewController.swift in Sources */,
 				E9879A2524C2276B004B497F /* Comment.swift in Sources */,
 				E9F31DCD23F6D6D2001D5D25 /* FactCell.swift in Sources */,
 				E9A02AA523265822000DAB69 /* BlankContentFile.swift in Sources */,
@@ -1384,7 +1368,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.9;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -1407,7 +1391,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.9;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;

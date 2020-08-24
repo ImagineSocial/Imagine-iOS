@@ -68,6 +68,8 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var settingButton: UIButton!
+    @IBOutlet weak var locationImageView: UIImageView!
+    @IBOutlet weak var locationLabel: UILabel!
     
     /* You have to set currentState and userOfProfile when you call this VC - Couldnt get the init to work */
     
@@ -360,6 +362,14 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                             } else {
                                 self.statusLabel.text = self.defaultStatusText
                             }
+                            
+                            if let locationName = docData["locationName"] as? String, let locationIsPublic = docData["locationIsPublic"] as? Bool {
+                                if locationIsPublic {
+                                    self.locationLabel.text = locationName
+                                    self.locationImageView.isHidden = false
+                                    self.locationLabel.isHidden = false
+                                }
+                            }
                         }
                     }
                     
@@ -437,6 +447,14 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             if medias.count != 0 {
                 self.socialMediaObjects = medias
                 self.setSocialMediaBar(socialMediaObjects: medias)
+            }
+            
+            if userOfProfile.locationIsPublic {
+                if let location = userOfProfile.locationName {
+                    self.locationLabel.text = location
+                    self.locationImageView.isHidden = false
+                    self.locationLabel.isHidden = false
+                }
             }
         }
     }

@@ -910,7 +910,7 @@ class LogInViewController: UIViewController {
     
     @IBAction func cancelTapped(_ sender: Any) {
         if signUpInProgress && signUpFrame != .enterFirstName {
-            let alertController = UIAlertController(title: NSLocalizedString("cancel_signup_title", comment: ""), message: NSLocalizedString("cancel_signup_message", comment: "all data is lost.."), preferredStyle: .alert)
+            let alertController = UIAlertController(title: NSLocalizedString("cancel_signup_title", comment: ""), message: NSLocalizedString("cancel_signup_message", comment: "all data will be lost.."), preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Anmeldung abbrechen", style: .destructive, handler: { (_) in
                 self.dismiss(animated: true, completion: nil)
                 

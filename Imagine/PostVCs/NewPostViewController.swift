@@ -80,6 +80,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var up = false
     
     var linkedFact: Fact?
+    var linkedLocation: Location?
+    
     var comingFromPostsOfFact = false
     var comingFromAddOnVC = false   // This will create a difference reference for the post to be stored, to show it just in the topic and not in the main feed - later it will show up for those who follow this topic
     var addItemDelegate: AddItemDelegate?
@@ -140,7 +142,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             setDismissButton()
             cancelLinkedFactButton.isEnabled = false
             cancelLinkedFactButton.alpha = 0.5
-            distributionInformationLabel.text = "Thema"
+            distributionInformationLabel.text = "Community"
         }
         
         let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15) as Any]
@@ -375,7 +377,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let descriptionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Beschreibung:"
+        label.text = NSLocalizedString("decriptionLabelText", comment: "...:")
         label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
         
         return label
@@ -600,7 +602,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             tipView.dismiss()
             postLinkTipView = nil
         } else {
-            self.postLinkTipView = EasyTipView(text: "Teile deine Links bei Imagine mit verschiedenen Darstellungsformen:\n\nNormale Websiten werden mit einer Preview und deinem gewählten Titel angezeigt. Teilst du ein YouTube Video wird dieses im bekannten YouTube Format präsentiert. \nHat dein Link die Endung \".mp4\", wird das Video direkt im Feed abgespielt.\nTeilst du einen Songwhip.com Link, wird die geteilte Musik für andere zugänglicher, durch das schnelle Auswählen eines Streamingdienstes.\n\nHast du weitere Ideen für besondere Formate, wie z.B. Netflix oder IMDB, stelle deine Idee im Imagine Tab den anderen Usern vor!")
+            self.postLinkTipView = EasyTipView(text: NSLocalizedString("postLinkTipViewText", comment: "What you can post and such"))
             postLinkTipView!.show(forView: linkView)
         }
     }
@@ -621,7 +623,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let pictureLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Bild:"
+        label.text = NSLocalizedString("pictureLabelText", comment: "picture:")
         label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
         label.alpha = 0
         
@@ -960,7 +962,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .imagineColor
-        button.setTitle("Thema verlinken", for: .normal)
+        button.setTitle("Community verlinken", for: .normal)
         button.addTarget(self, action: #selector(linkFactToPostTapped), for: .touchUpInside)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
         button.setTitleColor(.imagineColor, for: .normal)
@@ -1079,24 +1081,113 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         return button
     }()
     
+    //Location
+    let locationDescriptionLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = NSLocalizedString("location_label_text", comment: "location:")
+        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
+        
+        return label
+    }()
+    
+    let choosenLocationLabel : UILabel = {
+       let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
+        label.textAlignment = .center
+        
+        return label
+    }()
+    
+    let chooseLocationButton: DesignableButton = {
+       let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "mapIcon"), for: .normal)
+        button.addTarget(self, action: #selector(chooseLocationButtonTapped), for: .touchUpInside)
+        button.tintColor = .imagineColor
+        
+        return button
+    }()
+    
+    let linkedLocationImageView: UIImageView = {
+       let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = UIImage(named: "locationCircle")
+        if #available(iOS 13.0, *) {
+            imageView.tintColor = .secondaryLabel
+        } else {
+            imageView.tintColor = .lightGray
+        }
+        
+        return imageView
+    }()
+    
+    let linkedLocationView: UIView = {
+       let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white
+        }
+        
+        return view
+    }()
+    
+    @objc func chooseLocationButtonTapped() {
+        performSegue(withIdentifier: "toMapSegue", sender: nil)
+    }
+    
     //MARK:- Set Up Options UI
     func setUpOptionViewUI() {
+        let labelHeight: CGFloat = 20
+        
+        //LocationView
+        linkedLocationView.addSubview(locationDescriptionLabel)
+        locationDescriptionLabel.topAnchor.constraint(equalTo: linkedLocationView.topAnchor, constant: 5).isActive = true
+        locationDescriptionLabel.leadingAnchor.constraint(equalTo: linkedLocationView.leadingAnchor, constant: 10).isActive = true
+        locationDescriptionLabel.heightAnchor.constraint(equalToConstant: labelHeight).isActive = true
+        
+        linkedLocationView.addSubview(linkedLocationImageView)
+        linkedLocationImageView.centerYAnchor.constraint(equalTo: linkedLocationView.centerYAnchor, constant: labelHeight/2).isActive = true
+        linkedLocationImageView.leadingAnchor.constraint(equalTo: linkedLocationView.leadingAnchor, constant: 14).isActive = true
+        linkedLocationImageView.widthAnchor.constraint(equalToConstant: 18).isActive = true
+        linkedLocationImageView.heightAnchor.constraint(equalToConstant: 18).isActive = true
+        
+        linkedLocationView.addSubview(choosenLocationLabel)
+        choosenLocationLabel.centerYAnchor.constraint(equalTo: linkedLocationImageView.centerYAnchor).isActive = true
+        choosenLocationLabel.leadingAnchor.constraint(equalTo: locationDescriptionLabel.trailingAnchor, constant: 10).isActive = true
+        
+        linkedLocationView.addSubview(chooseLocationButton)
+        chooseLocationButton.leadingAnchor.constraint(equalTo: choosenLocationLabel.trailingAnchor, constant: 20).isActive = true
+        chooseLocationButton.trailingAnchor.constraint(equalTo: linkedLocationView.trailingAnchor, constant: -10).isActive = true
+        chooseLocationButton.centerYAnchor.constraint(equalTo: choosenLocationLabel.centerYAnchor).isActive = true
+        chooseLocationButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
+        chooseLocationButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
+        
+        self.view.addSubview(linkedLocationView)
+        linkedLocationView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 1).isActive = true
+        linkedLocationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+        linkedLocationView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        linkedLocationView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight+labelHeight).isActive = true
         
         //LinkedFactView
-        let distributionLabelHeight: CGFloat = 20
         linkedFactView.addSubview(distributionLabel)
         distributionLabel.topAnchor.constraint(equalTo: linkedFactView.topAnchor, constant: 5).isActive = true
         distributionLabel.leadingAnchor.constraint(equalTo: linkedFactView.leadingAnchor, constant: 10).isActive = true
-        distributionLabel.heightAnchor.constraint(equalToConstant: distributionLabelHeight).isActive = true
+        distributionLabel.heightAnchor.constraint(equalToConstant: labelHeight).isActive = true
 
         linkedFactView.addSubview(linkedFactInfoButton)
-        linkedFactInfoButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: distributionLabelHeight/2).isActive = true
+        linkedFactInfoButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: labelHeight/2).isActive = true
         linkedFactInfoButton.trailingAnchor.constraint(equalTo: linkedFactView.trailingAnchor, constant: -10).isActive = true
         linkedFactInfoButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
         linkedFactInfoButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
         
         linkedFactView.addSubview(addFactButton)
-        addFactButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: distributionLabelHeight/2).isActive = true
+        addFactButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: labelHeight/2).isActive = true
         addFactButton.trailingAnchor.constraint(equalTo: linkedFactInfoButton.leadingAnchor, constant: -20).isActive = true
 //        addFactButton.centerXAnchor.constraint(equalTo: linkedFactView.centerXAnchor).isActive = true
         addFactButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
@@ -1115,20 +1206,20 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         linkedFactView.addSubview(distributionInformationView)
         distributionInformationView.leadingAnchor.constraint(equalTo: linkedFactView.leadingAnchor, constant: 10).isActive = true
 //        distributionInformationView.trailingAnchor.constraint(equalTo: addFactButton.leadingAnchor, constant: -3).isActive = true
-        distributionInformationView.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: distributionLabelHeight/2).isActive = true
+        distributionInformationView.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: labelHeight/2).isActive = true
         distributionInformationView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-15).isActive = true
 
         linkedFactView.addSubview(cancelLinkedFactButton)
         cancelLinkedFactButton.trailingAnchor.constraint(equalTo: linkedFactInfoButton.leadingAnchor, constant: -10).isActive = true
-        cancelLinkedFactButton.widthAnchor.constraint(equalToConstant: 22).isActive = true
-        cancelLinkedFactButton.heightAnchor.constraint(equalToConstant: 22).isActive = true
-        cancelLinkedFactButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: distributionLabelHeight/2).isActive = true
+        cancelLinkedFactButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
+        cancelLinkedFactButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
+        cancelLinkedFactButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: labelHeight/2).isActive = true
         
         self.view.addSubview(linkedFactView)
-        linkedFactView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 1).isActive = true
+        linkedFactView.topAnchor.constraint(equalTo: linkedLocationView.bottomAnchor, constant: 1).isActive = true
         linkedFactView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
         linkedFactView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        linkedFactView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight+distributionLabelHeight).isActive = true
+        linkedFactView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight+labelHeight).isActive = true
         
         
         // OptionView
@@ -1311,7 +1402,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let markPostLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Post Markieren"
+        label.text = NSLocalizedString("markPostButtonText", comment: "mark your post text")
         label.textAlignment = .center
         label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
         
@@ -1328,7 +1419,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }()
     
     let markPostSegmentControl :UISegmentedControl = {
-        let items = ["Meinung", "Sensation", "Bearbeitet"]
+        let items = [NSLocalizedString("opinion", comment: "just opinion"), NSLocalizedString("sansational", comment: "sansational"), NSLocalizedString("edited", comment: "edited")]
         let control = UISegmentedControl(items: items)
         control.translatesAutoresizingMaskIntoConstraints = false
         control.isHidden = true
@@ -1386,7 +1477,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let postAnonymousLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Anonym posten"
+        label.text = NSLocalizedString("post_anonymous_label", comment: "post anonymous")
         label.textAlignment = .center
         label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
         
@@ -1565,7 +1656,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func showExplanationForLinkFactToPost() {
          DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-            self.linkFactExplanationTipView = EasyTipView(text: "Bei Imagine kann man einen Beitrag mit einer passenden Community verlinken. Dein Beitrag wird dadurch im Home-Feed und auch in der verlinkten Community angezeigt.\n\nMöchtest du deinen Beitrag ausschließlich in einer Community teilen, kannst du dies nach der Auswahl der Community angeben.")
+            self.linkFactExplanationTipView = EasyTipView(text: NSLocalizedString("link_fact_first_open_tip_view_text", comment: "how it works and such"))
             self.linkFactExplanationTipView!.show(forView: self.linkedFactView)
         }
     }
@@ -1591,9 +1682,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     @objc func CamRollTapped() {
         if let _ = Auth.auth().currentUser {
             
-            let alert = UIAlertController(title: "Wie viele Bilder willst du posten?", message: "Wähle aus, ob du ein einziges Bild, oder eine Reihe von bis zu 3 Bildern hochladen möchtest", preferredStyle: .actionSheet)
+            let alert = UIAlertController(title: NSLocalizedString("how_many_pics_alert_header", comment: "How many pics do you want to post?"), message: NSLocalizedString("how_many_pics_alert_message", comment: "How many pics do you want to post?"), preferredStyle: .actionSheet)
 
-            alert.addAction(UIAlertAction(title: "Nur ein Bild", style: .default, handler: { (_) in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_just_one", comment: "just one"), style: .default, handler: { (_) in
                 self.imagePicker.sourceType = .photoLibrary
                 //imagePicker.allowsEditing = true
                 
@@ -1602,13 +1693,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             }))
             
 
-            alert.addAction(UIAlertAction(title: "Mehrere Bilder", style: .default, handler: { (_) in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_three", comment: "two or three pics"), style: .default, handler: { (_) in
                 
                 //toDo: remove the selection
                 self.selectedOption = .multiPicture
                 self.openMultiPictureImagePicker()
             }))
-            alert.addAction(UIAlertAction(title: "Abbrechen", style: .destructive, handler: { (_) in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .destructive, handler: { (_) in
                 alert.dismiss(animated: true, completion: nil)
             }))
             self.present(alert, animated: true, completion: nil)
@@ -1767,7 +1858,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             tipView.dismiss()
             linkedFactTipView = nil
         } else {
-            self.linkedFactTipView = EasyTipView(text: "Standardmäßig postest du im Imagine-Feed (Der Haupt-Feed, nachdem du die App öffnest). \nPoste hier alles, was du mit der Welt teilen möchtest.\n\nWählst du ein Thema aus, kannst du entscheiden, ob du deinen Beitrag im Imagine-Feed teilst, oder nur im Thema. Die Follower eines Themas sehen dann deinen Beitrag (ganz bald jedenfalls) in ihrem angepassten Imagine-Feed.\nPoste im Thema also alles, was sehr themenspezifisch oder nicht für die breite Masse zugänglich ist.")
+            self.linkedFactTipView = EasyTipView(text: NSLocalizedString("linked_fact_tip_view_text", comment: "how and why"))
             linkedFactTipView!.show(forView: linkedFactView)
         }
     }
@@ -1787,10 +1878,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.postAnonymous = true
             self.anonymousImageView.isHidden = false
             
-            let alert = UIAlertController(title: "Anonymer Name", message: "Gib an, welcher Name bei diesem anonymen Post angezeigt werden soll. Der Name darf keine reale Person sein.", preferredStyle: .alert)
+            let alert = UIAlertController(title: NSLocalizedString("anonymous_name_alert_title", comment: "anonymous name"), message: NSLocalizedString("anonymous_name_alert_message", comment: "no real name and such"), preferredStyle: .alert)
 
             alert.addTextField { (textField) in
-                textField.placeholder = "Max Mustermann"
+                textField.placeholder = NSLocalizedString("anonymous_name_placeholder", comment: "john doe")
             }
 
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
@@ -1952,6 +2043,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 }
             }
         }
+        
+        if segue.identifier == "toMapSegue" {
+            if let mapVC = segue.destination as? MapViewController {
+                mapVC.locationDelegate = self
+            }
+        }
     }
     
     //MARK: -SharePressed
@@ -1998,13 +2095,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                             self.postLink(postRef: postRef, userID: userID)
                         }
                     } else {
-                        self.alert(message: "Gib bitte einen Link ein.")
+                        self.alert(message: NSLocalizedString("missing_info_alert_link", comment: "enter link please"))
                     }
                 case .event:
                     self.postEvent(postRef: postRef, userID: userID)
                 }
             } else {
-                self.alert(message: "Der Post muss einen Titel haben", title: "Kein Titel")
+                self.alert(message: NSLocalizedString("missing_info_alert_title", comment: "enter title pls"))
             }
         } else {
             self.notLoggedInAlert()
@@ -2103,7 +2200,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                         }
                     }
                 } else {
-                    self.alert(message: "Es ist ein Fehler bei der Auswahl der Bilder aufgetreten. Womöglich ist/sind ein oder mehrere Bilder in der Cloud gespeichert. In diesem Falle wähle das Bild in der Fotos-App aus und zoome ein wenig heran, unten rechts erscheint dann ein kleiner Ladekreis. Mache auf diesen Fehler aufmerksam indem du einen Bug-Report im Imagine-Bereich unter \"Mithilfe\" einreichst, dann wissen wir, das jemand auf dieses Problem gestoßen ist.", title: "Wir haben einen Fehler")
+                    self.alert(message: NSLocalizedString("error_uploading_multiple_pictures_message", comment: "werid bug"), title: NSLocalizedString("error_title", comment: "we have error"))
                     self.view.activityStopAnimating()
                     self.shareButton.isEnabled = true
                 }
@@ -2152,7 +2249,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 }
             }
         } else {
-            self.alert(message: "Wähle bitte weitere Bilder aus oder wähle die Option \"Nur ein Bild\"", title: "Fehlende Bilder")
+            self.alert(message: NSLocalizedString("error_choosing_multiple_pictures_message", comment: "choose more"), title: NSLocalizedString("error_title", comment: "got error"))
             self.view.activityStopAnimating()
             self.shareButton.isEnabled = true
         }
@@ -2254,7 +2351,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
             
         } else {
-            self.alert(message: "Du hast kein Bild hochgeladen. Möchtest du kein Bild hochladen, wähle bitte eine andere Post-Option aus", title: "Kein Bild")
+            self.alert(message: NSLocalizedString("error_choosing_picture", comment: "got no pic"), title: NSLocalizedString("error_title", comment: "got error"))
             self.view.activityStopAnimating()
             self.shareButton.isEnabled = true
         }
@@ -2312,12 +2409,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             } else {
                 self.view.activityStopAnimating()
                 self.shareButton.isEnabled = true
-                self.alert(message: "Unser Programm sagt mir, dass die URL nicht korrekt ist. Bitte überprüfe den Link", title: "Link fehlerhaft")
+                self.alert(message: NSLocalizedString("error_link_not_valid", comment: "not valid"), title: NSLocalizedString("error_title", comment: "got error"))
             }
         } else {
             self.view.activityStopAnimating()
             self.shareButton.isEnabled = true
-            self.alert(message: "Du hast kein Link angegeben. Möchtest du kein Link posten, wähle bitte eine andere Post-Option aus", title: "Kein Link")
+            self.alert(message: NSLocalizedString("error_no_link", comment: "no link"), title: NSLocalizedString("error_title", comment: "got error"))
         }
     }
     
@@ -2335,7 +2432,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         } else {
             self.view.activityStopAnimating()
             self.shareButton.isEnabled = true
-            self.alert(message: "Du hast kein Bild hochgeladen. Möchtest du kein Bild hochladen, wähle bitte eine andere Post-Option aus", title: "Kein Bild")
+            self.alert(message: NSLocalizedString("error_no_picture", comment: "no picture"), title: NSLocalizedString("error_title", comment: "got error"))
         }
     }
     
@@ -2365,7 +2462,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 Analytics.logEvent("FailedToPostGIF", parameters: [
                     AnalyticsParameterTerm: ""
                 ])
-                self.alert(message: "Im Moment sind nur Links mit Endung '.mp4' möglich. Die Endung .GIF ist veraltet, wird aus Speichergründen nicht mehr benutzt. Sag uns aber gerne bescheid, wie du deine GIFs verbreiten möchtest!", title: "Wir können dein GIF leider nicht hochladen")
+                self.alert(message: NSLocalizedString("error_gif_wrong_ending", comment: "just .mp4"), title: NSLocalizedString("error_title", comment: "got error"))
                 return
                 
 //                if let imgurID = text.imgurID { // Check if Imgur
@@ -2573,7 +2670,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 }
             }
         } else {
-            let alert = UIAlertController(title: "Done!", message: "Danke für deine Weisheiten.", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Done!", message: NSLocalizedString("message_after_done_posting", comment: "thanks"), preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
                 
                 self.descriptionTextView.text.removeAll()
@@ -2624,7 +2721,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.infoView = view
         
         let label = UILabel(frame: CGRect(x: 5, y: 2, width: infoView!.frame.width-10, height: infoView!.frame.height-5))
-        label.text = "Beim posten wird nur dein Vorname im Feed sichtbar sein!"
+        label.text = NSLocalizedString("just_name_info_message", comment: "surname is not visible")
         label.textAlignment = .center
         label.minimumScaleFactor = 0.5
         label.font = UIFont(name: "IBMPlexSans", size: 15)
@@ -2671,12 +2768,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func showShareAlert() {
-        let shareAlert = UIAlertController(title: "Wo möchtest du posten?", message: "Möchtest du den Beitrag mit allen im Hauptfeed teilen, oder nur im Thema posten?", preferredStyle: .actionSheet)
+        let shareAlert = UIAlertController(title: NSLocalizedString("link_fact_destination_alert_header", comment: "Where?"), message: NSLocalizedString("link_fact_destination_alert_message", comment: "with everybody or just community?"), preferredStyle: .actionSheet)
         
-        shareAlert.addAction(UIAlertAction(title: "Mit allen teilen", style: .default, handler: { (_) in
+        shareAlert.addAction(UIAlertAction(title: NSLocalizedString("link_fact_destination_everybody", comment: "everybody"), style: .default, handler: { (_) in
             
         }))
-        shareAlert.addAction(UIAlertAction(title: "Nur im Thema posten", style: .default, handler: { (_) in
+        shareAlert.addAction(UIAlertAction(title: NSLocalizedString("link_fact_destination_community", comment: "community"), style: .default, handler: { (_) in
             
             self.distributionInformationLabel.text = "Community"
             self.distributionInformationImageView.image = UIImage(named: "topicIcon")
@@ -2733,6 +2830,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         case .event:
             return "event"
         }
+    }
+}
+
+extension NewPostViewController: ChoosenLocationDelegate {
+    func gotLocation(location: Location) {
+        self.linkedLocation = location
+        self.choosenLocationLabel.text = location.title
     }
 }
 

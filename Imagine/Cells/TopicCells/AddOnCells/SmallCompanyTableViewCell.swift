@@ -14,12 +14,12 @@ class SmallCompanyTableViewCell: UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var additionalInformationLabel: UILabel!
     
-    var company: Company? {
-        didSet {
-            nameLabel.text = company!.name
-            
-        }
-    }
+//    var company: Company? {
+//        didSet {
+//            nameLabel.text = company!.name
+//            
+//        }
+//    }
     
     override func awakeFromNib() {
         companyImageView.layer.cornerRadius = 4

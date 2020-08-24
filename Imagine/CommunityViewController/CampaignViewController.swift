@@ -141,7 +141,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
                 print("We have an error: \(error.localizedDescription)")
             } else {
                 self.view.activityStopAnimating()
-                self.alert(message: "Deine Stimme wurde angenommen.", title: "Danke für deine Unterstützung!")
+                self.alert(message: NSLocalizedString("thanks_for_vote_message", comment: ""), title: NSLocalizedString("thanks_for_support", comment: ""))
                 self.oppositionLabel.text = "\(self.campaign.opposition) Vetos"
                 self.supporterLabel.text = "\(self.campaign.supporter) Supporter"
                 self.supportButton.isEnabled = false
@@ -165,7 +165,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
                                 if let voters = docData["voters"] as? [String] {
                                     for voter in voters {
                                         if voter == user.uid {
-                                            self.alert(message: "Jeder User hat nur eine Stimme für jede Abstimmung!", title: "Du hast bereits gewählt")
+                                            self.alert(message: NSLocalizedString("already_voted_message", comment: "already voted"), title: NSLocalizedString("already_voted_title", comment: ""))
                                             return
                                         }
                                     }
@@ -185,11 +185,11 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     func allowedToVote(supporter: Bool) {
-        let alertController = UIAlertController(title: "Bereit zum wählen?", message: "Du hast nur eine Stimme und kannst deine Meinung im Nachhinein nicht ändern!", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "Abbrechen", style: .destructive, handler: { (_) in
+        let alertController = UIAlertController(title: NSLocalizedString("sure_to_vote_title", comment: ""), message: NSLocalizedString("sure_to_vote_message", comment: ""), preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .destructive, handler: { (_) in
             alertController.dismiss(animated: true, completion: nil)
         })
-        let stayAction = UIAlertAction(title: "Ich bin mir sicher!", style: .cancel) { (_) in
+        let stayAction = UIAlertAction(title: NSLocalizedString("not_sure", comment: ""), style: .cancel) { (_) in
             self.voted(supporter: supporter)
         }
         alertController.addAction(stayAction)
@@ -268,7 +268,7 @@ extension CampaignViewController: CommentViewDelegate, CommentTableViewDelegate 
     }
     
     func commentGotDeleteRequest(comment: Comment, answerToComment: Comment?) {
-        self.deleteAlert(title: "Kommentar löschen?", message: "Möchtest du das Kommentar wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.", delete:  { (delete) in
+        self.deleteAlert(title: NSLocalizedString("delete_comment_alert_title", comment: ""), message: NSLocalizedString("delete_comment_alert_message", comment: "you sure? cant be returned"), delete:  { (delete) in
             if delete {
                 
                 HandyHelper().deleteCommentInFirebase(comment: comment, answerToComment: answerToComment)

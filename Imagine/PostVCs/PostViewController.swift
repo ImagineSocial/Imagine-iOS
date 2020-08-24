@@ -492,6 +492,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
         titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
         titleLabel.topAnchor.constraint(equalTo: profilePictureImageView.bottomAnchor, constant: 15).isActive = true
+        titleLabel.setContentHuggingPriority(UILayoutPriority(1), for: .vertical)
 //        titleLabel.heightAnchor.constraint(equalToConstant: titleLabelHeight).isActive = true
         
         contentView.addSubview(savePostButton)
@@ -590,7 +591,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         commentTableView.topAnchor.constraint(equalTo: commentView.bottomAnchor, constant: 10).isActive = true
         commentTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         commentTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        commentTableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -60).isActive = true
+        commentTableView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -60).isActive = true
         
         //To get the contentView up to the bottom, so the keyboard works even when small pictures or just a link without comments is displayed
         let endView = UIView()
@@ -1109,15 +1110,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         return view
     }()
     
-    let commentLabel: UILabel = {
-       let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 15)
-        label.textAlignment = .left
-        label.text = "Kommentare:"
-
-        return label
-    }()
     
     let separatorView: UIView = {
         let view = UIView()
@@ -1848,7 +1840,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if post.type == .picture {
             performSegue(withIdentifier: "toTranslateSegue", sender: post)
         } else {
-            self.alert(message: "Im Moment kann man leider nur Bild-Beiträge übersetzen. Reiche gerne einen Vorschlag für dieses Feature ein, damit wir wissen, dass die Nachfrage da ist. Vielen Dank für dein Verständnis!")
+            self.alert(message: NSLocalizedString("error_translate_not_supported", comment: "just picture is supported at the moment"))
         }
     }
     
@@ -2090,7 +2082,7 @@ extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
     }
     
     func commentGotDeleteRequest(comment: Comment, answerToComment: Comment?) {
-        self.deleteAlert(title: "Kommentar löschen?", message: "Möchtest du das Kommentar wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.", delete:  { (delete) in
+        self.deleteAlert(title: NSLocalizedString("delete_comment_alert_title", comment: "title"), message: NSLocalizedString("delete_comment_alert_message", comment: "cant be redeemed"), delete:  { (delete) in
             if delete {
                 HandyHelper().deleteCommentInFirebase(comment: comment, answerToComment: answerToComment)
                 self.commentTableView.deleteCommentFromTableView(comment: comment, answerToComment: answerToComment)

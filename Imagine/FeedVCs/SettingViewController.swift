@@ -75,7 +75,7 @@ class SettingViewController: UIViewController {
                     self.defaults.set(true, forKey: "allowNotifications")
                     HandyHelper().saveFCMToken(token: result.token)
     
-                    self.alert(message: "Push Benachrichtigungen aktiviert!")
+                    self.alert(message: NSLocalizedString("push_alert_message", comment: "got push notifications"))
                 }
             }
             
@@ -115,7 +115,7 @@ class SettingViewController: UIViewController {
                     self.deleteAccountButton.isEnabled = true
                     self.deleteAccountButton.alpha =  1
                 } else {
-                    self.alert(message: "Dein Account wird innerhalb von 48h gelöscht. Du kannst dich jetzt ausloggen, wir machen den Rest.")
+                    self.alert(message: NSLocalizedString("delete_account_alert_message", comment: "in the next 48h it will be deleted"))
                     print("Successfully set notification")
                 }
             }

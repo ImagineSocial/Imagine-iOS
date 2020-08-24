@@ -19,9 +19,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     
     @IBOutlet weak var sortPostsButton: DesignableButton!
     @IBOutlet weak var viewAboveTableView: UIView!
-    
-    let searchTableVC = SearchTableViewController()
-    
+        
     var searchController = UISearchController()
     var screenEdgeRecognizer: UIScreenEdgePanGestureRecognizer!
     
@@ -905,45 +903,6 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         }
     }
 }
-
-// MARK: - UISearchResultsUpdating Delegate, UISearchBar Delegate, CustomDelegate kann weg
-extension FeedTableViewController: UISearchResultsUpdating, UISearchBarDelegate, CustomSearchViewControllerDelegate {
-    
-    func didSelectItem(item: Any) {
-        if let post = item as? Post {
-            performSegue(withIdentifier: "showPost", sender: post)
-        } else if let user = item as? User {
-            performSegue(withIdentifier: "toUserSegue", sender: user)
-        }
-    }
-    
-    func updateSearchResults(for searchController: UISearchController) {
-        
-        searchController.searchResultsController?.view.isHidden = false
-        
-        let searchBar = searchController.searchBar
-        let scope = searchBar.selectedScopeButtonIndex
-        
-        if searchBar.text! != "" {
-            searchTableVC.searchTheDatabase(searchText: searchBar.text!, searchScope: scope)
-        } else {
-            // Clear the searchTableView
-            searchTableVC.showBlankTableView()
-        }
-    }
-    
-    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-        
-        if let text = searchBar.text {
-            if text != "" {
-                searchTableVC.searchTheDatabase(searchText: text, searchScope: selectedScope)
-            } else {
-                searchTableVC.showBlankTableView()
-            }
-        }
-    }
-}
-
 
 extension FeedTableViewController: LogOutDelegate {
     func deleteListener() {     // Triggered when the User logges themselve out. Otherwise they would get notified after they logged themself in and a new user could not get a new notificationListener

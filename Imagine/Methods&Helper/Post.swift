@@ -196,6 +196,13 @@ class Post {
                             user.songwhipLink = songwhipLink
                         }
                         
+                        if let locationName = docData["locationName"] as? String {
+                            user.locationName = locationName
+                        }
+                        if let locationIsPublic = docData["locationIsPublic"] as? Bool {
+                            user.locationIsPublic = locationIsPublic
+                        }
+                        
                         user.imageURL = docData["profilePictureURL"] as? String ?? ""
                         user.userUID = self.originalPosterUID
                         user.statusQuote = docData["statusText"] as? String ?? ""
@@ -241,6 +248,10 @@ public class User {
     public var youTubeLink: String?
     public var twitterLink: String?
     public var songwhipLink: String?
+    
+    //location
+    public var locationName: String?
+    public var locationIsPublic = false
     
     let db = Firestore.firestore()
     

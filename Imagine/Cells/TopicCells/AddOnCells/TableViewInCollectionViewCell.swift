@@ -51,46 +51,47 @@ class TableViewInCollectionViewCell: UICollectionViewCell {
 extension TableViewInCollectionViewCell: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let companys = items as? [Company] {
-            if companys.count <= 3 {
-                return companys.count
-            } else {
-                return 4
-            }
-        } else {
+//        if let companys = items as? [Company] {
+//            if companys.count <= 3 {
+//                return companys.count
+//            } else {
+//                return 4
+//            }
+//        } else {
             return items.count
-        }
+//        }
         
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        if let companys = items as? [Company] {
-            let company = companys[indexPath.row]
-            
-            if let cell = tableView.dequeueReusableCell(withIdentifier: companyReuseIdentifier) as? SmallCompanyTableViewCell {
-                if isEverySecondCell {
-                
-                    if #available(iOS 13.0, *) {
-                        cell.contentView.backgroundColor = .secondarySystemBackground
-                    } else {
-                        cell.contentView.backgroundColor = .ios12secondarySystemBackground
-                    }
-                } else {
-                    let layer = cell.contentView.layer
-                    
-                    if #available(iOS 13.0, *) {
-                        layer.borderColor = UIColor.secondarySystemBackground.cgColor
-                    } else {
-                        layer.borderColor = UIColor.ios12secondarySystemBackground.cgColor
-                    }
-                    layer.borderWidth = 1
-                    layer.cornerRadius = 5
-                }
-                cell.company = company
-                return cell
-            }
-        } else if let jobOffer = items as? [JobOffer] {
+//        if let companys = items as? [Company] {
+//            let company = companys[indexPath.row]
+//
+//            if let cell = tableView.dequeueReusableCell(withIdentifier: companyReuseIdentifier) as? SmallCompanyTableViewCell {
+//                if isEverySecondCell {
+//
+//                    if #available(iOS 13.0, *) {
+//                        cell.contentView.backgroundColor = .secondarySystemBackground
+//                    } else {
+//                        cell.contentView.backgroundColor = .ios12secondarySystemBackground
+//                    }
+//                } else {
+//                    let layer = cell.contentView.layer
+//
+//                    if #available(iOS 13.0, *) {
+//                        layer.borderColor = UIColor.secondarySystemBackground.cgColor
+//                    } else {
+//                        layer.borderColor = UIColor.ios12secondarySystemBackground.cgColor
+//                    }
+//                    layer.borderWidth = 1
+//                    layer.cornerRadius = 5
+//                }
+//                cell.company = company
+//                return cell
+//            }
+//        } else
+        if let jobOffer = items as? [JobOffer] {
             if let cell = tableView.dequeueReusableCell(withIdentifier: jobOfferReuseIdentifier) as? JobOfferCell {
                 
                 if isEverySecondCell {
@@ -170,11 +171,11 @@ extension TableViewInCollectionViewCell: UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if let _ = items as? [Company] {
-            return 50
-        } else {
+//        if let _ = items as? [Company] {
+//            return 50
+//        } else {
             return tableView.frame.height
-        }
+//        }
     }
     
     

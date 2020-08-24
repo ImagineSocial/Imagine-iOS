@@ -80,7 +80,7 @@ class ReportABugViewController: UIViewController, UITextViewDelegate {
             saveReport()
             self.view.activityStartAnimating()
         } else {
-            self.alert(message: "Ein bisschen genauer bitte")
+            self.alert(message: NSLocalizedString("more_information_alert", comment: "give more info"))
         }
     }
     
@@ -111,7 +111,7 @@ class ReportABugViewController: UIViewController, UITextViewDelegate {
                 } else {
                     self.view.activityStopAnimating()
                     
-                    let alert = UIAlertController(title: "Vielen Dank!", message: "Nett, dass du uns unterstützt! Wir versuchen das Netzwerk durchgehend zu verbessern.", preferredStyle: .alert)
+                    let alert = UIAlertController(title: NSLocalizedString("thanks", comment: "thanks"), message: NSLocalizedString("thanks_alert_message", comment: "thanks for sharing"), preferredStyle: .alert)
                     let ok = UIAlertAction(title: "OK", style: .default, handler: { (_) in
                         self.reportDescriptionTextView.text.removeAll()
                         

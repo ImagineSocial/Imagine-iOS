@@ -66,7 +66,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
        // Setup the Search Controller
        searchController.searchResultsUpdater = self
        searchController.obscuresBackgroundDuringPresentation = false
-       searchController.searchBar.placeholder = "Suche nach Beiträgen, Themen & Usern"
+       searchController.searchBar.placeholder = NSLocalizedString("search_input_placeholder", comment: "search for user, communities and posts")
        searchController.delegate = self
 
        searchController.searchBar.scopeButtonTitles = ["Posts", "Communities", "User"]
@@ -302,7 +302,7 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
     func changeTitleOfHeader(scope: Int) {
         switch scope {
         case 0:
-            headerDelegate?.newHeaderText(text: "Beiträge:")
+            headerDelegate?.newHeaderText(text: NSLocalizedString("posts", comment: "posts"))
         case 1:
             headerDelegate?.newHeaderText(text: "Communities:")
         default:
@@ -319,7 +319,7 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
         if let posts = communityPostsStack {
             communityPosts = posts
         }
-        headerDelegate?.newHeaderText(text: "Community-Beiträge:")
+        headerDelegate?.newHeaderText(text: NSLocalizedString("search_input_header", comment: "community posts:"))
         
         collectionView.reloadData()
     }

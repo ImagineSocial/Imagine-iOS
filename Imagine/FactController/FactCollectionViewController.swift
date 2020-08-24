@@ -37,7 +37,6 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     
     var topicFacts = [Fact]()
     var discussionFacts = [Fact]()
-    var filteredFacts = [Fact]()
     var followedFacts = [Fact]()
     
 //    var displayOption: FactCollectionDisplayOption = .all
@@ -52,7 +51,6 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     var tipView: EasyTipView?
     
     let collectionViewSpacing:CGFloat = 30
-    let searchController = UISearchController(searchResultsController: nil)
     
     let recentTopicsCellIdentifier = "RecentTopicsCollectionCell"
     let discussionCellIdentifier = "DiscussionCell"
@@ -69,7 +67,6 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         super.viewDidLoad()
         
         getFacts()
-//        setUpSearchController()
         
         if addFactToPost == .newPost {
             self.setDismissButton()
@@ -89,9 +86,6 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         self.view.activityStartAnimating()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        navigationItem.hidesSearchBarWhenScrolling = true
-    }
     
     override func viewWillAppear(_ animated: Bool) {
         //FML
@@ -232,17 +226,6 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         }
     }
     
-    func setUpSearchController() {
-        searchController.searchResultsUpdater = self
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Durchsuche die Themen..."
-    
-        self.navigationItem.searchController = searchController
-        self.navigationItem.hidesSearchBarWhenScrolling = true
-        definesPresentationContext = true
-        
-    }
-
     // MARK: UICollectionViewDataSource
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         
@@ -260,11 +243,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             if isLoading {
                 return 8
             } else {
-                if isFiltering {
-                    return filteredFacts.count
-                } else {
-                    return 8
-                }
+                return 8
             }
         } else if section == 2 {
             return discussionFacts.count
@@ -292,11 +271,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                     return cell
                 }
             } else {
-                if isFiltering {
-                    fact = filteredFacts[indexPath.row]
-                } else {
-                    fact = topicFacts[indexPath.row]
-                }
+                fact = topicFacts[indexPath.row]
             }
         } else if  indexPath.section == 2 {
             fact = discussionFacts[indexPath.row]
@@ -371,11 +346,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         if indexPath.section == 0 {
             
         } else if indexPath.section == 1 {
-            if isFiltering {
-                fact = filteredFacts[indexPath.row]
-            } else {
-                fact = topicFacts[indexPath.row]
-            }
+            fact = topicFacts[indexPath.row]
         } else if indexPath.section == 2 {
             fact = discussionFacts[indexPath.row]
         } else {
@@ -390,11 +361,14 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                     self.setFactForPost(fact: fact)
                 } else {
                     let factString = fact.title.quoted
-                    let alert = UIAlertController(title: "Bist du dir sicher?", message: "Möchtest du das Thema \(factString) zu dem AddOn hinzufügen?", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "Ja", style: .default, handler: { (_) in
+                    
+                    let string = NSLocalizedString("add_item_alert_message", comment: "you sure to add this?")
+                    
+                    let alert = UIAlertController(title: NSLocalizedString("add_item_alert_title", comment: "you sure?"), message: String.localizedStringWithFormat(string, factString), preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: "yes"), style: .default, handler: { (_) in
                         self.setFactForOptInfo(fact: fact)
                     }))
-                    alert.addAction(UIAlertAction(title: "Abbrechen", style: .cancel, handler: { (_) in
+                    alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .cancel, handler: { (_) in
                         alert.dismiss(animated: true, completion: nil)
                     }))
                     self.present(alert, animated: true)
@@ -414,7 +388,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                     if addFactToPost == .optInfo {
                         view.headerLabel.font = UIFont(name: "IBMPlexSans", size: 16)
                         view.headerLabel.numberOfLines = 0
-                        view.headerLabel.text = "Wähle eines dieser Themen aus oder nutze die Suchfunktion"
+                        view.headerLabel.text = NSLocalizedString("choose_topic_for_addOn_header", comment: "choose one")
                     }
                     return view
                 }
@@ -422,11 +396,11 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                 if let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: topicHeaderIdentifier, for: indexPath) as? TopicCollectionHeader {
                     
                     if indexPath.section == 1 {
-                        view.headerLabel.text = "Angesagt"
+                        view.headerLabel.text = NSLocalizedString("popular", comment: "popular")
                     } else if indexPath.section == 2 {
-                        view.headerLabel.text = "Aktuelle Diskussionen"
+                        view.headerLabel.text = NSLocalizedString("current_discussions", comment: "current discussions")
                     } else if indexPath.section == 3 {
-                        view.headerLabel.text = "Deine Communities"
+                        view.headerLabel.text = NSLocalizedString("followed_communities", comment: "followed communities")
                     }
                     
                     return view
@@ -580,87 +554,13 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         delegate?.selectedFact(fact: fact, isViewAlreadyLoaded: true) // True because 
         
         //Can be a opt. Info!
-        closeAndDismiss()
+        self.dismiss(animated: true, completion: nil)
     }
     
     func setFactForOptInfo(fact: Fact) {
         addItemDelegate?.itemSelected(item: fact)
         
-        if searchController.isActive {
-            searchController.dismiss(animated: false) {
-                self.navigationController?.popViewController(animated: true)
-            }
-        } else {
-            self.navigationController?.popViewController(animated: true)
-        }
-    }
-    
-    func closeAndDismiss() {
-        if searchController.isActive {
-            searchController.dismiss(animated: false) {
-                self.dismiss(animated: true, completion: nil)
-            }
-        } else {
-            self.dismiss(animated: true, completion: nil)
-        }
-    }
-    //MARK: -Search functionality
-    
-    var isSearchBarEmpty: Bool {
-      return searchController.searchBar.text?.isEmpty ?? true
-    }
-    
-    func filterContentForSearchText(_ searchText: String ){
-        
-        let titleRef = db.collection("Facts").whereField("name", isGreaterThan: searchText).whereField("name", isLessThan: "\(searchText)ü").limit(to: 10)
-        
-        titleRef.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                self.filteredFacts.removeAll()
-                for document in snap!.documents {
-                    let documentData = document.data()
-                    let documentID = document.documentID
-                    
-                    guard let name = documentData["name"] as? String,
-                        let createTimestamp = documentData["createDate"] as? Timestamp
-                        else {
-                            continue
-                    }
-                    
-                    let date = createTimestamp.dateValue()
-                    let stringDate = date.formatRelativeString()
-                    
-                    let fact = Fact()
-                    fact.title = name
-                    fact.createDate = stringDate
-                    fact.documentID = documentID
-                    
-                    if let displayOption = documentData["displayOption"] as? String {
-                        if displayOption == "topic" {
-                            fact.displayOption = .topic
-                        } else {
-                            fact.displayOption = .fact
-                        }
-                    }
-                    
-                    if let imageURL = documentData["imageURL"] as? String {
-                        fact.imageURL = imageURL
-                    }
-                    if let description = documentData["description"] as? String {
-                        fact.description = description
-                    }
-                    
-                    self.filteredFacts.append(fact)
-                }
-                self.collectionView.reloadData()
-            }
-        }
-    }
-    
-    var isFiltering: Bool {
-      return searchController.isActive && !isSearchBarEmpty
+        self.navigationController?.popViewController(animated: true)
     }
 }
 
@@ -707,15 +607,6 @@ extension FactCollectionViewController: TopOfCollectionViewDelegate, NewFactDele
         collectionView.reloadData()
     }
 }
-    
-
-
-extension FactCollectionViewController: UISearchResultsUpdating {
-  func updateSearchResults(for searchController: UISearchController) {
-    let searchBar = searchController.searchBar
-    filterContentForSearchText(searchBar.text!)
-  }
-}
 
 
 class AddTopicCell: UICollectionViewCell {
@@ -730,7 +621,7 @@ class AddTopicCell: UICollectionViewCell {
     var isAddOnView: Bool? {
         didSet {
             if isAddOnView! {
-                textLabel.text = "Neues Item hinzufügen"
+                textLabel.text = NSLocalizedString("add_item_label", comment: "add item")
                 textLabel.font =  UIFont(name: "IBMPlexSans-Medium", size: 13)
                 plusHeightConstraint.constant = 35
                 plusWidthConstraint.constant = 35
