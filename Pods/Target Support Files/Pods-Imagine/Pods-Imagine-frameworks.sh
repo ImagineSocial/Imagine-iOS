@@ -163,6 +163,7 @@ strip_invalid_archs() {
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/BSImagePicker/BSImagePicker.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/BoringSSL-GRPC/openssl_grpc.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/CropViewController/CropViewController.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/DateToolsSwift/DateToolsSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/EasyTipView/EasyTipView.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework"
@@ -185,6 +186,7 @@ fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/BSImagePicker/BSImagePicker.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/BoringSSL-GRPC/openssl_grpc.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/CropViewController/CropViewController.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/DateToolsSwift/DateToolsSwift.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/EasyTipView/EasyTipView.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework"

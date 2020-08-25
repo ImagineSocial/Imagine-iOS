@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import MapKit
+import CropViewController
 
 protocol SettingCellDelegate {
     func gotChanged(type: SettingChangeType, value: Any)
@@ -145,7 +146,7 @@ enum DestinationForSettings {
     case userProfile
 }
 
-class SettingTableViewController: UITableViewController {
+class SettingTableViewController: UITableViewController, CropViewControllerDelegate {
     
     let db = Firestore.firestore()
     let storDB = Storage.storage().reference()
@@ -733,39 +734,53 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
     //MARK: - ImagePicker
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            self.view.activityStartAnimating()
-            if let indexPath = self.indexPathOfImageSettingCell {
-                if let cell = tableView.cellForRow(at: indexPath) as? SettingImageCell {
-                    cell.newImage = image
-                }
-            }
-            
-            
-            if let topic = topic {
-                if topic.imageURL != "" {
-                    deletePicture()
-                    compressImage(image: image)
-                } else {    // If the community got no picture
-                    compressImage(image: image)
-                }
-            } else if let user = user {
-                if user.imageURL != "" {
-                    deletePicture()
-                    compressImage(image: image)
-                } else {    // If the user got no picture
-                    compressImage(image: image)
-                }
-            } else if let addOn = addOn {
-                if addOn.imageURL != "" {
-                    deletePicture()
-                    compressImage(image: image)
-                } else {
-                    compressImage(image: image)
-                }
+            imagePicker.dismiss(animated: true, completion: nil)
+            showCropView(image: image)
+        }
+    }
+    
+    func showCropView(image: UIImage) {
+        let cropViewController = CropViewController(image: image)
+        cropViewController.delegate = self
+        cropViewController.aspectRatioPreset = .presetSquare
+        cropViewController.aspectRatioLockEnabled = true
+        navigationController?.pushViewController(cropViewController, animated: true)
+    }
+    
+    func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
+        
+        if let indexPath = self.indexPathOfImageSettingCell {
+            if let cell = tableView.cellForRow(at: indexPath) as? SettingImageCell {
+                cell.newImage = image
             }
         }
         
-        imagePicker.dismiss(animated: true, completion: nil)
+        self.view.activityStartAnimating()
+        
+        if let topic = topic {
+            if topic.imageURL != "" {
+                deletePicture()
+                compressImage(image: image)
+            } else {    // If the community got no picture
+                compressImage(image: image)
+            }
+        } else if let user = user {
+            if user.imageURL != "" {
+                deletePicture()
+                compressImage(image: image)
+            } else {    // If the user got no picture
+                compressImage(image: image)
+            }
+        } else if let addOn = addOn {
+            if addOn.imageURL != "" {
+                deletePicture()
+                compressImage(image: image)
+            } else {
+                compressImage(image: image)
+            }
+        }
+        
+        navigationController?.popToViewController(self, animated: true)
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {

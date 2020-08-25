@@ -204,7 +204,7 @@ class NewAddOnTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toNewAddOnSegue" {
             if let navVC = segue.destination as? UINavigationController {
-                if let vc = navVC.topViewController as? NewFactViewController {
+                if let vc = navVC.topViewController as? NewCommunityItemTableViewController {
                     if let style = sender as? OptionalInformationStyle {
                         if let fact = fact {
                             if style == .header {

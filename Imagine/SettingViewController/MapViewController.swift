@@ -72,6 +72,14 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate {
         setUpSearchController()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.isTranslucent = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        navigationController?.navigationBar.isTranslucent = false
+    }
+    
     @objc func mapTapped(gestureRecognizer: UILongPressGestureRecognizer) {
         let location = gestureRecognizer.location(in: mapView)
         let coordinate = mapView.convert(location, toCoordinateFrom: mapView)

@@ -92,7 +92,7 @@ class ContraFactTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toNewArgumentSegue" {
             if let nav = segue.destination as? UINavigationController {
-                if let vc = nav.topViewController as? NewFactViewController {
+                if let vc = nav.topViewController as? NewCommunityItemTableViewController {
                     vc.fact = self.fact
                     vc.new = .argument
                     vc.proOrContra = .contra

@@ -27,7 +27,7 @@ class SettingCell: BaseCell {
     
     let blockUserText = "Blockieren"
     let cameraText = "Kamera"
-    let photoLibraryText = "Photo Library"
+    let photoLibraryText = "Profilbild ändern"
     let viewPicText = "Profilbild ansehen"
     let cancelText = "Abbrechen"
     let chatWithUserText = "Chatten"

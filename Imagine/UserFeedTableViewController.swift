@@ -657,16 +657,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 
                 self.navigationController?.pushViewController(pinchVC, animated: true)
             }
-        case .camera:
-            imagePicker.sourceType = .camera
-            imagePicker.cameraCaptureMode = .photo
-            imagePicker.cameraDevice = .rear
-            
-            present(imagePicker, animated: true, completion: nil)
         case .photoLibrary:
-            imagePicker.sourceType = .photoLibrary
-            
-            present(imagePicker, animated: true, completion: nil)
+            if let user = userOfProfile {
+                performSegue(withIdentifier: "toSettingSegue", sender: user)
+            }
         case .blockUser:
             blockUserTapped()
         default:

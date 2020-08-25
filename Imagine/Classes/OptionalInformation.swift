@@ -72,12 +72,14 @@ class OptionalInformation {
         }
     }
     
-    init(style: OptionalInformationStyle, OP: String, documentID: String, fact: Fact, introSentence: String?, description: String, moreInformationLink: String?) {     /// For the InfoHeaderAddOnCell initialization
-        let info = AddOnInfoHeader(description: description, introSentence: introSentence, moreInformationLink: moreInformationLink)
+    init(style: OptionalInformationStyle, OP: String, documentID: String, fact: Fact, imageURL: String, introSentence: String?, description: String, moreInformationLink: String?) {     /// For the InfoHeaderAddOnCell initialization
+        
+        let info = AddOnInfoHeader(description: description, imageURL: imageURL, introSentence: introSentence, moreInformationLink: moreInformationLink)
         self.style = style
         self.addOnInfoHeader = info
         self.documentID = documentID
         self.description = description
+        self.imageURL = imageURL
         self.fact = fact
         self.OP = OP
     }

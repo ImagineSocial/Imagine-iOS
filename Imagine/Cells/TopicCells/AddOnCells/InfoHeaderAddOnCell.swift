@@ -10,11 +10,13 @@ import UIKit
 
 class AddOnInfoHeader {
     var mainDescription:String
+    var imageURL: String
     var introSentence: String?
     var moreInformationLink: String?
     
-    init(description: String, introSentence: String?, moreInformationLink: String?) {
+    init(description: String, imageURL: String, introSentence: String?, moreInformationLink: String?) {
         mainDescription = description
+        self.imageURL = imageURL
         self.introSentence = introSentence
         self.moreInformationLink = moreInformationLink
     }
@@ -30,6 +32,7 @@ class InfoHeaderAddOnCell: UITableViewCell {
     @IBOutlet weak var mainDescriptionLabel: UILabel!
     @IBOutlet weak var moreInformationButton: UIButton!
     @IBOutlet weak var moreInformationButtonHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var headerImageView: UIImageView!
     
     var delegate: InfoHeaderAddOnCellDelegate?
     var addOnInfo: AddOnInfoHeader? {
@@ -39,15 +42,18 @@ class InfoHeaderAddOnCell: UITableViewCell {
                     introSentenceLabel.text = introSentence
                 }
                 
+                if let url = URL(string: info.imageURL) {
+                    headerImageView.sd_setImage(with: url, completed: nil)
+                }
+                
                 mainDescriptionLabel.text = info.mainDescription
                 mainDescriptionLabel.layoutIfNeeded()
                 
-                if let link = info.moreInformationLink {
-                    moreInformationButton.setTitle(link, for: .normal)
-                } else {
+                if info.moreInformationLink == nil {
                     moreInformationButtonHeightConstraint.constant = 0
                     moreInformationButton.isHidden = true
                 }
+                
             }
         }
     }
@@ -69,8 +75,8 @@ class InfoHeaderAddOnCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         //set the values for top,left,bottom,right margins
-        let margins = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        contentView.frame = contentView.frame.inset(by: margins)
+//        let margins = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+//        contentView.frame = contentView.frame.inset(by: margins)
         
         mainDescriptionLabel.adjustsFontSizeToFitWidth = true
     }

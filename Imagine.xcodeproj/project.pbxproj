@@ -21,6 +21,7 @@
 		E911EEF022DB157500EDD056 /* SettingsLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEEF22DB157500EDD056 /* SettingsLauncher.swift */; };
 		E911EEF222DB173E00EDD056 /* SettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEF122DB173E00EDD056 /* SettingCell.swift */; };
 		E911EEF422DB630300EDD056 /* SideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEF322DB630300EDD056 /* SideMenu.swift */; };
+		E91824E124F42553009D7638 /* NewCommunityItemTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91824E024F42553009D7638 /* NewCommunityItemTableViewController.swift */; };
 		E919EFE724A6787500ED7D4F /* LeanWebViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E919EFE624A6787400ED7D4F /* LeanWebViewViewController.swift */; };
 		E91A2B5E2473B9DC00B42353 /* AddOnHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E91A2B5D2473B9DC00B42353 /* AddOnHeaderView.xib */; };
 		E91A2B6124794EAE00B42353 /* SettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91A2B6024794EAE00B42353 /* SettingTableViewController.swift */; };
@@ -159,7 +160,6 @@
 		E9BFA6D02451764700E43826 /* InfoHeaderAddOnCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BFA6CF2451764700E43826 /* InfoHeaderAddOnCell.swift */; };
 		E9C42EEF2364393400FC50BA /* SearchPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C42EEE2364393400FC50BA /* SearchPostCell.swift */; };
 		E9C42EF12364396B00FC50BA /* SearchUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C42EF02364396B00FC50BA /* SearchUserCell.swift */; };
-		E9C6C237229601D8003F0F16 /* NewFactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C6C236229601D8003F0F16 /* NewFactViewController.swift */; };
 		E9C6C2392296BEED003F0F16 /* FactDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C6C2382296BEED003F0F16 /* FactDetailViewController.swift */; };
 		E9C6C23B22980FD8003F0F16 /* SourceTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C6C23A22980FD8003F0F16 /* SourceTableViewController.swift */; };
 		E9C6C23D22981C0B003F0F16 /* ArgumentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C6C23C22981C0B003F0F16 /* ArgumentTableViewController.swift */; };
@@ -220,6 +220,7 @@
 		E911EEEF22DB157500EDD056 /* SettingsLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLauncher.swift; sourceTree = "<group>"; };
 		E911EEF122DB173E00EDD056 /* SettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingCell.swift; sourceTree = "<group>"; };
 		E911EEF322DB630300EDD056 /* SideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenu.swift; sourceTree = "<group>"; };
+		E91824E024F42553009D7638 /* NewCommunityItemTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewCommunityItemTableViewController.swift; sourceTree = "<group>"; };
 		E919EFE624A6787400ED7D4F /* LeanWebViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeanWebViewViewController.swift; sourceTree = "<group>"; };
 		E91A2B5D2473B9DC00B42353 /* AddOnHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddOnHeaderView.xib; sourceTree = "<group>"; };
 		E91A2B6024794EAE00B42353 /* SettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewController.swift; sourceTree = "<group>"; };
@@ -363,7 +364,6 @@
 		E9BFA6CF2451764700E43826 /* InfoHeaderAddOnCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoHeaderAddOnCell.swift; sourceTree = "<group>"; };
 		E9C42EEE2364393400FC50BA /* SearchPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPostCell.swift; sourceTree = "<group>"; };
 		E9C42EF02364396B00FC50BA /* SearchUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserCell.swift; sourceTree = "<group>"; };
-		E9C6C236229601D8003F0F16 /* NewFactViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFactViewController.swift; sourceTree = "<group>"; };
 		E9C6C2382296BEED003F0F16 /* FactDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactDetailViewController.swift; sourceTree = "<group>"; };
 		E9C6C23A22980FD8003F0F16 /* SourceTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceTableViewController.swift; sourceTree = "<group>"; };
 		E9C6C23C22981C0B003F0F16 /* ArgumentTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArgumentTableViewController.swift; sourceTree = "<group>"; };
@@ -577,12 +577,12 @@
 				E96CE88C22940A9F00BACD3B /* FactCollectionViewController.swift */,
 				E9B85D4124112DCA00960942 /* ArgumentPageViewController.swift */,
 				E96CE89322941C5C00BACD3B /* FactParentContainerViewController.swift */,
-				E9C6C236229601D8003F0F16 /* NewFactViewController.swift */,
 				E9F6030E235DE5DF00A58D08 /* PostsOfFactTableViewController.swift */,
 				E9B85D45241165CF00960942 /* OptionalInformationForArgumentTableViewController.swift */,
 				E904BF0124264525003EC8DF /* AddPostTableViewController.swift */,
 				E9E521B92458477F002585A2 /* NewAddOnTableViewController.swift */,
 				E97FDFCD246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift */,
+				E91824E024F42553009D7638 /* NewCommunityItemTableViewController.swift */,
 			);
 			path = FactController;
 			sourceTree = "<group>";
@@ -1137,6 +1137,7 @@
 				E97E7263243603AC0012F105 /* OptionalInformation.swift in Sources */,
 				E9B85D5E2413C28B00960942 /* TableViewInCollectionViewCell.swift in Sources */,
 				E9A02AA7232D3181000DAB69 /* AddFactTableViewCell.swift in Sources */,
+				E91824E124F42553009D7638 /* NewCommunityItemTableViewController.swift in Sources */,
 				E9CF17C223CB27CE000E5149 /* CreativeSpaceIntroViewController.swift in Sources */,
 				E962AC3A222DB5DB00C6D6EF /* MeldeTableViewController.swift in Sources */,
 				E991CCD82270972F00940834 /* WebViewController.swift in Sources */,
@@ -1194,7 +1195,6 @@
 				E9B9445F225800EE000145E2 /* UserFeedTableViewController.swift in Sources */,
 				E9C42EF12364396B00FC50BA /* SearchUserCell.swift in Sources */,
 				E9332A9B23FE8A63004078FC /* CommentTableView.swift in Sources */,
-				E9C6C237229601D8003F0F16 /* NewFactViewController.swift in Sources */,
 				E9B79CE922510F1900166EED /* TabBarViewController.swift in Sources */,
 				E9925A9C23D8726300E1A9D4 /* MultiPictureCell.swift in Sources */,
 				E9B1872A222E981000923037 /* MeldeAgreeViewController.swift in Sources */,

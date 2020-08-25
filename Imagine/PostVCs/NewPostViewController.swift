@@ -15,6 +15,7 @@ import FirebaseAuth
 import EasyTipView
 import BSImagePicker
 import Photos
+import CropViewController
 
 enum PostSelection {
     case picture
@@ -34,7 +35,7 @@ protocol JustPostedDelegate {
     func posted()
 }
 
-class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate {
+class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate, CropViewControllerDelegate {
     
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var postSelectionSegmentedControl: UISegmentedControl!
@@ -962,9 +963,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .imagineColor
-        button.setTitle("Community verlinken", for: .normal)
+        button.setTitle(NSLocalizedString("distribution_button_text", comment: "link community"), for: .normal)
         button.addTarget(self, action: #selector(linkFactToPostTapped), for: .touchUpInside)
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
         button.setTitleColor(.imagineColor, for: .normal)
         
         return button
@@ -994,9 +995,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let distributionLabel: UILabel = {
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
+        label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
         label.textAlignment = .left
-        label.text = "Ziel:"
+        label.text = NSLocalizedString("distribution_label_text", comment: "destination:")
         if #available(iOS 13.0, *) {
             label.textColor = .label
         } else {
@@ -1086,7 +1087,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = NSLocalizedString("location_label_text", comment: "location:")
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
+        label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
         
         return label
     }()
@@ -1143,7 +1144,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     //MARK:- Set Up Options UI
     func setUpOptionViewUI() {
-        let labelHeight: CGFloat = 20
+        let labelHeight: CGFloat = 17
+        let smallOptionViewHeight = defaultOptionViewHeight-4
         
         //LocationView
         linkedLocationView.addSubview(locationDescriptionLabel)
@@ -1152,10 +1154,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         locationDescriptionLabel.heightAnchor.constraint(equalToConstant: labelHeight).isActive = true
         
         linkedLocationView.addSubview(linkedLocationImageView)
-        linkedLocationImageView.centerYAnchor.constraint(equalTo: linkedLocationView.centerYAnchor, constant: labelHeight/2).isActive = true
+        linkedLocationImageView.centerYAnchor.constraint(equalTo: linkedLocationView.centerYAnchor, constant: (labelHeight/2)+2).isActive = true
         linkedLocationImageView.leadingAnchor.constraint(equalTo: linkedLocationView.leadingAnchor, constant: 14).isActive = true
-        linkedLocationImageView.widthAnchor.constraint(equalToConstant: 18).isActive = true
-        linkedLocationImageView.heightAnchor.constraint(equalToConstant: 18).isActive = true
+        linkedLocationImageView.widthAnchor.constraint(equalToConstant: 17).isActive = true
+        linkedLocationImageView.heightAnchor.constraint(equalToConstant: 17).isActive = true
         
         linkedLocationView.addSubview(choosenLocationLabel)
         choosenLocationLabel.centerYAnchor.constraint(equalTo: linkedLocationImageView.centerYAnchor).isActive = true
@@ -1165,14 +1167,14 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         chooseLocationButton.leadingAnchor.constraint(equalTo: choosenLocationLabel.trailingAnchor, constant: 20).isActive = true
         chooseLocationButton.trailingAnchor.constraint(equalTo: linkedLocationView.trailingAnchor, constant: -10).isActive = true
         chooseLocationButton.centerYAnchor.constraint(equalTo: choosenLocationLabel.centerYAnchor).isActive = true
-        chooseLocationButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
-        chooseLocationButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
+        chooseLocationButton.heightAnchor.constraint(equalToConstant: infoButtonSize-1).isActive = true
+        chooseLocationButton.widthAnchor.constraint(equalToConstant: infoButtonSize-1).isActive = true
         
         self.view.addSubview(linkedLocationView)
         linkedLocationView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 1).isActive = true
         linkedLocationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
         linkedLocationView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        linkedLocationView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight+labelHeight).isActive = true
+        linkedLocationView.heightAnchor.constraint(equalToConstant: smallOptionViewHeight+labelHeight).isActive = true
         
         //LinkedFactView
         linkedFactView.addSubview(distributionLabel)
@@ -1183,8 +1185,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         linkedFactView.addSubview(linkedFactInfoButton)
         linkedFactInfoButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: labelHeight/2).isActive = true
         linkedFactInfoButton.trailingAnchor.constraint(equalTo: linkedFactView.trailingAnchor, constant: -10).isActive = true
-        linkedFactInfoButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
-        linkedFactInfoButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
+        linkedFactInfoButton.widthAnchor.constraint(equalToConstant: infoButtonSize-1).isActive = true
+        linkedFactInfoButton.heightAnchor.constraint(equalToConstant: infoButtonSize-1).isActive = true
         
         linkedFactView.addSubview(addFactButton)
         addFactButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: labelHeight/2).isActive = true
@@ -1195,8 +1197,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         distributionInformationView.addSubview(distributionInformationImageView)
         distributionInformationImageView.leadingAnchor.constraint(equalTo: distributionInformationView.leadingAnchor).isActive = true
         distributionInformationImageView.centerYAnchor.constraint(equalTo: distributionInformationView.centerYAnchor).isActive = true
-        distributionInformationImageView.widthAnchor.constraint(equalToConstant: 25).isActive = true
-        distributionInformationImageView.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        distributionInformationImageView.widthAnchor.constraint(equalToConstant: 23).isActive = true
+        distributionInformationImageView.heightAnchor.constraint(equalToConstant: 23).isActive = true
         
         distributionInformationView.addSubview(distributionInformationLabel)
         distributionInformationLabel.leadingAnchor.constraint(equalTo: distributionInformationImageView.trailingAnchor, constant: 2).isActive = true
@@ -1207,7 +1209,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         distributionInformationView.leadingAnchor.constraint(equalTo: linkedFactView.leadingAnchor, constant: 10).isActive = true
 //        distributionInformationView.trailingAnchor.constraint(equalTo: addFactButton.leadingAnchor, constant: -3).isActive = true
         distributionInformationView.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: labelHeight/2).isActive = true
-        distributionInformationView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-15).isActive = true
+        distributionInformationView.heightAnchor.constraint(equalToConstant: smallOptionViewHeight-15).isActive = true
 
         linkedFactView.addSubview(cancelLinkedFactButton)
         cancelLinkedFactButton.trailingAnchor.constraint(equalTo: linkedFactInfoButton.leadingAnchor, constant: -10).isActive = true
@@ -1219,7 +1221,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         linkedFactView.topAnchor.constraint(equalTo: linkedLocationView.bottomAnchor, constant: 1).isActive = true
         linkedFactView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
         linkedFactView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        linkedFactView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight+labelHeight).isActive = true
+        linkedFactView.heightAnchor.constraint(equalToConstant: smallOptionViewHeight+labelHeight).isActive = true
         
         
         // OptionView
@@ -2260,37 +2262,39 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
-        
-        /*if let editedImage = info[.editedImage] as? UIImage {
-         selectedImageFromPicker = editedImage
-         } else*/
-        
-        
         if picker.sourceType == .camera {
             self.camPic = true
         }
         if let originalImage = info[.originalImage] as? UIImage {
-            selectedImageFromPicker = originalImage
+            imagePicker.dismiss(animated: true, completion: nil)
+            showCropView(image: originalImage)
         }
+    }
+    
+    func showCropView(image: UIImage) {
+        let cropViewController = CropViewController(image: image)
+        cropViewController.delegate = self
+        cropViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(cropViewController, animated: true)
+    }
+    
+    func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
         
-        if let selectedImageSize = selectedImageFromPicker?.size {
-            selectedImageHeight = selectedImageSize.height
-            selectedImageWidth = selectedImageSize.width
+        navigationController?.popToViewController(self, animated: true)
+        
+        selectedImageFromPicker = image
+        selectedImageHeight = image.size.height
+        selectedImageWidth = image.size.width
+ 
+        self.increasePictureUI()
+        self.previewPictures.removeAll()
+        self.previewPictures.append(image)
+        self.previewCollectionView.reloadData()
+        
+        UIView.animate(withDuration: 0.3) {
+            self.removePictureButton.alpha = 1
+            self.removePictureButton.isEnabled = true
         }
-        
-        if let image = selectedImageFromPicker {
-            self.increasePictureUI()
-            self.previewPictures.removeAll()
-            self.previewPictures.append(image)
-            self.previewCollectionView.reloadData()
-            
-            UIView.animate(withDuration: 0.3) {
-                self.removePictureButton.alpha = 1
-                self.removePictureButton.isEnabled = true
-            }
-        }
-        
-        imagePicker.dismiss(animated: true, completion: nil)
     }
     
     
@@ -2575,6 +2579,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             if self.comingFromAddOnVC || postOnlyInTopic {
                 data["type"] = "topicPost"  // To fetch in a different ref when loading the posts of the topic
+            }
+            
+            if let location = linkedLocation {
+                data["locationName"] = location.title
+                let geoPoint = GeoPoint(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+                data["locationCoordinate"] = geoPoint
             }
             
             ref.setData(data) { (err) in
@@ -2862,9 +2872,9 @@ extension NewPostViewController: LinkFactWithPostDelegate {
         
         linkedFactView.addSubview(addedFactImageView)
         addedFactImageView.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: 10).isActive = true
-        addedFactImageView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-10).isActive = true
+        addedFactImageView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-15).isActive = true
         addedFactImageView.trailingAnchor.constraint(equalTo: cancelLinkedFactButton.leadingAnchor, constant: -10).isActive = true
-        addedFactImageView.widthAnchor.constraint(equalToConstant: defaultOptionViewHeight-10).isActive = true
+        addedFactImageView.widthAnchor.constraint(equalToConstant: defaultOptionViewHeight-15).isActive = true
         
         linkedFactView.addSubview(addedFactDescriptionLabel)
         addedFactDescriptionLabel.centerYAnchor.constraint(equalTo: addedFactImageView.centerYAnchor).isActive = true

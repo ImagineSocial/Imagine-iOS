@@ -59,7 +59,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
     }
     
     var noOptionalInformation = false
-    var optionalInformationProposals = [ProposalForOptionalInformation(isFirstCell: true, headerText: "", detailText: ""), ProposalForOptionalInformation(isFirstCell: false, headerText: "Wer ist daran Schuld?", detailText: "In objektiven Diskussionen kann der Einfluss von Firmen & Einzelpersonen auf das Thema diskutiert werden"), ProposalForOptionalInformation(isFirstCell: false, headerText: "Was kann ich tun?", detailText: "Beschreibungen und Beiträge zu einfachen Mitteln für Jedermann, wie man das Problem des Themas bekämpfen/verbessern kann"),  ProposalForOptionalInformation(isFirstCell: false, headerText: "Top-News", detailText: "Übersichtlich die neuesten Nachrichten über das Thema an einem Ort finden."), ProposalForOptionalInformation(isFirstCell: false, headerText: "Beginners Guide", detailText: "Erste Schritte für interessierte Neulinge die tiefer in dieses Thema eintauchen möchten")]
+    var optionalInformationProposals = [ProposalForOptionalInformation(isFirstCell: true, headerText: "", detailText: ""), ProposalForOptionalInformation(isFirstCell: false, headerText: NSLocalizedString("proposal_header_guilty", comment: "who is guilty?"), detailText: NSLocalizedString("proposal_detail_guilty", comment: "discuss about who is guilty for example")), ProposalForOptionalInformation(isFirstCell: false, headerText: "Was kann ich tun?", detailText: "Beschreibungen und Beiträge zu einfachen Mitteln für Jedermann, wie man das Problem des Themas bekämpfen/verbessern kann"),  ProposalForOptionalInformation(isFirstCell: false, headerText: "Top-News", detailText: "Übersichtlich die neuesten Nachrichten über das Thema an einem Ort finden."), ProposalForOptionalInformation(isFirstCell: false, headerText: "Beginners Guide", detailText: "Erste Schritte für interessierte Neulinge die tiefer in dieses Thema eintauchen möchten")]
     //ProposalForOptionalInformation(isFirstCell: false, headerText: "Wen sollte ich meiden?", detailText: "Eine übersichtliche Ansammlung von Firmen die du meiden könntest um das Problem des Themas zu entlasten"),
     let diyString = "Was kann ich tun?"
     let avoidString = "Wen sollte ich meiden?"
@@ -157,9 +157,10 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                             
                             self.optionalInformations.append(addOn)
                             
-                        } else if let description = data["headerDescription"] as? String, let OP = data["OP"] as? String {  // Header
+                        } else if let description = data["headerDescription"] as? String, let OP = data["OP"] as? String, let headerImage = data["imageURL"] as? String {  // Header
                             var intro: String?
                             var source: String?
+                            
                             if let introSentence = data["headerIntro"] as? String {
                                 intro = introSentence
                             }
@@ -167,7 +168,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                                 source = moreInfo
                             }
                             
-                            let addOn = OptionalInformation(style: .header, OP: OP, documentID: document.documentID, fact: fact ,introSentence: intro, description: description, moreInformationLink: source)
+                            let addOn = OptionalInformation(style: .header, OP: OP, documentID: document.documentID, fact: fact, imageURL: headerImage ,introSentence: intro, description: description, moreInformationLink: source)
                             
                             self.optionalInformations.insert(addOn, at: 0)  // Should be on top of the vc
                         } else if let documentID = data["linkedFactID"] as? String {    //SingleTopic
@@ -438,7 +439,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
         if let fact = item as? Fact {
             itemTypeString = "fact"
             itemID = fact.documentID
-            let newFactVC = NewFactViewController()
+            let newFactVC = NewCommunityItemTableViewController()
             displayOption = newFactVC.getNewFactDisplayString(displayOption: fact.displayOption).displayOption
         } else if let post = item as? Post {
             itemID = post.documentID
@@ -538,7 +539,6 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             if let vc = segue.destination as? FactCollectionViewController {
                 vc.addFactToPost = .optInfo
                 vc.navigationItem.hidesSearchBarWhenScrolling = false
-                vc.searchController.isActive = true
                 vc.addItemDelegate = self
             }
         }

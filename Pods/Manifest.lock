@@ -219,6 +219,7 @@ PODS:
     - BoringSSL-GRPC/Interface (= 0.0.7)
   - BoringSSL-GRPC/Interface (0.0.7)
   - BSImagePicker (3.2.0)
+  - CropViewController (2.5.4)
   - DateToolsSwift (5.0.0)
   - EasyTipView (2.0.4)
   - Firebase/Analytics (6.27.0):
@@ -412,6 +413,7 @@ PODS:
 
 DEPENDENCIES:
   - BSImagePicker (~> 3.0)
+  - CropViewController
   - DateToolsSwift
   - EasyTipView
   - Firebase/Analytics
@@ -434,6 +436,7 @@ SPEC REPOS:
     - abseil
     - BoringSSL-GRPC
     - BSImagePicker
+    - CropViewController
     - DateToolsSwift
     - EasyTipView
     - Firebase
@@ -481,6 +484,7 @@ SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   BSImagePicker: 1c0d14fa6f1b55380cd49cbebe47584f10e180c6
+  CropViewController: 980df34ffc499db89755b2f307f20eca00cd40c6
   DateToolsSwift: 4207ada6ad615d8dc076323d27037c94916dbfa6
   EasyTipView: 4f8beae0a82db2ca4a9b5fd658785fc5f61d296b
   Firebase: fc4cbf6f1592636431821ef9a3c557e4dfd9f268
@@ -516,6 +520,6 @@ SPEC CHECKSUMS:
   SwiftLinkPreview: 3d924eeaae8d17410a827a4b37675713af1a0a8a
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
 
-PODFILE CHECKSUM: 944388f5d2b479dd03840d6f94731097271e3e3b
+PODFILE CHECKSUM: 11f90c336aafe6db4c6cd7b685b8eea96ffea7bd
 
 COCOAPODS: 1.8.4

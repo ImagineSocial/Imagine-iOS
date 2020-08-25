@@ -76,7 +76,7 @@ struct Constants {
         static let argumentDetailText = "Hier werden die Quellen und Gegenargument für das ausgewählte Argument, sowie dessen Beschreibung dargestellt.\n\nAm unteren Ende findest du die Möglichkeit das Argument zu bewerten. \n\nDie Bewertung ist noch nicht abgesichert, wird aber der jetzigen Art ähneln."
         
 
-        static let addArgumentText = "Füge eine Quelle, ein Argument oder Gegenargument hinzu.\n\nDenke bitte daran, die Inhalte neutral wiederzugeben und ausführlich, auch für außenstehende zu erklären."
+        static let addArgumentText = "Füge eine Quelle, ein Argument oder Gegenargument hinzu.\n\nDenke bitte daran, die Inhalte neutral wiederzugeben und ausführlich zu erklären."
         
         static let markPostText = "Markiere einen Post, wenn du ihn mit Absicht provokant schreibst oder den Inhalt bearbeitet hast. Damit wollen wir Populismus, falschen Vorstellungen und Missverständnissen vorbeugen.\n\n'Meinung': Meinung, kein Fakt. Kann schnell von den Lesern verwechselt werden.\n\n'Sensation': Sensationalistisch gegschrieben\nEine übertriebene Darstellung der beschriebenen Ereignisse.\n\n'Bearbeitet': Inhalt eines Bildes oder Videos nachträglich verschönert."
         
@@ -90,12 +90,16 @@ struct Constants {
         
         static let introText = "Willkommen bei Imagine, Freund!\n\n\nIn unserem Netzwerk wollen wir das Medium unserer Zeit endlich nachhaltig verwenden und Unterhaltung mit einem Nutzen verbinden.\n\nSchau dich um, tausch dich aus, lass dich unterhalten und starte die nächste Generation der sozialen Netzwerke mit uns!"
         
+        static let communityText = "Erstelle eine neue Community oder eine neue Diskussion. \nEin Bild ist dabei optional aber immer gern gesehen\n\nDu bist vorerst der Moderator der von dir erstellten Communities und Diskussionen und kannst zu einem späteren Zeitpunkt die Informationen und Metadaten bearbeiten."
+        
         struct AddOns {
             static let headerText = "Der Header wird den Usern als erstes in den AddOns angezeigt. Hier kannst du den Besuchern zu einem groben Überblick verhelfen und wenn nötig durch einen Link zu weiterführenden Informationen schicken."
             
             static let singleTopicText = "Möchtest du ein passendes Thema verlinken, bist du bei diesem AddOn richtig. Die Darstellung enthält auch bis zu sechs Bilder-Beiträgen des Themas als Vorschau."
             
             static let collectionText = "In diesem AddOn kann man nach belieben vorhandene oder neue Beiträge posten um ein Unterthema deiner Wahl besser zu beleuchten.\nAuch Themen kannst du hier verlinken. Möchtest du jedoch nur ein Thema hervorheben, nutze bitte das AddOn für einzelne Themen."
+            
+            
         }
     }
     

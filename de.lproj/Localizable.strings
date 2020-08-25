@@ -149,6 +149,8 @@
 "link_fact_destination_everybody" = "Mit allen teilen";
 "link_fact_destination_community" = "Mit der Community teilen";
 "location_label_text" = "Location:";
+"distribution_label_text" = "Ziel:";
+"distribution_button_text" = "Community verlinken";
 
 
 //PostViewController
@@ -238,3 +240,6 @@
 
 //SettingTableViewController
 
+//NewCommunityItemTableViewController
+"new_community_discussion_description" = "Das Thema wird in zwei Spalten dargestellt. Die Gegenüberstellung ermöglicht es sich mit dem Thema gründlich auseinanderzusetzen. \nDie Auswahl der Überschriften der Spalten kannst du hier auswählen:";
+"new_community_topic_description" = "Das Thema wird als Sammlung aller verlinkten Beiträge zu diesem Thema dargestellt.";

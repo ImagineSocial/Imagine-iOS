@@ -516,12 +516,12 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         
         if segue.identifier == "toNewArgumentSegue" {
             if let navCon = segue.destination as? UINavigationController {
-                if let newFactVC = navCon.topViewController as? NewFactViewController {
+                if let newFactVC = navCon.topViewController as? NewCommunityItemTableViewController {
                     if let type = sender as? DisplayOption {
                         
                         newFactVC.pickedDisplayOption = type
                         
-                        newFactVC.new = .fact
+                        newFactVC.new = .community
                         newFactVC.delegate = self
                     }
                 }
