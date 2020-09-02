@@ -311,35 +311,35 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
         // Add the custom SettingCells with the current database data
         switch settingFor {
         case .community:
-            let setting = TableViewSetting(type: .normal, headerText: "Community-Einstellungen")
+            let setting = TableViewSetting(type: .normal, headerText: NSLocalizedString("setting_community_header_text", comment: "community settings"))
             
             if let topicSetting = topicSetting {
                 let imageCell = TableViewSettingCell(value: topicSetting.imageURL, type: .imageCell, settingChange: .changeTopicPicture)
                 let nameCell = TableViewSettingCell(value: topicSetting.title, type: .textCell, settingChange: .changeTopicTitle)
-                nameCell.titleText = "Titel:"
+                nameCell.titleText = NSLocalizedString("title:", comment: "title:")
                 nameCell.characterLimit = Constants.characterLimits.factTitleCharacterLimit
                 
                 let descriptionCell = TableViewSettingCell(value: topicSetting.description, type: .textCell, settingChange: .changeTopicDescription)
-                descriptionCell.titleText = "Beschreibung:"
+                descriptionCell.titleText = NSLocalizedString("description:", comment: "description:")
                 descriptionCell.characterLimit = Constants.characterLimits.factDescriptionCharacterLimit
                 
                 let addOnAsFirstViewCell = TableViewSettingCell(value: topicSetting.isAddOnFirstView, type: .switchCell, settingChange: .changeTopicAddOnsAsFirstView)
-                addOnAsFirstViewCell.titleText = "Themen Ansicht als Startbildschirm"
-                setting.footerText = "Wird deine Community besser von den Unterthemen repräsentiert, als von den Beiträgen, wähle diese Option aus."
+                addOnAsFirstViewCell.titleText = NSLocalizedString("setting_community_addOn_as_start", comment: "as startview?")
+                setting.footerText = NSLocalizedString("setting_community_addOn_as_start_description", comment: "description what that means")
                 
                 setting.cells.append(contentsOf: [imageCell, nameCell, descriptionCell, addOnAsFirstViewCell])
                 self.settings.append(setting)
                 tableView.reloadData()
             }
         case .userProfile:
-            let setting = TableViewSetting(type: .normal, headerText: "Profil-Einstellungen")
+            let setting = TableViewSetting(type: .normal, headerText: NSLocalizedString("setting_user_header_text", comment: "user settings:"))
 
             if let userSetting = userSetting {
                 let imageCell = TableViewSettingCell(value: userSetting.imageURL, type: .imageCell, settingChange: .changeUserPicture)
                 
                 let statusCell = TableViewSettingCell(value: userSetting.statusText, type: .textCell, settingChange: .changeUserStatusText)
                 statusCell.characterLimit = Constants.characterLimits.userStatusTextCharacterLimit
-                statusCell.titleText = "Steckbrief:"
+                statusCell.titleText = NSLocalizedString("setting_user_personal_bio", comment: "write about yourself")
                 
                 let socialMediaSetting = TableViewSetting(type: .normal, headerText: "Social Media Buttons")
                 
@@ -353,17 +353,17 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
                 twitterCell.titleText = "Twitter:"
                 let songwhipCell = TableViewSettingCell(value: userSetting.songwhipLink, type: .textCell, settingChange: .changeUserSongwhipLink)
                 songwhipCell.titleText = "Songwhip:"
-                socialMediaSetting.footerText = "Gib einen Link zu den jeweiligen Profilen ein, um einen Button in deinem Profil zu erhalten. Weise so die Besucher auf deine anderen Social-Media Profile hin oder promote deine persönlichen Favoriten."
+                socialMediaSetting.footerText = NSLocalizedString("setting_social_media_button_description", comment: "what are these about?")
                 
-                let voluntarySettings = TableViewSetting(type: .normal, headerText: "Persönliche Angaben")
-                voluntarySettings.footerText = "Mit der Altersangabe unterstützt du Imagine. Wir können diese Angaben nutzen, um unsere User besser zu verstehen und unsere kommenden Werbevorhaben zu optimieren. Das Alter wird nicht öffentlich angezeigt.\nDie Location sorgt für eine bessere Auswahl an Communities und passendere Werbung (später). Im Profil kann es ebenfalls angezeigt werden, um anderen zu zeigen, wo die Mituser herkommen.\nAlle Daten werden bei uns mit Vorsicht gehandhabt und nicht an dritte weitergegeben."
+                let voluntarySettings = TableViewSetting(type: .normal, headerText: NSLocalizedString("setting_user_personal_info", comment: "personal infos"))
+                voluntarySettings.footerText = NSLocalizedString("setting_user_personal_info_description", comment: "what is it about?")
                 
                 let ageCell = TableViewSettingCell(value: userSetting.birthday, type: .datePickerCell, settingChange: .changeUserAge)
-                ageCell.titleText = "Geburtsjahr:"
+                ageCell.titleText = NSLocalizedString("setting_user_birthday", comment: "Birthday:")
                 let locationCell = TableViewSettingCell(value: userSetting.location, type: .locationCell, settingChange: .changeUserLocation)
                 locationCell.titleText = "Location:"
                 let locationIsPublicCell = TableViewSettingCell(value: userSetting.locationIsPublic, type: .switchCell, settingChange: .changeUserLocationPublicity)
-                locationIsPublicCell.titleText = "Ort in Profil anzeigen?"
+                locationIsPublicCell.titleText = NSLocalizedString("setting_user_location_public", comment: "is location public`?")
                 
                 voluntarySettings.cells.append(contentsOf: [ageCell, locationCell, locationIsPublicCell])
                 
@@ -374,24 +374,24 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
                 tableView.reloadData()
             }
         case .addOn:
-            let setting = TableViewSetting(type: .normal, headerText: "Themen-Einstellungen:")
+            let setting = TableViewSetting(type: .normal, headerText: NSLocalizedString("setting_addOn_header_text", comment: "Topic settings:"))
 
             if let addOnSetting = addOnSetting {
                 let imageCell = TableViewSettingCell(value: addOnSetting.imageURL, type: .imageCell, settingChange: .changeAddOnPicture)
                 
                 let titleCell = TableViewSettingCell(value: addOnSetting.title, type: .textCell, settingChange: .changeAddOnTitle)
                 titleCell.characterLimit = Constants.characterLimits.addOnTitleCharacterLimit
-                titleCell.titleText = "Titel:"
+                titleCell.titleText = NSLocalizedString("title:", comment: "title:")
                 
                 let descriptionCell = TableViewSettingCell(value: addOnSetting.description, type: .textCell, settingChange: .changeAddOnDescription)
                 descriptionCell.characterLimit = Constants.characterLimits.addOnDescriptionCharacterLimit
-                descriptionCell.titleText = "Beschreibung"
+                descriptionCell.titleText = NSLocalizedString("description:", comment: "descriprion:")
                 
                 setting.cells.append(contentsOf: [imageCell, titleCell, descriptionCell])
                 self.settings.append(setting)
                 
-                if addOnSetting.style == .all {
-                    let orderSetting = TableViewSetting(type: .changeOrder, headerText: "Arrangiere die Beiträge:")
+                if addOnSetting.style == .collection {
+                    let orderSetting = TableViewSetting(type: .changeOrder, headerText: NSLocalizedString("setting_addOn_change_order", comment: "change order as you like"))
                     orderSetting.addOnItems = addOnSetting.items
                     self.getAddOnItemsForOrderArrangement(items: orderSetting.addOnItems)
                     
@@ -742,7 +742,11 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
     func showCropView(image: UIImage) {
         let cropViewController = CropViewController(image: image)
         cropViewController.delegate = self
-        cropViewController.aspectRatioPreset = .presetSquare
+        if let _ = addOn {
+            cropViewController.aspectRatioPreset = .preset16x9
+        } else {    //User & Topic Image must be square
+            cropViewController.aspectRatioPreset = .presetSquare
+        }
         cropViewController.aspectRatioLockEnabled = true
         navigationController?.pushViewController(cropViewController, animated: true)
     }
@@ -1378,7 +1382,7 @@ class SettingLocationCell: UITableViewCell {
                 if let value = setting.value as? Location {
                     choosenLocationLabel.text = value.title
                 } else {
-                    choosenLocationLabel.text = "Wähle einen Standort aus"
+                    choosenLocationLabel.text = NSLocalizedString("setting_location_cell_text", comment: "choose a location")
                 }
             }
         }

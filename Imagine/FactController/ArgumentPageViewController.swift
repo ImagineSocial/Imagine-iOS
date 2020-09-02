@@ -9,18 +9,24 @@
 import UIKit
 import Firebase
 
+protocol PageViewHeaderDelegate {
+    func childScrollViewScrolled(offset: CGFloat)
+}
+
 class ArgumentPageViewController: UIPageViewController {
-    
-    @IBOutlet weak var factInfoBarButtonItemView: DesignablePopUp!
-    @IBOutlet weak var factInfoImageView: DesignableImage!
-    @IBOutlet weak var factInfoTopicLabel: UILabel!
-    @IBOutlet weak var factInfoSectionLabel: UILabel!
-    @IBOutlet weak var barButtonPageControl: UIPageControl!
     
     var argumentVCs = [UIViewController]()
     var fact: Fact?
     
     var recentTopicDelegate: RecentTopicDelegate?
+    
+    var headerView = CommunityHeaderView()
+    
+    var firstViewOffset: CGFloat = 156  //Hard coded doesnt work when coming from feed
+    var secondViewOffset: CGFloat = 156
+    var thirdViewOffset: CGFloat = 156
+    
+    var presentedVC: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,48 +34,76 @@ class ArgumentPageViewController: UIPageViewController {
         dataSource = self
         delegate = self
         
-        
-//        let pageControl = UIPageControl.appearance()
         if #available(iOS 13.0, *) {
             self.view.backgroundColor = .systemBackground
-//            pageControl.pageIndicatorTintColor = .tertiaryLabel
-//            pageControl.currentPageIndicatorTintColor = .label
         } else {
-           self.view.backgroundColor = .white
-//            pageControl.pageIndicatorTintColor = .lightGray
-//            pageControl.currentPageIndicatorTintColor = .black
+            self.view.backgroundColor = .white
         }
         
+        setUpHeader()
         addViewController()
-        
         setBarButton()
     }
     
+
+    
+    func setUpHeader() {
+        let view = CommunityHeaderView.loadViewFromNib()
+        view.delegate = self
+        let height = Constants.Numbers.communityHeaderHeight
+        view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: height)
+        
+        if let fact = self.fact {
+            view.community = fact
+        } else {
+            print("Error: ArgumentPageViewController")
+            self.navigationController?.popViewController(animated: true)
+        }
+        
+        self.headerView = view
+        self.view.addSubview(view)
+    }
+    
+    var newPostButton = DesignableButton()
     func setBarButton() {
-        if let fact = fact {
-            
-            recentTopicDelegate?.topicSelected(fact: fact)
-            
-            if let url = URL(string: fact.imageURL) {
-                factInfoImageView.sd_setImage(with: url, completed: nil)
+        let newPostButton = DesignableButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        newPostButton.clipsToBounds = true
+        newPostButton.imageView?.contentMode = .scaleAspectFit
+        newPostButton.addTarget(self, action: #selector(self.newPostButtonTapped), for: .touchUpInside)
+        newPostButton.translatesAutoresizingMaskIntoConstraints = false
+        newPostButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        newPostButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        newPostButton.isHidden = true
+        
+        if #available(iOS 13.0, *) {
+            newPostButton.tintColor = UIColor.label
+            newPostButton.setImage(UIImage(systemName: "square.and.pencil"), for: .normal)
+        } else {
+            newPostButton.tintColor = UIColor.black
+            newPostButton.setImage(UIImage(named: "newPostIcon"), for: .normal)
+        }
+        
+        let postBarButton = UIBarButtonItem(customView: newPostButton)
+        self.navigationItem.rightBarButtonItem = postBarButton
+        self.newPostButton = newPostButton
+    }
+    
+    @objc func newPostButtonTapped() {
+        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToNewPost" {
+            if let fact = sender as? Fact {
+                if let navCon = segue.destination as? UINavigationController {
+                    if let newPostVC = navCon.topViewController as? NewPostViewController {
+                        newPostVC.selectedFact(fact: fact, isViewAlreadyLoaded: false)
+                        newPostVC.comingFromPostsOfFact = true
+                        newPostVC.postOnlyInTopic = true
+                        newPostVC.newInstanceDelegate = self
+                    }
+                }
             }
-            factInfoTopicLabel.text = fact.title
-            
-            if fact.displayOption == .fact {
-                self.factInfoSectionLabel.text = "Diskussion"
-            } else {
-                self.factInfoSectionLabel.text = "Beiträge"
-            }
-            self.factInfoImageView.alpha = 0.7
-            self.factInfoTopicLabel.alpha = 0.7
-            
-            if fact.isAddOnFirstView {
-                self.factInfoSectionLabel.text = "Themen"
-                self.factInfoImageView.alpha = 1
-                self.factInfoTopicLabel.alpha = 1
-            }
-            
-            
         }
     }
     
@@ -79,16 +113,20 @@ class ArgumentPageViewController: UIPageViewController {
         }
         
         //Add The VCs
-        if let optionalInformationVC = storyboard?.instantiateViewController(withIdentifier: "optionalInformationVC") as? OptionalInformationForArgumentTableViewController {
+        if let addOnCollectionVC = storyboard?.instantiateViewController(withIdentifier: "addOnCollectionVC") as? AddOnCollectionViewController {
             
-            optionalInformationVC.fact = fact
-            argumentVCs.append(optionalInformationVC)
+            addOnCollectionVC.pageViewHeaderDelegate = self
+            addOnCollectionVC.fact = fact
+            argumentVCs.append(addOnCollectionVC)
         }
         
         if fact.displayOption == .fact {
         
             if let factParentVC = storyboard?.instantiateViewController(withIdentifier: "factParentVC") as? FactParentContainerViewController {
                 
+                
+                
+                factParentVC.pageViewHeaderDelegate = self
                 factParentVC.fact = fact
                 argumentVCs.append(factParentVC)
             }
@@ -96,25 +134,34 @@ class ArgumentPageViewController: UIPageViewController {
         
         if let postOfFactVC = storyboard?.instantiateViewController(withIdentifier: "postsOfFactVC") as? PostsOfFactTableViewController {
             
+            postOfFactVC.pageViewHeaderDelegate = self
             postOfFactVC.fact = fact
             argumentVCs.append(postOfFactVC)
             
-            if fact.displayOption == .fact {
-                postOfFactVC.isMainViewController = false   // So the description on top is hidden
-            }
+        }
+        
+        if fact.displayOption == .fact {
+            self.headerView.headerSegmentedControl.setTitle("Themen", forSegmentAt: 0)
+            self.headerView.headerSegmentedControl.insertSegment(withTitle: "Diskussion", at: 1, animated: false)
+            self.headerView.headerSegmentedControl.setTitle("Feed", forSegmentAt: 2)
+        } else {
+            self.headerView.headerSegmentedControl.setTitle("Themen", forSegmentAt: 0)
+            self.headerView.headerSegmentedControl.setTitle("Feed", forSegmentAt: 1)
         }
         
         // Set the VCs and declare the firstVC
-        self.barButtonPageControl.numberOfPages = argumentVCs.count
         
         if fact.isAddOnFirstView {
-            self.barButtonPageControl.currentPage = 0
+            self.presentedVC = 0
+            self.headerView.segmentedControlChanged(self)
             
-            if let firstVC = argumentVCs[0] as? OptionalInformationForArgumentTableViewController {
+            if let firstVC = argumentVCs[0] as? AddOnCollectionViewController {
                 setViewControllers([firstVC], direction: .forward, animated: true, completion: nil)
             }
         } else {
-            self.barButtonPageControl.currentPage = 1
+            self.presentedVC = 1
+            self.headerView.headerSegmentedControl.selectedSegmentIndex = 1
+            self.headerView.segmentedControlChanged(self)
             
             if fact.displayOption == .fact {
                 Analytics.logEvent("DiscussionOpened", parameters: [
@@ -124,7 +171,6 @@ class ArgumentPageViewController: UIPageViewController {
                     setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
                 }
             } else {
-                
                 if let secondVC = argumentVCs[1] as? PostsOfFactTableViewController {
                     setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
                 }
@@ -135,31 +181,23 @@ class ArgumentPageViewController: UIPageViewController {
         
     }
     
-    override func viewDidLayoutSubviews() {
-        barButtonPageControl.subviews.forEach {
-            $0.transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
-        }
-    }
+//    override func viewDidLayoutSubviews() {
+//        barButtonPageControl.subviews.forEach {
+//            $0.transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
+//        }
+//    }
 }
 
 extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
-//    override func viewDidLayoutSubviews() {
-//        super.viewDidLayoutSubviews()
-//
-//        for view in self.view.subviews {
-//            if view.isKind(of:UIScrollView.self) {
-//                view.frame = UIScreen.main.bounds
-//            } else if view.isKind(of:UIPageControl.self) {
-//                view.backgroundColor = UIColor.white.withAlphaComponent(0.4)
-//                let y = view.frame.origin.y
-//                let x = view.frame.width/2
-//                view.frame = CGRect(x: x-25, y: y, width: 50, height: 20)
-//                view.layer.cornerRadius = 5
-//
-//            }
-//        }
-//    }
+    func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+        if let nextVC = pendingViewControllers.first
+        ,let index = argumentVCs.index(of: nextVC){
+            print("Print: Das ist der aktuelle index: \(index)")
+            headerView.headerSegmentedControl.selectedSegmentIndex = index
+            headerView.segmentedControlChanged(self)
+        }
+    }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         
@@ -169,51 +207,71 @@ extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageView
         
         if let currentViewController = pageViewController.viewControllers?.first
             ,let index = argumentVCs.index(of: currentViewController){
-            changeBarButtonItem(index: index)
-            self.barButtonPageControl.currentPage = index
+//            changeBarButtonItem(index: index)
+            print("##indedx \(index), controler: \(currentViewController)")
+            self.presentedVC = index
+            
+            switch index {
+            case 0:
+                self.animateToRightSizeOfHeader(offset: firstViewOffset)
+            case 1:
+                self.animateToRightSizeOfHeader(offset: secondViewOffset)
+            case 2:
+                self.animateToRightSizeOfHeader(offset: thirdViewOffset)
+            default:
+                print("Wrong index")
+            }
         }
     }
     
-    //    func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
-    //
-    //        UIView.animate(withDuration: 0.3) {
-    //            self.factInfoBarButtonItemView.alpha = 0
-    //        }
-    //
-    //    }
-    
-    func changeBarButtonItem(index: Int) {
-        if index == 0 { // AddOnViewController is shown
-            //show Vision bar button
-            self.factInfoSectionLabel.text = "Themen"
-            
-            UIView.animate(withDuration: 0.2) {
-                self.factInfoImageView.alpha = 1
-                self.factInfoTopicLabel.alpha = 1
-            }
-        } else if index == 1 {  // DiscussionViewController or PostOfFactVC is shown
-            if let fact = fact {
-                if fact.displayOption == .fact {
-                    self.factInfoSectionLabel.text = "Diskussion"
-                } else {
-                    self.factInfoSectionLabel.text = "Beiträge"
-                }
-                
-                UIView.animate(withDuration: 0.2) {
-                    self.factInfoImageView.alpha = 0.7
-                    self.factInfoTopicLabel.alpha = 0.7
-                }
-            }
-        } else if index == 2 {
-            self.factInfoSectionLabel.text = "Beiträge"
-            
-            UIView.animate(withDuration: 0.2) {
-                self.factInfoImageView.alpha = 1
-                self.factInfoTopicLabel.alpha = 1
-            }
-            
+    func animateToRightSizeOfHeader(offset: CGFloat) {
+        let per:CGFloat = 60 //percentage of required view to move on while moving collection view
+        let deductValue = CGFloat(per / 100 * headerView.frame.size.height)
+        let value = offset - deductValue
+        let rect = headerView.frame
+
+        UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.75, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+            self.headerView.frame = CGRect(x: rect.origin.x, y: value, width: rect.size.width, height: rect.size.height)
+            self.view.layoutIfNeeded()
+        }) { (_) in
+            print("Done")
         }
+
+        print("##Neuen Werte, firstVCOffset: \(self.firstViewOffset), value: \(value), offset: \(offset)" )
     }
+    
+//    func changeBarButtonItem(index: Int) {
+//        if index == 0 { // AddOnViewController is shown
+//            //show Vision bar button
+//            self.factInfoSectionLabel.text = "Themen"
+//
+//            UIView.animate(withDuration: 0.2) {
+//                self.factInfoImageView.alpha = 1
+//                self.factInfoTopicLabel.alpha = 1
+//            }
+//        } else if index == 1 {  // DiscussionViewController or PostOfFactVC is shown
+//            if let fact = fact {
+//                if fact.displayOption == .fact {
+//                    self.factInfoSectionLabel.text = "Diskussion"
+//                } else {
+//                    self.factInfoSectionLabel.text = "Beiträge"
+//                }
+//
+//                UIView.animate(withDuration: 0.2) {
+//                    self.factInfoImageView.alpha = 0.7
+//                    self.factInfoTopicLabel.alpha = 0.7
+//                }
+//            }
+//        } else if index == 2 {
+//            self.factInfoSectionLabel.text = "Beiträge"
+//
+//            UIView.animate(withDuration: 0.2) {
+//                self.factInfoImageView.alpha = 1
+//                self.factInfoTopicLabel.alpha = 1
+//            }
+//
+//        }
+//    }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         
@@ -242,16 +300,76 @@ extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageView
         
         return nil
     }
-    
-//    func presentationCount(for pageViewController: UIPageViewController) -> Int {
-//        return argumentVCs.count
-//    }
-//
-//    func presentationIndex(for pageViewController: UIPageViewController) -> Int {
-//        return 1
-//    }
+}
+
+
+extension ArgumentPageViewController: PageViewHeaderDelegate, CommunityFeedHeaderDelegate, NewFactDelegate {
     
     
+    
+    func finishedCreatingNewInstance(item: Any?) {
+        if let vc = self.argumentVCs[1] as? PostsOfFactTableViewController {
+            vc.posts.removeAll()
+            vc.tableView.reloadData()
+            vc.getPosts()
+        } else if let vc = self.argumentVCs[2] as? PostsOfFactTableViewController {
+            vc.posts.removeAll()
+            vc.tableView.reloadData()
+            vc.getPosts()
+        }
+    }
+    
+    func newPostTapped() {
+        if let community = self.fact {
+            performSegue(withIdentifier: "goToNewPost", sender: community)
+        }
+    }
+    
+    func segmentedControlTapped(index: Int, direction: UIPageViewController.NavigationDirection) {
+        
+        let viewVC = self.argumentVCs[index]
+        self.setViewControllers([viewVC], direction: direction, animated: true) { (_) in
+            
+        }
+    }
+    
+    func childScrollViewScrolled(offset: CGFloat) {
+        
+        let per:CGFloat = 60 //percentage of required view to move on while moving collection view
+        let deductValue = CGFloat(per / 100 * headerView.frame.size.height)
+        let offset = (-(per/100)) * (offset)
+        let value = offset - deductValue
+        let rect = headerView.frame
+        
+        self.headerView.frame = CGRect(x: rect.origin.x, y: value, width: rect.size.width, height: rect.size.height)
+        switch presentedVC {
+        case 0:
+            let difference = self.firstViewOffset-offset
+            
+            if difference > 40 || difference < -40 {
+                return
+            }
+            self.firstViewOffset = offset
+        case 1:
+            self.secondViewOffset = offset
+        case 2:
+            self.thirdViewOffset = offset
+        default:
+            self.firstViewOffset = 0
+            print("Wert offset WRONG!!!!!")
+        }
+        
+        if rect.origin.y <= -250 {
+            if let community = fact {
+                self.navigationItem.title = community.title
+                self.newPostButton.isHidden = false
+            }
+        } else {
+            self.navigationItem.title = ""
+            self.newPostButton.isHidden = true
+        }
+        print("## Werte, cgrect: \(rect), offset: \(offset)" )
+    }
 }
 
 

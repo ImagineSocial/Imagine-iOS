@@ -23,10 +23,10 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nYR-GN-6Az" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                    <rect key="frame" x="10" y="15" width="350" height="189"/>
+                    <rect key="frame" x="5" y="5" width="360" height="199"/>
                     <subviews>
                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="farmstead" translatesAutoresizingMaskIntoConstraints="NO" id="prw-5I-YcC" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
-                            <rect key="frame" x="0.0" y="0.0" width="350" height="100"/>
+                            <rect key="frame" x="0.0" y="0.0" width="360" height="100"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="100" id="6oJ-Ww-cBI"/>
@@ -37,15 +37,15 @@
                                 </userDefinedRuntimeAttribute>
                             </userDefinedRuntimeAttributes>
                         </imageView>
-                        <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FYJ-aG-aCB">
-                            <rect key="frame" x="5" y="155" width="312.5" height="28"/>
+                        <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FYJ-aG-aCB">
+                            <rect key="frame" x="5" y="155" width="322.5" height="38"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="13"/>
                             <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <button hidden="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uqH-Ne-coA" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                            <rect key="frame" x="275" y="107.5" width="25" height="25"/>
+                            <rect key="frame" x="285" y="107.5" width="25" height="25"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="25" id="eZb-ha-QNB"/>
                                 <constraint firstAttribute="width" constant="25" id="lhB-vC-gjv"/>
@@ -58,14 +58,14 @@
                             </connections>
                         </button>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tCN-lQ-iwb">
-                            <rect key="frame" x="0.0" y="75" width="350" height="25"/>
+                            <rect key="frame" x="0.0" y="75" width="360" height="25"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="25" id="T9B-fT-XqE"/>
                             </constraints>
                         </view>
-                        <button clipsSubviews="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zrt-NR-jqX" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                            <rect key="frame" x="312.5" y="158" width="25" height="25"/>
+                        <button hidden="YES" clipsSubviews="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zrt-NR-jqX" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                            <rect key="frame" x="322.5" y="168" width="25" height="25"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="25" id="3bz-hb-gap"/>
@@ -81,13 +81,13 @@
                             </connections>
                         </button>
                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="500" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sZn-Fe-Ozc">
-                            <rect key="frame" x="5" y="85" width="265" height="70"/>
+                            <rect key="frame" x="5" y="85" width="275" height="70"/>
                             <fontDescription key="fontDescription" name="IBMPlexSans-SemiBold" family="IBM Plex Sans" pointSize="17"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <button clipsSubviews="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Oe-Vq-z7H" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                            <rect key="frame" x="310" y="105" width="30" height="30"/>
+                            <rect key="frame" x="320" y="105" width="30" height="30"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="30" id="nX0-tP-uIe"/>
@@ -140,36 +140,16 @@
                         <constraint firstAttribute="height" constant="8" id="qAW-zP-YO0"/>
                     </constraints>
                 </view>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mxz-69-yfB" customClass="HairlineView" customModule="Imagine" customModuleProvider="target">
-                    <rect key="frame" x="10" y="165" width="1" height="40"/>
-                    <color key="backgroundColor" systemColor="separatorColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="1" id="PLb-Or-rYx"/>
-                        <constraint firstAttribute="height" constant="40" id="xz6-HE-2hX"/>
-                    </constraints>
-                </view>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uWQ-Q3-IQ9" customClass="HairlineView" customModule="Imagine" customModuleProvider="target">
-                    <rect key="frame" x="359" y="185" width="1" height="20"/>
-                    <color key="backgroundColor" systemColor="separatorColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="20" id="NlA-nl-KV5"/>
-                        <constraint firstAttribute="width" constant="1" id="pkZ-h3-hFj"/>
-                    </constraints>
-                </view>
             </subviews>
             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
             <constraints>
                 <constraint firstItem="WVK-1U-sgK" firstAttribute="bottom" secondItem="0Au-p0-ZmM" secondAttribute="bottom" id="9vg-M0-255"/>
-                <constraint firstItem="nYR-GN-6Az" firstAttribute="top" secondItem="nTE-2L-dgO" secondAttribute="top" constant="15" id="O9P-UW-nyq"/>
-                <constraint firstAttribute="bottom" secondItem="mxz-69-yfB" secondAttribute="bottom" id="bn9-9T-18d"/>
+                <constraint firstItem="nYR-GN-6Az" firstAttribute="top" secondItem="nTE-2L-dgO" secondAttribute="top" constant="5" id="O9P-UW-nyq"/>
                 <constraint firstAttribute="bottom" secondItem="nYR-GN-6Az" secondAttribute="bottom" constant="1" id="e3t-Ur-RP6"/>
                 <constraint firstItem="0Au-p0-ZmM" firstAttribute="trailing" secondItem="WVK-1U-sgK" secondAttribute="trailing" constant="9" id="evN-Pv-wwL"/>
                 <constraint firstItem="WVK-1U-sgK" firstAttribute="leading" secondItem="0Au-p0-ZmM" secondAttribute="leading" constant="9" id="gKe-KG-hch"/>
-                <constraint firstItem="nYR-GN-6Az" firstAttribute="leading" secondItem="0Au-p0-ZmM" secondAttribute="leading" constant="10" id="gNx-fB-ZcX"/>
-                <constraint firstItem="mxz-69-yfB" firstAttribute="leading" secondItem="0Au-p0-ZmM" secondAttribute="leading" constant="10" id="lWh-dZ-cbZ"/>
-                <constraint firstItem="0Au-p0-ZmM" firstAttribute="trailing" secondItem="uWQ-Q3-IQ9" secondAttribute="trailing" constant="10" id="luE-I5-5Ko"/>
-                <constraint firstAttribute="bottom" secondItem="uWQ-Q3-IQ9" secondAttribute="bottom" id="tQL-RC-JAN"/>
-                <constraint firstAttribute="trailing" secondItem="nYR-GN-6Az" secondAttribute="trailing" constant="10" id="wwi-0L-r2p"/>
+                <constraint firstItem="nYR-GN-6Az" firstAttribute="leading" secondItem="0Au-p0-ZmM" secondAttribute="leading" constant="5" id="gNx-fB-ZcX"/>
+                <constraint firstAttribute="trailing" secondItem="nYR-GN-6Az" secondAttribute="trailing" constant="5" id="wwi-0L-r2p"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="0Au-p0-ZmM"/>
@@ -191,6 +171,6 @@
         <image name="down" width="200" height="200"/>
         <image name="farmstead" width="1204" height="1034"/>
         <image name="settings" width="30" height="30"/>
-        <image name="thanksButton" width="800" height="800"/>
+        <image name="thanksButton" width="100" height="100"/>
     </resources>
 </document>

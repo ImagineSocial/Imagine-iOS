@@ -40,8 +40,7 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
         didSet {
             if let info = info {
                 switch info.style {
-                case .header:
-                    headerImageViewHeight.constant = 0
+                
                 case .singleTopic:
                     headerImageViewHeight.constant = 0
                 default:
@@ -90,12 +89,7 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
     }
     
     override func awakeFromNib() {
-        backgroundBorderView.layer.borderWidth = 0.5
-        if #available(iOS 13.0, *) {
-            backgroundBorderView.layer.borderColor = UIColor.separator.cgColor
-        } else {
-            backgroundBorderView.layer.borderColor = UIColor.lightGray.cgColor
-        }
+        
         contentView.clipsToBounds = true
         backgroundBorderView.clipsToBounds = true
         
@@ -114,7 +108,6 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
     override func prepareForReuse() {
         self.settingButton.isHidden = true
         
-        headerDescriptionLabel.numberOfLines = 2
         headerImageViewHeight.constant = 75
         
         expandDescriptionButton.setImage(UIImage(named: "down"), for: .normal)

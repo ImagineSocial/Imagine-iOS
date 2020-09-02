@@ -45,8 +45,6 @@ class MeldeTableViewController: UITableViewController {
             optionArray = reportOptionsClass.opticOptionArray
         } else if reportCategory == "Schlechte Absicht" {
             optionArray = reportOptionsClass.badIntentionArray
-        } else if reportCategory == "Lüge/Täuschung" {
-            optionArray = reportOptionsClass.lieDeceptionArray
         } else if reportCategory == "Inhalt" {
             optionArray = reportOptionsClass.contentArray
         } else {

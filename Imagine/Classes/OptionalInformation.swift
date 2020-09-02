@@ -10,14 +10,11 @@ import UIKit
 import Firebase
 
 protocol OptionalInformationDelegate {
-    func done()
+    func fetchCompleted()
 }
 
 enum OptionalInformationStyle {
-    case justPosts
-    case justTopics
-    case all
-    case header
+    case collection
     case singleTopic
 }
 
@@ -38,7 +35,6 @@ class OptionalInformation {
     var description: String
     var documentID: String  // DocumentID of the addOn
     var fact: Fact
-    var addOnInfoHeader: AddOnInfoHeader?
     var imageURL: String?
     var OP: String
     
@@ -66,57 +62,11 @@ class OptionalInformation {
             if let singleTopic = singleTopic {
                 self.singleTopic = singleTopic
                 if singleTopic.documentID != "" {
-                    self.getFact(documentID: singleTopic.documentID)
-                }
-            }
-        }
-    }
-    
-    init(style: OptionalInformationStyle, OP: String, documentID: String, fact: Fact, imageURL: String, introSentence: String?, description: String, moreInformationLink: String?) {     /// For the InfoHeaderAddOnCell initialization
-        
-        let info = AddOnInfoHeader(description: description, imageURL: imageURL, introSentence: introSentence, moreInformationLink: moreInformationLink)
-        self.style = style
-        self.addOnInfoHeader = info
-        self.documentID = documentID
-        self.description = description
-        self.imageURL = imageURL
-        self.fact = fact
-        self.OP = OP
-    }
-    
-    
-    func getFact(documentID: String) {
-        print("Get Fact: \(documentID)")
-        let ref = db.collection("Facts").document(documentID)
-        
-        ref.getDocument { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let document = snap {
-                    if let data = document.data() {
-                        guard let name = data["name"] as? String else {
-                            return
+                    let baseFeedCell = BaseFeedCell()
+                    DispatchQueue.global(qos: .default).async {
+                        baseFeedCell.loadFact(fact: singleTopic, beingFollowed: false) { (fact) in
+                            self.singleTopic = fact
                         }
-                        
-                        let fact = Fact()
-                        fact.documentID = document.documentID
-                        fact.title = name
-                        
-                        if let imageURL = data["imageURL"] as? String { // Not mandatory
-                            fact.imageURL = imageURL
-                        }
-                        if let description = data["description"] as? String {   // Was introduced later on
-                            fact.description = description
-                        }
-                        if let displayType = data["displayOption"] as? String { // Was introduced later on
-                            if displayType == "topic" {
-                                fact.displayOption = .topic
-                            } // else { .fact
-                        }
-                        fact.fetchComplete = true
-                        
-                        self.singleTopic = fact
                     }
                 }
             }
@@ -185,7 +135,7 @@ class OptionalInformation {
                                 }
                             }
                             DispatchQueue.main.async {
-                                self.delegate?.done()
+                                self.delegate?.fetchCompleted()
                             }
                         }
                     }

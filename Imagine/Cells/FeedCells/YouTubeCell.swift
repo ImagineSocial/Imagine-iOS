@@ -32,9 +32,6 @@ class YouTubeCell: BaseFeedCell {
         
         titleLabel.adjustsFontSizeToFitWidth = true
         
-        // add corner radius on `contentView`
-        contentView.layer.cornerRadius = 8
-        backgroundColor = .clear
         playerView.layer.cornerRadius = 8
     }
     
@@ -179,11 +176,13 @@ class YouTubeCell: BaseFeedCell {
     
     func getFact(beingFollowed: Bool) {
         if let post = post {
-            self.loadFact(post: post, beingFollowed: beingFollowed) {
-                (fact) in
-                post.fact = fact
-                
-                self.loadFact()
+            if let fact = post.fact {
+                self.loadFact(fact: fact, beingFollowed: beingFollowed) {
+                    (fact) in
+                    post.fact = fact
+                    
+                    self.loadFact()
+                }
             }
         }
     }

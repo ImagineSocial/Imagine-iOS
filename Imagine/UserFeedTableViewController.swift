@@ -472,10 +472,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         
         let button = DesignableButton(frame: CGRect(x: 0, y: 0, width: socialMediaStackViewHeight, height: socialMediaStackViewHeight))
         if #available(iOS 13.0, *) {
-            button.backgroundColor = .secondarySystemBackground
+            button.backgroundColor = .systemBackground
             button.tintColor = .label
         } else {
-            button.backgroundColor = .clear
+            button.backgroundColor = .white
             button.tintColor = .black
         }
         button.isOpaque = true

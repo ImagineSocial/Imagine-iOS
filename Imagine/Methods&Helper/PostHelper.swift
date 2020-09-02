@@ -1239,9 +1239,9 @@ class ReportOptions {
     // Bad Intentions
     let badIntentionArray = [NSLocalizedString("Hate against...", comment: "Expressing hat against a certain type of people"),NSLocalizedString("Disrespectful", comment: "If a person thinks he shouldnt care about another person's opinion"), NSLocalizedString("Offensive", comment: "Using slurs"), NSLocalizedString("Harassment", comment: "Keep on asking for something, even if the other person is knowingly annoyed"), NSLocalizedString("Racist", comment: "Not accepting another persons heritage"), NSLocalizedString("Homophobic", comment: "Not accepting another persons gender or sexual preferences"), NSLocalizedString("Violance Supporting", comment: "support the use of violance"), NSLocalizedString("Belittlement of suicide", comment: "Tough topic, no belittlement of suicide or joking about it"), NSLocalizedString("Disrespectful against religions", comment: "Disrespectful against religions"), NSLocalizedString("Not listed", comment: "Something besides the given options")]
     // Lie & Deception
-    let lieDeceptionArray = ["Fake News",NSLocalizedString("Denying of facts", comment: "Ignore proven facts and live with the lie"), NSLocalizedString("Conspiracy theory", comment: "Conspiracy theory"), NSLocalizedString("Not listed", comment: "Something besides the given options")]
+//    let lieDeceptionArray = [ NSLocalizedString("Conspiracy theory", comment: "Conspiracy theory"), NSLocalizedString("Not listed", comment: "Something besides the given options")]
     // Content
-    let contentArray = [NSLocalizedString("Pornography", comment: "You know what it means"),NSLocalizedString("Pedophilia", comment: "sexual display of minors"), NSLocalizedString("Presentation of violance", comment: "Presentation of violance"), NSLocalizedString("Not listed", comment: "Something besides the given options")]
+    let contentArray = ["Misinformation", NSLocalizedString("Pornography", comment: "You know what it means"),NSLocalizedString("Pedophilia", comment: "sexual display of minors"), NSLocalizedString("Presentation of violance", comment: "Presentation of violance"), NSLocalizedString("crime", comment: "crime"), NSLocalizedString("animal_cruelty", comment: "animal cruelty"),  NSLocalizedString("Not listed", comment: "Something besides the given options")]
 }
 
 

@@ -49,13 +49,7 @@ class PostCell : BaseFeedCell {
         
         
         // add corner radius on `contentView`
-        contentView.layer.cornerRadius = 8
-//        titleLabel.layer.masksToBounds = true
         cellImageView.layer.cornerRadius = 8
-        contentView.layer.masksToBounds = true
-//        backgroundColor = .clear
-//        kleines View was rausfährt von Username zu Name und Icon
-        
     }
     
     override func prepareForReuse() {
@@ -221,11 +215,13 @@ class PostCell : BaseFeedCell {
     
     func getFact(beingFollowed: Bool) {
         if let post = post {
-            self.loadFact(post: post, beingFollowed: beingFollowed) {
-                (fact) in
-                post.fact = fact
-                
-                self.loadFact(post: post)
+            if let fact = post.fact {
+                self.loadFact(fact: fact, beingFollowed: beingFollowed) {
+                    (fact) in
+                    post.fact = fact
+                    
+                    self.loadFact(post: post)
+                }
             }
         }
     }

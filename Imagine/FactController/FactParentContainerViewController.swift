@@ -44,7 +44,7 @@ class FactParentContainerViewController: UIViewController {
     
     var tipView: EasyTipView?
     
-    
+    var pageViewHeaderDelegate: PageViewHeaderDelegate?
     //MARK:-
     
     
@@ -98,6 +98,7 @@ class FactParentContainerViewController: UIViewController {
         self.navigationItem.leftBarButtonItem = barButton
     }
     
+    //MARK: 
 //    func setPostButton() {
 //        let button = DesignableButton()
 //        button.translatesAutoresizingMaskIntoConstraints = false

@@ -40,9 +40,6 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         self.addSubview(buttonLabel)
                 
         webView.navigationDelegate = self
-        
-        backgroundColor = .clear
-        contentView.layer.cornerRadius = 8
         webView.layer.cornerRadius = 8
         webView.clipsToBounds = true
         
@@ -157,11 +154,13 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
     
     func getFact(beingFollowed: Bool) {
         if let post = post {
-            self.loadFact(post: post, beingFollowed: beingFollowed) {
-                (fact) in
-                post.fact = fact
-                
-                self.loadFact()
+            if let fact = post.fact {
+                self.loadFact(fact: fact, beingFollowed: beingFollowed) {
+                    (fact) in
+                    post.fact = fact
+                    
+                    self.loadFact()
+                }
             }
         }
     }

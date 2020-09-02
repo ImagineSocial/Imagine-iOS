@@ -28,12 +28,6 @@ class ThoughtCell : BaseFeedCell {
         self.initiateCell(thanksButton: thanksButton, wowButton: wowButton, haButton: haButton, niceButton: niceButton, factImageView: factImageView, profilePictureImageView: profilePictureImageView)
         
         titleLabel.sizeToFit()
-        
-        // add corner radius on `contentView`
-        contentView.layer.cornerRadius = 8
-//        backgroundColor =  Constants.backgroundColorForTableViews
-        backgroundColor = .clear
-//        contentView.backgroundColor = Constants.imagineColor        
     }
     
     override func prepareForReuse() {
@@ -87,7 +81,9 @@ class ThoughtCell : BaseFeedCell {
             
             if post.description != "" {
                 self.titleToLikeButtonsConstraint.constant = 25
-                self.descriptionLabel.text = post.description
+                let newLineString = "\n"    // Need to hardcode this and replace the \n of the fetched text
+                let descriptionText = post.description.replacingOccurrences(of: "\\n", with: newLineString)
+                self.descriptionLabel.text = descriptionText
             } else {
                 self.descriptionLabel.text = ""
                 self.titleToLikeButtonsConstraint.constant = 10
@@ -175,11 +171,13 @@ class ThoughtCell : BaseFeedCell {
     
     func getFact(beingFollowed: Bool) {
         if let post = post {
-            self.loadFact(post: post, beingFollowed: beingFollowed) {
-                (fact) in
-                post.fact = fact
-                
-                self.loadFact()
+            if let fact = post.fact {
+                self.loadFact(fact: fact, beingFollowed: beingFollowed) {
+                    (fact) in
+                    post.fact = fact
+                    
+                    self.loadFact()
+                }
             }
         }
     }

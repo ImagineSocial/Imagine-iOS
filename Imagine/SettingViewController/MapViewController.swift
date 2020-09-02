@@ -66,7 +66,7 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate {
             annotation.title = location.title
             mapView.addAnnotation(annotation)
         } else {
-            choosenLocationLabel.text = "Wähle einen Standort aus..."
+            choosenLocationLabel.text = NSLocalizedString("setting_location_cell_text", comment: "choose location")
         }
         
         setUpSearchController()
@@ -139,7 +139,7 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate {
         //searchBar
         let searchBar = resultSearchController!.searchBar
         searchBar.sizeToFit()
-        searchBar.placeholder = "Search for places"
+        searchBar.placeholder = NSLocalizedString("search_map_placeholder", comment: "search_map_placeholder")
         
         navigationItem.searchController = resultSearchController
     }

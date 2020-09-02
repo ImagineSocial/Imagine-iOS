@@ -35,6 +35,17 @@ class FactCell:UICollectionViewCell {
         
         layer.cornerRadius = 4
         layer.masksToBounds = true
+//        
+//        contentView.clipsToBounds = false
+//        let layer = contentView.layer
+//        if #available(iOS 13.0, *) {
+//            layer.shadowColor = UIColor.label.cgColor
+//        } else {
+//            layer.shadowColor = UIColor.black.cgColor
+//        }
+//        layer.shadowOffset = CGSize(width: 0, height: 0)
+//        layer.shadowRadius = 3
+//        layer.shadowOpacity = 0.4
     }
     
     override func prepareForReuse() {

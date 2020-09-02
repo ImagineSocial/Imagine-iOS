@@ -16,6 +16,7 @@ import EasyTipView
 import BSImagePicker
 import Photos
 import CropViewController
+import SwiftLinkPreview
 
 enum PostSelection {
     case picture
@@ -102,6 +103,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var newInstanceDelegate: NewFactDelegate?
     
     var infoView: UIView?
+    
+    let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: InMemoryCache())
     
     var markPostTipView: EasyTipView?
     var postLinkTipView: EasyTipView?
@@ -2053,7 +2056,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    //MARK: -SharePressed
+    //MARK:- SharePressed
     
     @IBAction func sharePressed(_ sender: Any) {
         
@@ -2080,6 +2083,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             if titleTextView.text != "", let postRef = postRef {
                 self.view.activityStartAnimating()
                 self.shareButton.isEnabled = false
+                
                 switch selectedOption {
                 case .thought:
                     self.postThought(postRef: postRef, userID: userID)
@@ -2107,6 +2111,30 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
         } else {
             self.notLoggedInAlert()
+        }
+    }
+    
+    //MARK:- LinkPreview
+    
+    func getLinkPreview(link: String) {
+        if link.isValidURL {
+            slp.preview(link, onSuccess: { (response) in
+                if let imageURL = response.image {
+                    
+                }
+                if let shortURL = response.canonicalUrl {
+                    
+                }
+            }) { (err) in
+                print("We have an error: \(err.localizedDescription)")
+                self.alert(message: err.localizedDescription, title: NSLocalizedString("error_title", comment: "got error"))
+                self.view.activityStopAnimating()
+                self.shareButton.isEnabled = true
+            }
+        } else {
+            self.view.activityStopAnimating()
+            self.shareButton.isEnabled = true
+            self.alert(message: NSLocalizedString("error_no_link", comment: "no link"), title: NSLocalizedString("error_title", comment: "got error"))
         }
     }
     
@@ -2416,9 +2444,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 self.alert(message: NSLocalizedString("error_link_not_valid", comment: "not valid"), title: NSLocalizedString("error_title", comment: "got error"))
             }
         } else {
-            self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
-            self.alert(message: NSLocalizedString("error_no_link", comment: "no link"), title: NSLocalizedString("error_title", comment: "got error"))
+            
         }
     }
     

@@ -32,13 +32,11 @@ class GifCell: BaseFeedCell {
         
         self.addSubview(buttonLabel)
         
-        gifView.layoutIfNeeded()
         
         
-        backgroundColor = .clear
-        contentView.layer.cornerRadius = 8
         gifView.layer.cornerRadius = 8
         gifView.clipsToBounds = true
+        gifView.layoutIfNeeded()
         
         setupGIFPlayer()
     }
@@ -152,11 +150,13 @@ class GifCell: BaseFeedCell {
     
     func getFact(beingFollowed: Bool) {
         if let post = post {
-            self.loadFact(post: post, beingFollowed: beingFollowed) {
-                (fact) in
-                post.fact = fact
-                
-                self.loadFact()
+            if let fact = post.fact {
+                self.loadFact(fact: fact, beingFollowed: beingFollowed) {
+                    (fact) in
+                    post.fact = fact
+                    
+                    self.loadFact()
+                }
             }
         }
     }

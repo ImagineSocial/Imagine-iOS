@@ -27,7 +27,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="424" height="102"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FTS-vc-yco" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
+                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FTS-vc-yco" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
                         <rect key="frame" x="64" y="10" width="340" height="72"/>
                         <subviews>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="253" text="Text" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q22-uC-mgD">
@@ -171,6 +171,6 @@
     </objects>
     <resources>
         <image name="default-user" width="415" height="415"/>
-        <image name="niceButton" width="800" height="800"/>
+        <image name="niceButton" width="100" height="100"/>
     </resources>
 </document>

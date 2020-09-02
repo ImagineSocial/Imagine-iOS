@@ -7,7 +7,7 @@
 */
 
 //Report options
-"Opinion, not a fact" = "Meinung, kein Fakt";
+"Opinion, not a fact" = "Persönliche Meinung";
 "Sensationalism" = "Sensationalismus";
 "Pretentious" = "Angeberisch";
 "Ignorant Thinking" = "Schwarz-Weiß-Denken";
@@ -18,7 +18,7 @@
 "Offensive" = "Beleidigend";
 "Harassment" = "Belästigung";
 "Racist" = "Rassistisch";
-"Homophobic" = "Homophob";
+"Homophobic" = "Homophobie";
 "Violance Supporting" = "Gewaltunterstützend";
 "Belittlement of suicide" = "Verharmlosung von Suizid";
 "Disrespectful against religions" = "Inakzeptanz gegenüber Religionen";
@@ -27,6 +27,8 @@
 "Pornography" = "Pornografie";
 "Pedophilia" = "Pädophilie";
 "Presentation of violance" = "Gewaltdarstellung";
+"crime" = "Straftat";
+"animal_cruelty" = "Tierquälerei";
 
 //Date Format
 "%d days ago" = "Vor %d Tagen";
@@ -84,6 +86,8 @@
 "next" = "Weiter";
 "cancel" = "Abbrechen";
 "error_title" = "Es ist ein Fehler aufgetreten";
+"title:" = "Titel:";
+"description:" = "Beschreibung:";
 "yes" = "Ja";
 "no" = "Nein";
 "back" = "Zurück";
@@ -239,7 +243,25 @@
 "proposal_detail_guilty" = "In objektiven Diskussionen kann der Einfluss von Firmen & Einzelpersonen auf das Thema diskutiert werden";
 
 //SettingTableViewController
+"setting_community_header_text" = "Community-Einstellungen";
+"setting_community_addOn_as_start" = "Themen Ansicht als Startbildschirm";
+"setting_community_addOn_as_start_description" = "Wird deine Community besser von den Unterthemen repräsentiert, als von den Beiträgen, wähle diese Option aus.";
+"setting_user_header_text" = "Profil-Einstellungen";
+"setting_user_personal_bio" = "Steckbrief:";
+"setting_social_media_button_description" = "Gib einen Link zu den jeweiligen Profilen ein, um einen Button in deinem Profil zu erhalten. Weise so die Besucher auf deine anderen Social-Media Profile hin oder promote deine persönlichen Favoriten.";
+"setting_user_personal_info" = "Persönliche Angaben";
+"setting_user_personal_info_description" = "Mit der Altersangabe unterstützt du Imagine. Wir können diese Angaben nutzen, um unsere User besser zu verstehen und unsere kommenden Werbevorhaben zu optimieren. Das Alter wird nicht öffentlich angezeigt.\nDie Location sorgt für eine bessere Auswahl an Communities und passendere Werbung (später). Im Profil kann es ebenfalls angezeigt werden, um anderen zu zeigen, wo die Mituser herkommen.\nAlle Daten werden bei uns mit Vorsicht gehandhabt und nicht an dritte weitergegeben.";
+"setting_user_birthday" = "Geburtsjahr:";
+"setting_user_location_public" = "Ort in Profil anzeigen?";
+"setting_addOn_header_text" = "Themen-Einstellungen:";
+"setting_addOn_change_order" = "Arrangiere die Beiträge:";
+"setting_location_cell_text" = "Wähle einen Standort aus";
+
+//MapViewController
+"search_map_placeholder" = "Suche nach deinem Ort";
 
 //NewCommunityItemTableViewController
 "new_community_discussion_description" = "Das Thema wird in zwei Spalten dargestellt. Die Gegenüberstellung ermöglicht es sich mit dem Thema gründlich auseinanderzusetzen. \nDie Auswahl der Überschriften der Spalten kannst du hier auswählen:";
 "new_community_topic_description" = "Das Thema wird als Sammlung aller verlinkten Beiträge zu diesem Thema dargestellt.";
+
+//RepostViewController übersprungen!

@@ -142,7 +142,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                         let data = document.data()
                         
                         if let title = data["title"] as? String, let OP = data["OP"] as? String, let description = data["description"] as? String { //Normal collection
-                            let addOn = OptionalInformation(style: .all, OP: OP, documentID: document.documentID, fact: fact, headerTitle: title, description: description, singleTopic: nil)
+                            let addOn = OptionalInformation(style: .collection, OP: OP, documentID: document.documentID, fact: fact, headerTitle: title, description: description, singleTopic: nil)
                             
                             if let imageURL = data["imageURL"] as? String {
                                 addOn.imageURL = imageURL
@@ -168,9 +168,9 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                                 source = moreInfo
                             }
                             
-                            let addOn = OptionalInformation(style: .header, OP: OP, documentID: document.documentID, fact: fact, imageURL: headerImage ,introSentence: intro, description: description, moreInformationLink: source)
+//                            let addOn = OptionalInformation(style: .header, OP: OP, documentID: document.documentID, fact: fact, imageURL: headerImage ,introSentence: intro, description: description, moreInformationLink: source)
                             
-                            self.optionalInformations.insert(addOn, at: 0)  // Should be on top of the vc
+//                            self.optionalInformations.insert(addOn, at: 0)  // Should be on top of the vc
                         } else if let documentID = data["linkedFactID"] as? String {    //SingleTopic
                             if let headerTitle = data["headerTitle"] as? String, let description = data["description"] as? String,  let OP = data["OP"] as? String {
                                 
@@ -267,15 +267,15 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             
             
             switch info.style {
-                case .header:
-                    if let addOnHeader = info.addOnInfoHeader {
-                        if let cell = tableView.dequeueReusableCell(withIdentifier: infoHeaderReuseIdentifier, for: indexPath) as? InfoHeaderAddOnCell {
-                            cell.addOnInfo = addOnHeader
-                            cell.delegate = self
-                            
-                            return cell
-                        }
-                    }
+//                case .header:
+//                    if let addOnHeader = info.addOnInfoHeader {
+//                        if let cell = tableView.dequeueReusableCell(withIdentifier: infoHeaderReuseIdentifier, for: indexPath) as? InfoHeaderAddOnCell {
+//                            cell.addOnInfo = addOnHeader
+//                            cell.delegate = self
+//
+//                            return cell
+//                        }
+//                    }
                     
                 case .singleTopic:
                     if let cell = tableView.dequeueReusableCell(withIdentifier: singleTopicReuseIdentifier, for: indexPath) as? SingleTopicAddOnCell {
@@ -312,23 +312,23 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
-        if !noOptionalInformation {
+//        if !noOptionalInformation {
             let optInfo = optionalInformations[section]
             
-            if let _ = optInfo.addOnInfoHeader {
-                return nil
-            } else {
-                if let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: addOnHeaderIdentifier) as? AddOnHeaderView {
-                    
-                    headerView.info = optInfo
-                    headerView.section = section
-                    
-                    headerView.delegate = self
-                    
-                    return headerView
-                }
-            }
-        }
+//            if let _ = optInfo.addOnInfoHeader {
+//                return nil
+//            } else {
+//                if let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: addOnHeaderIdentifier) as? AddOnHeaderView {
+//
+//                    headerView.info = optInfo
+//                    headerView.section = section
+//
+//                    headerView.delegate = self
+//
+//                    return headerView
+//                }
+//            }
+//        }
         return nil
     }
     
@@ -344,20 +344,20 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
         return nil
     }
     
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        
-        if !noOptionalInformation {
-            let optInfo = optionalInformations[section]
-            
-            if let _ = optInfo.addOnInfoHeader {
-                return 0
-            } else {
-                return UITableView.automaticDimension
-            }
-        } else {
-            return 0
-        }
-    }
+//    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//
+//        if !noOptionalInformation {
+//            let optInfo = optionalInformations[section]
+//
+//            if let _ = optInfo.addOnInfoHeader {
+//                return 0
+//            } else {
+//                return UITableView.automaticDimension
+//            }
+//        } else {
+//            return 0
+//        }
+//    }
     
     override func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
         return 50
@@ -398,8 +398,6 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
         } else {
             let info = optionalInformations[indexPath.section]
             switch info.style {
-            case .header:
-                return UITableView.automaticDimension
             case .singleTopic:
                 return UITableView.automaticDimension
             default:
@@ -596,6 +594,15 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
                 }
             }
         }
+        if segue.identifier == "toAddOnFeedSegue" {
+            if let navVC = segue.destination as? UINavigationController {
+                if let vc = navVC.topViewController as? AddOnFeedTableViewController {
+                    if let info = sender as? OptionalInformation {
+                        vc.addOn = info
+                    }
+                }
+            }
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -630,7 +637,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
     
 }
 
-extension OptionalInformationForArgumentTableViewController: AddOnHeaderDelegate, InfoHeaderAddOnCellDelegate {
+extension OptionalInformationForArgumentTableViewController: AddOnHeaderDelegate {
     
     func settingsTapped(section: Int) {
         let info = optionalInformations[section]
@@ -667,8 +674,9 @@ extension OptionalInformationForArgumentTableViewController: AddOnHeaderDelegate
     }
     
     func showDescription() {
-        tableView.beginUpdates()
-        tableView.endUpdates()
+//        tableView.beginUpdates()
+//        tableView.endUpdates()
+        performSegue(withIdentifier: "toAddOnFeedSegue", sender: self.optionalInformations[1])
     }
     
     func showAllPosts(documentID: String) {

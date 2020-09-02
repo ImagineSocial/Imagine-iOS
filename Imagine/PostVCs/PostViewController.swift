@@ -904,7 +904,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     let titleLabel : UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 16)
+        label.font = UIFont(name: "IBMPlexSans-Medium", size: 16)
         label.numberOfLines = 0
         label.textAlignment = .left
         label.minimumScaleFactor = 0.8
@@ -1043,7 +1043,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     let descriptionLabel : UITextView = {   // Changed to TextView to make links clickable
         let label = UITextView()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans-Regular", size: 22)
+        label.font = UIFont(name: "IBMPlexSans", size: 15)
         label.textAlignment = NSTextAlignment.left
         label.isScrollEnabled = false
         label.isEditable = false
@@ -1575,9 +1575,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                     setFact()
                 } else {
                     let baseCell = BaseFeedCell()
-                    baseCell.loadFact(post: self.post, beingFollowed: false) { (fact) in
-                        self.post.fact = fact
-                        self.setFact()
+                    if let fact = post.fact {
+                        baseCell.loadFact(fact: fact, beingFollowed: false) { (fact) in
+                            self.post.fact = fact
+                            self.setFact()
+                        }
                     }
                 }
             }
@@ -1592,9 +1594,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                     setFact()
                 } else {
                     let baseCell = BaseFeedCell()
-                    baseCell.loadFact(post: self.post, beingFollowed: false) { (fact) in
-                        self.post.fact = fact
-                        self.setFact()
+                    if let fact = post.fact {
+                        baseCell.loadFact(fact: fact, beingFollowed: false) { (fact) in
+                            self.post.fact = fact
+                            self.setFact()
+                        }
                     }
                 }
             }

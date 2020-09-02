@@ -24,6 +24,12 @@ struct Constants {
         static let textOfTheWeek = "Tauscht euch aus, seid nett und lernt neue Menschen kennen!"
     }
     
+    struct Numbers {
+        static let feedCornerRadius: CGFloat = 12
+        static let communityHeaderHeight: CGFloat = 260
+        static let feedShadowRadius: CGFloat = 4
+    }
+    
     struct characterLimits {
         static let factTitleCharacterLimit = 30
         static let factDescriptionCharacterLimit = 120

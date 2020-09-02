@@ -88,9 +88,9 @@ class HandyHelper {
         } else if titleCount <= 140 {   // Four Lines
             labelHeight = 90
         } else if titleCount <= 180 {   //  5 Lines
-            labelHeight = 105
+            labelHeight = 95
         } else if titleCount <= 200 {   // 6 Lines
-            labelHeight = 145
+            labelHeight = 115
         }
         
         return labelHeight

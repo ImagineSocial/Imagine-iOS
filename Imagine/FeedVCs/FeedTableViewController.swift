@@ -524,9 +524,6 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
             if let fact = sender as? Fact {
                 if let factVC = segue.destination as? ArgumentPageViewController {
                         factVC.fact = fact
-//                    if fact.displayOption == .topic {
-//                        factVC.displayMode = .topic
-//                    }
                 }
             }
         }

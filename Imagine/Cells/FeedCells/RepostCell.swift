@@ -37,15 +37,8 @@ class RePostCell : BaseFeedCell {
         buttonLabel.textColor = .black
         
         // Profile Picture
-        let layer = ogProfilePictureImageView.layer
-        layer.cornerRadius = ogProfilePictureImageView.frame.width/2
+        ogProfilePictureImageView.layer.cornerRadius = ogProfilePictureImageView.frame.width/2
         
-        cellImageView.layer.cornerRadius = 5
-        
-        // add corner radius on `contentView`
-        contentView.layer.cornerRadius = 8
-        backgroundColor = .clear
-//        contentView.backgroundColor = Constants.imagineColor
         cellImageView.layer.cornerRadius = 8
     }
     

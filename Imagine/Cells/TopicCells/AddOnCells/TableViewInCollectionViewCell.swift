@@ -149,11 +149,11 @@ extension TableViewInCollectionViewCell: UITableViewDelegate, UITableViewDataSou
         } else if let info = items as? [OptionalInformation] {
             if let cell = tableView.dequeueReusableCell(withIdentifier: addOnHeaderIdentifier, for: indexPath) as? InfoHeaderAddOnCell {
                 
-                if info.count != 0 {
-                    if let header = info[0].addOnInfoHeader {
-                        cell.addOnInfo = header
-                    }
-                }
+//                if info.count != 0 {
+//                    if let header = info[0].addOnInfoHeader {
+//                        cell.addOnInfo = header
+//                    }
+//                }
                 
                 return cell
             }

@@ -78,7 +78,7 @@ class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegat
     }
     
     // OptionalInformationDelegate
-    func done() {
+    func fetchCompleted() {
         if let info = info {
             if let orderList = info.itemOrder { // If an itemOrder exists (set in addOn-settings), order according to it
                 let items = info.items
@@ -227,27 +227,5 @@ extension CollectionViewInTableViewCell: SmallPostCellDelegate {
             delegate?.saveItems(section: section, item: item)
         }
     }
-}
-
-class AddItemCollectionViewCell: UICollectionViewCell {
-    
-    override func layoutSubviews() {
-        
-        addSubview(addPostImageView)
-        
-        addPostImageView.widthAnchor.constraint(equalTo: widthAnchor, constant: -10).isActive = true
-        addPostImageView.heightAnchor.constraint(equalTo: heightAnchor, constant: -10).isActive = true
-        addPostImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5).isActive = true
-        addPostImageView.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
-    }
-    
-    let addPostImageView: UIImageView = {
-       let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "AddPost-1")
-        imageView.tintColor = .imagineColor
-        
-        return imageView
-    }()
 }
 

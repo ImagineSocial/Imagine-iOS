@@ -48,11 +48,10 @@ class NewAddOnTableViewController: UITableViewController {
         self.doneBarButtonItem.isEnabled = false
         self.doneBarButtonItem.tintColor = UIColor.blue.withAlphaComponent(0.5)
         
-        let header = OptionalInformation(style: .header, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_header_header", comment: "new header text"), description: Constants.texts.AddOns.headerText, singleTopic: nil)
-        let infoAll = OptionalInformation(style: .all, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_collection_header", comment: "new collection text"), description: Constants.texts.AddOns.collectionText, singleTopic: nil)
+        let infoAll = OptionalInformation(style: .collection, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_collection_header", comment: "new collection text"), description: Constants.texts.AddOns.collectionText, singleTopic: nil)
         let singleTopic = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_singleTopic_header", comment: "new singleTopicText"), description: Constants.texts.AddOns.singleTopicText, singleTopic: nil)
         
-        optionalInformations.append(contentsOf: [header, infoAll, singleTopic])
+        optionalInformations.append(contentsOf: [infoAll, singleTopic])
         tableView.reloadData()
     }
 
@@ -91,8 +90,6 @@ class NewAddOnTableViewController: UITableViewController {
                 
                 
                 switch info.style {
-                case .header:
-                    cell.exampleImageView.image = UIImage(named: "AddOnHeaderExample")
                 case .singleTopic:
                     cell.exampleImageView.image = UIImage(named: "AddOnSingleTopicExample")
                 default:
@@ -122,16 +119,7 @@ class NewAddOnTableViewController: UITableViewController {
    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if optionalInformations.count != indexPath.section {
-            let info = optionalInformations[indexPath.section]
-            
-            switch info.style {
-            case .singleTopic:
-                return 350
-            case .header:
-                return 225
-            default:
-                return 300
-            }
+            return 350
         } else {
             return 50
         }
@@ -182,14 +170,8 @@ class NewAddOnTableViewController: UITableViewController {
             self.selectedAddOnStyle = info.style
             
             switch info.style {
-            case .header:
-                self.selectedAddOnTypeLabel.text = "AddOn Header"
-            case .all:
+            case .collection:
                 self.selectedAddOnTypeLabel.text = NSLocalizedString("addOn_type_collection", comment: "adde a normal collection")
-            case .justPosts:
-                self.selectedAddOnTypeLabel.text = "Collection of just Posts"
-            case .justTopics:
-                self.selectedAddOnTypeLabel.text = "Collection of just Topics"
             case .singleTopic:
                 self.selectedAddOnTypeLabel.text = NSLocalizedString("addOn_type_singleTopic", comment: "adde a singleTopic")
             }
@@ -207,9 +189,7 @@ class NewAddOnTableViewController: UITableViewController {
                 if let vc = navVC.topViewController as? NewCommunityItemTableViewController {
                     if let style = sender as? OptionalInformationStyle {
                         if let fact = fact {
-                            if style == .header {
-                                vc.new = .addOnHeader
-                            } else if style == .singleTopic {
+                            if style == .singleTopic {
                                 vc.new = .singleTopicAddOn
                             } else {
                                 vc.new = .addOn

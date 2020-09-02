@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSans-Regular.ttf">
+            <string>IBMPlexSans</string>
+        </array>
+        <array key="IBMPlexSans-SemiBold.ttf">
+            <string>IBMPlexSans-SemiBold</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" contentMode="center" reuseIdentifier="AddOnHorizontalScrollCell" id="iX1-RK-FqE" customClass="AddOnHorizontalScrollCollectionViewCell" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="377" height="500"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <collectionViewCellContentView key="contentView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="jq4-be-6ds">
+                <rect key="frame" x="0.0" y="0.0" width="377" height="500"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WCI-Cp-mqc">
+                        <rect key="frame" x="0.0" y="0.0" width="377" height="500"/>
+                        <subviews>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="UQa-Di-4VI">
+                                <rect key="frame" x="0.0" y="230" width="377" height="260"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="260" id="xKg-eG-lGl"/>
+                                </constraints>
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="not-x8-X9s">
+                                    <size key="itemSize" width="128" height="128"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="10" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                            </collectionView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="500" text="dis isjakk isk dile shij kilelarum ipasi sidu dis isjakk isk dile shij kile" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Plr-ql-LiQ">
+                                <rect key="frame" x="10" y="125" width="323" height="40"/>
+                                <fontDescription key="fontDescription" name="IBMPlexSans-SemiBold" family="IBM Plex Sans" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button clipsSubviews="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sNj-wM-839" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                <rect key="frame" x="338" y="128" width="34" height="34"/>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="34" id="BJx-Kp-Kdd"/>
+                                    <constraint firstAttribute="width" constant="34" id="bFj-Uc-iBX"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                                <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <inset key="imageEdgeInsets" minX="1" minY="1" maxX="1" maxY="1"/>
+                                <state key="normal" image="thanksButton">
+                                    <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="17"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="thanksButtonTapped:" destination="iX1-RK-FqE" eventType="touchUpInside" id="DRZ-FN-fM5"/>
+                                </connections>
+                            </button>
+                            <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y4D-xM-Num">
+                                <rect key="frame" x="10" y="165" width="357" height="60"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="7bh-Wj-zGN"/>
+                                </constraints>
+                                <string key="text">larum ipasi sidu dis isjakk isk dile shij kilelarum ipasi sidu dis isjakk isk dile shij kilelarum ipasi sidu dis isjakk isk dile shij kile</string>
+                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="13"/>
+                                <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="farmstead" translatesAutoresizingMaskIntoConstraints="NO" id="Cdc-KH-a80" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="377" height="115"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="115" id="OeK-nh-rdq"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="2"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6eY-Ek-Ufb">
+                                <rect key="frame" x="0.0" y="90" width="377" height="25"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="25" id="Liz-4X-ScF"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="UQa-Di-4VI" firstAttribute="top" secondItem="y4D-xM-Num" secondAttribute="bottom" constant="5" id="14H-Kz-WaM"/>
+                            <constraint firstItem="Cdc-KH-a80" firstAttribute="leading" secondItem="WCI-Cp-mqc" secondAttribute="leading" id="6xZ-gt-r0B"/>
+                            <constraint firstAttribute="trailing" secondItem="UQa-Di-4VI" secondAttribute="trailing" id="76B-4b-Ljr"/>
+                            <constraint firstItem="6eY-Ek-Ufb" firstAttribute="leading" secondItem="WCI-Cp-mqc" secondAttribute="leading" id="8kn-R1-rOW"/>
+                            <constraint firstItem="UQa-Di-4VI" firstAttribute="leading" secondItem="WCI-Cp-mqc" secondAttribute="leading" id="E5P-aS-rED"/>
+                            <constraint firstAttribute="trailing" secondItem="sNj-wM-839" secondAttribute="trailing" constant="5" id="FVt-QU-Dn1"/>
+                            <constraint firstAttribute="bottom" secondItem="UQa-Di-4VI" secondAttribute="bottom" constant="10" id="G8O-8G-DGH"/>
+                            <constraint firstItem="sNj-wM-839" firstAttribute="centerY" secondItem="Plr-ql-LiQ" secondAttribute="centerY" id="IDa-VV-JFa"/>
+                            <constraint firstItem="sNj-wM-839" firstAttribute="leading" secondItem="Plr-ql-LiQ" secondAttribute="trailing" constant="5" id="Itk-RX-ChX"/>
+                            <constraint firstItem="Cdc-KH-a80" firstAttribute="top" secondItem="WCI-Cp-mqc" secondAttribute="top" id="Ivz-jD-k2s"/>
+                            <constraint firstItem="Plr-ql-LiQ" firstAttribute="leading" secondItem="WCI-Cp-mqc" secondAttribute="leading" constant="10" id="TR2-Yt-CcU"/>
+                            <constraint firstItem="y4D-xM-Num" firstAttribute="leading" secondItem="Plr-ql-LiQ" secondAttribute="leading" id="XyT-dq-YnU"/>
+                            <constraint firstAttribute="trailing" secondItem="Cdc-KH-a80" secondAttribute="trailing" id="eac-cN-C4V"/>
+                            <constraint firstAttribute="trailing" secondItem="y4D-xM-Num" secondAttribute="trailing" constant="10" id="lcz-8Y-uCk"/>
+                            <constraint firstItem="Plr-ql-LiQ" firstAttribute="top" secondItem="Cdc-KH-a80" secondAttribute="bottom" constant="10" id="liy-ex-NM9"/>
+                            <constraint firstItem="y4D-xM-Num" firstAttribute="top" secondItem="Plr-ql-LiQ" secondAttribute="bottom" id="rhH-bD-GcC"/>
+                            <constraint firstAttribute="trailing" secondItem="6eY-Ek-Ufb" secondAttribute="trailing" id="zcg-cw-3LV"/>
+                            <constraint firstItem="6eY-Ek-Ufb" firstAttribute="bottom" secondItem="Cdc-KH-a80" secondAttribute="bottom" id="zrB-KQ-4IV"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="WCI-Cp-mqc" secondAttribute="trailing" id="OMB-3Z-vWg"/>
+                    <constraint firstItem="WCI-Cp-mqc" firstAttribute="leading" secondItem="jq4-be-6ds" secondAttribute="leading" id="SWi-0N-C3I"/>
+                    <constraint firstItem="WCI-Cp-mqc" firstAttribute="top" secondItem="jq4-be-6ds" secondAttribute="top" id="VkO-6m-K0v"/>
+                    <constraint firstAttribute="bottom" secondItem="WCI-Cp-mqc" secondAttribute="bottom" id="vEX-GT-NHV"/>
+                </constraints>
+            </collectionViewCellContentView>
+            <size key="customSize" width="377" height="500"/>
+            <connections>
+                <outlet property="collectionView" destination="UQa-Di-4VI" id="mXp-i4-uRF"/>
+                <outlet property="containerView" destination="WCI-Cp-mqc" id="oGS-c1-8bL"/>
+                <outlet property="descriptionLabel" destination="y4D-xM-Num" id="PpP-HJ-e1c"/>
+                <outlet property="gradientView" destination="6eY-Ek-Ufb" id="fPa-OL-6qT"/>
+                <outlet property="headerImageView" destination="Cdc-KH-a80" id="nch-gC-o0L"/>
+                <outlet property="headerImageViewHeight" destination="OeK-nh-rdq" id="zo6-68-r3v"/>
+                <outlet property="thanksButton" destination="sNj-wM-839" id="LJr-BQ-WxD"/>
+                <outlet property="titleLabel" destination="Plr-ql-LiQ" id="ejC-AD-Zcp"/>
+            </connections>
+            <point key="canvasLocation" x="248.55072463768118" y="168.08035714285714"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="farmstead" width="1204" height="1034"/>
+        <image name="thanksButton" width="100" height="100"/>
+    </resources>
+</document>

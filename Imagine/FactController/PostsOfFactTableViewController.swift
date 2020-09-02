@@ -17,22 +17,9 @@ enum TableViewDisplayOptions {
 }
 
 class PostsOfFactTableViewController: UITableViewController {
-    
-    @IBOutlet weak var headerSeparatorView: HairlineView!
-    @IBOutlet weak var headerView: UIView!
-    @IBOutlet weak var headerLabel: UILabel!
+
     @IBOutlet weak var infoButton: UIBarButtonItem!
-    @IBOutlet weak var headerImageView: UIImageView!
-    @IBOutlet weak var descriptionLabel: UILabel!
-    @IBOutlet weak var displayOptionButton: DesignableButton!
-    @IBOutlet weak var followTopicButton: DesignableButton!
-    @IBOutlet weak var followerCountLabel: UILabel!
-    @IBOutlet weak var postCountLabel: UILabel!
-    @IBOutlet weak var moderatorView: DesignablePopUp!
-    
-    @IBOutlet weak var toModerationOptionsButton: DesignableButton!
-    @IBOutlet weak var youAreModeratorLabel: UILabel!
-    @IBOutlet weak var justForTipViewView: UIView!
+
     
     var fact: Fact?
     var noPostsType: BlankCellType = .postsOfFacts
@@ -50,8 +37,11 @@ class PostsOfFactTableViewController: UITableViewController {
     
     var isMainViewController = true
     
+    var pageViewHeaderDelegate: PageViewHeaderDelegate?
+    
     let defaults = UserDefaults.standard
     let smallDisplayTypeUserDefaultsPhrase = "smallDisplayType"
+    let musicCellIdentifier = "MusicCell"
     
     var postCount = 0
     var followerCount = 0
@@ -61,6 +51,11 @@ class PostsOfFactTableViewController: UITableViewController {
     
         self.navigationController?.navigationBar.shadowImage = UIImage()
         tableView.separatorStyle = .none
+        if #available(iOS 13.0, *) {
+            tableView.backgroundColor = .systemBackground
+        } else {
+            tableView.backgroundColor = .white
+        }
         
         //for small display option
         tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: "NibBlankCell")
@@ -74,12 +69,10 @@ class PostsOfFactTableViewController: UITableViewController {
         tableView.register(UINib(nibName: "YouTubeCell", bundle: nil), forCellReuseIdentifier: "NibYouTubeCell")
         tableView.register(UINib(nibName: "GifCell", bundle: nil), forCellReuseIdentifier: "GIFCell")
         tableView.register(UINib(nibName: "MultiPictureCell", bundle: nil), forCellReuseIdentifier: "MultiPictureCell")
+        tableView.register(UINib(nibName: "MusicCell", bundle: nil), forCellReuseIdentifier: musicCellIdentifier)
 
         getPosts()
         
-        if needNavigationController {
-            setDismissButton()
-        }
         
         // The type of presentation can vary between the normal and small cells. Saved in UserDefault
         let type = defaults.bool(forKey: smallDisplayTypeUserDefaultsPhrase)
@@ -88,19 +81,10 @@ class PostsOfFactTableViewController: UITableViewController {
             self.displayOption = .small
         }
         
-        setFactUI()
+        let newHeight = Constants.Numbers.communityHeaderHeight
+        tableView.contentInset = UIEdgeInsets(top: newHeight, left: 0, bottom: 0, right: 0)
+        tableView.contentOffset = CGPoint(x: 0, y: -newHeight)
         
-        if !isMainViewController {
-            decreaseTopView()
-            headerLabel.isHidden = true
-            headerImageView.isHidden = true
-            descriptionLabel.isHidden = true
-            followTopicButton.isHidden = true
-            headerSeparatorView.alpha = 0
-            followerCountLabel.isHidden = true
-            postCountLabel.isHidden = true
-            moderatorView.isHidden = true
-        }
     }
     
     func hintTheOtherView() {
@@ -139,111 +123,111 @@ class PostsOfFactTableViewController: UITableViewController {
         }
     }
     
-    func decreaseTopView() {
-        guard let headerView = tableView.tableHeaderView else {
-          return
-        }
-        
-        let size = CGSize(width: self.view.frame.width, height: 80)
-        
-        if headerView.frame.size.height != size.height {
-            headerView.frame.size.height = size.height
-        }
-        
-        self.tableView.tableHeaderView = headerView
-        
-        self.view.layoutIfNeeded()
-        
-    }
+//    func decreaseTopView() {
+//        guard let headerView = tableView.tableHeaderView else {
+//          return
+//        }
+//
+//        let size = CGSize(width: self.view.frame.width, height: 80)
+//
+//        if headerView.frame.size.height != size.height {
+//            headerView.frame.size.height = size.height
+//        }
+//
+//        self.tableView.tableHeaderView = headerView
+//
+//        self.view.layoutIfNeeded()
+//
+//    }
     
-    func setFactUI() {
-        
-        followTopicButton.cornerRadius = radius
-        followTopicButton.layer.borderWidth = 0.5
-        
-        headerImageView.layer.cornerRadius = radius
-        headerImageView.layer.borderWidth = 2
-        if #available(iOS 13.0, *) {
-            followTopicButton.layer.borderColor = UIColor.separator.cgColor
-            headerImageView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
-        } else {
-            followTopicButton.layer.borderColor = UIColor.darkGray.cgColor
-            headerImageView.layer.borderColor = UIColor.lightGray.cgColor
-        }
-        
-        if displayOption == .normal {
-            if #available(iOS 13.0, *) {
-                self.tableView.backgroundColor = .secondarySystemBackground
-                self.headerView.backgroundColor = .secondarySystemBackground
-            } else {
-                self.tableView.backgroundColor = .ios12secondarySystemBackground
-                self.headerView.backgroundColor = .ios12secondarySystemBackground
-            }
-        }
-        
-        
-        if let fact = fact {
-            
-            if fact.beingFollowed {
-                followTopicButton.setTitle("Unfollow", for: .normal)
-            }
-            
-            if let user = Auth.auth().currentUser {
-                for moderator in fact.moderators {
-                    if moderator == user.uid {
-                        self.moderatorView.isHidden = false
-                    }
-                }
-            }
-            
-            headerLabel.text = fact.title
-            descriptionLabel.text = fact.description
-            
-            if let url = URL(string: fact.imageURL) {
-                headerImageView.sd_setImage(with: url, completed: nil)
-            } else {
-                headerImageView.image = UIImage(named: "FactStamp")
-            }
-            
-            fact.getPostCount { (count) in
-                self.postCountLabel.text = "Posts: \(count)"
-                self.postCount = count
-            }
-            
-            fact.getFollowerCount{ (count) in
-                self.followerCountLabel.text = "Follower: \(count)"
-                self.followerCount = count
-            }
-            
-            if let user = Auth.auth().currentUser {
-                if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" {
-                    print("Nicht bei Malte loggen")
-                } else {
-                    Analytics.logEvent("PostsOfFactsSearched", parameters: [
-                        AnalyticsParameterTerm: fact.title
-                    ])
-                }
-            } else {
-                Analytics.logEvent("PostsOfFactsSearched", parameters: [
-                    AnalyticsParameterTerm: fact.title
-                ])
-            }
-        }
-    }
-    
-    func setDismissButton() {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .imagineColor
-        button.addTarget(self, action: #selector(dismissTapped), for: .touchUpInside)
-        button.setImage(UIImage(named: "Dismiss"), for: .normal)
-        button.heightAnchor.constraint(equalToConstant: 23).isActive = true
-        button.widthAnchor.constraint(equalToConstant: 23).isActive = true
-        
-        let barButton = UIBarButtonItem(customView: button)
-        self.navigationItem.leftBarButtonItem = barButton
-    }
-    
+//    func setFactUI() {
+//
+//        followTopicButton.cornerRadius = radius
+//        followTopicButton.layer.borderWidth = 0.5
+//
+//        headerImageView.layer.cornerRadius = radius
+//        headerImageView.layer.borderWidth = 2
+//        if #available(iOS 13.0, *) {
+//            followTopicButton.layer.borderColor = UIColor.separator.cgColor
+//            headerImageView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
+//        } else {
+//            followTopicButton.layer.borderColor = UIColor.darkGray.cgColor
+//            headerImageView.layer.borderColor = UIColor.lightGray.cgColor
+//        }
+//
+//        if displayOption == .normal {
+//            if #available(iOS 13.0, *) {
+//                self.tableView.backgroundColor = .secondarySystemBackground
+//                self.headerView.backgroundColor = .secondarySystemBackground
+//            } else {
+//                self.tableView.backgroundColor = .ios12secondarySystemBackground
+//                self.headerView.backgroundColor = .ios12secondarySystemBackground
+//            }
+//        }
+//
+//
+//        if let fact = fact {
+//
+//            if fact.beingFollowed {
+//                followTopicButton.setTitle("Unfollow", for: .normal)
+//            }
+//
+//            if let user = Auth.auth().currentUser {
+//                for moderator in fact.moderators {
+//                    if moderator == user.uid {
+//                        self.moderatorView.isHidden = false
+//                    }
+//                }
+//            }
+//
+//            headerLabel.text = fact.title
+//            descriptionLabel.text = fact.description
+//
+//            if let url = URL(string: fact.imageURL) {
+//                headerImageView.sd_setImage(with: url, completed: nil)
+//            } else {
+//                headerImageView.image = UIImage(named: "FactStamp")
+//            }
+//
+//            fact.getPostCount { (count) in
+//                self.postCountLabel.text = "Posts: \(count)"
+//                self.postCount = count
+//            }
+//
+//            fact.getFollowerCount{ (count) in
+//                self.followerCountLabel.text = "Follower: \(count)"
+//                self.followerCount = count
+//            }
+//
+//            if let user = Auth.auth().currentUser {
+//                if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" {
+//                    print("Nicht bei Malte loggen")
+//                } else {
+//                    Analytics.logEvent("PostsOfFactsSearched", parameters: [
+//                        AnalyticsParameterTerm: fact.title
+//                    ])
+//                }
+//            } else {
+//                Analytics.logEvent("PostsOfFactsSearched", parameters: [
+//                    AnalyticsParameterTerm: fact.title
+//                ])
+//            }
+//        }
+//    }
+//
+//    func setDismissButton() {
+//        let button = DesignableButton()
+//        button.translatesAutoresizingMaskIntoConstraints = false
+//        button.tintColor = .imagineColor
+//        button.addTarget(self, action: #selector(dismissTapped), for: .touchUpInside)
+//        button.setImage(UIImage(named: "Dismiss"), for: .normal)
+//        button.heightAnchor.constraint(equalToConstant: 23).isActive = true
+//        button.widthAnchor.constraint(equalToConstant: 23).isActive = true
+//
+//        let barButton = UIBarButtonItem(customView: button)
+//        self.navigationItem.leftBarButtonItem = barButton
+//    }
+//
     @objc func dismissTapped() {
         self.dismiss(animated: true, completion: nil)
     }
@@ -286,8 +270,16 @@ class PostsOfFactTableViewController: UITableViewController {
     
     func showFollowTopicExplanation() {
         followTopicTipView = EasyTipView(text: "Bei Imagine können Beiträge mit allen geteilt, oder auch seperat in einem Thema gepostet werden.\n\nFolge einer Community, um auch diese neuen Themen-Beiträge in deinem Home-Feed zu sehen. Ganz bald jedenfalls, wir sind dabei :)")
-        followTopicTipView!.show(forView: justForTipViewView)
+//        followTopicTipView!.show(forView: justForTipViewView)
     }
+    
+    //MARK:-ScrollViewDidScroll
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offset = scrollView.contentOffset.y
+        self.pageViewHeaderDelegate?.childScrollViewScrolled(offset: offset)
+    }
+    
+    //MARK:- TableView
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let post = posts[indexPath.row]
@@ -359,14 +351,25 @@ class PostsOfFactTableViewController: UITableViewController {
                         return cell
                     }
                 case .link:
-                    let identifier = "NibLinkCell"
-                    
-                    if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? LinkCell {
+                    if post.linkURL.contains("songwhip.com") {
                         
-                        cell.delegate = self
-                        cell.post = post
+                        if let cell = tableView.dequeueReusableCell(withIdentifier: musicCellIdentifier, for: indexPath) as? MusicCell {
+                            cell.post = post
+                            cell.delegate = self
+                            cell.webViewDelegate = self
+                            
+                            return cell
+                        }
+                    } else {
+                        let identifier = "NibLinkCell"
                         
-                        return cell
+                        if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? LinkCell {
+                            
+                            cell.delegate = self
+                            cell.post = post
+                            
+                            return cell
+                        }
                     }
                 case .youTubeVideo:
                     let identifier = "NibYouTubeCell"
@@ -477,20 +480,24 @@ class PostsOfFactTableViewController: UITableViewController {
                     return heightForRow
                 case .link:
                     
-                    if post.title.count <= 60 {
-                        heightForRow = 200
-                    } else if post.title.count <= 80 {
-                        heightForRow = 210
-                    } else if post.title.count <= 120 {
-                        heightForRow = 230
-                    } else if post.title.count <= 140 {
-                        heightForRow = 245
-                    } else if post.title.count <= 160 {
-                        heightForRow = 260
-                    } else if post.title.count <= 180 {
-                        heightForRow = 275
-                    }else if post.title.count <= 200 {
-                        heightForRow = 290
+                    if post.linkURL.contains("songwhip.com") {
+                        return UITableView.automaticDimension
+                    } else {
+                        if post.title.count <= 60 {
+                            heightForRow = 200
+                        } else if post.title.count <= 80 {
+                            heightForRow = 210
+                        } else if post.title.count <= 120 {
+                            heightForRow = 230
+                        } else if post.title.count <= 140 {
+                            heightForRow = 245
+                        } else if post.title.count <= 160 {
+                            heightForRow = 260
+                        } else if post.title.count <= 180 {
+                            heightForRow = 275
+                        }else if post.title.count <= 200 {
+                            heightForRow = 290
+                        }
                     }
                 case .repost:
                     
@@ -550,44 +557,44 @@ class PostsOfFactTableViewController: UITableViewController {
     }
     
     
-    @IBAction func displayOptionButtonTapped(_ sender: Any) {
-        switch displayOption {
-        case .small:
-            displayOption = .normal
-            defaults.set(false, forKey: smallDisplayTypeUserDefaultsPhrase)
-            displayOptionButton.setImage(UIImage(named: "list-1"), for: .normal)
-            
-            if isMainViewController {
-                headerSeparatorView.alpha = 1
-            }
-            if #available(iOS 13.0, *) {
-                self.tableView.backgroundColor = .secondarySystemBackground
-                self.headerView.backgroundColor = .secondarySystemBackground
-            } else {
-                self.tableView.backgroundColor = .ios12secondarySystemBackground
-                self.headerView.backgroundColor = .ios12secondarySystemBackground
-            }
-            
-            tableView.reloadData()
-        case .normal:
-            displayOption = .small
-            defaults.set(true, forKey: smallDisplayTypeUserDefaultsPhrase)
-            
-            displayOptionButton.setImage(UIImage(named: "today_apps"), for: .normal)
-            
-            headerSeparatorView.alpha = 0
-            
-            if #available(iOS 13.0, *) {
-                self.tableView.backgroundColor = .systemBackground
-                self.headerView.backgroundColor = .systemBackground
-            } else {
-                self.tableView.backgroundColor = .white
-                self.headerView.backgroundColor = .white
-            }
-            
-            tableView.reloadData()
-        }
-    }
+//    @IBAction func displayOptionButtonTapped(_ sender: Any) {
+//        switch displayOption {
+//        case .small:
+//            displayOption = .normal
+//            defaults.set(false, forKey: smallDisplayTypeUserDefaultsPhrase)
+//            displayOptionButton.setImage(UIImage(named: "list-1"), for: .normal)
+//            
+//            if isMainViewController {
+//                headerSeparatorView.alpha = 1
+//            }
+//            if #available(iOS 13.0, *) {
+//                self.tableView.backgroundColor = .secondarySystemBackground
+//                self.headerView.backgroundColor = .secondarySystemBackground
+//            } else {
+//                self.tableView.backgroundColor = .ios12secondarySystemBackground
+//                self.headerView.backgroundColor = .ios12secondarySystemBackground
+//            }
+//            
+//            tableView.reloadData()
+//        case .normal:
+//            displayOption = .small
+//            defaults.set(true, forKey: smallDisplayTypeUserDefaultsPhrase)
+//            
+//            displayOptionButton.setImage(UIImage(named: "today_apps"), for: .normal)
+//            
+//            headerSeparatorView.alpha = 0
+//            
+//            if #available(iOS 13.0, *) {
+//                self.tableView.backgroundColor = .systemBackground
+//                self.headerView.backgroundColor = .systemBackground
+//            } else {
+//                self.tableView.backgroundColor = .white
+//                self.headerView.backgroundColor = .white
+//            }
+//            
+//            tableView.reloadData()
+//        }
+//    }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
         if let tipView = tipView {
@@ -605,26 +612,26 @@ class PostsOfFactTableViewController: UITableViewController {
     }
     
     
-    @IBAction func followTopicButtonTapped(_ sender: Any) {
-        if let fact = fact {
-            if fact.beingFollowed {
-                factParentVC.unfollowTopic(fact: fact)
-                fact.beingFollowed = false
-                self.followTopicButton.setTitle("Follow", for: .normal)
-                
-                self.followerCount = self.followerCount-1
-                self.followerCountLabel.text = "Follower: \(self.followerCount)"
-                    
-            } else {
-                factParentVC.followTopic(fact: fact)
-                fact.beingFollowed = true
-                self.followTopicButton.setTitle("Unfollow", for: .normal)
-                
-                self.followerCount = self.followerCount+1
-                self.followerCountLabel.text = "Follower: \(self.followerCount)"
-            }
-        }
-    }
+//    @IBAction func followTopicButtonTapped(_ sender: Any) {
+//        if let fact = fact {
+//            if fact.beingFollowed {
+//                factParentVC.unfollowTopic(fact: fact)
+//                fact.beingFollowed = false
+//                self.followTopicButton.setTitle("Follow", for: .normal)
+//
+//                self.followerCount = self.followerCount-1
+//                self.followerCountLabel.text = "Follower: \(self.followerCount)"
+//
+//            } else {
+//                factParentVC.followTopic(fact: fact)
+//                fact.beingFollowed = true
+//                self.followTopicButton.setTitle("Unfollow", for: .normal)
+//
+//                self.followerCount = self.followerCount+1
+//                self.followerCountLabel.text = "Follower: \(self.followerCount)"
+//            }
+//        }
+//    }
     
     
     //MARK:- Prepare For Segue
@@ -682,7 +689,13 @@ class PostsOfFactTableViewController: UITableViewController {
     
 }
 
-extension PostsOfFactTableViewController: PostCellDelegate, NewFactDelegate {
+extension PostsOfFactTableViewController: PostCellDelegate, NewFactDelegate, MusicPostDelegate {
+    
+    func expandView() {
+        tableView.beginUpdates()
+        tableView.endUpdates()
+    }
+    
     
     func finishedCreatingNewInstance(item: Any?) {
         self.posts.removeAll()
