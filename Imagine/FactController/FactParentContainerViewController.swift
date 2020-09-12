@@ -16,7 +16,6 @@ protocol RecentTopicDelegate {
 
 class FactParentContainerViewController: UIViewController {
     
-    @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var contraArgumentCountLabel: UILabel!
     @IBOutlet weak var proArgumentCountLabel: UILabel!
     @IBOutlet weak var backgroundView: UIView!
@@ -24,16 +23,6 @@ class FactParentContainerViewController: UIViewController {
     @IBOutlet weak var proArgumentLabel: UILabel!
     
     @IBOutlet weak var infoButton: UIButton!
-    @IBOutlet weak var factImageView: UIImageView!
-    @IBOutlet weak var descriptionLabel: UILabel!
-    @IBOutlet weak var followTopicButton: DesignableButton!
-    @IBOutlet weak var moderatorView: DesignablePopUp!
-    
-    @IBOutlet weak var followerCountLabel: UILabel!
-    @IBOutlet weak var postCountLabel: UILabel!
-    
-    var postCount = 0
-    var followerCount = 0
     
     var fact:Fact?
     var proArgumentList = [Argument]()
@@ -51,28 +40,12 @@ class FactParentContainerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let fact = fact {
-            if fact.beingFollowed {
-                followTopicButton.setTitle("Unfollow", for: .normal)
-            }
-        }
-
-        followTopicButton.cornerRadius = radius
-        if #available(iOS 13.0, *) {
-            followTopicButton.layer.borderColor = UIColor.separator.cgColor
-        } else {
-            followTopicButton.layer.borderColor = UIColor.darkGray.cgColor
-        }
-        followTopicButton.layer.borderWidth = 0.5
-        
         if let topic = fact {
             self.getArguments(topic: topic)
             self.setUI(topic: topic)
         }
 //        setPostButton()
-        
-        factImageView.layer.cornerRadius = radius
-        
+                
         if needNavigationController {
             setDismissButton()
         }
@@ -136,31 +109,15 @@ class FactParentContainerViewController: UIViewController {
     }
     
     func setUI(topic: Fact) {
-        if let user = Auth.auth().currentUser {
-            for moderator in topic.moderators {
-                if moderator == user.uid {
-                    self.moderatorView.isHidden = false
-                }
-            }
-        }
+//        if let user = Auth.auth().currentUser {
+//            for moderator in topic.moderators {
+//                if moderator == user.uid {
+//                    self.moderatorView.isHidden = false
+//                }
+//            }
+//        }
         
-        titleLabel.text = topic.title
-        if let url = URL(string: topic.imageURL) {
-            factImageView.sd_setImage(with: url, completed: nil)
-        } else {
-            factImageView.image = UIImage(named: "FactStamp")
-        }
-        descriptionLabel.text = topic.description
         
-        topic.getPostCount { (count) in
-            self.postCountLabel.text = "Posts: \(count)"
-            self.postCount = count
-        }
-        
-        topic.getFollowerCount{ (count) in
-            self.followerCountLabel.text = "Follower: \(count)"
-            self.followerCount = count
-        }
     }
     
     func getArguments(topic: Fact) {
@@ -190,14 +147,14 @@ class FactParentContainerViewController: UIViewController {
             if let names = fact.factDisplayNames {
                 switch names{
                 case .proContra:
-                    proArgumentLabel.text = "Pro"
-                    contraArgumentLabel.text = "Contra"
+                    proArgumentLabel.text = NSLocalizedString("discussion_pro", comment: "pro")
+                    contraArgumentLabel.text = NSLocalizedString("discussion_contra", comment: "contra")
                 case .confirmDoubt:
-                    proArgumentLabel.text = "Bestätigung"
-                    contraArgumentLabel.text = "Zweifel"
+                    proArgumentLabel.text = NSLocalizedString("discussion_proof", comment: "proof")
+                    contraArgumentLabel.text = NSLocalizedString("discussion_doubt", comment: "doubt")
                 case .advantageDisadvantage:
-                    proArgumentLabel.text = "Vorteile"
-                    contraArgumentLabel.text = "Nachteile"
+                    proArgumentLabel.text = NSLocalizedString("discussion_advantage", comment: "advantage")
+                    contraArgumentLabel.text = NSLocalizedString("discussion_disadvantage", comment: "disadvantage")
                 }
             }
         }
@@ -316,25 +273,6 @@ class FactParentContainerViewController: UIViewController {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let tipView = tipView {
             tipView.dismiss()
-        }
-    }
-    
-    
-    @IBAction func followTopicButtonTapped(_ sender: Any) {
-        if let fact = fact {
-            if fact.beingFollowed {
-                self.unfollowTopic(fact: fact)
-                self.followTopicButton.setTitle("Follow", for: .normal)
-                
-                self.followerCount = self.followerCount-1
-                self.followerCountLabel.text = "Follower: \(self.followerCount)"
-            } else {
-                self.followTopic(fact: fact)
-                self.followTopicButton.setTitle("Unfollow", for: .normal)
-                
-                self.followerCount = self.followerCount+1
-                self.followerCountLabel.text = "Follower: \(self.followerCount)"
-            }
         }
     }
     

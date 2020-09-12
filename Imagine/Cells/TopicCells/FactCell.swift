@@ -14,43 +14,36 @@ class FactCell:UICollectionViewCell {
     @IBOutlet weak var factCellLabel: UILabel!
     @IBOutlet weak var factCellImageView: UIImageView!
     @IBOutlet weak var imageViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var gradientView: UIView!
     @IBOutlet weak var factDescriptionLabel: UILabel!
     @IBOutlet weak var followButton: DesignableButton!
+    @IBOutlet weak var containerView: UIView!
     
     let db = Firestore.firestore()
+    let cornerRadius: CGFloat = 6
     
     override func awakeFromNib() {
-        factCellImageView.contentMode = .scaleAspectFill
         
-        let gradient = CAGradientLayer()
-        gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
-        gradient.endPoint = CGPoint(x: 0.5, y: 0.6)
-        let whiteColor = UIColor.white
-        gradient.colors = [whiteColor.withAlphaComponent(0.0).cgColor, whiteColor.withAlphaComponent(0.5).cgColor, whiteColor.withAlphaComponent(0.7).cgColor]
-        gradient.locations = [0.0, 0.7, 1]
-        gradient.frame = gradientView.bounds
+        layer.cornerRadius = cornerRadius
+        containerView.layer.cornerRadius = cornerRadius
         
-        gradientView.layer.mask = gradient
-        
-        layer.cornerRadius = 4
-        layer.masksToBounds = true
-//        
-//        contentView.clipsToBounds = false
-//        let layer = contentView.layer
-//        if #available(iOS 13.0, *) {
-//            layer.shadowColor = UIColor.label.cgColor
-//        } else {
-//            layer.shadowColor = UIColor.black.cgColor
-//        }
-//        layer.shadowOffset = CGSize(width: 0, height: 0)
-//        layer.shadowRadius = 3
-//        layer.shadowOpacity = 0.4
+        contentView.clipsToBounds = false
     }
     
     override func prepareForReuse() {
         factCellImageView.image = nil
         followButton.setImage(UIImage(named: "AddPost"), for: .normal)
+    }
+    
+    override func layoutSubviews() {
+        if #available(iOS 13.0, *) {
+            layer.shadowColor = UIColor.label.cgColor
+        } else {
+            layer.shadowColor = UIColor.black.cgColor
+        }
+        layer.shadowOffset = CGSize(width: 0, height: 0)
+        layer.shadowRadius = 2
+        layer.shadowOpacity = 0.4
+        layer.shadowPath = UIBezierPath(roundedRect: contentView.frame, cornerRadius: cornerRadius).cgPath
     }
     
     var fact: Fact? {

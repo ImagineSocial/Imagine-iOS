@@ -89,7 +89,9 @@ class ArgumentPageViewController: UIPageViewController {
     }
     
     @objc func newPostButtonTapped() {
-        
+        if let community = self.fact {
+            performSegue(withIdentifier: "goToNewPost", sender: community)
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -141,11 +143,11 @@ class ArgumentPageViewController: UIPageViewController {
         }
         
         if fact.displayOption == .fact {
-            self.headerView.headerSegmentedControl.setTitle("Themen", forSegmentAt: 0)
-            self.headerView.headerSegmentedControl.insertSegment(withTitle: "Diskussion", at: 1, animated: false)
+            self.headerView.headerSegmentedControl.setTitle(NSLocalizedString("topics", comment: "topics"), forSegmentAt: 0)
+            self.headerView.headerSegmentedControl.insertSegment(withTitle: NSLocalizedString("discussion", comment: "discussion"), at: 1, animated: false)
             self.headerView.headerSegmentedControl.setTitle("Feed", forSegmentAt: 2)
         } else {
-            self.headerView.headerSegmentedControl.setTitle("Themen", forSegmentAt: 0)
+            self.headerView.headerSegmentedControl.setTitle(NSLocalizedString("topics", comment: "topics"), forSegmentAt: 0)
             self.headerView.headerSegmentedControl.setTitle("Feed", forSegmentAt: 1)
         }
         
@@ -193,7 +195,7 @@ extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageView
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
         if let nextVC = pendingViewControllers.first
         ,let index = argumentVCs.index(of: nextVC){
-            print("Print: Das ist der aktuelle index: \(index)")
+
             headerView.headerSegmentedControl.selectedSegmentIndex = index
             headerView.segmentedControlChanged(self)
         }
@@ -207,8 +209,8 @@ extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageView
         
         if let currentViewController = pageViewController.viewControllers?.first
             ,let index = argumentVCs.index(of: currentViewController){
-//            changeBarButtonItem(index: index)
-            print("##indedx \(index), controler: \(currentViewController)")
+
+            
             self.presentedVC = index
             
             switch index {
@@ -237,41 +239,8 @@ extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageView
             print("Done")
         }
 
-        print("##Neuen Werte, firstVCOffset: \(self.firstViewOffset), value: \(value), offset: \(offset)" )
+
     }
-    
-//    func changeBarButtonItem(index: Int) {
-//        if index == 0 { // AddOnViewController is shown
-//            //show Vision bar button
-//            self.factInfoSectionLabel.text = "Themen"
-//
-//            UIView.animate(withDuration: 0.2) {
-//                self.factInfoImageView.alpha = 1
-//                self.factInfoTopicLabel.alpha = 1
-//            }
-//        } else if index == 1 {  // DiscussionViewController or PostOfFactVC is shown
-//            if let fact = fact {
-//                if fact.displayOption == .fact {
-//                    self.factInfoSectionLabel.text = "Diskussion"
-//                } else {
-//                    self.factInfoSectionLabel.text = "Beiträge"
-//                }
-//
-//                UIView.animate(withDuration: 0.2) {
-//                    self.factInfoImageView.alpha = 0.7
-//                    self.factInfoTopicLabel.alpha = 0.7
-//                }
-//            }
-//        } else if index == 2 {
-//            self.factInfoSectionLabel.text = "Beiträge"
-//
-//            UIView.animate(withDuration: 0.2) {
-//                self.factInfoImageView.alpha = 1
-//                self.factInfoTopicLabel.alpha = 1
-//            }
-//
-//        }
-//    }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         
@@ -356,7 +325,6 @@ extension ArgumentPageViewController: PageViewHeaderDelegate, CommunityFeedHeade
             self.thirdViewOffset = offset
         default:
             self.firstViewOffset = 0
-            print("Wert offset WRONG!!!!!")
         }
         
         if rect.origin.y <= -250 {
@@ -368,7 +336,7 @@ extension ArgumentPageViewController: PageViewHeaderDelegate, CommunityFeedHeade
             self.navigationItem.title = ""
             self.newPostButton.isHidden = true
         }
-        print("## Werte, cgrect: \(rect), offset: \(offset)" )
+
     }
 }
 

@@ -31,7 +31,6 @@ enum NewCommunityItemType {
     case deepArgument
     case source
     case addOn
-    case addOnHeader
     case singleTopicAddOn
 }
 
@@ -137,25 +136,27 @@ class NewCommunityItemTableViewController: UITableViewController {
         
         switch new {
         case .community:
-            headerLabel.text = "Erstelle eine neue Community"
+            headerLabel.text = NSLocalizedString("new_community_header", comment: "create new community")
             cells.append(contentsOf: [.setTitle, .setDescription, .setPicture, .chooseCommunityPresentation])
         case .argument:
-            headerLabel.text = "Erstelle ein neues Argument"
+            headerLabel.text = NSLocalizedString("new_argument_header", comment: "create new argument")
             cells.append(contentsOf: [.setTitle, .setDescription, .setArgumentProContra])
         case .source:
-            headerLabel.text = "Erstelle eine neue Quelle"
+            headerLabel.text = NSLocalizedString("new_source_header", comment: "create new source")
             cells.append(contentsOf: [.setTitle, .setDescription, .setLink])
         case .deepArgument:
-            headerLabel.text = "Erstelle ein neues Argument"
+            guard let _ = fact, let _ = argument else {
+                self.dismiss(animated: true, completion: nil)
+                return
+            }
+            
+            headerLabel.text = NSLocalizedString("new_argument_header", comment: "create new argument")
             cells.append(contentsOf: [.setTitle, .setDescription])
-        case .addOnHeader:
-            headerLabel.text = "Erstelle einen neuen AddOn-Header"
-            cells.append(contentsOf: [.setTitle, .setDescription, .setLink, .setPicture])
         case .addOn:
-            headerLabel.text = "Erstelle ein neues AddOn"
+            headerLabel.text = NSLocalizedString("new_addOn_header", comment: "create new addon")
             cells.append(contentsOf: [.setTitle, .setDescription, .setPicture])
         case .singleTopicAddOn:
-            headerLabel.text = "Erstelle ein neues AddOn"
+            headerLabel.text = NSLocalizedString("new_addOn_header", comment: "create new addon")
             cells.append(contentsOf: [.setTitle, .setDescription, .chooseCommunity])
         }
         print("Reload: \(cells)")
@@ -191,8 +192,6 @@ class NewCommunityItemTableViewController: UITableViewController {
                         cell.characterLimit = Constants.characterLimits.argumentTitleCharacterLimit
                     case .addOn:
                         cell.characterLimit = Constants.characterLimits.addOnTitleCharacterLimit
-                    case .addOnHeader:
-                        cell.characterLimit = Constants.characterLimits.addOnHeaderTitleCharacterLimit
                     case .singleTopicAddOn:
                         cell.characterLimit = Constants.characterLimits.addOnTitleCharacterLimit
                     case .source:
@@ -207,7 +206,7 @@ class NewCommunityItemTableViewController: UITableViewController {
                 cell.delegate = self
                 
                 cell.isTitle = false
-                cell.headerTitleLabel.text = "Beschreibung:"
+                cell.headerTitleLabel.text = NSLocalizedString("description:", comment: "description:")
             
                 if let new = new {
                     switch new {
@@ -215,8 +214,6 @@ class NewCommunityItemTableViewController: UITableViewController {
                         cell.characterLimit = Constants.characterLimits.factDescriptionCharacterLimit
                     case .addOn:
                         cell.characterLimit = Constants.characterLimits.addOnDescriptionCharacterLimit
-                    case .addOnHeader:
-                        cell.characterLimit = Constants.characterLimits.addOnHeaderDescriptionCharacterLimit
                     case .singleTopicAddOn:
                         cell.characterLimit = Constants.characterLimits.addOnDescriptionCharacterLimit
                     default:
@@ -241,12 +238,6 @@ class NewCommunityItemTableViewController: UITableViewController {
         case .setLink:
             if let cell = tableView.dequeueReusableCell(withIdentifier: textFieldCellIdentifier, for: indexPath) as? NewCommunityTextfieldCell {
                 cell.delegate = self
-                
-                if let new = new {
-                    if new == .addOnHeader {
-                        cell.headerTitleLabel.text = "Link zu mehr Informationen (optional):"
-                    }
-                }
                 
                 return cell
             }
@@ -302,7 +293,7 @@ class NewCommunityItemTableViewController: UITableViewController {
         if let footerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: settingFooterIdentifier) as? SettingFooterView {
             if let new = new {
                 if new == .argument {
-                    footerView.settingDescriptionLabel.text = "Wähle dein Argument im Anschluss aus, um eine Quelle hinzuzufügen. Dies dient der Glaubwürdigkeit deines Argumentes."
+                    footerView.settingDescriptionLabel.text = NSLocalizedString("new_argument_source_footer_text", comment: "remember to add a source for credibility")
                 } else {
                     footerView.settingDescriptionLabel.text = ""
                 }
@@ -334,8 +325,6 @@ class NewCommunityItemTableViewController: UITableViewController {
         } else {
             var text = ""
             switch new {
-            case .addOnHeader:
-                text = Constants.texts.AddOns.headerText
             case .singleTopicAddOn:
                 text = Constants.texts.AddOns.singleTopicText
             case .addOn:
@@ -387,22 +376,13 @@ class NewCommunityItemTableViewController: UITableViewController {
             createNewSource()
         case .addOn:
             createNewAddOn()
-        case.addOnHeader:
-            if let fact = fact, let user = Auth.auth().currentUser {
-                if selectedImageFromPicker != nil {
-                    let ref = db.collection("Facts").document(fact.documentID).collection("addOns").document()
-                    self.savePicture(userID: user.uid, topicRef: ref, new: .addOnHeader)
-                } else {
-                    self.alert(message: "Bitte wähle einen Bild für dieses Item aus.")
-                }
-            }
         case .singleTopicAddOn:
             createNewSingleTopicAddOn()
         }
     }
     
     func showTitleDescriptionAlert() {
-        self.alert(message: "Ein Titel und eine Beschreibung sind bei diesem Item notwendig.", title: "Es fehlen Eingaben")
+        self.alert(message: NSLocalizedString("new_community_item_error_message", comment: "you need title and description"), title: NSLocalizedString("new_community_item_error_title", comment: "the are some things missing"))
         self.view.activityStopAnimating()
     }
     
@@ -425,7 +405,7 @@ class NewCommunityItemTableViewController: UITableViewController {
                         }
                     }
                 } else {
-                    self.alert(message: "Wir haben kein Thema zum verlinken registriert!")
+                    self.alert(message: NSLocalizedString("new_addOnTopic_missing_community", comment: "there is no linked community"))
                 }
             } else {
                 self.showTitleDescriptionAlert()
@@ -504,7 +484,7 @@ class NewCommunityItemTableViewController: UITableViewController {
                         }
                     })
                 } else {
-                    self.alert(message: "Bitte gib einen gültigen Link ein.")
+                    self.alert(message: NSLocalizedString("new_community_item_not_valid_link", comment: "not valid link"))
                 }
             } else {
                 showTitleDescriptionAlert()
@@ -567,7 +547,7 @@ class NewCommunityItemTableViewController: UITableViewController {
                 showTitleDescriptionAlert()
             }
         } else {
-            self.alert(message: "Es ist ein Fehler aufgetreten. Bitte Versuche es später noch einmal!", title: "Hmm...")
+            self.alert(message: NSLocalizedString("new_community_weird_error", comment: "something went wrong, try later"), title: "Hmm...")
         }
     }
     
@@ -639,7 +619,7 @@ class NewCommunityItemTableViewController: UITableViewController {
     
     func finished(item: Any?) {
         self.view.activityStopAnimating()
-        let alertController = UIAlertController(title: "Vielen Dank", message: "Deine Eingabe wurde erfolgreich hinzugefügt!", preferredStyle: .alert)
+        let alertController = UIAlertController(title: NSLocalizedString("thanks", comment: "thanks"), message: NSLocalizedString("new_community_successfull_added", comment: "new_community_successfull_added"), preferredStyle: .alert)
         let OKAction = UIAlertAction(title: "OK", style: .default) { (_) in
             self.dismiss(animated: true) {
                 self.doneButton.isEnabled = true
@@ -848,8 +828,6 @@ extension NewCommunityItemTableViewController: UIImagePickerControllerDelegate, 
                 if let url = url {
                     if new == .community {
                         self.createNewFact(ref: topicRef, imageURL: url.absoluteString)
-                    } else if new == .addOnHeader {
-                        self.createNewAddOnHeader(ref: topicRef, imageURL: url.absoluteString)
                     } else {
                         print("Here is no picture allowed")
                     }
@@ -912,7 +890,7 @@ class NewCommunityPresentationCell: UITableViewCell, UIPickerViewDelegate, UIPic
     
     var delegate: NewCommunityItemDelegate?
     
-    let pickerOptions = ["Contra/Pro", "Zweifel/Bestätigung", "Nachteile/Vorteile"]
+    let pickerOptions = [NSLocalizedString("discussion_pro/contra", comment: "pro/Contra"), NSLocalizedString("discussion_doubt/proof", comment: "doubt/proof"), NSLocalizedString("discussion_advantage/disadvantage", comment: "advantage/disadvantage")]
     var pickedFactDisplayNames: FactDisplayName = .proContra
     
     var pickedDisplayOption: DisplayOption? {
@@ -1022,11 +1000,11 @@ class NewCommunityArgumentCell: UITableViewCell {
             if let fact = fact {
                 switch fact.factDisplayNames {
                 case .advantageDisadvantage:
-                    proContraSegmentedControl.setTitle("Vorteile", forSegmentAt: 0)
-                    proContraSegmentedControl.setTitle("Nachteile", forSegmentAt: 1)
+                    proContraSegmentedControl.setTitle(NSLocalizedString("discussion_advantage", comment: "advantage"), forSegmentAt: 0)
+                    proContraSegmentedControl.setTitle(NSLocalizedString("discussion_disadvantage", comment: "disadvantage"), forSegmentAt: 1)
                 case .confirmDoubt:
-                    proContraSegmentedControl.setTitle("Zweifel", forSegmentAt: 0)
-                    proContraSegmentedControl.setTitle("Bestätigung", forSegmentAt: 1)
+                    proContraSegmentedControl.setTitle(NSLocalizedString("discussion_doubt", comment: "doubt"), forSegmentAt: 0)
+                    proContraSegmentedControl.setTitle(NSLocalizedString("discussion_proof", comment: "proof"), forSegmentAt: 1)
                 default:
                     print("Stays pro/contra")
                 }

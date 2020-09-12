@@ -15,6 +15,8 @@ class ArgumentCell: UITableViewCell {
     @IBOutlet weak var sourceLabel: UILabel!
     @IBOutlet weak var numberOfUpvotesLabel: UILabel!
     
+    let cornerRadius: CGFloat = 6
+    
     
     var argument: Argument? {
         didSet {
@@ -49,22 +51,43 @@ class ArgumentCell: UITableViewCell {
         super.awakeFromNib()
         
         // add corner radius on `contentView`
-        contentView.layer.cornerRadius = 6
-        contentView.layer.borderWidth = 2
-        if #available(iOS 13.0, *) {
-            contentView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
-        } else {
-            contentView.layer.borderColor = UIColor.ios12secondarySystemBackground.cgColor
-        }
+//        contentView.layer.cornerRadius = 6
+//        contentView.layer.borderWidth = 2
+//        if #available(iOS 13.0, *) {
+//            contentView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
+//        } else {
+//            contentView.layer.borderColor = UIColor.ios12secondarySystemBackground.cgColor
+//        }
+//
+//        contentView.clipsToBounds = true
+//        backgroundColor =  .clear
         
-        contentView.clipsToBounds = true
-        backgroundColor =  .clear
+//        layer.cornerRadius = cornerRadius
+//        contentView.layer.cornerRadius = cornerRadius
+//        
+        contentView.clipsToBounds = false
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
+
         //set the values for top,left,bottom,right margins
         let margins = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         contentView.frame = contentView.frame.inset(by: margins)
+
+        contentView.layer.cornerRadius = cornerRadius
+        
+        let layer = contentView.layer
+        if #available(iOS 13.0, *) {
+            layer.shadowColor = UIColor.label.cgColor
+        } else {
+            layer.shadowColor = UIColor.black.cgColor
+        }
+        layer.shadowOffset = CGSize(width: 0, height: 0)
+        layer.shadowRadius = 2
+        layer.shadowOpacity = 0.4
+
+        let frame = CGRect(x: 0, y: 0, width: contentView.frame.width, height: contentView.frame.height)
+        layer.shadowPath = UIBezierPath(roundedRect: frame, cornerRadius: cornerRadius).cgPath
     }
 }

@@ -69,22 +69,22 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
                             facts.append(fact)
                         }
                     }
-                    self.getCheckedTopics(type: type, topics: facts)
+                    self.showTopics(type: type, topics: facts)
                 }
             }
         }
     }
     
-    func getCheckedTopics(type: DisplayOption, topics: [Fact]) {
-        
-        if let user = Auth.auth().currentUser {
-            self.dataHelper.markFollowedTopics(userUID: user.uid, factList: topics) { (facts) in
-                self.showTopics(type: type, topics: facts)
-            }
-        } else {
-            showTopics(type: type, topics: topics)
-        }
-    }
+//    func getCheckedTopics(type: DisplayOption, topics: [Fact]) {
+//        
+//        if let user = Auth.auth().currentUser {
+//            self.dataHelper.markFollowedTopics(userUID: user.uid, factList: topics) { (facts) in
+//                self.showTopics(type: type, topics: facts)
+//            }
+//        } else {
+//            showTopics(type: type, topics: topics)
+//        }
+//    }
     
     func showTopics(type: DisplayOption, topics: [Fact]) {
         switch type {
@@ -146,6 +146,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
             
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: factCellIdentifier, for: indexPath) as? FactCell {
                 cell.fact = fact
+                cell.followButton.isHidden = true
                 
                 return cell
             }
@@ -207,7 +208,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
             
             if let type = type {
                 if type == .topic {
-                    view.headerLabel.text = "Communities"
+                    view.headerLabel.text = NSLocalizedString("communities", comment: "communities")
                 } else {
                     view.headerLabel.text = NSLocalizedString("discussions", comment: "discussions")
                 }

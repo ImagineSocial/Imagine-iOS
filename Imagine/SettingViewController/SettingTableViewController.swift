@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import MapKit
 import CropViewController
+import Photos
 
 protocol SettingCellDelegate {
     func gotChanged(type: SettingChangeType, value: Any)
@@ -918,6 +919,23 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
         self.indexPathOfImageSettingCell = forIndexPath
         self.changeTypeOfImageSettingCell = type
         
+        switch PHPhotoLibrary.authorizationStatus() {
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization { (status) in
+                if status == .authorized {
+                    self.showImagePicker()
+                } else {
+                    self.alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
+                }
+            }
+        case .restricted, .denied:
+            alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
+        case .authorized:
+            showImagePicker()
+        }
+    }
+    
+    func showImagePicker() {
         imagePicker.sourceType = .photoLibrary
         self.present(imagePicker, animated: true) {
             //Complete

@@ -116,10 +116,10 @@ class HandyHelper {
             reportViewLabelText = "Satire" // I think always the same excet arabic or whatever
             reportViewBackgroundColor = .orange
         case .misinformation:
-            reportViewLabelText = "Fehlinformation"
+            reportViewLabelText = NSLocalizedString("misinformation", comment: "misinformation")
             reportViewBackgroundColor = beautifulRed
         case .misleading:
-            reportViewLabelText = "Irreführender Inhalt"
+            reportViewLabelText = NSLocalizedString("misleading", comment: "misleading")
             reportViewBackgroundColor = beautifulRed
         case .opinion:
             reportViewLabelText = NSLocalizedString("Opinion, not a fact", comment: "When it seems like the post is presenting a fact, but is just an opinion")

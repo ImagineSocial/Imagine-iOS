@@ -25,13 +25,13 @@ class BaseCell: UICollectionViewCell {
 
 class SettingCell: BaseCell {
     
-    let blockUserText = "Blockieren"
-    let cameraText = "Kamera"
-    let photoLibraryText = "Profilbild ändern"
-    let viewPicText = "Profilbild ansehen"
-    let cancelText = "Abbrechen"
-    let chatWithUserText = "Chatten"
-    let deleteFriendText = "Als Freund löschen"
+    let blockUserText = NSLocalizedString("settingCell_block_label", comment: "block person")
+    let cameraText = NSLocalizedString("settingCell_camera_label", comment: "camera")
+    let photoLibraryText = NSLocalizedString("settingCell_change_picture", comment: "change picture")
+    let viewPicText = NSLocalizedString("settingCell_see_picture", comment: "see picture")
+    let cancelText = NSLocalizedString("cancel", comment: "cancel")
+    let chatWithUserText = NSLocalizedString("settingCell_write_message_label", comment: "write message")
+    let deleteFriendText = NSLocalizedString("settingCell_delete_as_friend_label", comment: "delete as friend")
     
     let settingCellHeight: CGFloat = 60
     fileprivate var nameLabelLeadingConstraint: NSLayoutConstraint?

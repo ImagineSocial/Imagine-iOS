@@ -37,6 +37,7 @@ class YouTubeCell: BaseFeedCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        descriptionPreviewLabel.text = nil
         titleLabel.text = nil
         
         profilePictureImageView.sd_cancelCurrentImageLoad()
@@ -121,7 +122,7 @@ class YouTubeCell: BaseFeedCell {
             
             createDateLabel.text = post.createTime
             titleLabel.text = post.title
-            
+            descriptionPreviewLabel.text = post.description
             commentCountLabel.text = String(post.commentCount)
             
             // LabelHeight calculated by the number of letters
@@ -153,6 +154,8 @@ class YouTubeCell: BaseFeedCell {
                 
                 if let url = URL(string: post.user.imageURL) {
                     profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                } else {
+                    profilePictureImageView.image = UIImage(named: "default-user")
                 }
             }
         }

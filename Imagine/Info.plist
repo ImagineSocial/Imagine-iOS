@@ -30,6 +30,8 @@
 	<false/>
 	<key>GOOGLE_ANALYTICS_IDFV_COLLECTION_ENABLED</key>
 	<false/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>
@@ -41,12 +43,12 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Wir würden gerne auf deine Kamera zugreifen, damit du Bilder für den Feed oder dein Profil machen kannst.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Wir würden gerne auf deinen Standort zugreifen, um dir die Auswahl des richtigen Ortes zu erleichtern</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Wir würden gerne das aufgenommene Bild in deinem Fotoalbum speichern.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Wir würden gerne auf deine Ordner zugreifen, damit du ein Foto zum posten auswählen kannst.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Wir würden gerne auf deinen Standort zugreifen, um dir die Auswahl des richtigen Ortes für dich zu vereinfachen</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Kalam-Regular.ttf</string>

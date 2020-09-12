@@ -271,15 +271,15 @@ class DataHelper {
     func getCategoryLabelText(type: CampaignType) -> String {
         switch type {
         case .proposal:
-            return "Vorschlag"
+            return NSLocalizedString("dataHelper_proposal_label", comment: "proposal")
         case .complaint:
-            return "Beschwerde"
+            return NSLocalizedString("dataHelper_complaint_label", comment: "complaint")
         case .call:
-            return "Aufruf"
+            return NSLocalizedString("dataHelper_call_label", comment: "call for action")
         case .change:
-            return "Veränderung"
+            return NSLocalizedString("dataHelper_change_label", comment: "change")
         case .topicAddOn:
-            return "Themen AddOn"
+            return NSLocalizedString("dataHelper_topic_addOn", comment: "topic addOn")
         }
     }
     

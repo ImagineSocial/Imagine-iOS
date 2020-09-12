@@ -141,7 +141,7 @@ class CommunityHeaderView: UIView {
                         print("We have an error: \(error.localizedDescription)")
                     } else {
                         print("Succesfully subscribed to topic")
-                        self.followButton.setTitle("Follow", for: .normal)
+                        self.followButton.setTitle("Unfollow", for: .normal)
                         community.beingFollowed = true
                         self.updateFollowCount(fact: community, follow: true)
                     }

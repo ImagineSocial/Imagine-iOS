@@ -102,21 +102,21 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
         switch displayNames {
         case .advantageDisadvantage:
             if proOrContra == "pro" {
-                return "Vorteile"
+                return NSLocalizedString("discussion_advantage", comment: "advantage")
             } else {
-               return "Nachteile"
+               return NSLocalizedString("discussion_disadvantage", comment: "disadvantage")
             }
         case .confirmDoubt:
            if proOrContra == "pro" {
-                return "Bestätigung"
+                return NSLocalizedString("discussion_proof", comment: "proof")
             } else {
-               return "Zweifel"
+               return NSLocalizedString("discussion_doubt", comment: "doubt")
             }
         case .proContra:
             if proOrContra == "pro" {
-                return "Pro"
+                return NSLocalizedString("discussion_pro", comment: "pro")
             } else {
-               return "Contra"
+               return NSLocalizedString("discussion_contra", comment: "contra")
             }
         }
     }
@@ -262,9 +262,8 @@ extension FactDetailViewController: CommentTableViewDelegate, CommentViewDelegat
     }
     
     func commentGotDeleteRequest(comment: Comment, answerToComment: Comment?) {
-        self.deleteAlert(title: "Kommentar löschen?", message: "Möchtest du das Kommentar wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.", delete:  { (delete) in
+        self.deleteAlert(title: NSLocalizedString("delete_comment_alert_title", comment: "delete comment?"), message: NSLocalizedString("delete_comment_alert_message", comment: "cant be redeemememed"), delete:  { (delete) in
             if delete {
-                
                 HandyHelper().deleteCommentInFirebase(comment: comment, answerToComment: answerToComment)
             }
         })

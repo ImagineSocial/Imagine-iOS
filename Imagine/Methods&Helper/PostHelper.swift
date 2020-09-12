@@ -456,7 +456,7 @@ class PostHelper {
                             var picturePosts = [Post]()
                             for post in self.posts {
                                 if post.type == .picture {
-                                    print("PicturePost mit namen: \(post.title), picturePostCount: ", picturePosts.count)
+
                                     picturePosts.append(post)
                                     
                                     if picturePosts.count == 6 {
@@ -1109,75 +1109,6 @@ class PostHelper {
         
     }
     
-//    func getUsers(postList: [Post], completion: @escaping ([Post]) -> Void) {
-//        //Wenn die Funktion fertig ist soll returnPosts bei der anderen losgehen
-//        for post in postList {
-//            // Vorläufig Daten hinzufügen
-//            //              print("postID::::::" , post.documentID)
-//            //            if post.type == "repost" || post.type == "translation" {
-//            //                let postRef = db.collection("Posts").document(post.documentID)
-//            //                let documentData : [String:Any] = ["thanksCount": 8, "wowCount": 4, "haCount": 3, "niceCount": 2]
-//            //
-//            //                postRef.setData(documentData, merge: true)
-//            //            }
-//            
-//            
-//            // User Daten raussuchen
-//            let userRef = db.collection("Users").document(post.originalPosterUID)
-//            
-//            userRef.getDocument(completion: { (document, err) in
-//                if let document = document {
-//                    if let docData = document.data() {
-//                        let user = User()
-//                        
-//                        user.name = docData["name"] as? String ?? ""
-//                        user.surname = docData["surname"] as? String ?? ""
-//                        user.imageURL = docData["profilePictureURL"] as? String ?? ""
-//                        user.userUID = post.originalPosterUID
-//                        user.blocked = docData["blocked"] as? [String] ?? nil
-//                        
-//                        post.user = user
-//                    }
-//                }
-//                
-//                if let err = err {
-//                    print("Wir haben einen Error beim User: \(err.localizedDescription)")
-//                }
-//            })
-//            
-//        }
-//        completion(postList)
-//    }
-    
-    
-//    func getCommentCount(completion: () -> Void) {
-//        //Wenn die Funktion fertig ist soll returnPosts bei der anderen losgehen
-//
-//        for post in self.posts {
-//            // Comment Count raussuchen wenn Post
-//
-//            if post.type != .event { // Wenn kein Event
-//
-//                let commentRef = db.collection("Comments").document(post.documentID).collection("threads")
-//
-//                commentRef.getDocuments { (snapshot, err) in
-//                    if let err = err {
-//                        print("Wir haben einen Error beim User: \(err.localizedDescription)")
-//                    }
-//                    if let snapshot = snapshot {
-//                        let number = snapshot.count
-//                        post.commentCount = number
-//                    }
-//                }
-//            }
-//        }
-//        print("Set Completed")
-//        completion()
-//    }
-    
-    
-    
-    
     
     func getChatUser(uid: String, sender: Bool, user: @escaping (ChatUser) -> Void) {
         
@@ -1202,15 +1133,6 @@ class PostHelper {
                         if let url = URL(string: imageURL) {
                             let defchatUser = ChatUser(displayName: "\(name) \(surname)", avatar: nil, avatarURL: url, isSender: sender)
                             
-                            //                        let imageView = UIImageView()
-                            //                        var image = UIImage()
-                            //                        imageView.sd_setImage(with: url, completed: { (newImage, _, _, _) in
-                            //
-                            //                        })
-                            //                        if let data = try? Data(contentsOf: url) {
-                            //                            let image:UIImage = UIImage.sd_image(with: data)
-                            //                        }
-                            
                             chatUser = defchatUser
                         }
                     } else {
@@ -1228,20 +1150,6 @@ class PostHelper {
             }
         })
     }
-}
-
-
-class ReportOptions {
-    // Optical change
-    // not now: "Circlejerk",NSLocalizedString("Pretentious", comment: "When the poster is just posting to sell themself"),, NSLocalizedString("Ignorant Thinking", comment: "If the poster is just looking at one side of the matter or problem")
-    
-    let opticOptionArray = ["Satire", "Spoiler", NSLocalizedString("Opinion, not a fact", comment: "When it seems like the post is presenting a fact, but is just an opinion"), NSLocalizedString("Sensationalism", comment: "When the given facts are presented more important, than they are in reality"), NSLocalizedString("Edited Content", comment: "If the person shares something that is corrected or changed with photoshop or whatever"), NSLocalizedString("Not listed", comment: "Something besides the given options")]
-    // Bad Intentions
-    let badIntentionArray = [NSLocalizedString("Hate against...", comment: "Expressing hat against a certain type of people"),NSLocalizedString("Disrespectful", comment: "If a person thinks he shouldnt care about another person's opinion"), NSLocalizedString("Offensive", comment: "Using slurs"), NSLocalizedString("Harassment", comment: "Keep on asking for something, even if the other person is knowingly annoyed"), NSLocalizedString("Racist", comment: "Not accepting another persons heritage"), NSLocalizedString("Homophobic", comment: "Not accepting another persons gender or sexual preferences"), NSLocalizedString("Violance Supporting", comment: "support the use of violance"), NSLocalizedString("Belittlement of suicide", comment: "Tough topic, no belittlement of suicide or joking about it"), NSLocalizedString("Disrespectful against religions", comment: "Disrespectful against religions"), NSLocalizedString("Not listed", comment: "Something besides the given options")]
-    // Lie & Deception
-//    let lieDeceptionArray = [ NSLocalizedString("Conspiracy theory", comment: "Conspiracy theory"), NSLocalizedString("Not listed", comment: "Something besides the given options")]
-    // Content
-    let contentArray = ["Misinformation", NSLocalizedString("Pornography", comment: "You know what it means"),NSLocalizedString("Pedophilia", comment: "sexual display of minors"), NSLocalizedString("Presentation of violance", comment: "Presentation of violance"), NSLocalizedString("crime", comment: "crime"), NSLocalizedString("animal_cruelty", comment: "animal cruelty"),  NSLocalizedString("Not listed", comment: "Something besides the given options")]
 }
 
 

@@ -391,7 +391,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans", size: 14)
-        label.text = "Benachrichtigungen:"
+        label.text = NSLocalizedString("sideMenu_notifications_label", comment: "notifications:")
         if #available(iOS 13.0, *) {
             label.tintColor = .label
         } else {
@@ -404,7 +404,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     let deleteAllNotificationsButton: DesignableButton = {
        let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Alle löschen", for: .normal)
+        button.setTitle(NSLocalizedString("sideMenu_notifications_delete_label", comment: "delete all"), for: .normal)
         button.setTitleColor(.systemRed, for: .normal)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 11)
         button.alpha = 0
@@ -479,7 +479,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     let chatButton: DesignableButton = {
         let btn = DesignableButton()
         btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.setTitle("Chats", for: .normal)
+        btn.setTitle(NSLocalizedString("sideMenu_chats_label", comment: "chats"), for: .normal)
         btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
         //        if #available(iOS 13.0, *) {
         //            btn.setTitleColor(.label, for: .normal)
@@ -529,7 +529,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     let friendsButton: DesignableButton = {
         let btn = DesignableButton()
         btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.setTitle("Freunde", for: .normal)
+        btn.setTitle(NSLocalizedString("sideMenu_friends_label", comment: "friends"), for: .normal)
         btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
         //        if #available(iOS 13.0, *) {
         //            btn.setTitleColor(.label, for: .normal)
@@ -607,7 +607,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     let savedButton: DesignableButton = {
         let btn = DesignableButton()
         btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.setTitle("Gesichert", for: .normal)
+        btn.setTitle(NSLocalizedString("sideMenu_saved_label", comment: "saved"), for: .normal)
         btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
         //        if #available(iOS 13.0, *) {
         //            btn.setTitleColor(.label, for: .normal)
@@ -665,7 +665,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     let eulaButton:DesignableButton = {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Einstellungen", for: .normal)
+        button.setTitle(NSLocalizedString("sideMenu_setting_label", comment: "settings"), for: .normal)
         //        if #available(iOS 13.0, *) {
         //            button.setTitleColor(.label, for: .normal)
         //        } else {

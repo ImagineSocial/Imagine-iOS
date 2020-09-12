@@ -186,12 +186,12 @@ class CommentTableView: UITableView {
                 comm.commentID == answerToComment.commentID
             }) {
                 let sectionComment = comments[section]
-                print("In der Section löschen: \(section), das Kommentar: \(sectionComment.text)")
+
                 if let children = sectionComment.children {
                     if let row = children.firstIndex(where: { (comm) -> Bool in
                         comm.commentID == comment.commentID
                     }) {
-                        print("In der row löschen: \(row), das Kommentar: \(children[row].text)")
+
                         let indexPath = IndexPath(row: row, section: section)
                         self.updateTableView(indexPath: indexPath)
                     }
@@ -202,7 +202,7 @@ class CommentTableView: UITableView {
                 comm.commentID == comment.commentID
             }) {
                 let indexPath = IndexPath(row: 0, section: index)
-                print("Hier wollen wir das toplevel comm löschen: \(indexPath.section), row: \(indexPath.row)")
+
                 self.updateTableView(indexPath: indexPath)
             }
         }
@@ -464,7 +464,9 @@ class CommentTableView: UITableView {
                                 }
                             }
                         } else {
-                            self.addUserAsNotificationRecipient(post: post, userUID: commenterUID)
+                            if commenterUID != "anonym" {
+                                self.addUserAsNotificationRecipient(post: post, userUID: commenterUID)
+                            }
                         }
                     }
                 }
@@ -569,7 +571,7 @@ extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
             }
         }
         
-        let editAction = UITableViewRowAction(style: .normal, title: "Melden") { (rowAction, indexPath) in
+        let editAction = UITableViewRowAction(style: .normal, title: NSLocalizedString("comment_report_label", comment: "report")) { (rowAction, indexPath) in
             
             self.commentDelegate?.commentGotReported(comment: comment)
         }
@@ -578,7 +580,7 @@ extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
         if let user = Auth.auth().currentUser {
             if let commentAuthor = comment.user {
                 if user.uid == commentAuthor.userUID {
-                    let deleteAction = UITableViewRowAction(style: .destructive, title: "Löschen") { (rowAction, indexPath) in
+                    let deleteAction = UITableViewRowAction(style: .destructive, title: NSLocalizedString("delete", comment: "delete")) { (rowAction, indexPath) in
                         
                         if comment.isIndented {
                             let answerToComment = self.comments[indexPath.section]
@@ -708,7 +710,7 @@ class CommentTableViewHeader: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans", size: 15)
         label.textAlignment = .left
-        label.text = "Kommentare:"
+        label.text = NSLocalizedString("comment_header_label", comment: "comments:")
         
         return label
     }()
@@ -747,7 +749,7 @@ class CommentTableViewHeader: UIView {
             label.textColor = .darkGray
         }
         label.textAlignment = .left
-        label.text = "Benachrichtigungen:"
+        label.text = NSLocalizedString("comment_notifications_label", comment: "notifications:")
         label.alpha = 0
 
         return label

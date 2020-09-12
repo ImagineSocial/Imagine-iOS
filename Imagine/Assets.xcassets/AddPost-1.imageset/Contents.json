@@ -1,23 +1,24 @@
 {
   "images" : [
     {
+      "filename" : "AddPost-1.png",
       "idiom" : "universal",
-      "filename" : "AddPost.pdf",
       "scale" : "1x"
     },
     {
+      "filename" : "AddPost-1@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "AddPost-1@3x.png",
       "idiom" : "universal",
-      "filename" : "AddPost69-1.pdf",
       "scale" : "3x"
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
   },
   "properties" : {
     "template-rendering-intent" : "template"

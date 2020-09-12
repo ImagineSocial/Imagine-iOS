@@ -30,6 +30,9 @@ class LinkCell : BaseFeedCell {
     @IBOutlet weak var reportView: DesignablePopUp!
     @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var urlLabel: UILabel!
+    @IBOutlet weak var linkPreviewTitleLabel: UILabel!
+    @IBOutlet weak var linkPreviewDescriptionLabel: UILabel!
+    @IBOutlet weak var titleLabelHeight: NSLayoutConstraint!
     
     let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: InMemoryCache())
     
@@ -53,8 +56,12 @@ class LinkCell : BaseFeedCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        descriptionPreviewLabel.text = ""
         
         urlLabel.text = nil
+        linkPreviewDescriptionLabel.text = nil
+        linkPreviewTitleLabel.text = nil
+        
         linkThumbNailImageView.sd_cancelCurrentImageLoad()
         linkThumbNailImageView.image = nil
         
@@ -104,6 +111,7 @@ class LinkCell : BaseFeedCell {
                 niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
             }
             
+            descriptionPreviewLabel.text = post.description
             commentCountLabel.text = String(post.commentCount)
             
             // Profile Picture
@@ -151,6 +159,8 @@ class LinkCell : BaseFeedCell {
                 }
             }
             
+            let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
+            titleLabelHeight.constant = labelHeight
             
             // ReportView einstellen
             let reportViewOptions = handyHelper.setReportView(post: post)
@@ -168,10 +178,25 @@ class LinkCell : BaseFeedCell {
         if let imageURL = result.image {
             if imageURL.isValidURL {
                 self.linkThumbNailImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
+//                { (image, _, _, _) in
+//                    if let image = image {
+//                        if let size = image.jpegData(compressionQuality: 100) {
+//                            print("##Das ist die size: \(size.count)")
+//                        }
+//                    }
+//                }
             } else {
                 
                 self.linkThumbNailImageView.image = UIImage(named: "link-default")
             }
+        }
+        
+        if let linkPreviewText = result.title {
+            linkPreviewTitleLabel.text = linkPreviewText
+        }
+        
+        if let linkPreviewDescription = result.description {
+            linkPreviewDescriptionLabel.text = linkPreviewDescription
         }
         
         if let linkSource = result.canonicalUrl {
@@ -194,6 +219,8 @@ class LinkCell : BaseFeedCell {
                 // Profile Picture
                 if let url = URL(string: post.user.imageURL) {
                     profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                } else {
+                    profilePictureImageView.image = UIImage(named: "default-user")
                 }
             }
         }

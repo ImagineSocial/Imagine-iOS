@@ -9,16 +9,63 @@
 import UIKit
 
 protocol tableViewToContainerParentProtocol:class { // Um die Auswahl zum ParentVC zu schicken
-    func passReportOption(option:String)
+    func passReportOption(option: ReportOption)
+}
+
+enum reportOption {
+    case notListed
+    
+    case satire
+    case spoiler
+    case personalOpinion
+    case sensationalism
+    case editedContent
+    
+    case hateSpeech
+    case mobbing
+    case insult
+    case racism
+    case homophobia
+    case violanceGlorification
+    case suicideTrivialization
+    case religiousFreedom
+    
+    case spam
+    case misinformation
+    case pornography
+    case pedophilia
+    case violence
+    case crime
+    case animalCruelty
+}
+
+class ReportOption {
+    var reportOption: reportOption
+    var text: String
+    
+    init(reportOption: reportOption, text: String) {
+        self.reportOption = reportOption
+        self.text = text
+    }
+    
+    // Optical change
+    // not now: "Circlejerk",NSLocalizedString("Pretentious", comment: "When the poster is just posting to sell themself"),, NSLocalizedString("Ignorant Thinking", comment: "If the poster is just looking at one side of the matter or problem")
 }
 
 class MeldeTableViewController: UITableViewController {
     
-    var reportCategory = ""
-    var choosenOption = ""
-    var optionArray = [String]()
+    var reportCategory: reportCategory?
+    var choosenOption: ReportOption?
+    var optionArray = [ReportOption]()
     var post = Post()
-    let reportOptionsClass = ReportOptions()
+    
+    let opticOptionArray: [ReportOption] = [ReportOption(reportOption: .satire, text: "Satire"), ReportOption(reportOption: .spoiler, text: "Spoiler"), ReportOption(reportOption: .personalOpinion, text: NSLocalizedString("Opinion, not a fact", comment: "When it seems like the post is presenting a fact, but is just an opinion")), ReportOption(reportOption: .sensationalism, text: NSLocalizedString("Sensationalism", comment: "When the given facts are presented more important, than they are in reality")), ReportOption(reportOption: .editedContent, text: NSLocalizedString("Edited Content", comment: "If the person shares something that is corrected or changed with photoshop or whatever")), ReportOption(reportOption: .notListed, text: NSLocalizedString("Not listed", comment: "Something besides the given options"))]
+        
+    
+    let ruleViolationArray: [ReportOption] = [ReportOption(reportOption: .hateSpeech, text: NSLocalizedString("reportOption_hateSpeech", comment: "hate speech")), ReportOption(reportOption: .mobbing, text: "Mobbing"), ReportOption(reportOption: .insult, text: NSLocalizedString("reportOption_insult", comment: "insult")), ReportOption(reportOption: .racism, text: NSLocalizedString("reportOption_racism", comment: "racism")), ReportOption(reportOption: .homophobia, text: NSLocalizedString("reportOption_homophobia", comment: "homophobia")), ReportOption(reportOption: .violanceGlorification, text: NSLocalizedString("reportOption_violanceGlorification", comment: "violance glorification")),ReportOption(reportOption: .suicideTrivialization, text: NSLocalizedString("reportOption_suicideTrivialization", comment: "trvialization of suicide")), ReportOption(reportOption: .religiousFreedom, text: NSLocalizedString("reportOption_religiousFreedom", comment: "freedom of religion")), ReportOption(reportOption: .notListed, text: NSLocalizedString("Not listed", comment: "Something besides the given options"))]
+        
+    
+    let contentArray: [ReportOption] = [ReportOption(reportOption: .misinformation, text: "Misinformation"), ReportOption(reportOption: .spam, text: "Spam"), ReportOption(reportOption: .pornography, text: NSLocalizedString("Pornography", comment: "You know what it means")), ReportOption(reportOption: .pedophilia, text: NSLocalizedString("Pedophilia", comment: "sexual display of minors")) , ReportOption(reportOption: .violence, text: NSLocalizedString("Presentation of violance", comment: "Presentation of violance")), ReportOption(reportOption: .crime, text: NSLocalizedString("crime", comment: "crime")), ReportOption(reportOption: .animalCruelty, text: NSLocalizedString("animal_cruelty", comment: "animal cruelty")),  ReportOption(reportOption: .notListed, text: NSLocalizedString("Not listed", comment: "Something besides the given options"))]
     
     weak var delegate:tableViewToContainerParentProtocol? = nil
 
@@ -40,17 +87,18 @@ class MeldeTableViewController: UITableViewController {
     
 
     func reportOptions () {
-        
-        if reportCategory == "Optisch markieren" {
-            optionArray = reportOptionsClass.opticOptionArray
-        } else if reportCategory == "Schlechte Absicht" {
-            optionArray = reportOptionsClass.badIntentionArray
-        } else if reportCategory == "Inhalt" {
-            optionArray = reportOptionsClass.contentArray
-        } else {
-            optionArray = ["Hier stimmt was nicht!"]
+        guard let category = reportCategory else {
+            dismiss(animated: true, completion: nil)
+            return
         }
-        
+        switch category {
+        case .markVisually:
+            optionArray = opticOptionArray
+        case .violationOfRules:
+            optionArray = ruleViolationArray
+        case .content:
+            optionArray = contentArray
+        }
     }
 
     
@@ -62,10 +110,10 @@ class MeldeTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "ReportCell", for: indexPath) as? ReportCell {
-
-        cell.ReportOptionLabel.text = optionArray[indexPath.row]
-
-        return cell
+            
+            cell.ReportOptionLabel.text = optionArray[indexPath.row].text
+            
+            return cell
         }
         return UITableViewCell()
     }
@@ -82,7 +130,7 @@ class MeldeTableViewController: UITableViewController {
             cell.ReportReasonLabel.text = "X"
             self.choosenOption = optionArray[indexPath.row]
             
-            delegate?.passReportOption(option: choosenOption)
+            delegate?.passReportOption(option: choosenOption!)
         }
         
         

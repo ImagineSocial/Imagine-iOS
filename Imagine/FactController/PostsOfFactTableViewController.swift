@@ -122,115 +122,6 @@ class PostsOfFactTableViewController: UITableViewController {
             followTopicTipView = nil
         }
     }
-    
-//    func decreaseTopView() {
-//        guard let headerView = tableView.tableHeaderView else {
-//          return
-//        }
-//
-//        let size = CGSize(width: self.view.frame.width, height: 80)
-//
-//        if headerView.frame.size.height != size.height {
-//            headerView.frame.size.height = size.height
-//        }
-//
-//        self.tableView.tableHeaderView = headerView
-//
-//        self.view.layoutIfNeeded()
-//
-//    }
-    
-//    func setFactUI() {
-//
-//        followTopicButton.cornerRadius = radius
-//        followTopicButton.layer.borderWidth = 0.5
-//
-//        headerImageView.layer.cornerRadius = radius
-//        headerImageView.layer.borderWidth = 2
-//        if #available(iOS 13.0, *) {
-//            followTopicButton.layer.borderColor = UIColor.separator.cgColor
-//            headerImageView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
-//        } else {
-//            followTopicButton.layer.borderColor = UIColor.darkGray.cgColor
-//            headerImageView.layer.borderColor = UIColor.lightGray.cgColor
-//        }
-//
-//        if displayOption == .normal {
-//            if #available(iOS 13.0, *) {
-//                self.tableView.backgroundColor = .secondarySystemBackground
-//                self.headerView.backgroundColor = .secondarySystemBackground
-//            } else {
-//                self.tableView.backgroundColor = .ios12secondarySystemBackground
-//                self.headerView.backgroundColor = .ios12secondarySystemBackground
-//            }
-//        }
-//
-//
-//        if let fact = fact {
-//
-//            if fact.beingFollowed {
-//                followTopicButton.setTitle("Unfollow", for: .normal)
-//            }
-//
-//            if let user = Auth.auth().currentUser {
-//                for moderator in fact.moderators {
-//                    if moderator == user.uid {
-//                        self.moderatorView.isHidden = false
-//                    }
-//                }
-//            }
-//
-//            headerLabel.text = fact.title
-//            descriptionLabel.text = fact.description
-//
-//            if let url = URL(string: fact.imageURL) {
-//                headerImageView.sd_setImage(with: url, completed: nil)
-//            } else {
-//                headerImageView.image = UIImage(named: "FactStamp")
-//            }
-//
-//            fact.getPostCount { (count) in
-//                self.postCountLabel.text = "Posts: \(count)"
-//                self.postCount = count
-//            }
-//
-//            fact.getFollowerCount{ (count) in
-//                self.followerCountLabel.text = "Follower: \(count)"
-//                self.followerCount = count
-//            }
-//
-//            if let user = Auth.auth().currentUser {
-//                if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" {
-//                    print("Nicht bei Malte loggen")
-//                } else {
-//                    Analytics.logEvent("PostsOfFactsSearched", parameters: [
-//                        AnalyticsParameterTerm: fact.title
-//                    ])
-//                }
-//            } else {
-//                Analytics.logEvent("PostsOfFactsSearched", parameters: [
-//                    AnalyticsParameterTerm: fact.title
-//                ])
-//            }
-//        }
-//    }
-//
-//    func setDismissButton() {
-//        let button = DesignableButton()
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        button.tintColor = .imagineColor
-//        button.addTarget(self, action: #selector(dismissTapped), for: .touchUpInside)
-//        button.setImage(UIImage(named: "Dismiss"), for: .normal)
-//        button.heightAnchor.constraint(equalToConstant: 23).isActive = true
-//        button.widthAnchor.constraint(equalToConstant: 23).isActive = true
-//
-//        let barButton = UIBarButtonItem(customView: button)
-//        self.navigationItem.leftBarButtonItem = barButton
-//    }
-//
-    @objc func dismissTapped() {
-        self.dismiss(animated: true, completion: nil)
-    }
 
     func getPosts() {
         
@@ -269,8 +160,7 @@ class PostsOfFactTableViewController: UITableViewController {
     }
     
     func showFollowTopicExplanation() {
-        followTopicTipView = EasyTipView(text: "Bei Imagine können Beiträge mit allen geteilt, oder auch seperat in einem Thema gepostet werden.\n\nFolge einer Community, um auch diese neuen Themen-Beiträge in deinem Home-Feed zu sehen. Ganz bald jedenfalls, wir sind dabei :)")
-//        followTopicTipView!.show(forView: justForTipViewView)
+        followTopicTipView = EasyTipView(text: NSLocalizedString("follow_community_description", comment: "Why should you follow a topic?"))
     }
     
     //MARK:-ScrollViewDidScroll
@@ -483,21 +373,10 @@ class PostsOfFactTableViewController: UITableViewController {
                     if post.linkURL.contains("songwhip.com") {
                         return UITableView.automaticDimension
                     } else {
-                        if post.title.count <= 60 {
-                            heightForRow = 200
-                        } else if post.title.count <= 80 {
-                            heightForRow = 210
-                        } else if post.title.count <= 120 {
-                            heightForRow = 230
-                        } else if post.title.count <= 140 {
-                            heightForRow = 245
-                        } else if post.title.count <= 160 {
-                            heightForRow = 260
-                        } else if post.title.count <= 180 {
-                            heightForRow = 275
-                        }else if post.title.count <= 200 {
-                            heightForRow = 290
-                        }
+                        let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
+                        let height = 300+extraHeightForReportView+labelHeight
+                        
+                        return height
                     }
                 case .repost:
                     
@@ -556,46 +435,6 @@ class PostsOfFactTableViewController: UITableViewController {
         }
     }
     
-    
-//    @IBAction func displayOptionButtonTapped(_ sender: Any) {
-//        switch displayOption {
-//        case .small:
-//            displayOption = .normal
-//            defaults.set(false, forKey: smallDisplayTypeUserDefaultsPhrase)
-//            displayOptionButton.setImage(UIImage(named: "list-1"), for: .normal)
-//            
-//            if isMainViewController {
-//                headerSeparatorView.alpha = 1
-//            }
-//            if #available(iOS 13.0, *) {
-//                self.tableView.backgroundColor = .secondarySystemBackground
-//                self.headerView.backgroundColor = .secondarySystemBackground
-//            } else {
-//                self.tableView.backgroundColor = .ios12secondarySystemBackground
-//                self.headerView.backgroundColor = .ios12secondarySystemBackground
-//            }
-//            
-//            tableView.reloadData()
-//        case .normal:
-//            displayOption = .small
-//            defaults.set(true, forKey: smallDisplayTypeUserDefaultsPhrase)
-//            
-//            displayOptionButton.setImage(UIImage(named: "today_apps"), for: .normal)
-//            
-//            headerSeparatorView.alpha = 0
-//            
-//            if #available(iOS 13.0, *) {
-//                self.tableView.backgroundColor = .systemBackground
-//                self.headerView.backgroundColor = .systemBackground
-//            } else {
-//                self.tableView.backgroundColor = .white
-//                self.headerView.backgroundColor = .white
-//            }
-//            
-//            tableView.reloadData()
-//        }
-//    }
-    
     @IBAction func infoButtonTapped(_ sender: Any) {
         if let tipView = tipView {
             tipView.dismiss()
@@ -610,28 +449,6 @@ class PostsOfFactTableViewController: UITableViewController {
             performSegue(withIdentifier: "goToNewPost", sender: fact)
         }
     }
-    
-    
-//    @IBAction func followTopicButtonTapped(_ sender: Any) {
-//        if let fact = fact {
-//            if fact.beingFollowed {
-//                factParentVC.unfollowTopic(fact: fact)
-//                fact.beingFollowed = false
-//                self.followTopicButton.setTitle("Follow", for: .normal)
-//
-//                self.followerCount = self.followerCount-1
-//                self.followerCountLabel.text = "Follower: \(self.followerCount)"
-//
-//            } else {
-//                factParentVC.followTopic(fact: fact)
-//                fact.beingFollowed = true
-//                self.followTopicButton.setTitle("Unfollow", for: .normal)
-//
-//                self.followerCount = self.followerCount+1
-//                self.followerCountLabel.text = "Follower: \(self.followerCount)"
-//            }
-//        }
-//    }
     
     
     //MARK:- Prepare For Segue
@@ -678,6 +495,15 @@ class PostsOfFactTableViewController: UITableViewController {
                 }
             }
         }
+        
+        if segue.identifier == "toUserSegue" {
+            if let userVC = segue.destination as? UserFeedTableViewController {
+                if let chosenUser = sender as? User {   // Another User
+                    userVC.userOfProfile = chosenUser
+                    userVC.currentState = .otherUser
+                } 
+            }
+        }
     }
     
     @IBAction func toSettingsTapped(_ sender: Any) {
@@ -709,7 +535,7 @@ extension PostsOfFactTableViewController: PostCellDelegate, NewFactDelegate, Mus
     
     
     func userTapped(post: Post) {
-        //Todo: To User
+        performSegue(withIdentifier: "toUserSegue", sender: post.user)
     }
     
     // MARK: Cell Button Tapped

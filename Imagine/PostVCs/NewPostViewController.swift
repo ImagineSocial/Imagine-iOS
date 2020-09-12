@@ -44,7 +44,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var headerView: UIView!
     
     var imagePicker = UIImagePickerController()
-    var multiImagePicker = ImagePickerController()
+    
     var imageURLs = [String]()
     var multiImageAssets = [PHAsset]()
     var previewPictures = [UIImage]()
@@ -114,7 +114,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print("###ich bin wacg")
         previewCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
         
         previewCollectionView.dataSource = self
@@ -123,8 +123,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
         previewCollectionView.setCollectionViewLayout(layout, animated: true)
         
-        let options = multiImagePicker.settings
-        options.selection.max = 3
+        
         
         imagePicker.delegate = self
         titleTextView.delegate = self
@@ -143,7 +142,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
 //        setLocationViewUI()
         
         if comingFromPostsOfFact || comingFromAddOnVC {
-            setDismissButton()
+            if #available(iOS 13.0, *) {
+                //no need for a dismiss button
+            } else {
+                setDismissButton()
+            }
+            
             cancelLinkedFactButton.isEnabled = false
             cancelLinkedFactButton.alpha = 0.5
             distributionInformationLabel.text = "Community"
@@ -313,7 +317,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Titel:"
+        label.text = NSLocalizedString("newPost_title_label_text", comment: "title:")
         label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
         
         return label
@@ -1670,48 +1674,117 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @objc func camTapped() {
         if let _ = Auth.auth().currentUser {
-            imagePicker.sourceType = .camera
-            imagePicker.cameraCaptureMode = .photo
-            imagePicker.cameraDevice = .rear
-            imagePicker.cameraFlashMode = .off
-            imagePicker.showsCameraControls = true
             
-            //imagePicker.allowsEditing = true
-            self.present(self.imagePicker, animated: true, completion: nil)
+            let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
+            switch status {
+            case .authorized:
+                self.showCamera()
+                
+            case .notDetermined:
+                AVCaptureDevice.requestAccess(for: AVMediaType.video) { (granted) in
+                    if granted {
+                        self.showCamera()
+                    } else {
+                        self.camDenied()
+                    }
+                }
+                
+            case .denied:
+                self.camDenied()
+                
+            case .restricted:
+                let alert = UIAlertController(title: "Restricted",
+                                              message: "You've been restricted from using the camera on this device. Without camera access this feature won't work. Please contact the device owner so they can give you access.",
+                                              preferredStyle: .alert)
+                
+                let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                alert.addAction(okAction)
+                self.present(alert, animated: true, completion: nil)
+            }
+        } else {
+            self.notLoggedInAlert()
+        }
+    }
+    
+    func camDenied() {
+        DispatchQueue.main.async {
+                var alertText = NSLocalizedString("newPost_camera_error_text", comment: "cant acces, what to do")
+
+                var alertButton = "OK"
+                var goAction = UIAlertAction(title: alertButton, style: .default, handler: nil)
+
+                if UIApplication.shared.canOpenURL(URL(string: UIApplication.openSettingsURLString)!) {
+                    alertText = NSLocalizedString("newPost_camera_error_text", comment: "CANT ACCESS    what to do")
+
+                    alertButton = "Go"
+
+                    goAction = UIAlertAction(title: alertButton, style: .default, handler: {(alert: UIAlertAction!) -> Void in
+                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
+                    })
+                }
+
+                let alert = UIAlertController(title: "Error", message: alertText, preferredStyle: .alert)
+                alert.addAction(goAction)
+                self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func showCamera() {
+        imagePicker.sourceType = .camera
+        imagePicker.cameraCaptureMode = .photo
+        imagePicker.cameraDevice = .rear
+        imagePicker.cameraFlashMode = .off
+        imagePicker.showsCameraControls = true
+        
+        //imagePicker.allowsEditing = true
+        self.present(self.imagePicker, animated: true, completion: nil)
+    }
+    
+    @objc func CamRollTapped() {
+        if let _ = Auth.auth().currentUser {
+            
+            switch PHPhotoLibrary.authorizationStatus() {
+            case .notDetermined:
+                PHPhotoLibrary.requestAuthorization { (status) in
+                    if status == .authorized {
+                        self.showPictureAlert()
+                    } else {
+                        self.alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
+                    }
+                }
+            case .restricted, .denied:
+                alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
+            case .authorized:
+                showPictureAlert()
+            }
             
         } else {
             self.notLoggedInAlert()
         }
     }
     
-    @objc func CamRollTapped() {
-        if let _ = Auth.auth().currentUser {
-            
-            let alert = UIAlertController(title: NSLocalizedString("how_many_pics_alert_header", comment: "How many pics do you want to post?"), message: NSLocalizedString("how_many_pics_alert_message", comment: "How many pics do you want to post?"), preferredStyle: .actionSheet)
+    func showPictureAlert() {
+        let alert = UIAlertController(title: NSLocalizedString("how_many_pics_alert_header", comment: "How many pics do you want to post?"), message: NSLocalizedString("how_many_pics_alert_message", comment: "How many pics do you want to post?"), preferredStyle: .actionSheet)
 
-            alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_just_one", comment: "just one"), style: .default, handler: { (_) in
-                self.imagePicker.sourceType = .photoLibrary
-                //imagePicker.allowsEditing = true
-                
-                self.selectedOption = .picture
-                self.present(self.imagePicker, animated: true, completion: nil)
-            }))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_just_one", comment: "just one"), style: .default, handler: { (_) in
+            self.imagePicker.sourceType = .photoLibrary
+            //imagePicker.allowsEditing = true
             
+            self.selectedOption = .picture
+            self.present(self.imagePicker, animated: true, completion: nil)
+        }))
+        
 
-            alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_three", comment: "two or three pics"), style: .default, handler: { (_) in
-                
-                //toDo: remove the selection
-                self.selectedOption = .multiPicture
-                self.openMultiPictureImagePicker()
-            }))
-            alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .destructive, handler: { (_) in
-                alert.dismiss(animated: true, completion: nil)
-            }))
-            self.present(alert, animated: true, completion: nil)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_three", comment: "two or three pics"), style: .default, handler: { (_) in
             
-        } else {
-            self.notLoggedInAlert()
-        }
+            //toDo: remove the selection
+            self.selectedOption = .multiPicture
+            self.openMultiPictureImagePicker()
+        }))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .destructive, handler: { (_) in
+            alert.dismiss(animated: true, completion: nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
     
     @objc func removePictureTapped() {
@@ -2098,7 +2171,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                         } else if let _ = text.youtubeID {
                             self.postYTVideo(postRef: postRef, userID: userID)
                         } else {
-                            self.postLink(postRef: postRef, userID: userID)
+                            self.getLinkPreview(postRef: postRef, userID: userID, link: text)
                         }
                     } else {
                         self.alert(message: NSLocalizedString("missing_info_alert_link", comment: "enter link please"))
@@ -2116,15 +2189,21 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     //MARK:- LinkPreview
     
-    func getLinkPreview(link: String) {
+    func getLinkPreview(postRef: DocumentReference, userID: String ,link: String) {
         if link.isValidURL {
             slp.preview(link, onSuccess: { (response) in
-                if let imageURL = response.image {
-                    
+                var imageURL: String?
+                var shortURL: String?
+                
+                if let URL = response.image {
+                    imageURL = URL
                 }
-                if let shortURL = response.canonicalUrl {
-                    
+                if let URL = response.canonicalUrl {
+                    shortURL = URL
                 }
+                
+                self.postLink(postRef: postRef, userID: userID, imageURL: imageURL, canonicalURL: shortURL)
+                
             }) { (err) in
                 print("We have an error: \(err.localizedDescription)")
                 self.alert(message: err.localizedDescription, title: NSLocalizedString("error_title", comment: "got error"))
@@ -2134,7 +2213,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         } else {
             self.view.activityStopAnimating()
             self.shareButton.isEnabled = true
-            self.alert(message: NSLocalizedString("error_no_link", comment: "no link"), title: NSLocalizedString("error_title", comment: "got error"))
+            self.alert(message: NSLocalizedString("error_link_not_valid", comment: "not valid"), title: NSLocalizedString("error_title", comment: "got error"))
         }
     }
     
@@ -2142,9 +2221,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     // MARK: - MultiImagePicker
     
     func openMultiPictureImagePicker() {
+        let multiImagePicker = ImagePickerController()
+        let options = multiImagePicker.settings
+        options.selection.max = 3
+        
         self.multiImageAssets.removeAll()
         //TODo: change the selection
-        self.presentImagePicker(self.multiImagePicker,
+        self.presentImagePicker(multiImagePicker,
                                 
         select: { (asset) in
             self.multiImageAssets.append(asset)
@@ -2428,23 +2511,27 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         print("thought posted")
     }
     
-    func postLink(postRef: DocumentReference, userID: String) {
+    func postLink(postRef: DocumentReference, userID: String, imageURL: String?, canonicalURL: String?) {
         if linkTextField.text != "" {
-            if linkTextField.text!.isValidURL {
-                
-                let descriptionText = descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
-                let tags = self.getTagsToSave()
-                
-                let dataDictionary: [String: Any] = ["title": titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "link", "report": getReportString(), "link": linkTextField.text!, "tags": tags]
-                
-                self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
-            } else {
-                self.view.activityStopAnimating()
-                self.shareButton.isEnabled = true
-                self.alert(message: NSLocalizedString("error_link_not_valid", comment: "not valid"), title: NSLocalizedString("error_title", comment: "got error"))
-            }
-        } else {
             
+            let descriptionText = descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
+            let tags = self.getTagsToSave()
+            
+            var dataDictionary: [String: Any] = ["title": titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "link", "report": getReportString(), "link": linkTextField.text!, "tags": tags]
+            if let url = imageURL {
+                dataDictionary["imageURL"] = url
+            }
+            
+            if let canURL = canonicalURL {
+                dataDictionary["shortURL"] = canURL
+            }
+                
+            self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
+            
+        } else {
+            self.view.activityStopAnimating()
+            self.shareButton.isEnabled = true
+            self.alert(message: NSLocalizedString("error_no_link", comment: "no link"), title: NSLocalizedString("error_title", comment: "got error"))
         }
     }
     
@@ -2594,6 +2681,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
         
         var data = dataDictionary
+        data["notificationRecipients"] = [userID]   //So he can set notifications off in his own post
+        
+        if let location = linkedLocation {
+            data["locationName"] = location.title
+            let geoPoint = GeoPoint(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+            data["locationCoordinate"] = geoPoint
+        }
         
         if let fact = self.linkedFact { // If there is a fact that should be linked to this post, and append its ID to the array
             data["linkedFactID"] = fact.documentID
@@ -2605,12 +2699,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             if self.comingFromAddOnVC || postOnlyInTopic {
                 data["type"] = "topicPost"  // To fetch in a different ref when loading the posts of the topic
-            }
-            
-            if let location = linkedLocation {
-                data["locationName"] = location.title
-                let geoPoint = GeoPoint(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-                data["locationCoordinate"] = geoPoint
             }
             
             ref.setData(data) { (err) in

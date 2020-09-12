@@ -59,11 +59,8 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
     }
     
     var noOptionalInformation = false
-    var optionalInformationProposals = [ProposalForOptionalInformation(isFirstCell: true, headerText: "", detailText: ""), ProposalForOptionalInformation(isFirstCell: false, headerText: NSLocalizedString("proposal_header_guilty", comment: "who is guilty?"), detailText: NSLocalizedString("proposal_detail_guilty", comment: "discuss about who is guilty for example")), ProposalForOptionalInformation(isFirstCell: false, headerText: "Was kann ich tun?", detailText: "Beschreibungen und Beiträge zu einfachen Mitteln für Jedermann, wie man das Problem des Themas bekämpfen/verbessern kann"),  ProposalForOptionalInformation(isFirstCell: false, headerText: "Top-News", detailText: "Übersichtlich die neuesten Nachrichten über das Thema an einem Ort finden."), ProposalForOptionalInformation(isFirstCell: false, headerText: "Beginners Guide", detailText: "Erste Schritte für interessierte Neulinge die tiefer in dieses Thema eintauchen möchten")]
+    var optionalInformationProposals = [ProposalForOptionalInformation(isFirstCell: true, headerText: "", detailText: ""), ProposalForOptionalInformation(isFirstCell: false, headerText: NSLocalizedString("proposal_header_guilty", comment: "who is guilty?"), detailText: NSLocalizedString("proposal_detail_guilty", comment: "discuss about who is guilty for example")), ProposalForOptionalInformation(isFirstCell: false, headerText: NSLocalizedString("proposal_what_can_i_do", comment: "what can I do?"), detailText: NSLocalizedString("proposal_what_can_i_do_detail", comment: "what could others do to help?")),  ProposalForOptionalInformation(isFirstCell: false, headerText: "Top-News", detailText: NSLocalizedString("proposal_top_news_detail", comment: "top news on one location")), ProposalForOptionalInformation(isFirstCell: false, headerText: "Beginners Guide", detailText: NSLocalizedString("proposal_beginners_guide_detail", comment: "for newbies an intro"))]
     //ProposalForOptionalInformation(isFirstCell: false, headerText: "Wen sollte ich meiden?", detailText: "Eine übersichtliche Ansammlung von Firmen die du meiden könntest um das Problem des Themas zu entlasten"),
-    let diyString = "Was kann ich tun?"
-    let avoidString = "Wen sollte ich meiden?"
-    let guiltyString = "Wer ist daran Schuld?"
     
     let reuseIdentifier = "CollectionViewInTableViewCell"
     let proposalCellIdentifier = "ProposalCell"
@@ -231,7 +228,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             
             if proposal.isFirstCell {
                 let cell = UITableViewCell(style: .default, reuseIdentifier: "FirstCell")
-                cell.textLabel!.text = "Füge einen passenden Bereich für dieses Thema hinzu, um es besser zu repräsentieren, für andere schnell Verständlich zu machen oder lass deiner Fantasie einfach freien lauf.\nEin paar Vorschläge:"
+                cell.textLabel!.text = NSLocalizedString("proposal_first_cell_header", comment: "what is this about?")
                 cell.textLabel?.font = UIFont(name: "IBMPlexSans", size: 15)
                 cell.contentView.backgroundColor = .clear
                 cell.backgroundColor = .clear
@@ -469,7 +466,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
-                let alert = UIAlertController(title: "Fertig", message: "Das AddOn wurde erweitert. Vielen Dank für deinen Beitrag!", preferredStyle: .alert)
+                let alert = UIAlertController(title: NSLocalizedString("done", comment: "done"), message: "Das AddOn wurde erweitert. Vielen Dank für deinen Beitrag!", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
                     
                     let docRef = self.db.collection("Facts").document(self.fact!.documentID).collection("addOns").document(addOnRef)

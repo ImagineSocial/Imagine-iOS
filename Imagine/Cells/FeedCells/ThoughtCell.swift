@@ -33,6 +33,8 @@ class ThoughtCell : BaseFeedCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         
+        descriptionPreviewLabel.text = ""
+        
         profilePictureImageView.sd_cancelCurrentImageLoad()
         profilePictureImageView.image = nil
         
@@ -89,6 +91,7 @@ class ThoughtCell : BaseFeedCell {
                 self.titleToLikeButtonsConstraint.constant = 10
             }
             
+            descriptionPreviewLabel.text = post.description
             commentCountLabel.text = String(post.commentCount)
             
             
@@ -148,6 +151,8 @@ class ThoughtCell : BaseFeedCell {
                 
                 if let url = URL(string: post.user.imageURL) {
                     profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                } else {
+                    profilePictureImageView.image = UIImage(named: "default-user")
                 }
             }
         }

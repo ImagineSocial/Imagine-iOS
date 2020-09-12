@@ -13,8 +13,8 @@ import FirebaseAuth
 
 class MeldeAgreeViewController: UIViewController {
 
-    var reportCategory = ""
-    var choosenReportOption = ""
+    var reportCategory: reportCategory?
+    var choosenReportOption: ReportOption?
     var post: Post?
     var comment: Comment?
     let db = Firestore.firestore()
@@ -30,44 +30,58 @@ class MeldeAgreeViewController: UIViewController {
     }
     
     func displayNoticeAndWarning() {
-        let underlineAttribute = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue]
-        let underlineAttributedString = NSAttributedString(string:  "Der Grund für dein Melden: \(choosenReportOption)", attributes: underlineAttribute)
-        MeldegrundLabel.attributedText = underlineAttributedString
+        let text = NSLocalizedString("report_reason_description", comment: "your report:")
+        MeldegrundLabel.text = String.localizedStringWithFormat(text, choosenReportOption!.text)
         
-        if reportCategory == "Optisch markieren" {
-            HinweisTextLabel.text = "Deine Mituser überprüfen nun ob der Post markiert werden muss. Wir wollen dafür sorgen, dass wir durch ein transparentes Internet surfen. Bitte missbrauche diese Features nicht, sonst müssen wir deinen Trust-Rang heruntersetzen. Mehr Infos zu dem Meldesystem findest du im Info-Bereich.\nVielen Dank für deine Mithilfe!"
-        } else if reportCategory == "Schlechte Absicht" {
-            HinweisTextLabel.text = "Deine Mituser überprüfen nun ob der Post wegen schlechter Absichten entfernt werden muss. Wir wollen dafür sorgen, dass wir durch ein transparentes Internet surfen. Bitte missbrauche diese Features nicht, sonst müssen wir deinen Trust-Rang heruntersetzen. Mehr Infos zu dem Meldesystem findest du im Info-Bereich.\nVielen Dank für deine Mithilfe!"
-            
-        } else if reportCategory == "Lüge/Täuschung" {
-            HinweisTextLabel.text = "Deine Mituser überprüfen nun ob der Post wegen Lüge oder Täuschung entfernt werden muss. Wir wollen dafür sorgen, dass wir durch ein transparentes Internet surfen. Bitte missbrauche diese Features nicht, sonst müssen wir deinen Trust-Rang heruntersetzen. Mehr Infos zu dem Meldesystem findest du im Info-Bereich.\nVielen Dank für deine Mithilfe!"
-            
-        } else if reportCategory == "Inhalt" {
-            HinweisTextLabel.text = "Deine Mituser überprüfen nun ob der Post wegen unpassendem Inhalt entfernt werden muss. Wir wollen dafür sorgen, dass wir durch ein transparentes Internet surfen. Bitte missbrauche diese Features nicht, sonst müssen wir deinen Trust-Rang heruntersetzen. Mehr Infos zu dem Meldesystem findest du im Info-Bereich.\nVielen Dank für deine Mithilfe!"
+        guard let category = self.reportCategory else { return }
+        
+        switch category {
+        case .markVisually:
+            HinweisTextLabel.text = NSLocalizedString("report_markVisually_description", comment: "what will happen if i do this?")
+        case .violationOfRules:
+            HinweisTextLabel.text = NSLocalizedString("report_ruleViolation/content_description", comment: "what will happen if i do this?")
+        case .content:
+            HinweisTextLabel.text = NSLocalizedString("report_ruleViolation/content_description", comment: "what will happen if i do this?")
+        }
+    }
+    
+    func getReportCategoryString(reportCategory: reportCategory) -> String {
+        switch reportCategory {
+        case .markVisually:
+            return "Optisch markieren"
+        case .violationOfRules:
+            return "Regelverstoß"
+        case .content:
+            return "Inhalt"
         }
     }
     
     func saveReportOption() {
+        
         // Erstmal nur optische Auswahl
         var reportOptionForDatabase = String()
         
-        switch choosenReportOption {
-        case "Meinung, kein Fakt":
+        switch choosenReportOption!.reportOption {
+        case .personalOpinion:
             reportOptionForDatabase = "opinion"
-        case "Sensationalismus":
+        case .sensationalism:
             reportOptionForDatabase = "sensationalism"
-        case "Circlejerk":
-            reportOptionForDatabase = "circlejerk"
-        case "Angeberisch":
-            reportOptionForDatabase = "pretentious"
-        case "Bildbearbeitung":
+        case .editedContent:
             reportOptionForDatabase = "edited"
-        case "Schwarz-Weiß-Denken":
-            reportOptionForDatabase = "ignorant"
-        case "Satire":
+        case .satire:
             reportOptionForDatabase = "satire"
-        case "Spoiler":
+        case .spoiler:
             reportOptionForDatabase = "spoiler"
+        case .pornography:
+            reportOptionForDatabase = "blocked"
+        case .pedophilia:
+            reportOptionForDatabase = "blocked"
+        case .violence:
+            reportOptionForDatabase = "blocked"
+        case .racism:
+            reportOptionForDatabase = "blocked"
+        case .animalCruelty:
+            reportOptionForDatabase = "blocked"
         default:
             reportOptionForDatabase = "normal"
         }
@@ -105,12 +119,12 @@ class MeldeAgreeViewController: UIViewController {
             
             if let post = post {
                 
-                let data: [String:Any] = ["category": reportCategory, "reason": choosenReportOption, "reportingUser": user.uid, "reported post":post.documentID]
+                let data: [String:Any] = ["category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported post":post.documentID]
                 
                 saveReportInDatabase(data: data)
                 
             } else if let comment = comment {
-                let data: [String:Any] = ["category": reportCategory, "reason": choosenReportOption, "reportingUser": user.uid, "reported post": comment.commentID]
+                let data: [String:Any] = ["category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported comment": comment.commentID]
                 
                 saveReportInDatabase(data: data)
             }

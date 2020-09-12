@@ -160,7 +160,7 @@ extension ArgumentDetailViewController: CommentViewDelegate, CommentTableViewDel
     }
     
     func commentGotDeleteRequest(comment: Comment, answerToComment: Comment?) {
-        self.deleteAlert(title: "Kommentar löschen?", message: "Möchtest du das Kommentar wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.", delete:  { (delete) in
+        self.deleteAlert(title: NSLocalizedString("delete_comment_alert_title", comment: "delete comment?"), message: NSLocalizedString("delete_comment_alert_message", comment: "sure to delete?"), delete:  { (delete) in
             if delete {
                 
                 HandyHelper().deleteCommentInFirebase(comment: comment, answerToComment: answerToComment)

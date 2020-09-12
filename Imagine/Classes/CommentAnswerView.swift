@@ -232,7 +232,7 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
         field.translatesAutoresizingMaskIntoConstraints = false
         field.backgroundColor = .white
         field.layer.cornerRadius = 10
-        field.placeholder = " Sag etwas dazu..."
+        field.placeholder = NSLocalizedString("comment_answer_placeholder", comment: "say something about it")
         if #available(iOS 13.0, *) {
             field.backgroundColor = .systemBackground
         } else {
@@ -270,7 +270,7 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans", size: 13)
-        label.text = "Antwort an: "
+        label.text = NSLocalizedString("comment_indented_answer_label", comment: "answer to:")
         
         return label
     }()

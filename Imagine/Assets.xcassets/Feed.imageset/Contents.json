@@ -1,16 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Feed.pdf",
+      "filename" : "Feed.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "Feed@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Feed69.pdf",
+      "filename" : "Feed@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -1,22 +1,23 @@
 {
   "images" : [
     {
+      "filename" : "Topic.png",
       "idiom" : "universal",
-      "filename" : "Topic.pdf",
       "scale" : "1x"
     },
     {
+      "filename" : "Topic@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "Topic@3x.png",
       "idiom" : "universal",
-      "filename" : "Topic69.pdf",
       "scale" : "3x"
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
   }
 }

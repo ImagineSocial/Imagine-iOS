@@ -21,6 +21,7 @@ class DiscussionCell: UICollectionViewCell {
     @IBOutlet weak var contraArgumentCountLabel: UILabel!
     
     let db = Firestore.firestore()
+    let cornerRadius: CGFloat = 6
     
     var fact: Fact? {
         didSet {
@@ -42,16 +43,21 @@ class DiscussionCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         
-        layer.masksToBounds = true
-        if #available(iOS 13.0, *) {
-            layer.borderColor = UIColor.secondaryLabel.cgColor
-        } else {
-            layer.borderColor = UIColor.black.cgColor
-        }
-        layer.borderWidth = 0.5
         
-        layer.cornerRadius = 6
-        backgroundColor = .clear
+    }
+    
+    override func layoutSubviews() {
+        contentView.layer.cornerRadius = cornerRadius
+        layer.cornerRadius = cornerRadius
+        if #available(iOS 13.0, *) {
+            layer.shadowColor = UIColor.label.cgColor
+        } else {
+            layer.shadowColor = UIColor.black.cgColor
+        }
+        layer.shadowOffset = CGSize(width: 0, height: 0)
+        layer.shadowRadius = 3
+        layer.shadowOpacity = 0.4
+        layer.shadowPath = UIBezierPath(roundedRect: contentView.frame, cornerRadius: cornerRadius).cgPath
     }
     
     func getArguments(documentID: String) {

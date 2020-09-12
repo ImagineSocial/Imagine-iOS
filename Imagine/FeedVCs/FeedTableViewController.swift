@@ -20,8 +20,8 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     @IBOutlet weak var sortPostsButton: DesignableButton!
     @IBOutlet weak var viewAboveTableView: UIView!
         
-    var searchController = UISearchController()
     var screenEdgeRecognizer: UIScreenEdgePanGestureRecognizer!
+    var statusBarView: UIView?
     
     var loggedIn = false    // For the barButtonItem
     
@@ -51,8 +51,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         loadBarButtonItem()
         
         setNotificationListener()
-        
-        getPosts(getMore: true)
+        setPlaceholderAndGetPosts()
         
         if !self.isAppAlreadyLaunchedOnce() {
             performSegue(withIdentifier: "toIntroView", sender: nil)
@@ -67,7 +66,28 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         }
     }
     
-    var statusBarView: UIView?
+    func setPlaceholderAndGetPosts() {
+        //setPlaceholder
+        var index = 0
+        
+        let post = Post()
+        post.type = .topTopicCell
+        self.posts.insert(post, at: 0)
+        
+        while index <= 3 {
+            let post2 = Post()
+            if index == 1 {
+                post2.type = .picture
+            } else {
+                post2.type = .thought
+            }
+            self.posts.append(post2)
+            index+=1
+        }
+        
+        self.tableView.reloadData()
+        getPosts(getMore: true)
+    }
     
     override func viewWillDisappear(_ animated: Bool) {
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
@@ -116,25 +136,9 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
             statusBarView = view
             window.addSubview(statusBarView!)
         }
-        
-        
         DispatchQueue.main.async {
             self.checkForLoggedInUser()
         }
-        
-        
-        
-        //        // Restore the searchController's active state.
-        //        if restoredState.wasActive {
-        //            searchController.isActive = restoredState.wasActive
-        //            restoredState.wasActive = false
-        //
-        //            if restoredState.wasFirstResponder {
-        //                searchController.searchBar.becomeFirstResponder()
-        //                restoredState.wasFirstResponder = false
-        //            }
-        //        } Aus dem apple tutorial für die suche
-        
     }
     
     
@@ -173,7 +177,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                                 self.showGDPRAlert()
                             }
                         }
-                        
+                        self.posts.removeAll()  //to get the placeholder out
                         self.posts = posts
                         let post = Post()
                         post.type = .topTopicCell

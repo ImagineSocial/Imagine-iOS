@@ -167,10 +167,10 @@ class SmallPostCell: UICollectionViewCell {
             } else {
                 // THought
                 postImageViewHeightConstraint.constant = 0
+                smallCellImageView.isHidden = true
             }
             
             postTitleLabel.text = post.title
-            //            descriptionLabel.text = post.description
         }
     }
     

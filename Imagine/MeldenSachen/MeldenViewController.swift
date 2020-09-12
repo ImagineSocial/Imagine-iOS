@@ -14,6 +14,12 @@ import FirebaseStorage
 
 // Worked on this at the beginning of the idea, a lot of code needs to be refusrbished
 
+enum reportCategory {
+    case markVisually
+    case violationOfRules
+    case content
+}
+
 class MeldenViewController: UIViewController {
     
     @IBOutlet weak var savePostButtonIcon: UIImageView!
@@ -24,7 +30,7 @@ class MeldenViewController: UIViewController {
     
     var post: Post?
     var comment: Comment?
-    var reportCategory = ""
+    var reportCategory: reportCategory?
     var repost : RepostType = .repost
     var reportComment = false
     
@@ -89,7 +95,7 @@ class MeldenViewController: UIViewController {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(showAlertForDeleteOption), for: .touchUpInside)
-        button.setTitle("Post löschen", for: .normal)
+        button.setTitle(NSLocalizedString("delete_post_label", comment: "delete post"), for: .normal)
         if #available(iOS 13.0, *) {
             button.setTitleColor(.label, for: .normal)
             button.backgroundColor = .systemBackground
@@ -279,16 +285,14 @@ class MeldenViewController: UIViewController {
     
     @IBAction func reportOptionsScreenTapped(_ sender: DesignableButton) {
         switch sender.tag {
-        case 0: reportCategory = "Optisch markieren"
+        case 0: reportCategory = .markVisually
             break
-        case 1: reportCategory = "Schlechte Absicht"
+        case 1: reportCategory = .violationOfRules
             break
-        case 2: reportCategory = "Lüge/Täuschung"
-            break
-        case 3: reportCategory = "Inhalt"
+        case 3: reportCategory = .content
             break
         default:
-            reportCategory = ""
+            reportCategory = .content
         }
         if let _ = Auth.auth().currentUser {
             if let post = post {
@@ -376,7 +380,11 @@ class MeldenViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if let nextVC = segue.destination as? MeldeOptionViewController {
-            nextVC.reportCategory = self.reportCategory
+            guard let category = self.reportCategory else {
+                dismiss(animated: true, completion: nil)
+                return
+            }
+            nextVC.reportCategory = category
             
             if let chosenPost = sender as? Post {
                 nextVC.post = chosenPost

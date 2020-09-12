@@ -150,7 +150,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                     } else {
                         if let snap = snap {
                             var discussionCount = snap.documents.count
-                            print("so viele documents gibts: \(discussionCount)")
+
                             for document in snap.documents {
                                 let data = document.data()
                                 
@@ -161,7 +161,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                                 }
                                 
                                 if self.discussionFacts.count == discussionCount {
-                                    print("#Reload 2")
+
                                     self.collectionView.reloadData()
                                     self.getFollowedCommunities()
                                     self.isLoading = false
@@ -195,7 +195,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                         }
                         if self.followedFacts.count == topicCount {
                             self.collectionView.reloadData()
-                            print("#Reload 3")
+
                         }
                     }
                 }
@@ -327,7 +327,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             
         } else if  indexPath.section == 2 { // Discussions
             
-                let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: (collectionView.frame.size.width/2)-(collectionViewSpacing/2))
+                let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: (collectionView.frame.size.width/2))//-(collectionViewSpacing/2)
                 
                 return newSize
             
@@ -589,12 +589,6 @@ extension FactCollectionViewController: TopOfCollectionViewDelegate, NewFactDele
     }
     
     func finishedCreatingNewInstance(item: Any?) {
-//        self.topicFacts.removeAll()
-//        self.discussionFacts.removeAll()
-//        self.collectionView.reloadData()
-//
-//        self.getFacts()
-        
         if let fact = item as? Fact {
             performSegue(withIdentifier: "toPageVC", sender: fact)
         }

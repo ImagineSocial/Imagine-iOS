@@ -20,7 +20,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     var optionalInformations = [OptionalInformation]()
     
     var noOptionalInformation = false
-    var optionalInformationProposals = [ProposalForOptionalInformation(isFirstCell: true, headerText: "Erweitere die Community", detailText: "Hier findest du verschiedene Erweiterungen, um eine Community besser zu repräsentieren und zusätzliche Informationen übersichtlich darzustellen."), ProposalForOptionalInformation(isFirstCell: false, headerText: "Was kann ich tun?", detailText: "Wie kann ein Jeder das Problem der Community bekämpfen oder verbessern?"),  ProposalForOptionalInformation(isFirstCell: false, headerText: "Top-News", detailText: "Übersichtlich die neuesten Nachrichten zu der Community an einem Ort finden."), ProposalForOptionalInformation(isFirstCell: false, headerText: "Beginners Guide", detailText: "Erste Schritte für interessierte Neulinge die tiefer in dieses Thema eintauchen möchten.")]
+    var optionalInformationProposals = [ProposalForOptionalInformation(isFirstCell: true, headerText: NSLocalizedString("proposal_header_text", comment: "individualise your community"), detailText: NSLocalizedString("proposal_header_description", comment: "What are addOns")), ProposalForOptionalInformation(isFirstCell: false, headerText: NSLocalizedString("proposal_me_active_header", comment: "What can I do?"), detailText: NSLocalizedString("proposal_me_active_description", comment: "what ca i do to make it better")),  ProposalForOptionalInformation(isFirstCell: false, headerText: "Top-News", detailText: NSLocalizedString("proposal_top_news_description", comment: "top new for visibility")), ProposalForOptionalInformation(isFirstCell: false, headerText: "Beginners Guide", detailText: NSLocalizedString("proposal_beginners_guide_description", comment: "help younglings"))]
     
     var addOnDocumentID: String?
     
@@ -170,7 +170,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
-                let alert = UIAlertController(title: "Fertig", message: "Das AddOn wurde erweitert. Vielen Dank für deinen Beitrag!", preferredStyle: .alert)
+                let alert = UIAlertController(title: NSLocalizedString("done", comment: "done"), message: NSLocalizedString("addOn_creation_successfull", comment: "done and successfull"), preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
                     
                     let docRef = self.db.collection("Facts").document(self.fact!.documentID).collection("addOns").document(addOnRef)
@@ -502,21 +502,20 @@ extension AddOnCollectionViewController: AddOnCellDelegate, AddOnHeaderReusableV
                     
                     self.addOnDocumentID = addOnDocumentID  // Set the documentID for the addOn where "new Post" was tapped, later to be used when the item is saved in the addOn- New or old iteme
                     
-                    let alert = UIAlertController(title: "Füge ein Item hinzu", message: "Möchtest du einen Beitrag oder ein Thema zu diesem AddOn hinzufügen?", preferredStyle: .actionSheet)
+                    let alert = UIAlertController(title: NSLocalizedString("addOn_newItem_alert_title", comment: "add an item"), message: NSLocalizedString("addOn_newItem_alert_message", comment: "what do you want to add?"), preferredStyle: .actionSheet)
                     
-                    alert.addAction(UIAlertAction(title: "Vorhandener Beitrag", style: .default, handler: { (_) in
+                    alert.addAction(UIAlertAction(title: NSLocalizedString("addOn_newItem_alert_oldPost", comment: "already existent"), style: .default, handler: { (_) in
                         self.performSegue(withIdentifier: "toAddAPostItemSegue", sender: nil)
                     }))
-                    alert.addAction(UIAlertAction(title: "Neuer Beitrag (Nur im Thema)", style: .default, handler: { (_) in
+                    alert.addAction(UIAlertAction(title: NSLocalizedString("addOn_newItem_alert_newPost", comment: "new Post (community)"), style: .default, handler: { (_) in
                         self.performSegue(withIdentifier: "newPostSegue", sender: nil)
-        //                self.performSegue(withIdentifier: "test", sender: addOnDocumentID)
                     }))
-                    alert.addAction(UIAlertAction(title: "Thema/Diskussion", style: .default, handler: { (_) in
+                    alert.addAction(UIAlertAction(title: NSLocalizedString("addOn_newItem_alert_topic", comment: "community/discussion"), style: .default, handler: { (_) in
                         
                         self.performSegue(withIdentifier: "toTopicsSegue", sender: nil)
                         
                     }))
-                    alert.addAction(UIAlertAction(title: "Abbrechen", style: .cancel, handler: { (_) in
+                    alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .cancel, handler: { (_) in
                         self.addOnDocumentID = nil
                         alert.dismiss(animated: true, completion: nil)
                     }))
