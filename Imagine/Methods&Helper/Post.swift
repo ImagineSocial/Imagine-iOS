@@ -46,12 +46,29 @@ class Votes {
     var nice = 0
 }
 
+class Link {
+    var imageURL: String?
+    var link: String
+    var shortURL: String
+    var linkTitle: String
+    var linkDescription: String
+    
+    init(link: String, title: String, description: String, shortURL: String, imageURL: String?) {
+        self.link = link
+        self.linkTitle = title
+        self.linkDescription = description
+        self.shortURL = shortURL
+        self.imageURL = imageURL
+    }
+}
+
 class Post {
     var title = ""
     var imageURL = ""
     var imageURLs: [String]?
     var description = ""
     var linkURL = ""
+    var link: Link?
     var type: PostType = .picture
     var mediaHeight: CGFloat = 0.0
     var mediaWidth: CGFloat = 0.0

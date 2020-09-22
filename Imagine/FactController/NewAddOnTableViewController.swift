@@ -9,6 +9,7 @@
 import UIKit
 import EasyTipView
 import Firebase
+import FirebaseFirestore
 
 class NewAddOnTableViewController: UITableViewController {
     
@@ -50,8 +51,9 @@ class NewAddOnTableViewController: UITableViewController {
         
         let infoAll = OptionalInformation(style: .collection, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_collection_header", comment: "new collection text"), description: Constants.texts.AddOns.collectionText, singleTopic: nil)
         let singleTopic = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_singleTopic_header", comment: "new singleTopicText"), description: Constants.texts.AddOns.singleTopicText, singleTopic: nil)
+        let QandA = OptionalInformation(style: .QandA, OP: "", documentID: "", fact: Fact(), description: "")
         
-        optionalInformations.append(contentsOf: [infoAll, singleTopic])
+        optionalInformations.append(contentsOf: [infoAll, singleTopic, QandA])
         tableView.reloadData()
     }
 
@@ -174,6 +176,8 @@ class NewAddOnTableViewController: UITableViewController {
                 self.selectedAddOnTypeLabel.text = NSLocalizedString("addOn_type_collection", comment: "adde a normal collection")
             case .singleTopic:
                 self.selectedAddOnTypeLabel.text = NSLocalizedString("addOn_type_singleTopic", comment: "adde a singleTopic")
+            case .QandA:
+                self.selectedAddOnTypeLabel.text = "Q&A AddOn"
             }
             
             
@@ -204,9 +208,28 @@ class NewAddOnTableViewController: UITableViewController {
     }
     
     @IBAction func doneTapped(_ sender: Any) {
-        if let _ = Auth.auth().currentUser {
+        if let user = Auth.auth().currentUser, let fact = fact {
             if let style = self.selectedAddOnStyle {
-                performSegue(withIdentifier: "toNewAddOnSegue", sender: style)
+                if style == .QandA {
+                    createNewQandAAddOn(user: user, fact: fact)
+                } else {
+                    performSegue(withIdentifier: "toNewAddOnSegue", sender: style)
+                }
+            }
+        }
+    }
+    
+    func createNewQandAAddOn(user: FirebaseAuth.User, fact: Fact) {
+        let ref = Firestore.firestore().collection("Facts").document(fact.documentID).collection("addOns").document()
+        
+        let data: [String:Any] = ["OP": user.uid, "type": "QandA", "popularity": 0]
+        
+        ref.setData(data) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                print("Successfully created qAndA AddOn")
+                self.finishedCreatingNewInstance(item: nil)
             }
         }
     }

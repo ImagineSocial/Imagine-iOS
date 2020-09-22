@@ -16,6 +16,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     let singleCommunityCellIdentifier = "SingleCommunityCollectionViewCell"
     let proposalCellIdentifier = "AddOnProposalCell"
     let footerViewIdentifier = "AddOnCollectionViewFooter"
+    let qAndACellIdentifier = "AddOnQAndACollectionViewCell"
     
     var optionalInformations = [OptionalInformation]()
     
@@ -44,10 +45,12 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         self.collectionView.register(UINib(nibName: "AddOnSingleCommunityCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: singleCommunityCellIdentifier)
         self.collectionView.register(UINib(nibName: "AddOnCollectionViewFooter", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: footerViewIdentifier)
         self.collectionView.register(UINib(nibName: "AddOnProposalCell", bundle: nil), forCellWithReuseIdentifier: proposalCellIdentifier)
+        self.collectionView.register(UINib(nibName: "AddOnQAndACollectionViewCell", bundle: nil), forCellWithReuseIdentifier: qAndACellIdentifier)
 
         let newHeight: CGFloat = 260
         collectionView.contentInset = UIEdgeInsets(top: newHeight, left: 0, bottom: 0, right: 0)
         collectionView.contentOffset = CGPoint(x: 0, y: -newHeight)
+        collectionView.delaysContentTouches = false
         
         if let flowLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             //If you are looking for the reason, the layout is wrong, it is because of the auto resizing option in storyboard collectionview
@@ -75,6 +78,9 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                         self.noOptionalInformation = false  // Need to add this here so it can update the view after the creation of a new addOn
                     }
                     
+                    let snapCount = snap.documents.count
+                    var index = 0
+                    
                     for document in snap.documents {
                         let data = document.data()
                         
@@ -93,6 +99,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                             }
                             
                             self.optionalInformations.append(addOn)
+                            index+=1
                             
                         } else if let documentID = data["linkedFactID"] as? String {    //SingleTopic
                             if let headerTitle = data["headerTitle"] as? String, let description = data["description"] as? String,  let OP = data["OP"] as? String {
@@ -110,11 +117,26 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                                 }
                                 
                                 self.optionalInformations.append(addOn)
+                                index+=1
                             }
+                        } else if let type = data["type"] as? String, let OP = data["OP"] as? String {
+                            if type == "QandA" {
+                                print("Adde QANDA")
+                                let addOn = OptionalInformation(style: .QandA, OP: OP, documentID: document.documentID, fact: fact, description: "")
+                                self.optionalInformations.append(addOn)
+                                index+=1
+                            } else {
+                                print("Incorrect AddOn Found in document: \(document)")
+                                index+=1
+                            }
+                        } else {
+                            print("Incorrect AddOn Found in document: \(document)")
+                            index+=1
                         }
                     
-                        
-                        self.collectionView.reloadData()
+                        if index == snapCount {
+                            self.collectionView.reloadData()
+                        }
                     }
                 }
             }
@@ -358,6 +380,13 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                     
                     return cell
                 }
+            case .QandA:
+                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: qAndACellIdentifier, for: indexPath) as? AddOnQAndACollectionViewCell {
+                    
+                    cell.info = info
+                    
+                    return cell
+                }
             }
         }
         
@@ -372,6 +401,10 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         } else if info.style == .singleTopic {
             if let community = info.singleTopic {
                 performSegue(withIdentifier: "toFactSegue", sender: community)
+            }
+        } else if info.style == .QandA {
+            if let cell = collectionView.cellForItem(at: indexPath) as? AddOnQAndACollectionViewCell {
+                cell.cancelTextFieldFirstResponder()
             }
         }
     }
@@ -388,13 +421,17 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                 return CGSize(width: width, height: 75)
             }
         } else {
-            let item = optionalInformations[indexPath.item]
+            let addOn = optionalInformations[indexPath.item]
             let newSize: CGSize!
             
-            if item.style == .singleTopic {
+            if addOn.style == .singleTopic {
                 return CGSize(width: width, height: 425)
+            } else if addOn.style == .QandA {
+                return CGSize(width: width, height: 500)
             }
-            if let _ = item.imageURL {
+            
+            //normal horizontalScrollAddOn
+            if let _ = addOn.imageURL {
                 newSize = CGSize(width: width, height: 500)
             } else {
                 newSize = CGSize(width: width, height: 400)
@@ -458,11 +495,6 @@ extension AddOnCollectionViewController: AddOnCellDelegate, AddOnHeaderReusableV
     func settingsTapped(itemRow: Int) {
         let info = optionalInformations[itemRow]
         performSegue(withIdentifier: "toSettingSegue", sender: info)
-    }
-    
-    func openAfterLongTap(itemRow: Int) {
-        let info = optionalInformations[itemRow]
-        performSegue(withIdentifier: "toAddOnFeedVCSegue", sender: info)
     }
     
     func thanksTapped(info: OptionalInformation) {

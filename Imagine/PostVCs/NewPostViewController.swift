@@ -1756,6 +1756,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
             case .authorized:
                 showPictureAlert()
+            case .limited:
+                showPictureAlert()
             }
             
         } else {
@@ -2193,7 +2195,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         if link.isValidURL {
             slp.preview(link, onSuccess: { (response) in
                 var imageURL: String?
-                var shortURL: String?
+                var shortURL = ""
+                var linkTitle = ""
+                var linkDescription = ""
                 
                 if let URL = response.image {
                     imageURL = URL
@@ -2201,8 +2205,15 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 if let URL = response.canonicalUrl {
                     shortURL = URL
                 }
+                if let title = response.title {
+                    linkTitle = title
+                }
+                if let description = response.description {
+                    linkDescription = description
+                }
+                let link = Link(link: link, title: linkTitle, description: linkDescription, shortURL: shortURL, imageURL: imageURL)
                 
-                self.postLink(postRef: postRef, userID: userID, imageURL: imageURL, canonicalURL: shortURL)
+                self.postLink(postRef: postRef, userID: userID, link: link)
                 
             }) { (err) in
                 print("We have an error: \(err.localizedDescription)")
@@ -2511,19 +2522,16 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         print("thought posted")
     }
     
-    func postLink(postRef: DocumentReference, userID: String, imageURL: String?, canonicalURL: String?) {
+    func postLink(postRef: DocumentReference, userID: String, link: Link) {
         if linkTextField.text != "" {
             
             let descriptionText = descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
             let tags = self.getTagsToSave()
             
-            var dataDictionary: [String: Any] = ["title": titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "link", "report": getReportString(), "link": linkTextField.text!, "tags": tags]
-            if let url = imageURL {
-                dataDictionary["imageURL"] = url
-            }
+            var dataDictionary: [String: Any] = ["title": titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "link", "report": getReportString(), "link": link.link, "linkTitle": link.linkTitle, "linkDescription": link.linkDescription, "linkShortURL": link.shortURL, "tags": tags]
             
-            if let canURL = canonicalURL {
-                dataDictionary["shortURL"] = canURL
+            if let url = link.imageURL {
+                dataDictionary["linkImageURL"] = url
             }
                 
             self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)

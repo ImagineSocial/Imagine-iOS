@@ -17,6 +17,7 @@ enum CommentSection {
     case source
     case proposal
     case counterArgument
+    case addOn
 }
 
 protocol CommentTableViewDelegate {
@@ -38,6 +39,7 @@ class CommentTableView: UITableView {
     var section: CommentSection?
     
     let commentIdentifier = "CommentCell"
+    let answerCellIdentifier = "AddOnQAndAAnswerCell"
     
     let db = Firestore.firestore()
     
@@ -85,16 +87,20 @@ class CommentTableView: UITableView {
         rowHeight = UITableView.automaticDimension
         separatorStyle = .none
         
-        self.headerView = CommentTableViewHeader(frame: CGRect(x: 0, y: 0, width: 276, height: 30))
-        self.headerView!.delegate = self
-        if let user = Auth.auth().currentUser, let recipients = notificationRecipients {
-            for recipient in recipients {
-                if user.uid == recipient {
-                    self.headerView!.showNotificationButton()
+        if section != .addOn {
+            self.headerView = CommentTableViewHeader(frame: CGRect(x: 0, y: 0, width: 276, height: 30))
+            self.headerView!.delegate = self
+            if let user = Auth.auth().currentUser, let recipients = notificationRecipients {
+                for recipient in recipients {
+                    if user.uid == recipient {
+                        self.headerView!.showNotificationButton()
+                    }
                 }
             }
+            self.tableHeaderView = self.headerView
+        } else {
+            register(UINib(nibName: "AddOnQAndAAnswerCell", bundle: nil), forCellReuseIdentifier: answerCellIdentifier)
         }
-        self.tableHeaderView = self.headerView
     }
     
     func getcomments() {
@@ -148,6 +154,9 @@ class CommentTableView: UITableView {
         case .counterArgument:
             ref = db.collection("Comments").document("arguments").collection("comments").document(counterArgument!.documentID).collection("threads").order(by: "sentAt", descending: false)
             sectionItemID = counterArgument!.documentID
+        case .addOn:
+            ref = db.collection("Comments").document(post!.documentID).collection("threads").order(by: "sentAt", descending: false)
+            sectionItemID = post!.documentID
         }
         
         return (ref, sectionItemID)
@@ -362,6 +371,19 @@ class CommentTableView: UITableView {
                         ref = db.collection("Comments").document("arguments").collection("comments").document(counterArgument!.documentID).collection("threads").document()
                     }
                     sectionItemID = counterArgument!.documentID
+                case .addOn:
+                    if let post = post {
+                        if let comment = answerToComment {
+                            ref = db.collection("Comments").document(post.documentID).collection("threads").document(comment.commentID).collection("children").document()
+                        } else {
+                            ref = db.collection("Comments").document(post.documentID).collection("threads").document()
+                        }
+                        
+                        if post.originalPosterUID != "" {
+                            self.getNotificationRecipients(post: post, bodyString: bodyString, displayName: displayName, commenterUID: userID)
+                        }
+                        sectionItemID = post.documentID
+                    }
                 }
                 
                 let data : [String: Any] = ["body": bodyString, "id": 0, "sentAt": Timestamp(date: Date()), "userID": userID]
@@ -419,6 +441,9 @@ class CommentTableView: UITableView {
         case .counterArgument:
             sectionString = "counterArgument"
             documentID = counterArgument!.documentID
+        case .addOn:
+            sectionString = "post"
+            documentID = post!.documentID
         }
         
         let data: [String: Any] = ["createTime": Timestamp(date: Date()), "originalPoster": userUID, "section": sectionString, "documentID": documentID]

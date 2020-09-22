@@ -653,8 +653,8 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    post.getCommentCount()
                     post.isTopicPost = isTopicPost
+                    post.getCommentCount()
                     
                     if forFeed {
                         self.posts.append(post)
@@ -711,8 +711,8 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    post.getCommentCount()
                     post.isTopicPost = isTopicPost
+                    post.getCommentCount()
                     
                     if forFeed {
                         self.posts.append(post)
@@ -766,8 +766,8 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    post.getCommentCount()
                     post.isTopicPost = isTopicPost
+                    post.getCommentCount()
                     
                     if forFeed {
                         self.posts.append(post)
@@ -814,8 +814,8 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    post.getCommentCount()
                     post.isTopicPost = isTopicPost
+                    post.getCommentCount()
                     
                     if forFeed {
                         self.posts.append(post)
@@ -879,8 +879,8 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    post.getCommentCount()
                     post.isTopicPost = isTopicPost
+                    post.getCommentCount()
                     
                     if forFeed {
                         self.posts.append(post)
@@ -890,17 +890,25 @@ class PostHelper {
                     
                 } else if postType == "stop" {
                     
-                }   else if postType == "link" {
+                } else if postType == "link" {
                     
                     guard let linkURL = documentData["link"] as? String
-                        
                         else {
                             return nil
+                    }
+                    var link: Link?
+                    if let shortURL = documentData["linkShortURL"] as? String, let linkTitle = documentData["linkTitle"] as? String, let linkDescription = documentData["linkDescription"] as? String {
+                        let linkImageURL = documentData["linkImageURL"] as? String
+                        
+                        link = Link(link: linkURL, title: linkTitle, description: linkDescription, shortURL: shortURL, imageURL: linkImageURL)
+                    } else if !linkURL.contains("songwhip.com") {
+                        notifyMalte(documentID: documentID, isTopicPost: isTopicPost)
                     }
                     
                     let post = Post()
                     post.title = title
                     post.linkURL = linkURL
+                    post.link = link
                     post.description = description
                     post.type = .link
                     post.documentID = documentID
@@ -933,8 +941,8 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    post.getCommentCount()
                     post.isTopicPost = isTopicPost
+                    post.getCommentCount()
                     
                     if forFeed {
                         self.posts.append(post)
@@ -986,8 +994,8 @@ class PostHelper {
                         post.getUser(isAFriend: isAFriend)
                     }
                     
-                    post.getCommentCount()
                     post.isTopicPost = isTopicPost
+                    post.getCommentCount()
                     
                     post.getRepost(returnRepost: { (repost) in
                         post.repost = repost
@@ -1002,6 +1010,20 @@ class PostHelper {
         }
         
         return nil
+    }
+    
+    func notifyMalte(documentID: String, isTopicPost: Bool) {
+        let maltesUID = "CZOcL3VIwMemWwEfutKXGAfdlLy1"
+        let notificationRef = db.collection("Users").document(maltesUID).collection("notifications").document()
+        let notificationData: [String: Any] = ["type": "message", "message": "Wir haben einen Link ohne URLPreview", "name": "System", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "postID": documentID, "isTopicPost": isTopicPost]
+        
+        notificationRef.setData(notificationData) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                print("Successfully set notification")
+            }
+        }
     }
     
     func addFact(factID: String) -> Fact {

@@ -81,6 +81,8 @@ class Comment {
             ref = db.collection("Comments").document("arguments").collection("comments").document(sectionItemID).collection("threads").document(commentID).collection("children")
         case .source:
             ref = db.collection("Comments").document("sources").collection("comments").document(sectionItemID).collection("threads").document(commentID).collection("children")
+        case .addOn:
+            ref =  db.collection("Comments").document(sectionItemID).collection("threads").document(commentID).collection("children")
         }
         
 

@@ -29,6 +29,7 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
     override func awakeFromNib() {
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.delaysContentTouches = false
         
         collectionView.register(UINib(nibName: "SmallTopicCell", bundle: nil), forCellWithReuseIdentifier: identifier)
         collectionView.register(UINib(nibName: "PlaceHolderCell", bundle: nil), forCellWithReuseIdentifier: placeHolderIdentifier)
@@ -144,6 +145,21 @@ class SmallTopicCell: UICollectionViewCell {
     @IBOutlet weak var cellImageView: UIImageView!
     @IBOutlet weak var cellNameLabel: UILabel!
     @IBOutlet weak var gradientView: UIView!
+    
+    override var isHighlighted: Bool {
+           didSet {
+               toggleIsHighlighted()
+           }
+       }
+
+       func toggleIsHighlighted() {
+           UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseOut], animations: {
+               self.alpha = self.isHighlighted ? 0.9 : 1.0
+               self.transform = self.isHighlighted ?
+                   CGAffineTransform.identity.scaledBy(x: 0.97, y: 0.97) :
+                   CGAffineTransform.identity
+           })
+       }
     
     override func awakeFromNib() {
             cellImageView.contentMode = .scaleAspectFill

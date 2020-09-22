@@ -264,23 +264,7 @@ class OptionalInformationForArgumentTableViewController: UITableViewController {
             
             
             switch info.style {
-//                case .header:
-//                    if let addOnHeader = info.addOnInfoHeader {
-//                        if let cell = tableView.dequeueReusableCell(withIdentifier: infoHeaderReuseIdentifier, for: indexPath) as? InfoHeaderAddOnCell {
-//                            cell.addOnInfo = addOnHeader
-//                            cell.delegate = self
-//
-//                            return cell
-//                        }
-//                    }
-                    
-                case .singleTopic:
-                    if let cell = tableView.dequeueReusableCell(withIdentifier: singleTopicReuseIdentifier, for: indexPath) as? SingleTopicAddOnCell {
-                        
-                        cell.info = info
-                        
-                        return cell
-                    }
+
                 default:
                     if let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as? CollectionViewInTableViewCell {
                         

@@ -8,6 +8,7 @@
 
 import UIKit
 import SwiftLinkPreview
+import Firebase
 
 extension String {
     var isValidURL: Bool {
@@ -57,6 +58,8 @@ class LinkCell : BaseFeedCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         descriptionPreviewLabel.text = ""
+        
+        self.linkThumbNailImageView.image = UIImage(named: "link-default")
         
         urlLabel.text = nil
         linkPreviewDescriptionLabel.text = nil
@@ -142,21 +145,29 @@ class LinkCell : BaseFeedCell {
                     self.loadFact()
                 }
             }
-//            "https://www.daslandhilft.deassets/teaser-min.jpg") Response(url: Optional(https://www.daslandhilft.de
             
             createDateLabel.text = post.createTime
             titleLabel.text = post.title
             
             // Show Preview of Link
-            if let cachedResult = slp.cache.slp_getCachedResponse(url: post.linkURL) {
-                self.showLinkPreview(result: cachedResult)
-            } else {
-                self.preview = slp.preview(post.linkURL, onSuccess: { (result) in
-                    
-                    self.showLinkPreview(result: result)
-                }) { (error) in
-                    print("We have an error: \(error.localizedDescription)")
+            if let link = post.link {
+                linkPreviewTitleLabel.text = link.linkTitle
+                linkPreviewDescriptionLabel.text = link.linkDescription
+                urlLabel.text = link.shortURL
+                
+                if let imageURL = link.imageURL {
+                    if imageURL.isValidURL {
+                        self.linkThumbNailImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
+                    }
                 }
+            } else {
+                slp.preview(post.linkURL) { (response) in
+                    self.showLinkPreview(result: response)
+                } onError: { (err) in
+                    print("We have an error: \(err.localizedDescription)")
+                }
+
+                print("#Error: got no link in link cell")
             }
             
             let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
@@ -175,8 +186,14 @@ class LinkCell : BaseFeedCell {
     func showLinkPreview(result: Response) {
         //https://github.com/LeonardoCardoso/SwiftLinkPreview
         
+        var previewImageURL: String?
+        var shortURL = ""
+        var title = ""
+        var description = ""
+        
         if let imageURL = result.image {
             if imageURL.isValidURL {
+                previewImageURL = imageURL
                 self.linkThumbNailImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
 //                { (image, _, _, _) in
 //                    if let image = image {
@@ -185,22 +202,47 @@ class LinkCell : BaseFeedCell {
 //                        }
 //                    }
 //                }
-            } else {
-                
-                self.linkThumbNailImageView.image = UIImage(named: "link-default")
-            }
+            } 
         }
         
         if let linkPreviewText = result.title {
             linkPreviewTitleLabel.text = linkPreviewText
+            title = linkPreviewText
         }
         
         if let linkPreviewDescription = result.description {
             linkPreviewDescriptionLabel.text = linkPreviewDescription
+            description = linkPreviewDescription
         }
         
         if let linkSource = result.canonicalUrl {
             self.urlLabel.text = linkSource
+            shortURL = linkSource
+        }
+        
+        var data: [String: Any] = ["linkShortURL": shortURL, "linkTitle": title, "linkDescription": description]
+        if let url = previewImageURL {
+            data["linkImageURL"] = url
+        }
+        setLinkStuffInFirebase(data: data)
+    }
+    
+    func setLinkStuffInFirebase(data: [String: Any]) {
+        if let post = post {
+            let db = Firestore.firestore()
+            var string = "Posts"
+            if post.isTopicPost {
+                string = "TopicPosts"
+            }
+            let ref = db.collection(string).document(post.documentID)
+
+            ref.updateData(data) { (err) in
+                if let error = err {
+                    print("###Wir haben einene Erororo: \(error.localizedDescription)")
+                } else {
+                    print("###Link DIngs erfolgreich")
+                }
+            }
         }
     }
     

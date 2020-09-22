@@ -20,6 +20,8 @@ class ArgumentPageViewController: UIPageViewController {
     
     var recentTopicDelegate: RecentTopicDelegate?
     
+    var settingButton = DesignableButton()
+    var newPostButton = DesignableButton()
     var headerView = CommunityHeaderView()
     
     var firstViewOffset: CGFloat = 156  //Hard coded doesnt work when coming from feed
@@ -64,7 +66,6 @@ class ArgumentPageViewController: UIPageViewController {
         self.view.addSubview(view)
     }
     
-    var newPostButton = DesignableButton()
     func setBarButton() {
         let newPostButton = DesignableButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         newPostButton.clipsToBounds = true
@@ -83,14 +84,56 @@ class ArgumentPageViewController: UIPageViewController {
             newPostButton.setImage(UIImage(named: "newPostIcon"), for: .normal)
         }
         
-        let postBarButton = UIBarButtonItem(customView: newPostButton)
-        self.navigationItem.rightBarButtonItem = postBarButton
+        guard let fact = fact else {
+            return
+        }
+        
         self.newPostButton = newPostButton
+        let postBarButton = UIBarButtonItem(customView: self.newPostButton)
+        
+        if let user = Auth.auth().currentUser {
+            for mod in fact.moderators {
+                if mod == user.uid {
+                    self.settingButton = getSettingButton()
+                    let settingBarButton = UIBarButtonItem(customView: self.settingButton)
+                    self.navigationItem.rightBarButtonItems = [settingBarButton, postBarButton]
+                    
+                    return
+                }
+            }
+        }
+        
+        self.navigationItem.rightBarButtonItem = postBarButton
+    }
+    
+    func getSettingButton() -> DesignableButton {
+        let settingButton = DesignableButton(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
+        settingButton.clipsToBounds = true
+        settingButton.imageView?.contentMode = .scaleAspectFit
+        settingButton.addTarget(self, action: #selector(self.settingButtonTapped), for: .touchUpInside)
+        settingButton.translatesAutoresizingMaskIntoConstraints = false
+        settingButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        settingButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        settingButton.setImage(UIImage(named: "settings"), for: .normal)
+        
+        if #available(iOS 13.0, *) {
+            settingButton.tintColor = UIColor.label
+        } else {
+            settingButton.tintColor = UIColor.black
+        }
+        
+        return settingButton
     }
     
     @objc func newPostButtonTapped() {
         if let community = self.fact {
             performSegue(withIdentifier: "goToNewPost", sender: community)
+        }
+    }
+    
+    @objc func settingButtonTapped() {
+        if let community = self.fact {
+            performSegue(withIdentifier: "toSettingSegue", sender: community)
         }
     }
     
@@ -104,6 +147,14 @@ class ArgumentPageViewController: UIPageViewController {
                         newPostVC.postOnlyInTopic = true
                         newPostVC.newInstanceDelegate = self
                     }
+                }
+            }
+        }
+        if segue.identifier == "toSettingSegue" {
+            if let fact = sender as? Fact {
+                if let vc = segue.destination as? SettingTableViewController {
+                    vc.topic = fact
+                    vc.settingFor = .community
                 }
             }
         }
@@ -231,15 +282,14 @@ extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageView
         let deductValue = CGFloat(per / 100 * headerView.frame.size.height)
         let value = offset - deductValue
         let rect = headerView.frame
-
+        
         UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.75, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+            self.presentNavigationTitle(rectOriginY: value)
             self.headerView.frame = CGRect(x: rect.origin.x, y: value, width: rect.size.width, height: rect.size.height)
             self.view.layoutIfNeeded()
         }) { (_) in
             print("Done")
         }
-
-
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
@@ -302,6 +352,19 @@ extension ArgumentPageViewController: PageViewHeaderDelegate, CommunityFeedHeade
         }
     }
     
+    func presentNavigationTitle(rectOriginY: CGFloat) {
+
+        if rectOriginY <= -250 {
+            if let community = fact {
+                self.navigationItem.title = community.title
+                self.newPostButton.isHidden = false
+            }
+        } else {
+            self.navigationItem.title = ""
+            self.newPostButton.isHidden = true
+        }
+    }
+    
     func childScrollViewScrolled(offset: CGFloat) {
         
         let per:CGFloat = 60 //percentage of required view to move on while moving collection view
@@ -327,15 +390,7 @@ extension ArgumentPageViewController: PageViewHeaderDelegate, CommunityFeedHeade
             self.firstViewOffset = 0
         }
         
-        if rect.origin.y <= -250 {
-            if let community = fact {
-                self.navigationItem.title = community.title
-                self.newPostButton.isHidden = false
-            }
-        } else {
-            self.navigationItem.title = ""
-            self.newPostButton.isHidden = true
-        }
+        presentNavigationTitle(rectOriginY: rect.origin.y)
 
     }
 }

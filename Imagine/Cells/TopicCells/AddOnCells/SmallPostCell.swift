@@ -133,20 +133,19 @@ class SmallPostCell: UICollectionViewCell {
                 linkView.heightAnchor.constraint(equalToConstant: 20).isActive = true
                 
                 // Show Preview of Link
-                if let cachedResult = slp.cache.slp_getCachedResponse(url: post.linkURL) {
-                    self.showLinkPreview(result: cachedResult)
-                } else {
-                    DispatchQueue.global(qos: .default).async {
-                        self.slp.preview(post.linkURL, onSuccess: { (result) in
-                            
-                            DispatchQueue.main.async {
-                                self.showLinkPreview(result: result)
-                            }
-                        }) { (error) in
-                            print("We have an error showing the link: \(error.localizedDescription)")
+                if let link = post.link {
+                    if let imageURL = link.imageURL {
+                        if imageURL.isValidURL {
+                            self.cellImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
+                        } else {
+                            self.cellImageView.image = UIImage(named: "link-default")
                         }
                     }
                     
+                    self.linkLabel.text = link.shortURL
+                    
+                } else {
+                    print("#Error: got no link in link cell")
                 }
                 
             } else if post.type == .youTubeVideo {
@@ -174,22 +173,22 @@ class SmallPostCell: UICollectionViewCell {
         }
     }
     
-    func showLinkPreview(result: Response) {
-        //https://github.com/LeonardoCardoso/SwiftLinkPreview
-        
-        if let imageURL = result.image {
-            if imageURL.isValidURL {
-                self.cellImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
-            } else {
-                
-                self.cellImageView.image = UIImage(named: "link-default")
-            }
-        }
-        
-        if let linkSource = result.canonicalUrl {
-            self.linkLabel.text = linkSource
-        }
-    }
+//    func showLinkPreview(result: Response) {
+//        //https://github.com/LeonardoCardoso/SwiftLinkPreview
+//
+//        if let imageURL = result.image {
+//            if imageURL.isValidURL {
+//                self.cellImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
+//            } else {
+//
+//                self.cellImageView.image = UIImage(named: "link-default")
+//            }
+//        }
+//
+//        if let linkSource = result.canonicalUrl {
+//            self.linkLabel.text = linkSource
+//        }
+//    }
     
     func generateThumbnail(url: URL) -> UIImage? {
         do {

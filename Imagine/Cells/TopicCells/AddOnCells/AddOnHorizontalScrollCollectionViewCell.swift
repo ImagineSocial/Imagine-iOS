@@ -17,10 +17,9 @@ protocol AddOnCellDelegate {
     //CollectionViewDelegate
     func itemTapped(item: Any)
     func newPostTapped(addOnDocumentID: String)
-    func openAfterLongTap(itemRow: Int)
 }
 
-class AddOnHorizontalScrollCollectionViewCell: UICollectionViewCell {
+class AddOnHorizontalScrollCollectionViewCell: BaseAddOnCollectionViewCell {
     
     @IBOutlet weak var headerImageView: DesignableImage!
     @IBOutlet weak var headerImageViewHeight: NSLayoutConstraint!
@@ -40,7 +39,6 @@ class AddOnHorizontalScrollCollectionViewCell: UICollectionViewCell {
     
     let itemCellWidth: CGFloat = 245
     var itemCellsGap: CGFloat = 10
-    let cornerRadius: CGFloat = 20
     
     var itemRow: Int?
     var delegate: AddOnCellDelegate?
@@ -94,15 +92,6 @@ class AddOnHorizontalScrollCollectionViewCell: UICollectionViewCell {
             layout.scrollDirection = .horizontal
         }
         
-        
-        //AnimationStuff
-        let lpgr = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
-        lpgr.minimumPressDuration = 0.1
-        lpgr.allowableMovement = 20
-        lpgr.delaysTouchesBegan = false
-        containerView.addGestureRecognizer(lpgr)
-        
-        
         //DesignStuff
         containerView.layer.cornerRadius = cornerRadius
         contentView.layer.cornerRadius = cornerRadius
@@ -118,57 +107,6 @@ class AddOnHorizontalScrollCollectionViewCell: UICollectionViewCell {
         
         thanksButton.setTitle(nil, for: .normal)
         thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        let layer = contentView.layer
-        if #available(iOS 13.0, *) {
-            layer.shadowColor = UIColor.label.cgColor
-        } else {
-            layer.shadowColor = UIColor.black.cgColor
-        }
-        layer.shadowOffset = CGSize(width: 0, height: 0)
-        layer.shadowRadius = 4
-        layer.shadowOpacity = 0.6
-        
-        let rect = CGRect(x: 0, y: 0, width: contentView.frame.width, height: contentView.frame.height)
-        layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius).cgPath
-    }
-    
-    @objc func handleLongPress(gesture : UILongPressGestureRecognizer!) {
-        if gesture.state == .began {
-            self.highlight(true)
-        }else if gesture.state == .ended {
-            self.highlight(false)
-        }
-    }
-    
-    func highlight(_ touched: Bool) {
-        var duration: Double!
-        if touched {
-            duration = 0.5
-        } else {
-            duration = 0.4
-        }
-        if !touched {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                if let itemRow = self.itemRow {
-                    self.delegate?.openAfterLongTap(itemRow: itemRow)
-                }
-            }
-        }
-        UIView.animate(withDuration: duration,
-                       delay: 0,
-                       usingSpringWithDamping: 1.0,
-                       initialSpringVelocity: 5.0,
-                       options: [.allowUserInteraction],
-                       animations: {
-                        self.transform = touched ? .init(scaleX: 0.95, y: 0.95) : .identity
-        }) { (_) in
-            
-        }
     }
     
     @IBAction func thanksButtonTapped(_ sender: Any) {

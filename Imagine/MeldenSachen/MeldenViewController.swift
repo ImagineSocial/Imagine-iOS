@@ -47,6 +47,8 @@ class MeldenViewController: UIViewController {
             translatePostView.isHidden = true
         }
         
+        checkIfItsYourPost()
+        
         if let post = post {
             handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
                 if alreadySaved {
@@ -60,10 +62,6 @@ class MeldenViewController: UIViewController {
                 }
             }
         }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        checkIfItsYourPost()
     }
     
     let deleteView: UIView = {
@@ -194,7 +192,13 @@ class MeldenViewController: UIViewController {
             self.deleteTopicPost(fact: fact)
         }
         if let postRef = postRef {
-            postRef.delete()
+            postRef.delete { (err) in
+                if let error = err {
+                    print("We have an error deleting the post: \(error.localizedDescription)")
+                } else {
+                    print("Successfully deleted the post")
+                }
+            }
         }
         
         switch post.type {

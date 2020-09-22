@@ -463,6 +463,15 @@ class PostsOfFactTableViewController: UITableViewController {
                 }
             }
         }
+        
+        if segue.identifier == "meldenSegue" {
+            if let chosenPost = sender as? Post {
+                if let reportVC = segue.destination as? MeldenViewController {
+                    reportVC.post = chosenPost
+                }
+            }
+        }
+        
         if segue.identifier == "toFactSegue" {
             if let fact = sender as? Fact {
                 if let navCon = segue.destination as? UINavigationController {

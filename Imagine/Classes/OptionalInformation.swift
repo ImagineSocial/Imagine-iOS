@@ -16,6 +16,7 @@ protocol OptionalInformationDelegate {
 enum OptionalInformationStyle {
     case collection
     case singleTopic
+    case QandA
 }
 
 class AddOnItem {   // Otherwise it is a pain in the ass to compare Any to the documentIDs in the itemOrder Array
@@ -71,6 +72,14 @@ class OptionalInformation {
                 }
             }
         }
+    }
+    
+    init(style: OptionalInformationStyle, OP: String, documentID: String, fact: Fact, description: String) {
+        self.description = description
+        self.documentID = documentID
+        self.fact = fact
+        self.style = style
+        self.OP = OP
     }
     
     func getDisplayOptions() {

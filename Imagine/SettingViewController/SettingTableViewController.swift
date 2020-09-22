@@ -745,7 +745,9 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
         cropViewController.delegate = self
         if let _ = addOn {
             cropViewController.aspectRatioPreset = .preset16x9
-        } else {    //User & Topic Image must be square
+        } else if let _ = topic {    //User & Topic Image must be square
+            cropViewController.aspectRatioPreset = .preset16x9
+        } else {
             cropViewController.aspectRatioPreset = .presetSquare
         }
         cropViewController.aspectRatioLockEnabled = true
@@ -932,6 +934,8 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
         case .authorized:
             showImagePicker()
+        case .limited:
+            self.showImagePicker()
         }
     }
     

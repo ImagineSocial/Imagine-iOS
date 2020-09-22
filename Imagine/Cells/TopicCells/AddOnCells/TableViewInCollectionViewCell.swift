@@ -147,16 +147,16 @@ extension TableViewInCollectionViewCell: UITableViewDelegate, UITableViewDataSou
                 return cell
             }
         } else if let info = items as? [OptionalInformation] {
-            if let cell = tableView.dequeueReusableCell(withIdentifier: addOnHeaderIdentifier, for: indexPath) as? InfoHeaderAddOnCell {
-                
-//                if info.count != 0 {
-//                    if let header = info[0].addOnInfoHeader {
-//                        cell.addOnInfo = header
-//                    }
-//                }
-                
-                return cell
-            }
+//            if let cell = tableView.dequeueReusableCell(withIdentifier: addOnHeaderIdentifier, for: indexPath) as? InfoHeaderAddOnCell {
+//                
+////                if info.count != 0 {
+////                    if let header = info[0].addOnInfoHeader {
+////                        cell.addOnInfo = header
+////                    }
+////                }
+//                
+//                return cell
+//            }
         }
         
         

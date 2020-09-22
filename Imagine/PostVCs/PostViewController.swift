@@ -15,39 +15,11 @@ import AVKit
 import FirebaseAuth
 import FirebaseFirestore
 
-extension UIScrollView {
-    
-    var isAtTop: Bool {
-        return contentOffset.y <= verticalOffsetForTop
-    }
-    
-    var isAtBottom: Bool {
-        return contentOffset.y >= verticalOffsetForBottom
-    }
-    
-    var verticalOffsetForTop: CGFloat {
-        let topInset = contentInset.top
-        return -topInset
-    }
-    
-    var verticalOffsetForBottom: CGFloat {
-        let scrollViewHeight = bounds.height
-        let scrollContentSizeHeight = contentSize.height
-        let bottomInset = contentInset.bottom
-        let scrollViewBottomOffset = scrollContentSizeHeight + bottomInset - scrollViewHeight
-        return scrollViewBottomOffset
-    }
-    
-}
-
-
 
 class PostViewController: UIViewController, UIScrollViewDelegate {
     
     var post = Post()
     var comments = [Comment]()
-    
-    let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: DisabledCache.instance)
     
     let db = Firestore.firestore()
     let handyHelper = HandyHelper()
@@ -97,7 +69,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         commentTableView.initializeCommentTableView(section: .post, notificationRecipients: self.post.notificationRecipients)
         commentTableView.commentDelegate = self
-        commentTableView.post = self.post
+        commentTableView.post = self.post   // Absichern, wenn der Post keine Kommentare hat, brauch man auch nicht danach suchen und sich die Kosten sparen
         
         
         imageCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
@@ -355,35 +327,27 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             }
             
         case .link:
-            if post.linkURL != "" {
+            if let link = post.link {
                 if #available(iOS 13.0, *) {
                     self.imageCollectionView.backgroundColor = .secondarySystemBackground
                 } else {
                     self.imageCollectionView.backgroundColor = .ios12secondarySystemBackground
                 }
-                slp.preview(post.linkURL, onSuccess: { (result) in
-                    if let imageURL = result.image {
-                        
-                        self.imageURLs.append(imageURL)
-                        self.imageCollectionView.reloadData()
-                        
-                    } else {
-                        self.imageURLs.append(self.defaultLinkString)
-                        self.imageCollectionView.reloadData()
-                    }
-                    
-                    self.linkLabel.leadingAnchor.constraint(equalTo: self.imageCollectionView.leadingAnchor).isActive = true
-                    self.linkLabel.trailingAnchor.constraint(equalTo: self.imageCollectionView.trailingAnchor).isActive = true
-                    
-                    if let linkSource = result.canonicalUrl {
-                        self.linkLabel.text = linkSource
-                    }
-                }) { (error) in
-                    print("We have an Error: \(error.localizedDescription)")
+                
+                if let imageURL = link.imageURL {
+                    self.imageURLs.append(imageURL)
+                    self.imageCollectionView.reloadData()
+                } else {
+                    self.imageURLs.append(self.defaultLinkString)
+                    self.imageCollectionView.reloadData()
                 }
+                
+                self.linkLabel.leadingAnchor.constraint(equalTo: self.imageCollectionView.leadingAnchor).isActive = true
+                self.linkLabel.trailingAnchor.constraint(equalTo: self.imageCollectionView.trailingAnchor).isActive = true
+                
+                self.linkLabel.text = link.shortURL
             } else {
-                // No Post yet
-                return
+                print("#Error: got no link in link post view")
             }
         case .repost:
             if let repost = post.repost {
