@@ -48,12 +48,8 @@ class CommunityHeaderView: UIView {
                     headerDescriptionLabeel.text = community.description
                     headerTitleLabel.text = community.title
                     
-                    community.getFollowerCount(completion: { (count) in
-                        self.followerCountLabel.text = String(count)
-                    })
-                    community.getPostCount { (count) in
-                        self.postCountLabel.text = String(count)
-                    }
+                    self.followerCountLabel.text = String(community.followerCount)
+                    self.postCountLabel.text = String(community.postCount)
                 } else {
                     print("No Info we got")
                 }

@@ -51,7 +51,7 @@ class NewAddOnTableViewController: UITableViewController {
         
         let infoAll = OptionalInformation(style: .collection, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_collection_header", comment: "new collection text"), description: Constants.texts.AddOns.collectionText, singleTopic: nil)
         let singleTopic = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_singleTopic_header", comment: "new singleTopicText"), description: Constants.texts.AddOns.singleTopicText, singleTopic: nil)
-        let QandA = OptionalInformation(style: .QandA, OP: "", documentID: "", fact: Fact(), description: "")
+        let QandA = OptionalInformation(style: .QandA, OP: "", documentID: "", fact: Fact(), description: Constants.texts.AddOns.QandAText)
         
         optionalInformations.append(contentsOf: [infoAll, singleTopic, QandA])
         tableView.reloadData()
@@ -94,6 +94,8 @@ class NewAddOnTableViewController: UITableViewController {
                 switch info.style {
                 case .singleTopic:
                     cell.exampleImageView.image = UIImage(named: "AddOnSingleTopicExample")
+                case .QandA:
+                    cell.exampleImageView.image = UIImage(named: "AddOnQandAExample")
                 default:
                     cell.exampleImageView.image = UIImage(named: "AddOnCollectionExample")
                 }
@@ -177,7 +179,7 @@ class NewAddOnTableViewController: UITableViewController {
             case .singleTopic:
                 self.selectedAddOnTypeLabel.text = NSLocalizedString("addOn_type_singleTopic", comment: "adde a singleTopic")
             case .QandA:
-                self.selectedAddOnTypeLabel.text = "Q&A AddOn"
+                self.selectedAddOnTypeLabel.text = NSLocalizedString("addOn_type_QandA", comment: "adde stuff")
             }
             
             

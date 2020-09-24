@@ -114,6 +114,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
         
         let ref = db.collection("Facts").whereField("displayOption", isEqualTo: sortByString)
         
+        let user = Auth.auth().currentUser
         ref.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
@@ -123,7 +124,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
                     for document in snap.documents {
                         let data = document.data()
                         
-                        if let fact = self.dataHelper.addFact(documentID: document.documentID, data: data) {
+                        if let fact = self.dataHelper.addFact(currentUser: user, documentID: document.documentID, data: data) {
                             facts.append(fact)
                         }
                     }
@@ -132,17 +133,6 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
             }
         }
     }
-    
-//    func getCheckedTopics(type: DisplayOption, topics: [Fact]) {
-//        
-//        if let user = Auth.auth().currentUser {
-//            self.dataHelper.markFollowedTopics(userUID: user.uid, factList: topics) { (facts) in
-//                self.showTopics(type: type, topics: facts)
-//            }
-//        } else {
-//            showTopics(type: type, topics: topics)
-//        }
-//    }
     
     func showTopics(type: DisplayOption, topics: [Fact]) {
         switch type {

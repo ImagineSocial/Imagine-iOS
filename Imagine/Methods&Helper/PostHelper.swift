@@ -33,6 +33,7 @@ class PostHelper {
     var startBeforeSnap: QueryDocumentSnapshot?
     var lastEventSnap: QueryDocumentSnapshot?
     var lastSavedPostsSnap: QueryDocumentSnapshot?
+    var lastFeedPostSnap: QueryDocumentSnapshot?
     
     let factJSONString = "linkedFactID"
     
@@ -288,7 +289,7 @@ class PostHelper {
     }
     
     
-    //MARK: - Saved and UserPosts
+    //MARK: - Saved and User
     func getPostList(getMore: Bool, whichPostList: PostList, userUID : String, returnPosts: @escaping ([Post]?, _ InitialFetch:Bool) -> Void) {
         
         // check if there are more posts to fetch
@@ -296,7 +297,7 @@ class PostHelper {
             
             posts.removeAll()
             
-            var postListReference:String?
+            var postListReference: String!
             
             switch whichPostList {
             case .postsFromUser:
@@ -304,91 +305,90 @@ class PostHelper {
             case .savedPosts:
                 postListReference = "saved"
             }
-
+            
             var documentIDsOfPosts = [Post]()
             
-            if let ref = postListReference {
-                
-                var userPostRef = db.collection("Users").document(userUID).collection(ref).order(by: "createTime", descending: true).limit(to: 20)
-                
-                
-                // Check if the Feed has been refreshed or the next batch is ordered
-                if getMore {
-                    // For the next loading batch of 20, that will start after this snapshot if it is there
-                    if let lastSnap = lastSavedPostsSnap {
-                        
-                        // I think I have an issue with createDate + .start(afterDocument:) because there are some without date
-                        userPostRef = userPostRef.start(afterDocument: lastSnap)
-                        self.initialFetch = false
-                    }
-                } else { // Else you want to refresh the feed
-                    self.initialFetch = true
+            var userPostRef = db.collection("Users").document(userUID).collection(postListReference).order(by: "createTime", descending: true).limit(to: 20)
+            
+            
+            // Check if the Feed has been refreshed or the next batch is ordered
+            if getMore {
+                // For the next loading batch of 20, that will start after this snapshot if it is there
+                if let lastSnap = lastSavedPostsSnap {
+                    
+                    // I think I have an issue with createDate + .start(afterDocument:) because there are some without date
+                    userPostRef = userPostRef.start(afterDocument: lastSnap)
+                    self.initialFetch = false
                 }
-                
-                
-                userPostRef.getDocuments { (querySnapshot, err) in
-                    if let error = err {
-                        print("Wir haben einen Error bei den Userposts: \(error.localizedDescription)")
-                    } else {
-                        
-                        if querySnapshot!.documents.count == 0 {    // Hasnt posted or saved anything yet
+            } else { // Else you want to refresh the feed
+                self.initialFetch = true
+            }
+            
+            
+            userPostRef.getDocuments { (querySnapshot, err) in
+                if let error = err {
+                    print("Wir haben einen Error bei den Userposts: \(error.localizedDescription)")
+                } else {
+                    if let snap = querySnapshot {
+                        if snap.documents.count == 0 {    // Hasnt posted or saved anything yet
                             let post = Post()
                             post.type = .nothingPostedYet
                             returnPosts([post], self.initialFetch)
-                        }
-                        
-                        let fetchedDocsCount = querySnapshot!.documents.count
-                        self.alreadyFetchedCount = self.alreadyFetchedCount+fetchedDocsCount
-                        
-                        let fullCollectionRef = self.db.collection("Users").document(userUID).collection(ref)
-                        self.checkHowManyDocumentsThereAre(ref: fullCollectionRef)
-                        
-                        self.lastSavedPostsSnap = querySnapshot?.documents.last // For the next batch
-                        
-                        switch whichPostList {
-                        case .postsFromUser:
-                            for document in querySnapshot!.documents {
-                                let documentID = document.documentID
-                                let data = document.data()
-                                
-                                let post = Post()
-                                post.documentID = documentID
-                                if let _ = data["isTopicPost"] as? Bool {
-                                    post.isTopicPost = true
-                                }
-                                documentIDsOfPosts.append(post)
-                            }
+                        } else {
                             
-                            self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in
-                                // Needs to be sorted because the posts are fetched without the date that they were added
-                                self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
-                                returnPosts(self.posts, self.initialFetch)
-                            })
-                        case .savedPosts:
-                            for document in querySnapshot!.documents {
-                                let documentID = document.documentID
-                                let data = document.data()
-                                
-                                let post = Post()
-                                post.documentID = documentID
-                                if let _ = data["isTopicPost"] as? Bool {
-                                    post.isTopicPost = true
-                                }
-                                if let documentID = data["documentID"] as? String {
+                            let fetchedDocsCount = snap.documents.count
+                            self.alreadyFetchedCount = self.alreadyFetchedCount+fetchedDocsCount
+                            
+                            let fullCollectionRef = self.db.collection("Users").document(userUID).collection(postListReference)
+                            self.checkHowManyDocumentsThereAre(ref: fullCollectionRef)
+                            
+                            self.lastSavedPostsSnap = snap.documents.last // For the next batch
+                            
+                            switch whichPostList {
+                            case .postsFromUser:
+                                for document in snap.documents {
+                                    let documentID = document.documentID
+                                    let data = document.data()
+                                    
+                                    let post = Post()
                                     post.documentID = documentID
+                                    if let _ = data["isTopicPost"] as? Bool {
+                                        post.isTopicPost = true
+                                    }
+                                    documentIDsOfPosts.append(post)
                                 }
-                                documentIDsOfPosts.append(post)
+                                
+                                self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in
+                                    // Needs to be sorted because the posts are fetched without the date that they were added
+                                    self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                                    returnPosts(self.posts, self.initialFetch)
+                                })
+                            case .savedPosts:
+                                for document in snap.documents {
+                                    let documentID = document.documentID
+                                    let data = document.data()
+                                    
+                                    let post = Post()
+                                    post.documentID = documentID
+                                    if let _ = data["isTopicPost"] as? Bool {
+                                        post.isTopicPost = true
+                                    }
+                                    if let documentID = data["documentID"] as? String {
+                                        post.documentID = documentID
+                                    }
+                                    documentIDsOfPosts.append(post)
+                                    
+                                    
+                                }
                                 
                                 
+                                
+                                self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in
+                                    // Needs to be sorted because the posts are fetched without the date that they were added
+                                    self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                                    returnPosts(self.posts, self.initialFetch)
+                                })
                             }
-                            
-                            
-                            
-                            self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in
-                                // Needs to be sorted because the posts are fetched without the date that they were added
-                                self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
-                                returnPosts(self.posts, self.initialFetch)
-                            })
                         }
                     }
                 }
@@ -399,78 +399,104 @@ class PostHelper {
         }
     }
     
-    //MARK:-Test Beginn
+    //MARK:- Communities
     
-//    func getPosts(_ ids: [String]) -> Promise<Void> {
-//        return Promise.value(ids).thenMap { id in
-//            Promise<Data> { resolver in
-//                db.collection("data").whereField("id", isEqualTo: id).getDocuments { dataForId, error in
-//                    guard let error = error else { resolver.fulfill(dataForId) }
-//                    resolver.reject(error)
-//                }
-//            }
-//        }
-//        .done { allDataForIds in
-//            self.arr = allDataForIds
-//        }
-//        .catch { error in
-//            // handle error
-//        }
-//    }
-    
-    //MARK:- Test Ende
-    
-    func getPostsForFact(factID: String, forPreviewPictures: Bool, posts: @escaping ([Post]) -> Void) {
+    func getPostsForCommunity(getMore: Bool, communityID: String, returnPosts: @escaping ([Post]?, _ InitialFetch:Bool) -> Void) {
         
-        let ref = db.collection("Facts").document(factID).collection("posts")
-        var documentIDsOfPosts = [Post]()
+        if morePostsToFetch {
+            self.posts.removeAll()
+            
+            var ref = db.collection("Facts").document(communityID).collection("posts").order(by: "createTime", descending: true).limit(to: 20)
+            var documentIDsOfPosts = [Post]()
+            
+            // Check if the Feed has been refreshed or the next batch is ordered
+            if getMore {
+                // For the next loading batch of 20, that will start after this snapshot if it is there
+                if let lastSnap = lastFeedPostSnap {
+                    
+                    // I think I have an issue with createDate + .start(afterDocument:) because there are some without date
+                    ref = ref.start(afterDocument: lastSnap)
+                    self.initialFetch = false
+                }
+            } else { // Else you want to refresh the feed
+                self.initialFetch = true
+            }
+            
+            ref.getDocuments { (snap, err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    if let snap = snap {
+                        if snap.documents.count == 0 {    // Hasnt posted or saved anything yet
+                            let post = Post()
+                            post.type = .nothingPostedYet
+                            returnPosts([post], self.initialFetch)
+                        } else {
+                            //Prepare the next batch
+                            let fetchedDocsCount = snap.documents.count
+                            self.alreadyFetchedCount = self.alreadyFetchedCount+fetchedDocsCount
+                            
+                            let fullCollectionRef = self.db.collection("Facts").document(communityID).collection("posts")
+                            self.checkHowManyDocumentsThereAre(ref: fullCollectionRef)
+                            
+                            self.lastFeedPostSnap = snap.documents.last // For the next batch
+                            
+                            // Get right post objects for next fetch
+                            for document in snap.documents {
+                                let documentID = document.documentID
+                                let data = document.data()
+                                
+                                let post = Post()
+                                post.documentID = documentID
+                                
+                                if let _ = data["type"] as? String {    // Sort between normal and "JustTopic" Posts
+                                    post.isTopicPost = true
+                                }
+                                
+                                documentIDsOfPosts.append(post)
+                            }
+                            
+                            self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in    // First fetch the normal Posts, then the "JustTopic" Posts
+                                self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                                
+                                returnPosts(self.posts, self.initialFetch)
+                            })
+                        }
+                    }
+                }
+            }
+        } else {
+            print("We already have all posts fetched")
+            returnPosts(nil, self.initialFetch)
+        }
+    }
+    
+    func getPreviewPicturesForCommunity(communityID: String, posts: @escaping ([Post]?) -> Void) {
+        let ref = db.collection("TopicPosts").whereField("linkedFactID", isEqualTo: communityID).whereField("type", isEqualTo: "picture").limit(to: 6)
         
         ref.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
-                if snap!.documents.count == 0 {    // Hasnt posted or saved anything yet
-                    let post = Post()
-                    post.type = .nothingPostedYet
-                    posts([post])
-                } else {
-                    
-                    for document in snap!.documents {
-                        let documentID = document.documentID
-                        let data = document.data()
+                if let snap = snap {
+                    if snap.documents.count == 0 {    // Hasnt posted or saved anything yet
+                        posts(nil)
+                    } else {
+                        var picturePosts = [Post]()
+                        var count = snap.documents.count
                         
-                        let post = Post()
-                        post.documentID = documentID
-                        
-                        if let _ = data["type"] as? String {    // Sort between normal and "JustTopic" Posts
-                            post.isTopicPost = true
-                        }
-                        
-                        documentIDsOfPosts.append(post)
-                        
-                    }
-                    
-                    self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in    // First fetch the normal Posts, then the "JustTopic" Posts
-                        self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
-                        if forPreviewPictures {
-                            var picturePosts = [Post]()
-                            for post in self.posts {
-                                if post.type == .picture {
-
-                                    picturePosts.append(post)
-                                    
-                                    if picturePosts.count == 6 {
-                                        posts(picturePosts)
-                                        break
-                                    }
-                                }
+                        for document in snap.documents {
+                            
+                            if let post = self.addThePost(document: document, isTopicPost: true, forFeed: false) {
+                                picturePosts.append(post)
+                            } else {
+                                count-=1
                             }
-                            print("Got less than 6")
-                            posts(picturePosts)
-                        } else {
-                            posts(self.posts)
+                            if picturePosts.count == count {
+                                posts(picturePosts)
+                            }
                         }
-                    })
+                    }
                 }
             }
         }
@@ -499,7 +525,7 @@ class PostHelper {
         }
     }
     
-    // MARK: Get Posts from DocumentIDs
+    // MARK:- Get Posts from DocumentIDs
     func getPostsFromDocumentIDs(posts: [Post], done: @escaping ([Post]?) -> Void) {
         print("Get posts")
         let endIndex = posts.count
@@ -540,7 +566,7 @@ class PostHelper {
     }
     
     
-    //MARK: -add Post
+    //MARK:- addThePost
     func addThePost(document: DocumentSnapshot, isTopicPost: Bool, forFeed: Bool) -> Post? {
         
         let documentID = document.documentID
@@ -564,6 +590,9 @@ class PostHelper {
                         return nil
                 }
                 
+                if reportString == "blocked" {
+                    return nil
+                }
                 
                 let dateToSort = createTimestamp.dateValue()
                 let stringDate = createTimestamp.dateValue().formatForFeed()
@@ -1011,6 +1040,8 @@ class PostHelper {
         
         return nil
     }
+    
+    //MARK:-Stuff
     
     func notifyMalte(documentID: String, isTopicPost: Bool) {
         let maltesUID = "CZOcL3VIwMemWwEfutKXGAfdlLy1"

@@ -258,8 +258,10 @@
 "new_addOn_header_header" = "Füge einen Header hinzu.";
 "new_addOn_collection_header" = "Füge eine Kollektion mit Beiträgen und Themen hinzu.";
 "new_addOn_singleTopic_header" = "Verlinke ein aussagekräftiges Thema.";
+"new_addOn_QandA_header" = "Füge ein Frage/Antwort AddOn hinzu.";
 "addOn_type_collection" = "Post & Themen Kollektion";
 "addOn_type_singleTopic" = "Präsentation einer Community";
+"addOn_type_QandA" = "Frage & Antwort Bereich";
 
 //AddPostTableViewController
 "search_placeholder" = "Durchsuche Imagine";
@@ -386,7 +388,8 @@
 "constants_reportBugText" = "Sag uns, was wir für Fehler beheben sollen.\n\nSchließt sich die App abrupt, wird ein Bereich des Bildschirms falsch dargestellt oder eine Funktion funktioniert nicht, so sag uns bitte Bescheid.\n\nSelbst wenn es ein offensichtlicher Fehler ist, so wissen wir was die User am Meisten stört, je mehr Reporte zu diesem Thema bei uns eintreffen.";
 "constants_communityText" = "Erstelle eine neue Community oder eine neue Diskussion. \nEin Bild ist dabei optional aber immer gern gesehen\n\nDu bist vorerst der Moderator der von dir erstellten Communities und Diskussionen und kannst zu einem späteren Zeitpunkt die Informationen und Metadaten bearbeiten.";
 "constants_addOns_singleTopicText" = "Verlinke mit diesem AddOn eine andere Community, die den Menschen aus der derzeitigen Community interessant finden könnten. Die Darstellung enthält Bilder-Beiträge, sowie die Beschreibung der Community in der Vorschau.";
-"constants_addOns_normalText" = "In diesem AddOn kann man nach belieben vorhandene oder neue Beiträge posten um ein Unterthema deiner Wahl besser zu beleuchten.\nAuch Themen kannst du hier verlinken. Möchtest du jedoch nur ein Thema hervorheben, nutze bitte das AddOn für einzelne Themen.";
+"constants_addOns_normalText" = "In diesem AddOn kann man nach belieben vorhandene oder neue Beiträge posten um ein Unterthema deiner Wahl besser zu beleuchten.\nAuch Themen kannst du hier verlinken. Möchtest du jedoch nur ein Thema hervorheben, kannst du das AddOn für einzelne Themen nutzen.";
+"constants_addOns_QandA" = "Füge dieses AddOn hinzu, um einen Ort für mögliche Fragen zu  schaffen. Anfänger können so schneller lernen und Neulinge oder Fremde sich einfacher an einem Ort oder einer Community zurechtfinden.";
 
 ////Storyboard
 

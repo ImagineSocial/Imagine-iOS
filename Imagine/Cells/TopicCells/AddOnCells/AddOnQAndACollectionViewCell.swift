@@ -64,8 +64,8 @@ class AddOnQAndACollectionViewCell: BaseAddOnCollectionViewCell {
         
         contentView.layer.cornerRadius = cornerRadius
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cancelTextFieldFirstResponder))
-        self.addGestureRecognizer(tapGesture)
+//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cancelTextFieldFirstResponder))
+//        self.addGestureRecognizer(tapGesture)
     }
     
     
@@ -342,6 +342,10 @@ class AddOnQAndATextfieldCell: UITableViewCell {
     var questionID: String?
     
     var delegate: QandACellDelegate?
+    
+    override func awakeFromNib() {
+        selectionStyle = .none
+    }
     
     @IBAction func sendButtonTapped(_ sender: Any) {
         guard let type = type, let info = info, let text = answerTextField.text, text != "" else { return }

@@ -54,7 +54,6 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     @IBOutlet weak var profilePictureButton: DesignableButton!
     @IBOutlet weak var blogPostButton: DesignableButton!
     @IBOutlet weak var chatWithUserButton: DesignableButton!
-//    @IBOutlet weak var statusTextView: UITextView!
     @IBOutlet weak var cameraView: UIView!
     @IBOutlet weak var moreButton: DesignableButton!
     @IBOutlet weak var headerView: UIView!

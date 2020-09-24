@@ -84,13 +84,14 @@ class FactCell:UICollectionViewCell {
         didSet {
             let ref = db.collection("Facts").document(factID!)
                         
+            let user = Auth.auth().currentUser
             ref.getDocument { (snap, err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
                     if let snap = snap {
                         if let data = snap.data() {
-                            if let fact = DataHelper().addFact(documentID: snap.documentID, data: data) {
+                            if let fact = DataHelper().addFact(currentUser: user,documentID: snap.documentID, data: data) {
                                 
                                 self.fact = fact
                             }

@@ -16,19 +16,15 @@ enum TableViewDisplayOptions {
     case normal
 }
 
-class PostsOfFactTableViewController: UITableViewController {
-
+class PostsOfFactTableViewController: BaseFeedTableViewController {
+    
     @IBOutlet weak var infoButton: UIBarButtonItem!
-
     
     var fact: Fact?
-    var noPostsType: BlankCellType = .postsOfFacts
-    var posts = [Post]()
+    
     var needNavigationController = false
     var displayOption: TableViewDisplayOptions = .normal
     
-    let postHelper = PostHelper()
-    let handyHelper = HandyHelper()
     let factParentVC = FactParentContainerViewController()
     let radius:CGFloat = 6
     
@@ -40,51 +36,107 @@ class PostsOfFactTableViewController: UITableViewController {
     var pageViewHeaderDelegate: PageViewHeaderDelegate?
     
     let defaults = UserDefaults.standard
-    let smallDisplayTypeUserDefaultsPhrase = "smallDisplayType"
-    let musicCellIdentifier = "MusicCell"
     
     var postCount = 0
     var followerCount = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
+        self.isFactSegueEnabled = false //Cant go to this community from this community, right
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        tableView.separatorStyle = .none
-        if #available(iOS 13.0, *) {
-            tableView.backgroundColor = .systemBackground
-        } else {
-            tableView.backgroundColor = .white
-        }
-        
-        //for small display option
-        tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: "NibBlankCell")
-        tableView.register(SearchPostCell.self, forCellReuseIdentifier: "SearchPostCell")
-        
-        // For normal display
-        tableView.register(UINib(nibName: "RePostTableViewCell", bundle: nil), forCellReuseIdentifier: "NibRepostCell")
-        tableView.register(UINib(nibName: "PostTableViewCell", bundle: nil), forCellReuseIdentifier: "NibPostCell")
-        tableView.register(UINib(nibName: "LinkCell", bundle: nil), forCellReuseIdentifier: "NibLinkCell")
-        tableView.register(UINib(nibName: "ThoughtPostCell", bundle: nil), forCellReuseIdentifier: "NibThoughtCell")
-        tableView.register(UINib(nibName: "YouTubeCell", bundle: nil), forCellReuseIdentifier: "NibYouTubeCell")
-        tableView.register(UINib(nibName: "GifCell", bundle: nil), forCellReuseIdentifier: "GIFCell")
-        tableView.register(UINib(nibName: "MultiPictureCell", bundle: nil), forCellReuseIdentifier: "MultiPictureCell")
-        tableView.register(UINib(nibName: "MusicCell", bundle: nil), forCellReuseIdentifier: musicCellIdentifier)
-
-        getPosts()
-        
-        
-        // The type of presentation can vary between the normal and small cells. Saved in UserDefault
-        let type = defaults.bool(forKey: smallDisplayTypeUserDefaultsPhrase)
-        
-        if type {
-            self.displayOption = .small
-        }
         
         let newHeight = Constants.Numbers.communityHeaderHeight
         tableView.contentInset = UIEdgeInsets(top: newHeight, left: 0, bottom: 0, right: 0)
         tableView.contentOffset = CGPoint(x: 0, y: -newHeight)
         
+        setPlaceholderAndGetPosts()
+    }
+    
+    func setPlaceholderAndGetPosts() {
+        //setPlaceholder
+        var index = 0
+        
+        while index <= 2 {
+            let post = Post()
+            if index == 1 {
+                post.type = .picture
+            } else {
+                post.type = .thought
+            }
+            self.posts.append(post)
+            index+=1
+        }
+        
+        self.tableView.reloadData()
+        getPosts(getMore: true)
+    }
+    
+    override func getPosts(getMore: Bool) {
+        if let fact = fact {
+            if isConnected() {
+                
+                self.view.activityStartAnimating()
+                
+                DispatchQueue.global(qos: .default).async {
+                    self.postHelper.getPostsForCommunity(getMore: getMore, communityID: fact.documentID) { (posts, initialFetch) in
+                        if let posts = posts {
+                            if initialFetch {   // Get the first batch of posts
+                                
+                                self.posts.removeAll()  //to get the placeholder out
+                                self.posts = posts
+                                
+                                DispatchQueue.main.async {
+                                    self.tableView.reloadData()
+                                    
+                                    self.fetchesPosts = false
+                                    
+                                    // remove ActivityIndicator incl. backgroundView
+                                    self.view.activityStopAnimating()
+                                    
+                                    self.refreshControl?.endRefreshing()
+                                    self.explainFunctions()
+                                }
+                            } else {    // Append the next batch to the existing
+                                var indexes : [IndexPath] = [IndexPath]()
+                                
+                                for result in posts {
+                                    let row = self.posts.count
+                                    
+                                    indexes.append(IndexPath(row: row, section: 0))
+                                    self.posts.append(result)
+                                }
+                                
+                                DispatchQueue.main.async {
+                                    
+                                    if #available(iOS 11.0, *) {
+                                        self.tableView.performBatchUpdates({
+                                            self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                                            self.tableView.insertRows(at: indexes, with: .bottom)
+                                        }, completion: { (_) in
+                                            self.fetchesPosts = false
+                                        })
+                                    } else {
+                                        self.tableView.beginUpdates()
+                                        self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                                        self.tableView.insertRows(at: indexes, with: .right)
+                                        self.tableView.endUpdates()
+                                        
+                                        self.fetchesPosts = false
+                                    }
+                                    
+                                    self.view.activityStopAnimating()
+                                }
+                            }
+                        } else {
+                            self.view.activityStopAnimating()
+                        }
+                    }
+                }
+            } else {
+                fetchRequested = true
+            }
+        }
     }
     
     func hintTheOtherView() {
@@ -122,21 +174,6 @@ class PostsOfFactTableViewController: UITableViewController {
             followTopicTipView = nil
         }
     }
-
-    func getPosts() {
-        
-        if let fact = fact {
-            self.view.activityStartAnimating()
-            
-            postHelper.getPostsForFact(factID: fact.documentID, forPreviewPictures: false) { (posts) in
-                self.posts = posts
-                self.tableView.reloadData()
-                self.view.activityStopAnimating()
-                
-                self.explainFunctions()
-            }
-        }
-    }
     
     func explainFunctions() {
         
@@ -163,10 +200,22 @@ class PostsOfFactTableViewController: UITableViewController {
         followTopicTipView = EasyTipView(text: NSLocalizedString("follow_community_description", comment: "Why should you follow a topic?"))
     }
     
-    //MARK:-ScrollViewDidScroll
+    //MARK:- ScrollViewDidScroll
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offset = scrollView.contentOffset.y
         self.pageViewHeaderDelegate?.childScrollViewScrolled(offset: offset)
+        
+        let height = scrollView.frame.size.height
+        let distanceFromBottom = scrollView.contentSize.height - offset
+        
+        if distanceFromBottom < height {
+            if fetchesPosts == false {
+                print("##Ende erreicht!")
+                
+                fetchesPosts = true
+                self.getPosts(getMore: true)
+            }
+        }
     }
     
     //MARK:- TableView
@@ -188,252 +237,6 @@ class PostsOfFactTableViewController: UITableViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return posts.count
-    }
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let post = posts[indexPath.row]
-        
-        switch post.type {
-        case .nothingPostedYet:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "NibBlankCell", for: indexPath) as? BlankContentCell {
-                
-                cell.type = noPostsType
-                cell.contentView.backgroundColor = self.tableView.backgroundColor
-                
-                return cell
-            }
-        default:
-            
-            switch displayOption {
-            case .normal:
-                
-                switch post.type {
-                case .repost:
-                    let identifier = "NibRepostCell"
-                    
-                    if let repostCell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? RePostCell {
-                        
-                        repostCell.delegate = self
-                        repostCell.post = post
-                        
-                        return repostCell
-                    }
-                case .picture:
-                    let identifier = "NibPostCell"
-                    
-                    if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? PostCell {
-                        
-                        cell.delegate = self
-                        cell.post = post
-                        
-                        return cell
-                    }
-                case .thought:
-                    let identifier = "NibThoughtCell"
-                    
-                    if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? ThoughtCell {
-                        
-                        cell.delegate = self
-                        cell.post = post
-                        
-                        return cell
-                    }
-                case .link:
-                    if post.linkURL.contains("songwhip.com") {
-                        
-                        if let cell = tableView.dequeueReusableCell(withIdentifier: musicCellIdentifier, for: indexPath) as? MusicCell {
-                            cell.post = post
-                            cell.delegate = self
-                            cell.webViewDelegate = self
-                            
-                            return cell
-                        }
-                    } else {
-                        let identifier = "NibLinkCell"
-                        
-                        if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? LinkCell {
-                            
-                            cell.delegate = self
-                            cell.post = post
-                            
-                            return cell
-                        }
-                    }
-                case .youTubeVideo:
-                    let identifier = "NibYouTubeCell"
-                    
-                    if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? YouTubeCell {
-                        
-                        cell.delegate = self
-                        cell.post = post
-                        
-                        return cell
-                    }
-                case .GIF:
-                    let identifier = "GIFCell"
-                    
-                    if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? GifCell {
-                     
-                        cell.post = post
-                        cell.delegate = self
-                        if let url = URL(string: post.linkURL) {
-                            cell.videoPlayerItem = AVPlayerItem.init(url: url)
-                            cell.startPlayback()
-                        }
-                        
-                        return cell
-                    }
-                case .multiPicture:
-                    let identifier = "MultiPictureCell"
-                    
-                    if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? MultiPictureCell {
-                        
-                        cell.delegate = self
-                        cell.post = post
-                        
-                        return cell
-                    }
-                default:
-                    let identifier = "NibThoughtCell"
-                    
-                    if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? ThoughtCell {
-                        
-                        cell.delegate = self
-                        cell.post = post
-                        
-                        return cell
-                    }
-                }
-                
-            case .small:
-                if let cell = tableView.dequeueReusableCell(withIdentifier: "SearchPostCell", for: indexPath) as? SearchPostCell {
-                    
-                    cell.post = post
-                    
-                    return cell
-                }
-            }
-        }
-        
-        return UITableViewCell()
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let post = posts[indexPath.row]
-        
-        switch post.type {
-        case .nothingPostedYet:
-            return self.view.frame.height-150
-        default:
-            
-            switch displayOption {
-            case .normal:
-                var extraHeightForReportView:CGFloat = 0
-                
-                var heightForRow:CGFloat = 150
-                
-                let post = posts[indexPath.row]
-                let postType = post.type
-                
-                switch post.report {
-                case .normal:
-                    extraHeightForReportView = 0
-                default:
-                    extraHeightForReportView = 24
-                }
-                
-                switch postType {
-                case .thought:
-                    let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
-                    
-                    return 110+labelHeight+extraHeightForReportView
-                case .picture:
-                    
-                    // Label vergrößern
-                    let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
-                    
-                    let imageHeight = post.mediaHeight
-                    let imageWidth = post.mediaWidth
-                    
-                    let ratio = imageWidth / imageHeight
-                    let width = self.view.frame.width-20
-                    var newHeight = width / ratio
-                    
-                    if newHeight >= 500 {
-                        newHeight = 500
-                    }
-                    
-                    heightForRow = newHeight+105+extraHeightForReportView+labelHeight // 100 weil Höhe von StackView & Rest
-                    
-                    return heightForRow
-                case .link:
-                    
-                    if post.linkURL.contains("songwhip.com") {
-                        return UITableView.automaticDimension
-                    } else {
-                        let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
-                        let height = 300+extraHeightForReportView+labelHeight
-                        
-                        return height
-                    }
-                case .repost:
-                    
-                    let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
-                    
-                    return 390+extraHeightForReportView+labelHeight //525
-                    
-                case .youTubeVideo:
-                    
-                    let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
-                    
-                    return 330+labelHeight
-                case .GIF:
-                    
-                    let imageHeight = post.mediaHeight
-                    let imageWidth = post.mediaWidth
-                    
-                    let ratio = imageWidth / imageHeight
-                    var newHeight = self.view.frame.width / ratio
-                    
-                    if newHeight >= 500 {
-                        newHeight = 500
-                    }
-                    
-                    let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
-                    
-                    return newHeight+85+labelHeight //85 is height of title, profileicture, buttons etc.
-                //                return UITableView.automaticDimension
-                case .multiPicture:
-                    // Label vergrößern
-                    let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
-                    
-                    let imageHeight = post.mediaHeight
-                    let imageWidth = post.mediaWidth
-                    
-                    let ratio = imageWidth / imageHeight
-                    let width = self.view.frame.width-20
-                    var newHeight = width / ratio
-                    
-                    if newHeight >= 500 {
-                        newHeight = 500
-                    }
-                    
-                    
-                    heightForRow = newHeight+100+extraHeightForReportView+labelHeight // 100 weil Höhe von StackView & Rest
-                    
-                    return heightForRow
-                default:
-                    return 300
-                }
-                
-                return heightForRow
-            case .small:
-                return 80
-            }
-        }
-    }
     
     @IBAction func infoButtonTapped(_ sender: Any) {
         if let tipView = tipView {
@@ -513,6 +316,18 @@ class PostsOfFactTableViewController: UITableViewController {
                 } 
             }
         }
+        
+        if segue.identifier == "goToLink" {
+            if let post = sender as? Post {
+                if let webVC = segue.destination as? WebViewController {
+                    webVC.post = post
+                }
+            }
+        }
+    }
+    
+    override func userTapped(post: Post) {
+        performSegue(withIdentifier: "toUserSegue", sender: post.user)
     }
     
     @IBAction func toSettingsTapped(_ sender: Any) {
@@ -520,77 +335,14 @@ class PostsOfFactTableViewController: UITableViewController {
             performSegue(withIdentifier: "toSettingSegue", sender: fact)
         }
     }
-    //MARK:- PostCell Delegate
-    
 }
 
-extension PostsOfFactTableViewController: PostCellDelegate, NewFactDelegate, MusicPostDelegate {
-    
-    func expandView() {
-        tableView.beginUpdates()
-        tableView.endUpdates()
-    }
-    
+extension PostsOfFactTableViewController: NewFactDelegate {
     
     func finishedCreatingNewInstance(item: Any?) {
         self.posts.removeAll()
         self.tableView.reloadData()
-        self.getPosts()
-    }
-    
-    func collectionViewTapped(post: Post) {
-        performSegue(withIdentifier: "showPost", sender: post)
-    }
-    
-    
-    func userTapped(post: Post) {
-        performSegue(withIdentifier: "toUserSegue", sender: post.user)
-    }
-    
-    // MARK: Cell Button Tapped
-    
-    func reportTapped(post: Post) {
-        performSegue(withIdentifier: "meldenSegue", sender: post)
-    }
-    
-    func thanksTapped(post: Post) {
-        if let _ = Auth.auth().currentUser {
-            handyHelper.updatePost(button: .thanks, post: post)
-        } else {
-            self.notLoggedInAlert()
-        }
-    }
-    
-    func wowTapped(post: Post) {
-        if let _ = Auth.auth().currentUser {
-            handyHelper.updatePost(button: .wow, post: post)
-        } else {
-            self.notLoggedInAlert()
-        }
-    }
-    
-    func haTapped(post: Post) {
-        if let _ = Auth.auth().currentUser {
-            handyHelper.updatePost(button: .ha, post: post)
-        } else {
-            self.notLoggedInAlert()
-        }
-    }
-    
-    func niceTapped(post: Post) {
-        if let _ = Auth.auth().currentUser {
-            handyHelper.updatePost(button: .nice, post: post)
-        } else {
-            self.notLoggedInAlert()
-        }
-    }
-    
-    func linkTapped(post: Post) {
-        performSegue(withIdentifier: "goToLink", sender: post)
-    }
-    
-    func factTapped(fact: Fact) {
-        //nothing has to happen
+        self.getPosts(getMore: false)
     }
     
 }

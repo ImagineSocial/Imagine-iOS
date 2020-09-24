@@ -45,10 +45,11 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
         
         let defaults = UserDefaults.standard
         let factStrings = defaults.stringArray(forKey: "recentTopics") ?? [String]()
+        let user = Auth.auth().currentUser
         
         if initialFetch {
             for string in factStrings {
-                loadFact(factID: string)
+                loadFact(user: user, factID: string)
             }
         } else {
             if self.facts.count >= 10 {
@@ -57,11 +58,11 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
             
             self.facts = self.facts.filter{ $0.documentID != factStrings[0] }
             
-            loadFact(factID: factStrings[0])
+            loadFact(user: user, factID: factStrings[0])
         }
     }
     
-    func loadFact(factID: String) {
+    func loadFact(user: Firebase.User?, factID: String) {
         let factRef = db.collection("Facts").document(factID)
         
         factRef.getDocument { (snap, err) in
@@ -70,7 +71,7 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
             } else {
                 if let snapshot = snap {
                     if let data = snapshot.data() {
-                        if let fact = self.dataHelper.addFact(documentID: snapshot.documentID, data: data) {
+                        if let fact = self.dataHelper.addFact(currentUser: user, documentID: snapshot.documentID, data: data) {
                             
                             self.facts.insert(fact, at: 0)
                             self.collectionView.reloadData()

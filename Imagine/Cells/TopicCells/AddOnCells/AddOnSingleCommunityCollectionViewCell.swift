@@ -50,13 +50,8 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
                         addOnTitleLabel.text = title
                     }
                     addOnDescriptionLabel.text = info.description
-                    
-                    fact.getPostCount { (count) in
-                        self.topicPostCountLabel.text = "Beiträge: \(count)"
-                    }
-                    fact.getFollowerCount { (count) in
-                        self.topicFollowerLabel.text = "Follower: \(count)"
-                    }
+                    self.topicPostCountLabel.text = "Beiträge: \(fact.postCount)"
+                    self.topicFollowerLabel.text = "Follower: \(fact.followerCount)"
                 }
             }
         }
@@ -66,10 +61,9 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
         if documentID != "" {
             if self.previewPosts == nil {
                 DispatchQueue.global(qos: .default).async {
-                    self.postHelper.getPostsForFact(factID: documentID, forPreviewPictures: true) { (posts) in
+                    self.postHelper.getPreviewPicturesForCommunity(communityID: documentID) { (posts) in
                         DispatchQueue.main.async {
-                            if posts.count != 0 {
-                                print("Got the singleTopicPosts")
+                            if let posts = posts, posts.count != 0 {
                                 self.previewPosts = posts
                                 self.topicPreviewCollectionView.reloadData()
                                 self.isFetchingPreviewPosts = false
@@ -81,8 +75,6 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
                     }
                 }
             }
-        } else {    // AddOnStoreViewController
-            
         }
     }
     

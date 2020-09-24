@@ -325,16 +325,15 @@ extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageView
 extension ArgumentPageViewController: PageViewHeaderDelegate, CommunityFeedHeaderDelegate, NewFactDelegate {
     
     
-    
     func finishedCreatingNewInstance(item: Any?) {
         if let vc = self.argumentVCs[1] as? PostsOfFactTableViewController {
             vc.posts.removeAll()
             vc.tableView.reloadData()
-            vc.getPosts()
+            vc.getPosts(getMore: false)
         } else if let vc = self.argumentVCs[2] as? PostsOfFactTableViewController {
             vc.posts.removeAll()
             vc.tableView.reloadData()
-            vc.getPosts()
+            vc.getPosts(getMore: false)
         }
     }
     

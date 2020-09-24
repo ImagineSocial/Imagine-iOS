@@ -28,10 +28,10 @@ class DataHelper {
     /*  Every data from firebase which are not posts are fetched through this class
      */
     
-    // Überall noch eine Wichtigkeitsvariable einfügen
     var dataPath = ""
     let db = Firestore.firestore()
     let handyHelper = HandyHelper()
+    let user = Auth.auth().currentUser
     
     func getData(get: DataType, returnData: @escaping ([Any]) -> Void) {
         // "get" Variable kann "campaign" für CommunityEntscheidungen, "jobOffer" für Hilfe der Community und "fact" für Fakten Dings sein
@@ -214,10 +214,9 @@ class DataHelper {
                         list.append(vote)
                         
                     case .facts:
-                        if let fact = self.addFact(documentID: documentID, data: documentData) {
+                        if let fact = self.addFact(currentUser: self.user, documentID: documentID, data: documentData) {
                             list.append(fact)
                         }
-                        
                     case .jobOffer:
                         guard let title = documentData["jobTitle"] as? String,
                             let shortBody = documentData["jobShortBody"] as? String,
@@ -247,24 +246,7 @@ class DataHelper {
                     }
                 }
             }
-            if get == .facts {  // Control wether or not the fact is beeing followed by the current user
-                if let user = Auth.auth().currentUser {
-                    self.getFollowedTopicDocuments(userUID: user.uid) { (topicIDs) in
-                        for fact in (list as! [Fact]) {
-                            for topicID in topicIDs {
-                                if topicID.documentID == fact.documentID {
-                                    fact.beingFollowed = true
-                                }
-                            }
-                        }
-                        returnData(list)
-                    }
-                } else {
-                    returnData(list)
-                }
-            } else {
-                returnData(list)
-            }
+            returnData(list)
         }
     }
     
@@ -313,28 +295,8 @@ class DataHelper {
         }
     }
     
-    func markFollowedTopics(userUID: String, factList: [Fact], checkedList: @escaping ([Fact]) -> Void) {
-        let topicRef = db.collection("Users").document(userUID).collection("topics")
-        
-        topicRef.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    for document in snap.documents {
-                        for fact in factList {
-                            if fact.documentID == document.documentID {
-                                fact.beingFollowed = true
-                            }
-                        }
-                    }
-                    checkedList(factList)
-                }
-            }
-        }
-    }
     
-    func addFact(documentID: String, data: [String: Any]) -> Fact? {
+    func addFact(currentUser: Firebase.User?, documentID: String, data: [String: Any]) -> Fact? {
         
         guard let name = data["name"] as? String,
             let createTimestamp = data["createDate"] as? Timestamp,
@@ -351,6 +313,21 @@ class DataHelper {
         fact.title = name
         fact.createDate = stringDate
         fact.moderators.append(OP)  //Later there will be more moderators, so it is an array
+        
+        if let postCount = data["postCount"] as? Int {
+            fact.postCount = postCount
+        }
+        
+        if let follower = data["follower"] as? [String] {
+            fact.followerCount = follower.count
+            if let user = currentUser {
+                for userID in follower {
+                    if userID == user.uid {
+                        fact.beingFollowed = true
+                    }
+                }
+            }
+        }
         
         if let imageURL = data["imageURL"] as? String { // Not mandatory (in fact not selectable)
             fact.imageURL = imageURL
@@ -383,15 +360,17 @@ class DataHelper {
         
         let ref = db.collection("Facts").document(factID)
         
+        
         ref.getDocument { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
                 if let snap = snap {
                     if let data = snap.data() {
-                        if let fact = self.addFact(documentID: snap.documentID, data: data) {
-                            
+                        if let fact = self.addFact(currentUser: self.user, documentID: snap.documentID, data: data) {
                             loadedFact(fact)
+                        } else {
+                            loadedFact(nil)
                         }
                     }
                 }

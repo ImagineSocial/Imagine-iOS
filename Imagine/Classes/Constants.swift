@@ -103,7 +103,7 @@ struct Constants {
             
             static let collectionText = NSLocalizedString("constants_addOns_normalText", comment: "whats that about? (infoText)")
             
-            
+            static let QandAText = NSLocalizedString("constants_addOns_QandA", comment: "whats that about?")
         }
     }
     

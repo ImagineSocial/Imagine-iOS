@@ -146,6 +146,8 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                 
                 let ref = self.db.collection("Facts").whereField("displayOption", isEqualTo: "fact").order(by: "popularity", descending: true).limit(to: 6)
                 
+                let user = Auth.auth().currentUser
+                
                 ref.getDocuments { (snap, err) in
                     if let error = err {
                         print("We have an error: \(error.localizedDescription)")
@@ -156,7 +158,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                             for document in snap.documents {
                                 let data = document.data()
                                 
-                                if let fact = self.dataHelper.addFact(documentID: document.documentID, data: data) {
+                                if let fact = self.dataHelper.addFact(currentUser: user, documentID: document.documentID, data: data) {
                                     self.discussionFacts.append(fact)
                                 } else {
                                     discussionCount-=1
@@ -185,7 +187,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             dataHelper.getFollowedTopicDocuments(userUID: user.uid) { (documents) in
                 var topicCount = documents.count
                 for document in documents {
-                    self.addFact(documentID: document.documentID) { (fact) in
+                    self.addFact(user: user, documentID: document.documentID) { (fact) in
                         if let fact = fact {
                             fact.beingFollowed = true
                             self.followedFacts.append(fact)
@@ -197,7 +199,6 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                         }
                         if self.followedFacts.count == topicCount {
                             self.collectionView.reloadData()
-
                         }
                     }
                 }
@@ -205,7 +206,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         }
     }
     
-    func addFact(documentID: String, returnedFact: @escaping (Fact?) -> Void) {
+    func addFact(user: Firebase.User?, documentID: String, returnedFact: @escaping (Fact?) -> Void) {
         let ref = self.db.collection("Facts").document(documentID)
         
         ref.getDocument { (snap, err) in
@@ -215,7 +216,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             } else {
                 if let snap = snap {
                     if let data = snap.data() {
-                        if let fact = self.dataHelper.addFact(documentID: snap.documentID, data: data) {
+                        if let fact = self.dataHelper.addFact(currentUser: user, documentID: snap.documentID, data: data) {
                             returnedFact(fact)
                         }
                     } else {

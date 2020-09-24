@@ -81,8 +81,34 @@ class LogInViewController: UIViewController {
         layer2.borderWidth = 1
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
+        
+        checkIfSignUpIsAllowed()
     }
   
+    func checkIfSignUpIsAllowed() {
+        let ref = db.collection("TopTopicData").document("TopTopicData")
+        ref.getDocument { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    if let data = snap.data() {
+                        if let isSignUpAllowed = data["isSignUpAllowed"] as? Bool {
+                            if !isSignUpAllowed {
+                                let alert = UIAlertController(title: "We're Sorry", message: "There are more Sign-Up requests, than we can handle. In order to protect the app and our database, we pause the Sign-Up/Log-In for now. Please try later again. Thanks for your support!", preferredStyle: .alert)
+                                let okAction = UIAlertAction(title: "OK", style: .default) { (_) in
+                                    self.dismiss(animated: true, completion: nil)
+                                }
+                                
+                                alert.addAction(okAction)
+                                self.present(alert, animated: true, completion: nil)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         answerTextfield.resignFirstResponder()

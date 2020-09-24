@@ -52,14 +52,8 @@ class SmallFactCell: UICollectionViewCell {
             }
             factHeaderTitle.text = fact.title
             factHeaderDescriptionLabel.text = fact.description
-                     
-            fact.getFollowerCount { (count) in
-                self.factFollowerCountLabel.text = "Follower: \(count)"
-            }
-            
-            fact.getPostCount { (count) in
-                self.factPostCountLabel.text = "Posts: \(count)"
-            }
+            self.factPostCountLabel.text = "Posts: \(fact.postCount)"
+            self.factFollowerCountLabel.text = "Follower: \(fact.followerCount)"
         }
     }
     

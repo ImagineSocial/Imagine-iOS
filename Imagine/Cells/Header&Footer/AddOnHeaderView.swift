@@ -57,6 +57,8 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
                 
                 if let title = info.headerTitle {
                     headerTitleLabel.text = title
+                } else if info.style == .QandA {
+                    headerTitleLabel.text = NSLocalizedString("new_addOn_QandA_header", comment: "adde a qanda addon")
                 }
                 
                 if let user = Auth.auth().currentUser {
