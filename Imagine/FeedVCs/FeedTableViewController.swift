@@ -310,6 +310,11 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                                                 if let isTopicPost = data["isTopicPist"] as? Bool {
                                                     comment.isTopicPost = isTopicPost
                                                 }
+                                                if let language = data["language"] as? String {
+                                                    if language == "en" {
+                                                        comment.sectionItemLanguage = .english
+                                                    }
+                                                }
                                                 comment.author = author
                                                 comment.text = text
                                                 self.notifications.append(comment)
@@ -333,6 +338,11 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                                                     comment.title = title
                                                     if let _ = data["isTopicPost"] as? Bool {
                                                         comment.isTopicPost = true
+                                                    }
+                                                    if let language = data["language"] as? String {
+                                                        if language == "en" {
+                                                            comment.sectionItemLanguage = .english
+                                                        }
                                                     }
                                                     
                                                     self.upvotes.append(comment)
@@ -823,6 +833,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                 let post = Post()
                 post.documentID = comment.sectionItemID
                 post.isTopicPost = comment.isTopicPost
+                post.language = comment.sectionItemLanguage
                 if let user = Auth.auth().currentUser {     //Only works if you get notifications for your own posts
                     post.originalPosterUID = user.uid
                 }
@@ -834,6 +845,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                 post.documentID = comment.sectionItemID
                 post.isTopicPost = comment.isTopicPost
                 post.toComments = true
+                post.language = comment.sectionItemLanguage
                 if let user = Auth.auth().currentUser {
                     post.originalPosterUID = user.uid
                 }

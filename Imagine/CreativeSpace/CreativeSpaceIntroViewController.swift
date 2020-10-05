@@ -53,7 +53,14 @@ class CreativeSpaceIntroViewController: UIViewController {
     
     
     func getData() {
-        let ref = db.collection("TopTopicData").document("CurrentProjects").collection("Visions")
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        if language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topTopicData")
+        } else {
+            collectionRef = db.collection("TopTopicData")
+        }
+        let ref = collectionRef.document("CurrentProjects").collection("Visions")
         
         ref.getDocuments { (snap, err) in
             if let error = err {

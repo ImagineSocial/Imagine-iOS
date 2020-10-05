@@ -143,7 +143,13 @@ class MeldenViewController: UIViewController {
     func deleteTopicPost(fact: Fact) {
         guard let post = post else { return }
         
-        let ref = db.collection("Facts").document(fact.documentID).collection("posts").document(post.documentID)
+        var collectionRef: CollectionReference!
+        if fact.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        let ref = collectionRef.document(fact.documentID).collection("posts").document(post.documentID)
         
         ref.getDocument { (snap, err) in
             if let error = err {
@@ -167,7 +173,13 @@ class MeldenViewController: UIViewController {
         guard let post = post else { return }
         
         if let fact = post.fact {
-            let ref = db.collection("Facts").document(fact.documentID).collection("addOns").document(addOnID).collection("items").document(post.documentID)
+            var collectionRef: CollectionReference!
+            if fact.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topics")
+            } else {
+                collectionRef = db.collection("Facts")
+            }
+            let ref = collectionRef.document(fact.documentID).collection("addOns").document(addOnID).collection("items").document(post.documentID)
             
             ref.delete { (err) in
                 if let error = err {
@@ -182,10 +194,21 @@ class MeldenViewController: UIViewController {
         guard let post = post else { return }
         
         let postRef: DocumentReference?
+        var collectionRef: CollectionReference!
         if post.isTopicPost {
-            postRef = db.collection("TopicPosts").document(post.documentID)
+            if post.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topicPosts")
+            } else {
+                collectionRef = db.collection("TopicPosts")
+            }
+            postRef = collectionRef.document(post.documentID)
         } else {
-            postRef = db.collection("Posts").document(post.documentID)
+            if post.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("posts")
+            } else {
+                collectionRef = db.collection("Posts")
+            }
+            postRef = collectionRef.document(post.documentID)
         }
         
         if let fact = post.fact {

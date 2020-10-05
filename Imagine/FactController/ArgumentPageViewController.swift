@@ -90,20 +90,41 @@ class ArgumentPageViewController: UIPageViewController {
         
         self.newPostButton = newPostButton
         let postBarButton = UIBarButtonItem(customView: self.newPostButton)
+        let shareButton = getShareTopicButton()
+        let shareBarButton = UIBarButtonItem(customView: shareButton)
         
         if let user = Auth.auth().currentUser {
             for mod in fact.moderators {
                 if mod == user.uid {
                     self.settingButton = getSettingButton()
                     let settingBarButton = UIBarButtonItem(customView: self.settingButton)
-                    self.navigationItem.rightBarButtonItems = [settingBarButton, postBarButton]
+                    self.navigationItem.rightBarButtonItems = [settingBarButton, shareBarButton, postBarButton]
                     
                     return
                 }
             }
         }
         
-        self.navigationItem.rightBarButtonItem = postBarButton
+        self.navigationItem.rightBarButtonItems = [shareBarButton, postBarButton]
+    }
+    
+    func getShareTopicButton() -> DesignableButton {
+        let shareTopicButton = DesignableButton(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        shareTopicButton.clipsToBounds = true
+        shareTopicButton.imageView?.contentMode = .scaleAspectFit
+        shareTopicButton.addTarget(self, action: #selector(self.shareTopicButtonTapped), for: .touchUpInside)
+        shareTopicButton.translatesAutoresizingMaskIntoConstraints = false
+        shareTopicButton.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        shareTopicButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        shareTopicButton.setImage(UIImage(named: "openLinkButton"), for: .normal)
+        
+        if #available(iOS 13.0, *) {
+            shareTopicButton.tintColor = UIColor.label
+        } else {
+            shareTopicButton.tintColor = UIColor.black
+        }
+        
+        return shareTopicButton
     }
     
     func getSettingButton() -> DesignableButton {
@@ -125,6 +146,12 @@ class ArgumentPageViewController: UIPageViewController {
         return settingButton
     }
     
+    @objc func shareTopicButtonTapped() {
+        if let community = fact {
+            performSegue(withIdentifier: "shareTopicSegue", sender: community)
+        }
+    }
+    
     @objc func newPostButtonTapped() {
         if let community = self.fact {
             performSegue(withIdentifier: "goToNewPost", sender: community)
@@ -137,6 +164,7 @@ class ArgumentPageViewController: UIPageViewController {
         }
     }
     
+    //MARK:-Prepare For Segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToNewPost" {
             if let fact = sender as? Fact {
@@ -150,6 +178,19 @@ class ArgumentPageViewController: UIPageViewController {
                 }
             }
         }
+        
+        if segue.identifier == "shareTopicSegue" {
+            if let fact = sender as? Fact {
+                if let navVC = segue.destination as? UINavigationController {
+                    if let vc = navVC.topViewController as? NewCommunityItemTableViewController {
+                        vc.fact = fact
+                        vc.delegate = self
+                        vc.new = .shareTopic
+                    }
+                }
+            }
+        }
+        
         if segue.identifier == "toSettingSegue" {
             if let fact = sender as? Fact {
                 if let vc = segue.destination as? SettingTableViewController {
@@ -326,14 +367,18 @@ extension ArgumentPageViewController: PageViewHeaderDelegate, CommunityFeedHeade
     
     
     func finishedCreatingNewInstance(item: Any?) {
-        if let vc = self.argumentVCs[1] as? PostsOfFactTableViewController {
-            vc.posts.removeAll()
-            vc.tableView.reloadData()
-            vc.getPosts(getMore: false)
-        } else if let vc = self.argumentVCs[2] as? PostsOfFactTableViewController {
-            vc.posts.removeAll()
-            vc.tableView.reloadData()
-            vc.getPosts(getMore: false)
+        if let _ = item as? Post {
+            self.alert(message: "Kehre zum Hauptfeed zurück und aktualisiere diesen, um deinen Beitrag zu sehen.", title: "Die Community wurde erfolgreich geteilt!")
+        } else {
+            if let vc = self.argumentVCs[1] as? PostsOfFactTableViewController {
+                vc.posts.removeAll()
+                vc.tableView.reloadData()
+                vc.getPosts(getMore: false)
+            } else if let vc = self.argumentVCs[2] as? PostsOfFactTableViewController {
+                vc.posts.removeAll()
+                vc.tableView.reloadData()
+                vc.getPosts(getMore: false)
+            }
         }
     }
     
@@ -390,7 +435,6 @@ extension ArgumentPageViewController: PageViewHeaderDelegate, CommunityFeedHeade
         }
         
         presentNavigationTitle(rectOriginY: rect.origin.y)
-
     }
 }
 

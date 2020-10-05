@@ -43,7 +43,7 @@ class SmallFactCell: UICollectionViewCell {
         didSet {
             guard let fact = fact else { return }
             
-            self.getArguments(documentID: fact.documentID)
+            self.getArguments(fact: fact)
             
             if let url = URL(string: fact.imageURL) {
                 factImageView.sd_setImage(with: url, completed: nil)
@@ -57,11 +57,11 @@ class SmallFactCell: UICollectionViewCell {
         }
     }
     
-    var factID: String? {
+    var unloadedFact: Fact? {
         didSet {
-            if let factID = factID {
+            if let unloadedFact = unloadedFact {
                 DispatchQueue.global(qos: .default).async {
-                    self.dataHelper.loadFact(factID: factID) { (fact) in
+                    self.dataHelper.loadFact(fact: unloadedFact) { (fact) in
                         if let fact = fact {
                             DispatchQueue.main.async {
                                 self.fact = fact
@@ -156,10 +156,16 @@ class SmallFactCell: UICollectionViewCell {
         }
     }
     
-    func getArguments(documentID: String) {
-        if documentID == "" { return }
+    func getArguments(fact: Fact) {
+        if fact.documentID == "" { return }
         
-        let ref = db.collection("Facts").document(documentID).collection("arguments")
+        var collectionRef: CollectionReference!
+        if fact.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        let ref = collectionRef.document(fact.documentID).collection("arguments")
         
         let proRef = ref.whereField("proOrContra", isEqualTo: "pro").order(by: "upvotes", descending: true).limit(to: 1)
         proRef.getDocuments { (snap, err) in

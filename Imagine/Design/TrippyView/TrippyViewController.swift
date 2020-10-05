@@ -42,6 +42,26 @@ class TrippyViewController: UIViewController {
         button.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 10).isActive = true
         button.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10).isActive = true
         
+        let owen = DesignableButton()
+        owen.translatesAutoresizingMaskIntoConstraints = false
+        owen.addTarget(self, action: #selector(owenTapped), for: .touchUpInside)
+        owen.setImage(UIImage(named: "wow"), for: .normal)
+        owen.imageView?.contentMode = .scaleAspectFit
+        
+        self.view.addSubview(owen)
+        owen.heightAnchor.constraint(equalToConstant: 55).isActive = true
+        owen.widthAnchor.constraint(equalToConstant: 55).isActive = true
+        owen.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        owen.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -85).isActive = true
+    }
+    
+    @objc func owenTapped() {
+        let alert = UIAlertController(title: "Hint 1/3", message: "Tap for..", preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .default) { (_) in
+            self.performSegue(withIdentifier: "showProposalSegue", sender: nil)
+        }
+        alert.addAction(action)
+        self.present(alert, animated: true, completion: nil)
     }
     
     @objc func dismissTapped() {

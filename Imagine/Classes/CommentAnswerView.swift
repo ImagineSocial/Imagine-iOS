@@ -17,7 +17,6 @@ protocol CommentViewDelegate {
 class CommentAnswerView: UIView, UITextFieldDelegate {
     
     var delegate: CommentViewDelegate?
-    let db = Firestore.firestore()
     
     var isAnonymous = false
     var answerToCommentView: UIView?

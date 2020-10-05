@@ -22,6 +22,15 @@ enum DeepDataType {
     case arguments
     case sources
 }
+/*
+ var collectionRef: CollectionReference!
+ let language = LanguageSelection().getLanguage()
+ if language == .english {
+     collectionRef = db.collection("Data").document("en").collection("posts")
+ } else {
+     collectionRef = db.collection("Posts")
+ }
+ */
 
 class DataHelper {
     
@@ -38,24 +47,28 @@ class DataHelper {
         
         var list = [Any]()
         
-        let settings = db.settings
-        settings.areTimestampsInSnapshotsEnabled = true
-        db.settings = settings
-        
         var orderString = ""
         var descending = false
         
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
         
         switch get {
         case .blogPosts:
             list = [BlogPost]()
             dataPath = "BlogPosts"
+            if language == .english {
+                dataPath = "blogPosts"
+            }
             
             orderString = "createDate"
             
         case .campaign:
             list = [Campaign]()
             dataPath = "Campaigns"
+            if language == .english {
+                dataPath = "campaigns"
+            }
             
             orderString = "campaignSupporter"
             descending = true
@@ -63,12 +76,18 @@ class DataHelper {
         case .vote:
             list = [Vote]()
             dataPath = "Votes"
+            if language == .english {
+                dataPath = "votes"
+            }
             
             orderString = "endOfVoteDate"
             
         case .facts:
             list = [Fact]()
             dataPath = "Facts"
+            if language == .english {
+                dataPath = "topics"
+            }
             
             orderString = "popularity"
             descending = true
@@ -76,6 +95,9 @@ class DataHelper {
         case .jobOffer:
             list = [JobOffer]()
             dataPath = "JobOffers"
+            if language == .english {
+                dataPath = "jobOffers"
+            }
             
             orderString = "importance"
             descending = true
@@ -83,170 +105,190 @@ class DataHelper {
             
         }
         
-        var ref = db.collection(dataPath).order(by: orderString, descending: descending)
+        if language == .english {
+            collectionRef = db.collection("Data").document("en").collection(dataPath)
+        } else {
+            collectionRef = db.collection(dataPath)
+        }
+        var ref = collectionRef.order(by: orderString, descending: descending)
         
         if get == .facts {
-            ref = db.collection("Facts").whereField("displayOption", isEqualTo: "topic").order(by: "popularity", descending: true).limit(to: 8)
+            if language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topics")
+            } else {
+                collectionRef = db.collection("Facts")
+            }
+            
+            ref = collectionRef.whereField("displayOption", isEqualTo: "topic").order(by: "popularity", descending: true).limit(to: 8)
         }
         
         ref.getDocuments { (querySnapshot, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
-                for document in querySnapshot!.documents {
+                if let snap = querySnapshot {
                     
-                    let documentID = document.documentID
-                    let documentData = document.data()
-                    
-                    switch get {
-                    case .blogPosts:
-                        guard let title = documentData["title"] as? String,
-                            let createTimestamp = documentData["createDate"] as? Timestamp,
-                            let subtitle = documentData["subtitle"] as? String,
-                            let poster = documentData["poster"] as? String,
-                            let profileImageURL = documentData["profileImageURL"] as? String,
-                            let category = documentData["category"] as? String,
-                            let description = documentData["description"] as? String
+                    if snap.documents.count == 0 {
+                        returnData(list)
+                        return
+                    }
+                    for document in snap.documents {
+                        let documentID = document.documentID
+                        let documentData = document.data()
+                        
+                        switch get {
+                        case .blogPosts:
+                            guard let title = documentData["title"] as? String,
+                                  let createTimestamp = documentData["createDate"] as? Timestamp,
+                                  let subtitle = documentData["subtitle"] as? String,
+                                  let poster = documentData["poster"] as? String,
+                                  let profileImageURL = documentData["profileImageURL"] as? String,
+                                  let category = documentData["category"] as? String,
+                                  let description = documentData["description"] as? String
                             
                             else {
                                 continue
-                        }
-                        
-                        let date = createTimestamp.dateValue()
-                        let stringDate = date.formatRelativeString()
-                        
-                        let blogPost = BlogPost()
-                        blogPost.title = title
-                        blogPost.subtitle = subtitle
-                        blogPost.stringDate = stringDate
-                        blogPost.poster = poster
-                        blogPost.profileImageURL = profileImageURL
-                        blogPost.category = category
-                        blogPost.description = description
-                        blogPost.createDate = date
-                        
-                        if let imageURL = documentData["imageURL"] as? String {
-                            blogPost.imageURL = imageURL
-                        }
-                        
-                        list.append(blogPost)
-                    case .campaign:
-                        if let campaignType = documentData["campaignType"] as? String {
-                            if campaignType == "normal" {
-                                
-                                guard let title = documentData["campaignTitle"] as? String,
-                                    let shortBody = documentData["campaignShortBody"] as? String,
-                                    let createTimestamp = documentData["campaignCreateTime"] as? Timestamp,
-                                    let supporter = documentData["campaignSupporter"] as? Int,
-                                    let opposition = documentData["campaignOpposition"] as? Int,
-                                    let category = documentData["category"] as? String
+                            }
+                            
+                            let date = createTimestamp.dateValue()
+                            let stringDate = date.formatRelativeString()
+                            
+                            let blogPost = BlogPost()
+                            blogPost.title = title
+                            blogPost.subtitle = subtitle
+                            blogPost.stringDate = stringDate
+                            blogPost.poster = poster
+                            blogPost.profileImageURL = profileImageURL
+                            blogPost.category = category
+                            blogPost.description = description
+                            blogPost.createDate = date
+                            
+                            if let imageURL = documentData["imageURL"] as? String {
+                                blogPost.imageURL = imageURL
+                            }
+                            
+                            list.append(blogPost)
+                        case .campaign:
+                            if let campaignType = documentData["campaignType"] as? String {
+                                if campaignType == "normal" {
+                                    
+                                    guard let title = documentData["campaignTitle"] as? String,
+                                          let shortBody = documentData["campaignShortBody"] as? String,
+                                          let createTimestamp = documentData["campaignCreateTime"] as? Timestamp,
+                                          let supporter = documentData["campaignSupporter"] as? Int,
+                                          let opposition = documentData["campaignOpposition"] as? Int,
+                                          let category = documentData["category"] as? String
                                     else {
                                         continue    // Falls er das nicht als (String) zuordnen kann
+                                    }
+                                    
+                                    let date = createTimestamp.dateValue()
+                                    let stringDate = date.formatRelativeString()
+                                    
+                                    let campaign = Campaign()       // Erst neue Campaign erstellen
+                                    campaign.title = title      // Dann die Sachen zuordnen
+                                    campaign.cellText = shortBody
+                                    campaign.documentID = documentID
+                                    campaign.createDate = stringDate
+                                    campaign.supporter = supporter
+                                    campaign.opposition = opposition
+                                    campaign.category = self.getCampaignType(categoryString: category)
+                                    
+                                    if let description = documentData["campaignExplanation"] as? String {
+                                        campaign.descriptionText = description
+                                    }
+                                    
+                                    list.append(campaign)
                                 }
-                                
-                                let date = createTimestamp.dateValue()
-                                let stringDate = date.formatRelativeString()
-                                
-                                let campaign = Campaign()       // Erst neue Campaign erstellen
-                                campaign.title = title      // Dann die Sachen zuordnen
-                                campaign.cellText = shortBody
-                                campaign.documentID = documentID
-                                campaign.createDate = stringDate
-                                campaign.supporter = supporter
-                                campaign.opposition = opposition
-                                campaign.category = self.getCampaignType(categoryString: category)
-                                
-                                if let description = documentData["campaignExplanation"] as? String {
-                                    campaign.descriptionText = description
-                                }
-                                
-                                list.append(campaign)
                             }
-                        }
-                    case .vote:
-                        guard let title = documentData["title"] as? String,
-                            let subtitle = documentData["subtitle"] as? String,
-                            let description = documentData["description"] as? String,
-                            let createTimestamp = documentData["createDate"] as? Timestamp,
-                            let voteTillDateTimestamp = documentData["endOfVoteDate"] as? Timestamp,
-                            let cost = documentData["cost"] as? Double,
-                            let impactString = documentData["impact"] as? String,
-                            let timeToRealization = documentData["timeToRealization"] as? Int,
-                            let costDescription = documentData["costDescription"] as? String,
-                            let impactDescription = documentData["impactDescription"] as? String,
-                            let realizationTimeDescription = documentData["realizationTimeDescription"] as? String
+                        case .vote:
+                            guard let title = documentData["title"] as? String,
+                                  let subtitle = documentData["subtitle"] as? String,
+                                  let description = documentData["description"] as? String,
+                                  let createTimestamp = documentData["createDate"] as? Timestamp,
+                                  let voteTillDateTimestamp = documentData["endOfVoteDate"] as? Timestamp,
+                                  let cost = documentData["cost"] as? Double,
+                                  let impactString = documentData["impact"] as? String,
+                                  let timeToRealization = documentData["timeToRealization"] as? Int,
+                                  let costDescription = documentData["costDescription"] as? String,
+                                  let impactDescription = documentData["impactDescription"] as? String,
+                                  let realizationTimeDescription = documentData["realizationTimeDescription"] as? String
                             else {
                                 continue
-                        }
-                        
-                        let date = createTimestamp.dateValue()
-                        let createDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
-                        let endDate = voteTillDateTimestamp.dateValue()
-                        let endOfVoteDate = endDate.formatRelativeString()
-                        let costString = self.handyHelper.getLocaleCurrencyString(number: cost)
-                        
-                        var impact:Impact = .light
-                        
-                        switch impactString {
-                        case "medium":
-                            impact = .medium
-                        case "strong":
-                            impact = .strong
-                        default:
-                            impact = .light
-                        }
-                        
-                        let vote = Vote()
-                        vote.title = title
-                        vote.subtitle = subtitle
-                        vote.description = description
-                        vote.stringDate = createDate
-                        vote.endOfVoteDate = endOfVoteDate
-                        vote.cost = costString
-                        vote.impact = impact
-                        vote.timeToRealization = timeToRealization
-                        vote.costDescription = costDescription
-                        vote.impactDescription = impactDescription
-                        vote.realizationTimeDescription = realizationTimeDescription
-                        vote.documentID = documentID
-                        vote.createDate = date
-                        
-                        list.append(vote)
-                        
-                    case .facts:
-                        if let fact = self.addFact(currentUser: self.user, documentID: documentID, data: documentData) {
-                            list.append(fact)
-                        }
-                    case .jobOffer:
-                        guard let title = documentData["jobTitle"] as? String,
-                            let shortBody = documentData["jobShortBody"] as? String,
-                            let createTime = documentData["jobCreateTime"] as? Timestamp,
-                            let interestedCount = documentData["interestedInJob"] as? Int,
-                            let category = documentData["category"] as? String
+                            }
+                            
+                            let date = createTimestamp.dateValue()
+                            let createDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
+                            let endDate = voteTillDateTimestamp.dateValue()
+                            let endOfVoteDate = endDate.formatRelativeString()
+                            let costString = self.handyHelper.getLocaleCurrencyString(number: cost)
+                            
+                            var impact:Impact = .light
+                            
+                            switch impactString {
+                            case "medium":
+                                impact = .medium
+                            case "strong":
+                                impact = .strong
+                            default:
+                                impact = .light
+                            }
+                            
+                            let vote = Vote()
+                            vote.title = title
+                            vote.subtitle = subtitle
+                            vote.description = description
+                            vote.stringDate = createDate
+                            vote.endOfVoteDate = endOfVoteDate
+                            vote.cost = costString
+                            vote.impact = impact
+                            vote.timeToRealization = timeToRealization
+                            vote.costDescription = costDescription
+                            vote.impactDescription = impactDescription
+                            vote.realizationTimeDescription = realizationTimeDescription
+                            vote.documentID = documentID
+                            vote.createDate = date
+                            
+                            list.append(vote)
+                            
+                        case .facts:
+                            if let fact = self.addFact(currentUser: self.user, documentID: documentID, data: documentData) {
+                                list.append(fact)
+                            }
+                        case .jobOffer:
+                            guard let title = documentData["jobTitle"] as? String,
+                                  let shortBody = documentData["jobShortBody"] as? String,
+                                  let createTime = documentData["jobCreateTime"] as? Timestamp,
+                                  let interestedCount = documentData["interestedInJob"] as? Int,
+                                  let category = documentData["category"] as? String
                             else {
                                 continue    // Falls er das nicht als (String) zuordnen kann
+                            }
+                            
+                            let date = createTime.dateValue()
+                            let stringDate = date.formatRelativeString()
+                            
+                            let jobOffer = JobOffer()       // Erst neue Campaign erstellen
+                            jobOffer.title = title      // Dann die Sachen zuordnen
+                            jobOffer.cellText = shortBody
+                            jobOffer.documentID = documentID
+                            jobOffer.stringDate = stringDate
+                            jobOffer.interested = interestedCount
+                            jobOffer.category = category
+                            if let description = documentData["description"] as? String {
+                                jobOffer.descriptionText = description
+                            }
+                            jobOffer.createDate = date
+                            
+                            list.append(jobOffer)
                         }
                         
-                        let date = createTime.dateValue()
-                        let stringDate = date.formatRelativeString()
-                        
-                        let jobOffer = JobOffer()       // Erst neue Campaign erstellen
-                        jobOffer.title = title      // Dann die Sachen zuordnen
-                        jobOffer.cellText = shortBody
-                        jobOffer.documentID = documentID
-                        jobOffer.stringDate = stringDate
-                        jobOffer.interested = interestedCount
-                        jobOffer.category = category
-                        if let description = documentData["description"] as? String {
-                            jobOffer.descriptionText = description
-                        }
-                        jobOffer.createDate = date
-                        
-                        list.append(jobOffer)
                     }
+                    returnData(list)
+                } else {
+                    returnData(list)
                 }
             }
-            returnData(list)
         }
     }
     
@@ -329,6 +371,12 @@ class DataHelper {
             }
         }
         
+        if let language = data["language"] as? String {
+            if language == "en" {
+                fact.language = .english
+            }
+        }
+        
         if let imageURL = data["imageURL"] as? String { // Not mandatory (in fact not selectable)
             fact.imageURL = imageURL
         }
@@ -352,13 +400,19 @@ class DataHelper {
         return fact
     }
     
-    func loadFact(factID: String, loadedFact: @escaping (Fact?) -> Void) {
+    func loadFact(fact: Fact, loadedFact: @escaping (Fact?) -> Void) {
         
-        if factID == "" {
+        if fact.documentID == "" {
             loadedFact(nil)
         }
         
-        let ref = db.collection("Facts").document(factID)
+        var collectionRef: CollectionReference!
+        if fact.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        let ref = collectionRef.document(fact.documentID)
         
         
         ref.getDocument { (snap, err) in
@@ -398,11 +452,24 @@ class DataHelper {
         }
     }
     
-    func getDeepData(documentID: String, returnData: @escaping ([Any]) -> Void) {
+    func getDeepData(fact: Fact, returnData: @escaping ([Any]) -> Void) {
         
         var argumentList = [Argument]()
         
-        let ref = self.db.collection("Facts").document(documentID).collection("arguments").order(by: "upvotes", descending: true)
+        if fact.documentID == "" {
+            print("We have an error fetching arguments")
+            returnData(argumentList)
+        }
+        
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        if fact.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        
+        let ref = collectionRef.document(fact.documentID).collection("arguments").order(by: "upvotes", descending: true)
         
         ref.getDocuments(completion: { (snap, err) in
             if let error = err {
@@ -452,10 +519,13 @@ class DataHelper {
         })
     }
     
-    func getDeepestArgument(factID: String, argumentID: String, deepDataType: DeepDataType , returnData: @escaping ([Any]) -> Void) {
+    func getDeepestArgument(fact: Fact, argumentID: String, deepDataType: DeepDataType , returnData: @escaping ([Any]) -> Void) {
         
         var list = [Any]()
         
+        if fact.documentID == "" {
+            returnData(list)
+        }
         switch deepDataType {
         case .sources:
             list = [Source]()
@@ -465,7 +535,14 @@ class DataHelper {
             dataPath = "arguments"
         }
         
-        let argumentPath = self.db.collection("Facts").document(factID).collection("arguments").document(argumentID).collection(dataPath)
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        if fact.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        let argumentPath = collectionRef.document(fact.documentID).collection("arguments").document(argumentID).collection(dataPath)
         
         argumentPath.getDocuments(completion: { (snap, err) in
             

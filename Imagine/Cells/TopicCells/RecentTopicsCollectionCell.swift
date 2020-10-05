@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
 
 protocol RecentTopicCellDelegate {
     func topicTapped(fact: Fact)
@@ -44,12 +45,21 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
     func getFacts(initialFetch: Bool) {
         
         let defaults = UserDefaults.standard
-        let factStrings = defaults.stringArray(forKey: "recentTopics") ?? [String]()
+        let language = LanguageSelection().getLanguage()
+        var key: String!
+        
+        switch language {
+        case .english:
+            key = "recentTopics-en"
+        case .german:
+            key = "recentTopics"
+        }
+        let factStrings = defaults.stringArray(forKey: key) ?? [String]()
         let user = Auth.auth().currentUser
         
         if initialFetch {
             for string in factStrings {
-                loadFact(user: user, factID: string)
+                loadFact(user: user, factID: string, language: language)
             }
         } else {
             if self.facts.count >= 10 {
@@ -58,12 +68,18 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
             
             self.facts = self.facts.filter{ $0.documentID != factStrings[0] }
             
-            loadFact(user: user, factID: factStrings[0])
+            loadFact(user: user, factID: factStrings[0], language: language)
         }
     }
     
-    func loadFact(user: Firebase.User?, factID: String) {
-        let factRef = db.collection("Facts").document(factID)
+    func loadFact(user: Firebase.User?, factID: String, language: Language) {
+        var collectionRef: CollectionReference!
+        if language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        let factRef = collectionRef.document(factID)
         
         factRef.getDocument { (snap, err) in
             if let error = err {

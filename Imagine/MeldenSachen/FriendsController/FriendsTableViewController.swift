@@ -80,8 +80,8 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                     }
                     
                     
-                    self.sections = [Category(name: "Freundschaftsanfragen", friends: self.requestedFriends),
-                                     Category(name: "Freunde", friends: self.alreadyFriends)]
+                    self.sections = [Category(name: NSLocalizedString("friendship_requests_label", comment: "friendship_requests_label"), friends: self.requestedFriends),
+                                     Category(name: NSLocalizedString("friends_label", comment: "friends_label"), friends: self.alreadyFriends)]
                     self.loadUsers()
                 }
             }
@@ -269,7 +269,7 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
         case .chatWithUser:
             goToChatTapped(friend: friend)
         case .blockUser:
-            let alert = UIAlertController(title: "Blocken", message: "Der User wird aus deiner Freundesliste gelöscht und darf dich nicht mehr kontaktieren. Fortfahren? ", preferredStyle: .alert)
+            let alert = UIAlertController(title: NSLocalizedString("block_user_alert_title", comment: "block user?"), message: NSLocalizedString("block_user_alert_message", comment: "block cant contact u and stuff"), preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
                 // block User
                 
@@ -282,7 +282,7 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                     self.deleteFriend(friend: friend)
                 }
             }))
-            alert.addAction(UIAlertAction(title: "Doch nicht!", style: .cancel, handler: { (_) in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("rather_not", comment: "rather_not"), style: .cancel, handler: { (_) in
                 alert.dismiss(animated: true, completion: nil)
             }))
             present(alert, animated: true)
@@ -308,7 +308,7 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
             
             
             // Notify User
-            let alert = UIAlertController(title: "Freundschaft gelöscht", message: "Die Freundschaft wurde erfolgreich gelöscht", preferredStyle: .alert)
+            let alert = UIAlertController(title: NSLocalizedString("done_delete_friend_alert_title", comment: "done deleting"), message: NSLocalizedString("done_delete_friend_alert_message", comment: "out of friends list"), preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
                 
             }))
@@ -441,7 +441,7 @@ class FriendRequestCell: UITableViewCell {
     @IBAction func acceptedTapped(_ sender: Any) {
         stackView.isHidden = true
         acceptLabel.isHidden = false
-        acceptLabel.text = "Ihr seid nun befreundet!"
+        acceptLabel.text = NSLocalizedString("friendship_allowed_label", comment: "accepted")
         acceptLabel.backgroundColor = UIColor(red:0.36, green:0.70, blue:0.37, alpha:1.0)
         acceptLabel.layer.cornerRadius = 5
         acceptLabel.clipsToBounds = true
@@ -451,7 +451,7 @@ class FriendRequestCell: UITableViewCell {
     @IBAction func declinedTapped(_ sender: Any) {
         stackView.isHidden = true
         acceptLabel.isHidden = false
-        acceptLabel.text = "Anfrage abgelehnt"
+        acceptLabel.text = NSLocalizedString("friendship_declined_label", comment: "declined")
         acceptLabel.backgroundColor = UIColor(red:1.00, green:0.54, blue:0.52, alpha:1.0)
         acceptLabel.layer.cornerRadius = 5
         acceptLabel.clipsToBounds = true

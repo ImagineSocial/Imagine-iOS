@@ -104,23 +104,23 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
             if proOrContra == "pro" {
                 return NSLocalizedString("discussion_advantage", comment: "advantage")
             } else {
-               return NSLocalizedString("discussion_disadvantage", comment: "disadvantage")
+                return NSLocalizedString("discussion_disadvantage", comment: "disadvantage")
             }
         case .confirmDoubt:
-           if proOrContra == "pro" {
+            if proOrContra == "pro" {
                 return NSLocalizedString("discussion_proof", comment: "proof")
             } else {
-               return NSLocalizedString("discussion_doubt", comment: "doubt")
+                return NSLocalizedString("discussion_doubt", comment: "doubt")
             }
         case .proContra:
             if proOrContra == "pro" {
                 return NSLocalizedString("discussion_pro", comment: "pro")
             } else {
-               return NSLocalizedString("discussion_contra", comment: "contra")
+                return NSLocalizedString("discussion_contra", comment: "contra")
             }
         }
     }
-
+    
     @IBAction func downVoteButtonTapped(_ sender: Any) {
         voted(kindOfVote: .downvote)
     }
@@ -140,31 +140,37 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     
     func voted(kindOfVote: vote) {
         if isConnected() {
-        if let argument = argument, let fact = fact {
-            let ref = db.collection("Facts").document(fact.documentID).collection("arguments").document(argument.documentID)
-            
-            var voteString = ""
-            var voteCount = 0
-            
-            switch kindOfVote {
-            case .downvote:
-                voteString = "downvotes"
-                voteCount = argument.downvotes+1
-                argument.downvotes = voteCount
-            case .upvote:
-                voteString = "upvotes"
-                voteCount = argument.upvotes+1
-                argument.upvotes = voteCount
-            }
-            
-            ref.setData([voteString: voteCount], mergeFields: [voteString]) { (err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
+            if let argument = argument, let fact = fact {
+                var collectionRef: CollectionReference!
+                if fact.language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("topics")
                 } else {
-                    self.ready()
+                    collectionRef = db.collection("Facts")
+                }
+                let ref = collectionRef.document(fact.documentID).collection("arguments").document(argument.documentID)
+                
+                var voteString = ""
+                var voteCount = 0
+                
+                switch kindOfVote {
+                case .downvote:
+                    voteString = "downvotes"
+                    voteCount = argument.downvotes+1
+                    argument.downvotes = voteCount
+                case .upvote:
+                    voteString = "upvotes"
+                    voteCount = argument.upvotes+1
+                    argument.upvotes = voteCount
+                }
+                
+                ref.updateData([voteString: voteCount]) { (err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        self.ready()
+                    }
                 }
             }
-        }
         } else {
             self.alert(message: "Du brauchst eine aktive Internet Verbindung um wählen zu können!")
         }

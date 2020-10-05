@@ -14,11 +14,6 @@ import YoutubePlayer_in_WKWebView
 class YouTubeCell: BaseFeedCell {
     
     @IBOutlet weak var playerView: WKYTPlayerView!
-    @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var titleLabelHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var reportView: DesignablePopUp!
-    @IBOutlet weak var reportViewLabel: UILabel!
-    @IBOutlet weak var reportViewButtonInTop: DesignableButton!
     
     var delegate: PostCellDelegate?
     
@@ -125,17 +120,8 @@ class YouTubeCell: BaseFeedCell {
             descriptionPreviewLabel.text = post.description
             commentCountLabel.text = String(post.commentCount)
             
-            // LabelHeight calculated by the number of letters
-            let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
-            titleLabelHeightConstraint.constant = labelHeight
-            
-            // Set ReportView
-            let reportViewOptions = handyHelper.setReportView(post: post)
-            
-            reportViewHeightConstraint.constant = reportViewOptions.heightConstant
-            reportViewButtonInTop.isHidden = reportViewOptions.buttonHidden
-            reportViewLabel.text = reportViewOptions.labelText
-            reportView.backgroundColor = reportViewOptions.backgroundColor
+
+            setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
         }
     }
     
@@ -180,7 +166,7 @@ class YouTubeCell: BaseFeedCell {
     func getFact(beingFollowed: Bool) {
         if let post = post {
             if let fact = post.fact {
-                self.loadFact(fact: fact, beingFollowed: beingFollowed) {
+                self.loadFact(language: post.language, fact: fact, beingFollowed: beingFollowed) {
                     (fact) in
                     post.fact = fact
                     

@@ -76,7 +76,15 @@ class AddOnQAndACollectionViewCell: BaseAddOnCollectionViewCell {
     }
     
     func getQuestions(info: OptionalInformation) {
-        let ref = db.collection("Facts").document(info.fact.documentID).collection("addOns").document(info.documentID).collection("questions")
+        
+        var collectionRef: CollectionReference!
+        if info.fact.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        
+        let ref = collectionRef.document(info.fact.documentID).collection("addOns").document(info.documentID).collection("questions")
         ref.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
@@ -356,9 +364,18 @@ class AddOnQAndATextfieldCell: UITableViewCell {
     }
     
     func storeInFirebase(info: OptionalInformation, type: QandAAnswerType, text: String, user: Firebase.User) {
+        
+        var collectionRef: CollectionReference!
+        if info.fact.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        
         if type == .question {
             if info.fact.documentID != "" {
-                let ref = db.collection("Facts").document(info.fact.documentID).collection("addOns").document(info.documentID).collection("questions").document()
+                
+                let ref = collectionRef.document(info.fact.documentID).collection("addOns").document(info.documentID).collection("questions").document()
                 
                 let data: [String: Any] = ["question": text, "OP": user.uid]
                 
@@ -374,17 +391,19 @@ class AddOnQAndATextfieldCell: UITableViewCell {
             }
         } else {
             if let id = questionID {
-                let ref = db.collection("Facts").document(info.fact.documentID).collection("addOns").document(info.documentID).collection("questions").document(id)
-                
-                ref.updateData([
-                    "answers" : FieldValue.arrayUnion([text])
-                ]) { (err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        print("answer successfully created")
-                        self.delegate?.insertNewItem(type: .answer, text: text, questionID: id)
-                        self.resetTextField(type: type)
+                if info.fact.documentID != "" {
+                    let ref = collectionRef.document(info.fact.documentID).collection("addOns").document(info.documentID).collection("questions").document(id)
+                    
+                    ref.updateData([
+                        "answers" : FieldValue.arrayUnion([text])
+                    ]) { (err) in
+                        if let error = err {
+                            print("We have an error: \(error.localizedDescription)")
+                        } else {
+                            print("answer successfully created")
+                            self.delegate?.insertNewItem(type: .answer, text: text, questionID: id)
+                            self.resetTextField(type: type)
+                        }
                     }
                 }
             }

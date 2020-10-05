@@ -18,6 +18,7 @@ class MeldeAgreeViewController: UIViewController {
     var post: Post?
     var comment: Comment?
     let db = Firestore.firestore()
+    let language = LanguageSelection().getLanguage()
     
     @IBOutlet weak var MeldegrundLabel: UILabel!
     @IBOutlet weak var HinweisTextLabel: UILabel!
@@ -72,23 +73,31 @@ class MeldeAgreeViewController: UIViewController {
             reportOptionForDatabase = "satire"
         case .spoiler:
             reportOptionForDatabase = "spoiler"
-        case .pornography:
-            reportOptionForDatabase = "blocked"
-        case .pedophilia:
-            reportOptionForDatabase = "blocked"
-        case .violence:
-            reportOptionForDatabase = "blocked"
-        case .racism:
-            reportOptionForDatabase = "blocked"
-        case .animalCruelty:
-            reportOptionForDatabase = "blocked"
         default:
-            reportOptionForDatabase = "normal"
+            if let reportCategory = reportCategory {
+                if reportCategory != .markVisually {
+                    reportOptionForDatabase = "blocked"
+                }
+            }
         }
         
         if let post = post {
-            let postRef = db.collection("Posts")
-            postRef.document(post.documentID).updateData(["report": reportOptionForDatabase]) { err in
+            var collectionRef: CollectionReference!
+            if post.isTopicPost {
+                if self.language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("topicPosts")
+                } else {
+                    collectionRef = db.collection("TopicPosts")
+                }
+            } else {
+                if self.language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("posts")
+                } else {
+                    collectionRef = db.collection("Posts")
+                }
+            }
+            let postRef = collectionRef.document(post.documentID)
+            postRef.updateData(["report": reportOptionForDatabase]) { err in
                 if let err = err {
                     print("Error updating document: \(err)")
                 } else {
@@ -106,8 +115,11 @@ class MeldeAgreeViewController: UIViewController {
         if let user = Auth.auth().currentUser {
             
             let notificationRef = db.collection("Users").document("CZOcL3VIwMemWwEfutKXGAfdlLy1").collection("notifications").document()
-            let notificationData: [String: Any] = ["type": "message", "message": "Jemand hat eine Sache markiert oder gemeldet", "name": "Meldung", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "messageID": user.uid]
+            var notificationData: [String: Any] = ["type": "message", "message": "Jemand hat eine Sache markiert oder gemeldet", "name": "Meldung", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "messageID": user.uid]
             
+            if language == .english {
+                notificationData["language"] = "en"
+            }
             
             notificationRef.setData(notificationData) { (err) in
                 if let error = err {
@@ -119,12 +131,20 @@ class MeldeAgreeViewController: UIViewController {
             
             if let post = post {
                 
-                let data: [String:Any] = ["category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported post":post.documentID]
+                var data: [String:Any] = ["category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported post":post.documentID]
+                
+                if language == .english {
+                    data["language"] = "en"
+                }
                 
                 saveReportInDatabase(data: data)
                 
             } else if let comment = comment {
-                let data: [String:Any] = ["category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported comment": comment.commentID]
+                var data: [String:Any] = ["category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported comment": comment.commentID]
+                
+                if language == .english {
+                    data["language"] = "en"
+                }
                 
                 saveReportInDatabase(data: data)
             }

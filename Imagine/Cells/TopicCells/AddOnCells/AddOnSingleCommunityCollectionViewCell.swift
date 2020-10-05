@@ -24,7 +24,6 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
     @IBOutlet weak var halfTransparentBackgroundView: UIView!
     
     let previewCellIdentifier = "SmallTopicCell"
-    let db = Firestore.firestore()
     let postHelper = PostHelper()
     
     var isFetchingPreviewPosts = false
@@ -38,7 +37,7 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
                     
                     if !isFetchingPreviewPosts {
                         self.isFetchingPreviewPosts = true
-                        self.getPreviewPictures(documentID: fact.documentID)
+                        self.getPreviewPictures(community: fact)
                     }
                     self.topicTitleLabel.text = fact.title
                     self.topicDescriptionLabel.text = fact.description
@@ -57,20 +56,17 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
         }
     }
     
-    func getPreviewPictures(documentID: String) {
-        if documentID != "" {
+    func getPreviewPictures(community: Fact) {
+        if community.documentID != "" {
             if self.previewPosts == nil {
                 DispatchQueue.global(qos: .default).async {
-                    self.postHelper.getPreviewPicturesForCommunity(communityID: documentID) { (posts) in
+                    self.postHelper.getPreviewPicturesForCommunity(community: community) { (posts) in
                         DispatchQueue.main.async {
                             if let posts = posts, posts.count != 0 {
                                 self.previewPosts = posts
                                 self.topicPreviewCollectionView.reloadData()
                                 self.isFetchingPreviewPosts = false
-                            } else {
-                                self.topicPreviewCollectionViewHeightConstraint.constant = 0
-                                self.layoutIfNeeded()
-                            }
+                            } 
                         }
                     }
                 }
@@ -95,14 +91,6 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
         topicPreviewCollectionView.layer.cornerRadius = 8
         contentView.layer.cornerRadius = cornerRadius
         containerView.layer.cornerRadius = cornerRadius
-        if #available(iOS 13.0, *) {
-            layer.shadowColor = UIColor.label.cgColor
-        } else {
-            layer.shadowColor = UIColor.black.cgColor
-        }
-        layer.shadowOffset = CGSize(width: 0, height: 0)
-        layer.shadowRadius = 4
-        layer.shadowOpacity = 0.6
     }
     
     override func prepareForReuse() {

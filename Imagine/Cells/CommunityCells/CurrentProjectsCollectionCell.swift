@@ -20,12 +20,8 @@ class CurrentProjectsCollectionCell: UICollectionViewCell {
     @IBOutlet weak var thirdView: UIView!
     @IBOutlet weak var secondView: UIView!
     @IBOutlet weak var fourthView: UIView!
-    
-    @IBOutlet weak var donationSourceButton: DesignableButton!
-    
+        
     let db = Firestore.firestore()
-    var donationSource: String?
-    var donationRecipient: String?
         
     override func awakeFromNib() {
         
@@ -50,7 +46,14 @@ class CurrentProjectsCollectionCell: UICollectionViewCell {
     }
     
     func getData(labels: [UILabel]) {
-        let ref = db.collection("TopTopicData").document("CurrentProjects")
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        if language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topTopicData")
+        } else {
+            collectionRef = db.collection("TopTopicData")
+        }
+        let ref = collectionRef.document("CurrentProjects")
         
         ref.getDocument { (snap, err) in
             if let error = err {
@@ -58,12 +61,6 @@ class CurrentProjectsCollectionCell: UICollectionViewCell {
             } else {
                 if let snap = snap {
                     if let data = snap.data() {
-                        if let donationRecipient = data["donationRecipient"] as? String, let source = data["donationSource"] as? String {
-                            self.donationSource = source
-                            self.donationRecipient = donationRecipient
-                            
-                            self.donationSourceButton.setTitle(donationRecipient, for: .normal)
-                        }
                         if let workedOn = data["workedOn"] as? [String] {
                             var index = 0
                             for string in workedOn {
@@ -73,15 +70,6 @@ class CurrentProjectsCollectionCell: UICollectionViewCell {
                         }
                      }
                 }
-            }
-        }
-    }
-    
-    @IBAction func donationSourceButtonTapped(_ sender: Any) {
-        if let source = self.donationSource {
-            
-            if let url = URL(string: source) {
-                UIApplication.shared.open(url)
             }
         }
     }

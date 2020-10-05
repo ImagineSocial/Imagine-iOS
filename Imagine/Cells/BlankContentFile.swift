@@ -34,26 +34,26 @@ class BlankContentCell: UITableViewCell {
                     self.pictureView.image = UIImage(named: "chatWithPeople")
                     
                     if let _ = Auth.auth().currentUser {
-                        self.descriptionLabel.text = "Du hast noch keine Chats. Schreibe jetzt deine Freunde an"
+                        self.descriptionLabel.text = NSLocalizedString("blank_content_chats", comment: "no chats yet")
                     } else {
                         self.descriptionLabel.text = "Tausche dich hier mit deinen Mitmenschen aus"
                     }
                     
                 case .friends:
                     self.pictureView.image = UIImage(named: "meetNewPeople")
-                    self.descriptionLabel.text = "Hier werden dir deine Freunde angezeigt"
+                    self.descriptionLabel.text = NSLocalizedString("blank_content_friends", comment: "no friends yet")
                 case .savedPicture:
                     self.pictureView.image = UIImage(named: "savePostImage")
-                    self.descriptionLabel.text = "Hier werden deine gespeicherten Beiträge gesammelt"
+                    self.descriptionLabel.text = NSLocalizedString("blank_content_saved", comment: "no saved yet")
                 case .ownProfile:
                     self.pictureView.image = UIImage(named: "savePostImage")
-                    self.descriptionLabel.text = "Du hast noch keine Beiträge hochgeladen"
+                    self.descriptionLabel.text = NSLocalizedString("blank_content_ownPosts", comment: "no posts yet")
                 case .userProfile:
                     self.pictureView.image = UIImage(named: "savePostImage")
-                    self.descriptionLabel.text = "Dieser User hat noch keine Beiträge hochgeladen"
+                    self.descriptionLabel.text = NSLocalizedString("blank_content_stranger_posts", comment: "no posts yet")
                 case .postsOfFacts:
                     self.pictureView.image = UIImage(named: "savePostImage")
-                    self.descriptionLabel.text = "Es sind noch keine Beiträge zu diesem Thema zu finden"
+                    self.descriptionLabel.text = NSLocalizedString("blank_content_topic_feed", comment: "no posts yet")
                 case .search:
                     self.pictureView.isHidden = true
                     self.descriptionLabel.isHidden = true

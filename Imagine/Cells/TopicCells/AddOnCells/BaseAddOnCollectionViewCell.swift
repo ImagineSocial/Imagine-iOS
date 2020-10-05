@@ -11,7 +11,7 @@ import UIKit
 class BaseAddOnCollectionViewCell: UICollectionViewCell {
     
     let cornerRadius: CGFloat = 20
-
+    var isAddOnCell = true  //If the singleTopic is user in the FeedSingleTopicCell
     
     override var isHighlighted: Bool {
         didSet {
@@ -31,17 +31,19 @@ class BaseAddOnCollectionViewCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        let layer = contentView.layer
-        if #available(iOS 13.0, *) {
-            layer.shadowColor = UIColor.label.cgColor
-        } else {
-            layer.shadowColor = UIColor.black.cgColor
+        if isAddOnCell {
+            let layer = contentView.layer
+            if #available(iOS 13.0, *) {
+                layer.shadowColor = UIColor.label.cgColor
+            } else {
+                layer.shadowColor = UIColor.black.cgColor
+            }
+            layer.shadowOffset = CGSize(width: 0, height: 0)
+            layer.shadowRadius = 4
+            layer.shadowOpacity = 0.6
+            
+            let rect = CGRect(x: 0, y: 0, width: contentView.frame.width, height: contentView.frame.height)
+            layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius).cgPath
         }
-        layer.shadowOffset = CGSize(width: 0, height: 0)
-        layer.shadowRadius = 4
-        layer.shadowOpacity = 0.6
-        
-        let rect = CGRect(x: 0, y: 0, width: contentView.frame.width, height: contentView.frame.height)
-        layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius).cgPath
     }
 }

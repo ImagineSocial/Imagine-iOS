@@ -8,8 +8,6 @@
 
 import UIKit
 
-private let reuseIdentifier = "communityCell"
-
 class CommunityItem {
     var item: Any
     var createDate: Date
@@ -29,9 +27,8 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     let blogPostIdentifier = "BlogCell"
     let currentProjectsIdentifier = "CurrentProjectsCollectionCell"
     let tableViewIdentifier = "TableViewInCollectionViewCell"
-    
-    let extraItems = 2
-    
+    let optionsCellIdentifier = "ImagineCommunityOptionsCell"
+        
     let dataHelper = DataHelper()
     
     override func viewDidLoad() {
@@ -39,32 +36,24 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
         
         HandyHelper().deleteNotifications(type: .blogPost, id: "blogPost")//Maybe
         
-//        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-//        self.navigationController?.navigationBar.shadowImage = UIImage()
-//        self.navigationController?.navigationBar.isTranslucent = false
-//        self.navigationController?.view.backgroundColor = .white
-        
         self.extendedLayoutIncludesOpaqueBars = true
         navigationController?.navigationBar.prefersLargeTitles = true
-        
-        
-        
+ 
         let gesture = UILongPressGestureRecognizer(target: self, action: #selector(showSecretButton))
         gesture.allowableMovement = 500
         gesture.minimumPressDuration = 3
         self.view.addGestureRecognizer(gesture)
         
         // Register cell classes
-        self.collectionView!.register(CommunityCollectionCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-        self.collectionView!.register(UINib(nibName: "BlogPostCell", bundle: nil), forCellWithReuseIdentifier: blogPostIdentifier)
-        self.collectionView!.register(UINib(nibName: "CurrentProjectsCollectionCell", bundle: nil), forCellWithReuseIdentifier: currentProjectsIdentifier)
+        self.collectionView.register(UINib(nibName: "ImagineCommunityOptionsCell", bundle: nil), forCellWithReuseIdentifier: optionsCellIdentifier)
+        self.collectionView.register(UINib(nibName: "BlogPostCell", bundle: nil), forCellWithReuseIdentifier: blogPostIdentifier)
+        self.collectionView.register(UINib(nibName: "CurrentProjectsCollectionCell", bundle: nil), forCellWithReuseIdentifier: currentProjectsIdentifier)
         collectionView.register(UINib(nibName: tableViewIdentifier, bundle: nil), forCellWithReuseIdentifier: tableViewIdentifier)
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        let value:CGFloat = (UIScreen.main.bounds.width)-insetTimesTwo
-        layout.itemSize = CGSize(width: value, height: 125)
         layout.headerReferenceSize = CGSize(width: self.collectionView.frame.size.width, height: 85)
-        collectionView!.collectionViewLayout = layout
+        layout.minimumLineSpacing = 20
+        collectionView.collectionViewLayout = layout
         
         getData()
     }
@@ -76,6 +65,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     }
     
     func getData() {
+
         dataHelper.getData(get: .blogPosts) { (posts) in
             
             for post in posts {
@@ -84,7 +74,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
                     self.items.append(item)
                 }
             }
-                        
+            
             self.dataHelper.getData(get: .jobOffer) { (jobOffer) in
                 for offer in jobOffer {
                     if let offer = offer as? JobOffer {
@@ -93,45 +83,38 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
                     }
                 }
                 
-                self.dataHelper.getData(get: .vote) { (votes) in
-                    for vote in votes {
-                        if let vote = vote as? Vote {
-                            let item = CommunityItem(item: vote, createDate: vote.createDate)
-                            self.items.append(item)
-                        }
-                    }
-                    
-                    self.items.sort {
-                        ($0.createDate) > ($1.createDate)
-                    }
-                    
-                    let first = BlogPost()
-                    first.isCurrentProjectsCell = true
-                    
-                    let item = CommunityItem(item: first, createDate: Date())
-                    self.items.insert(item, at: 0)
-                    
-                    self.collectionView.reloadData()
+                self.items.sort {
+                    ($0.createDate) > ($1.createDate)
                 }
+                
+                let first = BlogPost()
+                first.isCurrentProjectsCell = true
+                let item = CommunityItem(item: first, createDate: Date())
+                self.items.insert(item, at: 0)
+                
+                self.collectionView.reloadData()
+                
             }
         }
     }
    
-    @objc func showSecretButton() {
-        performSegue(withIdentifier: "toSecretSegue", sender: nil)
+    @objc func showSecretButton(sender: UILongPressGestureRecognizer) {
+        if sender.state == .ended {
+            performSegue(withIdentifier: "toSecretSegue", sender: nil)
+        }
     }
 
     // MARK: UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return extraItems
+        return 2
     }
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if section == 0 {
-            return extraItems
+            return 1
         } else {
             return items.count
         }
@@ -141,21 +124,13 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
         
         if indexPath.section == 0 {
             
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? CommunityCollectionCell {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: optionsCellIdentifier, for: indexPath) as? ImagineCommunityOptionsCell {
                 
                 cell.delegate = self
                 
-                switch indexPath.item {
-                case 0:
-                    cell.cellType = .first
-                case 1:
-                    cell.cellType = .second
-                default:
-                    print("Doesnt matter")
-                }
-                
                 return cell
             }
+            
         } else {
             let communityItem = items[indexPath.item]
             
@@ -177,23 +152,19 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
                         
                         cell.post = blogPost
                         if isEverySecondCell {
-                        
+                            
                             if #available(iOS 13.0, *) {
                                 cell.contentView.backgroundColor = .secondarySystemBackground
                             } else {
                                 cell.contentView.backgroundColor = .ios12secondarySystemBackground
                             }
-                            cell.contentView.layer.cornerRadius = 5
                         } else {
-                            let layer = cell.contentView.layer
-                            
                             if #available(iOS 13.0, *) {
-                                layer.borderColor = UIColor.secondarySystemBackground.cgColor
+                                cell.contentView.backgroundColor = .systemBackground
                             } else {
-                                layer.borderColor = UIColor.ios12secondarySystemBackground.cgColor
+                                cell.contentView.backgroundColor = .white
                             }
-                            layer.borderWidth = 1
-                            layer.cornerRadius = 5
+                            
                         }
                         
                         return cell
@@ -226,28 +197,23 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     
+        let width = collectionView.frame.width-insetTimesTwo
         
         if indexPath.section == 0{
-            if indexPath.item == 0 {
-                return CGSize(width: collectionView.frame.width-insetTimesTwo, height: 175)     // First OptionCell
-            } else {
-                return CGSize(width: collectionView.frame.width-insetTimesTwo, height: 120)     // SecondOptionCell
-            }
+            return CGSize(width: width, height: 265)
         } else {
             let communityItem = items[indexPath.item]
             
             if let blogPost = communityItem.item as? BlogPost {
                 if blogPost.isCurrentProjectsCell {
-                    return CGSize(width: collectionView.frame.width-insetTimesTwo, height: 225)    // For CurrentProfectsCollectionCell
+                    return CGSize(width: width, height: 170)    // For CurrentProfectsCollectionCell
                 } else {
-                    return CGSize(width: collectionView.frame.width-insetTimesTwo, height: 220)   // For BlogCell
+                    return CGSize(width: width, height: 220)   // For BlogCell
                 }
             } else if let _ = communityItem.item as? JobOffer {
-                return CGSize(width: collectionView.frame.width-insetTimesTwo, height: 165)   // For JobOffer
-            } else if let _ = communityItem.item as? Vote {
-                return CGSize(width: collectionView.frame.width-insetTimesTwo, height: 180)   // For Vote
-            } else {
-                return CGSize(width: collectionView.frame.width-insetTimesTwo, height: 225)
+                return CGSize(width: width, height: 125)   // For JobOffer
+            }  else {
+                return CGSize(width: width, height: 225)
             }
         }
     }
@@ -359,11 +325,8 @@ extension CommunityCollectionViewController: CommunityCollectionCellDelegate, Ta
             performSegue(withIdentifier: "toSupportTheCommunitySegue", sender: nil)
         case .proposals:
             performSegue(withIdentifier: "toProposalsSegue", sender: nil)
-        case .communityChat:
-            let chat = Chat()
-            chat.documentID = "CommunityChat"
-            
-            performSegue(withIdentifier: "toChatSegue", sender: chat)
+        case .imagineFund:
+            print("Kommt noch")
         case .vision:
             performSegue(withIdentifier: "toVisionSegue", sender: nil)
         case .settings:

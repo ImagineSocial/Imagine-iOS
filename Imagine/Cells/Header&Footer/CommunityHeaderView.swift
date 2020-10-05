@@ -132,7 +132,12 @@ class CommunityHeaderView: UIView {
             if let user = Auth.auth().currentUser {
                 let topicRef = db.collection("Users").document(user.uid).collection("topics").document(community.documentID)
                 
-                topicRef.setData(["createDate": Timestamp(date: Date())]) { (err) in
+                var data: [String: Any] = ["createDate": Timestamp(date: Date())]
+                
+                if community.language == .english {
+                    data["language"] = "en"
+                }
+                topicRef.setData(data) { (err) in
                     if let error = err {
                         print("We have an error: \(error.localizedDescription)")
                     } else {
@@ -169,7 +174,13 @@ class CommunityHeaderView: UIView {
         self.followButton.isEnabled = true
         if let user = Auth.auth().currentUser {
             
-            let ref = db.collection("Facts").document(fact.documentID)
+            var collectionRef: CollectionReference!
+            if fact.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topics")
+            } else {
+                collectionRef = db.collection("Facts")
+            }
+            let ref = collectionRef.document(fact.documentID)
             
             if follow {
                 ref.updateData([

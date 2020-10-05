@@ -112,7 +112,14 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
     func getTopics(type: DisplayOption) {
         let sortByString = getDisplayOptionString(type: type)
         
-        let ref = db.collection("Facts").whereField("displayOption", isEqualTo: sortByString)
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        if language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        let ref = collectionRef.whereField("displayOption", isEqualTo: sortByString)
         
         let user = Auth.auth().currentUser
         ref.getDocuments { (snap, err) in

@@ -24,11 +24,8 @@ protocol PostCellDelegate {
 class PostCell : BaseFeedCell {
     
     @IBOutlet weak var cellImageView: UIImageView!
-    @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var titleLabelHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var reportViewLabel: UILabel!
-    @IBOutlet weak var reportView: DesignablePopUp!
-    @IBOutlet weak var reportViewButtonInTop: DesignableButton!
+    //    @IBOutlet weak var titleLabelHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var cellImageViewHeightConstraint: NSLayoutConstraint!
     
     var delegate: PostCellDelegate?
     
@@ -46,7 +43,6 @@ class PostCell : BaseFeedCell {
         self.cellImageView.addGestureRecognizer(pinch)
     
         self.addSubview(buttonLabel)
-        
         
         // add corner radius on `contentView`
         cellImageView.layer.cornerRadius = 8
@@ -140,11 +136,7 @@ class PostCell : BaseFeedCell {
                 }
                                 
                 if fact.title == "" {
-                    if fact.beingFollowed {
-                        self.getFact(beingFollowed: true)
-                    } else {
-                        self.getFact(beingFollowed: false)
-                    }
+                    self.getFact(beingFollowed: fact.beingFollowed)
                 } else {
                     self.loadFact(post: post)
                 }
@@ -155,12 +147,6 @@ class PostCell : BaseFeedCell {
             descriptionPreviewLabel.text = post.description
             commentCountLabel.text = String(post.commentCount)
             
-            // LabelHeight calculated by the number of letters
-            // Maybe call this when I fetch the Posts and put it into the object? ReportView also
-            let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
-            titleLabelHeightConstraint.constant = labelHeight
-            
-            
             if let url = URL(string: post.imageURL) {
                 if let cellImageView = cellImageView {
                     cellImageView.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
@@ -168,13 +154,7 @@ class PostCell : BaseFeedCell {
                 }
             }
             
-            // Set ReportView
-            let reportViewOptions = handyHelper.setReportView(post: post)
-            
-            reportViewHeightConstraint.constant = reportViewOptions.heightConstant
-            reportViewButtonInTop.isHidden = reportViewOptions.buttonHidden
-            reportViewLabel.text = reportViewOptions.labelText
-            reportView.backgroundColor = reportViewOptions.backgroundColor
+            setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
         }
     }
     
@@ -221,7 +201,7 @@ class PostCell : BaseFeedCell {
     func getFact(beingFollowed: Bool) {
         if let post = post {
             if let fact = post.fact {
-                self.loadFact(fact: fact, beingFollowed: beingFollowed) {
+                self.loadFact(language: post.language, fact: fact, beingFollowed: beingFollowed) {
                     (fact) in
                     post.fact = fact
                     

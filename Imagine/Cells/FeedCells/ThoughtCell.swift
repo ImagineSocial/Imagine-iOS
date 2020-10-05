@@ -10,10 +10,6 @@ import UIKit
 
 class ThoughtCell : BaseFeedCell {
     
-    @IBOutlet weak var reportView: DesignablePopUp!
-    @IBOutlet weak var reportViewLabel: UILabel!
-    @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var reportViewButtonInTop: DesignableButton!
     @IBOutlet weak var titleToLikeButtonsConstraint: NSLayoutConstraint!
     @IBOutlet weak var descriptionLabel: UILabel!
     
@@ -79,8 +75,6 @@ class ThoughtCell : BaseFeedCell {
                 niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
             }
             
-            titleLabel.text = post.title
-            
             if post.description != "" {
                 self.titleToLikeButtonsConstraint.constant = 25
                 let newLineString = "\n"    // Need to hardcode this and replace the \n of the fetched text
@@ -91,9 +85,10 @@ class ThoughtCell : BaseFeedCell {
                 self.titleToLikeButtonsConstraint.constant = 10
             }
             
+            titleLabel.text = post.title
             descriptionPreviewLabel.text = post.description
             commentCountLabel.text = String(post.commentCount)
-            
+            createDateLabel.text = post.createTime
             
             if post.user.displayName == "" {
                 if post.anonym {
@@ -119,20 +114,13 @@ class ThoughtCell : BaseFeedCell {
                 }
             }
             
-            createDateLabel.text = post.createTime
             
             // Profile Picture
             if let url = URL(string: post.user.imageURL) {
                 profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
             }
             
-            // ReportView einstellen
-            let reportViewOptions = handyHelper.setReportView(post: post)
-            
-            reportViewHeightConstraint.constant = reportViewOptions.heightConstant
-            reportViewButtonInTop.isHidden = reportViewOptions.buttonHidden
-            reportViewLabel.text = reportViewOptions.labelText
-            reportView.backgroundColor = reportViewOptions.backgroundColor
+            setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
         }
     }
     
@@ -177,7 +165,7 @@ class ThoughtCell : BaseFeedCell {
     func getFact(beingFollowed: Bool) {
         if let post = post {
             if let fact = post.fact {
-                self.loadFact(fact: fact, beingFollowed: beingFollowed) {
+                self.loadFact(language: post.language, fact: fact, beingFollowed: beingFollowed) {
                     (fact) in
                     post.fact = fact
                     

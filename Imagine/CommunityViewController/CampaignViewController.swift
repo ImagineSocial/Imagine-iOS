@@ -101,7 +101,14 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     func voted(supporter: Bool) {
-        let postRef = db.collection("Campaigns").document(campaign.documentID)
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        if language == .english {
+            collectionRef = db.collection("Data").document("en").collection("campaigns")
+        } else {
+            collectionRef = db.collection("Campaigns")
+        }
+        let postRef = collectionRef.document(campaign.documentID)
         
         if let user = Auth.auth().currentUser {
             if supporter {
@@ -132,7 +139,14 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
     func registerVoter(userUID: String) {
         
-        let postRef = db.collection("Campaigns").document(campaign.documentID)
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        if language == .english {
+            collectionRef = db.collection("Data").document("en").collection("campaigns")
+        } else {
+            collectionRef = db.collection("Campaigns")
+        }
+        let postRef = collectionRef.document(campaign.documentID)
         
         postRef.updateData([
             "voters": FieldValue.arrayUnion([userUID]) // Add the person as a voter
@@ -155,7 +169,14 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     func checkIfAllowedToVote(supporter: Bool) {
         if isConnected() {
             if let user = Auth.auth().currentUser {
-                let voteRef = db.collection("Campaigns").document(campaign.documentID)
+                var collectionRef: CollectionReference!
+                let language = LanguageSelection().getLanguage()
+                if language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("campaigns")
+                } else {
+                    collectionRef = db.collection("Campaigns")
+                }
+                let voteRef = collectionRef.document(campaign.documentID)
                 voteRef.getDocument { (doc, err) in
                     if let error = err {
                         print("We have an error: \(error.localizedDescription)")

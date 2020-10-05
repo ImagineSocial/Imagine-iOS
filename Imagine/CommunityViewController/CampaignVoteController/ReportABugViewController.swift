@@ -103,7 +103,7 @@ class ReportABugViewController: UIViewController, UITextViewDelegate {
             
             let data: [String: Any] = ["userID": user.uid, "bugType": getTypeString(), "problem": text]
             
-            let bugRef = db.collection("Bugs").document()
+            let bugRef = db.collection("Feedback").document("bugs").collection("bugs").document()
             
             bugRef.setData(data) { (err) in
                 if let error = err {

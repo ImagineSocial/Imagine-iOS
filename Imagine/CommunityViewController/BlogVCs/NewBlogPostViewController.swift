@@ -50,16 +50,31 @@ class NewBlogPostViewController: UIViewController {
         
         if user == nil {
             headerLabel.text = "Kein User da!"
+            return
         } else {
             
-            if let user = user {
+            if let _ = user {
                 
-                let blogRef = db.collection("BlogPosts")
+                var collectionRef: CollectionReference!
+                let language = LanguageSelection().getLanguage()
+                if language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("blogPosts")
+                } else {
+                    collectionRef = db.collection("BlogPosts")
+                }
                 
-                let dataDictionary: [String: Any] = ["title": titleTextField.text, "subtitle": shortDescriptionTextfield.text, "category" : categoryTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "profileImageURL": user.imageURL, "poster": "Imagine"]
+                let blogRef = collectionRef.document()
+                
+                let dataDictionary: [String: Any] = ["title": titleTextField.text, "subtitle": shortDescriptionTextfield.text, "category" : categoryTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "poster": "Imagine"]
                 
                 
-                blogRef.addDocument(data: dataDictionary)
+                blogRef.setData(dataDictionary) { (err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        print("BlogPost successfully set")
+                    }
+                }
                 
                 self.getEveryUserAndSetNotification()
                 

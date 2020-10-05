@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
 import EasyTipView
 import CropViewController
 
@@ -32,6 +33,7 @@ enum NewCommunityItemType {
     case source
     case addOn
     case singleTopicAddOn
+    case shareTopic
 }
 
 enum ArgumentType {
@@ -77,6 +79,8 @@ class NewCommunityItemTableViewController: UITableViewController {
     let textCellIdentifier = "NewCommunityTextCell"
     
     let settingFooterIdentifier = "SettingFooter"
+    
+    let language = LanguageSelection().getLanguage()
     
     var new: NewCommunityItemType?
     
@@ -158,6 +162,9 @@ class NewCommunityItemTableViewController: UITableViewController {
         case .singleTopicAddOn:
             headerLabel.text = NSLocalizedString("new_addOn_header", comment: "create new addon")
             cells.append(contentsOf: [.setTitle, .setDescription, .chooseCommunity])
+        case .shareTopic:
+            headerLabel.text = NSLocalizedString("share_community_header_label", comment: "share community in feed")
+            cells.append(contentsOf: [.setTitle, .setDescription])
         }
         print("Reload: \(cells)")
         tableView.reloadData()
@@ -196,6 +203,8 @@ class NewCommunityItemTableViewController: UITableViewController {
                         cell.characterLimit = Constants.characterLimits.addOnTitleCharacterLimit
                     case .source:
                         cell.characterLimit = Constants.characterLimits.sourceTitleCharacterLimit
+                    case .shareTopic:
+                        cell.characterLimit = Constants.characterLimits.postTitleCharacterLimit
                     }
                 }
                 
@@ -294,6 +303,8 @@ class NewCommunityItemTableViewController: UITableViewController {
             if let new = new {
                 if new == .argument {
                     footerView.settingDescriptionLabel.text = NSLocalizedString("new_argument_source_footer_text", comment: "remember to add a source for credibility")
+                } else if new == .shareTopic {
+                    footerView.settingDescriptionLabel.text = NSLocalizedString("share_community_footer_description", comment: "share to let people know and stuff")
                 } else {
                     footerView.settingDescriptionLabel.text = ""
                 }
@@ -306,7 +317,7 @@ class NewCommunityItemTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         if let new = new {
-            if new == .argument {
+            if new == .argument || new == .shareTopic {
                 return UITableView.automaticDimension
             } else {
                 return 30
@@ -363,7 +374,16 @@ class NewCommunityItemTableViewController: UITableViewController {
         case .deepArgument:
             createNewDeepArgument()
         case .community:
-            let ref = db.collection("Facts").document()
+            
+            var collectionRef: CollectionReference!
+            if language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topics")
+            } else {
+                collectionRef = db.collection("Facts")
+            }
+            
+            let ref = collectionRef.document()
+            
             if selectedImageFromPicker != nil {
                 if let user = Auth.auth().currentUser {
                     
@@ -378,6 +398,8 @@ class NewCommunityItemTableViewController: UITableViewController {
             createNewAddOn()
         case .singleTopicAddOn:
             createNewSingleTopicAddOn()
+        case .shareTopic:
+            createSingleTopicPost()
         }
     }
     
@@ -386,16 +408,74 @@ class NewCommunityItemTableViewController: UITableViewController {
         self.view.activityStopAnimating()
     }
     
+    func createSingleTopicPost() {
+        if let fact = fact {
+            if let title = titleText, title != "" {
+                
+                let OP = Auth.auth().currentUser!
+                
+                var collectionRef: CollectionReference!
+                if fact.language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("posts")
+                } else {
+                    collectionRef = db.collection("Posts")
+                }
+                let ref = collectionRef.document()
+                
+                var description = ""
+                if let descriptionText = descriptionText {
+                    description = descriptionText
+                }
+
+                let dataDictionary: [String: Any] = ["title": title, "description": description, "createTime": Timestamp(date: Date()), "originalPoster": OP.uid, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "singleTopic", "report": "normal", "linkedFactID": fact.documentID, "notificationRecipients": [OP.uid]]
+                
+                ref.setData(dataDictionary) { (err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        let post = Post()
+                        post.documentID = ref.documentID
+                        post.title = title
+                        post.language = fact.language
+                        
+                        let userRef = self.db.collection("Users").document(OP.uid).collection("posts").document(ref.documentID)
+                        var data: [String: Any] = ["createTime": Timestamp(date: Date())]
+                        
+                        if fact.language == .english {
+                            data["language"] = "en"
+                        }
+                        userRef.setData(data) { (err) in
+                            if let error = err {
+                                print("We have an error: \(error.localizedDescription)")
+                                self.finished(item: post)   // finish anyway
+                            } else {
+                                self.finished(item: post)
+                            }
+                        }
+                    }
+                }
+            } else {
+                self.alert(message: NSLocalizedString("new_community_item_error_title", comment: "input missing"))
+            }
+        }
+    }
+    
     func createNewSingleTopicAddOn() {
         
         if let fact = fact {
             if let title = titleText, let description = descriptionText {
                 if let linkedFactID = self.selectedTopicIDForSingleTopicAddOn {
-                    let ref = db.collection("Facts").document(fact.documentID).collection("addOns")
+                    var collectionRef: CollectionReference!
+                    if fact.language == .english {
+                        collectionRef = db.collection("Data").document("en").collection("topics")
+                    } else {
+                        collectionRef = db.collection("Facts")
+                    }
+                    let ref = collectionRef.document(fact.documentID).collection("addOns")
                     
                     let op = Auth.auth().currentUser!
                     
-                    let data: [String: Any] = ["OP": op.uid, "headerTitle": title, "description": description, "linkedFactID": linkedFactID, "popularity": 0]
+                    let data: [String: Any] = ["OP": op.uid, "headerTitle": title, "description": description, "linkedFactID": linkedFactID, "popularity": 0, "type": "singleTopic"]
                     
                     ref.addDocument(data: data) { (err) in
                         if let error = err {
@@ -441,11 +521,19 @@ class NewCommunityItemTableViewController: UITableViewController {
         
         if let fact = fact {
             if let title = titleText, let description = descriptionText {
-                let ref = db.collection("Facts").document(fact.documentID).collection("addOns")
+                
+                var collectionRef: CollectionReference!
+                if fact.language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("topics")
+                } else {
+                    collectionRef = db.collection("Facts")
+                }
+                
+                let ref = collectionRef.document(fact.documentID).collection("addOns")
                 
                 let op = Auth.auth().currentUser!
                 
-                let data: [String: Any] = ["OP": op.uid, "title": title, "description": description, "popularity": 0]
+                let data: [String: Any] = ["OP": op.uid, "title": title, "description": description, "popularity": 0, "type": "default"]
                 
                 ref.addDocument(data: data) { (err) in
                     if let error = err {
@@ -464,7 +552,15 @@ class NewCommunityItemTableViewController: UITableViewController {
         if let fact = fact, let argument = argument {   // Only possible to add source to specific argument
             if let title = titleText, let description = descriptionText {
                 if let source = sourceLink, source.isValidURL {
-                    let argumentRef = db.collection("Facts").document(fact.documentID).collection("arguments").document(argument.documentID).collection("sources").document()
+                    
+                    var collectionRef: CollectionReference!
+                    if fact.language == .english {
+                        collectionRef = db.collection("Data").document("en").collection("topics")
+                    } else {
+                        collectionRef = db.collection("Facts")
+                    }
+                    
+                    let argumentRef = collectionRef.document(fact.documentID).collection("arguments").document(argument.documentID).collection("sources").document()
                     
                     let op = Auth.auth().currentUser!
                     
@@ -495,7 +591,13 @@ class NewCommunityItemTableViewController: UITableViewController {
     func createNewDeepArgument() {
         if let fact = fact, let argument = argument {
             if let title = titleText, let description = descriptionText {
-                let ref = db.collection("Facts").document(fact.documentID).collection("arguments").document(argument.documentID).collection("arguments").document()
+                var collectionRef: CollectionReference!
+                if fact.language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("topics")
+                } else {
+                    collectionRef = db.collection("Facts")
+                }
+                let ref = collectionRef.document(fact.documentID).collection("arguments").document(argument.documentID).collection("arguments").document()
                 let op = Auth.auth().currentUser!
                 
                 let data: [String:Any] = ["title" : title, "description": description, "OP": op.uid]
@@ -523,7 +625,15 @@ class NewCommunityItemTableViewController: UITableViewController {
     func createNewArgument() {
         if let fact = fact {
             if let title = titleText, let description = descriptionText {
-                let ref = db.collection("Facts").document(fact.documentID).collection("arguments").document()
+                
+                var collectionRef: CollectionReference!
+                if fact.language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("topics")
+                } else {
+                    collectionRef = db.collection("Facts")
+                }
+                
+                let ref = collectionRef.document(fact.documentID).collection("arguments").document()
                 
                 let op = Auth.auth().currentUser!
                 let proOrContra = getProOrContraString()
@@ -579,6 +689,9 @@ class NewCommunityItemTableViewController: UITableViewController {
                 if let url = imageURL {
                     data["imageURL"] = url
                     fact.imageURL = url
+                }
+                if language == .english {
+                    data["language"] = "en"
                 }
                 
                 self.setUserChanges(documentID: ref.documentID) //Follow Topic and set Mod Badge

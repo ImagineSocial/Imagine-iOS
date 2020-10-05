@@ -70,33 +70,7 @@ class FactParentContainerViewController: UIViewController {
         let barButton = UIBarButtonItem(customView: button)
         self.navigationItem.leftBarButtonItem = barButton
     }
-    
-    //MARK: 
-//    func setPostButton() {
-//        let button = DesignableButton()
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        button.setTitleColor(.imagineColor, for: .normal)
-//        button.setTitle("Beiträge", for: .normal)
-//        button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
-//        if #available(iOS 13.0, *) {
-//            button.backgroundColor = .secondarySystemBackground
-//            button.layer.borderColor = UIColor.separator.cgColor
-//        } else {
-//            button.layer.borderColor = UIColor.darkGray.cgColor
-//            button.backgroundColor = .ios12secondarySystemBackground
-//        }
-//        button.addTarget(self, action: #selector(toPostsTapped), for: .touchUpInside)
-////        button.layer.borderColor = Constants.imagineColor.cgColor
-//        button.layer.borderWidth = 0.5
-//        button.cornerRadius = radius
-//        button.clipsToBounds = true
-//
-//        button.heightAnchor.constraint(equalToConstant: 25).isActive = true
-//        button.widthAnchor.constraint(equalToConstant: 75).isActive = true
-//
-//        let barButton = UIBarButtonItem(customView: button)
-//        self.navigationItem.rightBarButtonItem = barButton
-//    }
+
     
     @objc func toPostsTapped() {
         if let fact = self.fact {
@@ -122,7 +96,7 @@ class FactParentContainerViewController: UIViewController {
     
     func getArguments(topic: Fact) {
         
-        DataHelper().getDeepData(documentID: topic.documentID) { (deepData) in // Fetch all Arguments for this fact
+        DataHelper().getDeepData(fact: topic) { (deepData) in // Fetch all Arguments for this fact
             if let arguments = deepData as? [Argument] {
                 for argument in arguments {
                     if argument.proOrContra == "pro" {      // Sort the Arguments
@@ -208,8 +182,13 @@ class FactParentContainerViewController: UIViewController {
     
     func updateFollowCount(fact: Fact, follow: Bool) {
         if let user = Auth.auth().currentUser {
-            
-            let ref = db.collection("Facts").document(fact.documentID)
+            var collectionRef: CollectionReference!
+            if fact.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topics")
+            } else {
+                collectionRef = db.collection("Facts")
+            }
+            let ref = collectionRef.document(fact.documentID)
             
             if follow {
                 ref.updateData([

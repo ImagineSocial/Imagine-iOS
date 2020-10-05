@@ -116,10 +116,6 @@ class PostHelper {
         
         posts.removeAll()
         
-        let settings = db.settings
-        settings.areTimestampsInSnapshotsEnabled = true
-        db.settings = settings
-        
         var orderBy = "createTime"
         var descending = true
         
@@ -148,7 +144,15 @@ class PostHelper {
             self.getFollowedTopics()    // Do I need it anymore?
         }
         
-        var postRef = db.collection("Posts").order(by: orderBy, descending: descending).limit(to: 15)
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        if language == .english {
+            collectionRef = db.collection("Data").document("en").collection("posts")
+        } else {
+            collectionRef = db.collection("Posts")
+        }
+                
+        var postRef = collectionRef.order(by: orderBy, descending: descending).limit(to: 15)
                 
         if getMore {    // If you want to get More Posts
             if let lastSnap = lastSnap {        // For the next loading batch of 20, that will start after this snapshot
@@ -162,19 +166,27 @@ class PostHelper {
         
         self.getTheUsersFriend { (_) in // First get the friends to choose which name to fetch
             
-            postRef.getDocuments { (querySnapshot, error) in
+            postRef.getDocuments { (snap, error) in
                 
-                self.lastSnap = querySnapshot?.documents.last    // Last document for the next fetch cycle
-                
-                for document in querySnapshot!.documents {
-                    self.addThePost(document: document, isTopicPost: false, forFeed: true)
-                }
-                
-                self.getFollowedTopicPosts(startSnap: self.startBeforeSnap, endSnap: self.lastSnap!) { (posts) in
-                    var combinedPosts: [Post] = posts
-                    combinedPosts.append(contentsOf: self.posts)
-                    let finalPosts = combinedPosts.sorted(by: { $0.createDate ?? Date() > $1.createDate ?? Date() })
-                    returnPosts(finalPosts, self.initialFetch)
+                if let snap = snap {
+                    self.lastSnap = snap.documents.last    // Last document for the next fetch cycle
+                    
+                    for document in snap.documents {
+                        self.addThePost(document: document, isTopicPost: false, forFeed: true, language: language)
+                    }
+                    
+                    if let lastSnap = self.lastSnap {
+                        self.getFollowedTopicPosts(startSnap: self.startBeforeSnap, endSnap: lastSnap) { (posts) in
+                            var combinedPosts: [Post] = posts
+                            combinedPosts.append(contentsOf: self.posts)
+                            let finalPosts = combinedPosts.sorted(by: { $0.createDate ?? Date() > $1.createDate ?? Date() })
+                            returnPosts(finalPosts, self.initialFetch)
+                        }
+                    } else {
+                        returnPosts(self.posts, self.initialFetch)
+                    }
+                } else {
+                    returnPosts(self.posts, self.initialFetch)
                 }
             }
         }
@@ -209,7 +221,14 @@ class PostHelper {
                 
                 for topicID in topics {
                     
-                    let ref = self.db.collection("TopicPosts")
+                    var collectionRef: CollectionReference!
+                    let language = LanguageSelection().getLanguage()
+                    if language == .english {
+                        collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
+                    } else {
+                        collectionRef = self.db.collection("TopicPosts")
+                    }
+                    let ref = collectionRef
                         .whereField("linkedFactID", isEqualTo: topicID)
                         .whereField("createTime", isLessThanOrEqualTo: startTimestamp)
                         .whereField("createTime", isGreaterThanOrEqualTo: endTimestamp)
@@ -227,7 +246,7 @@ class PostHelper {
                                 for document in snap.documents {
                                     postCount+=1
                                     
-                                    if let post = self.addThePost(document: document, isTopicPost: true, forFeed: false) {
+                                    if let post = self.addThePost(document: document, isTopicPost: true, forFeed: false, language: language) {
                                         topicPosts.append(post)
                                     }
                                 }
@@ -355,6 +374,11 @@ class PostHelper {
                                     if let _ = data["isTopicPost"] as? Bool {
                                         post.isTopicPost = true
                                     }
+                                    if let language = data["language"] as? String {
+                                        if language == "en" {
+                                            post.language = .english
+                                        }
+                                    }
                                     documentIDsOfPosts.append(post)
                                 }
                                 
@@ -376,11 +400,13 @@ class PostHelper {
                                     if let documentID = data["documentID"] as? String {
                                         post.documentID = documentID
                                     }
+                                    if let language = data["language"] as? String {
+                                        if language == "en" {
+                                            post.language = .english
+                                        }
+                                    }
                                     documentIDsOfPosts.append(post)
-                                    
-                                    
                                 }
-                                
                                 
                                 
                                 self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in
@@ -401,26 +427,100 @@ class PostHelper {
     
     //MARK:- Communities
     
-    func getPostsForCommunity(getMore: Bool, communityID: String, returnPosts: @escaping ([Post]?, _ InitialFetch:Bool) -> Void) {
+    func getPostsForCommunity(getMore: Bool, fact: Fact, returnPosts: @escaping ([Post]?, _ InitialFetch:Bool) -> Void) {
         
-        if morePostsToFetch {
-            self.posts.removeAll()
-            
-            var ref = db.collection("Facts").document(communityID).collection("posts").order(by: "createTime", descending: true).limit(to: 20)
-            var documentIDsOfPosts = [Post]()
-            
-            // Check if the Feed has been refreshed or the next batch is ordered
-            if getMore {
-                // For the next loading batch of 20, that will start after this snapshot if it is there
-                if let lastSnap = lastFeedPostSnap {
-                    
-                    // I think I have an issue with createDate + .start(afterDocument:) because there are some without date
-                    ref = ref.start(afterDocument: lastSnap)
-                    self.initialFetch = false
+        if fact.documentID != "" {
+            if morePostsToFetch {
+                self.posts.removeAll()
+                
+                var collectionRef: CollectionReference!
+                if fact.language == .english {
+                    collectionRef = self.db.collection("Data").document("en").collection("topics")
+                } else {
+                    collectionRef = self.db.collection("Facts")
                 }
-            } else { // Else you want to refresh the feed
-                self.initialFetch = true
+                
+                var ref = collectionRef.document(fact.documentID).collection("posts").order(by: "createTime", descending: true).limit(to: 20)
+                var documentIDsOfPosts = [Post]()
+                
+                // Check if the Feed has been refreshed or the next batch is ordered
+                if getMore {
+                    // For the next loading batch of 20, that will start after this snapshot if it is there
+                    if let lastSnap = lastFeedPostSnap {
+                        
+                        // I think I have an issue with createDate + .start(afterDocument:) because there are some without date
+                        ref = ref.start(afterDocument: lastSnap)
+                        self.initialFetch = false
+                    }
+                } else { // Else you want to refresh the feed
+                    self.initialFetch = true
+                }
+                
+                ref.getDocuments { (snap, err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        if let snap = snap {
+                            if snap.documents.count == 0 {    // Hasnt posted or saved anything yet
+                                let post = Post()
+                                post.type = .nothingPostedYet
+                                returnPosts([post], self.initialFetch)
+                            } else {
+                                //Prepare the next batch
+                                let fetchedDocsCount = snap.documents.count
+                                self.alreadyFetchedCount = self.alreadyFetchedCount+fetchedDocsCount
+                                
+                                let fullCollectionRef = collectionRef.document(fact.documentID).collection("posts")
+                                self.checkHowManyDocumentsThereAre(ref: fullCollectionRef)
+                                
+                                self.lastFeedPostSnap = snap.documents.last // For the next batch
+                                
+                                // Get right post objects for next fetch
+                                for document in snap.documents {
+                                    let documentID = document.documentID
+                                    let data = document.data()
+                                    
+                                    let post = Post()
+                                    post.documentID = documentID
+                                    post.language = fact.language
+                                    
+                                    if let _ = data["type"] as? String {    // Sort between normal and "JustTopic" Posts
+                                        post.isTopicPost = true
+                                    }
+                                    
+                                    documentIDsOfPosts.append(post)
+                                }
+                                
+                                self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in    // First fetch the normal Posts, then the "JustTopic" Posts
+                                    self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                                    
+                                    returnPosts(self.posts, self.initialFetch)
+                                })
+                            }
+                        }
+                    }
+                }
+            } else {
+                print("We already have all posts fetched")
+                returnPosts(nil, self.initialFetch)
             }
+        } else {
+            print("Error: no documentID for Fact")
+            returnPosts(nil, self.initialFetch)
+        }
+    }
+    
+    func getPreviewPicturesForCommunity(community: Fact, posts: @escaping ([Post]?) -> Void) {
+        if community.documentID != "" {
+            
+            var collectionRef: CollectionReference!
+            if community.language == .english {
+                collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
+            } else {
+                collectionRef = self.db.collection("TopicPosts")
+            }
+            
+            let ref = collectionRef.whereField("linkedFactID", isEqualTo: community.documentID).whereField("type", isEqualTo: "picture").limit(to: 6)
             
             ref.getDocuments { (snap, err) in
                 if let error = err {
@@ -428,72 +528,21 @@ class PostHelper {
                 } else {
                     if let snap = snap {
                         if snap.documents.count == 0 {    // Hasnt posted or saved anything yet
-                            let post = Post()
-                            post.type = .nothingPostedYet
-                            returnPosts([post], self.initialFetch)
+                            posts(nil)
                         } else {
-                            //Prepare the next batch
-                            let fetchedDocsCount = snap.documents.count
-                            self.alreadyFetchedCount = self.alreadyFetchedCount+fetchedDocsCount
+                            var picturePosts = [Post]()
+                            var count = snap.documents.count
                             
-                            let fullCollectionRef = self.db.collection("Facts").document(communityID).collection("posts")
-                            self.checkHowManyDocumentsThereAre(ref: fullCollectionRef)
-                            
-                            self.lastFeedPostSnap = snap.documents.last // For the next batch
-                            
-                            // Get right post objects for next fetch
                             for document in snap.documents {
-                                let documentID = document.documentID
-                                let data = document.data()
                                 
-                                let post = Post()
-                                post.documentID = documentID
-                                
-                                if let _ = data["type"] as? String {    // Sort between normal and "JustTopic" Posts
-                                    post.isTopicPost = true
+                                if let post = self.addThePost(document: document, isTopicPost: true, forFeed: false, language: community.language) {
+                                    picturePosts.append(post)
+                                } else {
+                                    count-=1
                                 }
-                                
-                                documentIDsOfPosts.append(post)
-                            }
-                            
-                            self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in    // First fetch the normal Posts, then the "JustTopic" Posts
-                                self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
-                                
-                                returnPosts(self.posts, self.initialFetch)
-                            })
-                        }
-                    }
-                }
-            }
-        } else {
-            print("We already have all posts fetched")
-            returnPosts(nil, self.initialFetch)
-        }
-    }
-    
-    func getPreviewPicturesForCommunity(communityID: String, posts: @escaping ([Post]?) -> Void) {
-        let ref = db.collection("TopicPosts").whereField("linkedFactID", isEqualTo: communityID).whereField("type", isEqualTo: "picture").limit(to: 6)
-        
-        ref.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    if snap.documents.count == 0 {    // Hasnt posted or saved anything yet
-                        posts(nil)
-                    } else {
-                        var picturePosts = [Post]()
-                        var count = snap.documents.count
-                        
-                        for document in snap.documents {
-                            
-                            if let post = self.addThePost(document: document, isTopicPost: true, forFeed: false) {
-                                picturePosts.append(post)
-                            } else {
-                                count-=1
-                            }
-                            if picturePosts.count == count {
-                                posts(picturePosts)
+                                if picturePosts.count == count {
+                                    posts(picturePosts)
+                                }
                             }
                         }
                     }
@@ -536,21 +585,34 @@ class PostHelper {
         } else {
             // The function has to be here for the right order
             for post in posts {
-                var ref: DocumentReference?
+                var ref: DocumentReference!
+                var collectionRef: CollectionReference!
+                
+                print("Das ist der post: \(post.isTopicPost), \(post.language)")
                 
                 if post.isTopicPost {
-                    ref = self.db.collection("TopicPosts").document(post.documentID)
+                    if post.language == .english {
+                        collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
+                    } else {
+                        collectionRef = self.db.collection("TopicPosts")
+                    }
+                    ref = collectionRef.document(post.documentID)
                 } else {
-                    ref = self.db.collection("Posts").document(post.documentID)
+                    if post.language == .english {
+                        collectionRef = self.db.collection("Data").document("en").collection("posts")
+                    } else {
+                        collectionRef = self.db.collection("Posts")
+                    }
+                    ref = collectionRef.document(post.documentID)
                 }
-                ref!.getDocument{ (document, err) in
+                ref.getDocument{ (document, err) in
                     if let error =  err {
                         print("We have an error: \(error.localizedDescription)")
                     } else {
                         if let document = document {
                             
                             self.getTheUsersFriend { (_) in // First get the friends to check which name to fetch
-                                self.addThePost(document: document, isTopicPost: post.isTopicPost, forFeed: true)
+                                self.addThePost(document: document, isTopicPost: post.isTopicPost, forFeed: true, language: post.language)
                                 
                                 startIndex+=1
                                 
@@ -567,7 +629,7 @@ class PostHelper {
     
     
     //MARK:- addThePost
-    func addThePost(document: DocumentSnapshot, isTopicPost: Bool, forFeed: Bool) -> Post? {
+    func addThePost(document: DocumentSnapshot, isTopicPost: Bool, forFeed: Bool, language: Language) -> Post? {
         
         let documentID = document.documentID
         if let documentData = document.data() {
@@ -659,6 +721,7 @@ class PostHelper {
                     post.votes.ha = haCount
                     post.votes.nice = niceCount
                     post.createDate = dateToSort
+                    post.language = language
                     
                     //Tried to export these extra values because they repeat themself in every "type" case but because of my async func "getFact" if a factID exists and move the post afterwards
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
@@ -683,7 +746,10 @@ class PostHelper {
                     }
                     
                     post.isTopicPost = isTopicPost
-                    post.getCommentCount()
+                    
+                    if let commentCount = documentData["commentCount"] as? Int {
+                        post.commentCount = commentCount
+                    } // else { its 0
                     
                     if forFeed {
                         self.posts.append(post)
@@ -718,6 +784,7 @@ class PostHelper {
                     post.votes.ha = haCount
                     post.votes.nice = niceCount
                     post.createDate = dateToSort
+                    post.language = language
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
@@ -741,7 +808,9 @@ class PostHelper {
                     }
                     
                     post.isTopicPost = isTopicPost
-                    post.getCommentCount()
+                    if let commentCount = documentData["commentCount"] as? Int {
+                        post.commentCount = commentCount
+                    } // else { its 0
                     
                     if forFeed {
                         self.posts.append(post)
@@ -773,6 +842,7 @@ class PostHelper {
                     post.votes.ha = haCount
                     post.votes.nice = niceCount
                     post.createDate = dateToSort
+                    post.language = language
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
@@ -796,7 +866,9 @@ class PostHelper {
                     }
                     
                     post.isTopicPost = isTopicPost
-                    post.getCommentCount()
+                    if let commentCount = documentData["commentCount"] as? Int {
+                        post.commentCount = commentCount
+                    } // else { its 0
                     
                     if forFeed {
                         self.posts.append(post)
@@ -821,6 +893,7 @@ class PostHelper {
                     post.votes.ha = haCount
                     post.votes.nice = niceCount
                     post.createDate = dateToSort
+                    post.language = language
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
@@ -844,7 +917,9 @@ class PostHelper {
                     }
                     
                     post.isTopicPost = isTopicPost
-                    post.getCommentCount()
+                    if let commentCount = documentData["commentCount"] as? Int {
+                        post.commentCount = commentCount
+                    } // else { its 0
                     
                     if forFeed {
                         self.posts.append(post)
@@ -874,6 +949,7 @@ class PostHelper {
                     post.votes.ha = haCount
                     post.votes.nice = niceCount
                     post.createDate = dateToSort
+                    post.language = language
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
@@ -909,7 +985,9 @@ class PostHelper {
                     }
                     
                     post.isTopicPost = isTopicPost
-                    post.getCommentCount()
+                    if let commentCount = documentData["commentCount"] as? Int {
+                        post.commentCount = commentCount
+                    } // else { its 0
                     
                     if forFeed {
                         self.posts.append(post)
@@ -948,6 +1026,7 @@ class PostHelper {
                     post.votes.ha = haCount
                     post.votes.nice = niceCount
                     post.createDate = dateToSort
+                    post.language = language
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
@@ -971,13 +1050,64 @@ class PostHelper {
                     }
                     
                     post.isTopicPost = isTopicPost
-                    post.getCommentCount()
+                    if let commentCount = documentData["commentCount"] as? Int {
+                        post.commentCount = commentCount
+                    } // else { its 0
                     
                     if forFeed {
                         self.posts.append(post)
                     } else {
                         return post
                     }
+                    
+                } else if postType == "singleTopic"  {
+                    
+                    let post = Post()
+                    post.title = title
+                    post.description = description
+                    post.type = .singleTopic
+                    post.documentID = documentID
+                    post.createTime = stringDate
+                    post.originalPosterUID = originalPoster
+                    post.votes.thanks = thanksCount
+                    post.votes.wow = wowCount
+                    post.votes.ha = haCount
+                    post.votes.nice = niceCount
+                    post.createDate = dateToSort
+                    post.language = language
+                    
+                    if let report = self.handyHelper.setReportType(fetchedString: reportString) {
+                        post.report = report
+                    }
+                    
+                    if let notificationRecipients = documentData["notificationRecipients"] as? [String] {
+                        post.notificationRecipients = notificationRecipients
+                    }
+                    
+                    if let factID = documentData[factJSONString] as? String {
+                        post.fact = self.addFact(factID: factID)
+                    }
+                    
+                    if originalPoster == "anonym" {
+                        post.anonym = true
+                        if let anonymousName = documentData["anonymousName"] as? String {
+                            post.anonymousName = anonymousName
+                        }
+                    } else {
+                        post.getUser(isAFriend: isAFriend)
+                    }
+                    
+                    post.isTopicPost = isTopicPost
+                    if let commentCount = documentData["commentCount"] as? Int {
+                        post.commentCount = commentCount
+                    } // else { its 0
+                    
+                    if forFeed {
+                        self.posts.append(post)
+                    } else {
+                        return post
+                    }
+                    
                     
                     // Repost
                 } else if postType == "repost" || postType == "translation" {
@@ -989,11 +1119,28 @@ class PostHelper {
                     }
                     
                     let post = Post()
-                    post.type = .repost
+                    post.repostDocumentID = postDocumentID
+                    if let repostLanguage = documentData["repostLanguage"] as? String {
+                        if repostLanguage == "en" {
+                            post.repostLanguage = .english
+                            if post.language != .english {
+                                post.type = .translation
+                            }
+                        } else if repostLanguage == "de" {
+                            post.repostLanguage = .german
+                            if post.language != .german {
+                                post.type = .translation
+                            }
+                        }
+                    } else {
+                        post.type = .repost
+                    }
+                    if let repostIsTopicPost = documentData["repostIsTopicPost"] as? Bool {
+                        post.repostIsTopicPost = repostIsTopicPost
+                    }
                     post.title = title
                     post.description = description
                     post.createTime = stringDate
-                    post.OGRepostDocumentID = postDocumentID
                     post.documentID = documentID
                     post.originalPosterUID = originalPoster
                     post.votes.thanks = thanksCount
@@ -1001,6 +1148,7 @@ class PostHelper {
                     post.votes.ha = haCount
                     post.votes.nice = niceCount
                     post.createDate = dateToSort
+                    post.language = language
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
@@ -1024,7 +1172,9 @@ class PostHelper {
                     }
                     
                     post.isTopicPost = isTopicPost
-                    post.getCommentCount()
+                    if let commentCount = documentData["commentCount"] as? Int {
+                        post.commentCount = commentCount
+                    } // else { its 0
                     
                     post.getRepost(returnRepost: { (repost) in
                         post.repost = repost
@@ -1041,7 +1191,7 @@ class PostHelper {
         return nil
     }
     
-    //MARK:-Stuff
+    //MARK:- Stuff
     
     func notifyMalte(documentID: String, isTopicPost: Bool) {
         let maltesUID = "CZOcL3VIwMemWwEfutKXGAfdlLy1"
@@ -1068,17 +1218,28 @@ class PostHelper {
         return fact
     }
     
-    func loadPost(postID: String, isTopicPost: Bool, loadedPost: @escaping (Post?) -> Void) {
+    func loadPost(post: Post, loadedPost: @escaping (Post?) -> Void) {
         let ref: DocumentReference!
         
-        if postID == "" {   // NewAddOnTableVC
+        if post.documentID == "" {   // NewAddOnTableVC
             loadedPost(nil)
         }
         
-        if isTopicPost {
-            ref = db.collection("TopicPosts").document(postID)
+        var collectionRef: CollectionReference!
+        if post.isTopicPost {
+            if post.language == .english {
+                collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
+            } else {
+                collectionRef = self.db.collection("TopicPosts")
+            }
+            ref = collectionRef.document(post.documentID)
         } else {
-            ref = db.collection("Posts").document(postID)
+            if post.language == .english {
+                collectionRef = self.db.collection("Data").document("en").collection("posts")
+            } else {
+                collectionRef = self.db.collection("Posts")
+            }
+            ref = collectionRef.document(post.documentID)
         }
         
         ref.getDocument { (snap, err) in
@@ -1086,11 +1247,8 @@ class PostHelper {
                 print("We have an error: \(error.localizedDescription)")
             } else {
                 if let snap = snap {
-                    if let post = self.addThePost(document: snap, isTopicPost: isTopicPost, forFeed: false){
-                        if isTopicPost {
-                            post.isTopicPost = true
-                        }
-                        loadedPost(post)
+                    if let fullPost = self.addThePost(document: snap, isTopicPost: post.isTopicPost, forFeed: false, language: post.language){
+                        loadedPost(fullPost)
                     }
                 }
             }

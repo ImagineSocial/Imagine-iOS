@@ -133,7 +133,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 PostHelper().getPostsFromDocumentIDs(posts: [post]) { (posts) in
                     if let posts = posts {
                         if posts.count != 0 {
-                            print("1m5")
                             let post = posts[0]
                             
                             self.post = post
@@ -555,7 +554,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         commentTableView.topAnchor.constraint(equalTo: commentView.bottomAnchor, constant: 10).isActive = true
         commentTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         commentTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        commentTableView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -60).isActive = true
+        commentTableView.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -85).isActive = true
         
         //To get the contentView up to the bottom, so the keyboard works even when small pictures or just a link without comments is displayed
         let endView = UIView()
@@ -1540,7 +1539,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 } else {
                     let baseCell = BaseFeedCell()
                     if let fact = post.fact {
-                        baseCell.loadFact(fact: fact, beingFollowed: false) { (fact) in
+                        baseCell.loadFact(language: post.language, fact: fact, beingFollowed: false) { (fact) in
                             self.post.fact = fact
                             self.setFact()
                         }
@@ -1559,7 +1558,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 } else {
                     let baseCell = BaseFeedCell()
                     if let fact = post.fact {
-                        baseCell.loadFact(fact: fact, beingFollowed: false) { (fact) in
+                        baseCell.loadFact(language: post.language, fact: fact, beingFollowed: false) { (fact) in
                             self.post.fact = fact
                             self.setFact()
                         }
@@ -1961,7 +1960,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 let commentViewHeight: CGFloat = 60
                 floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: viewHeight-commentViewHeight, width: self.view.frame.width, height: commentViewHeight))
                 floatingCommentView!.delegate = self
-                print("Add Subview1: \(viewHeight-commentViewHeight), viewHeight: \(viewHeight), full height: \(UIScreen.main.bounds.height)")
                 self.contentView.addSubview(floatingCommentView!)
                 self.contentView.bringSubviewToFront(floatingCommentView!)
                 self.contentView.layoutIfNeeded()
@@ -2103,7 +2101,6 @@ extension PostViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         let size = CGSize(width: imageCollectionView.frame.width, height: imageCollectionView.frame.height)
-        print("das ist die size: ", size)
         return size
     }
     

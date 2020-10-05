@@ -25,6 +25,7 @@ class NewAddOnTableViewController: UITableViewController {
     let addOnHeaderIdentifier = "AddOnHeaderView"
     
     var tipView: EasyTipView?
+    let db = Firestore.firestore()
     
     var delegate: NewFactDelegate?
 
@@ -222,7 +223,13 @@ class NewAddOnTableViewController: UITableViewController {
     }
     
     func createNewQandAAddOn(user: FirebaseAuth.User, fact: Fact) {
-        let ref = Firestore.firestore().collection("Facts").document(fact.documentID).collection("addOns").document()
+        var collectionRef: CollectionReference!
+        if fact.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        let ref = collectionRef.document(fact.documentID).collection("addOns").document()
         
         let data: [String:Any] = ["OP": user.uid, "type": "QandA", "popularity": 0]
         

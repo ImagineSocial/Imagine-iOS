@@ -73,7 +73,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var selectedOption: PostSelection = .thought
     
     let labelFont = UIFont(name: "IBMPlexSans-Medium", size: 15)
-    let characterLimitForTitle = 200
+    
+    let characterLimitForTitle = Constants.characterLimits.postTitleCharacterLimit
     let characterLimitForEventTitle = 100
     let defaultOptionViewHeight: CGFloat = 45
     
@@ -2139,10 +2140,23 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             var userID = ""
             
             let postRef: DocumentReference?
+            var collectionRef: CollectionReference!
+            let language = LanguageSelection().getLanguage()
+            
             if comingFromAddOnVC || postOnlyInTopic {
-                postRef = db.collection("TopicPosts").document()
+                if language == .english {
+                    collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
+                } else {
+                    collectionRef = self.db.collection("TopicPosts")
+                }
+                postRef = collectionRef.document()
             } else {
-                postRef = db.collection("Posts").document()
+                if language == .english {
+                    collectionRef = self.db.collection("Data").document("en").collection("posts")
+                } else {
+                    collectionRef = self.db.collection("Posts")
+                }
+                postRef = collectionRef.document()
             }
 
             if self.postAnonymous {
@@ -2235,6 +2249,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         let multiImagePicker = ImagePickerController()
         let options = multiImagePicker.settings
         options.selection.max = 3
+        let fetchOptions = options.fetch.album.options
+                options.fetch.album.fetchResults = [
+                    PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumRecentlyAdded, options: fetchOptions),
+                    PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: fetchOptions),
+                ]
         
         self.multiImageAssets.removeAll()
         //TODo: change the selection
@@ -2681,6 +2700,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         let documentID = postRef.documentID
         
         var userRef: DocumentReference?
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
         
         if postAnonymous {
             userRef = db.collection("AnonymousPosts").document(documentID)
@@ -2701,7 +2722,14 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             data["linkedFactID"] = fact.documentID
             
             // Add the post to the specific fact, so that it can be looked into
-            let ref = db.collection("Facts").document(fact.documentID).collection("posts").document(documentID)
+            
+            if language == .english {
+                collectionRef = self.db.collection("Data").document("en").collection("topics")
+            } else {
+                collectionRef = self.db.collection("Facts")
+            }
+            
+            let topicRef = collectionRef.document(fact.documentID).collection("posts").document(documentID)
             
             var data: [String: Any] = ["createTime": self.getDate()]
             
@@ -2709,7 +2737,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 data["type"] = "topicPost"  // To fetch in a different ref when loading the posts of the topic
             }
             
-            ref.setData(data) { (err) in
+            topicRef.setData(data) { (err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
@@ -2733,6 +2761,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 if let userRef = userRef {
                     
                     var data: [String: Any] = ["createTime": self.getDate()]
+                    
+                    if language == .english {
+                        data["language"] = "en"
+                    }
                     
                     if self.postAnonymous {
                         if let user = Auth.auth().currentUser {
@@ -2770,7 +2802,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         let eventRef = db.collection("Events").document()
         let documentID = eventRef.documentID
         
-        let userRef = Firestore.firestore().collection("Users").document(userID).collection("events").document(documentID)
+        let userRef = db.collection("Users").document(userID).collection("events").document(documentID)
         
         userRef.setData(["createTime": getDate()])      // add event to User
         

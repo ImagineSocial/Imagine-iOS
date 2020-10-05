@@ -42,7 +42,7 @@ class DiscussionCell: UICollectionViewCell {
         didSet {
             guard let fact = fact else { return }
             
-            self.getArguments(documentID: fact.documentID)
+            self.getArguments(fact: fact)
             
             if let url = URL(string: fact.imageURL) {
                 topicImageView.sd_setImage(with: url, completed: nil)
@@ -54,11 +54,6 @@ class DiscussionCell: UICollectionViewCell {
                      
             
         }
-    }
-    
-    override func awakeFromNib() {
-        
-        
     }
     
     override func layoutSubviews() {
@@ -75,10 +70,18 @@ class DiscussionCell: UICollectionViewCell {
         layer.shadowPath = UIBezierPath(roundedRect: contentView.frame, cornerRadius: cornerRadius).cgPath
     }
     
-    func getArguments(documentID: String) {
-        if documentID == "" { return }
+    func getArguments(fact: Fact) {
+        if fact.documentID == "" { return }
         
-        let ref = db.collection("Facts").document(documentID).collection("arguments")
+        var collectionRef: CollectionReference!
+        
+        if fact.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        
+        let ref = collectionRef.document(fact.documentID).collection("arguments")
         
         let proRef = ref.whereField("proOrContra", isEqualTo: "pro").order(by: "upvotes", descending: true).limit(to: 1)
         proRef.getDocuments { (snap, err) in

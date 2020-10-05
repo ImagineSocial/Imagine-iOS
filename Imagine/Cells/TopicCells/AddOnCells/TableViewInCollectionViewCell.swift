@@ -15,6 +15,7 @@ protocol TableViewInCollectionViewCellDelegate {
 class TableViewInCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var containerView: UIView!
     
     var items = [Any]()
     let companyReuseIdentifier = "SmallCompanyTableViewCell"
@@ -25,6 +26,8 @@ class TableViewInCollectionViewCell: UICollectionViewCell {
     var isEverySecondCell = false       // Change Design on every second Cell
     
     var delegate: TableViewInCollectionViewCellDelegate?
+    
+    let cornerRadius: CGFloat = 8
     
     override func awakeFromNib() {
         
@@ -39,11 +42,29 @@ class TableViewInCollectionViewCell: UICollectionViewCell {
         tableView.register(UINib(nibName: "VoteCell", bundle: nil), forCellReuseIdentifier: voteCellIdentifier)
         tableView.register(UINib(nibName: "InfoHeaderAddOnCell", bundle: nil), forCellReuseIdentifier: addOnHeaderIdentifier)
         
-        contentView.layer.cornerRadius = 5
     }
     
     override func prepareForReuse() {
         isEverySecondCell = false
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        let layer = contentView.layer
+        layer.cornerRadius = cornerRadius
+        containerView.layer.cornerRadius = cornerRadius
+        if #available(iOS 13.0, *) {
+            layer.shadowColor = UIColor.label.cgColor
+        } else {
+            layer.shadowColor = UIColor.black.cgColor
+        }
+        layer.shadowOffset = CGSize(width: 0, height: 0)
+        layer.shadowRadius = 3
+        layer.shadowOpacity = 0.5
+        
+        let rect = CGRect(x: 0, y: 0, width: contentView.frame.width, height: contentView.frame.height)
+        layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius).cgPath
     }
     
 }
@@ -51,16 +72,8 @@ class TableViewInCollectionViewCell: UICollectionViewCell {
 extension TableViewInCollectionViewCell: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        if let companys = items as? [Company] {
-//            if companys.count <= 3 {
-//                return companys.count
-//            } else {
-//                return 4
-//            }
-//        } else {
-            return items.count
-//        }
-        
+
+        return items.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -101,7 +114,6 @@ extension TableViewInCollectionViewCell: UITableViewDelegate, UITableViewDataSou
                     } else {
                         cell.contentView.backgroundColor = .ios12secondarySystemBackground
                     }
-                    cell.contentView.layer.cornerRadius = 5
                 } else {
                     let layer = cell.contentView.layer
                     
@@ -110,8 +122,7 @@ extension TableViewInCollectionViewCell: UITableViewDelegate, UITableViewDataSou
                     } else {
                         layer.borderColor = UIColor.ios12secondarySystemBackground.cgColor
                     }
-                    layer.borderWidth = 1
-                    layer.cornerRadius = 5
+                    
                 }
                 cell.jobOffer = jobOffer[indexPath.row]
                 cell.needInsets = false

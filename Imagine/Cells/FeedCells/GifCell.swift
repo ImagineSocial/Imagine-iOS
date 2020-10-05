@@ -12,9 +12,9 @@ import AVKit
 
 class GifCell: BaseFeedCell {
     
-    @IBOutlet weak var titleLabelHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var gifView: UIView!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
+    @IBOutlet weak var GIFViewHeightConstraint: NSLayoutConstraint!
     
     var avPlayer: AVPlayer?
     var avPlayerLayer: AVPlayerLayer?
@@ -123,9 +123,6 @@ class GifCell: BaseFeedCell {
                 descriptionPreviewLabel.text = post.description
                 commentCountLabel.text = String(post.commentCount)
                 
-                // LabelHeight calculated by the number of letters
-                let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
-                titleLabelHeightConstraint.constant = labelHeight
                 
                 if let fact = post.fact {
                     if #available(iOS 13.0, *) {
@@ -144,7 +141,8 @@ class GifCell: BaseFeedCell {
                         self.loadFact()
                     }
                 }
-                // ToDo: ReportView
+                
+                setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
             }
         }
     }
@@ -152,7 +150,7 @@ class GifCell: BaseFeedCell {
     func getFact(beingFollowed: Bool) {
         if let post = post {
             if let fact = post.fact {
-                self.loadFact(fact: fact, beingFollowed: beingFollowed) {
+                self.loadFact(language: post.language, fact: fact, beingFollowed: beingFollowed) {
                     (fact) in
                     post.fact = fact
                     

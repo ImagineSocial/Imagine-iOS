@@ -82,7 +82,15 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
     
     
     func getCommunityPosts() {
-        let ref = db.collection("TopicPosts").whereField("type", in: ["picture", "multiPicture", "GIF"]).order(by: "createTime", descending: true).limit(to: 50)
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        if language == .english {
+            collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
+        } else {
+            collectionRef = self.db.collection("TopicPosts")
+        }
+        
+        let ref = collectionRef.whereField("type", in: ["picture", "multiPicture", "GIF"]).order(by: "createTime", descending: true).limit(to: 50)
         //.whereField("type", isEqualTo: "picture").order(by: "createTime", descending: true).limit(to: 50)
         ref.getDocuments { (snap, err) in
             if let error = err {
@@ -92,7 +100,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
                     var posts = [Post]()
                     for document in snap.documents {
                         
-                        if let post = self.postHelper.addThePost(document: document, isTopicPost: true, forFeed: false) {
+                        if let post = self.postHelper.addThePost(document: document, isTopicPost: true, forFeed: false, language: language) {
                             posts.append(post)
                         }
                     }
@@ -328,10 +336,16 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
         var postResults = [Post]()
         var userResults = [User]()
         var topicResults = [Fact]()
-        
+        let language = LanguageSelection().getLanguage()
         switch searchScope {
         case 0: // Search Posts
-            let titleRef = db.collection("Posts").whereField("title", isGreaterThan: searchText).whereField("title", isLessThan: "\(searchText)ü").limit(to: 10)
+            var collectionRef: CollectionReference!
+            if language == .english {
+                collectionRef = db.collection("Data").document("en").collection("posts")
+            } else {
+                collectionRef = db.collection("Posts")
+            }
+            let titleRef = collectionRef.whereField("title", isGreaterThan: searchText).whereField("title", isLessThan: "\(searchText)ü").limit(to: 10)
             
             titleRef.getDocuments { (querySnap, error) in
                 if let err = error {
@@ -356,7 +370,13 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
             }
             
             // You have to write the whole noun
-            let tagRef = db.collection("Posts").whereField("tags", arrayContains: searchText).limit(to: 10)
+            var tagCollectionRef: CollectionReference!
+            if language == .english {
+                collectionRef = db.collection("Data").document("en").collection("posts")
+            } else {
+                collectionRef = db.collection("Posts")
+            }
+            let tagRef = tagCollectionRef.whereField("tags", arrayContains: searchText).limit(to: 10)
             
             tagRef.getDocuments { (querySnap, error) in
                 if let err = error {
@@ -381,7 +401,13 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
             }
             
         case 1:
-            let titleRef = db.collection("Facts").whereField("name", isGreaterThan: searchText).whereField("name", isLessThan: "\(searchText)ü").limit(to: 10)
+            var collectionRef: CollectionReference!
+            if language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topics")
+            } else {
+                collectionRef = db.collection("Facts")
+            }
+            let titleRef = collectionRef.whereField("name", isGreaterThan: searchText).whereField("name", isLessThan: "\(searchText)ü").limit(to: 10)
             
             titleRef.getDocuments { (snap, err) in
                 if let error = err {

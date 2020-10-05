@@ -11,6 +11,7 @@ import Firebase
 import MapKit
 import CropViewController
 import Photos
+import FirebaseFirestore
 
 protocol SettingCellDelegate {
     func gotChanged(type: SettingChangeType, value: Any)
@@ -46,10 +47,15 @@ class UserSetting {
     var locationIsPublic = false
     
     var youTubeLink: String?
+    var youTubeDescription: String?
     var patreonLink: String?
+    var patreonDescription: String?
     var instagramLink: String?
+    var instagramDescription: String?
     var twitterLink: String?
+    var twitterDescription: String?
     var songwhipLink: String?
+    var songwhipDescription: String?
     
     init(name: String, OP: String) {
         self.name = name
@@ -126,14 +132,20 @@ enum SettingChangeType {
     //User
     case changeUserPicture
     case changeUserStatusText
-    case changeUserInstagramLink
-    case changeUserPatreonLink
-    case changeUserYouTubeLink
-    case changeUserTwitterLink
-    case changeUserSongwhipLink
     case changeUserAge
     case changeUserLocation
     case changeUserLocationPublicity
+    //User Social Media
+    case changeUserInstagramLink
+    case changeUserInstagramDescription
+    case changeUserPatreonLink
+    case changeUserPatreonDescription
+    case changeUserYouTubeLink
+    case changeUserYouTubeDescription
+    case changeUserTwitterLink
+    case changeUserTwitterDescription
+    case changeUserSongwhipLink
+    case changeUserSongwhipDescription
     //AddOn
     case changeAddOnPicture
     case changeAddOnTitle
@@ -201,7 +213,13 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
         // Set the custom settings and fetch additional information if neccessarry
         
         if let topic = topic {
-            let ref = db.collection("Facts").document(topic.documentID)
+            var collectionRef: CollectionReference!
+            if topic.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topics")
+            } else {
+                collectionRef = db.collection("Facts")
+            }
+            let ref = collectionRef.document(topic.documentID)
             
             Analytics.logEvent("SettingOpened", parameters: [
                 AnalyticsParameterTerm: "topic"
@@ -260,6 +278,21 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
                             }
                             if let songwhipLink = data["songwhipLink"] as? String {
                                 userSetting.songwhipLink = songwhipLink
+                            }
+                            if let instagramDescription = data["instagramDescription"] as? String {
+                                userSetting.instagramDescription = instagramDescription
+                            }
+                            if let patreonDescription = data["patreonDescription"] as? String {
+                                userSetting.patreonDescription = patreonDescription
+                            }
+                            if let youTubeDescription = data["youTubeDescription"] as? String {
+                                userSetting.youTubeDescription = youTubeDescription
+                            }
+                            if let twitterDescription = data["twitterDescription"] as? String {
+                                userSetting.twitterDescription = twitterDescription
+                            }
+                            if let songwhipDescription = data["songwhipDescription"] as? String {
+                                userSetting.songwhipDescription = songwhipDescription
                             }
                             
                             if let birthday = data["birthday"] as? Timestamp {
@@ -346,14 +379,29 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
                 
                 let instaCell = TableViewSettingCell(value: userSetting.instagramLink, type: .textCell, settingChange: .changeUserInstagramLink)
                 instaCell.titleText = "Instagram:"
+                let instaDescrCell = TableViewSettingCell(value: userSetting.instagramDescription, type: .textCell, settingChange: .changeUserInstagramDescription)
+                instaDescrCell.titleText = "Beschreibung:"
+                instaDescrCell.characterLimit = Constants.characterLimits.socialMediaDescriptionCharacterLimit
                 let patreonCell = TableViewSettingCell(value: userSetting.patreonLink, type: .textCell, settingChange: .changeUserPatreonLink)
                 patreonCell.titleText = "Patreon:"
+                let patreonDescrCell = TableViewSettingCell(value: userSetting.patreonDescription, type: .textCell, settingChange: .changeUserPatreonDescription)
+                patreonDescrCell.titleText = "Beschreibung:"
+                patreonDescrCell.characterLimit = Constants.characterLimits.socialMediaDescriptionCharacterLimit
                 let youTubeCell = TableViewSettingCell(value: userSetting.youTubeLink, type: .textCell, settingChange: .changeUserYouTubeLink)
                 youTubeCell.titleText = "YouTube:"
+                let youTubeDescrCell = TableViewSettingCell(value: userSetting.youTubeDescription, type: .textCell, settingChange: .changeUserYouTubeDescription)
+                youTubeDescrCell.titleText = "Beschreibung:"
+                youTubeDescrCell.characterLimit = Constants.characterLimits.socialMediaDescriptionCharacterLimit
                 let twitterCell = TableViewSettingCell(value: userSetting.twitterLink, type: .textCell, settingChange: .changeUserTwitterLink)
                 twitterCell.titleText = "Twitter:"
+                let twitterDescrCell = TableViewSettingCell(value: userSetting.twitterDescription, type: .textCell, settingChange: .changeUserTwitterDescription)
+                twitterDescrCell.titleText = "Beschreibung:"
+                twitterDescrCell.characterLimit = Constants.characterLimits.socialMediaDescriptionCharacterLimit
                 let songwhipCell = TableViewSettingCell(value: userSetting.songwhipLink, type: .textCell, settingChange: .changeUserSongwhipLink)
                 songwhipCell.titleText = "Songwhip:"
+                let songwhipDescrCell = TableViewSettingCell(value: userSetting.songwhipDescription, type: .textCell, settingChange: .changeUserSongwhipDescription)
+                songwhipDescrCell.titleText = "Beschreibung:"
+                songwhipDescrCell.characterLimit = Constants.characterLimits.socialMediaDescriptionCharacterLimit
                 socialMediaSetting.footerText = NSLocalizedString("setting_social_media_button_description", comment: "what are these about?")
                 
                 let voluntarySettings = TableViewSetting(type: .normal, headerText: NSLocalizedString("setting_user_personal_info", comment: "personal infos"))
@@ -368,7 +416,7 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
                 
                 voluntarySettings.cells.append(contentsOf: [ageCell, locationCell, locationIsPublicCell])
                 
-                socialMediaSetting.cells.append(contentsOf: [patreonCell, youTubeCell, instaCell, twitterCell, songwhipCell])
+                socialMediaSetting.cells.append(contentsOf: [youTubeCell, youTubeDescrCell, instaCell, instaDescrCell, twitterCell, twitterDescrCell, patreonCell, patreonDescrCell, songwhipCell, songwhipDescrCell])
                 setting.cells.append(contentsOf: [imageCell, statusCell])
                 
                 self.settings.append(contentsOf: [setting, socialMediaSetting, voluntarySettings])
@@ -416,7 +464,7 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
         
         for item in items {
             if let post = item.item as? Post {
-                self.postHelper.loadPost(postID: post.documentID, isTopicPost: post.isTopicPost) { (post) in
+                self.postHelper.loadPost(post: post) { (post) in
                     if let post = post {
                         let item = AddOnItem(documentID: post.documentID, item: post)
                         self.itemList.append(item)
@@ -426,7 +474,7 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
                     }
                 }
             } else if let fact = item.item as? Fact {
-                self.dataHelper.loadFact(factID: fact.documentID) { (fact) in
+                self.dataHelper.loadFact(fact: fact) { (fact) in
                     if let fact = fact {
                         let item = AddOnItem(documentID: fact.documentID, item: fact)
                         self.itemList.append(item)
@@ -585,6 +633,16 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
                     return 75
                 case .changeAddOnDescription:
                     return 100
+                case .changeUserYouTubeDescription:
+                    return 75
+                case .changeUserSongwhipDescription:
+                    return 75
+                case .changeUserTwitterDescription:
+                    return 75
+                case .changeUserInstagramDescription:
+                    return 75
+                case .changeUserPatreonDescription:
+                    return 75
                 default:
                     return 40
                 }
@@ -1000,6 +1058,39 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             } else {
                 return
             }
+        case .changeUserAge:
+            firestoreKey = "birthday"
+            
+            if let date = value as? Date {
+                let timestamp = Timestamp(date: date)
+                firestoreValue = timestamp
+            } else {
+                return
+            }
+        case .changeUserLocation:
+            
+            if let location = value as? Location {
+                firestoreKey = "locationName"
+                firestoreValue = location.title
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.gotChanged(type: .changeUserLocation, value: location.coordinate)
+                }
+            } else if let coordinate = value as? CLLocationCoordinate2D {
+                firestoreKey = "locationCoordinate"
+                let geoPoint = GeoPoint(latitude: coordinate.latitude, longitude: coordinate.longitude)
+                firestoreValue = geoPoint
+            } else {
+                return
+            }
+        case .changeUserLocationPublicity:
+            firestoreKey = "locationIsPublic"
+            
+            if let isIt = value as? Bool {
+                firestoreValue = isIt
+            } else {
+                return
+            }
         case .changeUserInstagramLink:
             firestoreKey = "instagramLink"
             
@@ -1040,6 +1131,46 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             } else {
                 return
             }
+        case .changeUserInstagramDescription:
+            firestoreKey = "instagramDescription"
+            
+            if let string = value as? String {
+                firestoreValue = string
+            } else {
+                return
+            }
+        case .changeUserPatreonDescription:
+            firestoreKey = "patreonDescription"
+            
+            if let string = value as? String {
+                firestoreValue = string
+            } else {
+                return
+            }
+        case .changeUserYouTubeDescription:
+            firestoreKey = "youTubeDescription"
+            
+            if let string = value as? String {
+                firestoreValue = string
+            } else {
+                return
+            }
+        case .changeUserTwitterDescription:
+            firestoreKey = "twitterDescription"
+            
+            if let string = value as? String {
+                firestoreValue = string
+            } else {
+                return
+            }
+        case .changeUserSongwhipDescription:
+            firestoreKey = "songwhipDescription"
+            
+            if let string = value as? String {
+                firestoreValue = string
+            } else {
+                return
+            }
         case .changeAddOnPicture:
             firestoreKey = "imageURL"
             
@@ -1072,39 +1203,6 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             } else {
                 return
             }
-        case .changeUserAge:
-            firestoreKey = "birthday"
-            
-            if let date = value as? Date {
-                let timestamp = Timestamp(date: date)
-                firestoreValue = timestamp
-            } else {
-                return
-            }
-        case .changeUserLocation:
-            
-            if let location = value as? Location {
-                firestoreKey = "locationName"
-                firestoreValue = location.title
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.gotChanged(type: .changeUserLocation, value: location.coordinate)
-                }
-            } else if let coordinate = value as? CLLocationCoordinate2D {
-                firestoreKey = "locationCoordinate"
-                let geoPoint = GeoPoint(latitude: coordinate.latitude, longitude: coordinate.longitude)
-                firestoreValue = geoPoint
-            } else {
-                return
-            }
-        case .changeUserLocationPublicity:
-            firestoreKey = "locationIsPublic"
-            
-            if let isIt = value as? Bool {
-                firestoreValue = isIt
-            } else {
-                return
-            }
         }
         
         if firestoreKey != "" {
@@ -1116,7 +1214,13 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
     
     func changeDataInFirestore(data: [String: Any]) {
         if let topic = topic {
-            let ref = db.collection("Facts").document(topic.documentID)
+            var collectionRef: CollectionReference!
+            if topic.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topics")
+            } else {
+                collectionRef = db.collection("Facts")
+            }
+            let ref = collectionRef.document(topic.documentID)
             ref.updateData(data) { (err) in
                 if let error = err {
                     print("We could not update the data: \(error.localizedDescription)")
@@ -1134,7 +1238,13 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
                 }
             }
         } else if let addOn = addOn {
-            let ref = db.collection("Facts").document(addOn.fact.documentID).collection("addOns").document(addOn.documentID)
+            var collectionRef: CollectionReference!
+            if addOn.fact.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topics")
+            } else {
+                collectionRef = db.collection("Facts")
+            }
+            let ref = collectionRef.document(addOn.fact.documentID).collection("addOns").document(addOn.documentID)
             ref.updateData(data) { (err) in
                 if let error = err {
                     print("We could not update the data: \(error.localizedDescription)")

@@ -31,6 +31,8 @@ struct Constants {
     }
     
     struct characterLimits {
+        static let postTitleCharacterLimit = 200
+        
         static let factTitleCharacterLimit = 30
         static let factDescriptionCharacterLimit = 120
         
@@ -45,6 +47,7 @@ struct Constants {
         static let addOnHeaderDescriptionCharacterLimit = 400
         
         static let userStatusTextCharacterLimit = 150
+        static let socialMediaDescriptionCharacterLimit = 85
     }
     
     struct userIDs {

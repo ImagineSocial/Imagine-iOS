@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -24,52 +25,21 @@
                 <rect key="frame" x="0.0" y="0.0" width="375" height="165"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kategorie" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.64999997615814209" translatesAutoresizingMaskIntoConstraints="NO" id="kel-W8-0uN">
-                        <rect key="frame" x="285" y="12" width="70" height="17"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vMU-Mk-NAK">
+                        <rect key="frame" x="300.5" y="141.5" width="64.5" height="18.5"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="70" id="BTS-pp-Ymj"/>
+                            <constraint firstAttribute="height" constant="18.5" id="XFE-F9-i8C"/>
                         </constraints>
-                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="13"/>
-                        <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Informatiker" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fmn-yh-ahA">
-                        <rect key="frame" x="40" y="8" width="235" height="25"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="25" id="Sjz-Zf-biF"/>
-                        </constraints>
-                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="19"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Ujy-kB-r9f">
-                        <rect key="frame" x="8" y="40" width="352" height="86"/>
-                        <string key="text">Unsere Algorithmen sind das Rückrad für eine faire und unterhaltsame Verteilung von Wissen und Posts. Höchste Priorität für dieses komplizierte Thema!</string>
-                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0 Interessenten" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Roz-n1-yHD">
-                        <rect key="frame" x="8" y="136" width="100.5" height="21"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="21" id="xxk-Av-3ri"/>
-                        </constraints>
-                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mlZ-fA-faV">
-                        <rect key="frame" x="280" y="136" width="75" height="21"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="21" id="OWV-YC-36P"/>
-                        </constraints>
-                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="people" translatesAutoresizingMaskIntoConstraints="NO" id="xGU-Xb-7Z2" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="5" y="5.5" width="30" height="30"/>
-                        <color key="backgroundColor" systemColor="systemFillColor" red="0.47058823529999999" green="0.47058823529999999" blue="0.50196078430000002" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="people" translatesAutoresizingMaskIntoConstraints="NO" id="Izp-NI-AEu" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="10" y="5" width="30" height="30"/>
+                        <color key="backgroundColor" systemColor="systemFillColor"/>
                         <color key="tintColor" red="0.31537210939999999" green="0.46283984179999998" blue="0.65801352260000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="30" id="Y1t-dV-hJP"/>
-                            <constraint firstAttribute="width" constant="30" id="Z7Q-Me-YrJ"/>
+                            <constraint firstAttribute="width" constant="30" id="ZuA-jY-aYO"/>
+                            <constraint firstAttribute="height" constant="30" id="ebu-5w-6JM"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -77,39 +47,74 @@
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0 Interessenten" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6m9-4X-ATv">
+                        <rect key="frame" x="10" y="144" width="86" height="16"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kategorie" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.64999997615814209" translatesAutoresizingMaskIntoConstraints="NO" id="Eau-PN-hyv">
+                        <rect key="frame" x="314" y="5" width="56" height="17"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="13"/>
+                        <color key="textColor" systemColor="secondaryLabelColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lwX-8r-r2X">
+                        <rect key="frame" x="10" y="40" width="355" height="96.5"/>
+                        <string key="text">Unsere Algorithmen sind das Rückrad für eine faire und unterhaltsame Verteilung von Wissen und Posts. Höchste Priorität für dieses komplizierte Thema!</string>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Informatiker" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HbY-gO-X6t">
+                        <rect key="frame" x="45" y="7.5" width="110.5" height="25"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="19"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
-                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                 <constraints>
-                    <constraint firstAttribute="trailingMargin" secondItem="kel-W8-0uN" secondAttribute="trailing" id="4TG-5Y-7h9"/>
-                    <constraint firstItem="Ujy-kB-r9f" firstAttribute="top" secondItem="fmn-yh-ahA" secondAttribute="bottom" constant="7" id="A9f-3v-zAr"/>
-                    <constraint firstAttribute="bottom" secondItem="Roz-n1-yHD" secondAttribute="bottom" constant="8" id="APc-w5-9JH"/>
-                    <constraint firstItem="kel-W8-0uN" firstAttribute="leading" secondItem="fmn-yh-ahA" secondAttribute="trailing" constant="10" id="D3b-kY-xEx"/>
-                    <constraint firstItem="kel-W8-0uN" firstAttribute="centerY" secondItem="fmn-yh-ahA" secondAttribute="centerY" id="LF3-nE-jGY"/>
-                    <constraint firstItem="Ujy-kB-r9f" firstAttribute="leading" secondItem="F75-GZ-Ov2" secondAttribute="leading" constant="8" id="OnY-sW-XiR"/>
-                    <constraint firstItem="fmn-yh-ahA" firstAttribute="leading" secondItem="xGU-Xb-7Z2" secondAttribute="trailing" constant="5" id="Z10-7Z-9aR"/>
-                    <constraint firstItem="xGU-Xb-7Z2" firstAttribute="leading" secondItem="F75-GZ-Ov2" secondAttribute="leading" constant="5" id="bEE-oR-157"/>
-                    <constraint firstItem="mlZ-fA-faV" firstAttribute="centerY" secondItem="Roz-n1-yHD" secondAttribute="centerY" id="ePR-di-N2Q"/>
-                    <constraint firstAttribute="trailing" secondItem="mlZ-fA-faV" secondAttribute="trailing" constant="20" id="hit-2W-10U"/>
-                    <constraint firstAttribute="trailing" secondItem="Ujy-kB-r9f" secondAttribute="trailing" constant="15" id="mEj-8m-T0N"/>
-                    <constraint firstItem="Roz-n1-yHD" firstAttribute="leading" secondItem="Ujy-kB-r9f" secondAttribute="leading" id="nIh-rz-iCT"/>
-                    <constraint firstItem="fmn-yh-ahA" firstAttribute="top" secondItem="F75-GZ-Ov2" secondAttribute="top" constant="8" id="nO3-Vr-by0"/>
-                    <constraint firstItem="Roz-n1-yHD" firstAttribute="top" secondItem="Ujy-kB-r9f" secondAttribute="bottom" constant="10" id="vNR-Xk-CEW"/>
-                    <constraint firstItem="xGU-Xb-7Z2" firstAttribute="centerY" secondItem="fmn-yh-ahA" secondAttribute="centerY" id="wQ1-Nh-77F"/>
+                    <constraint firstAttribute="trailing" secondItem="vMU-Mk-NAK" secondAttribute="trailing" constant="10" id="DzQ-IK-G68"/>
+                    <constraint firstItem="HbY-gO-X6t" firstAttribute="centerY" secondItem="Izp-NI-AEu" secondAttribute="centerY" id="FVO-zy-pnO"/>
+                    <constraint firstItem="HbY-gO-X6t" firstAttribute="leading" secondItem="Izp-NI-AEu" secondAttribute="trailing" constant="5" id="GVO-pW-zi0"/>
+                    <constraint firstAttribute="trailing" secondItem="lwX-8r-r2X" secondAttribute="trailing" constant="10" id="J7Y-Ef-p9A"/>
+                    <constraint firstAttribute="bottom" secondItem="6m9-4X-ATv" secondAttribute="bottom" constant="5" id="LLm-45-naO"/>
+                    <constraint firstItem="Izp-NI-AEu" firstAttribute="top" secondItem="F75-GZ-Ov2" secondAttribute="top" constant="5" id="Ss9-rI-Owz"/>
+                    <constraint firstItem="lwX-8r-r2X" firstAttribute="leading" secondItem="F75-GZ-Ov2" secondAttribute="leading" constant="10" id="XUL-yT-h7a"/>
+                    <constraint firstItem="vMU-Mk-NAK" firstAttribute="top" secondItem="lwX-8r-r2X" secondAttribute="bottom" constant="5" id="Xs0-8t-bpq"/>
+                    <constraint firstItem="Izp-NI-AEu" firstAttribute="leading" secondItem="F75-GZ-Ov2" secondAttribute="leading" constant="10" id="bZs-if-om6"/>
+                    <constraint firstAttribute="bottom" secondItem="vMU-Mk-NAK" secondAttribute="bottom" constant="5" id="jgr-5a-FJf"/>
+                    <constraint firstItem="6m9-4X-ATv" firstAttribute="leading" secondItem="F75-GZ-Ov2" secondAttribute="leading" constant="10" id="kPU-AH-blE"/>
+                    <constraint firstItem="lwX-8r-r2X" firstAttribute="top" secondItem="Izp-NI-AEu" secondAttribute="bottom" constant="5" id="nn7-xV-bfY"/>
+                    <constraint firstItem="Eau-PN-hyv" firstAttribute="top" secondItem="F75-GZ-Ov2" secondAttribute="top" constant="5" id="vBy-GW-ibo"/>
+                    <constraint firstAttribute="trailing" secondItem="Eau-PN-hyv" secondAttribute="trailing" constant="5" id="zL1-jJ-PSk"/>
                 </constraints>
             </tableViewCellContentView>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <connections>
-                <outlet property="categoryLabel" destination="kel-W8-0uN" id="kvr-Mn-QOA"/>
-                <outlet property="cellBodyLabel" destination="Ujy-kB-r9f" id="c44-ma-euQ"/>
-                <outlet property="createDateLabel" destination="mlZ-fA-faV" id="3ou-4I-MAe"/>
-                <outlet property="headerLabel" destination="fmn-yh-ahA" id="VIl-OF-PVG"/>
-                <outlet property="interestedCountLabel" destination="Roz-n1-yHD" id="6Hh-29-ZJb"/>
-                <outlet property="jobOfferIconImageView" destination="xGU-Xb-7Z2" id="Yc6-qR-fFp"/>
+                <outlet property="categoryLabel" destination="Eau-PN-hyv" id="RoE-G6-kcD"/>
+                <outlet property="cellBodyLabel" destination="lwX-8r-r2X" id="GLm-f6-Ecb"/>
+                <outlet property="createDateLabel" destination="vMU-Mk-NAK" id="bvy-U3-ODv"/>
+                <outlet property="headerLabel" destination="HbY-gO-X6t" id="ax7-3o-ZH1"/>
+                <outlet property="interestedCountLabel" destination="6m9-4X-ATv" id="kN4-Vh-QJh"/>
+                <outlet property="jobOfferIconImageView" destination="Izp-NI-AEu" id="x9l-Dq-mYR"/>
             </connections>
             <point key="canvasLocation" x="129.71014492753625" y="81.361607142857139"/>
         </tableViewCell>
     </objects>
+    <designables>
+        <designable name="Izp-NI-AEu">
+            <size key="intrinsicContentSize" width="102" height="102"/>
+        </designable>
+    </designables>
     <resources>
         <image name="people" width="102" height="102"/>
+        <systemColor name="secondaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemFillColor">
+            <color red="0.47058823529411764" green="0.47058823529411764" blue="0.50196078431372548" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
     </resources>
 </document>

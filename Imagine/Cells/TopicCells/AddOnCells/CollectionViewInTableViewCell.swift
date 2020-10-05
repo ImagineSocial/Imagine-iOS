@@ -151,7 +151,7 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                         
                         cell.delegate = self
                         if post.documentID != "" {
-                            cell.loadPost(postID: post.documentID, isTopicPost: post.isTopicPost)
+                            cell.loadPost(post: post)
                         } else {    //NewAddOnTableVC
                             cell.post = post
                         }
@@ -171,7 +171,7 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                         if fact.title != "" {
                             cell.fact = fact
                         } else {    // Not loaded yet
-                            cell.factID = fact.documentID
+                            cell.unloadedFact = fact
                         }
                         
                         if let title = fact.addOnTitle {

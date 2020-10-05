@@ -73,7 +73,15 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     func getPosts() {
-        let ref = db.collection("Posts").order(by: "createTime", descending: true).limit(to: 15)
+        
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        if language == .english {
+            collectionRef = self.db.collection("Data").document("en").collection("posts")
+        } else {
+            collectionRef = self.db.collection("Posts")
+        }
+        let ref = collectionRef.order(by: "createTime", descending: true).limit(to: 15)
         
         ref.getDocuments { (snap, err) in
             if let error = err {
@@ -82,7 +90,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
                 if let snap = snap {
                     for document in snap.documents {
                                                 
-                        if let post = self.postHelper.addThePost(document: document, isTopicPost: false, forFeed: false) {
+                        if let post = self.postHelper.addThePost(document: document, isTopicPost: false, forFeed: false, language: language) {
                             self.posts.append(post)
                         }
                     }
@@ -404,7 +412,14 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     
     
     func checkIfFirstEntry(collectionReferenceString: String, fact: Fact, gotCollection: @escaping (Bool) -> Void) {
-        let ref = db.collection("Facts").document(fact.documentID).collection(collectionReferenceString)
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        if language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        let ref = collectionRef.document(fact.documentID).collection(collectionReferenceString)
         
         ref.getDocuments { (snap, err) in
             if let error = err {

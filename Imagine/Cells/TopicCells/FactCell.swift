@@ -80,20 +80,29 @@ class FactCell:UICollectionViewCell {
         }
     }
     
-    var factID: String? {
+    var unloadedFact: Fact? {
         didSet {
-            let ref = db.collection("Facts").document(factID!)
-                        
-            let user = Auth.auth().currentUser
-            ref.getDocument { (snap, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
+            if let unloadedFact = unloadedFact, unloadedFact.documentID != "" {
+                var collectionRef: CollectionReference!
+                let language = LanguageSelection().getLanguage()
+                if language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("topics")
                 } else {
-                    if let snap = snap {
-                        if let data = snap.data() {
-                            if let fact = DataHelper().addFact(currentUser: user,documentID: snap.documentID, data: data) {
-                                
-                                self.fact = fact
+                    collectionRef = db.collection("Facts")
+                }
+                let ref = collectionRef.document(unloadedFact.documentID)
+                
+                let user = Auth.auth().currentUser
+                ref.getDocument { (snap, err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        if let snap = snap {
+                            if let data = snap.data() {
+                                if let fact = DataHelper().addFact(currentUser: user,documentID: snap.documentID, data: data) {
+                                    
+                                    self.fact = fact
+                                }
                             }
                         }
                     }

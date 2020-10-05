@@ -29,6 +29,7 @@ class JobSurveyViewController: UIViewController, MFMailComposeViewControllerDele
     var userUID = ""
     var send = false
     var jobTitle:String = ""
+    let db = Firestore.firestore()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,6 +65,7 @@ class JobSurveyViewController: UIViewController, MFMailComposeViewControllerDele
                 self.present(createMail, animated: true, completion: nil)
             } else {
                 EmailAlert()
+                setFirebaseData()
             }
         }
         
@@ -71,7 +73,14 @@ class JobSurveyViewController: UIViewController, MFMailComposeViewControllerDele
     }
     
     func setFirebaseData() {
-        let jobRef = Firestore.firestore().collection("JobOffers").document(jobOffer.documentID)
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        if language == .english {
+            collectionRef = db.collection("Data").document("en").collection("jobOffers")
+        } else {
+            collectionRef = db.collection("JobOffers")
+        }
+        let jobRef = collectionRef.document(jobOffer.documentID)
         
         var dataDictionary: [String: Any] = ["name": userName, "userUID": userUID, "qualifications": qualificationTextField.text, "sharedLink": linkTextField.text, "residence" : residenceTextField.text, "motivation" : inputTextField.text, "contact": contactTextField.text, "applicationCreateTime": Timestamp(date: Date()), "message": messageTextField.text]
         
@@ -118,7 +127,7 @@ class JobSurveyViewController: UIViewController, MFMailComposeViewControllerDele
     }
     
     func EmailAlert() {
-        let emailError = UIAlertController(title: "We couldnt send the Email!", message: "Check your preferences, if you are locked into your Email at your phone. Your request is saved, if you want to send this Email anyway please try again or write us at: malte.schoppe@gmail.com", preferredStyle: .alert)
+        let emailError = UIAlertController(title: "We couldnt send the Email!", message: "Check your preferences, if you are locked into your Email at your phone. Your request is saved and the admins alerted, if you want to send this Email anyway please try again or write us at: malte.schoppe@gmail.com", preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: .default) { (_) in
             emailError.dismiss(animated: true, completion: nil)
         }

@@ -138,13 +138,19 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
    
     func getFacts() {
         dataHelper.getData(get: .facts) { (facts) in    // gets the first 8 topic communities by popularity
+            print("##1")
             if let facts = facts as? [Fact] {
-                
                 self.topicFacts = facts
                 self.collectionView.reloadData()    //The user thinks it is loaded
-                print("#Reload 1")
                 
-                let ref = self.db.collection("Facts").whereField("displayOption", isEqualTo: "fact").order(by: "popularity", descending: true).limit(to: 6)
+                var collectionRef: CollectionReference!
+                let language = LanguageSelection().getLanguage()
+                if language == .english {
+                    collectionRef = self.db.collection("Data").document("en").collection("topics")
+                } else {
+                    collectionRef = self.db.collection("Facts")
+                }
+                let ref = collectionRef.whereField("displayOption", isEqualTo: "fact").order(by: "popularity", descending: true).limit(to: 6)
                 
                 let user = Auth.auth().currentUser
                 
@@ -155,6 +161,10 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                         if let snap = snap {
                             var discussionCount = snap.documents.count
 
+                            if snap.documents.count == 0 {
+                                self.loadingFinished()
+                            }
+                            
                             for document in snap.documents {
                                 let data = document.data()
                                 
@@ -165,21 +175,29 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                                 }
                                 
                                 if self.discussionFacts.count == discussionCount {
-
-                                    self.collectionView.reloadData()
-                                    self.getFollowedCommunities()
-                                    self.isLoading = false
-                                    self.view.activityStopAnimating()
+                                    
+                                    self.loadingFinished()
                                 }
                             }
+                        } else {
+                            self.loadingFinished()
                         }
                     }
                 }
+                
             } else {
+                print("##2")
                 self.view.activityStopAnimating()
                 print("Something went wrong")
-            }
+            } 
         }
+    }
+    
+    func loadingFinished() {
+        self.collectionView.reloadData()
+        self.getFollowedCommunities()
+        self.isLoading = false
+        self.view.activityStopAnimating()
     }
     
     func getFollowedCommunities() {
@@ -246,7 +264,11 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             if isLoading {
                 return 8
             } else {
-                return 8
+                if topicFacts.count <= 8 {
+                    return topicFacts.count
+                } else {
+                    return 8
+                }
             }
         } else if section == 2 {
             return discussionFacts.count
@@ -378,6 +400,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
                 }
             } else {
                 performSegue(withIdentifier: "toPageVC", sender: fact)
+                self.topicSelected(fact: fact)
             }
         }
     }
@@ -489,17 +512,25 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     
     func registerRecentFact(fact: Fact) {
         // Safe the selected topic to display it later in the "currentTopic" CollectionView
-         let defaults = UserDefaults.standard
-         var factStrings = defaults.stringArray(forKey: "recentTopics") ?? [String]()
+        let defaults = UserDefaults.standard
+        let key:String!
+        switch fact.language {
+        case .english:
+            key = "recentTopics-en"
+        case .german:
+            key = "recentTopics"
+        }
         
-         factStrings = factStrings.filter{ $0 != fact.documentID }
-         factStrings.insert(fact.documentID, at: 0)
-         
-         if factStrings.count >= 10 {
-             factStrings.removeLast()
-         }
-         
-         defaults.set(factStrings, forKey: "recentTopics")
+        var factStrings = defaults.stringArray(forKey: key) ?? [String]()
+        
+        factStrings = factStrings.filter{ $0 != fact.documentID }
+        factStrings.insert(fact.documentID, at: 0)
+        
+        if factStrings.count >= 10 {
+            factStrings.removeLast()
+        }
+        
+        defaults.set(factStrings, forKey: key)
         
         reloadRecentTopics = true
     }

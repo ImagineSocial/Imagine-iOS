@@ -47,13 +47,13 @@ class Comment {
     var createTime = Date()
     var author = ""
     var sectionItemID: String
+    var sectionItemLanguage: Language = .german
     var isTopicPost = false
     var upvotes: Votes?
     var likes = 0
     var user: User?
     var commentID: String
     var isIndented = false
-    
     var delegate: CommentDelegate?
     
     var children: [Comment]? {
@@ -81,8 +81,6 @@ class Comment {
             ref = db.collection("Comments").document("arguments").collection("comments").document(sectionItemID).collection("threads").document(commentID).collection("children")
         case .source:
             ref = db.collection("Comments").document("sources").collection("comments").document(sectionItemID).collection("threads").document(commentID).collection("children")
-        case .addOn:
-            ref =  db.collection("Comments").document(sectionItemID).collection("threads").document(commentID).collection("children")
         }
         
 

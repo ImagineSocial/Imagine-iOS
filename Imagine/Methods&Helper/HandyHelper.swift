@@ -44,7 +44,12 @@ class HandyHelper {
         // Timestamp umwandeln
         let formatter = DateFormatter()
         let date:Date = timestamp.dateValue()
-        formatter.dateFormat = "dd.MM.yyyy HH:mm"
+        let language = LanguageSelection().getLanguage()
+        if language == .german {
+            formatter.dateFormat = "dd.MM.yyyy HH:mm"
+        } else {
+            formatter.dateFormat = "MM/dd/yyyy HH:mm"
+        }
         let stringDate = formatter.string(from: date)
         
         return stringDate
@@ -54,7 +59,7 @@ class HandyHelper {
         
         // User Daten raussuchen
         let userRef = db.collection("Users").document(userUID)
-
+        
         let user = User()
 
         userRef.getDocument(completion: { (document, err) in
@@ -147,10 +152,22 @@ class HandyHelper {
     
     func updatePost(button: VoteButton, post: Post) {
         var ref: DocumentReference?
+        var collectionRef: CollectionReference!
+        
         if post.isTopicPost {
-            ref = db.collection("TopicPosts").document(post.documentID)
+            if post.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topicPosts")
+            } else {
+                collectionRef = db.collection("TopicPosts")
+            }
+            ref = collectionRef.document(post.documentID)
         } else {
-            ref = db.collection("Posts").document(post.documentID)
+            if post.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("posts")
+            } else {
+                collectionRef = db.collection("Posts")
+            }
+            ref = collectionRef.document(post.documentID)
         }
             
         var keyForFirestore: String?
@@ -203,10 +220,14 @@ class HandyHelper {
         }
         
         if let button = buttonString {
+            
             var data: [String: Any] = ["type": "upvote", "button": button, "postID": post.documentID, "title": post.title]
             
             if post.isTopicPost {
                 data["isTopicPost"] = true
+            }
+            if post.language == .english {
+                data["language"] = "en"
             }
             
             let ref = db.collection("Users").document(post.originalPosterUID).collection("notifications").document()
@@ -301,11 +322,15 @@ class HandyHelper {
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
-                    if snap!.documents.count != 0 {
-                        // Already saved
-                        saved = true
+                    if let snap = snap {
+                        if snap.documents.count != 0 {
+                            // Already saved
+                            saved = true
+                        }
+                        alreadySaved(saved)
+                    } else {
+                        alreadySaved(saved)
                     }
-                    alreadySaved(saved)
                 }
             }
         }
@@ -370,9 +395,10 @@ class HandyHelper {
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
-                
-                for document in snap!.documents {
-                    document.reference.delete()
+                if let snap = snap {
+                    for document in snap.documents {
+                        document.reference.delete()
+                    }
                 }
             }
         }

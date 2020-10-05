@@ -17,7 +17,6 @@ protocol MusicPostDelegate {
 class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
     
     @IBOutlet weak var webView: WKWebView!
-    @IBOutlet weak var titleLabelHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var webViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var viewAboveWebView: UIView!
     @IBOutlet weak var expandViewButton: DesignableButton!
@@ -127,9 +126,6 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
                 descriptionPreviewLabel.text = post.description
                 commentCountLabel.text = String(post.commentCount)
                 
-                // LabelHeight calculated by the number of letters
-                let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
-                titleLabelHeightConstraint.constant = labelHeight
                 
                 if let fact = post.fact {
                     if #available(iOS 13.0, *) {
@@ -148,7 +144,8 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
                         self.loadFact()
                     }
                 }
-                // ToDo: ReportView
+                
+                setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
             }
         }
     }
@@ -156,7 +153,7 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
     func getFact(beingFollowed: Bool) {
         if let post = post {
             if let fact = post.fact {
-                self.loadFact(fact: fact, beingFollowed: beingFollowed) {
+                self.loadFact(language: post.language, fact: fact, beingFollowed: beingFollowed) {
                     (fact) in
                     post.fact = fact
                     

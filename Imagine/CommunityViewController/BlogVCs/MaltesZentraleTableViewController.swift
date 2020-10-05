@@ -29,7 +29,7 @@ class MaltesZentraleTableViewController: UITableViewController {
     }
     
     func getBugs() {
-        let ref = db.collection("Bugs")
+        let ref = db.collection("Feedback").document("bugs").collection("bugs")
         
         ref.getDocuments { (snap, err) in
             if let error = err {

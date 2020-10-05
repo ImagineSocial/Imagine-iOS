@@ -14,6 +14,7 @@
 "description:" = "Beschreibung:";
 "yes" = "Ja";
 "no" = "Nein";
+"rather_not" = "Doch nicht!";
 "next" = "Weiter";
 "back" = "Zurück";
 "thanks" = "Vielen Dank!";
@@ -274,7 +275,7 @@
 "setting_community_addOn_as_start_description" = "Wird deine Community besser von den Unterthemen repräsentiert, als von den Beiträgen, wähle diese Option aus.";
 "setting_user_header_text" = "Profil-Einstellungen";
 "setting_user_personal_bio" = "Steckbrief:";
-"setting_social_media_button_description" = "Gib einen Link zu den jeweiligen Profilen ein, um einen Button in deinem Profil zu erhalten. Weise so die Besucher auf deine anderen Social-Media Profile hin oder promote deine persönlichen Favoriten.";
+"setting_social_media_button_description" = "Gib einen Link zu deinen anderen Konten ein, um einen Button in deinem Profil zu erhalten. Die Beschreibung für die jeweiligen Profile is optional und tauchen erst nach einem Tap in deinem User-Profil auf. Weise so die Besucher auf deine anderen Social-Media Profile hin oder promote deine persönlichen Favoriten.";
 "setting_user_personal_info" = "Persönliche Angaben";
 "setting_user_personal_info_description" = "Mit der Altersangabe unterstützt du Imagine. Wir können diese Angaben nutzen, um unsere User besser zu verstehen und unsere kommenden Werbevorhaben zu optimieren. Das Alter wird nicht öffentlich angezeigt.\nDie Location sorgt für eine bessere Auswahl an Communities und passendere Werbung (später). Im Profil kann es ebenfalls angezeigt werden, um anderen zu zeigen, wo die Mituser herkommen.\nAlle Daten werden bei uns mit Vorsicht gehandhabt und nicht an dritte weitergegeben.";
 "setting_user_birthday" = "Geburtsjahr:";
@@ -397,6 +398,19 @@
 "posts_label" = "Beiträge";
 "send_message_label" = "Nachricht";
 "add_as_friend_label" = "Freundschaftsanfrage";
+"remove_as_friend_label" = "Freund entfernen";
+"friend_request_pending" = "Angefragt";
+"user_status_default_text" = "Hier steht dein Status";
+"block_user_alert_title" = "User Blockieren?";
+"block_user_alert_message" = "Der User wird aus deiner Freundesliste gelöscht und darf dich nicht mehr kontaktieren. Fortfahren? ";
+"delete_friend_alert_title" = "Freund entfernen?";
+"delete_friend_alert_message" = "Möchtest du diese Person als Freund löschen?";
+"done_delete_friend_alert_title" = "Freund gelöscht";
+"done_delete_friend_alert_message" = "Der Freund wurde erfolgreich aus deiner Freundesliste gelöscht";
+"add_friend_alert_title" = "Freundschaft angefragt";
+"add_friend_alert_message" = "Die Freundschaftsanfrage wurde erfolgreich verschickt";
+"log_out" = "Abmelden";
+"we_will_meet_again" = "Wir sehen uns bald wieder!";
 
 //LoginViewController
 "login_welcome_label" = "Willkommen bei Imagine!";
@@ -479,3 +493,37 @@
 //PhotoAccess
 "photoAccess_permission_denied_text" = "Es scheint, dass deine Einstellungen uns den Zugriff auf deine Bild-Ordner untersagen. Du kannst das wie folgt ändern:\n\n1. Schließe die App.\n\n2. Öffne die Einstellungen.\n\n3. Scroll nach unten und wähle Imagine aus.\n\n4. Ändere die Ordner Einstellungen.\n\n5. Öffne die App und versuche es erneut.";
 
+//After Mid Sept.. Update
+//NewCommunityItem
+"share_community_header_label" = "Teile diese Community im Feed";
+"share_community_footer_description" = "Teile diese Community im Feed, um deinen Mitmenschen bei Imagine diese Community zu empfehlen oder sie darauf aufmerksam zu machen. Der Titel wird über der Community im Feed sichtbar sein, so wie du es kennst.";
+
+//ChatVC
+"chat_security_message" = "Der Chat ist für einen ersten Austausch mit deinen Mitmenschen gedacht. Die Nachrichten sind bei uns noch nicht Ende-zu-Ende Verschlüsselt, und damit nicht sicher. Bedenkt dies bitte und weicht ggf. auf andere Messenger aus. Vielen Dank für euer Verständnis!";
+
+//FriendsTableViewController
+"friendship_allowed_label" = "Ihr seid nun befreundet!";
+"friendship_declined_label" = "Anfrage abgelehnt";
+"friendship_requests_label" = "Freundschaftsanfragen";
+"friends_label" = "Freunde";
+
+//Storyboard
+//SettingVC
+"settingVC_languageSelection_label" = "Content-Sprache:";
+"settingVC_languageSelection_description" = "Starte die App erneut um den Content in der bevorzugten Sprache zu sehen";
+
+//BlankContentFile
+"blank_content_chats" = "Du hast noch keine Chats. Schreibe jetzt deine Freunde an";
+"blank_content_friends" = "Hier werden dir deine Freunde angezeigt";
+"blank_content_saved" = "Hier werden deine gespeicherten Beiträge gesammelt";
+"blank_content_ownPosts" = "Du hast noch keine Beiträge hochgeladen";
+"blank_content_stranger_posts" = "Dieser User hat noch keine Beiträge hochgeladen";
+"blank_content_topic_feed" = "Es sind noch keine Beiträge zu diesem Thema zu finden";
+
+
+//CreativeVCs
+"revolution_footer" = "Je mehr Menschen sich für eine Sache einsetzen, desto größer wird ihr Einfluss. Suchen wir uns zuerst die Probleme, bei der sich alle einig sind und setzen uns effektiv für eine Veränderung ein. Lassen wir das Internet endlich für uns arbeiten!";
+"artist_footer" = "Der Einfluss der User ist fest in unserer Idee verankert. Wir wollen kreatives Denken unterstützen und freuen uns auch über kleine Gimmicks, die nicht zwangsläufig notwendig sind, aber das Erlebnis verbessern. Wir wollen anders sein und Menschen die anders denken und handeln anziehen!";
+"programmer_footer" = "Imagine ist ein Open Source Projekt. Wir können die kreativen Ideen von Vielen ausprobieren, testen und als Features etablieren. Die Möglichkeiten sind endlos, wir sind keinen Aktionären oder Investoren Rechenschaft schuldig, kreieren wir also etwas großes und außergewöhnliches!";
+"artist_header" = "Gestalten wir die Zukunft & die App wie es uns beliebt";
+"programmer_header" = "Wir entscheiden wie sich die App anfühlt!";

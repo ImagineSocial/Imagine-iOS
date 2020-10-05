@@ -17,13 +17,7 @@ class RePostCell : BaseFeedCell {
     @IBOutlet weak var originalTitleLabel: UILabel!
     @IBOutlet weak var cellImageView: UIImageView!
 //    @IBOutlet weak var cellImageViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var reportView: DesignablePopUp!
-    @IBOutlet weak var reportViewLabel: UILabel!
-    @IBOutlet weak var reportViewButton: DesignableButton!
-    @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var ogPosterNameLabel: UILabel!
-    @IBOutlet weak var reposterNameLabel: UILabel!
-    @IBOutlet weak var repostDateLabel: UILabel!
     @IBOutlet weak var ogProfilePictureImageView: UIImageView!
     
     var delegate: PostCellDelegate?
@@ -103,7 +97,7 @@ class RePostCell : BaseFeedCell {
             
             // Post Sachen einstellen
             translatedTitleLabel.text = post.title
-            repostDateLabel.text = post.createTime
+            createDateLabel.text = post.createTime
             
             commentCountLabel.text = String(post.commentCount)
             
@@ -135,13 +129,7 @@ class RePostCell : BaseFeedCell {
                     cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
                 }
                 
-                // ReportView einstellen
-                let reportViewOptions = handyHelper.setReportView(post: post)
-                
-                reportViewHeightConstraint.constant = reportViewOptions.heightConstant
-                reportViewButton.isHidden = reportViewOptions.buttonHidden
-                reportViewLabel.text = reportViewOptions.labelText
-                reportView.backgroundColor = reportViewOptions.backgroundColor
+                setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
                 
             } else {
                 
@@ -157,7 +145,7 @@ class RePostCell : BaseFeedCell {
                 cellImageView.image = UIImage(named: "default")
                 
                 reportViewHeightConstraint.constant = 0
-                reportViewButton.isHidden = true
+                reportViewButtonInTop.isHidden = true
                 reportViewLabel.text = ""
                 reportView.backgroundColor = .white
                 
@@ -178,7 +166,7 @@ class RePostCell : BaseFeedCell {
                 }
                 profilePictureImageView.image = UIImage(named: "anonym-user")
             } else {
-                reposterNameLabel.text = post.user.displayName
+                OPNameLabel.text = post.user.displayName
                 // Profile Picture
                 
                 // Profile Picture

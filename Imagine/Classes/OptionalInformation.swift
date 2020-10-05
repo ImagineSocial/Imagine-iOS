@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
 
 protocol OptionalInformationDelegate {
     func fetchCompleted()
@@ -65,7 +66,7 @@ class OptionalInformation {
                 if singleTopic.documentID != "" {
                     let baseFeedCell = BaseFeedCell()
                     DispatchQueue.global(qos: .default).async {
-                        baseFeedCell.loadFact(fact: singleTopic, beingFollowed: false) { (fact) in
+                        baseFeedCell.loadFact(language: fact.language, fact: singleTopic, beingFollowed: false) { (fact) in
                             self.singleTopic = fact
                         }
                     }
@@ -97,7 +98,13 @@ class OptionalInformation {
         if fact.documentID != "" && documentID != "" {
             
             DispatchQueue.global(qos: .default).async {
-                let ref = self.db.collection("Facts").document(self.fact.documentID).collection("addOns").document(self.documentID).collection("items").order(by: "createDate", descending: true).limit(to: 10)
+                var collectionRef: CollectionReference!
+                if self.fact.language == .english {
+                    collectionRef = self.db.collection("Data").document("en").collection("topics")
+                } else {
+                    collectionRef = self.db.collection("Facts")
+                }
+                let ref = collectionRef.document(self.fact.documentID).collection("addOns").document(self.documentID).collection("items").order(by: "createDate", descending: true).limit(to: 10)
                 
                 ref.getDocuments { (snap, err) in
                     if let error = err {
@@ -120,6 +127,7 @@ class OptionalInformation {
                                     if let title = data["title"] as? String {
                                         fact.addOnTitle = title
                                     }
+                                    fact.language = self.fact.language
                                     
                                     let item = AddOnItem(documentID: document.documentID, item: fact)
                                     
@@ -128,12 +136,14 @@ class OptionalInformation {
                                     let post = Post()
                                     post.documentID = document.documentID
                                     post.isTopicPost = true
+                                    post.language = self.fact.language
                                     
                                     let item = AddOnItem(documentID: document.documentID, item: post)
                                     self.items.append(item)
                                 } else {    // Post
                                     let post = Post()
                                     post.documentID = document.documentID
+                                    post.language = self.fact.language
                                     
                                     if let postDescription = data["title"] as? String {
                                         post.addOnTitle = postDescription

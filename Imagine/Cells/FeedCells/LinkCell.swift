@@ -24,16 +24,10 @@ extension String {
 
 class LinkCell : BaseFeedCell {
     
-    
     @IBOutlet weak var linkThumbNailImageView: UIImageView!
-    @IBOutlet weak var reportViewLabel: UILabel!
-    @IBOutlet weak var reportViewButtonInTop: DesignableButton!
-    @IBOutlet weak var reportView: DesignablePopUp!
-    @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var urlLabel: UILabel!
     @IBOutlet weak var linkPreviewTitleLabel: UILabel!
     @IBOutlet weak var linkPreviewDescriptionLabel: UILabel!
-    @IBOutlet weak var titleLabelHeight: NSLayoutConstraint!
     
     let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: InMemoryCache())
     
@@ -170,16 +164,8 @@ class LinkCell : BaseFeedCell {
                 print("#Error: got no link in link cell")
             }
             
-            let labelHeight = handyHelper.setLabelHeight(titleCount: post.title.count)
-            titleLabelHeight.constant = labelHeight
             
-            // ReportView einstellen
-            let reportViewOptions = handyHelper.setReportView(post: post)
-            
-            reportViewHeightConstraint.constant = reportViewOptions.heightConstant
-            reportViewButtonInTop.isHidden = reportViewOptions.buttonHidden
-            reportViewLabel.text = reportViewOptions.labelText
-            reportView.backgroundColor = reportViewOptions.backgroundColor
+            setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
         }
     }
     
@@ -229,6 +215,9 @@ class LinkCell : BaseFeedCell {
     
     func setLinkStuffInFirebase(data: [String: Any]) {
         if let post = post {
+            if post.language == .english {
+                return 
+            }
             let db = Firestore.firestore()
             var string = "Posts"
             if post.isTopicPost {
@@ -287,7 +276,7 @@ class LinkCell : BaseFeedCell {
     func getFact(beingFollowed: Bool) {
         if let post = post {
             if let fact = post.fact {
-                self.loadFact(fact: fact, beingFollowed: beingFollowed) {
+                self.loadFact(language: post.language, fact: fact, beingFollowed: beingFollowed) {
                     (fact) in
                     post.fact = fact
                     

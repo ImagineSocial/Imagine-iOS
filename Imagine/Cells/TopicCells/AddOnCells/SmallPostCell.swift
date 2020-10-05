@@ -30,12 +30,9 @@ class SmallPostCell: UICollectionViewCell {
     
     var delegate: SmallPostCellDelegate?
     
-    let db = Firestore.firestore()
     let postHelper = PostHelper()
     
     var gradient: CAGradientLayer?
-    
-    let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: InMemoryCache())
     
     var postTitle: String? {
         didSet {
@@ -56,15 +53,14 @@ class SmallPostCell: UICollectionViewCell {
         }
     }
     
-    func loadPost(postID: String, isTopicPost: Bool) {
+    func loadPost(post: Post) {
         DispatchQueue.global(qos: .default).async {
             
-            self.postHelper.loadPost(postID: postID, isTopicPost: isTopicPost) { (post) in
+            //needs documentID, isTopicPost and language
+            self.postHelper.loadPost(post: post) { (post) in
                 if let post = post {
-                    
                     DispatchQueue.main.async {
                         self.post = post
-                        self.delegate?.sendItem(item: post)
                     }
                 }
             }
@@ -104,6 +100,7 @@ class SmallPostCell: UICollectionViewCell {
                 }
             } else if post.type == .GIF {
                 smallCellImageView.image = UIImage(named: "GIFIcon")
+                smallCellImageView.contentMode = .center
                 
                 if let url = URL(string: post.linkURL) {
                     DispatchQueue.global(qos: .default).async {  // Quite some work to do apparently

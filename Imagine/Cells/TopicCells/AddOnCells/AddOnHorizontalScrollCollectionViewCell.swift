@@ -133,11 +133,6 @@ extension AddOnHorizontalScrollCollectionViewCell: UICollectionViewDelegate, UIC
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-//        if isAddOnStoreCell {
-//            let width = (collectionView.frame.width/2)-15   //15 is spacing +insets/2
-//            return CGSize(width: width, height: collectionView.frame.height)
-//        }
-        
         if let info = info {
             if indexPath.item != info.items.count {
                 let item = info.items[indexPath.item]
@@ -179,7 +174,7 @@ extension AddOnHorizontalScrollCollectionViewCell: UICollectionViewDelegate, UIC
                         
 //                        cell.delegate = self
                         if post.documentID != "" {
-                            cell.loadPost(postID: post.documentID, isTopicPost: post.isTopicPost)
+                            cell.loadPost(post: post)
                         } else {    //NewAddOnTableVC
                             cell.post = post
                         }
@@ -199,7 +194,7 @@ extension AddOnHorizontalScrollCollectionViewCell: UICollectionViewDelegate, UIC
                         if fact.title != "" {
                             cell.fact = fact
                         } else {    // Not loaded yet
-                            cell.factID = fact.documentID
+                            cell.unloadedFact = fact
                         }
                         
                         if let title = fact.addOnTitle {

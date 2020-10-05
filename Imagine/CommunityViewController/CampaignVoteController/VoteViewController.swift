@@ -111,7 +111,14 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
         if isConnected() {
         if let user = Auth.auth().currentUser {
             if let vote = vote {
-                let voteRef = db.collection("Votes").document(vote.documentID)
+                var collectionRef: CollectionReference!
+                let language = LanguageSelection().getLanguage()
+                if language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("votes")
+                } else {
+                    collectionRef = db.collection("Votes")
+                }
+                let voteRef = collectionRef.document(vote.documentID)
                 voteRef.getDocument { (doc, err) in
                     if let error = err {
                         print("We have an error: \(error.localizedDescription)")
@@ -160,7 +167,14 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
                 
                 self.view.activityStartAnimating()
                 
-                let voteRef = db.collection("Votes").document(vote.documentID)
+                var collectionRef: CollectionReference!
+                let language = LanguageSelection().getLanguage()
+                if language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("votes")
+                } else {
+                    collectionRef = db.collection("Votes")
+                }
+                let voteRef = collectionRef.document(vote.documentID)
                 
                 voteRef.getDocument { (document, err) in
                     if let error = err {
@@ -203,7 +217,14 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
     
     func registerVoter(userUID: String) {
         if let vote = vote {
-            let voteRef = db.collection("Votes").document(vote.documentID)
+            var collectionRef: CollectionReference!
+            let language = LanguageSelection().getLanguage()
+            if language == .english {
+                collectionRef = db.collection("Data").document("en").collection("votes")
+            } else {
+                collectionRef = db.collection("Votes")
+            }
+            let voteRef = collectionRef.document(vote.documentID)
             
             voteRef.updateData([
                 "voters": FieldValue.arrayUnion([userUID]) // Add the person as a voter

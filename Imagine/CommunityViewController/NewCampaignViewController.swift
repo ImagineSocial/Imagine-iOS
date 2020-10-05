@@ -32,6 +32,7 @@ class NewCampaignViewController: UIViewController {
     var chosenCategory: CampaignType = .proposal
     
     var tipView: EasyTipView?
+    let db = Firestore.firestore()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -89,14 +90,24 @@ class NewCampaignViewController: UIViewController {
     
     @IBAction func shareButtonTapped(_ sender: Any) {
         if titleTextField.text != nil && shortBodyTextField.text != nil {
-            let campaignRef = Firestore.firestore().collection("Campaigns")
+            var collectionRef: CollectionReference!
+            let language = LanguageSelection().getLanguage()
+            if language == .english {
+                collectionRef = db.collection("Data").document("en").collection("campaigns")
+            } else {
+                collectionRef = db.collection("Campaigns")
+            }
+            let campaignRef = collectionRef.document()
             
-            let campaignRefDocumentID = campaignRef.document().documentID
-            var dataDictionary: [String: Any] = ["campaignTitle": titleTextField.text, "campaignShortBody": shortBodyTextField.text, "campaignType" : "normal", "category" : getCategoryString(), "campaignExplanation": longBodyTextField.text, "campaignID": campaignRefDocumentID, "campaignCreateTime": Timestamp(date: Date()), "campaignSupporter": 0, "campaignOpposition": 0, "voters": [""]]
+            var dataDictionary: [String: Any] = ["campaignTitle": titleTextField.text, "campaignShortBody": shortBodyTextField.text, "campaignType" : "normal", "category" : getCategoryString(), "campaignExplanation": longBodyTextField.text, "campaignCreateTime": Timestamp(date: Date()), "campaignSupporter": 0, "campaignOpposition": 0, "voters": [""]]
             
-            campaignRef.document(campaignRefDocumentID).setData(dataDictionary) // Glaube macht keinen Unterschied
-            
-            
+            campaignRef.setData(dataDictionary) { (err) in
+                if let error = err {
+                    print("We have an error.: \(error.localizedDescription)")
+                } else {
+                    print("Successfully added campaign")
+                }
+            }
             
             let alert = UIAlertController(title: NSLocalizedString("done", comment: "done"), message: NSLocalizedString("submit_successfull_alert_message", comment: "thanks"), preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in

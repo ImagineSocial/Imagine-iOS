@@ -15,6 +15,7 @@ class SettingViewController: UIViewController {
     @IBOutlet weak var notificationSwitch: UISwitch!
     @IBOutlet weak var deleteAccountButton: DesignableButton!
     @IBOutlet weak var notificationLabel: UILabel!
+    @IBOutlet weak var languageSegmentedControl: UISegmentedControl!
     
     let defaults = UserDefaults.standard
     let db = Firestore.firestore()
@@ -47,6 +48,10 @@ class SettingViewController: UIViewController {
             deleteAccountButton.isEnabled = false
         }
 
+        let language = LanguageSelection().getLanguage()
+        if language == .english {
+            languageSegmentedControl.selectedSegmentIndex = 1
+        }
     }
     
     @IBAction func cookieSwitchChanged(_ sender: Any) {
@@ -122,6 +127,24 @@ class SettingViewController: UIViewController {
         }
     }
     
+    @IBAction func languageSegmentedControlChanged(_ sender: Any) {
+        let pre = Locale.preferredLanguages[0]
+        
+        if languageSegmentedControl.selectedSegmentIndex == 0 { //german
+            if pre == "de" {
+                defaults.removeObject(forKey: "languageSelection")
+            } else {
+                defaults.set("de", forKey: "languageSelection")
+            }
+        } else if languageSegmentedControl.selectedSegmentIndex == 1 {  //english
+            if pre == "en" {
+                defaults.removeObject(forKey: "languageSelection")
+            } else {
+                defaults.set("en", forKey: "languageSelection")
+            }
+        }
+//        if let language = defaults.string(forKey: "languageSelection"){ }
+    }
     
     @IBAction func dataControlTapped(_ sender: Any) {
         

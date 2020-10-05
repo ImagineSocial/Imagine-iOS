@@ -17,7 +17,6 @@ enum CommentSection {
     case source
     case proposal
     case counterArgument
-    case addOn
 }
 
 protocol CommentTableViewDelegate {
@@ -82,25 +81,23 @@ class CommentTableView: UITableView {
         delegate = self
         dataSource = self
         
+        isScrollEnabled = false
         register(UINib(nibName: "CommentCell", bundle: nil), forCellReuseIdentifier: commentIdentifier)
         estimatedRowHeight = 100
         rowHeight = UITableView.automaticDimension
         separatorStyle = .none
         
-        if section != .addOn {
-            self.headerView = CommentTableViewHeader(frame: CGRect(x: 0, y: 0, width: 276, height: 30))
-            self.headerView!.delegate = self
-            if let user = Auth.auth().currentUser, let recipients = notificationRecipients {
-                for recipient in recipients {
-                    if user.uid == recipient {
-                        self.headerView!.showNotificationButton()
-                    }
+        self.headerView = CommentTableViewHeader(frame: CGRect(x: 0, y: 0, width: 276, height: 30))
+        self.headerView!.delegate = self
+        if let user = Auth.auth().currentUser, let recipients = notificationRecipients {
+            for recipient in recipients {
+                if user.uid == recipient {
+                    self.headerView!.showNotificationButton()
                 }
             }
-            self.tableHeaderView = self.headerView
-        } else {
-            register(UINib(nibName: "AddOnQAndAAnswerCell", bundle: nil), forCellReuseIdentifier: answerCellIdentifier)
         }
+        self.tableHeaderView = self.headerView
+        
     }
     
     func getcomments() {
@@ -154,9 +151,6 @@ class CommentTableView: UITableView {
         case .counterArgument:
             ref = db.collection("Comments").document("arguments").collection("comments").document(counterArgument!.documentID).collection("threads").order(by: "sentAt", descending: false)
             sectionItemID = counterArgument!.documentID
-        case .addOn:
-            ref = db.collection("Comments").document(post!.documentID).collection("threads").order(by: "sentAt", descending: false)
-            sectionItemID = post!.documentID
         }
         
         return (ref, sectionItemID)
@@ -371,24 +365,20 @@ class CommentTableView: UITableView {
                         ref = db.collection("Comments").document("arguments").collection("comments").document(counterArgument!.documentID).collection("threads").document()
                     }
                     sectionItemID = counterArgument!.documentID
-                case .addOn:
-                    if let post = post {
-                        if let comment = answerToComment {
-                            ref = db.collection("Comments").document(post.documentID).collection("threads").document(comment.commentID).collection("children").document()
-                        } else {
-                            ref = db.collection("Comments").document(post.documentID).collection("threads").document()
-                        }
-                        
-                        if post.originalPosterUID != "" {
-                            self.getNotificationRecipients(post: post, bodyString: bodyString, displayName: displayName, commenterUID: userID)
-                        }
-                        sectionItemID = post.documentID
-                    }
                 }
                 
-                let data : [String: Any] = ["body": bodyString, "id": 0, "sentAt": Timestamp(date: Date()), "userID": userID]
+                var data : [String: Any] = ["body": bodyString, "id": 0, "sentAt": Timestamp(date: Date()), "userID": userID]
                  
-                
+                if section == .post {
+                    if let post = post {
+                        if post.isTopicPost {
+                            data["isTopicPost"] = true
+                        }
+                        if post.language == .english {
+                            data["language"] = "en"
+                        }
+                    }
+                }
                 
                 ref.setData(data) { (err) in
                     if let error = err {
@@ -441,13 +431,15 @@ class CommentTableView: UITableView {
         case .counterArgument:
             sectionString = "counterArgument"
             documentID = counterArgument!.documentID
-        case .addOn:
-            sectionString = "post"
-            documentID = post!.documentID
         }
         
-        let data: [String: Any] = ["createTime": Timestamp(date: Date()), "originalPoster": userUID, "section": sectionString, "documentID": documentID]
+        let language = LanguageSelection().getLanguage()
         
+        var data: [String: Any] = ["createTime": Timestamp(date: Date()), "originalPoster": userUID, "section": sectionString, "documentID": documentID]
+        
+        if language == .english {
+            data["language"] = "en"
+        }
         let ref = db.collection("AnonymousPosts")
         
             ref.addDocument(data: data) { (err) in
@@ -455,16 +447,26 @@ class CommentTableView: UITableView {
                 print("We have an error: \(error.localizedDescription)")
             }
         }
-        
     }
-    
+
     func getNotificationRecipients(post: Post, bodyString: String, displayName: String, commenterUID: String) {
         let ref: DocumentReference!
+        var collectionRef: CollectionReference!
         
         if post.isTopicPost {
-            ref = db.collection("TopicPosts").document(post.documentID)
+            if post.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topicPosts")
+            } else {
+                collectionRef = db.collection("TopicPosts")
+            }
+            ref = collectionRef.document(post.documentID)
         } else {
-            ref = db.collection("Posts").document(post.documentID)
+            if post.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("posts")
+            } else {
+                collectionRef = db.collection("Posts")
+            }
+            ref = collectionRef.document(post.documentID)
         }
         
         ref.getDocument { (snap, err) in
@@ -512,8 +514,22 @@ class CommentTableView: UITableView {
     }
     
     func addUserAsNotificationRecipient(post: Post, userUID: String) {
+        var collectionRef: CollectionReference!
+        if post.isTopicPost {
+            if post.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topicPosts")
+            } else {
+                collectionRef = db.collection("TopicPosts")
+            }
+        } else {
+            if post.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("posts")
+            } else {
+                collectionRef = db.collection("Posts")
+            }
+        }
         
-        let ref = db.collection("Posts").document(post.documentID)
+        let ref = collectionRef.document(post.documentID)
         ref.updateData([
             "notificationRecipients" : FieldValue.arrayUnion([userUID])
         ])
@@ -527,7 +543,22 @@ class CommentTableView: UITableView {
     
     
     func removeUserAsNotificationRecipient(post: Post, userUID: String) {
-        let ref = db.collection("Posts").document(post.documentID)
+        var collectionRef: CollectionReference!
+        if post.isTopicPost {
+            if post.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topicPosts")
+            } else {
+                collectionRef = db.collection("TopicPosts")
+            }
+        } else {
+            if post.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("posts")
+            } else {
+                collectionRef = db.collection("Posts")
+            }
+        }
+        
+        let ref = collectionRef.document(post.documentID)
         ref.updateData([
             "notificationRecipients" : FieldValue.arrayRemove([userUID])
         ])
@@ -540,7 +571,11 @@ class CommentTableView: UITableView {
         
         let notificationRef = db.collection("Users").document(userID).collection("notifications").document()
         
-        let notificationData: [String: Any] = ["type": "comment", "comment": bodyString, "name": displayName, "postID": post.documentID, "isTopicPost": post.isTopicPost, "forOP": forOP]   //"forOP" changes the message in the notification: "You got a comment: " vs "X-Post got a comment"
+        var notificationData: [String: Any] = ["type": "comment", "comment": bodyString, "name": displayName, "postID": post.documentID, "isTopicPost": post.isTopicPost, "forOP": forOP]   //"forOP" changes the message in the notification: "You got a comment: " vs "X-Post got a comment"
+        
+        if post.language == .english {
+            notificationData["language"] = "en"
+        }
         
         notificationRef.setData(notificationData) { (err) in
             if let error = err {

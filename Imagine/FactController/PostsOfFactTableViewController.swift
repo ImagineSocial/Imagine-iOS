@@ -43,6 +43,7 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.noPostsType = .postsOfFacts
         self.isFactSegueEnabled = false //Cant go to this community from this community, right
         self.navigationController?.navigationBar.shadowImage = UIImage()
         
@@ -79,7 +80,7 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
                 self.view.activityStartAnimating()
                 
                 DispatchQueue.global(qos: .default).async {
-                    self.postHelper.getPostsForCommunity(getMore: getMore, communityID: fact.documentID) { (posts, initialFetch) in
+                    self.postHelper.getPostsForCommunity(getMore: getMore, fact: fact) { (posts, initialFetch) in
                         if let posts = posts {
                             if initialFetch {   // Get the first batch of posts
                                 
@@ -129,7 +130,9 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
                                 }
                             }
                         } else {
-                            self.view.activityStopAnimating()
+                            DispatchQueue.main.async {
+                                self.view.activityStopAnimating()
+                            }
                         }
                     }
                 }

@@ -8,6 +8,20 @@
 
 import UIKit
 import Firebase
+import FirebaseFirestore
+
+class ProposalForOptionalInformation {
+    var headerText: String
+    var detailText: String
+    var isFirstCell: Bool
+    
+    init(isFirstCell: Bool, headerText: String, detailText: String) {
+        
+        self.headerText = headerText
+        self.isFirstCell = isFirstCell
+        self.detailText = detailText
+    }
+}
 
 class AddOnCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 
@@ -60,7 +74,15 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     
     //MARK:- Get Data
     func getData(fact: Fact) {
-        let ref = db.collection("Facts").document(fact.documentID).collection("addOns").order(by: "popularity", descending: true)
+        
+        var collectionRef: CollectionReference!
+        if fact.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        print("##Get addons: \(collectionRef.path), language_ ", fact.language)
+        let ref = collectionRef.document(fact.documentID).collection("addOns").order(by: "popularity", descending: true)
         
         
         ref.getDocuments { (snap, err) in
@@ -147,7 +169,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     
     func saveItemInAddOn(item: Any) {
         
-        guard let addOnRef = addOnDocumentID else {
+        guard let addOnRef = addOnDocumentID, let fact = fact else {
             print("Error: No addOnDocumentID in AddOnVC")
             return
         }
@@ -176,9 +198,14 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
             return
         }
         
+        var collectionRef: CollectionReference!
+        if fact.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
         
-        
-        let ref = db.collection("Facts").document(fact!.documentID).collection("addOns").document(addOnRef).collection("items").document(itemID)
+        let ref = collectionRef.document(fact.documentID).collection("addOns").document(addOnRef).collection("items").document(itemID)
         let user = Auth.auth().currentUser!
         
         var data: [String: Any] = ["type": itemTypeString, "OP": user.uid, "createDate": Timestamp(date: Date())]
@@ -195,7 +222,14 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                 let alert = UIAlertController(title: NSLocalizedString("done", comment: "done"), message: NSLocalizedString("addOn_creation_successfull", comment: "done and successfull"), preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
                     
-                    let docRef = self.db.collection("Facts").document(self.fact!.documentID).collection("addOns").document(addOnRef)
+                    var collectionRef: CollectionReference!
+                    if fact.language == .english {
+                        collectionRef = self.db.collection("Data").document("en").collection("topics")
+                    } else {
+                        collectionRef = self.db.collection("Facts")
+                    }
+                    
+                    let docRef = collectionRef.document(fact.documentID).collection("addOns").document(addOnRef)
                     self.checkIfOrderArrayExists(documentReference: docRef, documentIDOfItem: itemID)
                     
                     alert.dismiss(animated: true, completion: nil)
@@ -247,11 +281,21 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     }
     
     func updateTopicPostInFact(addOnID: String, postDocumentID: String) {       //Add the AddOnDocumentIDs to the fact, so we can delete every trace of the post if you choose to delete it later. Otherwise there would be empty post in an AddOn
-        let ref = db.collection("Facts").document(fact!.documentID).collection("posts").document(postDocumentID)
-        
-        ref.updateData([
-            "addOnDocumentIDs": FieldValue.arrayUnion([addOnID])
-        ])
+        if let fact = fact {
+            
+            var collectionRef: CollectionReference!
+            if fact.language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topics")
+            } else {
+                collectionRef = db.collection("Facts")
+            }
+            
+            let ref = collectionRef.document(fact.documentID).collection("posts").document(postDocumentID)
+            
+            ref.updateData([
+                "addOnDocumentIDs": FieldValue.arrayUnion([addOnID])
+            ])
+        }
     }
     
     //MARK:- PrepareForSegue
@@ -500,7 +544,13 @@ extension AddOnCollectionViewController: AddOnCellDelegate, AddOnHeaderReusableV
     func thanksTapped(info: OptionalInformation) {
         if let _ = Auth.auth().currentUser {
             if let fact = fact, info.documentID != "" {
-                let ref = db.collection("Facts").document(fact.documentID).collection("addOns").document(info.documentID)
+                var collectionRef: CollectionReference!
+                if fact.language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("topics")
+                } else {
+                    collectionRef = db.collection("Facts")
+                }
+                let ref = collectionRef.document(fact.documentID).collection("addOns").document(info.documentID)
                 
                 var thanksCount = 1
                 if let count = info.thanksCount {

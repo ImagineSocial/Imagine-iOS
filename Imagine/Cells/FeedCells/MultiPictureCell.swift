@@ -13,6 +13,7 @@ class MultiPictureCell: BaseFeedCell {
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var pageControl: UIPageControl!
     @IBOutlet weak var pictureCountLabel: UILabel!
+    @IBOutlet weak var multiPictureCollectionViewHeightConstraint: NSLayoutConstraint!
     
     let identifier = "MultiPictureCell"
     var images: [String]?
@@ -132,6 +133,8 @@ class MultiPictureCell: BaseFeedCell {
             titleLabel.text = post.title
             descriptionPreviewLabel.text = post.description
             commentCountLabel.text = String(post.commentCount)
+            
+            setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
         }
     }
     
@@ -178,7 +181,7 @@ class MultiPictureCell: BaseFeedCell {
     func getFact(beingFollowed: Bool) {
         if let post = post {
             if let fact = post.fact {
-                self.loadFact(fact: fact, beingFollowed: beingFollowed) {
+                self.loadFact(language: post.language, fact: fact, beingFollowed: beingFollowed) {
                     (fact) in
                     post.fact = fact
                     

@@ -16,19 +16,13 @@ class BlogCell : UICollectionViewCell {
     @IBOutlet weak var profileImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var categoryLabel: UILabel!
+    @IBOutlet weak var containerView: UIView!
+    
+    let cornerRadius: CGFloat = 8
     
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        // add corner radius on `contentView`
-        contentView.clipsToBounds = true
-        backgroundColor = .clear
-        
-//        if #available(iOS 13.0, *) {
-//            contentView.backgroundColor = .quaternarySystemFill
-//        } else {
-//            contentView.backgroundColor = .ios12secondarySystemBackground
-//        }
     }
     
     override func prepareForReuse() {
@@ -37,19 +31,25 @@ class BlogCell : UICollectionViewCell {
         } else {
             contentView.backgroundColor = .white
         }
-        contentView.layer.borderWidth = 0
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        let margins = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
-        contentView.frame = contentView.frame.inset(by: margins)
+        let layer = contentView.layer
+        layer.cornerRadius = cornerRadius
+        containerView.layer.cornerRadius = cornerRadius
+        if #available(iOS 13.0, *) {
+            layer.shadowColor = UIColor.label.cgColor
+        } else {
+            layer.shadowColor = UIColor.black.cgColor
+        }
+        layer.shadowOffset = CGSize(width: 0, height: 0)
+        layer.shadowRadius = 3
+        layer.shadowOpacity = 0.5
         
-//        categoryLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
-//        headerLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
-//        bodyLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
-//        createDateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+        let rect = CGRect(x: 0, y: 0, width: contentView.frame.width, height: contentView.frame.height)
+        layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius).cgPath
         
     }
     
@@ -59,7 +59,7 @@ class BlogCell : UICollectionViewCell {
                 headerLabel.text = post.title
                 bodyLabel.text = post.subtitle
                 createDateLabel.text = post.stringDate
-                categoryLabel.text = "Thema: \(post.category)"
+                categoryLabel.text = post.category
                 nameLabel.text = post.poster
                 
                 if let url = URL(string: post.profileImageURL) {

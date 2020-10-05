@@ -462,6 +462,11 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.contentMode = .scaleAspectFit
         imgView.image = nil
+        if #available(iOS 13.0, *) {
+            imgView.tintColor = .label
+        } else {
+            imgView.tintColor = .black
+        }
         
         return imgView
     }()
@@ -471,6 +476,11 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.contentMode = .scaleAspectFit
         imgView.image = nil
+        if #available(iOS 13.0, *) {
+            imgView.tintColor = .label
+        } else {
+            imgView.tintColor = .black
+        }
         
         return imgView
     }()

@@ -493,7 +493,8 @@ class LogInViewController: UIViewController {
     
     func notifyMalte(name: String) {
         let notificationRef = db.collection("Users").document(maltesUID).collection("notifications").document()
-        let notificationData: [String: Any] = ["type": "message", "message": "Wir haben einen neuen User: \(name)", "name": "System", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "messageID": "Dont Know"]
+        let language = Locale.preferredLanguages[0]
+        let notificationData: [String: Any] = ["type": "message", "message": "Wir haben einen neuen User: \(name)", "name": "System", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "messageID": "Dont Know", "language": language]
         
         
         notificationRef.setData(notificationData) { (err) in

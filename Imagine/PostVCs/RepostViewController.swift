@@ -34,6 +34,7 @@ class RepostViewController: UIViewController {
     var repost: RepostType = .repost
     
     var tipView: EasyTipView?
+    let db = Firestore.firestore()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -87,6 +88,14 @@ class RepostViewController: UIViewController {
                 
                 if let url = URL(string: post.imageURL) {
                     postImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+                }
+            case .multiPicture:
+                postImageView.isHidden = false
+                
+                if let urls = post.imageURLs {
+                    if let url = URL(string: urls[0]) {
+                        postImageView.sd_setImage(with: url, completed: nil)
+                    }
                 }
             default:
                 postImageView.isHidden = true
@@ -144,17 +153,39 @@ class RepostViewController: UIViewController {
     }
     
     func uploadRepost() {
-        let postRef = Firestore.firestore().collection("Posts")
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
         
-        let postRefDocumentID = postRef.document().documentID
-        
+        if language == .english {
+            collectionRef = db.collection("Data").document("en").collection("posts")
+        } else {
+            collectionRef = db.collection("Posts")
+        }
+        let postRef = collectionRef.document()
+                
         if let user = Auth.auth().currentUser {
             
-            let dataDictionary: [String: Any] = ["title": titleTranslationTextView.text, "description": descriptionTranslationTextView.text, "documentID": postRefDocumentID, "createTime": Timestamp(date: Date()), "type": getRepostTypeString(), "OGpostDocumentID" : post.documentID, "report": "normal", "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "originalPoster": user.uid]
+            var dataDictionary: [String: Any] = ["title": titleTranslationTextView.text, "description": descriptionTranslationTextView.text, "createTime": Timestamp(date: Date()), "type": getRepostTypeString(), "OGpostDocumentID" : post.documentID, "report": "normal", "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "originalPoster": user.uid]
             
-            postRef.document(postRefDocumentID).setData(dataDictionary) // Glaube macht keinen Unterschied
+            if post.isTopicPost {
+                dataDictionary["repostIsTopicPost"] = true
+            }
             
-            let alert = UIAlertController(title: "Done!", message: "Danke, dass du Wissen teilst!", preferredStyle: .alert)
+            if post.language == .english {
+                dataDictionary["repostLanguage"] = "en"
+            } else {
+                dataDictionary["repostLanguage"] = "de"
+            }
+            
+            postRef.setData(dataDictionary, completion: { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    print("Successfully created repost")
+                }
+            })
+            
+            let alert = UIAlertController(title: NSLocalizedString("done", comment: "done"), message: NSLocalizedString("message_after_done_posting", comment: "thanks for sharing"), preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
                 self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
             }))
