@@ -75,6 +75,7 @@
                                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
                                                 <real key="value" value="8"/>
                                             </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="xibLocKey" value="help_header"/>
                                         </userDefinedRuntimeAttributes>
                                         <connections>
                                             <action selector="helpWantedButtonTapped:" destination="keQ-1P-bEE" eventType="touchUpInside" id="dMN-s5-BQY"/>
@@ -120,6 +121,7 @@
                                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
                                                 <real key="value" value="8"/>
                                             </userDefinedRuntimeAttribute>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="xibLocKey" value="moreInfo_header"/>
                                         </userDefinedRuntimeAttributes>
                                         <connections>
                                             <action selector="moreInfoButtonTapped:" destination="keQ-1P-bEE" eventType="touchUpInside" id="19m-PS-IyI"/>
@@ -141,6 +143,7 @@
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
                                         <real key="value" value="8"/>
                                     </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="xibLocKey" value="proposal_header"/>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="proposalsButtonTapped:" destination="keQ-1P-bEE" eventType="touchUpInside" id="Kmo-5b-y4a"/>

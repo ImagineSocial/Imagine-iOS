@@ -112,6 +112,15 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                             if let imageURL = data["imageURL"] as? String {
                                 addOn.imageURL = imageURL
                             }
+                            if let design = data["design"] as? String {
+                                if design == "youTubePlaylist" {
+                                    addOn.design = .youTubePlaylist
+                                }
+                                
+                                if let playlistURL = data["externalLink"] as? String {
+                                    addOn.externalLink = playlistURL
+                                }
+                            }
                             if let thanksCount = data["thanksCount"] as? Int {
                                 addOn.thanksCount = thanksCount
                             }
@@ -189,6 +198,9 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
             if let title = post.addOnTitle {    // Description of the added post
                 addOnTitle = title
             }
+            if post.type == .youTubeVideo {
+                self.notifyMalteForYouTubePlaylist(fact: fact, addOn: addOnRef)
+            }
             if post.isTopicPost {
                 itemTypeString = "topicPost"    // So the getData method looks in a different ref
                 self.updateTopicPostInFact(addOnID: addOnRef, postDocumentID: itemID)
@@ -236,6 +248,21 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                 }))
                 
                 self.present(alert, animated: true)
+            }
+        }
+    }
+    
+    func notifyMalteForYouTubePlaylist(fact: Fact, addOn: String) {
+        let notificationRef = db.collection("Users").document("CZOcL3VIwMemWwEfutKXGAfdlLy1").collection("notifications").document()
+        let language = Locale.preferredLanguages[0]
+        let notificationData: [String: Any] = ["type": "message", "message": "Wir haben einen neuen YouTubePost in \(fact.title) mit der ID: \(addOn)", "name": "System", "chatID": addOn, "sentAt": Timestamp(date: Date()), "messageID": "Dont Know", "language": language]
+        
+        
+        notificationRef.setData(notificationData) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                print("Successfully set notification")
             }
         }
     }
@@ -415,19 +442,19 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                     
                     return cell
                 }
-            case .collection:
+            case .QandA:
+                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: qAndACellIdentifier, for: indexPath) as? AddOnQAndACollectionViewCell {
+                    
+                    cell.info = info
+                    
+                    return cell
+                }
+            default:
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: horizontalScrollCellIdentifier, for: indexPath) as? AddOnHorizontalScrollCollectionViewCell {
                     
                     cell.delegate = self
                     cell.info = info
                     cell.itemRow = indexPath.item
-                    
-                    return cell
-                }
-            case .QandA:
-                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: qAndACellIdentifier, for: indexPath) as? AddOnQAndACollectionViewCell {
-                    
-                    cell.info = info
                     
                     return cell
                 }
@@ -478,7 +505,11 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
             if let _ = addOn.imageURL {
                 newSize = CGSize(width: width, height: 500)
             } else {
+                if addOn.design == .youTubePlaylist {
+                newSize = CGSize(width: width, height: 450)
+                } else {
                 newSize = CGSize(width: width, height: 400)
+                }
             }
             
             return newSize

@@ -23,6 +23,7 @@ class CommentCell: UITableViewCell {
     @IBOutlet weak var inlineSeparatorView: UIView!
     @IBOutlet weak var niceButton: DesignableButton!
     @IBOutlet weak var answerButton: UIButton!
+    @IBOutlet weak var inlineSeparatorLeadingConstraint: NSLayoutConstraint!
     
     var delegate: CommentCellDelegate?
     var handyHelper = HandyHelper()
@@ -50,9 +51,12 @@ class CommentCell: UITableViewCell {
                 
                 if comment.isIndented {
                     answerButton.isHidden = true
-                } else {
-                    bodyLabel.text = comment.text
+                    inlineSeparatorView.isHidden = false
+                    inlineSeparatorLeadingConstraint.constant = 60
                 }
+                
+                bodyLabel.text = comment.text
+                layoutIfNeeded()
             }
         }
     }
@@ -73,22 +77,11 @@ class CommentCell: UITableViewCell {
         layer.borderWidth = 0.5
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        if let comment = comment {
-            if comment.isIndented {
-                let margins = UIEdgeInsets(top: 0, left: 65, bottom: 0, right: 0)
-                contentView.frame = contentView.frame.inset(by: margins)
-                
-                bodyLabel.text = comment.text
-                inlineSeparatorView.isHidden = false
-            }
-        }
-    }
-    
     override func prepareForReuse() {
         inlineSeparatorView.isHidden = true
         answerButton.isHidden = false
+        inlineSeparatorLeadingConstraint.constant = 1
+        niceButton.setImage(UIImage(named: "thanksButton"), for: .normal)
     }
     
     @IBAction func answerButtonTapped(_ sender: Any) {

@@ -25,15 +25,15 @@
         <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MultiPictureCell" rowHeight="396" id="hqv-Yx-c3k" customClass="MultiPictureCell" customModule="Imagine" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="516" height="396"/>
             <autoresizingMask key="autoresizingMask"/>
-            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="hqv-Yx-c3k" id="N0L-Ru-SAL">
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="hqv-Yx-c3k" id="N0L-Ru-SAL">
                 <rect key="frame" x="0.0" y="0.0" width="516" height="396"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2Nr-9E-z4D">
+                    <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2Nr-9E-z4D">
                         <rect key="frame" x="10" y="10" width="496" height="376"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Y3m-Mx-YIR">
-                                <rect key="frame" x="10" y="347" width="476" height="23"/>
+                                <rect key="frame" x="10" y="354" width="476" height="23"/>
                                 <subviews>
                                     <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bkQ-R5-FTr" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="87" height="23"/>
@@ -151,7 +151,7 @@
                                 </constraints>
                             </imageView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="t4x-ao-7Mr">
-                                <rect key="frame" x="5" y="82" width="486" height="250"/>
+                                <rect key="frame" x="5" y="89" width="486" height="250"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="250" id="SeL-PO-SOM"/>
@@ -171,7 +171,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="U0d-21-SXR" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="439" y="92" width="42" height="23"/>
+                                <rect key="frame" x="439" y="99" width="42" height="23"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1/3" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gkk-4e-fzE">
                                         <rect key="frame" x="11.5" y="3.5" width="19" height="16"/>
@@ -227,7 +227,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999998807907104" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zXD-2l-pnC">
-                                <rect key="frame" x="10" y="74" width="476" height="3"/>
+                                <rect key="frame" x="10" y="79" width="476" height="0.0"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                 <nil key="highlightedColor"/>
@@ -298,7 +298,7 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="YDM-1V-5Tr">
-                                <rect key="frame" x="187" y="332" width="122.5" height="15"/>
+                                <rect key="frame" x="187" y="339" width="122.5" height="15"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="15" id="xB1-6K-47M"/>
                                 </constraints>
@@ -316,7 +316,7 @@
                             <constraint firstItem="Y3m-Mx-YIR" firstAttribute="top" secondItem="YDM-1V-5Tr" secondAttribute="bottom" id="3af-Ed-9aQ"/>
                             <constraint firstItem="YDM-1V-5Tr" firstAttribute="centerX" secondItem="2Nr-9E-z4D" secondAttribute="centerX" id="4tn-HS-xfs"/>
                             <constraint firstItem="Zhe-1d-MJH" firstAttribute="height" secondItem="hFQ-KW-eiD" secondAttribute="height" constant="6" id="CMz-8k-kRz"/>
-                            <constraint firstItem="zXD-2l-pnC" firstAttribute="top" secondItem="5Jn-2T-nth" secondAttribute="bottom" constant="5" id="EEa-OE-XUY"/>
+                            <constraint firstItem="zXD-2l-pnC" firstAttribute="top" secondItem="5Jn-2T-nth" secondAttribute="bottom" constant="10" id="EEa-OE-XUY"/>
                             <constraint firstItem="5Jn-2T-nth" firstAttribute="leading" secondItem="zXD-2l-pnC" secondAttribute="leading" id="FPd-Q4-s9y"/>
                             <constraint firstItem="I4Q-fX-gQ6" firstAttribute="trailing" secondItem="PFS-Ma-tIN" secondAttribute="trailing" constant="3" id="FZA-h4-Gq0"/>
                             <constraint firstItem="Zhe-1d-MJH" firstAttribute="top" secondItem="hFQ-KW-eiD" secondAttribute="top" constant="-3" id="FrM-3c-VWi"/>
@@ -342,7 +342,7 @@
                             <constraint firstItem="t4x-ao-7Mr" firstAttribute="leading" secondItem="2Nr-9E-z4D" secondAttribute="leading" constant="5" id="mID-hh-DBd"/>
                             <constraint firstItem="I4Q-fX-gQ6" firstAttribute="top" secondItem="5Jn-2T-nth" secondAttribute="top" constant="-3" id="qtW-9O-trA"/>
                             <constraint firstItem="IFc-hq-zRW" firstAttribute="leading" secondItem="2Nr-9E-z4D" secondAttribute="leading" id="srU-9p-afE"/>
-                            <constraint firstItem="t4x-ao-7Mr" firstAttribute="top" secondItem="zXD-2l-pnC" secondAttribute="bottom" constant="5" id="wY0-Lb-75O"/>
+                            <constraint firstItem="t4x-ao-7Mr" firstAttribute="top" secondItem="zXD-2l-pnC" secondAttribute="bottom" constant="10" id="wY0-Lb-75O"/>
                             <constraint firstItem="5Jn-2T-nth" firstAttribute="top" secondItem="IFc-hq-zRW" secondAttribute="bottom" constant="10" id="xa5-hB-hAx"/>
                             <constraint firstItem="Y3m-Mx-YIR" firstAttribute="leading" secondItem="2Nr-9E-z4D" secondAttribute="leading" constant="10" id="xkk-fV-1Vl"/>
                         </constraints>

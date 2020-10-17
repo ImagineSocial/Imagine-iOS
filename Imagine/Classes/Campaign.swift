@@ -14,6 +14,7 @@ class Campaign {
     var descriptionText = ""
     var documentID = ""
     var createDate = ""
+    var createTime: Date = Date()
     var supporter = 0
     var opposition = 0
     var category: CampaignCategory?

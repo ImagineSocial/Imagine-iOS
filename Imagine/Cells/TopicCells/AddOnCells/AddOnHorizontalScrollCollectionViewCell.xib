@@ -29,6 +29,28 @@
                     <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WCI-Cp-mqc">
                         <rect key="frame" x="0.0" y="0.0" width="377" height="500"/>
                         <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Cdc-KH-a80" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="377" height="115"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="115" id="OeK-nh-rdq"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="2"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </imageView>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zBl-mn-7pP">
+                                <rect key="frame" x="0.0" y="0.0" width="377" height="115"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="115" id="jid-fk-VuH"/>
+                                </constraints>
+                                <state key="normal" image="AddOnDesignYTPlaylist"/>
+                                <connections>
+                                    <action selector="addOnDesignButtonTapped:" destination="iX1-RK-FqE" eventType="touchUpInside" id="QuT-Q5-XgN"/>
+                                </connections>
+                            </button>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="UQa-Di-4VI">
                                 <rect key="frame" x="0.0" y="230" width="377" height="260"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -81,18 +103,6 @@
                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="farmstead" translatesAutoresizingMaskIntoConstraints="NO" id="Cdc-KH-a80" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="377" height="115"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="115" id="OeK-nh-rdq"/>
-                                </constraints>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                        <real key="value" value="2"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                            </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6eY-Ek-Ufb">
                                 <rect key="frame" x="0.0" y="90" width="377" height="25"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -106,7 +116,9 @@
                             <constraint firstItem="UQa-Di-4VI" firstAttribute="top" secondItem="y4D-xM-Num" secondAttribute="bottom" constant="5" id="14H-Kz-WaM"/>
                             <constraint firstItem="Cdc-KH-a80" firstAttribute="leading" secondItem="WCI-Cp-mqc" secondAttribute="leading" id="6xZ-gt-r0B"/>
                             <constraint firstAttribute="trailing" secondItem="UQa-Di-4VI" secondAttribute="trailing" id="76B-4b-Ljr"/>
+                            <constraint firstItem="zBl-mn-7pP" firstAttribute="top" secondItem="WCI-Cp-mqc" secondAttribute="top" id="7cZ-7P-Xkl"/>
                             <constraint firstItem="6eY-Ek-Ufb" firstAttribute="leading" secondItem="WCI-Cp-mqc" secondAttribute="leading" id="8kn-R1-rOW"/>
+                            <constraint firstItem="zBl-mn-7pP" firstAttribute="leading" secondItem="Cdc-KH-a80" secondAttribute="leading" id="CRM-64-8YX"/>
                             <constraint firstItem="UQa-Di-4VI" firstAttribute="leading" secondItem="WCI-Cp-mqc" secondAttribute="leading" id="E5P-aS-rED"/>
                             <constraint firstAttribute="trailing" secondItem="sNj-wM-839" secondAttribute="trailing" constant="5" id="FVt-QU-Dn1"/>
                             <constraint firstAttribute="bottom" secondItem="UQa-Di-4VI" secondAttribute="bottom" constant="10" id="G8O-8G-DGH"/>
@@ -118,6 +130,7 @@
                             <constraint firstAttribute="trailing" secondItem="Cdc-KH-a80" secondAttribute="trailing" id="eac-cN-C4V"/>
                             <constraint firstAttribute="trailing" secondItem="y4D-xM-Num" secondAttribute="trailing" constant="10" id="lcz-8Y-uCk"/>
                             <constraint firstItem="Plr-ql-LiQ" firstAttribute="top" secondItem="Cdc-KH-a80" secondAttribute="bottom" constant="10" id="liy-ex-NM9"/>
+                            <constraint firstItem="zBl-mn-7pP" firstAttribute="width" secondItem="Cdc-KH-a80" secondAttribute="width" id="m24-e2-SMf"/>
                             <constraint firstItem="y4D-xM-Num" firstAttribute="top" secondItem="Plr-ql-LiQ" secondAttribute="bottom" id="rhH-bD-GcC"/>
                             <constraint firstAttribute="trailing" secondItem="6eY-Ek-Ufb" secondAttribute="trailing" id="zcg-cw-3LV"/>
                             <constraint firstItem="6eY-Ek-Ufb" firstAttribute="bottom" secondItem="Cdc-KH-a80" secondAttribute="bottom" id="zrB-KQ-4IV"/>
@@ -134,6 +147,7 @@
             </collectionViewCellContentView>
             <size key="customSize" width="377" height="500"/>
             <connections>
+                <outlet property="addOnDesignButton" destination="zBl-mn-7pP" id="Wp9-2X-HBJ"/>
                 <outlet property="collectionView" destination="UQa-Di-4VI" id="mXp-i4-uRF"/>
                 <outlet property="containerView" destination="WCI-Cp-mqc" id="oGS-c1-8bL"/>
                 <outlet property="descriptionLabel" destination="y4D-xM-Num" id="PpP-HJ-e1c"/>
@@ -152,7 +166,7 @@
         </designable>
     </designables>
     <resources>
-        <image name="farmstead" width="1204" height="1034"/>
+        <image name="AddOnDesignYTPlaylist" width="828" height="255"/>
         <image name="thanksButton" width="100" height="100"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

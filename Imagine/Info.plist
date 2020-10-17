@@ -42,13 +42,13 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Wir würden gerne auf deine Kamera zugreifen, damit du Bilder für den Feed oder dein Profil machen kannst.</string>
+	<string>We would like to access your camera so you can take pictures to post or to select for your profile.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Wir würden gerne auf deinen Standort zugreifen, um dir die Auswahl des richtigen Ortes zu erleichtern</string>
+	<string>We would like to access your location to help you choose the right place.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Wir würden gerne das aufgenommene Bild in deinem Fotoalbum speichern.</string>
+	<string>We would like to save the captured image in your photo album.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Wir würden gerne auf deine Ordner zugreifen, damit du ein Foto zum posten auswählen kannst.</string>
+	<string>We would like to access your folders so you can select a photo to post.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Kalam-Regular.ttf</string>

@@ -205,7 +205,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
             dataHelper.getFollowedTopicDocuments(userUID: user.uid) { (documents) in
                 var topicCount = documents.count
                 for document in documents {
-                    self.addFact(user: user, documentID: document.documentID) { (fact) in
+                    self.addFact(user: user, document: document) { (fact) in
                         if let fact = fact {
                             fact.beingFollowed = true
                             self.followedFacts.append(fact)
@@ -224,8 +224,18 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         }
     }
     
-    func addFact(user: Firebase.User?, documentID: String, returnedFact: @escaping (Fact?) -> Void) {
-        let ref = self.db.collection("Facts").document(documentID)
+    func addFact(user: Firebase.User?, document: QueryDocumentSnapshot, returnedFact: @escaping (Fact?) -> Void) {
+        let data = document.data()
+        
+        var collectionRef: CollectionReference = self.db.collection("Facts")
+        
+        if let language = data["language"] as? String {
+            if language == "en" {
+                collectionRef = self.db.collection("Data").document("en").collection("topics")
+            }
+        }
+        
+        let ref = collectionRef.document(document.documentID)
         
         ref.getDocument { (snap, err) in
             if let error = err {

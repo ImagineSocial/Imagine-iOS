@@ -171,7 +171,7 @@
                                 </constraints>
                             </stackView>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.60000002384185791" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="foQ-ja-tns">
-                                <rect key="frame" x="10" y="74" width="380" height="75"/>
+                                <rect key="frame" x="10" y="79" width="380" height="65"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                 <nil key="highlightedColor"/>
@@ -272,7 +272,7 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="foQ-ja-tns" firstAttribute="top" secondItem="4Ik-xR-LpA" secondAttribute="bottom" constant="5" id="0TO-ep-ltj"/>
+                            <constraint firstItem="foQ-ja-tns" firstAttribute="top" secondItem="4Ik-xR-LpA" secondAttribute="bottom" constant="10" id="0TO-ep-ltj"/>
                             <constraint firstItem="QwS-Wc-EXi" firstAttribute="leading" secondItem="4Ik-xR-LpA" secondAttribute="leading" constant="-3" id="4Kq-rh-Wo8"/>
                             <constraint firstItem="DZQ-Hr-Hsx" firstAttribute="top" secondItem="Dm2-78-G4e" secondAttribute="bottom" constant="10" id="5aZ-s7-8XJ"/>
                             <constraint firstItem="mM7-ZA-2Pk" firstAttribute="top" secondItem="cQq-sW-UfR" secondAttribute="top" id="Al8-mx-kRa"/>
@@ -294,7 +294,7 @@
                             <constraint firstItem="yL5-Oj-yeD" firstAttribute="leading" secondItem="Otu-cb-LcG" secondAttribute="trailing" constant="25" id="dPV-rZ-GYh"/>
                             <constraint firstAttribute="trailing" secondItem="DZQ-Hr-Hsx" secondAttribute="trailing" constant="10" id="g4b-VY-m88"/>
                             <constraint firstItem="Y2h-SG-AvH" firstAttribute="top" secondItem="Otu-cb-LcG" secondAttribute="top" constant="-3" id="gJO-sG-gKU"/>
-                            <constraint firstItem="Dm2-78-G4e" firstAttribute="top" secondItem="foQ-ja-tns" secondAttribute="bottom" constant="5" id="hiz-mj-CiE"/>
+                            <constraint firstItem="Dm2-78-G4e" firstAttribute="top" secondItem="foQ-ja-tns" secondAttribute="bottom" constant="10" id="hiz-mj-CiE"/>
                             <constraint firstItem="Inn-hF-mcs" firstAttribute="bottom" secondItem="Y2h-SG-AvH" secondAttribute="bottom" constant="3" id="k6s-vN-5hs"/>
                             <constraint firstItem="4Ik-xR-LpA" firstAttribute="top" secondItem="mM7-ZA-2Pk" secondAttribute="bottom" constant="10" id="kEe-hV-IJM"/>
                             <constraint firstAttribute="trailing" secondItem="Dm2-78-G4e" secondAttribute="trailing" constant="5" id="kxf-ez-HSc"/>

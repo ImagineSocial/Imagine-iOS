@@ -48,15 +48,17 @@ class NotificationCell: UITableViewCell {
                     let count = vote.thanks+vote.wow+vote.ha+vote.nice
                     
                     if count == 1 {
-                        headerLabel.text = "Dein Beitrag wurde geliked"
+                        headerLabel.text = NSLocalizedString("notification_like_singular", comment: "has been liked")
                     } else {
-                        headerLabel.text = "Dein Beitrag wurde \(count) mal geliked"
+                        let labelText = NSLocalizedString("notification_like_plural", comment: "how many times liked")
+                        headerLabel.text = String.localizedStringWithFormat(labelText, count)
                     }
                     
                     mainTextLabel.text = comment.title.quoted
                 } else {
-                    headerLabel.text = "\(comment.author) hat kommentiert:"
-                    mainTextLabel.text = "\(comment.text)".quoted
+                    let labelText = NSLocalizedString("notification_comment", comment: "who commented")
+                    headerLabel.text = String.localizedStringWithFormat(labelText, comment.author)
+                    mainTextLabel.text = comment.text.quoted
                 }
             }
         }

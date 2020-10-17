@@ -20,7 +20,7 @@ enum CommentSection {
 }
 
 protocol CommentTableViewDelegate {
-    func doneSaving() //// Tells the parent that the input text was successfully saved
+    func doneSaving() /// Tells the parent that the input text was successfully saved
     func notLoggedIn()
     func notAllowedToComment()
     func commentGotReported(comment: Comment)
@@ -81,7 +81,7 @@ class CommentTableView: UITableView {
         delegate = self
         dataSource = self
         
-        isScrollEnabled = false
+//        isScrollEnabled = false
         register(UINib(nibName: "CommentCell", bundle: nil), forCellReuseIdentifier: commentIdentifier)
         estimatedRowHeight = 100
         rowHeight = UITableView.automaticDimension
@@ -170,16 +170,19 @@ class CommentTableView: UITableView {
                     rightComment.children = children
                 }
                 self.reloadData()
+                print("ReloadData##")
             } else {
                // item could not be found
                 self.comments.append(comment)
                 self.comments.sort(by: { $0.createTime.compare($1.createTime) == .orderedAscending })
                 self.reloadData()
+                print("ReloadData##")
             }
         } else {
             self.comments.append(comment)
             self.comments.sort(by: { $0.createTime.compare($1.createTime) == .orderedAscending })
             self.reloadData()
+            print("ReloadData##")
         }
     }
     
@@ -677,7 +680,17 @@ extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
 
     override var intrinsicContentSize: CGSize {
         layoutIfNeeded()
-        return CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
+        var height:CGFloat = 0;
+        for s in 0..<self.numberOfSections {
+            let nRowsSection = self.numberOfRows(inSection: s)
+            for r in 0..<nRowsSection {
+                height += self.rectForRow(at: IndexPath(row: r, section: s)).size.height;
+            }
+        }
+        height+=30 //tableViewHeader
+        
+        print("return height: \(height)")
+        return CGSize(width: -1, height: height)
     }
 }
 

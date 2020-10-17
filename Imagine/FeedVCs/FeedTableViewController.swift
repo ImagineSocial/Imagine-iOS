@@ -66,6 +66,32 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         }
     }
     
+    override func presentInfoView() {
+        let commHeaderShown = UserDefaults.standard.bool(forKey: "likesInfo")
+        if commHeaderShown == false {
+            showInfoView()
+        }
+    }
+    
+    func showInfoView() {
+        let upperHeight = UIApplication.shared.statusBarFrame.height +
+              self.navigationController!.navigationBar.frame.height
+        let height = upperHeight+40
+        
+        let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
+        let popUpView = PopUpInfoView(frame: frame)
+        popUpView.alpha = 0
+        popUpView.type = .likes
+        
+        if let window = UIApplication.shared.keyWindow {
+            window.addSubview(popUpView)
+        }
+        
+        UIView.animate(withDuration: 0.5) {
+            popUpView.alpha = 1
+        }
+    }
+    
     func setPlaceholderAndGetPosts() {
         //setPlaceholder
         var index = 0
@@ -182,11 +208,6 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                         let post = Post()
                         post.type = .topTopicCell
                         self.posts.insert(post, at: 0)
-                        
-                        //                    let adpost = Post()
-                        //                    adpost.title = "ad"
-                        //
-                        //                    self.posts.insert(adpost, at: 4)
                         
                         DispatchQueue.main.async {
                             self.tableView.reloadData()
@@ -336,8 +357,8 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                                                     comment.sectionItemID =  postID
                                                     comment.upvotes = Votes()
                                                     comment.title = title
-                                                    if let _ = data["isTopicPost"] as? Bool {
-                                                        comment.isTopicPost = true
+                                                    if let isTopicPost = data["isTopicPost"] as? Bool {
+                                                        comment.isTopicPost = isTopicPost
                                                     }
                                                     if let language = data["language"] as? String {
                                                         if language == "en" {
@@ -834,6 +855,8 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                 post.documentID = comment.sectionItemID
                 post.isTopicPost = comment.isTopicPost
                 post.language = comment.sectionItemLanguage
+                post.newUpvotes = comment.upvotes
+                print("to post with upvotes: \(comment.upvotes)")
                 if let user = Auth.auth().currentUser {     //Only works if you get notifications for your own posts
                     post.originalPosterUID = user.uid
                 }

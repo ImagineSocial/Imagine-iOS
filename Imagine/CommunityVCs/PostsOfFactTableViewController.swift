@@ -96,7 +96,6 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
                                     self.view.activityStopAnimating()
                                     
                                     self.refreshControl?.endRefreshing()
-                                    self.explainFunctions()
                                 }
                             } else {    // Append the next batch to the existing
                                 var indexes : [IndexPath] = [IndexPath]()
@@ -178,31 +177,6 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
         }
     }
     
-    func explainFunctions() {
-        
-        if isMainViewController {
-            if let _ = defaults.string(forKey: "showFollowFunction") {
-                
-                let count = defaults.integer(forKey: "TimesOpenedCommunity")
-                print("THat is how many Times: \(count)")
-                
-                if count < 6 {
-                    hintTheOtherView()
-                    defaults.set(count+1, forKey: "TimesOpenedCommunity")
-                }
-                
-            } else {
-                showFollowTopicExplanation()
-                defaults.set(true, forKey: "showFollowFunction")
-                print("Community launched first time")
-            }
-        }
-    }
-    
-    func showFollowTopicExplanation() {
-        followTopicTipView = EasyTipView(text: NSLocalizedString("follow_community_description", comment: "Why should you follow a topic?"))
-    }
-    
     //MARK:- ScrollViewDidScroll
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offset = scrollView.contentOffset.y
@@ -213,7 +187,6 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
         
         if distanceFromBottom < height {
             if fetchesPosts == false {
-                print("##Ende erreicht!")
                 
                 fetchesPosts = true
                 self.getPosts(getMore: true)

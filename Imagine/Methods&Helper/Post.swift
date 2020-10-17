@@ -88,6 +88,7 @@ class Post {
     var anonymousName: String?
     var user = User()
     var votes = Votes()
+    var newUpvotes: Votes?
     var event = Event()
     var repost: Post?
     var fact:Fact?
@@ -132,63 +133,6 @@ class Post {
                         
                         returnRepost(post)
                     }
-                    //                        guard let title = docData["title"] as? String,
-                    //                            let description = docData["description"] as? String,
-                    //                            let report = docData["report"] as? String,
-                    //                            let createTimestamp = docData["createTime"] as? Timestamp,
-                    //                            let originalPoster = docData["originalPoster"] as? String,
-                    //                            let thanksCount = docData["thanksCount"] as? Int,
-                    //                            let wowCount = docData["wowCount"] as? Int,
-                    //                            let haCount = docData["haCount"] as? Int,
-                    //                            let niceCount = docData["niceCount"] as? Int,
-                    //                            let postType = docData["type"] as? String
-                    //
-                    //                            else {
-                    //                                return
-                    //                        }
-                    //
-                    //                        let linkURL = docData["link"] as? String ?? ""
-                    //                        let imageURL = docData["imageURL"] as? String ?? ""
-                    //                        let picHeight = docData["imageHeight"] as? Double ?? 0
-                    //                        let picWidth = docData["imageWidth"] as? Double ?? 0
-                    //
-                    //                        let stringDate = createTimestamp.dateValue().formatRelativeString()
-                    //
-                    //                        post.title = title      // Sachen zuordnen
-                    //                        post.imageURL = imageURL
-                    //                        post.mediaHeight = CGFloat(picHeight)
-                    //                        post.mediaWidth = CGFloat(picWidth)
-                    //                        post.description = description
-                    //                        post.documentID = document.documentID
-                    //                        post.createTime = stringDate
-                    //                        post.originalPosterUID = originalPoster
-                    //                        post.votes.thanks = thanksCount
-                    //                        post.votes.wow = wowCount
-                    //                        post.votes.ha = haCount
-                    //                        post.votes.nice = niceCount
-                    //                        post.linkURL = linkURL
-                    //
-                    //                        if let reportType = self.handyHelper.setReportType(fetchedString: report) {
-                    //                            post.report = reportType
-                    //                        }
-                    //
-                    //                        if let factID = docData["linkedFactID"] as? String {
-                    //                            let fact = Fact()
-                    //                            fact.documentID = factID
-                    //
-                    //                            post.fact = fact
-                    //                        }
-                    //
-                    //                        if let postType = self.handyHelper.setPostType(fetchedString: postType) {
-                    //                            post.type = postType
-                    //                        }
-                    //
-                    //                        if originalPoster == "anonym" {
-                    //                            post.anonym = true
-                    //                        } else {
-                    //                            post.getUser(isAFriend: false)
-                    //                        }
-                    
                 }
             })
         }

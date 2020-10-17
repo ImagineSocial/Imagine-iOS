@@ -248,6 +248,11 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
 
 extension CampaignViewController: CommentViewDelegate, CommentTableViewDelegate {
     
+    func heightChanged() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.view.layoutSubviews()
+        }
+    }
     
     func recipientChanged(isActive: Bool, userUID: String) {
         print("COming soon")

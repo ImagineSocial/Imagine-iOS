@@ -34,10 +34,10 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
     let communityPostCellIdentifier = "SearchCollectionViewPostCell"
     let searchHeaderIdentifier = "SearchCollectionViewHeader"
     let placeHolderIdentifier = "PlaceHolderCell"
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         collectionView.register(UINib(nibName: "SmallPostCell", bundle: nil), forCellWithReuseIdentifier: postCellIdentifier)
         collectionView.register(UINib(nibName: "FactCell", bundle: nil), forCellWithReuseIdentifier: topicCellIdentifier)
         collectionView.register(SearchUserCell.self, forCellWithReuseIdentifier: userCellIdentifier)
@@ -58,54 +58,59 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
     }
     
     func setUpSearchController() {
-       
-       // I think it is unnecessary to set the searchResultsUpdater and searchcontroller Delegate here, but I couldnt work out an alone standing SearchViewController
-       
-//       searchTableVC.customDelegate = self
-       
-       // Setup the Search Controller
-       searchController.searchResultsUpdater = self
-       searchController.obscuresBackgroundDuringPresentation = false
-       searchController.searchBar.placeholder = NSLocalizedString("search_input_placeholder", comment: "search for user, communities and posts")
-       searchController.delegate = self
-
-       searchController.searchBar.scopeButtonTitles = ["Posts", "Communities", "User"]
-       searchController.searchBar.delegate = self
-
+        
+        // I think it is unnecessary to set the searchResultsUpdater and searchcontroller Delegate here, but I couldnt work out an alone standing SearchViewController
+        
+        //       searchTableVC.customDelegate = self
+        
+        // Setup the Search Controller
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = NSLocalizedString("search_input_placeholder", comment: "search for user, communities and posts")
+        searchController.delegate = self
+        
+        searchController.searchBar.scopeButtonTitles = ["Posts", "Communities", "User"]
+        searchController.searchBar.delegate = self
+        
         self.navigationItem.searchController = searchController
-
-       self.navigationItem.hidesSearchBarWhenScrolling = true
-       searchController.isActive = true
-       definesPresentationContext = true
+        
+        self.navigationItem.hidesSearchBarWhenScrolling = true
+        searchController.isActive = true
+        definesPresentationContext = true
     }
     
     
     
     func getCommunityPosts() {
-        var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
-        if language == .english {
-            collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
-        } else {
-            collectionRef = self.db.collection("TopicPosts")
-        }
-        
-        let ref = collectionRef.whereField("type", in: ["picture", "multiPicture", "GIF"]).order(by: "createTime", descending: true).limit(to: 50)
-        //.whereField("type", isEqualTo: "picture").order(by: "createTime", descending: true).limit(to: 50)
-        ref.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
+        DispatchQueue.global(qos: .default).async {
+            
+            var collectionRef: CollectionReference!
+            let language = LanguageSelection().getLanguage()
+            if language == .english {
+                collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
             } else {
-                if let snap = snap {
-                    var posts = [Post]()
-                    for document in snap.documents {
+                collectionRef = self.db.collection("TopicPosts")
+            }
+            
+            let ref = collectionRef.whereField("type", in: ["picture", "multiPicture", "GIF"]).order(by: "createTime", descending: true).limit(to: 30)
+            //.whereField("type", isEqualTo: "picture").order(by: "createTime", descending: true).limit(to: 50)
+            ref.getDocuments { (snap, err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    if let snap = snap {
+                        var posts = [Post]()
+                        for document in snap.documents {
+                            if let post = self.postHelper.addThePost(document: document, isTopicPost: true, forFeed: false, language: language) {
+                                posts.append(post)
+                            }
+                        }
                         
-                        if let post = self.postHelper.addThePost(document: document, isTopicPost: true, forFeed: false, language: language) {
-                            posts.append(post)
+                        DispatchQueue.main.async {
+                            self.communityPosts = posts
+                            self.collectionView.reloadData()
                         }
                     }
-                    self.communityPosts = posts
-                    self.collectionView.reloadData()
                 }
             }
         }
@@ -372,9 +377,9 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
             // You have to write the whole noun
             var tagCollectionRef: CollectionReference!
             if language == .english {
-                collectionRef = db.collection("Data").document("en").collection("posts")
+                tagCollectionRef = db.collection("Data").document("en").collection("posts")
             } else {
-                collectionRef = db.collection("Posts")
+                tagCollectionRef = db.collection("Posts")
             }
             let tagRef = tagCollectionRef.whereField("tags", arrayContains: searchText).limit(to: 10)
             

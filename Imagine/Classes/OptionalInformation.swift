@@ -14,10 +14,16 @@ protocol OptionalInformationDelegate {
     func fetchCompleted()
 }
 
+enum AddOnDesign {
+    case normal
+    case youTubePlaylist
+}
+
 enum OptionalInformationStyle {
     case collection
     case singleTopic
     case QandA
+    case collectionWithYTPlaylist
 }
 
 class AddOnItem {   // Otherwise it is a pain in the ass to compare Any to the documentIDs in the itemOrder Array
@@ -39,6 +45,8 @@ class OptionalInformation {
     var fact: Fact
     var imageURL: String?
     var OP: String
+    var design: AddOnDesign = .normal
+    var externalLink: String?
     
     var singleTopic: Fact?
     

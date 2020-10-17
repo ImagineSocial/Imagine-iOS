@@ -212,6 +212,7 @@ PODS:
     - abseil/base/base_internal
     - abseil/base/config
     - abseil/meta/type_traits
+  - Alamofire (5.2.2)
   - BoringSSL-GRPC (0.0.7):
     - BoringSSL-GRPC/Implementation (= 0.0.7)
     - BoringSSL-GRPC/Interface (= 0.0.7)
@@ -412,6 +413,7 @@ PODS:
   - YoutubePlayer-in-WKWebView (0.3.4)
 
 DEPENDENCIES:
+  - Alamofire (~> 5.2)
   - BSImagePicker (~> 3.0)
   - CropViewController
   - DateToolsSwift
@@ -434,6 +436,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - abseil
+    - Alamofire
     - BoringSSL-GRPC
     - BSImagePicker
     - CropViewController
@@ -482,6 +485,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
+  Alamofire: 814429acc853c6c54ff123fc3d2ef66803823ce0
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   BSImagePicker: 1c0d14fa6f1b55380cd49cbebe47584f10e180c6
   CropViewController: 980df34ffc499db89755b2f307f20eca00cd40c6
@@ -520,6 +524,6 @@ SPEC CHECKSUMS:
   SwiftLinkPreview: 3d924eeaae8d17410a827a4b37675713af1a0a8a
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
 
-PODFILE CHECKSUM: 11f90c336aafe6db4c6cd7b685b8eea96ffea7bd
+PODFILE CHECKSUM: e9a7ece3db40686fa8188d7443731ca01e6bde60
 
 COCOAPODS: 1.8.4

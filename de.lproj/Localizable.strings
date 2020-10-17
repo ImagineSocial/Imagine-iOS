@@ -389,7 +389,7 @@
 "constants_reportBugText" = "Sag uns, was wir für Fehler beheben sollen.\n\nSchließt sich die App abrupt, wird ein Bereich des Bildschirms falsch dargestellt oder eine Funktion funktioniert nicht, so sag uns bitte Bescheid.\n\nSelbst wenn es ein offensichtlicher Fehler ist, so wissen wir was die User am Meisten stört, je mehr Reporte zu diesem Thema bei uns eintreffen.";
 "constants_communityText" = "Erstelle eine neue Community oder eine neue Diskussion. \nEin Bild ist dabei optional aber immer gern gesehen\n\nDu bist vorerst der Moderator der von dir erstellten Communities und Diskussionen und kannst zu einem späteren Zeitpunkt die Informationen und Metadaten bearbeiten.";
 "constants_addOns_singleTopicText" = "Verlinke mit diesem AddOn eine andere Community, die den Menschen aus der derzeitigen Community interessant finden könnten. Die Darstellung enthält Bilder-Beiträge, sowie die Beschreibung der Community in der Vorschau.";
-"constants_addOns_normalText" = "In diesem AddOn kann man nach belieben vorhandene oder neue Beiträge posten um ein Unterthema deiner Wahl besser zu beleuchten.\nAuch Themen kannst du hier verlinken. Möchtest du jedoch nur ein Thema hervorheben, kannst du das AddOn für einzelne Themen nutzen.";
+"constants_addOns_normalText" = "Your post was";
 "constants_addOns_QandA" = "Füge dieses AddOn hinzu, um einen Ort für mögliche Fragen zu  schaffen. Anfänger können so schneller lernen und Neulinge oder Fremde sich einfacher an einem Ort oder einer Community zurechtfinden.";
 
 ////Storyboard
@@ -493,7 +493,6 @@
 //PhotoAccess
 "photoAccess_permission_denied_text" = "Es scheint, dass deine Einstellungen uns den Zugriff auf deine Bild-Ordner untersagen. Du kannst das wie folgt ändern:\n\n1. Schließe die App.\n\n2. Öffne die Einstellungen.\n\n3. Scroll nach unten und wähle Imagine aus.\n\n4. Ändere die Ordner Einstellungen.\n\n5. Öffne die App und versuche es erneut.";
 
-//After Mid Sept.. Update
 //NewCommunityItem
 "share_community_header_label" = "Teile diese Community im Feed";
 "share_community_footer_description" = "Teile diese Community im Feed, um deinen Mitmenschen bei Imagine diese Community zu empfehlen oder sie darauf aufmerksam zu machen. Der Titel wird über der Community im Feed sichtbar sein, so wie du es kennst.";
@@ -527,3 +526,100 @@
 "programmer_footer" = "Imagine ist ein Open Source Projekt. Wir können die kreativen Ideen von Vielen ausprobieren, testen und als Features etablieren. Die Möglichkeiten sind endlos, wir sind keinen Aktionären oder Investoren Rechenschaft schuldig, kreieren wir also etwas großes und außergewöhnliches!";
 "artist_header" = "Gestalten wir die Zukunft & die App wie es uns beliebt";
 "programmer_header" = "Wir entscheiden wie sich die App anfühlt!";
+
+//PostVC
+"buttonLabel_thanks" = "Ich fühle mit dir";
+"buttonLabel_wow" = "Wow, ich bin begeistert";
+"buttonLabel_ha" = "Ha, das ist witzig";
+"buttonLabel_nice" = "Das ist ja cool";
+
+//ImagineCommuntiy
+"help_header" = "Mithilfe";
+"moreInfo_header" = "Mehr\nInfos";
+"latest_news_header" = "Aktuelles";
+
+//newAddONVC
+"new_addOn_youtube_playlist_header" = "Eine normale Kollektion mit einer eingebauten YouTube Playlist";
+"new_addOn_youtube_playlist_description" = "Eine Kollektion, bestimmt für YouTube Videos. Teile die Videos in diesem AddOn um die hinterlegte Playlist zu erweitern. So hat man übersichtlich und bequem alle Inhalte an einem Ort, zum abspeichern für später oder direkt zum gucken.";
+
+//topTopicCell
+"top_topic_week_post_header" = "Die Themen der Woche: ";
+
+//notificationCell
+"notification_like_singular" = "Jamand hat mit deinem Beitrag interagiert";
+"notification_like_plural" = "Auf deinen Beitrag wurde %d mal reagiert";
+"notification_comment" = "%@ hat kommentiert:";
+
+//SupportTheCommunity
+"helpVC_description" = "Zusammen bauen wir ein freies und unabhängiges Netzwerk auf!";
+"helpVC_title" = "Gemeinsamer Aufbau";
+"helpVC_language" = "Sprache";
+"helpVC_entry_title" = "Wir brauchen dich!";
+"helpVC_entry_summary" = "Wenn du glaubst, mit deinem Wissen oder Erfahrung kannst du uns helfen, aber es gibt keine passende Ausschreibung, gib uns Bescheid! Wir sind auf klüge Köpfe angewiesen!";
+"helpVC_entry_description" = "Schreib uns einfach, welcher Bereich dich besonders interessiert und deine Motivation.\n\n Wir würden uns freuen";
+"helpVC_category_general" = "Allgemein";
+"helpVC_interested_label" = "%@ Interessenten";
+
+//BugReport
+"bug_report_header" = "Danke für deine Unterstützung, wo hakt's?";
+"bug_report_description" = "Erkläre uns bitte mit deinen Worten kurz, wo es ein Problem gibt. Wir versuchen uns so schnell es geht darum zu kümmern.   Danke für deine Zeit!";
+
+//CampaignVCs
+"campaignVC_title" = "Vorschläge";
+"campaignVC_description" = "Treffen wir die Entscheidungen gemeinsam! Stelle deine Ideen vor und entscheide über die Vorschläge von anderen.";
+"campaignVC_shareButton" = "Teile deine Idee";
+"campaignVC_segment_proposal" = "Vorschläge";
+"campaignVC_segment_vote" = "Abstimmungen";
+
+//ShareProposalVC
+"share_proposal_header" = "Wie kann sich Imagine verbessern?";
+"share_proposal_title" = "Titel:";
+"share_proposal_summary" = "Kurze Zusammenfassung:";
+"share_proposal_description" = "Beschreibung:";
+"share_proposal_category" = "Kategorie:";
+
+//VoteViewController
+"vote_vc_effects" = "Auswirkungen:";
+"vote_vc_cost" = "Kosten:";
+"vote_vc_timeToBuild" = "Dauer:";
+
+//FAQ
+"faq_header" = "So funktioniert unser Netzwerk:";
+
+//JobSurveyVC
+"jobSurvey_title" = "Wir sind über jede Hilfe dankbar!";
+"jobSurvey_qualification_header" = "Was sind denn deine bisherigen Erfahrungen oder Qualifikationen?";
+"jobSurvey_qualification_placeholder" = "...";
+"jobSurvey_link_title" = "Falls du einen Link mit uns teilen möchtest:";
+"jobSurvey_link_placeholder" = "meinPortfolio.html";
+"jobSurvey_location_title" = "Wo wohnst du, bzw. wo hälst du dich in nächster Zeit auf?";
+"jobSurvey_location_placeholder" = "Berlin, Deutschland...";
+"jobSurvey_motivation_title" = "Wie weit geht deine Motivation?";
+"jobSurvey_motivation_placeholder" = "Team-Member, Helfer oder erstmal schauen...";
+"jobSurvey_contact_title" = "Wie können wir dich erreichen?";
+"jobSurvey_contact_placeholder" = "E-Mail Adresse, WhatsApp, Facebook...";
+"jobSurvey_whatElse_title" = "Möchtest du noch etwas loswerden?";
+"jobSurvey_contact_button" = "Jetzt kontaktieren";
+
+"jobSurvey_introduction_label" = "Du möchtest Imagine unterstützen?";
+"jobSurvey_introduction_variable" = "Du möchtest Imagine als %@ unterstützen?";
+"jobSurvey_input_alert" = "Bitte fülle mindestens die Kontaktzeile und die Qualifikationszeile aus";
+"jobSurvey_alert_success" = "Deine Nachricht wurde erfolgreich an uns weitergeleitet!";
+
+//infoTableVIew
+"better_than_others_title" = "Unterschied zu anderen Open Source Netzwerken";
+"better_than_others_description" = "Es gibt viele schlaue Köpfe und Gruppen im Internet, die versuchen den Missständen der jetzigen Netwerke mit Open Source- oder dezentralisierten Netzwerken entgegen zu wirken, doch noch hat sich kein Netzwerk wirklich bewährt.\n\nWir sind also nicht die ersten, wollen aber erst einmal durch eine hohe Benutzerfreundlichkeit glänzen. Aktuelle Formate, wie wir sie aus anderen Netzwerken kennen und mögen, sind pflicht. \n\nDie \"leane\" (schmale) Herangehensweise, also einen Netzwerk-Prototypen so früh wie möglich zu testen, soll uns einen Marktvorteil bieten, da wir nicht auf Crowdfunding und damit entstehende Erwartungshaltungen gebunden sind.\n\nEin wichtiger Punkt ist auch der finanzielle Aspekt. Viele Netzwerke werben mit einer Freiheit von lästiger Werbung. Wir sind auch von Werbung genervt, wollen diese jedoch angenehm umsetzen und so die enormen finanziellen Möglichkeiten nutzen. So wird die Wahrscheinlichkeit des Erfolges erhöht und wir können mehr an die Gesellschaft zurückgeben.";
+"give_to_charity_title" = "Einnahmenverwendung";
+"give_to_charity_description" = "Wir wollen die enormen Einnahmemöglichkeiten von sozialen Netzwerken nutzen um damit etwas Gutes zu tun.\n\nDie Einnahmen, welche die Kosten des Netzwerkes (wie z.B. Server & Marketing) überschreiten, werden für gute Zwecke, wie Spenden und später auch Imagine Projekte genutzt. Die Gemeinschaft baut das Netzwerk auf und hat am Ende auch etwas davon!";
+"our_motivation_title" = "Unsere Motivation";
+"our_motivation_description" = "Unsere Erde und ihre Natur leidet unter den Auswirkungen von Globalisierung und Industrialisierung und die Menschen schauen dabei zu.\n\nAbgelenkt und beschäftigt werden die Probleme der Welt weiter vor uns hergeschoben.\nUnsere Ablenkung bringt uns dabei schlechte Gedanken und lügt uns an, während die Firmen dabei mit unseren Daten reich werden.Da stimmt etwas nicht. Dabei ist das nicht so schwer eine Lösung zu finden. Alle die es jedoch versuchen, werden früher oder später von Geld und Macht manipuliert. Deswegen sorgen wir von Anfang an mit der Demokratie vor.";
+"network_effect_title" = "Network-Effekt";
+"network_effect_description" = "Dem Network-Effekt wird durch unsere Post-Verteilung vorgebeugt. Während es bei anderen Netzwerken zu Beginn einsam ist, wenn Freunde und Bekannte noch nicht beigetreten sind, wird man bei Imagine direkt aufgenommen und erhält einen interessanten Feed den man schrittweise optimiert.\n So funktioniert es als kleines Netzwerk, kann aber auch nach belieben expandieren, ohne das Gemeinschaftsgefühl zu verlieren.";
+"voice_of_team_title" = "Mitspracherecht des Teams";
+"voice_of_team_description" = "Das Team von Imagine setzt sich jeden Tag mit dem Netzwerk auseinander und hat damit einen tieferen Einblick in die Geschehnisse und dessen Folgen.  \nDa wir das Netzwerk jedoch als Community aufbauen wollen, schlagen wir vor, dass wir die Entscheidungsmacht aufteilen. Wir geben den Usern und dem Team einen gewissen Prozentsatz. Bei Entscheidungen haben die ”Profis” also einen Anteil an dem Ausgang der Wahl.  \nSind die User jedoch nicht zufrieden mit der Arbeit und den Entscheidungen des Teams, kann das Mitspracherecht des Teams durch periodische Wahlen angepasst werden.\n Konzept und Ausführung werden wir gemeinsam mit der Community in der Orientierungsphase des Netzwerkes diskutieren und festlegen.";
+"vcs_are_bad_title" = "Nachteile durch Investoren";
+"vcs_are_bad_description" = "Die Start-Up Industrie ist in den vergangenen Jahren stark gewachsen. Mit dem wirtschaftlichen Erfolg von StartUps hat sich auch die Infrastruktur rund um die jungen Firmen gewandelt. Heute wird schnelles Wachstum seltener durch Banken, sondern meist durch Risikokapitalgeber in Form von privaten Investoren (Angel Investor) und Venture Capital (VC) Firmen ermöglicht.\n Durch die niedrige Erfolgsquote von StartUps lassen sich die Investoren ihr Risiko in Anteilen am StartUp gut bezahlen und möchten auch ein Mitbestimmungsrecht in den alltäglichen Entscheidungen haben.  \nDa es jedoch selten bei nur einer Finanzierungsrunde bleibt, wird der Einfluss von Investoren und die Erwartungen an das StartUp immer größer. Das höchste Ziel wird so die Profitmaximierung und die Ambitionen der Gründung können nicht mehr durchgesetzt werden.";
+"principle_title" = "Imagine-Grundsatz";
+"principle_descriprion" = "Kommunikation, Transparenz und soziale Verantwortung sind für uns die wichtigsten Merkmale für ein faires Miteinander zwischen User/Kunde und Unternehmen.  \nWir hoffen, dass in Zukunft Unternehmen eine offene Atmosphäre zu ihren Kunden aufbauen und pflegen. Ihr gegenseitliches Handeln sollte verständlich dargelegt und nicht in langen Datenschutz- und Nutzungsrichtlinien verschlüsselt werden.  \nFirmen suchen trotz hoher Einnahmen, Steuer- und Gesetzeslücken um ihren Profit zu maximieren, während die User und Allgemeinheit nicht berücksichtigt werden.   \nDas Umdenken der Unternehmen muss eingefordert werden. Im Informationszeitalter haben Konsumenten die Möglichkeit sich zu vernetzen, ihre Rechte einzufordern und die derzeitige Profitgier anzuprangern. ";
+"helper_title" = "Helfer & Team";
+"helper_description" = "Um Imagine frei von externen Einflüssen und Absichten zu halten, wollen wir das Netzwerk mit der Unterstützung unserer User aufbauen.  \nWir sind dankbar für jede Unterstützung, können zu Beginn jedoch keine Entlohnungen anbieten. Als Wertschätzung bieten wir den Helfern einen besonderen Status in Netzwerk und bitten sie, ihre angewendete Zeit zu notieren. Sofern es zu einem späteren Zeitpunkt möglich ist, werden diese für ihre Mühen in gemeinschaftlichem Konsens angemessen kompensiert.\n Bei Erfolg des Netzwerkes wird ein Team von Mitarbeitern für die koordinierte Erweiterung des Netzwerkes aufgebaut. Hierfür wird die digitale Vernetzung des Aufbaus gegen eine zentrale Anlaufstelle eingetauscht.  \nStadt der Niederlassung wird aufgrund von Expansions- und Vernetzungschancen ausgewählt.\n Die Helfer zu Beginn von Imagine erhalten für die Auswahl des Teams selbstverständlich einen besonderen Status.";

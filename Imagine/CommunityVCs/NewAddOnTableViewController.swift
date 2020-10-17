@@ -53,8 +53,9 @@ class NewAddOnTableViewController: UITableViewController {
         let infoAll = OptionalInformation(style: .collection, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_collection_header", comment: "new collection text"), description: Constants.texts.AddOns.collectionText, singleTopic: nil)
         let singleTopic = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_singleTopic_header", comment: "new singleTopicText"), description: Constants.texts.AddOns.singleTopicText, singleTopic: nil)
         let QandA = OptionalInformation(style: .QandA, OP: "", documentID: "", fact: Fact(), description: Constants.texts.AddOns.QandAText)
+        let youTubePlaylist = OptionalInformation(style: .collectionWithYTPlaylist, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_youtube_playlist_header", comment: "new collection text"), description: NSLocalizedString("new_addOn_youtube_playlist_description", comment: ""), singleTopic: nil)
         
-        optionalInformations.append(contentsOf: [infoAll, singleTopic, QandA])
+        optionalInformations.append(contentsOf: [infoAll, singleTopic, QandA, youTubePlaylist])
         tableView.reloadData()
     }
 
@@ -97,8 +98,10 @@ class NewAddOnTableViewController: UITableViewController {
                     cell.exampleImageView.image = UIImage(named: "AddOnSingleTopicExample")
                 case .QandA:
                     cell.exampleImageView.image = UIImage(named: "AddOnQandAExample")
-                default:
+                case .collection:
                     cell.exampleImageView.image = UIImage(named: "AddOnCollectionExample")
+                case .collectionWithYTPlaylist:
+                    cell.exampleImageView.image = UIImage(named: "AddOnYouTubePlaylistExample")
                 }
                 
                 return cell
@@ -175,6 +178,8 @@ class NewAddOnTableViewController: UITableViewController {
             self.selectedAddOnStyle = info.style
             
             switch info.style {
+            case .collectionWithYTPlaylist:
+                self.selectedAddOnTypeLabel.text = "YouTube Playlist AddOn"
             case .collection:
                 self.selectedAddOnTypeLabel.text = NSLocalizedString("addOn_type_collection", comment: "adde a normal collection")
             case .singleTopic:
@@ -198,6 +203,8 @@ class NewAddOnTableViewController: UITableViewController {
                         if let fact = fact {
                             if style == .singleTopic {
                                 vc.new = .singleTopicAddOn
+                            } else if style == .collectionWithYTPlaylist {
+                                vc.new = .addOnYouTubePlaylistDesign
                             } else {
                                 vc.new = .addOn
                             }

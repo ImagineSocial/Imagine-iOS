@@ -223,7 +223,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
         
         if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "communityHeader", for: indexPath) as? CommunityHeader {
 
-                headerView.headerLabel.text = "Aktuell"
+                headerView.headerLabel.text = NSLocalizedString("latest_news_header", comment: "latest news")
 
             return headerView
         
@@ -326,7 +326,7 @@ extension CommunityCollectionViewController: CommunityCollectionCellDelegate, Ta
         case .proposals:
             performSegue(withIdentifier: "toProposalsSegue", sender: nil)
         case .imagineFund:
-            print("Kommt noch")
+            performSegue(withIdentifier: "toImagineFundSegue", sender: nil)
         case .vision:
             performSegue(withIdentifier: "toVisionSegue", sender: nil)
         case .settings:

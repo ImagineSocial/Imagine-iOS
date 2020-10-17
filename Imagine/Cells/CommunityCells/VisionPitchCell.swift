@@ -11,6 +11,7 @@ import UIKit
 protocol VisionPitchDelegate {
     func nextTapped(indexPath:IndexPath)
     func backTapped(indexPath:IndexPath)
+    func signUpTapped()
 }
 
 class VisionPitchCell: UICollectionViewCell {
@@ -19,6 +20,7 @@ class VisionPitchCell: UICollectionViewCell {
     @IBOutlet weak var nextButton: DesignableButton!
     @IBOutlet weak var pageControl: UIPageControl!
     @IBOutlet weak var dismissButton: DesignableButton!
+    @IBOutlet weak var signUpButton: DesignableButton!
     
     
     var delegate:VisionPitchDelegate?
@@ -35,6 +37,10 @@ class VisionPitchCell: UICollectionViewCell {
     @IBAction func backTapped(_ sender: Any) {
         let lastSite = IndexPath(item: indexPathToChangeSite.item-1, section: indexPathToChangeSite.section)
         delegate?.backTapped(indexPath:lastSite)
+    }
+    
+    @IBAction func signUpButtonTapped(_ sender: Any) {
+        delegate?.signUpTapped()
     }
     
 }

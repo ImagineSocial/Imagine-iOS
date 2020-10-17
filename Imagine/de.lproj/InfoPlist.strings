@@ -1,0 +1,14 @@
+/* 
+  InfoPlist.strings
+  Imagine
+
+  Created by Malte Schoppe on 11.10.20.
+  Copyright © 2020 Malte Schoppe. All rights reserved.
+*/
+
+
+NSLocationWhenInUseUsageDescription = "Wir würden gerne auf deinen Standort zugreifen, um dir die Auswahl des richtigen Ortes zu erleichtern";
+NSPhotoLibraryUsageDescription = "Wir würden gerne auf deine Ordner zugreifen, damit du ein Foto zum posten auswählen kannst.";
+NSPhotoLibraryAddUsageDescription = "Wir würden gerne das aufgenommene Bild in deinem Fotoalbum speichern.";
+NSCameraUsageDescription = "Wir würden gerne auf deine Kamera zugreifen, damit du Bilder für den Feed oder dein Profil machen kannst.";
+

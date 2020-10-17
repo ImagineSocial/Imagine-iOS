@@ -55,6 +55,8 @@ class voteCampaignTableViewController: UITableViewController {
             Analytics.logEvent("LookingForCampaigns", parameters: [:])
         }
         
+        getCampaigns()
+        
         self.view.activityStartAnimating()
         
         tableView.register(UINib(nibName: "VoteCell", bundle: nil), forCellReuseIdentifier: voteCellIdentifier)
@@ -100,12 +102,6 @@ class voteCampaignTableViewController: UITableViewController {
         infoScreen.voteCampaignVC = self
         return infoScreen
     }()
-    
-    
-    override func viewWillAppear(_ animated: Bool) {
-//        navigationController?.navigationBar.prefersLargeTitles = false
-        getCampaigns()
-    }
     
     func getCampaigns() {
         dataHelper.getData(get: .vote) { (votes) in

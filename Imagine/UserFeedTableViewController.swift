@@ -122,6 +122,30 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         setBarButtonItem()
         
         imagePicker.delegate = self
+        
+        let profileInfoShown = UserDefaults.standard.bool(forKey: "userFeedInfo")
+        if !profileInfoShown {
+            showInfoView()
+        }
+    }
+    
+    func showInfoView() {
+        let upperHeight = UIApplication.shared.statusBarFrame.height +
+              self.navigationController!.navigationBar.frame.height
+        let height = upperHeight+40
+        
+        let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
+        let popUpView = PopUpInfoView(frame: frame)
+        popUpView.alpha = 0
+        popUpView.type = .userFeed
+        
+        if let window = UIApplication.shared.keyWindow {
+            window.addSubview(popUpView)
+        }
+        
+        UIView.animate(withDuration: 0.5) {
+            popUpView.alpha = 1
+        }
     }
     
     override func viewDidLayoutSubviews() {

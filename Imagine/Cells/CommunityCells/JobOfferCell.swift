@@ -26,7 +26,8 @@ class JobOfferCell: UITableViewCell {
             headerLabel.text = jobOffer.title
             cellBodyLabel.text = jobOffer.cellText
             createDateLabel.text = jobOffer.stringDate
-            interestedCountLabel.text = "\(jobOffer.interested) Interessenten"
+            let text = NSLocalizedString("helpVC_interested_label", comment: "")
+            interestedCountLabel.text = String.localizedStringWithFormat(text, jobOffer.interested)
             categoryLabel.text = jobOffer.category
         }
     }

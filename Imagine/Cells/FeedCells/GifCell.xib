@@ -71,7 +71,7 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999998807907104" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3si-bm-DnA">
-                                <rect key="frame" x="10" y="74" width="382" height="12"/>
+                                <rect key="frame" x="10" y="74" width="382" height="2"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                 <nil key="highlightedColor"/>
@@ -138,7 +138,7 @@
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" horizontalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="386-Uc-o5s">
-                                <rect key="frame" x="5" y="91" width="392" height="175"/>
+                                <rect key="frame" x="5" y="86" width="392" height="175"/>
                                 <subviews>
                                     <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="V2M-wY-QrG">
                                         <rect key="frame" x="186" y="77.5" width="20" height="20"/>
@@ -281,7 +281,7 @@
                         <constraints>
                             <constraint firstItem="SCp-GG-0k5" firstAttribute="height" secondItem="Z3N-c3-48A" secondAttribute="height" constant="6" id="0Sf-D4-ykQ"/>
                             <constraint firstItem="d2p-oE-Zew" firstAttribute="centerY" secondItem="Z3N-c3-48A" secondAttribute="centerY" id="2HG-xR-aKK"/>
-                            <constraint firstItem="386-Uc-o5s" firstAttribute="top" secondItem="3si-bm-DnA" secondAttribute="bottom" constant="5" id="5Pf-Wd-DkD"/>
+                            <constraint firstItem="386-Uc-o5s" firstAttribute="top" secondItem="3si-bm-DnA" secondAttribute="bottom" constant="10" id="5Pf-Wd-DkD"/>
                             <constraint firstItem="Z3N-c3-48A" firstAttribute="leading" secondItem="3si-bm-DnA" secondAttribute="leading" id="AFi-eC-OQO"/>
                             <constraint firstItem="Z17-rF-0hw" firstAttribute="bottom" secondItem="Z3N-c3-48A" secondAttribute="bottom" constant="-2" id="APu-3B-Xf7"/>
                             <constraint firstItem="s57-4K-coq" firstAttribute="height" secondItem="3LC-IW-T8K" secondAttribute="height" constant="6" id="CPq-f0-OzM"/>
@@ -295,7 +295,7 @@
                             <constraint firstItem="3LC-IW-T8K" firstAttribute="centerY" secondItem="Z3N-c3-48A" secondAttribute="centerY" id="NHb-E9-ywK"/>
                             <constraint firstAttribute="trailing" secondItem="Pcc-bY-ai6" secondAttribute="trailing" id="Nul-3H-VSi"/>
                             <constraint firstItem="Pcc-bY-ai6" firstAttribute="top" secondItem="naF-ts-12n" secondAttribute="top" id="OFB-Kc-ncM"/>
-                            <constraint firstItem="8C7-cb-Ros" firstAttribute="top" secondItem="386-Uc-o5s" secondAttribute="bottom" constant="5" id="PfY-4q-H89"/>
+                            <constraint firstItem="8C7-cb-Ros" firstAttribute="top" secondItem="386-Uc-o5s" secondAttribute="bottom" constant="10" id="PfY-4q-H89"/>
                             <constraint firstAttribute="trailing" secondItem="3si-bm-DnA" secondAttribute="trailing" constant="10" id="TyK-F6-EzE"/>
                             <constraint firstItem="0Xg-JW-1AK" firstAttribute="bottom" secondItem="s57-4K-coq" secondAttribute="bottom" constant="3" id="Wfm-1P-cxf"/>
                             <constraint firstItem="d2p-oE-Zew" firstAttribute="leading" secondItem="3LC-IW-T8K" secondAttribute="trailing" constant="25" id="c4Y-oS-awB"/>

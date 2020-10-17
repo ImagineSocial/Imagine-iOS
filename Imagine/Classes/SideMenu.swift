@@ -445,7 +445,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         return label
     }()
     
-    //MARK:-BadgeUI
+    //MARK:- BadgeUI
     let badgeStackView: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false

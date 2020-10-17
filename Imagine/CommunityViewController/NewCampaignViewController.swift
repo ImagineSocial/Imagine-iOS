@@ -99,7 +99,7 @@ class NewCampaignViewController: UIViewController {
             }
             let campaignRef = collectionRef.document()
             
-            var dataDictionary: [String: Any] = ["campaignTitle": titleTextField.text, "campaignShortBody": shortBodyTextField.text, "campaignType" : "normal", "category" : getCategoryString(), "campaignExplanation": longBodyTextField.text, "campaignCreateTime": Timestamp(date: Date()), "campaignSupporter": 0, "campaignOpposition": 0, "voters": [""]]
+            var dataDictionary: [String: Any] = ["title": titleTextField.text, "summary": shortBodyTextField.text, "type" : "normal", "category" : getCategoryString(), "description": longBodyTextField.text, "createTime": Timestamp(date: Date()), "supporter": 0, "opposition": 0, "voters": [""]]
             
             campaignRef.setData(dataDictionary) { (err) in
                 if let error = err {

@@ -29,6 +29,7 @@ class AddOnHorizontalScrollCollectionViewCell: BaseAddOnCollectionViewCell {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
     
+    @IBOutlet weak var addOnDesignButton: UIButton!
     
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var containerView: UIView!
@@ -53,9 +54,16 @@ class AddOnHorizontalScrollCollectionViewCell: BaseAddOnCollectionViewCell {
                             headerImageView.sd_setImage(with: url, completed: nil)
                         }
                     } else {
-                        headerImageViewHeight.constant = 0
+                        if info.design == .youTubePlaylist {
+                            headerImageViewHeight.constant = 50
+                        } else {
+                            headerImageViewHeight.constant = 0
+                        }
                     }
                     
+                    if info.design == .youTubePlaylist {
+                        addOnDesignButton.isHidden = false
+                    }
                     
                     descriptionLabel.text = info.description
                     
@@ -92,6 +100,8 @@ class AddOnHorizontalScrollCollectionViewCell: BaseAddOnCollectionViewCell {
             layout.scrollDirection = .horizontal
         }
         
+        addOnDesignButton.imageView?.contentMode = .scaleAspectFill
+        
         //DesignStuff
         containerView.layer.cornerRadius = cornerRadius
         contentView.layer.cornerRadius = cornerRadius
@@ -104,6 +114,7 @@ class AddOnHorizontalScrollCollectionViewCell: BaseAddOnCollectionViewCell {
         collectionView.setContentOffset(CGPoint.zero, animated: false)  //Set collectionView to the beginning
                 
         headerImageViewHeight.constant = 115
+        addOnDesignButton.isHidden = true
         
         thanksButton.setTitle(nil, for: .normal)
         thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
@@ -127,6 +138,21 @@ class AddOnHorizontalScrollCollectionViewCell: BaseAddOnCollectionViewCell {
             generator.impactOccurred()
         }
     }
+    
+    @IBAction func addOnDesignButtonTapped(_ sender: Any) {
+        if let info = info {
+            if let link = info.externalLink {
+                if let url = URL(string: link) {
+                    UIApplication.shared.open(url)
+                }
+            } else {
+                if let url = URL(string: "https://www.youtube.com/channel/UCnplKle1yLH86hib4ZdKblQ/playlists") {
+                    UIApplication.shared.open(url)
+                }
+            }
+        }
+    }
+    
 }
 
 extension AddOnHorizontalScrollCollectionViewCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {

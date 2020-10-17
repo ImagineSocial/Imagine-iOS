@@ -30,6 +30,8 @@ class ArgumentPageViewController: UIPageViewController {
     
     var presentedVC: Int = 0
     
+    let defaults = UserDefaults.standard
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -45,9 +47,30 @@ class ArgumentPageViewController: UIPageViewController {
         setUpHeader()
         addViewController()
         setBarButton()
+        
+        
+        let commHeaderShown = defaults.bool(forKey: "communityHeaderInfo")
+        if !commHeaderShown {
+            showInfoView()
+        }
     }
     
-
+    func showInfoView() {
+        let upperHeight = UIApplication.shared.statusBarFrame.height +
+              self.navigationController!.navigationBar.frame.height
+        let height = upperHeight+40
+        
+        let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
+        let popUpView = PopUpInfoView(frame: frame)
+        popUpView.alpha = 0
+        popUpView.type = .communityHeader
+        
+        self.view.addSubview(popUpView)
+        
+        UIView.animate(withDuration: 0.5) {
+            popUpView.alpha = 1
+        }
+    }
     
     func setUpHeader() {
         let view = CommunityHeaderView.loadViewFromNib()

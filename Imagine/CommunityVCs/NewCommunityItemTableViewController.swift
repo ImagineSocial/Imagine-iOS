@@ -32,6 +32,7 @@ enum NewCommunityItemType {
     case deepArgument
     case source
     case addOn
+    case addOnYouTubePlaylistDesign
     case singleTopicAddOn
     case shareTopic
 }
@@ -159,6 +160,9 @@ class NewCommunityItemTableViewController: UITableViewController {
         case .addOn:
             headerLabel.text = NSLocalizedString("new_addOn_header", comment: "create new addon")
             cells.append(contentsOf: [.setTitle, .setDescription, .setPicture])
+        case .addOnYouTubePlaylistDesign:
+            headerLabel.text = NSLocalizedString("new_addOn_header", comment: "create new addon")
+            cells.append(contentsOf: [.setTitle, .setDescription, .setPicture])
         case .singleTopicAddOn:
             headerLabel.text = NSLocalizedString("new_addOn_header", comment: "create new addon")
             cells.append(contentsOf: [.setTitle, .setDescription, .chooseCommunity])
@@ -199,6 +203,8 @@ class NewCommunityItemTableViewController: UITableViewController {
                         cell.characterLimit = Constants.characterLimits.argumentTitleCharacterLimit
                     case .addOn:
                         cell.characterLimit = Constants.characterLimits.addOnTitleCharacterLimit
+                    case .addOnYouTubePlaylistDesign:
+                        cell.characterLimit = Constants.characterLimits.addOnTitleCharacterLimit
                     case .singleTopicAddOn:
                         cell.characterLimit = Constants.characterLimits.addOnTitleCharacterLimit
                     case .source:
@@ -222,6 +228,8 @@ class NewCommunityItemTableViewController: UITableViewController {
                     case .community:
                         cell.characterLimit = Constants.characterLimits.factDescriptionCharacterLimit
                     case .addOn:
+                        cell.characterLimit = Constants.characterLimits.addOnDescriptionCharacterLimit
+                    case .addOnYouTubePlaylistDesign:
                         cell.characterLimit = Constants.characterLimits.addOnDescriptionCharacterLimit
                     case .singleTopicAddOn:
                         cell.characterLimit = Constants.characterLimits.addOnDescriptionCharacterLimit
@@ -340,6 +348,8 @@ class NewCommunityItemTableViewController: UITableViewController {
                 text = Constants.texts.AddOns.singleTopicText
             case .addOn:
                 text = Constants.texts.AddOns.collectionText
+            case .addOnYouTubePlaylistDesign:
+                text = Constants.texts.AddOns.collectionText
             case .community:
                 text = Constants.texts.communityText
             default:
@@ -395,7 +405,9 @@ class NewCommunityItemTableViewController: UITableViewController {
         case .source:
             createNewSource()
         case .addOn:
-            createNewAddOn()
+            createNewAddOn(isYouTubePlaylistDesign: false)
+        case .addOnYouTubePlaylistDesign:
+            createNewAddOn(isYouTubePlaylistDesign: true)
         case .singleTopicAddOn:
             createNewSingleTopicAddOn()
         case .shareTopic:
@@ -517,7 +529,7 @@ class NewCommunityItemTableViewController: UITableViewController {
         }
     }
     
-    func createNewAddOn() {
+    func createNewAddOn(isYouTubePlaylistDesign: Bool) {
         
         if let fact = fact {
             if let title = titleText, let description = descriptionText {
@@ -533,7 +545,11 @@ class NewCommunityItemTableViewController: UITableViewController {
                 
                 let op = Auth.auth().currentUser!
                 
-                let data: [String: Any] = ["OP": op.uid, "title": title, "description": description, "popularity": 0, "type": "default"]
+                var data: [String: Any] = ["OP": op.uid, "title": title, "description": description, "popularity": 0, "type": "default"]
+                
+                if isYouTubePlaylistDesign {
+                    data["design"] = "youTubePlaylist"
+                }
                 
                 ref.addDocument(data: data) { (err) in
                     if let error = err {
@@ -1213,5 +1229,10 @@ class NewCommunityTextCell: UITableViewCell, UITextViewDelegate {
             }
         }
     }
+    
+}
+
+class NewCommunityAddOnDesignCell: UITableViewCell {
+    
     
 }

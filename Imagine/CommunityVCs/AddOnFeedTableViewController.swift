@@ -26,7 +26,7 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
     var dismissBarButton: UIBarButtonItem?
     
     private var Headerheight : CGFloat = 250
-    private let Headercut : CGFloat = 15
+    private let Headercut : CGFloat = 0
     private var dismissHeight: CGFloat = 450
     
     var isTransparent = true
@@ -63,33 +63,34 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
         
         for item in info.items {
             if let post = item.item as? Post {
+                post.language = info.fact.language
                 self.addOnPosts.append(post)
             }
         }
-//        postHelper.getPostsFromDocumentIDs(posts: self.addOnPosts) { (posts) in
-//            if let posts = posts {
-//                if let orderList = info.itemOrder { // If an itemOrder exists (set in addOn-settings), order according to it
-//                    
-//                    DispatchQueue.global(qos: .default).async {
-//                        let sorted = posts.compactMap { obj in
-//                            orderList.index(of: obj.documentID).map { idx in (obj, idx) }
-//                        }.sorted(by: { $0.1 < $1.1 } ).map { $0.0 }
-//                        
-//                        self.posts = sorted
-//                        
-//                        DispatchQueue.main.async {
-//                            self.tableView.reloadData()
-//                        }
-//                    }
-//                } else {
-//                    
-//                    let sortedPosts = posts.sorted(by: { $0.createDate ?? Date() > $1.createDate ?? Date() })
-//                    self.posts = sortedPosts
-//                    self.tableView.reloadData()
-//                }
-//                //BaseFeedTableViewController cellForRow wird nicht gecalled
-//            }
-//        }
+        postHelper.getPostsFromDocumentIDs(posts: self.addOnPosts) { (posts) in
+            if let posts = posts {
+                if let orderList = info.itemOrder { // If an itemOrder exists (set in addOn-settings), order according to it
+                    
+                    DispatchQueue.global(qos: .default).async {
+                        let sorted = posts.compactMap { obj in
+                            orderList.index(of: obj.documentID).map { idx in (obj, idx) }
+                        }.sorted(by: { $0.1 < $1.1 } ).map { $0.0 }
+                        
+                        self.posts = sorted
+                        
+                        DispatchQueue.main.async {
+                            self.tableView.reloadData()
+                        }
+                    }
+                } else {
+                    
+                    let sortedPosts = posts.sorted(by: { $0.createDate ?? Date() > $1.createDate ?? Date() })
+                    self.posts = sortedPosts
+                    self.tableView.reloadData()
+                }
+                //BaseFeedTableViewController cellForRow wird nicht gecalled
+            }
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

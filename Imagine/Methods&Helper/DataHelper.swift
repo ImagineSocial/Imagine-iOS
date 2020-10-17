@@ -43,7 +43,7 @@ class DataHelper {
     let user = Auth.auth().currentUser
     
     func getData(get: DataType, returnData: @escaping ([Any]) -> Void) {
-        // "get" Variable kann "campaign" für CommunityEntscheidungen, "jobOffer" für Hilfe der Community und "fact" für Fakten Dings sein
+        // "get" Variable kann "campaign" für CommunityEntscheidungen, "jobOffer" für Hilfe der Community und "fact" für COmmunites Dings sein
         
         var list = [Any]()
         
@@ -70,7 +70,7 @@ class DataHelper {
                 dataPath = "campaigns"
             }
             
-            orderString = "campaignSupporter"
+            orderString = "supporter"
             descending = true
             
         case .vote:
@@ -169,14 +169,14 @@ class DataHelper {
                             
                             list.append(blogPost)
                         case .campaign:
-                            if let campaignType = documentData["campaignType"] as? String {
+                            if let campaignType = documentData["type"] as? String {
                                 if campaignType == "normal" {
                                     
-                                    guard let title = documentData["campaignTitle"] as? String,
-                                          let shortBody = documentData["campaignShortBody"] as? String,
-                                          let createTimestamp = documentData["campaignCreateTime"] as? Timestamp,
-                                          let supporter = documentData["campaignSupporter"] as? Int,
-                                          let opposition = documentData["campaignOpposition"] as? Int,
+                                    guard let title = documentData["title"] as? String,
+                                          let shortBody = documentData["summary"] as? String,
+                                          let createTimestamp = documentData["createTime"] as? Timestamp,
+                                          let supporter = documentData["supporter"] as? Int,
+                                          let opposition = documentData["opposition"] as? Int,
                                           let category = documentData["category"] as? String
                                     else {
                                         continue    // Falls er das nicht als (String) zuordnen kann
@@ -192,9 +192,10 @@ class DataHelper {
                                     campaign.createDate = stringDate
                                     campaign.supporter = supporter
                                     campaign.opposition = opposition
+                                    campaign.createTime = date
                                     campaign.category = self.getCampaignType(categoryString: category)
                                     
-                                    if let description = documentData["campaignExplanation"] as? String {
+                                    if let description = documentData["description"] as? String {
                                         campaign.descriptionText = description
                                     }
                                     

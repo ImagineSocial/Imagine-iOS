@@ -115,7 +115,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("###ich bin wacg")
+
         previewCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
         
         previewCollectionView.dataSource = self
@@ -139,8 +139,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         setLinkViewUI()
         setUpOptionViewUI() // Shows linked Fact in here, if there is one
         
-//        setEventViewUI()
-//        setLocationViewUI()
         
         if comingFromPostsOfFact || comingFromAddOnVC {
             if #available(iOS 13.0, *) {
@@ -164,6 +162,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
+        let infoAlreadyShown = UserDefaults.standard.bool(forKey: "newPostInfo")
+        if !infoAlreadyShown {
+            showNewPostInfoView()
+        }
     }
    
     override func viewWillDisappear(_ animated: Bool) {
@@ -172,9 +174,34 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
         self.removeTipViews()
     }
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         self.infoView = nil
-        showInfoView()
+        
+        let alreadyShown = UserDefaults.standard.bool(forKey: "newPostNameInfo")
+        if !alreadyShown {
+            showInfoView()
+        }
+    }
+    
+    func showNewPostInfoView() {
+        let upperHeight = UIApplication.shared.statusBarFrame.height +
+              self.navigationController!.navigationBar.frame.height
+        let height = upperHeight+40
+        
+        let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
+        let popUpView = PopUpInfoView(frame: frame)
+        popUpView.alpha = 0
+        popUpView.type = .newPost
+        
+        if let window = UIApplication.shared.keyWindow {
+            window.addSubview(popUpView)
+        }
+        
+        UIView.animate(withDuration: 0.5) {
+            popUpView.alpha = 1
+        }
     }
     
     // MARK: - Functions for the UI Initializing
@@ -447,7 +474,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.borderStyle = .none
-        textField.placeholder = "Link: https://..."
+        textField.placeholder = "https://..."
         textField.alpha = 0
         
         return textField
@@ -1316,7 +1343,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         endView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
         endView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
         
-        explainFunctionOnFirstOpen()
+//        explainFunctionOnFirstOpen()
     }
     
     //MARK:-PostAsSomebodyElse-UI
@@ -2914,6 +2941,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                         label.alpha = 0
                     }) { (_) in
                         self.infoView!.removeFromSuperview()
+                        UserDefaults.standard.set(true, forKey: "newPostNameInfo")
                     }
                 }
             }

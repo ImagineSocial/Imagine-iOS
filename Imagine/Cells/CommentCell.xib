@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -28,18 +29,18 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FTS-vc-yco" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="64" y="10" width="340" height="72"/>
+                        <rect key="frame" x="59" y="10" width="345" height="72"/>
                         <subviews>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="253" text="Text" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q22-uC-mgD">
-                                <rect key="frame" x="10" y="27" width="320" height="40"/>
-                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <rect key="frame" x="10" y="27" width="325" height="40"/>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VMh-oN-jNZ">
                                 <rect key="frame" x="10" y="5" width="35.5" height="17"/>
-                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="1JE-rh-RaF"/>
                                 </constraints>
@@ -49,7 +50,7 @@
                             </label>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Vor 3 h" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ym3-1M-box">
                                 <rect key="frame" x="55.5" y="5" width="30.5" height="17"/>
-                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="nYC-vL-c3S"/>
                                 </constraints>
@@ -58,7 +59,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="Ym3-1M-box" firstAttribute="centerY" secondItem="VMh-oN-jNZ" secondAttribute="centerY" id="0LT-SF-gzS"/>
                             <constraint firstItem="Ym3-1M-box" firstAttribute="leading" secondItem="VMh-oN-jNZ" secondAttribute="trailing" constant="10" id="0h0-T3-VfI"/>
@@ -76,7 +77,7 @@
                         </userDefinedRuntimeAttributes>
                     </view>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="default-user" translatesAutoresizingMaskIntoConstraints="NO" id="xtk-iA-AdD" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="15" y="10" width="34" height="34"/>
+                        <rect key="frame" x="10" y="10" width="34" height="34"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="34" id="Uhd-LU-6qX"/>
                             <constraint firstAttribute="height" constant="34" id="fZM-xV-CtG"/>
@@ -87,26 +88,26 @@
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </imageView>
-                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FaG-Zv-mHD">
-                        <rect key="frame" x="15" y="10" width="34" height="34"/>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FaG-Zv-mHD">
+                        <rect key="frame" x="10" y="10" width="34" height="34"/>
                         <connections>
                             <action selector="toUserTapped:" destination="aj4-eF-TBR" eventType="touchUpInside" id="MgS-ZR-WqN"/>
                         </connections>
                     </button>
                     <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tPf-AQ-EYz">
                         <rect key="frame" x="1" y="0.0" width="1" height="102"/>
-                        <color key="backgroundColor" systemColor="separatorColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="separatorColor"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="1" id="4iB-I7-EgJ"/>
                         </constraints>
                     </view>
-                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fPQ-BU-yi6" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fPQ-BU-yi6" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                         <rect key="frame" x="293" y="79" width="59" height="20"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="ogo-np-GjN"/>
                         </constraints>
                         <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="12"/>
-                        <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="tintColor" systemColor="labelColor"/>
                         <state key="normal" title="Antworten"/>
                         <connections>
                             <action selector="answerButtonTapped:" destination="aj4-eF-TBR" eventType="touchUpInside" id="r6c-Hy-v6o"/>
@@ -114,18 +115,18 @@
                     </button>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xzT-im-IUE" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                         <rect key="frame" x="372" y="72" width="27" height="27"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="27" id="kso-vH-nAv"/>
                             <constraint firstAttribute="height" constant="27" id="xz1-N1-b8Q"/>
                         </constraints>
                         <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="13"/>
-                        <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <color key="tintColor" systemColor="labelColor"/>
                         <inset key="contentEdgeInsets" minX="1" minY="1" maxX="1" maxY="1"/>
                         <inset key="titleEdgeInsets" minX="1" minY="1" maxX="1" maxY="1"/>
                         <inset key="imageEdgeInsets" minX="1" minY="1" maxX="1" maxY="1"/>
                         <state key="normal" title="2" image="niceButton">
-                            <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="titleColor" systemColor="labelColor"/>
                         </state>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -139,7 +140,6 @@
                 </subviews>
                 <constraints>
                     <constraint firstItem="FTS-vc-yco" firstAttribute="top" secondItem="xtk-iA-AdD" secondAttribute="top" id="Czg-8y-qC8"/>
-                    <constraint firstItem="xtk-iA-AdD" firstAttribute="leading" secondItem="0Vg-xH-S4S" secondAttribute="leading" constant="15" id="DsM-Le-12k"/>
                     <constraint firstAttribute="bottom" secondItem="FTS-vc-yco" secondAttribute="bottom" constant="20" id="Eb5-8I-ypH"/>
                     <constraint firstItem="xzT-im-IUE" firstAttribute="trailing" secondItem="FTS-vc-yco" secondAttribute="trailing" constant="-5" id="Hwy-Lv-W8n"/>
                     <constraint firstItem="fPQ-BU-yi6" firstAttribute="bottom" secondItem="xzT-im-IUE" secondAttribute="bottom" id="Q6U-WF-7OV"/>
@@ -150,6 +150,7 @@
                     <constraint firstItem="tPf-AQ-EYz" firstAttribute="leading" secondItem="0Vg-xH-S4S" secondAttribute="leading" constant="1" id="chV-Ek-H1f"/>
                     <constraint firstItem="tPf-AQ-EYz" firstAttribute="top" secondItem="0Vg-xH-S4S" secondAttribute="top" id="dn9-jH-1VP"/>
                     <constraint firstItem="xzT-im-IUE" firstAttribute="bottom" secondItem="FTS-vc-yco" secondAttribute="bottom" constant="17" id="dvc-em-xnB"/>
+                    <constraint firstItem="xtk-iA-AdD" firstAttribute="leading" secondItem="tPf-AQ-EYz" secondAttribute="trailing" constant="8" id="i88-DX-wSQ"/>
                     <constraint firstAttribute="bottom" secondItem="tPf-AQ-EYz" secondAttribute="bottom" id="iJu-2o-yHJ"/>
                     <constraint firstAttribute="trailing" secondItem="FTS-vc-yco" secondAttribute="trailing" constant="20" id="iXu-by-2Py"/>
                     <constraint firstItem="FaG-Zv-mHD" firstAttribute="height" secondItem="xtk-iA-AdD" secondAttribute="height" id="rpg-jD-lS8"/>
@@ -161,6 +162,7 @@
                 <outlet property="answerButton" destination="fPQ-BU-yi6" id="xFp-gy-D8X"/>
                 <outlet property="bodyLabel" destination="Q22-uC-mgD" id="UQg-qs-E2W"/>
                 <outlet property="createDateLabel" destination="Ym3-1M-box" id="8c1-qr-un2"/>
+                <outlet property="inlineSeparatorLeadingConstraint" destination="chV-Ek-H1f" id="1QF-DW-krh"/>
                 <outlet property="inlineSeparatorView" destination="tPf-AQ-EYz" id="s6b-ud-70d"/>
                 <outlet property="nameLabel" destination="VMh-oN-jNZ" id="6Qw-Py-xGB"/>
                 <outlet property="niceButton" destination="xzT-im-IUE" id="Byi-r2-GTQ"/>
@@ -169,8 +171,25 @@
             <point key="canvasLocation" x="18.840579710144929" y="18.080357142857142"/>
         </tableViewCell>
     </objects>
+    <designables>
+        <designable name="xtk-iA-AdD">
+            <size key="intrinsicContentSize" width="415" height="415"/>
+        </designable>
+    </designables>
     <resources>
         <image name="default-user" width="415" height="415"/>
         <image name="niceButton" width="100" height="100"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="secondarySystemBackgroundColor">
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="separatorColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>

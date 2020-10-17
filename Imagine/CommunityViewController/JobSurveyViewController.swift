@@ -41,13 +41,15 @@ class JobSurveyViewController: UIViewController, MFMailComposeViewControllerDele
     func setUI() {
         scrollView.keyboardDismissMode = .onDrag
         messageTextField.layer.cornerRadius = 5
-        introductionLabel.text = "Du möchtest Imagine als \(jobOffer.title) unterstützen?"
+        let text = NSLocalizedString("jobSurvey_introduction_variable", comment: "")
+        
+        introductionLabel.text = String.localizedStringWithFormat(text, jobOffer.title)
         jobTitle = "as a \(jobOffer.title)"
         
         if jobOffer.documentID == "DDTMnbUAPco0gvWOkmvL" {   // Also Übersetzer
             qualificationLabel.text = "Bei welcher Sprache kannst du uns helfen Imagine zu übersetzen?"
         } else if jobOffer.documentID == "" {
-            introductionLabel.text = "Du möchtest Imagine unterstützen?"
+            introductionLabel.text = NSLocalizedString("jobSurvey_introduction_label", comment: "")
             jobTitle = ""
         }
     }
@@ -55,7 +57,7 @@ class JobSurveyViewController: UIViewController, MFMailComposeViewControllerDele
     
     @IBAction func contactButtonTapped(_ sender: Any) {
         if qualificationLabel.text == "" || contactTextField.text == "" {
-            introductionLabel.text = "Bitte fülle mindestens die Kontaktzeile und die Qualifikationszeile aus"
+            introductionLabel.text = NSLocalizedString("jobSurvey_input_alert", comment: "")
             introductionLabel.textColor = .red
             scrollView.setContentOffset(.zero, animated: true)
         } else {
@@ -162,7 +164,7 @@ class JobSurveyViewController: UIViewController, MFMailComposeViewControllerDele
             let generator = UINotificationFeedbackGenerator()
             generator.notificationOccurred(.success)
             
-            let emailSendAlert = UIAlertController(title: "Vielen Dank!", message: "Deine Nachricht wurde erfolgreich an uns weitergeleitet!", preferredStyle: .alert)
+            let emailSendAlert = UIAlertController(title: NSLocalizedString("thanks", comment: ""), message: NSLocalizedString("jobSurvey_alert_success", comment: ""), preferredStyle: .alert)
             let action1 = UIAlertAction(title: "OK!", style: .default) { (action:UIAlertAction) in
                 self.send = false
                 emailSendAlert.dismiss(animated: true, completion: nil)
