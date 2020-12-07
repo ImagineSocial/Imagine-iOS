@@ -2,7 +2,7 @@
 The iOS-App in all its glory!
 
 Currently, the iOS version is the prototype of the Imagine Network. We have all the basic network functionalities, like an endless feed, chat,comments & post interactions. The UI is modern and stylish and the performance is very stable. 
-You can find the app in the AppStore: https://apps.apple.com/de/app/imagine/id1480679038 (Currently just in German, sorry) 
+You can find the app in the AppStore: https://apps.apple.com/de/app/imagine/id1480679038 
 
 # The Network:
 Imagine tries to be a social and entertaining place that encourages a change. A lot of open source and decentralized networks have tried it, so will we. We do not only focus on the serious parts, but try to find a responsible and fun way to get a new network.
