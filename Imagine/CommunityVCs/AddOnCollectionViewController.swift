@@ -31,14 +31,13 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     let proposalCellIdentifier = "AddOnProposalCell"
     let footerViewIdentifier = "AddOnCollectionViewFooter"
     let qAndACellIdentifier = "AddOnQAndACollectionViewCell"
+    let playlistCellIdentifier = "AddOnPlaylistCollectionViewCell"
     
     var optionalInformations = [OptionalInformation]()
     
     var noOptionalInformation = false
     var optionalInformationProposals = [ProposalForOptionalInformation(isFirstCell: true, headerText: NSLocalizedString("proposal_header_text", comment: "individualise your community"), detailText: NSLocalizedString("proposal_header_description", comment: "What are addOns")), ProposalForOptionalInformation(isFirstCell: false, headerText: NSLocalizedString("proposal_me_active_header", comment: "What can I do?"), detailText: NSLocalizedString("proposal_me_active_description", comment: "what ca i do to make it better")),  ProposalForOptionalInformation(isFirstCell: false, headerText: "Top-News", detailText: NSLocalizedString("proposal_top_news_description", comment: "top new for visibility")), ProposalForOptionalInformation(isFirstCell: false, headerText: "Beginners Guide", detailText: NSLocalizedString("proposal_beginners_guide_description", comment: "help younglings"))]
-    
-    var addOnDocumentID: String?
-    
+        
     var addOnHeader: AddOnHeader?
     
     var pageViewHeaderDelegate: PageViewHeaderDelegate?
@@ -60,6 +59,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         self.collectionView.register(UINib(nibName: "AddOnCollectionViewFooter", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: footerViewIdentifier)
         self.collectionView.register(UINib(nibName: "AddOnProposalCell", bundle: nil), forCellWithReuseIdentifier: proposalCellIdentifier)
         self.collectionView.register(UINib(nibName: "AddOnQAndACollectionViewCell", bundle: nil), forCellWithReuseIdentifier: qAndACellIdentifier)
+        self.collectionView.register(UINib(nibName: "AddOnPlaylistCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: playlistCellIdentifier)
 
         let newHeight: CGFloat = 260
         collectionView.contentInset = UIEdgeInsets(top: newHeight, left: 0, bottom: 0, right: 0)
@@ -81,9 +81,8 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         } else {
             collectionRef = db.collection("Facts")
         }
-        print("##Get addons: \(collectionRef.path), language_ ", fact.language)
-        let ref = collectionRef.document(fact.documentID).collection("addOns").order(by: "popularity", descending: true)
         
+        let ref = collectionRef.document(fact.documentID).collection("addOns").order(by: "popularity", descending: true)
         
         ref.getDocuments { (snap, err) in
             if let error = err {
@@ -105,6 +104,41 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                     
                     for document in snap.documents {
                         let data = document.data()
+                        
+                        if let type = data["type"] as? String {
+                            if type == "playlist" {
+                                
+                                if let title = data["title"] as? String,
+                                   let description = data["description"] as? String,
+                                   let OP = data["OP"] as? String {
+                                    let addOn = OptionalInformation(style: .playlist, OP: OP, documentID: document.documentID, fact: fact, headerTitle: title, description: description, singleTopic: nil)
+                                    
+                                    if let thanksCount = data["thanksCount"] as? Int {
+                                        addOn.thanksCount = thanksCount
+                                    }
+                                    
+                                    if let itemOrder = data["itemOrder"] as? [String] {
+                                        addOn.itemOrder = itemOrder
+                                    }
+                                    
+                                    if let appleMusicURL = data["appleMusicPlaylistURL"] as? String {
+                                        addOn.appleMusicPlaylistURL = appleMusicURL
+                                    }
+                                    if let spotifyURL = data["spotifyPlaylistURL"] as? String {
+                                        addOn.spotifyPlaylistURL = spotifyURL
+                                    }
+                                    
+                                    self.optionalInformations.append(addOn)
+                                    index+=1
+                                    
+                                    if index == snapCount {
+                                        self.collectionView.reloadData()
+                                    }
+                                    
+                                    continue    //because it is fetched again below
+                                }
+                            }
+                        }
                         
                         if let title = data["title"] as? String, let OP = data["OP"] as? String, let description = data["description"] as? String { //Normal collection
                             let addOn = OptionalInformation(style: .collection, OP: OP, documentID: document.documentID, fact: fact, headerTitle: title, description: description, singleTopic: nil)
@@ -174,155 +208,10 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
     }
     
-    //MARK: - Save Data (Item)
-    
-    func saveItemInAddOn(item: Any) {
-        
-        guard let addOnRef = addOnDocumentID, let fact = fact else {
-            print("Error: No addOnDocumentID in AddOnVC")
-            return
-        }
-        
-        var itemTypeString = "post"
-        var addOnTitle: String?
-        var displayOption: String?
-        var itemID = ""
-        
-        if let fact = item as? Fact {
-            itemTypeString = "fact"
-            itemID = fact.documentID
-            let newFactVC = NewCommunityItemTableViewController()
-            displayOption = newFactVC.getNewFactDisplayString(displayOption: fact.displayOption).displayOption
-        } else if let post = item as? Post {
-            itemID = post.documentID
-            if let title = post.addOnTitle {    // Description of the added post
-                addOnTitle = title
-            }
-            if post.type == .youTubeVideo {
-                self.notifyMalteForYouTubePlaylist(fact: fact, addOn: addOnRef)
-            }
-            if post.isTopicPost {
-                itemTypeString = "topicPost"    // So the getData method looks in a different ref
-                self.updateTopicPostInFact(addOnID: addOnRef, postDocumentID: itemID)
-            }
-        } else {
-            print("Dont got an item ID")
-            return
-        }
-        
-        var collectionRef: CollectionReference!
-        if fact.language == .english {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        
-        let ref = collectionRef.document(fact.documentID).collection("addOns").document(addOnRef).collection("items").document(itemID)
-        let user = Auth.auth().currentUser!
-        
-        var data: [String: Any] = ["type": itemTypeString, "OP": user.uid, "createDate": Timestamp(date: Date())]
-        if let title = addOnTitle {
-            data["title"] = title
-        }
-        if let mode = displayOption {
-            data["displayOption"] = mode
-        }
-        ref.setData(data) { (err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                let alert = UIAlertController(title: NSLocalizedString("done", comment: "done"), message: NSLocalizedString("addOn_creation_successfull", comment: "done and successfull"), preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
-                    
-                    var collectionRef: CollectionReference!
-                    if fact.language == .english {
-                        collectionRef = self.db.collection("Data").document("en").collection("topics")
-                    } else {
-                        collectionRef = self.db.collection("Facts")
-                    }
-                    
-                    let docRef = collectionRef.document(fact.documentID).collection("addOns").document(addOnRef)
-                    self.checkIfOrderArrayExists(documentReference: docRef, documentIDOfItem: itemID)
-                    
-                    alert.dismiss(animated: true, completion: nil)
-                }))
-                
-                self.present(alert, animated: true)
-            }
-        }
-    }
-    
-    func notifyMalteForYouTubePlaylist(fact: Fact, addOn: String) {
-        let notificationRef = db.collection("Users").document("CZOcL3VIwMemWwEfutKXGAfdlLy1").collection("notifications").document()
-        let language = Locale.preferredLanguages[0]
-        let notificationData: [String: Any] = ["type": "message", "message": "Wir haben einen neuen YouTubePost in \(fact.title) mit der ID: \(addOn)", "name": "System", "chatID": addOn, "sentAt": Timestamp(date: Date()), "messageID": "Dont Know", "language": language]
-        
-        
-        notificationRef.setData(notificationData) { (err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                print("Successfully set notification")
-            }
-        }
-    }
-    
-    func checkIfOrderArrayExists(documentReference: DocumentReference, documentIDOfItem: String) {
-        documentReference.getDocument { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    if let data = snap.data() {
-                        if let array = data["itemOrder"] as? [String] {
-                            self.updateOrderArray(documentReference: documentReference, documentIDOfItem: documentIDOfItem, array: array)
-                        } else {
-                            self.renewCollectionView()
-                            print("No itemOrder yet")
-                            return
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    func updateOrderArray(documentReference: DocumentReference, documentIDOfItem: String, array: [String]) {
-        var newArray = array
-        newArray.insert(documentIDOfItem, at: 0)
-        documentReference.updateData([
-            "itemOrder": newArray
-        ]) { (err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                self.renewCollectionView()
-            }
-        }
-    }
-    
     func renewCollectionView() {
         self.optionalInformations.removeAll()
         self.collectionView.reloadData()
         self.getData(fact: self.fact!)
-    }
-    
-    func updateTopicPostInFact(addOnID: String, postDocumentID: String) {       //Add the AddOnDocumentIDs to the fact, so we can delete every trace of the post if you choose to delete it later. Otherwise there would be empty post in an AddOn
-        if let fact = fact {
-            
-            var collectionRef: CollectionReference!
-            if fact.language == .english {
-                collectionRef = db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = db.collection("Facts")
-            }
-            
-            let ref = collectionRef.document(fact.documentID).collection("posts").document(postDocumentID)
-            
-            ref.updateData([
-                "addOnDocumentIDs": FieldValue.arrayUnion([addOnID])
-            ])
-        }
     }
     
     //MARK:- PrepareForSegue
@@ -347,19 +236,25 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
         if segue.identifier == "toAddAPostItemSegue" {
             if let vc = segue.destination as? AddPostTableViewController {
+                if let addOn = sender as? OptionalInformation {
                     vc.addItemDelegate = self
-                    
-                    if let fact = self.fact {
-                        vc.fact = fact
+                    vc.addOn = addOn
+                    if addOn.style == .playlist {
+                        vc.playlistTracksOnly = true
+                    }
                 }
             }
         }
+        
         if segue.identifier == "newPostSegue" {
             if let navCon = segue.destination as? UINavigationController {
                 if let newPostVC = navCon.topViewController as? NewPostViewController {
-                    newPostVC.comingFromAddOnVC = true
-                    newPostVC.selectedFact(fact: self.fact!, isViewAlreadyLoaded: false)
-                    newPostVC.addItemDelegate = self
+                    if let addOn = sender as? OptionalInformation {
+                        newPostVC.comingFromAddOnVC = true
+                        newPostVC.selectedFact(fact: addOn.fact, isViewAlreadyLoaded: false)
+                        newPostVC.addItemDelegate = self
+                        newPostVC.addOn = addOn
+                    }
                 }
             }
         }
@@ -372,9 +267,12 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
         if segue.identifier == "toTopicsSegue" {
             if let vc = segue.destination as? FactCollectionViewController {
-                vc.addFactToPost = .optInfo
-                vc.navigationItem.hidesSearchBarWhenScrolling = false
-                vc.addItemDelegate = self
+                if let addOn = sender as? OptionalInformation {
+                    vc.addOn = addOn
+                    vc.addFactToPost = .optInfo
+                    vc.navigationItem.hidesSearchBarWhenScrolling = false
+                    vc.addItemDelegate = self
+                }
             }
         }
         if segue.identifier == "toNewAddOnSegue" {
@@ -394,7 +292,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
     }
     
-    //MARK: ScrollView
+    //MARK:- ScrollView
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
         let offset = scrollView.contentOffset.y
@@ -449,6 +347,14 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                     
                     return cell
                 }
+            case .playlist:
+                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: playlistCellIdentifier, for: indexPath) as? AddOnPlaylistCollectionViewCell {
+                    
+                    cell.delegate = self
+                    cell.info = info
+                    
+                    return cell
+                }
             default:
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: horizontalScrollCellIdentifier, for: indexPath) as? AddOnHorizontalScrollCollectionViewCell {
                     
@@ -499,6 +405,8 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                 return CGSize(width: width, height: 425)
             } else if addOn.style == .QandA {
                 return CGSize(width: width, height: 500)
+            } else if addOn.style == .playlist {
+                return CGSize(width: width, height: 750)
             }
             
             //normal horizontalScrollAddOn
@@ -506,9 +414,9 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                 newSize = CGSize(width: width, height: 500)
             } else {
                 if addOn.design == .youTubePlaylist {
-                newSize = CGSize(width: width, height: 450)
+                    newSize = CGSize(width: width, height: 450)
                 } else {
-                newSize = CGSize(width: width, height: 400)
+                    newSize = CGSize(width: width, height: 400)
                 }
             }
             
@@ -610,43 +518,52 @@ extension AddOnCollectionViewController: AddOnCellDelegate, AddOnHeaderReusableV
         }
     }
     
-    func newPostTapped(addOnDocumentID: String) {
+    func newPostTapped(addOn: OptionalInformation) {   //New Item tapped inside an addOn
         if let _ = Auth.auth().currentUser {
-                    
-                    self.addOnDocumentID = addOnDocumentID  // Set the documentID for the addOn where "new Post" was tapped, later to be used when the item is saved in the addOn- New or old iteme
-                    
-                    let alert = UIAlertController(title: NSLocalizedString("addOn_newItem_alert_title", comment: "add an item"), message: NSLocalizedString("addOn_newItem_alert_message", comment: "what do you want to add?"), preferredStyle: .actionSheet)
-                    
-                    alert.addAction(UIAlertAction(title: NSLocalizedString("addOn_newItem_alert_oldPost", comment: "already existent"), style: .default, handler: { (_) in
-                        self.performSegue(withIdentifier: "toAddAPostItemSegue", sender: nil)
-                    }))
-                    alert.addAction(UIAlertAction(title: NSLocalizedString("addOn_newItem_alert_newPost", comment: "new Post (community)"), style: .default, handler: { (_) in
-                        self.performSegue(withIdentifier: "newPostSegue", sender: nil)
-                    }))
-                    alert.addAction(UIAlertAction(title: NSLocalizedString("addOn_newItem_alert_topic", comment: "community/discussion"), style: .default, handler: { (_) in
-                        
-                        self.performSegue(withIdentifier: "toTopicsSegue", sender: nil)
-                        
-                    }))
-                    alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .cancel, handler: { (_) in
-                        self.addOnDocumentID = nil
-                        alert.dismiss(animated: true, completion: nil)
-                    }))
-                    self.present(alert, animated: true, completion: nil)
-                    
-                } else {
-                    self.notLoggedInAlert()
-                }
+            
+            
+            let alert = UIAlertController(title: NSLocalizedString("addOn_newItem_alert_title", comment: "add an item"), message: NSLocalizedString("addOn_newItem_alert_message", comment: "what do you want to add?"), preferredStyle: .actionSheet)
+            
+            let addExistingPostAction = UIAlertAction(title: NSLocalizedString("addOn_newItem_alert_oldPost", comment: "already existent"), style: .default, handler: { (_) in  //choose existing post
+                self.performSegue(withIdentifier: "toAddAPostItemSegue", sender: addOn)
+            })
+            
+            let addNewTopicPostAction = UIAlertAction(title: NSLocalizedString("addOn_newItem_alert_newPost", comment: "new Post (community)"), style: .default, handler: { (_) in //create a new topicPost
+                self.performSegue(withIdentifier: "newPostSegue", sender: addOn)
+            })
+            
+            let addTopicAction = UIAlertAction(title: NSLocalizedString("addOn_newItem_alert_topic", comment: "community/discussion"), style: .default, handler: { (_) in    //add community or discussion
+                
+                self.performSegue(withIdentifier: "toTopicsSegue", sender: addOn)
+                
+            })
+            
+            switch addOn.style {
+            case .playlist:
+                alert.addAction(addExistingPostAction)
+            default:
+                alert.addAction(addExistingPostAction)
+                alert.addAction(addNewTopicPostAction)
+                alert.addAction(addTopicAction)
+            }
+            
+            alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .cancel, handler: { (_) in
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            self.present(alert, animated: true, completion: nil)
+            
+        } else {
+            self.notLoggedInAlert()
+        }
     }
-    
 }
 
 extension AddOnCollectionViewController: AddItemDelegate, NewFactDelegate {
-    func finishedCreatingNewInstance(item: Any?) {
-        renewCollectionView()
+    func itemAdded() {
+        self.renewCollectionView()
     }
     
-    func itemSelected(item: Any) {
-        saveItemInAddOn(item: item)// Should it be possible to add an title to your new topicPost?
+    func finishedCreatingNewInstance(item: Any?) {
+        renewCollectionView()
     }
 }

@@ -45,6 +45,10 @@
 		E93F6F1925336EC90044EAA4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E93F6F1B25336EC90044EAA4 /* InfoPlist.strings */; };
 		E940D8D4249676AB00018EF3 /* PlaceHolderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E940D8D3249676AA00018EF3 /* PlaceHolderCell.xib */; };
 		E948AC5222C77BA400DB9E69 /* Repost.swift in Sources */ = {isa = PBXBuildFile; fileRef = E948AC5122C77BA400DB9E69 /* Repost.swift */; };
+		E94EDD972564289500B226C8 /* AddOnPlaylistCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E94EDD962564289500B226C8 /* AddOnPlaylistCollectionViewCell.xib */; };
+		E94EDD9B2564307700B226C8 /* AddOnPlaylistTrackTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E94EDD9A2564307700B226C8 /* AddOnPlaylistTrackTableViewCell.xib */; };
+		E94EDD9E2564328000B226C8 /* AddOnPlaylistCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94EDD9D2564328000B226C8 /* AddOnPlaylistCollectionViewCell.swift */; };
+		E94EDDA12564350500B226C8 /* AddOnPlaylistTrackTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94EDDA02564350500B226C8 /* AddOnPlaylistTrackTableViewCell.swift */; };
 		E94F29BE22B2F7E60015A8CC /* EventCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E94F29BD22B2F7E60015A8CC /* EventCell.xib */; };
 		E94F29C022B375610015A8CC /* EventCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E94F29BF22B375610015A8CC /* EventCell.swift */; };
 		E94FB65D251D10D300E58707 /* FeedSingleTopicCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E94FB65C251D10D200E58707 /* FeedSingleTopicCell.xib */; };
@@ -177,7 +181,6 @@
 		E9C6C23B22980FD8003F0F16 /* SourceTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C6C23A22980FD8003F0F16 /* SourceTableViewController.swift */; };
 		E9C6C23D22981C0B003F0F16 /* ArgumentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C6C23C22981C0B003F0F16 /* ArgumentTableViewController.swift */; };
 		E9C6C23F2298441E003F0F16 /* ArgumentDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C6C23E2298441E003F0F16 /* ArgumentDetailViewController.swift */; };
-		E9CF17BD23CA45BD000E5149 /* Idea.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9CF17BC23CA45BD000E5149 /* Idea.xib */; };
 		E9CF17C223CB27CE000E5149 /* CreativeSpaceIntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CF17C123CB27CE000E5149 /* CreativeSpaceIntroViewController.swift */; };
 		E9CF17C423CB3F41000E5149 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CF17C323CB3F41000E5149 /* Campaign.swift */; };
 		E9CF237F233A279200D3B295 /* TopicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CF237E233A279200D3B295 /* TopicCell.swift */; };
@@ -265,6 +268,10 @@
 		E93F6F1D25336F180044EAA4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E940D8D3249676AA00018EF3 /* PlaceHolderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlaceHolderCell.xib; sourceTree = "<group>"; };
 		E948AC5122C77BA400DB9E69 /* Repost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repost.swift; sourceTree = "<group>"; };
+		E94EDD962564289500B226C8 /* AddOnPlaylistCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddOnPlaylistCollectionViewCell.xib; sourceTree = "<group>"; };
+		E94EDD9A2564307700B226C8 /* AddOnPlaylistTrackTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddOnPlaylistTrackTableViewCell.xib; sourceTree = "<group>"; };
+		E94EDD9D2564328000B226C8 /* AddOnPlaylistCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOnPlaylistCollectionViewCell.swift; sourceTree = "<group>"; };
+		E94EDDA02564350500B226C8 /* AddOnPlaylistTrackTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOnPlaylistTrackTableViewCell.swift; sourceTree = "<group>"; };
 		E94F29BD22B2F7E60015A8CC /* EventCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EventCell.xib; sourceTree = "<group>"; };
 		E94F29BF22B375610015A8CC /* EventCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCell.swift; sourceTree = "<group>"; };
 		E94FB65C251D10D200E58707 /* FeedSingleTopicCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedSingleTopicCell.xib; sourceTree = "<group>"; };
@@ -401,7 +408,6 @@
 		E9C6C23A22980FD8003F0F16 /* SourceTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceTableViewController.swift; sourceTree = "<group>"; };
 		E9C6C23C22981C0B003F0F16 /* ArgumentTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArgumentTableViewController.swift; sourceTree = "<group>"; };
 		E9C6C23E2298441E003F0F16 /* ArgumentDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArgumentDetailViewController.swift; sourceTree = "<group>"; };
-		E9CF17BC23CA45BD000E5149 /* Idea.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Idea.xib; sourceTree = "<group>"; };
 		E9CF17C123CB27CE000E5149 /* CreativeSpaceIntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreativeSpaceIntroViewController.swift; sourceTree = "<group>"; };
 		E9CF17C323CB3F41000E5149 /* Campaign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Campaign.swift; sourceTree = "<group>"; };
 		E9CF237E233A279200D3B295 /* TopicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicCell.swift; sourceTree = "<group>"; };
@@ -508,6 +514,8 @@
 		E9530C4C22DB9FBB007D6A00 /* VisionVCs */ = {
 			isa = PBXGroup;
 			children = (
+				E9CF17C023CB26F5000E5149 /* CreativeSpace */,
+				E9E521BE245AE696002585A2 /* TrippyView */,
 				E9EE0E3022D21C0E0039F32C /* SwipeCollectionViewController.swift */,
 				E9A9FAE022A50ED90088BD37 /* CobraViewController.swift */,
 				E9BA724B232557D100DF3FB3 /* InfoTableViewController.swift */,
@@ -568,7 +576,6 @@
 				E962AC162224430400C6D6EF /* AppDelegate.swift */,
 				E9B79CDD224EC66C00166EED /* Cells */,
 				E962AC302224491200C6D6EF /* Design */,
-				E97CC1D422A028D400A23490 /* EmojiExtension */,
 				E9871FA522C77AC5002D22F9 /* Classes */,
 				E9F9B690223D6D8500100F51 /* Methods&Helper */,
 				E98B22EC22CA3936000F965F /* ChatController */,
@@ -577,7 +584,6 @@
 				E96CE88E229419D700BACD3B /* CommunityVCs */,
 				E9530C4C22DB9FBB007D6A00 /* VisionVCs */,
 				E9B79CEC225110D800166EED /* CommunityViewController */,
-				E9CF17C023CB26F5000E5149 /* CreativeSpace */,
 				E9EE9D83231692000033748E /* CampaignVoteController */,
 				E938324E22F7196D0002DF8C /* BlogVCs */,
 				E9E531FA229E9191004D0654 /* FeedVCs */,
@@ -599,7 +605,6 @@
 		E962AC302224491200C6D6EF /* Design */ = {
 			isa = PBXGroup;
 			children = (
-				E9E521BE245AE696002585A2 /* TrippyView */,
 				E9526C0C250F99790088004F /* RunderProgress.swift */,
 				E962AC2C222448D400C6D6EF /* DesignableButton.swift */,
 				E962AC2E222448F800C6D6EF /* BounceButton.swift */,
@@ -628,14 +633,6 @@
 			path = CommunityVCs;
 			sourceTree = "<group>";
 		};
-		E97CC1D422A028D400A23490 /* EmojiExtension */ = {
-			isa = PBXGroup;
-			children = (
-				E97CC1D222A028C800A23490 /* EmojiExtension.swift */,
-			);
-			path = EmojiExtension;
-			sourceTree = "<group>";
-		};
 		E9871FA522C77AC5002D22F9 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -655,6 +652,7 @@
 				E92CB98225068FF500D2FA45 /* Localizable.swift */,
 				E9C6969D2524E38200F02D94 /* LanguageSelection.swift */,
 				E93F6F13253237FE0044EAA4 /* PopUpInfoView.swift */,
+				E97CC1D222A028C800A23490 /* EmojiExtension.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -747,6 +745,10 @@
 				E93665842513CC41008CC8A9 /* AddOnQAndACollectionViewCell.swift */,
 				E936658D2514A4D5008CC8A9 /* AddOnQAndATextfieldCell.xib */,
 				E936659025150832008CC8A9 /* AddOnQAndAQuestionCell.xib */,
+				E94EDD962564289500B226C8 /* AddOnPlaylistCollectionViewCell.xib */,
+				E94EDD9D2564328000B226C8 /* AddOnPlaylistCollectionViewCell.swift */,
+				E94EDD9A2564307700B226C8 /* AddOnPlaylistTrackTableViewCell.xib */,
+				E94EDDA02564350500B226C8 /* AddOnPlaylistTrackTableViewCell.swift */,
 			);
 			path = AddOnCells;
 			sourceTree = "<group>";
@@ -778,10 +780,8 @@
 				E911EEF122DB173E00EDD056 /* SettingCell.swift */,
 				E9C42EEE2364393400FC50BA /* SearchPostCell.swift */,
 				E9C42EF02364396B00FC50BA /* SearchUserCell.swift */,
-				E9CF17BC23CA45BD000E5149 /* Idea.xib */,
 				E98FAEA123FAB8760064A614 /* CommentCell.xib */,
 				E98FAEA323FAB9C10064A614 /* CommentCell.swift */,
-				E98FAEA523FAD2CC0064A614 /* CommentFooter.xib */,
 				E9A57A9C24535C8200665007 /* AdvertisingCell.xib */,
 				E9A57A9E245360D100665007 /* AdvertisingCell.swift */,
 				E997F760248CE90200BF7F88 /* SurveyCell.xib */,
@@ -830,6 +830,7 @@
 				E9F12BFF24FC040F006BD9C3 /* CommunityHeaderView.swift */,
 				E9F12C0524FE3630006BD9C3 /* AddOnCollectionViewFooter.xib */,
 				E9F12C0724FE369E006BD9C3 /* AddOnCollectionViewFooter.swift */,
+				E98FAEA523FAD2CC0064A614 /* CommentFooter.xib */,
 			);
 			path = "Header&Footer";
 			sourceTree = "<group>";
@@ -997,11 +998,13 @@
 				E90AC38324FA52C4002A36F0 /* IBMPlexSans-Thin.ttf in Resources */,
 				E9B85D482412483500960942 /* CollectionViewInTableViewCell.xib in Resources */,
 				E997F761248CE90300BF7F88 /* SurveyCell.xib in Resources */,
+				E94EDD9B2564307700B226C8 /* AddOnPlaylistTrackTableViewCell.xib in Resources */,
 				E9E49D2D2349E8AB002E371E /* NotificationCell.xib in Resources */,
 				E96CE89622959E6D00BACD3B /* ArgumentCell.xib in Resources */,
 				E93F6F1925336EC90044EAA4 /* InfoPlist.strings in Resources */,
 				E9F12BFC24FA6582006BD9C3 /* AddOnSingleCommunityCollectionViewCell.xib in Resources */,
 				E9879A2124BDB4C1004B497F /* MusicCell.xib in Resources */,
+				E94EDD972564289500B226C8 /* AddOnPlaylistCollectionViewCell.xib in Resources */,
 				E98FAEA223FAB8760064A614 /* CommentCell.xib in Resources */,
 				E97FDFBE246AA4130049E1E4 /* ShowAllTopicsCell.xib in Resources */,
 				E940D8D4249676AB00018EF3 /* PlaceHolderCell.xib in Resources */,
@@ -1044,7 +1047,6 @@
 				E90AC38824FA52C4002A36F0 /* IBMPlexSans-ExtraLight.ttf in Resources */,
 				E962AC1E2224430600C6D6EF /* Assets.xcassets in Resources */,
 				E962AC1C2224430400C6D6EF /* Main.storyboard in Resources */,
-				E9CF17BD23CA45BD000E5149 /* Idea.xib in Resources */,
 				E9B85D5C2413C1BF00960942 /* TableViewInCollectionViewCell.xib in Resources */,
 				E9EA7C9722E20DEB0015C0EC /* BlogPostCell.xib in Resources */,
 				E97FDFC0246BE9BC0049E1E4 /* DiscussionCell.xib in Resources */,
@@ -1189,6 +1191,7 @@
 				E9F6030F235DE5DF00A58D08 /* PostsOfFactTableViewController.swift in Sources */,
 				E911EEF222DB173E00EDD056 /* SettingCell.swift in Sources */,
 				E904F268229C274A00383885 /* JobSurveyViewController.swift in Sources */,
+				E94EDDA12564350500B226C8 /* AddOnPlaylistTrackTableViewCell.swift in Sources */,
 				E98B22F622CB5F26000F965F /* FriendsTableViewController.swift in Sources */,
 				E904BF0224264525003EC8DF /* AddPostTableViewController.swift in Sources */,
 				E9526C07250F993A0088004F /* AnimatedWaveView.swift in Sources */,
@@ -1200,6 +1203,7 @@
 				E911EEF422DB630300EDD056 /* SideMenu.swift in Sources */,
 				E992B48F2379874800D7E8E8 /* NotificationCell.swift in Sources */,
 				E9B85D582412D8E000960942 /* SmallFactCell.swift in Sources */,
+				E94EDD9E2564328000B226C8 /* AddOnPlaylistCollectionViewCell.swift in Sources */,
 				E9CF237F233A279200D3B295 /* TopicCell.swift in Sources */,
 				E9EA7C9B22E5F47C0015C0EC /* VoteCell.swift in Sources */,
 				E93F6F1125322F1F0044EAA4 /* ImagineFundViewController.swift in Sources */,
@@ -1454,7 +1458,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.6.3;
+				MARKETING_VERSION = 1.6.8;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -1477,7 +1481,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.6.3;
+				MARKETING_VERSION = 1.6.8;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;

@@ -31,7 +31,7 @@ class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegat
                 if info.items.count == 0 {
                     collectionView.reloadData() // If the cell got old Data in it
 //                    print("Would get the items now")
-                    info.getItems()
+                    info.getItems(postOnly: false)
                 } else {
                     print("Already Got Items")
                     collectionView.reloadData()
@@ -77,7 +77,7 @@ class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegat
         collectionView.setContentOffset(CGPoint.zero, animated: false)
     }
     
-    // OptionalInformationDelegate
+    //MARK:- OptionalInformationDelegate
     func fetchCompleted() {
         if let info = info {
             if let orderList = info.itemOrder { // If an itemOrder exists (set in addOn-settings), order according to it
@@ -97,6 +97,10 @@ class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegat
                 collectionView.reloadData()
             }
         }
+    }
+    
+    func itemAdded(successfull: Bool) {
+        print("not needed")
     }
     
 }

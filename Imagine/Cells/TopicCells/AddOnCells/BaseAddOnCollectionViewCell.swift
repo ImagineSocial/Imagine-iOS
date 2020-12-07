@@ -8,6 +8,16 @@
 
 import UIKit
 
+protocol AddOnCellDelegate {
+    func showDescription()
+    func settingsTapped(itemRow: Int)
+    func thanksTapped(info: OptionalInformation)
+    
+    //CollectionViewDelegate
+    func itemTapped(item: Any)
+    func newPostTapped(addOn: OptionalInformation)
+}
+
 class BaseAddOnCollectionViewCell: UICollectionViewCell {
     
     let cornerRadius: CGFloat = 20

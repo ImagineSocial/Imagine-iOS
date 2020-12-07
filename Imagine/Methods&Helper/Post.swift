@@ -48,6 +48,40 @@ class Votes {
     var nice = 0
 }
 
+enum MusicType {
+    case track
+    case album
+}
+
+class Music {
+    var type: MusicType
+    var name: String
+    var artist: String
+    var releaseDate: Date?
+    var artistImageURL: String?
+    var musicImageURL: String
+    var songwhipURL: String
+    
+    ///Playlist init
+    init(type:MusicType, name: String, artist: String, musicImageURL: String, songwhipURL: String) {
+        self.type = type
+        self.name = name
+        self.artist = artist
+        self.musicImageURL = musicImageURL
+        self.songwhipURL = songwhipURL
+    }
+    
+    init(type: MusicType, name: String, artist: String, releaseDate: Date, artistImageURL: String, musicImageURL: String, songwhipURL: String) {
+        self.type = type
+        self.name = name
+        self.artist = artist
+        self.releaseDate = releaseDate
+        self.artistImageURL = artistImageURL
+        self.musicImageURL = musicImageURL
+        self.songwhipURL = songwhipURL
+    }
+}
+
 class Link {
     var imageURL: String?
     var link: String
@@ -71,6 +105,7 @@ class Post {
     var description = ""
     var linkURL = ""
     var link: Link?
+    var music: Music?
     var type: PostType = .picture
     var mediaHeight: CGFloat = 0.0
     var mediaWidth: CGFloat = 0.0

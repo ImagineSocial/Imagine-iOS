@@ -14,7 +14,7 @@ protocol CommentViewDelegate {
     func commentTypingBegins()
 }
 
-class CommentAnswerView: UIView, UITextFieldDelegate {
+class CommentAnswerView: UIView, UITextViewDelegate {
     
     var delegate: CommentViewDelegate?
     
@@ -23,15 +23,21 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
     
     var answerToComment: Comment?
     
+    let messageTextViewMaxHeight: CGFloat = 80
+    
+    let answerPlaceholderText = NSLocalizedString("comment_answer_placeholder", comment: "say something about it")
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        translatesAutoresizingMaskIntoConstraints = false
         if #available(iOS 13.0, *) {
             self.backgroundColor = .secondarySystemBackground
         } else {
             self.backgroundColor = .ios12secondarySystemBackground
         }
         answerTextField.delegate = self
+        answerTextField.text = answerPlaceholderText
                 
         addSubview(answerTextField)
         addSubview(sendButton)
@@ -48,8 +54,39 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func textFieldDidBeginEditing(_ textField: UITextField) {
+    func textViewDidChange(_ textView: UITextView) {
+        if textView.contentSize.height >= self.messageTextViewMaxHeight {
+            textView.isScrollEnabled = true
+        } else {
+//            textView.frame.size.height = textView.contentSize.height
+            textView.isScrollEnabled = false
+         }
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
         delegate?.commentTypingBegins()
+        
+        if textView.text == answerPlaceholderText {
+            answerTextField.text = ""
+        }
+        
+        if #available(iOS 13.0, *) {
+            textView.textColor = .label
+        } else {
+            textView.textColor = .black
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text == "" {
+            textView.text = answerPlaceholderText
+            
+            if #available(iOS 13.0, *) {
+                textView.textColor = .secondaryLabel
+            } else {
+                textView.textColor = .lightGray
+            }
+        }
     }
     
     @objc func anonymousTapped() {
@@ -73,6 +110,8 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
     func doneSaving() {
         sendButton.isEnabled = true
         answerTextField.text = ""
+        answerTextField.frame.size.height = answerTextField.contentSize.height
+        self.layoutSubviews()
         if let _ = answerToComment {
             cancelRecipientTapped() // Remove the view, if there is any
         }
@@ -92,7 +131,9 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
         anonymousButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
         
         answerTextField.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20).isActive = true
-        answerTextField.heightAnchor.constraint(equalToConstant: 35).isActive = true
+//        answerTextField.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        answerTextField.heightAnchor.constraint(lessThanOrEqualToConstant: 80).isActive = true
+        answerTextField.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
         answerTextField.trailingAnchor.constraint(equalTo: sendButton.leadingAnchor, constant: -10).isActive = true
         answerTextField.leadingAnchor.constraint(equalTo: anonymousButton.trailingAnchor, constant: 10).isActive = true
         
@@ -161,7 +202,7 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
     }
     
     @objc func cancelRecipientTapped() {
-        
+        print("Cancel tapped")
         if let view = answerToCommentView {
             self.answerToComment = nil
             
@@ -190,7 +231,6 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
     
     
     @objc func keyboardWillChange(notification: NSNotification) {
-        
             if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
                 let heightDifference = keyboardSize.height-self.keyboardheight
                 
@@ -226,16 +266,20 @@ class CommentAnswerView: UIView, UITextFieldDelegate {
         return button
     }()
     
-    let answerTextField: UITextField = {
-        let field = UITextField()
+    let answerTextField: UITextView = {
+        let field = UITextView()
         field.translatesAutoresizingMaskIntoConstraints = false
         field.backgroundColor = .white
         field.layer.cornerRadius = 10
-        field.placeholder = NSLocalizedString("comment_answer_placeholder", comment: "say something about it")
+        field.font = UIFont(name: "IBMPlexSans", size: 14)
+        field.isScrollEnabled = false
+
         if #available(iOS 13.0, *) {
             field.backgroundColor = .systemBackground
+            field.textColor = .secondaryLabel
         } else {
             field.backgroundColor = .white
+            field.textColor = .lightGray
         }
         
         return field

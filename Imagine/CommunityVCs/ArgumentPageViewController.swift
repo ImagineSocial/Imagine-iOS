@@ -13,6 +13,12 @@ protocol PageViewHeaderDelegate {
     func childScrollViewScrolled(offset: CGFloat)
 }
 
+/*
+ Throughout this file, there are a few UI tweaks that are not properly implemented. When Coming to this view from the navigation controller of the main feed, the header behaves wrong.
+ The boolean "headerNeedsAdjustment" is set if comming from said controller and changes a few variables in viewdidload and and when "childScrollViewScrolled" is called. If you dont use a iPhone 7 or iPhone 11 you can see slight gaps between header and navigation bar. I havent found a solution for this problem.
+ 
+ */
+
 class ArgumentPageViewController: UIPageViewController {
     
     var argumentVCs = [UIViewController]()
@@ -24,9 +30,13 @@ class ArgumentPageViewController: UIPageViewController {
     var newPostButton = DesignableButton()
     var headerView = CommunityHeaderView()
     
-    var firstViewOffset: CGFloat = 156  //Hard coded doesnt work when coming from feed
-    var secondViewOffset: CGFloat = 156
-    var thirdViewOffset: CGFloat = 156
+    var firstViewOffset: CGFloat = 260
+    var secondViewOffset: CGFloat = 260
+    var thirdViewOffset: CGFloat = 260//156
+    
+    
+    var headerNeedsAdjustment = false //If this view is opened from the main feed or postvc it has a different navigation height and therefore is on the wrong place
+    var showNavigationTitle = true  //No navigation title when coming from main feed navigation controller because the font would be wrong
     
     var presentedVC: Int = 0
     
@@ -43,11 +53,28 @@ class ArgumentPageViewController: UIPageViewController {
         } else {
             self.view.backgroundColor = .white
         }
-        
         setUpHeader()
         addViewController()
         setBarButton()
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.headerNeedsAdjustment = false
+        }
+        
+        if headerNeedsAdjustment {
+            showNavigationTitle = false
+            let addedHeight: CGFloat!
+            let bounds = UIScreen.main.bounds
+            //FML I just dont get it
+            if bounds == CGRect(x: 0, y: 0, width: 375, height: 667) {  //iPhone 7
+                addedHeight = 64
+            } else {
+                addedHeight = 92
+            }
+            firstViewOffset = 260+addedHeight   //Hard coded doesnt work when coming from feed
+            secondViewOffset = 260+addedHeight
+            thirdViewOffset = 260+addedHeight
+        }
         
         let commHeaderShown = defaults.bool(forKey: "communityHeaderInfo")
         if !commHeaderShown {
@@ -305,6 +332,7 @@ class ArgumentPageViewController: UIPageViewController {
 //    }
 }
 
+//MARK:- PageVC
 extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
@@ -330,6 +358,7 @@ extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageView
             
             switch index {
             case 0:
+                
                 self.animateToRightSizeOfHeader(offset: firstViewOffset)
             case 1:
                 self.animateToRightSizeOfHeader(offset: secondViewOffset)
@@ -342,7 +371,8 @@ extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageView
     }
     
     func animateToRightSizeOfHeader(offset: CGFloat) {
-        let per:CGFloat = 60 //percentage of required view to move on while moving collection view
+        print("#animateToSize: \(offset)")
+        let per:CGFloat = 100 //percentage of required view to move on while moving collection view
         let deductValue = CGFloat(per / 100 * headerView.frame.size.height)
         let value = offset - deductValue
         let rect = headerView.frame
@@ -387,8 +417,10 @@ extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageView
 
 
 extension ArgumentPageViewController: PageViewHeaderDelegate, CommunityFeedHeaderDelegate, NewFactDelegate {
-    
-    
+    func notLoggedIn() {
+        self.notLoggedInAlert()
+    }
+
     func finishedCreatingNewInstance(item: Any?) {
         if let _ = item as? Post {
             self.alert(message: "Kehre zum Hauptfeed zurück und aktualisiere diesen, um deinen Beitrag zu sehen.", title: "Die Community wurde erfolgreich geteilt!")
@@ -433,14 +465,41 @@ extension ArgumentPageViewController: PageViewHeaderDelegate, CommunityFeedHeade
     }
     
     func childScrollViewScrolled(offset: CGFloat) {
-        
-        let per:CGFloat = 60 //percentage of required view to move on while moving collection view
+        //Called from the different childvc's of this PageViewController
+//        print("#")
+//        print("#")
+//        print("#")
+//        print("#ChildViewScrolled First Offset: \(offset)")
+        let per:CGFloat = 100 //percentage of required view to move on while moving collection view
         let deductValue = CGFloat(per / 100 * headerView.frame.size.height)
-        let offset = (-(per/100)) * (offset)
-        let value = offset - deductValue
+        let offset = (-(per/100)) * (offset)    //turn minus into plus
+        var value = offset - deductValue
         let rect = headerView.frame
+//        print("#let deductValue: \(deductValue)")
+//        print("#let offset: \(offset)")
+//        print("#let value: \(value)")
+//        print("#let rect.size.height: \(rect.size.height)")
+//
+//        let screenSize: CGRect = UIScreen.main.bounds
+//        print("#ScreenSize: \(screenSize)")
         
+        if let fact = fact {
+            if headerNeedsAdjustment && !fact.isAddOnFirstView {
+                let addedHeight: CGFloat!
+                let bounds = UIScreen.main.bounds
+                //FML I just dont get it
+                if bounds == CGRect(x: 0, y: 0, width: 375, height: 667) {  //iPhone 7
+                    addedHeight = 64
+                } else {
+                    addedHeight = 92
+                }
+                value = value+addedHeight
+            }
+        }
+            
+        //childScrollViewScrolled(offset: -352)
         self.headerView.frame = CGRect(x: rect.origin.x, y: value, width: rect.size.width, height: rect.size.height)
+        
         switch presentedVC {
         case 0:
             let difference = self.firstViewOffset-offset
@@ -457,7 +516,9 @@ extension ArgumentPageViewController: PageViewHeaderDelegate, CommunityFeedHeade
             self.firstViewOffset = 0
         }
         
-        presentNavigationTitle(rectOriginY: rect.origin.y)
+        if showNavigationTitle { //Weird big font looks bad
+            presentNavigationTitle(rectOriginY: rect.origin.y)
+        }
     }
 }
 

@@ -147,14 +147,27 @@ class SettingViewController: UIViewController {
     }
     
     @IBAction func dataControlTapped(_ sender: Any) {
-        
-        if let url = URL(string: "https://www.imagine.social/datenschutzerklärung-app") {
-            UIApplication.shared.open(url)
+        let language = LanguageSelection().getLanguage()
+        if language == .german {
+            if let url = URL(string: "https://www.imagine.social/datenschutzerklaerung-app") {
+                UIApplication.shared.open(url)
+            }
+        } else {
+            if let url = URL(string: "https://en.imagine.social/datenschutzerklaerung-app") {
+                UIApplication.shared.open(url)
+            }
         }
     }
     @IBAction func eulaTapped(_ sender: Any) {
-        if let url = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
-            UIApplication.shared.open(url)
+        let language = LanguageSelection().getLanguage()
+        if language == .german {
+            if let url = URL(string: "https://www.imagine.social/eula") {
+                UIApplication.shared.open(url)
+            }
+        } else {
+            if let url = URL(string: "https://en.imagine.social/eula") {
+                UIApplication.shared.open(url)
+            }
         }
     }
 

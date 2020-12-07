@@ -30,7 +30,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     var newBlogPost = 0
     var newMessages = 0
     var newComments = 0
-    var notifications = [Comment]() // Maybe later also likes and stuff
+    var notifications = [Comment]()
     var upvotes = [Comment]()
     
     let defaults = UserDefaults.standard
@@ -38,25 +38,29 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        setUpSearchController()
+        //Set up the preferences for the info views used in the whole project
         setUpEasyTipViewPreferences()
         
-        // Initiliaze ScreenEdgePanRecognizer
+        // Initiliaze ScreenEdgePanRecognizer to open sideMenu
         screenEdgeRecognizer = UIScreenEdgePanGestureRecognizer(target: self,
                                                                 action: #selector(BarButtonItemTapped))
         screenEdgeRecognizer.edges = .left
         view.addGestureRecognizer(screenEdgeRecognizer)
         
-        // Others
+        // Initialize the logIn or profilePicture Button
         loadBarButtonItem()
         
+        // If logged in get notifications and listen for new ones
         setNotificationListener()
+        // Show empty cells while fetching the posts
         setPlaceholderAndGetPosts()
         
+        // Show intro slides for different features in the app
         if !self.isAppAlreadyLaunchedOnce() {
             performSegue(withIdentifier: "toIntroView", sender: nil)
         }
 
+        // Link the delegate to switch to this view again and reload if somebody posts something
         if let viewControllers = self.tabBarController?.viewControllers {
             if let navVC = viewControllers[2] as? UINavigationController {
                 if let newVC = navVC.topViewController as? NewPostViewController {
@@ -67,13 +71,15 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     }
     
     override func presentInfoView() {
-        let commHeaderShown = UserDefaults.standard.bool(forKey: "likesInfo")
-        if commHeaderShown == false {
+        //Called from BaseFeedTableVC because it is called in CellForRowAt if you are new and after 6 posts are displayed
+        let infoViewShown = UserDefaults.standard.bool(forKey: "likesInfo")
+        if infoViewShown == false {
             showInfoView()
         }
     }
     
     func showInfoView() {
+        //Show Info View that shows what the like buttons mean and stuff like this
         let upperHeight = UIApplication.shared.statusBarFrame.height +
               self.navigationController!.navigationBar.frame.height
         let height = upperHeight+40
@@ -93,7 +99,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     }
     
     func setPlaceholderAndGetPosts() {
-        //setPlaceholder
+        // Show empty cells while fetching the posts
         var index = 0
         
         let post = Post()
@@ -258,12 +264,12 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         }
     }
     
-    
-    func loadUser() {   // After dismissal of the logInViewController
-        print("Loaded")
+    /// Call to load User in SideMenu and set notifications after dismissal of the logInViewController
+    func loadUser() {
         self.setNotificationListener()
         self.checkForLoggedInUser()
         self.setNotifications()
+        sideMenu.showUser()
     }
     
     
@@ -295,7 +301,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     }
     
     func setNotificationListener() {
-        
+        // If logged in get notifications and listen for new ones
         if let _ = notificationListener {
             print("Listener already Set")
         } else {
@@ -315,7 +321,6 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                                  
                                 if let type = data["type"] as? String {
                                     
-                                    print("Im notificationsListener: \(type)")
                                     switch change.type {
                                         
                                     case .added:
@@ -377,7 +382,6 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                                             print("Unknown Type")
                                         }
                                     case .removed:
-                                        print("Something got removed")
                                         switch type {
                                         case "friend":
                                             self.friendRequests = self.friendRequests-1
@@ -469,18 +473,6 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         }
     }
     
-//    func setChatBadge(value: Int) {
-//        if let tabItems = tabBarController?.tabBar.items {
-//            let tabItem = tabItems[1] //Chats
-//            if value != 0 {
-//                tabItem.badgeValue = String(value)
-//            } else {
-//                tabItem.badgeValue = nil
-//            }
-//        }
-//    }
-
-    
     // MARK: - TableViewStuff
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -489,11 +481,28 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         
         if post.type == .topTopicCell {
             tableView.deselectRow(at: indexPath, animated: false)
+        } else if post.type == .singleTopic {
+            if let fact = post.fact {
+                performSegue(withIdentifier: "toFactSegue", sender: fact)
+            }
         } else {
+//            changePostLocation(post: post)
             performSegue(withIdentifier: "showPost", sender: post)
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func changePostLocation(post: Post) {
+        let dataDictionary: [String: Any] = ["title": post.title, "description": post.description, "createTime": Timestamp(date: Date()), "originalPoster": post.user.userUID, "thanksCount":post.votes.thanks, "wowCount":post.votes.thanks, "haCount":post.votes.thanks, "niceCount":post.votes.thanks, "type": "picture", "report": "normal", "imageURL": post.imageURL, "imageHeight": post.mediaHeight, "imageWidth": post.mediaWidth]
+        
+        let ref = db.collection("Posts").document()
+        
+        ref.setData(dataDictionary) { (err) in
+            if let error = err {
+                print("error:", error.localizedDescription)
+            }
+        }
     }
     
     // MARK: - PrepareForSegue
@@ -503,6 +512,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
             if let chosenPost = sender as? Post {
                 if let postVC = segue.destination as? PostViewController {
                     postVC.post = chosenPost
+                    postVC.linkedFactPageVCNeedsHeightCorrection = true
                 }
             }
         }
@@ -558,11 +568,11 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         if segue.identifier == "toFactSegue" {
             if let fact = sender as? Fact {
                 if let factVC = segue.destination as? ArgumentPageViewController {
-                        factVC.fact = fact
+                    factVC.fact = fact
+                    factVC.headerNeedsAdjustment = true
                 }
             }
         }
-        
         if segue.identifier == "goToPostsOfTopic" {
             if let fact = sender as? Fact {
                 if let factVC = segue.destination as? PostsOfFactTableViewController {
@@ -592,7 +602,6 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     
     func loadBarButtonItem() {
         
-        
         if isConnected() {
             
             // needs Internet to check if User is logged in and/or profilePicture
@@ -619,7 +628,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     
     
     func createBarButton() {
-        // View so I there can be a small number for Invitations
+        // View so there can be a small number for Invitations
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.heightAnchor.constraint(equalToConstant: 35).isActive = true
@@ -633,7 +642,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         
         
         
-        // Wenn jemand eingeloggt ist:
+        // If somebody is logged in add a profilePicture button to open the sidemenu
         if let user = Auth.auth().currentUser {
             self.loggedIn = true
             
@@ -668,7 +677,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
             view.addSubview(self.smallNumberForNewChats)
             view.addSubview(self.smallNumberForNotifications)
             
-        } else {    // Wenn niemand eingeloggt
+        } else {    // If nobody is logged in just show the logIn Button
             self.loggedIn = false
             
             self.smallNumberForNotifications.isHidden = true
@@ -837,7 +846,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     
     
     func sideMenuButtonTapped(whichButton: SideMenuButton, comment: Comment?) {
-        
+        //Called when the sideMenu is closed with an call to action
         switch whichButton {
         case .toUser:
             self.performSegue(withIdentifier: "toUserSegue", sender: nil)
@@ -856,7 +865,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                 post.isTopicPost = comment.isTopicPost
                 post.language = comment.sectionItemLanguage
                 post.newUpvotes = comment.upvotes
-                print("to post with upvotes: \(comment.upvotes)")
+
                 if let user = Auth.auth().currentUser {     //Only works if you get notifications for your own posts
                     post.originalPosterUID = user.uid
                 }
@@ -900,6 +909,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     }
     
     func showGDPRAlert() {
+        //Ask about the use of cookies. You can change the userdefaults later in the settings
         let alert = UIAlertController(title: NSLocalizedString("accept_cookies_title", comment: "we got cookies"), message: NSLocalizedString("accept_cookies_message", comment: "what are out cookies about"), preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(title: NSLocalizedString("to_gdpr", comment: ""), style: .default, handler: { (_) in
@@ -941,7 +951,8 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
 }
 
 extension FeedTableViewController: LogOutDelegate {
-    func deleteListener() {     // Triggered when the User logges themselve out. Otherwise they would get notified after they logged themself in and a new user could not get a new notificationListener
+
+    func deleteListener() {     
         self.notificationListener?.remove()
         self.notificationListener = nil
         
@@ -951,7 +962,7 @@ extension FeedTableViewController: LogOutDelegate {
         self.newMessages = 0
         self.notifications.removeAll()
         
-        print("listener removed")
+        sideMenu.removeUser()
     }
 }
 

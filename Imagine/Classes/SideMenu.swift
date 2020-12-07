@@ -98,12 +98,8 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    
-    
-    
-    
+    ///Show the SideMenu: Move the sideMenu over the FeedTableVC
     func showMenu() {
-        //show menu
         
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             
@@ -341,6 +337,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         deleteAllNotificationsButton.addTarget(self, action: #selector(deleteAllTapped), for: .touchUpInside)
     }
     
+    /// Get the user data and display it 
     func showUser() {
         if let user = Auth.auth().currentUser {
             if let url = user.photoURL {
@@ -366,7 +363,13 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    
+    /// Remove the user from the UI after the user is logged out
+    func removeUser() {
+        profilePictureImageView.image = UIImage(named: "default-user")
+        nameLabel.text = ""
+        notifications.removeAll()
+        notificationTableView.reloadData()
+    }
     
     // MARK:- Instantiate UI
     

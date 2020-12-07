@@ -35,7 +35,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var createDateLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var descriptionLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UITextView!
     @IBOutlet weak var descriptionView: DesignablePopUp!
     
     @IBOutlet weak var reportViewTitleLabel: UILabel!
@@ -60,6 +60,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     var centerX: NSLayoutConstraint?
     var distanceConstraint: NSLayoutConstraint?
+    
+    var linkedFactPageVCNeedsHeightCorrection = false   //If it comes from mainFeed it needs to adjust height of communityHeader
     
     fileprivate var backUpViewHeight : NSLayoutConstraint?
     fileprivate var backUpButtonHeight : NSLayoutConstraint?
@@ -283,6 +285,12 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             }
         default:
             print("No important stuff for these buggeroos")
+        }
+        
+        if let view = floatingCommentView {
+            if view.answerTextField.isFirstResponder { //If the answerview is open
+                self.scrollViewDidScroll(scrollView)
+            }
         }
         
 //        if contentView.frame.height != 0 {  //ScrollView got set
@@ -640,10 +648,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 setFact()
             } else {
                 let baseCell = BaseFeedCell()
-                if let fact = post.fact {
-                    baseCell.loadFact(language: post.language, fact: fact, beingFollowed: false) { (fact) in
-                        self.post.fact = fact
-                        self.setFact()
+                baseCell.loadFact(language: post.language, fact: fact, beingFollowed: false) { (fact) in
+                    self.post.fact = fact
+                    self.addLinkedFactView()
+                    self.setFact()
+                    if let view = self.floatingCommentView {
+                        //Otherwise the linkedFactView would be over the keyboard of the commentField
+                        self.contentView.bringSubviewToFront(view)
                     }
                 }
             }
@@ -1133,9 +1144,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             if let fact = sender as? Fact {
                 if let factVC = segue.destination as? ArgumentPageViewController {
                     factVC.fact = fact
-//                    if fact.displayOption == .topic {
-//                        factVC.displayMode = .topic
-//                    }
+                    if linkedFactPageVCNeedsHeightCorrection {
+                        factVC.headerNeedsAdjustment = true
+                    }
                 }
             }
         }
@@ -1202,8 +1213,16 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             if floatingCommentView == nil {
                 let commentViewHeight: CGFloat = 60
                 floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: viewHeight-commentViewHeight, width: self.view.frame.width, height: commentViewHeight))
+                
+                
                 floatingCommentView!.delegate = self
                 self.contentView.addSubview(floatingCommentView!)
+                
+                floatingCommentView!.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+                floatingCommentView!.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
+                floatingCommentView!.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor).isActive = true
+                floatingCommentView!.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
+                
                 self.contentView.bringSubviewToFront(floatingCommentView!)
                 self.contentView.layoutIfNeeded()
             }

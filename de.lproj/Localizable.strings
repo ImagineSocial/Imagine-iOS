@@ -87,6 +87,7 @@
 "password must be safe" = "Das Passwort muss mindestens 6 Zeichen haben, und schon ein bisschen sicher sein!";
 "approve apple rules" = "Stimmst du den Apple Nutzungsbedingungen zu und lädst keine unangebrachten Inhalte hoch?";
 "approve GDPR rules" = "Mit der Registrierung akzeptierst du unsere Datenschutzerklärung und damit die Speicherung und Bearbeitung der eingegebenen Daten nach DSGVO-Vorgaben. Okay?";
+"approve_eula_rules" = "Mit der Registrierung stimmst du unserem Endbenutzer-Lizenzvertrag (EULA) zu, die besagt, dass du keine unangebrachten Inhalte hochlädst und respektvoll mit deinen Mitmenschen umgehst.";
 "ready to go" = "Jetzt kannst du loslegen! Schau dich um und vergiss nicht deine E-Mail-Adresse zu bestätigen🙏 (vielleicht im Spam Ordner)";
 "welcome to imagine" = "Herzlich Willkommen bei Imagine. Zu unseren Prinzipien gehören eine respektvolle und positive Stimmung & Respekt gegenüber anderen Meinungen und Ansichten.";
 "need your help" = "Zur Sicherstellung dieser Prinzipien benötigen wir eure Hilfe. Verstöße können bei uns gemeldet werden und werden schnellstmöglich überprüft.";
@@ -260,9 +261,15 @@
 "new_addOn_collection_header" = "Füge eine Kollektion mit Beiträgen und Themen hinzu.";
 "new_addOn_singleTopic_header" = "Verlinke ein aussagekräftiges Thema.";
 "new_addOn_QandA_header" = "Füge ein Frage/Antwort AddOn hinzu.";
+"new_addOn_youtube_playlist_header" = "Eine normale Kollektion mit einer eingebauten YouTube Playlist";
+"new_addOn_youtube_playlist_description" = "Eine Kollektion, bestimmt für YouTube Videos. Teile die Videos in diesem AddOn um die hinterlegte Playlist zu erweitern. So hat man übersichtlich und bequem alle Inhalte an einem Ort, zum abspeichern für später oder direkt zum gucken.";
+"new_addOn_playlist_header" = "Erstelle eine Musik Playlist";
+"new_addOn_playlist_description" = "Erstelle eine Wiedergabeliste aus geteilten Songs, die als Songwhip-Link hochgeladen wurden. Verschaffen dir einen klaren Überblick und wähle einzelne Lieder aus, um sie im Streaming-Dienst deiner Wahl zu öffnen.";
+
 "addOn_type_collection" = "Post & Themen Kollektion";
 "addOn_type_singleTopic" = "Präsentation einer Community";
 "addOn_type_QandA" = "Frage & Antwort Bereich";
+"addOn_type_playlist" = "Musik Playlist";
 
 //AddPostTableViewController
 "search_placeholder" = "Durchsuche Imagine";
@@ -343,6 +350,7 @@
 //CommentAnswerView
 "comment_answer_placeholder" = " Sag etwas dazu...";
 "comment_indented_answer_label" = "Antwort an: ";
+"comment_answer_button_label" = "Antworten";
 
 //CommentTableView
 "comment_report_label" = "Melden";
@@ -389,7 +397,7 @@
 "constants_reportBugText" = "Sag uns, was wir für Fehler beheben sollen.\n\nSchließt sich die App abrupt, wird ein Bereich des Bildschirms falsch dargestellt oder eine Funktion funktioniert nicht, so sag uns bitte Bescheid.\n\nSelbst wenn es ein offensichtlicher Fehler ist, so wissen wir was die User am Meisten stört, je mehr Reporte zu diesem Thema bei uns eintreffen.";
 "constants_communityText" = "Erstelle eine neue Community oder eine neue Diskussion. \nEin Bild ist dabei optional aber immer gern gesehen\n\nDu bist vorerst der Moderator der von dir erstellten Communities und Diskussionen und kannst zu einem späteren Zeitpunkt die Informationen und Metadaten bearbeiten.";
 "constants_addOns_singleTopicText" = "Verlinke mit diesem AddOn eine andere Community, die den Menschen aus der derzeitigen Community interessant finden könnten. Die Darstellung enthält Bilder-Beiträge, sowie die Beschreibung der Community in der Vorschau.";
-"constants_addOns_normalText" = "Your post was";
+"constants_addOns_normalText" = "In diesem AddOn kannst du neue oder bestehende Beiträge posten, um ein Unterthema deiner Wahl besser hervorzuheben. Wenn du nur ein Thema markieren möchtest, benutze bitte das AddOn für einzelne Themen";
 "constants_addOns_QandA" = "Füge dieses AddOn hinzu, um einen Ort für mögliche Fragen zu  schaffen. Anfänger können so schneller lernen und Neulinge oder Fremde sich einfacher an einem Ort oder einer Community zurechtfinden.";
 
 ////Storyboard
@@ -437,6 +445,10 @@
 
 //FactCollectionViewController
 "factCollectionVC_recent_label" = "Zuletzt angesehen";
+
+//TopicCollectionFooter
+"topicCollectionFooter_add" = "Hinzufügen";
+"topicCollectionFooter_showAll" = "Alle anzeigen";
 
 //NewPostVC //Segment geht noch nicht!
 "newPost_header_label" = "Neuer Beitrag";
@@ -538,10 +550,6 @@
 "moreInfo_header" = "Mehr\nInfos";
 "latest_news_header" = "Aktuelles";
 
-//newAddONVC
-"new_addOn_youtube_playlist_header" = "Eine normale Kollektion mit einer eingebauten YouTube Playlist";
-"new_addOn_youtube_playlist_description" = "Eine Kollektion, bestimmt für YouTube Videos. Teile die Videos in diesem AddOn um die hinterlegte Playlist zu erweitern. So hat man übersichtlich und bequem alle Inhalte an einem Ort, zum abspeichern für später oder direkt zum gucken.";
-
 //topTopicCell
 "top_topic_week_post_header" = "Die Themen der Woche: ";
 
@@ -558,7 +566,7 @@
 "helpVC_entry_summary" = "Wenn du glaubst, mit deinem Wissen oder Erfahrung kannst du uns helfen, aber es gibt keine passende Ausschreibung, gib uns Bescheid! Wir sind auf klüge Köpfe angewiesen!";
 "helpVC_entry_description" = "Schreib uns einfach, welcher Bereich dich besonders interessiert und deine Motivation.\n\n Wir würden uns freuen";
 "helpVC_category_general" = "Allgemein";
-"helpVC_interested_label" = "%@ Interessenten";
+"helpVC_interested_label" = "%d Interessenten";
 
 //BugReport
 "bug_report_header" = "Danke für deine Unterstützung, wo hakt's?";
@@ -623,3 +631,19 @@
 "principle_descriprion" = "Kommunikation, Transparenz und soziale Verantwortung sind für uns die wichtigsten Merkmale für ein faires Miteinander zwischen User/Kunde und Unternehmen.  \nWir hoffen, dass in Zukunft Unternehmen eine offene Atmosphäre zu ihren Kunden aufbauen und pflegen. Ihr gegenseitliches Handeln sollte verständlich dargelegt und nicht in langen Datenschutz- und Nutzungsrichtlinien verschlüsselt werden.  \nFirmen suchen trotz hoher Einnahmen, Steuer- und Gesetzeslücken um ihren Profit zu maximieren, während die User und Allgemeinheit nicht berücksichtigt werden.   \nDas Umdenken der Unternehmen muss eingefordert werden. Im Informationszeitalter haben Konsumenten die Möglichkeit sich zu vernetzen, ihre Rechte einzufordern und die derzeitige Profitgier anzuprangern. ";
 "helper_title" = "Helfer & Team";
 "helper_description" = "Um Imagine frei von externen Einflüssen und Absichten zu halten, wollen wir das Netzwerk mit der Unterstützung unserer User aufbauen.  \nWir sind dankbar für jede Unterstützung, können zu Beginn jedoch keine Entlohnungen anbieten. Als Wertschätzung bieten wir den Helfern einen besonderen Status in Netzwerk und bitten sie, ihre angewendete Zeit zu notieren. Sofern es zu einem späteren Zeitpunkt möglich ist, werden diese für ihre Mühen in gemeinschaftlichem Konsens angemessen kompensiert.\n Bei Erfolg des Netzwerkes wird ein Team von Mitarbeitern für die koordinierte Erweiterung des Netzwerkes aufgebaut. Hierfür wird die digitale Vernetzung des Aufbaus gegen eine zentrale Anlaufstelle eingetauscht.  \nStadt der Niederlassung wird aufgrund von Expansions- und Vernetzungschancen ausgewählt.\n Die Helfer zu Beginn von Imagine erhalten für die Auswahl des Teams selbstverständlich einen besonderen Status.";
+
+//QandA Addon
+"qanda_first_question" = "Stelle eine erste Frage";
+
+//SwipeCollectionViewController
+"cookie_alert_header" = "Wir haben 'Cookies' bei Imagine";
+"cookie_alert_description" = "Gemäß unseren Datenschutzrichtlinien möchten wir damit herausfinden, wie die User unsere App nutzen und welche Features beliebt sind. Anonymisiert natürlich und Imagine-Intern! Du kannst deine Auswahl jederzeit in den Einstellungen ändern.";
+"cookie_alert_toEULA" = "Zu den Datenschutzrichtlinien";
+"cookie_alert_accept" = "Ich akzeptiere Cookies";
+"cookie_alert_dontAccept" = "Keine Cookies";
+
+//SurveyCell
+"surveyCell_pickOne_label" = "Wähle eine der möglichen Antworten aus.";
+"surveyCell_pickOrder_label" = "Wähle eine Reihenfolge von 1 bis 4 (am Meisten -> am Wenigsten) aus.";
+"surveyCell_writeComment_label" = "Schreibe uns deine Meinung.";
+"surveyCell_disclaimer" = "Die Daten werden anonym ausgewertet und helfen uns dabei unsere User besser zu verstehen. So gestalten wir das Netzwerk nach euren Vorstellungen und Wünschen.";

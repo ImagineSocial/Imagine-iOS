@@ -109,6 +109,9 @@
                         <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="12"/>
                         <color key="tintColor" systemColor="labelColor"/>
                         <state key="normal" title="Antworten"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="string" keyPath="xibLocKey" value="comment_answer_button_label"/>
+                        </userDefinedRuntimeAttributes>
                         <connections>
                             <action selector="answerButtonTapped:" destination="aj4-eF-TBR" eventType="touchUpInside" id="r6c-Hy-v6o"/>
                         </connections>

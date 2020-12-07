@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSans-Regular.ttf">
+            <string>IBMPlexSans</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="AddOnPlaylistTrackTableViewCell" rowHeight="60" id="oMC-YM-HIH" customClass="AddOnPlaylistTrackTableViewCell" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="438" height="60"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="oMC-YM-HIH" id="Qqp-YO-rAS">
+                <rect key="frame" x="0.0" y="0.0" width="438" height="60"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="default" translatesAutoresizingMaskIntoConstraints="NO" id="Dll-eb-5GT" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="5" y="5" width="50" height="50"/>
+                        <constraints>
+                            <constraint firstAttribute="width" secondItem="Dll-eb-5GT" secondAttribute="height" multiplier="1:1" id="GrV-uL-N26"/>
+                            <constraint firstAttribute="height" constant="50" id="l1K-4M-fXS"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="3"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gX8-lw-pCp">
+                        <rect key="frame" x="70" y="5" width="353" height="25"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zax-QW-5Mo">
+                        <rect key="frame" x="70" y="30" width="353" height="25"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                        <color key="textColor" systemColor="secondaryLabelColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="O79-Ya-jxl">
+                        <rect key="frame" x="0.0" y="60" width="438" height="0.0"/>
+                        <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" id="cw1-RO-PLL"/>
+                        </constraints>
+                        <wkWebViewConfiguration key="configuration">
+                            <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                            <wkPreferences key="preferences"/>
+                        </wkWebViewConfiguration>
+                    </wkWebView>
+                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PSm-Mb-ObM" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="402" y="24" width="26" height="26"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="26" id="JZm-5n-kJ6"/>
+                            <constraint firstAttribute="width" constant="26" id="tcH-YG-sjY"/>
+                        </constraints>
+                        <state key="normal" image="DismissWhite"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="13"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                        <connections>
+                            <action selector="dismissButtonTapped:" destination="oMC-YM-HIH" eventType="touchUpInside" id="M2B-nT-7pi"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="Zax-QW-5Mo" firstAttribute="trailing" secondItem="gX8-lw-pCp" secondAttribute="trailing" id="09g-RE-cae"/>
+                    <constraint firstItem="Zax-QW-5Mo" firstAttribute="leading" secondItem="gX8-lw-pCp" secondAttribute="leading" id="3Dt-HH-9oN"/>
+                    <constraint firstItem="Dll-eb-5GT" firstAttribute="leading" secondItem="Qqp-YO-rAS" secondAttribute="leading" constant="5" id="4Va-pA-VK4"/>
+                    <constraint firstAttribute="trailing" secondItem="O79-Ya-jxl" secondAttribute="trailing" id="5DP-sB-h7d"/>
+                    <constraint firstAttribute="bottom" secondItem="O79-Ya-jxl" secondAttribute="bottom" constant="5" id="BNL-5u-MEo"/>
+                    <constraint firstItem="O79-Ya-jxl" firstAttribute="leading" secondItem="Qqp-YO-rAS" secondAttribute="leading" id="PyV-x9-lRl"/>
+                    <constraint firstItem="gX8-lw-pCp" firstAttribute="height" secondItem="Dll-eb-5GT" secondAttribute="height" multiplier="0.5" id="Qfv-re-mB4"/>
+                    <constraint firstAttribute="trailing" secondItem="gX8-lw-pCp" secondAttribute="trailing" constant="15" id="SzK-Qc-zar"/>
+                    <constraint firstItem="Zax-QW-5Mo" firstAttribute="height" secondItem="gX8-lw-pCp" secondAttribute="height" id="TPu-4e-Q7n"/>
+                    <constraint firstItem="gX8-lw-pCp" firstAttribute="leading" secondItem="Dll-eb-5GT" secondAttribute="trailing" constant="15" id="U5p-uW-VKM"/>
+                    <constraint firstAttribute="bottom" secondItem="PSm-Mb-ObM" secondAttribute="bottom" constant="10" id="YfP-nH-DBJ"/>
+                    <constraint firstItem="O79-Ya-jxl" firstAttribute="top" secondItem="Dll-eb-5GT" secondAttribute="bottom" constant="5" id="Z5h-Mj-YTl"/>
+                    <constraint firstItem="Dll-eb-5GT" firstAttribute="top" secondItem="Qqp-YO-rAS" secondAttribute="top" constant="5" id="cfy-ae-Ac9"/>
+                    <constraint firstItem="gX8-lw-pCp" firstAttribute="top" secondItem="Dll-eb-5GT" secondAttribute="top" id="f5A-rb-s1R"/>
+                    <constraint firstAttribute="trailing" secondItem="PSm-Mb-ObM" secondAttribute="trailing" constant="10" id="moT-LH-yKh"/>
+                    <constraint firstItem="Zax-QW-5Mo" firstAttribute="bottom" secondItem="Dll-eb-5GT" secondAttribute="bottom" id="yy5-tj-Wus"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="albumCoverHeightConstraint" destination="l1K-4M-fXS" id="g0f-lh-7sx"/>
+                <outlet property="albumCoverImageView" destination="Dll-eb-5GT" id="giQ-8w-2zj"/>
+                <outlet property="artistNameLabel" destination="Zax-QW-5Mo" id="cpL-CS-rwz"/>
+                <outlet property="dismissButton" destination="PSm-Mb-ObM" id="hPq-QE-Yse"/>
+                <outlet property="trackTitleLabel" destination="gX8-lw-pCp" id="Bbx-xk-9Lx"/>
+                <outlet property="webView" destination="O79-Ya-jxl" id="q3P-eN-FNI"/>
+                <outlet property="webViewHeightConstraint" destination="cw1-RO-PLL" id="beO-XS-xpM"/>
+            </connections>
+            <point key="canvasLocation" x="269.56521739130437" y="59.598214285714285"/>
+        </tableViewCell>
+    </objects>
+    <designables>
+        <designable name="Dll-eb-5GT">
+            <size key="intrinsicContentSize" width="1191" height="670"/>
+        </designable>
+    </designables>
+    <resources>
+        <image name="DismissWhite" width="136" height="135"/>
+        <image name="default" width="1191" height="670"/>
+        <systemColor name="secondaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

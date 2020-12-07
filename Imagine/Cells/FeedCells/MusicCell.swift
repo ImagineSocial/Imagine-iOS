@@ -18,8 +18,14 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
     
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var webViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var viewAboveWebView: UIView!
     @IBOutlet weak var expandViewButton: DesignableButton!
+    @IBOutlet weak var albumPreviewShadowView: UIView!
+    @IBOutlet weak var albumPreviewImageView: DesignableImage!
+    @IBOutlet weak var musicTitleLabel: UILabel!
+    @IBOutlet weak var artistLabel: UILabel!
+    @IBOutlet weak var releaseYearLabel: UILabel!
+    @IBOutlet weak var musicViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var songwhipButton: UIButton!
     
     var delegate: PostCellDelegate?
     var webViewDelegate: MusicPostDelegate?
@@ -33,40 +39,120 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         self.initiateCell(thanksButton: thanksButton, wowButton: wowButton, haButton: haButton, niceButton: niceButton, factImageView: factImageView, profilePictureImageView: profilePictureImageView)
         
         titleLabel.adjustsFontSizeToFitWidth = true
-        
-//        webView.scrollView.delegate = self
-        
+                
         self.addSubview(buttonLabel)
                 
         webView.navigationDelegate = self
         webView.layer.cornerRadius = 8
         webView.clipsToBounds = true
         
+        songwhipButton.imageView?.contentMode = .scaleAspectFit
+        
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
         
-        let touch: UITouch = touches.first!
+        let shadowRadius = Constants.Numbers.feedShadowRadius
+        let radius = Constants.Numbers.feedCornerRadius
         
-        if touch.view == viewAboveWebView {
-            print("WebView touched")
-            if webViewHeightConstraint.constant != 500 {
-                self.expandWebView()
-            }
+        let musicLayer = albumPreviewShadowView.layer
+        let layer = containerView.layer
+        
+        layer.cornerRadius = radius
+        musicLayer.cornerRadius = radius
+        
+        if #available(iOS 13.0, *) {
+            layer.shadowColor = UIColor.label.cgColor
+            musicLayer.shadowColor = UIColor.label.cgColor
+        } else {
+            layer.shadowColor = UIColor.black.cgColor
+            musicLayer.shadowColor = UIColor.black.cgColor
         }
+        layer.shadowOffset = CGSize.zero
+        layer.shadowRadius = shadowRadius
+        layer.shadowOpacity = 0.5
+        
+        musicLayer.shadowOffset = CGSize.zero
+        musicLayer.shadowRadius = 10
+        musicLayer.shadowOpacity = 0.3
+        
+        let rect = CGRect(x: 0, y: 0, width: contentView.frame.width-20, height: contentView.frame.height-20)
+        layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: radius).cgPath
+        
+        let width = contentView.frame.width-140
+        let musicRect = CGRect(x: 0, y: 0, width: width, height: width)
+        musicLayer.shadowPath = UIBezierPath(roundedRect: musicRect, cornerRadius: radius).cgPath
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        descriptionPreviewLabel.text = nil
+        
+        profilePictureImageView.sd_cancelCurrentImageLoad()
+        profilePictureImageView.image = nil
+        
+        factImageView.layer.borderColor = UIColor.clear.cgColor
+        factImageView.image = nil
+        factImageView.backgroundColor = .clear
+        followTopicImageView.isHidden = true
+        
+        webViewHeightConstraint.constant = 250
+        
+//        viewAboveWebView.isHidden = false
+        expandViewButton.isHidden = false
+        expandViewButton.alpha = 1
+        
+        thanksButton.isEnabled = true
+        wowButton.isEnabled = true
+        haButton.isEnabled = true
+        niceButton.isEnabled = true
+        
+        musicViewHeightConstraint.constant = 400
+        webViewHeightConstraint.constant = 0
+        albumPreviewImageView.alpha = 1
+        albumPreviewShadowView.alpha = 1
+        musicTitleLabel.alpha = 1
+        artistLabel.alpha = 1
+        releaseYearLabel.alpha = 1
+        expandViewButton.alpha = 1
+        
+        albumPreviewImageView.isHidden = false
+        albumPreviewShadowView.isHidden = false
+        musicTitleLabel.isHidden = false
+        artistLabel.isHidden = false
+        releaseYearLabel.isHidden = false
+        expandViewButton.isHidden = false
+        
+        
     }
     
     func expandWebView() {
-        webViewHeightConstraint.constant = 500
-        webViewDelegate?.expandView()
-        viewAboveWebView.isHidden = true
-        UIView.animate(withDuration: 0.2, animations: {
+        let height = musicViewHeightConstraint.constant
+        
+        UIView.animate(withDuration: 0.5) {
+            self.musicViewHeightConstraint.constant = 0
+            self.webViewHeightConstraint.constant = height
+            self.albumPreviewImageView.alpha = 0
+            self.albumPreviewShadowView.alpha = 0
+            self.musicTitleLabel.alpha = 0
+            self.artistLabel.alpha = 0
+            self.releaseYearLabel.alpha = 0
             self.expandViewButton.alpha = 0
-        }) { (_) in
+            
+            self.layoutIfNeeded()
+        } completion: { (_) in            
+            self.webViewDelegate?.expandView()
+
+            self.albumPreviewImageView.isHidden = true
+            self.albumPreviewShadowView.isHidden = true
+            self.musicTitleLabel.isHidden = true
+            self.artistLabel.isHidden = true
+            self.releaseYearLabel.isHidden = true
             self.expandViewButton.isHidden = true
+            
         }
-        self.layoutIfNeeded()
     }
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
@@ -81,6 +167,13 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         
     }
     
+    func getYearFromDate(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy"
+        let stringDate = dateFormatter.string(from: date)
+        
+        return stringDate
+    }
     
     var post: Post? {
         didSet {
@@ -89,6 +182,18 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
                 if let url = URL(string: post.linkURL) {
                     let request = URLRequest(url: url)
                     webView.load(request)
+                }
+                
+                if let music = post.music {
+                    if let url = URL(string: music.musicImageURL) {
+                        albumPreviewImageView.sd_setImage(with: url, completed: nil)
+                    }
+                    
+                    musicTitleLabel.text = music.name
+                    artistLabel.text = music.artist
+                    if let releaseDate = music.releaseDate {
+                        releaseYearLabel.text = getYearFromDate(date: releaseDate)
+                    }
                 }
                 
                 if ownProfile {
@@ -220,32 +325,11 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         }
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        descriptionPreviewLabel.text = nil
-        
-        profilePictureImageView.sd_cancelCurrentImageLoad()
-        profilePictureImageView.image = nil
-        
-        factImageView.layer.borderColor = UIColor.clear.cgColor
-        factImageView.image = nil
-        factImageView.backgroundColor = .clear
-        followTopicImageView.isHidden = true
-        
-        webViewHeightConstraint.constant = 250
-        
-        viewAboveWebView.isHidden = false
-        expandViewButton.isHidden = false
-        expandViewButton.alpha = 1
-        
-        thanksButton.isEnabled = true
-        wowButton.isEnabled = true
-        haButton.isEnabled = true
-        niceButton.isEnabled = true
-    }
-    
 
     @IBAction func expandViewButtonTapped(_ sender: Any) {
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+        
         if webViewHeightConstraint.constant != 500 {
             self.expandWebView()
         }

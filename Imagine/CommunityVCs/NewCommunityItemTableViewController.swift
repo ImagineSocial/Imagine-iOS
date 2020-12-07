@@ -35,6 +35,7 @@ enum NewCommunityItemType {
     case addOnYouTubePlaylistDesign
     case singleTopicAddOn
     case shareTopic
+    case addOnPlaylist
 }
 
 enum ArgumentType {
@@ -157,6 +158,9 @@ class NewCommunityItemTableViewController: UITableViewController {
             
             headerLabel.text = NSLocalizedString("new_argument_header", comment: "create new argument")
             cells.append(contentsOf: [.setTitle, .setDescription])
+        case .addOnPlaylist:
+            headerLabel.text = NSLocalizedString("new_addOn_header", comment: "create new addon")
+            cells.append(contentsOf: [.setTitle, .setDescription])
         case .addOn:
             headerLabel.text = NSLocalizedString("new_addOn_header", comment: "create new addon")
             cells.append(contentsOf: [.setTitle, .setDescription, .setPicture])
@@ -203,6 +207,8 @@ class NewCommunityItemTableViewController: UITableViewController {
                         cell.characterLimit = Constants.characterLimits.argumentTitleCharacterLimit
                     case .addOn:
                         cell.characterLimit = Constants.characterLimits.addOnTitleCharacterLimit
+                    case .addOnPlaylist:
+                        cell.characterLimit = Constants.characterLimits.addOnTitleCharacterLimit
                     case .addOnYouTubePlaylistDesign:
                         cell.characterLimit = Constants.characterLimits.addOnTitleCharacterLimit
                     case .singleTopicAddOn:
@@ -229,6 +235,8 @@ class NewCommunityItemTableViewController: UITableViewController {
                         cell.characterLimit = Constants.characterLimits.factDescriptionCharacterLimit
                     case .addOn:
                         cell.characterLimit = Constants.characterLimits.addOnDescriptionCharacterLimit
+                    case .addOnPlaylist:
+                        cell.characterLimit = Constants.characterLimits.addOnDescriptionCharacterLimit
                     case .addOnYouTubePlaylistDesign:
                         cell.characterLimit = Constants.characterLimits.addOnDescriptionCharacterLimit
                     case .singleTopicAddOn:
@@ -243,12 +251,6 @@ class NewCommunityItemTableViewController: UITableViewController {
             if let cell = tableView.dequeueReusableCell(withIdentifier: pictureCellIdentifier, for: indexPath) as? NewCommunityPictureCell {
                 cell.delegate = self
                 cell.indexPath = indexPath
-                
-                if let new = new {
-                    if new == .community {
-                        cell.imageViewWidthConstraint.constant = 75 //1:1
-                    } // else it stays 125:75
-                }
                 
                 return cell
             }
@@ -346,6 +348,8 @@ class NewCommunityItemTableViewController: UITableViewController {
             switch new {
             case .singleTopicAddOn:
                 text = Constants.texts.AddOns.singleTopicText
+            case .addOnPlaylist:
+                text = Constants.texts.AddOns.collectionText
             case .addOn:
                 text = Constants.texts.AddOns.collectionText
             case .addOnYouTubePlaylistDesign:
@@ -375,7 +379,7 @@ class NewCommunityItemTableViewController: UITableViewController {
         }
     }
     
-    //MARK:-SetData
+    //MARK:- SetData
     func createNewInstance() {
         guard let new = new else { return }
         switch new {
@@ -396,18 +400,65 @@ class NewCommunityItemTableViewController: UITableViewController {
             
             if selectedImageFromPicker != nil {
                 if let user = Auth.auth().currentUser {
-                    
                     self.savePicture(userID: user.uid, topicRef: ref, new: .community)
                 }
             } else {
-                createNewFact(ref: ref, imageURL: nil)
+                createNewCommunity(ref: ref, imageURL: nil)
             }
         case .source:
             createNewSource()
+        case .addOnPlaylist:
+            if let fact = fact {
+                var collectionRef: CollectionReference!
+                if fact.language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("topics")
+                } else {
+                    collectionRef = db.collection("Facts")
+                }
+                
+                let ref = collectionRef.document(fact.documentID).collection("addOns").document()
+                
+                createNewAddOnPlaylist(ref: ref)
+                
+            }
         case .addOn:
-            createNewAddOn(isYouTubePlaylistDesign: false)
+            if let fact = fact {
+                var collectionRef: CollectionReference!
+                if fact.language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("topics")
+                } else {
+                    collectionRef = db.collection("Facts")
+                }
+                
+                let ref = collectionRef.document(fact.documentID).collection("addOns").document()
+                
+                if selectedImageFromPicker != nil {
+                    if let user = Auth.auth().currentUser {
+                        self.savePicture(userID: user.uid, topicRef: ref, new: .addOn)
+                    }
+                } else {
+                    createNewAddOn(ref: ref, imageURL: nil, isYouTubePlaylistDesign: false)
+                }
+            }
         case .addOnYouTubePlaylistDesign:
-            createNewAddOn(isYouTubePlaylistDesign: true)
+            if let fact = fact {
+                var collectionRef: CollectionReference!
+                if fact.language == .english {
+                    collectionRef = db.collection("Data").document("en").collection("topics")
+                } else {
+                    collectionRef = db.collection("Facts")
+                }
+                
+                let ref = collectionRef.document(fact.documentID).collection("addOns").document()
+                
+                if selectedImageFromPicker != nil {
+                    if let user = Auth.auth().currentUser {
+                        self.savePicture(userID: user.uid, topicRef: ref, new: .addOnYouTubePlaylistDesign)
+                    }
+                } else {
+                    createNewAddOn(ref: ref, imageURL: nil, isYouTubePlaylistDesign: true)
+                }
+            }
         case .singleTopicAddOn:
             createNewSingleTopicAddOn()
         case .shareTopic:
@@ -505,43 +556,9 @@ class NewCommunityItemTableViewController: UITableViewController {
         }
     }
     
-    func createNewAddOnHeader(ref: DocumentReference, imageURL: String) {
+    func createNewAddOn(ref: DocumentReference, imageURL: String?, isYouTubePlaylistDesign: Bool) {
         
-        if let title = self.titleText, let description = self.descriptionText {
-            
-            let op = Auth.auth().currentUser!
-            
-            var data: [String: Any] = ["OP": op.uid,"imageURL": imageURL, "headerIntro": title, "headerDescription": description, "popularity": 0]
-            
-            if let source = sourceLink {
-                data["moreInformationLink"] = source
-            }
-            
-            ref.setData(data) { (err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    self.finished(item: nil)// Will reload the database in the delegate
-                }
-            }
-        } else {
-            self.showTitleDescriptionAlert()
-        }
-    }
-    
-    func createNewAddOn(isYouTubePlaylistDesign: Bool) {
-        
-        if let fact = fact {
             if let title = titleText, let description = descriptionText {
-                
-                var collectionRef: CollectionReference!
-                if fact.language == .english {
-                    collectionRef = db.collection("Data").document("en").collection("topics")
-                } else {
-                    collectionRef = db.collection("Facts")
-                }
-                
-                let ref = collectionRef.document(fact.documentID).collection("addOns")
                 
                 let op = Auth.auth().currentUser!
                 
@@ -551,7 +568,7 @@ class NewCommunityItemTableViewController: UITableViewController {
                     data["design"] = "youTubePlaylist"
                 }
                 
-                ref.addDocument(data: data) { (err) in
+                ref.setData(data) { (err) in
                     if let error = err {
                         print("We have an error: \(error.localizedDescription)")
                     } else {
@@ -561,7 +578,26 @@ class NewCommunityItemTableViewController: UITableViewController {
             } else {
                 showTitleDescriptionAlert()
             }
-        }
+    }
+    
+    func createNewAddOnPlaylist(ref: DocumentReference) {
+        
+            if let title = titleText, let description = descriptionText {
+                
+                let op = Auth.auth().currentUser!
+                
+                var data: [String: Any] = ["OP": op.uid, "title": title, "description": description, "popularity": 0, "type": "playlist"]
+                
+                ref.setData(data) { (err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        self.finished(item: nil)// Will reload the database in the delegate
+                    }
+                }
+            } else {
+                showTitleDescriptionAlert()
+            }
     }
     
     func createNewSource() {
@@ -677,7 +713,7 @@ class NewCommunityItemTableViewController: UITableViewController {
         }
     }
     
-    func createNewFact(ref: DocumentReference, imageURL: String?) {
+    func createNewCommunity(ref: DocumentReference, imageURL: String?) {
         
         if let op = Auth.auth().currentUser {
             if let title = titleText, let description = descriptionText {
@@ -701,6 +737,7 @@ class NewCommunityItemTableViewController: UITableViewController {
                 fact.documentID = ref.documentID
                 fact.displayOption = self.pickedDisplayOption
                 fact.moderators = [op.uid]
+                fact.language = language
                 
                 if let url = imageURL {
                     data["imageURL"] = url
@@ -786,7 +823,7 @@ class NewCommunityItemTableViewController: UITableViewController {
     }
     
     
-    //MARK:-PrepareForSegue
+    //MARK:- PrepareForSegue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "selectFactSegue" {
             if let navCon = segue.destination as? UINavigationController {
@@ -867,7 +904,6 @@ extension NewCommunityItemTableViewController: UIImagePickerControllerDelegate, 
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
-        
         if let originalImage = info[.originalImage] as? UIImage {
             imagePicker.dismiss(animated: true, completion: nil)
             self.showCropView(image: originalImage)
@@ -877,13 +913,7 @@ extension NewCommunityItemTableViewController: UIImagePickerControllerDelegate, 
     func showCropView(image: UIImage) {
         let cropViewController = CropViewController(image: image)
         cropViewController.delegate = self
-        if let new = new {
-            if new == .community {
-                cropViewController.aspectRatioPreset = .presetSquare
-            } else {
-                cropViewController.aspectRatioPreset = .preset16x9
-            }
-        }
+        cropViewController.aspectRatioPreset = .preset16x9
         cropViewController.aspectRatioLockEnabled = true
         navigationController?.pushViewController(cropViewController, animated: true)
     }
@@ -956,7 +986,11 @@ extension NewCommunityItemTableViewController: UIImagePickerControllerDelegate, 
                 }
                 if let url = url {
                     if new == .community {
-                        self.createNewFact(ref: topicRef, imageURL: url.absoluteString)
+                        self.createNewCommunity(ref: topicRef, imageURL: url.absoluteString)
+                    } else if new == .addOn {
+                        self.createNewAddOn(ref: topicRef, imageURL: url.absoluteString, isYouTubePlaylistDesign: false)
+                    } else if new == .addOnYouTubePlaylistDesign {
+                        self.createNewAddOn(ref: topicRef, imageURL: url.absoluteString, isYouTubePlaylistDesign: true)
                     } else {
                         print("Here is no picture allowed")
                     }

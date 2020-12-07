@@ -38,7 +38,9 @@ class AddOnQAndACollectionViewCell: BaseAddOnCollectionViewCell {
     var info: OptionalInformation? {
         didSet {
             if let info = info {
-                getQuestions(info: info)
+                if self.questions.count == 0 {
+                    getQuestions(info: info)
+                }
             }
         }
     }
@@ -106,7 +108,7 @@ class AddOnQAndACollectionViewCell: BaseAddOnCollectionViewCell {
                         self.currentQuestionLabel.text = self.questions[0].question
                         self.commentTableView.reloadData()
                     } else {
-                        self.currentQuestionLabel.text = "Stelle eine erste Frage"
+                        self.currentQuestionLabel.text = NSLocalizedString("qanda_first_question", comment: "aska first question")
                     }
                     self.questionsTableView.reloadData()
                 }

@@ -12,6 +12,7 @@ import Firebase
 protocol CommunityFeedHeaderDelegate {
     func segmentedControlTapped(index: Int, direction: UIPageViewController.NavigationDirection)
     func newPostTapped()
+    func notLoggedIn()
 }
 
 class CommunityHeaderView: UIView {
@@ -115,11 +116,15 @@ class CommunityHeaderView: UIView {
     @IBAction func followTopicButtonTapped(_ sender: Any) {
         guard let community = community else { return }
         
-        self.followButton.isEnabled = false
-        if community.beingFollowed {
-            unfollowTopic()
+        if let _ = Auth.auth().currentUser {
+            self.followButton.isEnabled = false
+            if community.beingFollowed {
+                unfollowTopic()
+            } else {
+                followTopic()
+            }
         } else {
-            followTopic()
+            delegate?.notLoggedIn()
         }
     }
     

@@ -89,6 +89,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var comingFromAddOnVC = false   // This will create a difference reference for the post to be stored, to show it just in the topic and not in the main feed - later it will show up for those who follow this topic
     var addItemDelegate: AddItemDelegate?
     var postOnlyInTopic = false
+    var addOn: OptionalInformation?
     
     var pictureViewHeight: NSLayoutConstraint?
     var linkViewHeight: NSLayoutConstraint?
@@ -100,6 +101,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var descriptionViewTopAnchor: NSLayoutConstraint?
     var pictureViewTopAnchor: NSLayoutConstraint?
     
+    /// Link the delegate from the main feed to switch to its view again and reload if somebody posts something
     var delegate: JustPostedDelegate?
     var newInstanceDelegate: NewFactDelegate?
     
@@ -621,7 +623,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             if text.isValidURL {
                 if let _ = text.youtubeID {
                     youTubeImageView.alpha = 1
-                } else if text.contains("songwhip.com") {
+                } else if text.contains("songwhip.com") || text.contains("music.apple.com") || text.contains("open.spotify.com/") || text.contains("deezer.page.link") {
                     songWhipImageView.alpha = 1
                 } else if text.contains(".mp4") {
                     GIFImageView.alpha = 1
@@ -2211,10 +2213,46 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     if let text = linkTextField.text {
                         if text.contains(".mp4") {
                             self.postGIF(postRef: postRef, userID: userID)
+                        } else if text.contains("music.apple.com") || text.contains("open.spotify.com/") || text.contains("deezer.page.link") {
+                            self.getSongwhipData(link: text) { (data) in
+                                if let data = data {
+                                    if let link = data["link"] as? String {
+                                        self.getLinkPreview(linkString: link) { (link) in
+                                            if let link = link {
+                                                self.postLink(postRef: postRef, userID: userID, link: link, songwhipData: data)
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    print("No Songwhip data")
+                                }
+                            }
                         } else if let _ = text.youtubeID {
-                            self.postYTVideo(postRef: postRef, userID: userID)
+                            //check if the youtubeVideo is a music video/song
+                            self.getSongwhipData(link: text) { (data) in
+                                if let data = data {
+                                    //if so get link data and post as link
+                                    if let link = data["link"] as? String {
+                                        self.getLinkPreview(linkString: link) { (link) in
+                                            if let link = link {
+                                                self.postLink(postRef: postRef, userID: userID, link: link, songwhipData: data)
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    //if not post as yt video
+                                    self.postYTVideo(postRef: postRef, userID: userID)
+                                }
+                            }
                         } else {
-                            self.getLinkPreview(postRef: postRef, userID: userID, link: text)
+                            //post a normal Link but get the image and the different descriptions first
+                            self.getLinkPreview(linkString: text) { (link) in
+                                if let link = link {
+                                    self.postLink(postRef: postRef, userID: userID, link: link, songwhipData: nil)
+                                } else {
+                                    return
+                                }
+                            }
                         }
                     } else {
                         self.alert(message: NSLocalizedString("missing_info_alert_link", comment: "enter link please"))
@@ -2232,14 +2270,14 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     //MARK:- LinkPreview
     
-    func getLinkPreview(postRef: DocumentReference, userID: String ,link: String) {
-        if link.isValidURL {
-            slp.preview(link, onSuccess: { (response) in
+    func getLinkPreview(linkString: String, returnLink: @escaping (Link?) -> Void) {
+        if linkString.isValidURL {
+            slp.preview(linkString, onSuccess: { (response) in
                 var imageURL: String?
                 var shortURL = ""
                 var linkTitle = ""
                 var linkDescription = ""
-                
+
                 if let URL = response.image {
                     imageURL = URL
                 }
@@ -2252,23 +2290,91 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 if let description = response.description {
                     linkDescription = description
                 }
-                let link = Link(link: link, title: linkTitle, description: linkDescription, shortURL: shortURL, imageURL: imageURL)
-                
-                self.postLink(postRef: postRef, userID: userID, link: link)
-                
+                let link = Link(link: linkString, title: linkTitle, description: linkDescription, shortURL: shortURL, imageURL: imageURL)
+
+                returnLink(link)
+
             }) { (err) in
                 print("We have an error: \(err.localizedDescription)")
                 self.alert(message: err.localizedDescription, title: NSLocalizedString("error_title", comment: "got error"))
                 self.view.activityStopAnimating()
                 self.shareButton.isEnabled = true
+                
+                returnLink(nil)
             }
         } else {
             self.view.activityStopAnimating()
             self.shareButton.isEnabled = true
             self.alert(message: NSLocalizedString("error_link_not_valid", comment: "not valid"), title: NSLocalizedString("error_title", comment: "got error"))
+            
+            returnLink(nil)
+        }
+    }
+
+    
+    func getSongwhipData(link: String, returnData: @escaping ([String: Any]?) -> Void) {
+        
+        if let url = URL(string: "https://songwhip.com/") {
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            let body = "{\"url\":\"\(link)\"}"
+            request.httpBody = body.data(using: .utf8)
+            
+            
+            URLSession.shared.dataTask(with: request) { (data, response, err) in
+                if let error = err {
+                    print("We have an error getting the songwhip Data: ", error.localizedDescription)
+                } else {
+                    if let data = data {
+                        
+                        do {
+                            if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
+                                
+                                guard let type = json["type"] as? String,
+                                      let name = json["name"] as? String,
+                                      let releaseDate = json["releaseDate"] as? String,
+                                      let link = json["url"] as? String,
+                                      let musicImage = json["image"] as? String,
+                                      let artistData = json["artists"] as? [[String: Any]]
+                                else {
+                                    print("Returne ohne daten")
+                                    return
+                                }
+                                
+                                guard let date = self.getReleaseDate(stringDate: releaseDate) else { return }
+                                
+                                if let artistInfo = artistData.first {
+                                    if let artistName = artistInfo["name"] as? String, let artistImage = artistInfo["image"] as? String {
+                                        
+                                        let songwhipData: [String: Any] = ["musicType": type, "name": name, "releaseDate": Timestamp(date: date), "link": link, "artist": artistName, "artistImage": artistImage, "musicImage": musicImage]
+                                        
+                                        returnData(songwhipData)
+                                    }
+                                }
+                            } else {
+                                print("Couldnt get the jsonData from Songwhip API Call")
+                                returnData(nil)
+                            }
+                        } catch {
+                            print("Couldnt get the jsonData from Songwhip API Call")
+                            returnData(nil)
+                        }
+                    }
+                }
+            }.resume()
         }
     }
     
+    func getReleaseDate(stringDate: String) -> Date? {
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "de_DE")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let date = dateFormatter.date(from: stringDate)
+        
+        return date
+    }
     
     // MARK: - MultiImagePicker
     
@@ -2568,18 +2674,23 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         print("thought posted")
     }
     
-    func postLink(postRef: DocumentReference, userID: String, link: Link) {
-        if linkTextField.text != "" {
+    func postLink(postRef: DocumentReference, userID: String, link: Link, songwhipData: [String: Any]?) {
+        if linkTextField.text != "", let title = titleTextView.text {
             
             let descriptionText = descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
             let tags = self.getTagsToSave()
             
-            var dataDictionary: [String: Any] = ["title": titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "link", "report": getReportString(), "link": link.link, "linkTitle": link.linkTitle, "linkDescription": link.linkDescription, "linkShortURL": link.shortURL, "tags": tags]
+            var dataDictionary: [String: Any] = ["title": title, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "link", "report": getReportString(), "link": link.link, "linkTitle": link.linkTitle, "linkDescription": link.linkDescription, "linkShortURL": link.shortURL, "tags": tags]
+            
+            if let dictionary = songwhipData {
+                //Merge the uploaddata and the songwhip data to one dictionary and keep the songwhip link, not the streaming service link
+                dataDictionary = dataDictionary.merging(dictionary) { (_, new) in new }
+            }
             
             if let url = link.imageURL {
                 dataDictionary["linkImageURL"] = url
             }
-                
+                            
             self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
             
         } else {
@@ -2590,12 +2701,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func postPicture(postRef: DocumentReference, userID: String) {
-        if let _ = selectedImageFromPicker, let url = imageURL {
+        if let _ = selectedImageFromPicker, let url = imageURL, let title = titleTextView.text {
             
             let descriptionText = descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
             let tags = self.getTagsToSave()
             
-            let dataDictionary: [String: Any] = ["title": titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "picture", "report": getReportString(), "imageURL": url, "imageHeight": Double(selectedImageHeight), "imageWidth": Double(selectedImageWidth), "tags": tags]
+            let dataDictionary: [String: Any] = ["title": title, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "picture", "report": getReportString(), "imageURL": url, "imageHeight": Double(selectedImageHeight), "imageWidth": Double(selectedImageWidth), "tags": tags]
             
             self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
             print("picture posted")
@@ -2851,16 +2962,17 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func presentAlert(post: Post?) {
         
-        // remove ActivityIndicator incl. backgroundView
-        self.view.activityStopAnimating()
-        self.shareButton.isEnabled = true
+        
         if self.comingFromAddOnVC {
-            self.dismiss(animated: true) {
-                if let post = post {
-                    self.addItemDelegate?.itemSelected(item: post)  // Save the post in OptionalInformationVC
-                }
+            if let addOn = addOn, let post = post {
+                addOn.delegate = self
+                addOn.saveItem(item: post)
             }
         } else {
+            // remove ActivityIndicator incl. backgroundView
+            self.view.activityStopAnimating()
+            self.shareButton.isEnabled = true
+            
             let alert = UIAlertController(title: "Done!", message: NSLocalizedString("message_after_done_posting", comment: "thanks"), preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
                 
@@ -3022,6 +3134,32 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         case .event:
             return "event"
         }
+    }
+}
+
+extension NewPostViewController: OptionalInformationDelegate {
+    func fetchCompleted() {
+        print("Not needed")
+    }
+    
+    func itemAdded(successfull: Bool) {
+        // remove ActivityIndicator incl. backgroundView
+        self.view.activityStopAnimating()
+        self.shareButton.isEnabled = true
+        
+        if successfull {
+            self.addItemDelegate?.itemAdded()
+            self.dismiss(animated: true, completion: nil)
+        } else {
+            let alert = UIAlertController(title: "Something went wrong", message: "Please try later again or ask the developers to do a better job. We are sorry!", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
+                
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            
+            self.present(alert, animated: true)
+        }
+        
     }
 }
 

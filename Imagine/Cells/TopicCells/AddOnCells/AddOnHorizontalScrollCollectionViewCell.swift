@@ -9,16 +9,6 @@
 import UIKit
 import Firebase
 
-protocol AddOnCellDelegate {
-    func showDescription()
-    func settingsTapped(itemRow: Int)
-    func thanksTapped(info: OptionalInformation)
-    
-    //CollectionViewDelegate
-    func itemTapped(item: Any)
-    func newPostTapped(addOnDocumentID: String)
-}
-
 class AddOnHorizontalScrollCollectionViewCell: BaseAddOnCollectionViewCell {
     
     @IBOutlet weak var headerImageView: DesignableImage!
@@ -73,8 +63,8 @@ class AddOnHorizontalScrollCollectionViewCell: BaseAddOnCollectionViewCell {
                     
                     if info.items.count == 0 {
                         collectionView.reloadData() // If the cell got old Data in it
-    //                    print("Would get the items now")
-                        info.getItems()
+
+                        info.getItems(postOnly: false)
                     } else {
                         print("Already Got Items")
                         collectionView.reloadData()
@@ -264,7 +254,7 @@ extension AddOnHorizontalScrollCollectionViewCell: UICollectionViewDelegate, UIC
                 }
             } else {
                 // AddNewItem tapped
-                delegate?.newPostTapped(addOnDocumentID: info.documentID)
+                delegate?.newPostTapped(addOn: info)
             }
         }
     }
@@ -293,6 +283,10 @@ class AddItemCollectionViewCell: UICollectionViewCell {
 }
 
 extension AddOnHorizontalScrollCollectionViewCell: OptionalInformationDelegate {
+    func itemAdded(successfull: Bool) {
+        print("not needed")
+    }
+    
     func fetchCompleted() {
         if let info = info {
             if let orderList = info.itemOrder { // If an itemOrder exists (set in addOn-settings), order according to it

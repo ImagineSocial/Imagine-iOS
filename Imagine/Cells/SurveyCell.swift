@@ -37,9 +37,9 @@ class SurveyCell: UITableViewCell {
     @IBOutlet weak var doneButton: UIButton!
     @IBOutlet weak var answerTextView: UITextView!
     @IBOutlet weak var resetButton: UIButton!
-    @IBOutlet var answerTextViewView: UIView!
-    
     @IBOutlet weak var explanationLabel: UILabel!
+    @IBOutlet weak var containerView: UIView!
+    
     var surveyType: SurveyType?
     var orderIndex = 1
     var pickOneSelectedAnswer: Int?
@@ -64,11 +64,11 @@ class SurveyCell: UITableViewCell {
                 
                 switch survey.type {
                 case .pickOne:
-                    explanationLabel.text = "Wähle eine der möglichen Antworten aus."
+                    explanationLabel.text = NSLocalizedString("surveyCell_pickOne_label", comment: "pick one")
                 case .pickOrder:
-                    explanationLabel.text = "Wähle eine Reihenfolge von 1 bis 4 (am Meisten -> am Wenigsten) aus."
+                    explanationLabel.text = NSLocalizedString("surveyCell_pickOrder_label", comment: "pick order")
                 case .comment:
-                    explanationLabel.text = "Schreibe uns deine Meinung."
+                    explanationLabel.text = NSLocalizedString("surveyCell_writeComment_label", comment: "write comment")
                 }
             }
         }
@@ -107,8 +107,22 @@ class SurveyCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        let margins = UIEdgeInsets(top: 10, left: 10, bottom: 0, right: 10)
-        contentView.frame = contentView.frame.inset(by: margins)
+        let shadowRadius = Constants.Numbers.feedShadowRadius
+        let radius = Constants.Numbers.feedCornerRadius
+        
+        let layer = containerView.layer
+        layer.cornerRadius = radius
+        if #available(iOS 13.0, *) {
+            layer.shadowColor = UIColor.label.cgColor
+        } else {
+            layer.shadowColor = UIColor.black.cgColor
+        }
+        layer.shadowOffset = CGSize.zero
+        layer.shadowRadius = shadowRadius
+        layer.shadowOpacity = 0.5
+        
+        let rect = CGRect(x: 0, y: 0, width: contentView.frame.width-20, height: contentView.frame.height-20)
+        layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: radius).cgPath
     }
     
     func buttonTapped(button: Int) {

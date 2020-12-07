@@ -48,6 +48,8 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     var delegate: LinkFactWithPostDelegate?
     var addItemDelegate: AddItemDelegate?
     
+    var addOn: OptionalInformation?
+    
     var tipView: EasyTipView?
     
     let collectionViewSpacing:CGFloat = 30
@@ -602,9 +604,31 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     }
     
     func setFactForOptInfo(fact: Fact) {
-        addItemDelegate?.itemSelected(item: fact)
-        
-        self.navigationController?.popViewController(animated: true)
+        if let addOn = addOn {
+            addOn.delegate = self
+            addOn.saveItem(item: fact)
+        }
+    }
+}
+
+extension FactCollectionViewController: OptionalInformationDelegate {
+    func fetchCompleted() {
+        print("not needed")
+    }
+    
+    func itemAdded(successfull: Bool) {
+        if successfull {
+            addItemDelegate?.itemAdded()
+            self.navigationController?.popViewController(animated: true)
+        } else {
+            let alert = UIAlertController(title: "Something went wrong", message: "Please try later again or ask the developers to do a better job. We are sorry!", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
+                
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            
+            self.present(alert, animated: true)
+        }
     }
 }
 

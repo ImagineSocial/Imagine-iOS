@@ -78,7 +78,6 @@ class PostHelper {
         } else {
             
             fetchedFriends(self.friends!)
-            print("Already got the friends")
         }
     }
     
@@ -112,7 +111,7 @@ class PostHelper {
     
     
     //MARK: - Main Feed
-    func getPostsForMainFeed(getMore:Bool,sort: PostSortOptions, returnPosts: @escaping ([Post], _ InitialFetch:Bool) -> Void) {
+    func getPostsForMainFeed(getMore:Bool, sort: PostSortOptions, returnPosts: @escaping ([Post], _ InitialFetch:Bool) -> Void) {
         
         posts.removeAll()
         
@@ -141,7 +140,7 @@ class PostHelper {
         }
         
         if initialFetch {
-            self.getFollowedTopics()    // Do I need it anymore?
+            self.getFollowedTopics()
         }
         
         var collectionRef: CollectionReference!
@@ -629,6 +628,8 @@ class PostHelper {
     
     
     //MARK:- addThePost
+    
+    ///Insert DocumentSnapshot and either get a full Post object back if "forFeed" is set to false or add the Post object to the posts array for the main feed to return the array later on
     func addThePost(document: DocumentSnapshot, isTopicPost: Bool, forFeed: Bool, language: Language) -> Post? {
         
         let documentID = document.documentID
@@ -1004,6 +1005,7 @@ class PostHelper {
                             return nil
                     }
                     var link: Link?
+                    
                     if let shortURL = documentData["linkShortURL"] as? String, let linkTitle = documentData["linkTitle"] as? String, let linkDescription = documentData["linkDescription"] as? String {
                         let linkImageURL = documentData["linkImageURL"] as? String
                         
@@ -1027,6 +1029,29 @@ class PostHelper {
                     post.votes.nice = niceCount
                     post.createDate = dateToSort
                     post.language = language
+                    
+                    //look for songwhip data
+                    if let type = documentData["musicType"] as? String,
+                       let name = documentData["name"] as? String,
+                       let releaseDateTimestamp = documentData["releaseDate"] as? Timestamp,
+                       let artist = documentData["artist"] as? String,
+                       let artistImage = documentData["artistImage"] as? String,
+                       let musicImage = documentData["musicImage"] as? String {
+                        
+                        let releaseDate = releaseDateTimestamp.dateValue()
+                        let musicType: MusicType!
+                        if type == "track" {
+                            musicType = .track
+                        } else {
+                            musicType = .album
+                        }
+                        
+                        let music = Music(type: musicType, name: name, artist: artist, releaseDate: releaseDate, artistImageURL: artistImage, musicImageURL: musicImage, songwhipURL: linkURL)
+                        post.music = music
+                        
+                    } else {
+                        print("Couldnt get songwhip data")
+                    }
                     
                     if let report = self.handyHelper.setReportType(fetchedString: reportString) {
                         post.report = report
@@ -1254,72 +1279,6 @@ class PostHelper {
             }
         }
     }
-    
-    func getEvent(completion: @escaping (Post) -> Void) {
-        
-        var eventRef = db.collection("Events").limit(to: 1)
-        
-        if let lastEventSnap = lastEventSnap {        // For the next loading batch of 20, there will be one event
-            eventRef = eventRef.start(afterDocument: lastEventSnap)
-        }
-        
-        eventRef.getDocuments { (eventSnap, err) in
-            if let err = err {
-                print("Wir haben einen Error beim Event: \(err.localizedDescription)")
-            }
-            
-            for event in eventSnap!.documents {
-                
-                let documentID = event.documentID
-                let documentData = event.data()
-                
-                guard let title = documentData["title"] as? String,
-                    let description = documentData["description"] as? String,
-                    let location = documentData["location"] as? String,
-                    let type = documentData["type"] as? String,
-                    let imageURL = documentData["imageURL"] as? String,
-                    let imageHeight = documentData["imageHeight"] as? CGFloat,
-                    let imageWidth = documentData["imageWidth"] as? CGFloat,
-                    let participants = documentData["participants"] as? [String],
-                    let admin = documentData["admin"] as? String,
-                    let createDate = documentData["createDate"] as? Timestamp,
-                    let eventDate = documentData["time"] as? Timestamp
-                    
-                    else {
-                        continue
-                }
-                
-                let eventTime = self.handyHelper.getStringDate(timestamp: eventDate)
-                let createDateString = self.handyHelper.getStringDate(timestamp: createDate)
-                
-                let post = Post()
-                let event = Event()
-                
-                event.title = title
-                event.description = description
-                event.location = location
-                event.type = type
-                event.imageURL = imageURL
-                event.imageWidth = imageWidth
-                event.imageHeight = imageHeight
-                event.participants = participants
-                event.createDate = createDateString
-                event.time = eventTime
-                
-                post.originalPosterUID = admin
-                post.documentID = documentID
-                post.type = .event
-                
-                post.event = event
-                
-                completion(post)
-                
-            }
-            
-        }
-        
-    }
-    
     
     func getChatUser(uid: String, sender: Bool, user: @escaping (ChatUser) -> Void) {
         

@@ -199,7 +199,7 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let post = posts[indexPath.row]
         
-        if let tipView = followTopicTipView  {
+        if let tipView = followTopicTipView {
             tipView.dismiss()
             followTopicTipView = nil
         } else {
@@ -208,7 +208,44 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
                 print("Nothing will happen")
                 tableView.deselectRow(at: indexPath, animated: true)
             default:
+//                changePostLocationForAddOnPosts(post: post)
                 performSegue(withIdentifier: "showPost", sender: post)
+            }
+        }
+    }
+    
+    func changePostLocationForAddOnPosts(post: Post) {
+        
+        let topicID = "UOlUbkeFexR147dYh9eB"
+        let addOnID = "2o6GSAPeYCYP3ZytD51l"
+        
+        let dataDictionary: [String: Any] = ["title": post.title, "description": post.description, "createTime": Timestamp(date: Date()), "originalPoster": post.user.userUID, "thanksCount":post.votes.thanks, "wowCount":post.votes.thanks, "haCount":post.votes.thanks, "niceCount":post.votes.thanks, "type": "thought", "report": "normal", "linkedFactID": topicID]
+        /*
+         "imageHeight": post.mediaHeight, "imageWidth": post.mediaWidth,
+         */
+        let topicPostRef = db.collection("Data").document("en").collection("topicPosts").document()
+        
+        topicPostRef.setData(dataDictionary) { (err) in
+            if let error = err {
+                print("error:", error.localizedDescription)
+            }
+        }
+        
+        let addOnData: [String: Any] = ["createDate": Timestamp(date: Date()), "type": "topicPost", "OP": "CZOcL3VIwMemWwEfutKXGAfdlLy1"]
+        let addOnRef = db.collection("Data").document("en").collection("topics").document(topicID).collection("addOns").document(addOnID).collection("items").document(topicPostRef.documentID)
+        
+        addOnRef.setData(addOnData) { (err) in
+            if let error = err {
+                print("error1:", error.localizedDescription)
+            }
+        }
+        
+        let topicRef = db.collection("Data").document("en").collection("topics").document(topicID).collection("posts").document(topicPostRef.documentID)
+        
+        let topicData: [String: Any] = ["createTime": Timestamp(date: Date()), "type": "topicPost"]
+        topicRef.setData(topicData) { (err) in
+            if let error = err {
+                print("error2:", error.localizedDescription)
             }
         }
     }
@@ -304,12 +341,6 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
     
     override func userTapped(post: Post) {
         performSegue(withIdentifier: "toUserSegue", sender: post.user)
-    }
-    
-    @IBAction func toSettingsTapped(_ sender: Any) {
-        if let fact = fact {
-            performSegue(withIdentifier: "toSettingSegue", sender: fact)
-        }
     }
 }
 

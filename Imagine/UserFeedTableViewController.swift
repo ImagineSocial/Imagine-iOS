@@ -45,6 +45,7 @@ class SocialMediaObject {
 }
 
 protocol LogOutDelegate {
+    /// Triggered when the User logges themselve out. Otherwise they would get notified after they logged themself in and a new user could not get a new notificationListener
     func deleteListener()
 }
 

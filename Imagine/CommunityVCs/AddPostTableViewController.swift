@@ -10,7 +10,13 @@ import UIKit
 import Firebase
 
 protocol AddItemDelegate {
-    func itemSelected(item: Any)
+    func itemAdded()
+}
+
+enum SelectedPostType {
+    case post
+    case topicPost
+    case saved
 }
 
 class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
@@ -19,15 +25,26 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet weak var lastPostLabel: UILabel!
     @IBOutlet weak var doneButton: UIBarButtonItem!
     @IBOutlet weak var headerDescriptionLabel: UILabel!
+    @IBOutlet weak var segmentedControl: UISegmentedControl!
     
+    var selectedPostType: SelectedPostType = .post
+    var playlistTracksOnly = false
     
     var posts = [Post]()
+    var topicPosts = [Post]()
+    var savedPosts = [Post]()
+    
     let db = Firestore.firestore()
     let postHelper = PostHelper()
     
-//    var type: OptionalInformationType = .diy
-    var fact: Fact?
-    
+    var addOn: OptionalInformation? {
+        didSet {
+            if let addOn = addOn {
+                addOn.delegate = self
+            }
+        }
+    }
+        
     var addItemDelegate: AddItemDelegate?
     
     var selectedPost: Post? {
@@ -81,7 +98,12 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
         } else {
             collectionRef = self.db.collection("Posts")
         }
-        let ref = collectionRef.order(by: "createTime", descending: true).limit(to: 15)
+        let ref: Query!
+        if playlistTracksOnly {
+            ref = collectionRef.whereField("musicType", isEqualTo: "track").order(by: "createTime", descending: true).limit(to: 15)
+        } else {
+            ref = collectionRef.order(by: "createTime", descending: true).limit(to: 15)
+        }
         
         ref.getDocuments { (snap, err) in
             if let error = err {
@@ -100,37 +122,72 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
+    func getTopicPosts() {
+        
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        if language == .english {
+            collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
+        } else {
+            collectionRef = self.db.collection("TopicPosts")
+        }
+        
+        let ref: Query!
+        if playlistTracksOnly {
+            ref = collectionRef.whereField("musicType", isEqualTo: "track").order(by: "createTime", descending: true).limit(to: 15)
+        } else {
+            ref = collectionRef.order(by: "createTime", descending: true).limit(to: 15)
+        }
+        
+        ref.getDocuments { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    for document in snap.documents {
+                                                
+                        if let post = self.postHelper.addThePost(document: document, isTopicPost: true, forFeed: false, language: language) {
+                            self.topicPosts.append(post)
+                        }
+                    }
+                    self.tableView.reloadData()
+                }
+            }
+        }
+    }
+    
     func setUpSearchController() {
-       
-       // I think it is unnecessary to set the searchResultsUpdater and searchcontroller Delegate here, but I couldnt work out an alone standing SearchViewController
-       
-       searchTableVC.customDelegate = self
-       
-       searchController = UISearchController(searchResultsController: searchTableVC)
-       
-       // Setup the Search Controller
-       searchController.searchResultsUpdater = self
-       searchController.obscuresBackgroundDuringPresentation = true
-       searchController.searchBar.placeholder = NSLocalizedString("search_placeholder", comment: "")
-       searchController.delegate = self
-       searchController.searchBar.delegate = self
-       
-       if #available(iOS 11.0, *) {
-           // For iOS 11 and later, place the search bar in the navigation bar.
-           self.navigationItem.searchController = searchController
-       } else {
-           // For iOS 10 and earlier, place the search controller's search bar in the table view's header.
-           tableView.tableHeaderView = searchController.searchBar
-       }
-       self.navigationItem.hidesSearchBarWhenScrolling = true
-       self.searchController.isActive = false
-       definesPresentationContext = true
+        
+        // I think it is unnecessary to set the searchResultsUpdater and searchcontroller Delegate here, but I couldnt work out an alone standing SearchViewController
+        
+        searchTableVC.customDelegate = self
+        
+        searchController = UISearchController(searchResultsController: searchTableVC)
+        
+        // Setup the Search Controller
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = true
+        searchController.searchBar.placeholder = NSLocalizedString("search_placeholder", comment: "")
+        searchController.searchBar.scopeButtonTitles = ["Posts", "TopicPosts"]
+        searchController.delegate = self
+        searchController.searchBar.delegate = self
+        
+        if #available(iOS 11.0, *) {
+            // For iOS 11 and later, place the search bar in the navigation bar.
+            self.navigationItem.searchController = searchController
+        } else {
+            // For iOS 10 and earlier, place the search controller's search bar in the table view's header.
+            tableView.tableHeaderView = searchController.searchBar
+        }
+        self.navigationItem.hidesSearchBarWhenScrolling = true
+        self.searchController.isActive = false
+        definesPresentationContext = true
     }
     
     func showSelectedPost(post: Post) {
         
         guard let headerView = tableView.tableHeaderView else {
-          return
+            return
         }
         
         headerPostView.addSubview(headerTitleLabel)
@@ -206,7 +263,21 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
             }
         } else if post.type == .GIF {
             headerImageView.image = UIImage(named: "GIFIcon")
-        }else {
+        } else if post.type == .link {
+            if let music = post.music {
+                if let url = URL(string: music.musicImageURL) {
+                    headerImageView.sd_setImage(with: url, completed: nil)
+                }
+            } else {
+                if let link = post.link {
+                    if let imageURL = link.imageURL {
+                        if let url = URL(string: imageURL) {
+                            headerImageView.sd_setImage(with: url, completed: nil)
+                        }
+                    }
+                }
+            }
+        } else {
             headerImageView.image = UIImage(named: "savePostImage")
         }
         
@@ -253,12 +324,28 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return posts.count
+        switch selectedPostType {
+        case .post:
+            return posts.count
+        case .topicPost:
+            return topicPosts.count
+        case .saved:
+            return savedPosts.count
+        }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let post = posts[indexPath.row]
+        let post: Post!
+        switch selectedPostType {
+        case .post:
+            post = posts[indexPath.row]
+        case .topicPost:
+            post = topicPosts[indexPath.row]
+        case .saved:
+            post = savedPosts[indexPath.row]
+        }
+        
         
         if let cell = tableView.dequeueReusableCell(withIdentifier: searchCellIdentifier, for: indexPath) as? SearchPostCell {
             
@@ -275,7 +362,15 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let post = posts[indexPath.row]
+        let post: Post!
+        switch selectedPostType {
+        case .post:
+            post = posts[indexPath.row]
+        case .topicPost:
+            post = topicPosts[indexPath.row]
+        case .saved:
+            post = savedPosts[indexPath.row]
+        }
         
         self.selectedPost = post
         tableView.deselectRow(at: indexPath, animated: true)
@@ -289,6 +384,80 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
                 }
             }
         }
+    }
+    
+    
+    @IBAction func segmentedControlChanged(_ sender: Any) {
+        switch segmentedControl.selectedSegmentIndex {
+        case 0:
+            selectedPostType = .post
+            tableView.reloadData()
+        case 1:
+            selectedPostType = .topicPost
+            if topicPosts.count == 0 {
+                self.getTopicPosts()
+            } else {
+                tableView.reloadData()
+            }
+        case 2:
+            selectedPostType = .saved
+            tableView.reloadData()
+        default:
+            selectedPostType = .post
+            tableView.reloadData()
+        }
+    }
+    
+    //MARK:- SaveInstance
+    
+    @IBAction func doneButtonTapped(_ sender: Any) {
+        if let post = self.selectedPost, let addOn = addOn {
+            if headerTextField.text != "" {
+                post.addOnTitle = headerTextField.text!
+            }
+            
+            addOn.saveItem(item: post)
+        }
+    }
+    
+    
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        headerTextField.resignFirstResponder()
+    }
+    
+    
+    func checkIfFirstEntry(collectionReferenceString: String, fact: Fact, gotCollection: @escaping (Bool) -> Void) {
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        if language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        let ref = collectionRef.document(fact.documentID).collection(collectionReferenceString)
+        
+        ref.getDocuments { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    
+                    if snap.isEmpty {
+                        print("No document in snap")
+                        gotCollection(false)
+                    } else {
+                        print("Got Documents in snap")
+                        gotCollection(true)
+                    }
+                }
+            }
+        }
+    }
+    
+    @IBAction func searchButtonTapped(_ sender: Any) {
+        
+        self.searchController.searchBar.becomeFirstResponder()
     }
     
     //MARK:- UI SetUp
@@ -391,61 +560,40 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
         }
     }
     
-    //MARK:- SaveInstance
-    
-    @IBAction func doneButtonTapped(_ sender: Any) {
-        
-            if let post = self.selectedPost {
-                if headerTextField.text != "" {
-                    post.addOnTitle = headerTextField.text!
-                }
-                addItemDelegate?.itemSelected(item: post)
-                self.navigationController?.popViewController(animated: true)
-            }
-    }
-    
-    
- 
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        headerTextField.resignFirstResponder()
-    }
-    
-    
-    func checkIfFirstEntry(collectionReferenceString: String, fact: Fact, gotCollection: @escaping (Bool) -> Void) {
-        var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
-        if language == .english {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let ref = collectionRef.document(fact.documentID).collection(collectionReferenceString)
-        
-        ref.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    
-                    if snap.isEmpty {
-                        print("No document in snap")
-                        gotCollection(false)
-                    } else {
-                        print("Got Documents in snap")
-                        gotCollection(true)
-                    }
-                }
-            }
-        }
-    }
-    
-    @IBAction func searchButtonTapped(_ sender: Any) {
-        
-        self.searchController.searchBar.becomeFirstResponder()
-    }
-    
 }
 
+//MARK:- OptionalInformationDelegate
+extension AddPostTableViewController: OptionalInformationDelegate {
+    func fetchCompleted() {
+        print("not needed")
+    }
+    
+    func itemAdded(successfull: Bool) {
+        if successfull {
+            let alert = UIAlertController(title: NSLocalizedString("done", comment: "done"), message: NSLocalizedString("addOn_creation_successfull", comment: "done and successfull"), preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
+                
+                self.addItemDelegate?.itemAdded()
+                self.navigationController?.popViewController(animated: true)
+                
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            
+            self.present(alert, animated: true)
+        } else {
+            let alert = UIAlertController(title: "Something went wrong", message: "Please try later again or ask the developers to do a better job. We are sorry!", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
+                
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            
+            self.present(alert, animated: true)
+        }
+    }
+}
+
+
+//MARK:- SearchController
 extension AddPostTableViewController: UISearchResultsUpdating, UISearchBarDelegate, CustomSearchViewControllerDelegate, UISearchControllerDelegate {
     
     func didSelectItem(item: Any) {
@@ -461,10 +609,13 @@ extension AddPostTableViewController: UISearchResultsUpdating, UISearchBarDelega
         searchController.searchResultsController?.view.isHidden = false
         
         let searchBar = searchController.searchBar
-        let scope = searchBar.selectedScopeButtonIndex
+        var scope = searchBar.selectedScopeButtonIndex
+        if scope == 1 {  // to ease the switch in the searchTableVC.searchTheDatabase function
+            scope = 2
+        }
         
         if searchBar.text! != "" {
-            searchTableVC.searchTheDatabase(searchText: searchBar.text!, searchScope: scope)
+            searchTableVC.searchTheDatabase(searchText: searchBar.text!, searchScope: scope, musicTrackOnly: playlistTracksOnly)
         } else {
             // Clear the searchTableView
             searchTableVC.showBlankTableView()
@@ -472,10 +623,14 @@ extension AddPostTableViewController: UISearchResultsUpdating, UISearchBarDelega
     }
     
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        var scope = searchBar.selectedScopeButtonIndex
+        if scope == 1 {  // to ease the switch in the searchTableVC.searchTheDatabase function
+            scope = 2
+        }
         
         if let text = searchBar.text {
             if text != "" {
-                searchTableVC.searchTheDatabase(searchText: text, searchScope: selectedScope)
+                searchTableVC.searchTheDatabase(searchText: text, searchScope: scope, musicTrackOnly: playlistTracksOnly)
             } else {
                 searchTableVC.showBlankTableView()
             }

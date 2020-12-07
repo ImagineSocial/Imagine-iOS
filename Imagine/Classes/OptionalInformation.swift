@@ -12,6 +12,7 @@ import FirebaseFirestore
 
 protocol OptionalInformationDelegate {
     func fetchCompleted()
+    func itemAdded(successfull: Bool)
 }
 
 enum AddOnDesign {
@@ -24,6 +25,7 @@ enum OptionalInformationStyle {
     case singleTopic
     case QandA
     case collectionWithYTPlaylist
+    case playlist
 }
 
 class AddOnItem {   // Otherwise it is a pain in the ass to compare Any to the documentIDs in the itemOrder Array
@@ -47,6 +49,8 @@ class OptionalInformation {
     var OP: String
     var design: AddOnDesign = .normal
     var externalLink: String?
+    var appleMusicPlaylistURL: String?
+    var spotifyPlaylistURL: String?
     
     var singleTopic: Fact?
     
@@ -101,10 +105,9 @@ class OptionalInformation {
         //        }
     }
     
-    func getItems() {
+    func getItems(postOnly: Bool) {
         
         if fact.documentID != "" && documentID != "" {
-            
             DispatchQueue.global(qos: .default).async {
                 var collectionRef: CollectionReference!
                 if self.fact.language == .english {
@@ -125,6 +128,11 @@ class OptionalInformation {
                                     return
                                 }
                                 if type == "fact" {
+                                    
+                                    if postOnly {
+                                        continue
+                                    }
+                                    
                                     let fact = Fact()
                                     fact.documentID = document.documentID
                                     if let displayOption = data["displayOption"] as? String {
@@ -146,6 +154,10 @@ class OptionalInformation {
                                     post.isTopicPost = true
                                     post.language = self.fact.language
                                     
+                                    if let music = self.addMusicObject(data: data) {
+                                        post.music = music
+                                    }
+                                    
                                     let item = AddOnItem(documentID: document.documentID, item: post)
                                     self.items.append(item)
                                 } else {    // Post
@@ -155,6 +167,10 @@ class OptionalInformation {
                                     
                                     if let postDescription = data["title"] as? String {
                                         post.addOnTitle = postDescription
+                                    }
+                                    
+                                    if let music = self.addMusicObject(data: data) {
+                                        post.music = music
                                     }
                                     
                                     let item = AddOnItem(documentID: document.documentID, item: post)
@@ -172,6 +188,160 @@ class OptionalInformation {
             print("Not enough info in OptionalInformation getItems")
             return
         }
+    }
+    
+    func addMusicObject(data: [String:Any]) -> Music? {
+        if let image = data["musicImage"] as? String,
+           let name = data["musicName"] as? String,
+           let artist = data["artist"] as? String,
+           let url = data["musicURL"] as? String {
+            let music = Music(type: .track, name: name, artist: artist, musicImageURL: image, songwhipURL: url)
+            
+            return music
+        } else {
+            return nil
+        }
+    }
+    
+    
+    //MARK:-Save Items
+    
+    func saveItem(item: Any) {
+        
+        let itemID: String!
+        
+        if let fact = item as? Fact {
+            itemID = fact.documentID
+        } else if let post = item as? Post {
+            itemID = post.documentID
+        } else {
+            print("Dont got an item ID")
+            return
+        }
+        
+        var collectionRef: CollectionReference!
+        if fact.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        
+        let ref = collectionRef.document(fact.documentID).collection("addOns").document(documentID).collection("items").document(itemID)
+        let user = Auth.auth().currentUser!
+        
+        var data: [String: Any] = ["OP": user.uid, "createDate": Timestamp(date: Date())]
+        
+        if let fact = item as? Fact {
+            data["type"] = "fact"
+
+            let newFactVC = NewCommunityItemTableViewController()
+            let displayOption = newFactVC.getNewFactDisplayString(displayOption: fact.displayOption).displayOption
+            data["displayOption"] = displayOption
+        } else if let post = item as? Post {
+
+            if let title = post.addOnTitle {    // Description of the added post
+                data["title"] = title
+            }
+            if post.type == .youTubeVideo {
+                self.notifyMalteForYouTubePlaylist(fact: fact, addOn: documentID)
+            }
+            
+            if let music = post.music {
+                data["musicImage"] = music.musicImageURL
+                data["musicName"] = music.name
+                data["artist"] = music.artist
+                data["musicURL"] = post.linkURL
+            }
+            
+            if post.isTopicPost {
+                data["type"] = "topicPost"    // So the getData method looks in a different ref
+                self.updateTopicPostInFact(addOnID: documentID, postDocumentID: itemID)
+            } else {
+                data["type"] = "post"
+            }
+        }
+        
+        ref.setData(data) { (err) in
+            if let error = err {
+                self.delegate?.itemAdded(successfull: false)
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                var collectionRef: CollectionReference!
+                if self.fact.language == .english {
+                    collectionRef = self.db.collection("Data").document("en").collection("topics")
+                } else {
+                    collectionRef = self.db.collection("Facts")
+                }
+                
+                let docRef = collectionRef.document(self.fact.documentID).collection("addOns").document(self.documentID)
+                self.checkIfOrderArrayExists(documentReference: docRef, documentIDOfItem: itemID)
+            }
+        }
+    }
+    
+    func notifyMalteForYouTubePlaylist(fact: Fact, addOn: String) {
+        let notificationRef = db.collection("Users").document("CZOcL3VIwMemWwEfutKXGAfdlLy1").collection("notifications").document()
+        let language = Locale.preferredLanguages[0]
+        let notificationData: [String: Any] = ["type": "message", "message": "Wir haben einen neuen YouTubePost in \(fact.title) mit der ID: \(addOn)", "name": "System", "chatID": addOn, "sentAt": Timestamp(date: Date()), "messageID": "Dont Know", "language": language]
+        
+        
+        notificationRef.setData(notificationData) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                print("Successfully set notification")
+            }
+        }
+    }
+    
+    func checkIfOrderArrayExists(documentReference: DocumentReference, documentIDOfItem: String) {
+        documentReference.getDocument { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    if let data = snap.data() {
+                        if let array = data["itemOrder"] as? [String] {
+                            self.updateOrderArray(documentReference: documentReference, documentIDOfItem: documentIDOfItem, array: array)
+                        } else {
+                            self.delegate?.itemAdded(successfull: true)
+                            print("No itemOrder yet")
+                            return
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func updateOrderArray(documentReference: DocumentReference, documentIDOfItem: String, array: [String]) {
+        var newArray = array
+        newArray.insert(documentIDOfItem, at: 0)
+        documentReference.updateData([
+            "itemOrder": newArray
+        ]) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                self.delegate?.itemAdded(successfull: true)
+            }
+        }
+    }
+    
+    func updateTopicPostInFact(addOnID: String, postDocumentID: String) {       //Add the AddOnDocumentIDs to the fact, so we can delete every trace of the post if you choose to delete it later. Otherwise there would be empty post in an AddOn
+        
+        var collectionRef: CollectionReference!
+        if fact.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        
+        let ref = collectionRef.document(fact.documentID).collection("posts").document(postDocumentID)
+        
+        ref.updateData([
+            "addOnDocumentIDs": FieldValue.arrayUnion([addOnID])
+        ])
     }
 }
 

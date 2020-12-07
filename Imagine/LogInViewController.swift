@@ -29,6 +29,7 @@ private enum SignUpFrame {
     case ourPrinciples
     case ready
     case acceptPrivacyAgreement
+    case acceptEULAAgreement
     case wait
     case error
 }
@@ -186,11 +187,25 @@ class LogInViewController: UIViewController {
             nextButton.alpha = 1
         case .error:
             questionLabel.text = NSLocalizedString("signup_error", comment: "Something is wrong, try later")
+        case .acceptEULAAgreement:
+            answerTextfield.resignFirstResponder()
+            answerTextfieldTwo.resignFirstResponder()
+            self.nextButton.alpha = 1
+            self.nextButton.isEnabled = true
+            self.eulaButton.isEnabled = true
+            self.answerTextfield.alpha = 0
+            self.informationLabel.alpha = 0
+            self.answerTextfield.isEnabled = false
+            questionLabel.text = NSLocalizedString("approve_eula_rules", comment: "dont be a shitty person!")
+            nextButton.setTitle(NSLocalizedString("I agree", comment: "I agree"), for: .normal)
+            
+            showEulaButton()
         case .acceptPrivacyAgreement:
             answerTextfield.resignFirstResponder()
             answerTextfieldTwo.resignFirstResponder()
             self.nextButton.alpha = 1
             self.nextButton.isEnabled = true
+            self.eulaButton.isEnabled = true
             self.answerTextfield.alpha = 0
             self.informationLabel.alpha = 0
             self.answerTextfield.isEnabled = false
@@ -229,6 +244,9 @@ class LogInViewController: UIViewController {
                 self.showInformationLabel()
                 self.answerTextfield.alpha = 0
             case .ready:
+                self.answerTextfield.alpha = 0
+            case .acceptEULAAgreement:
+                self.eulaButton.alpha = 1
                 self.answerTextfield.alpha = 0
             case .acceptPrivacyAgreement:
                 self.eulaButton.alpha = 1
@@ -338,6 +356,8 @@ class LogInViewController: UIViewController {
                     email = answer
                     signUpFrame = .enterPassword
                 case .enterPassword:
+                    self.signUpFrame = .acceptEULAAgreement
+                case .acceptEULAAgreement:
                     self.signUpFrame = .acceptPrivacyAgreement
                 case .EmailAlreadyInUse:
                     email = answer
@@ -611,18 +631,33 @@ class LogInViewController: UIViewController {
         eulaButton.topAnchor.constraint(equalTo: nextButton.bottomAnchor, constant: 25).isActive = true
         eulaButton.widthAnchor.constraint(equalTo: nextButton.widthAnchor, constant: -50).isActive = true
         eulaButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        eulaButton.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
         
         eulaButton.alpha = 1
     }
+    
     @objc func toEulaTapped() {
-        
+        let language = LanguageSelection().getLanguage()
         if self.signUpFrame == .acceptPrivacyAgreement {
-            if let url = URL(string: "https://www.imagine.social/datenschutzerklärung-app") {
-                UIApplication.shared.open(url)
+            
+            if language == .english {
+                if let url = URL(string: "https://en.imagine.social/datenschutzerklaerung-app") {
+                    UIApplication.shared.open(url)
+                }
+            } else {
+                if let url = URL(string: "https://imagine.social/datenschutzerklaerung-app") {
+                    UIApplication.shared.open(url)
+                }
             }
         } else {
-            if let url = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
-                UIApplication.shared.open(url)
+            if language == .english {
+                if let url = URL(string: "https://en.imagine.social/eula") {
+                    UIApplication.shared.open(url)
+                }
+            } else {
+                if let url = URL(string: "https://imagine.social/eula") {
+                    UIApplication.shared.open(url)
+                }
             }
         }
     }

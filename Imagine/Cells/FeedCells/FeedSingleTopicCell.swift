@@ -90,6 +90,7 @@ class FeedSingleTopicCell: BaseFeedCell {
         let info = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Fact(), headerTitle: post.title, description: post.description, singleTopic: community)
         
         self.addOnInfo = info
+        post.fact = community
         print("##LoadedSingleTopic")
         self.collectionView.reloadData()
         self.layoutSubviews()

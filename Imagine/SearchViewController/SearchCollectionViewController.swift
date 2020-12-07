@@ -22,7 +22,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
     var userResults: [User]?
     var topicResults: [Fact]?
     
-    var communityPosts: [Post]?
+    var communityPosts: [Post]? // Default topicPosts queried by date and type
     var communityPostsStack: [Post]?
     
     let postCellIdentifier = "SmallPostCell"
@@ -361,7 +361,7 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
                         addPost(document: document)
                     }
                     
-                    stackCommunityPosts()
+                    self.stackCommunityPosts()
                     
                     self.communityPosts = nil
                     self.postResults = nil
@@ -392,7 +392,7 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
                         addPost(document: document)
                     }
                     
-                    stackCommunityPosts()
+                    self.stackCommunityPosts()
                     
                     self.communityPosts = nil
                     self.postResults = nil
@@ -423,7 +423,7 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
                         addTopic(document: document)
                     }
                     
-                    stackCommunityPosts()
+                    self.stackCommunityPosts()
                     
                     self.communityPosts = nil
                     self.postResults = nil
@@ -435,68 +435,67 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
             }
             
         case 2: // Search Users
-        let fullNameRef = db.collection("Users").whereField("full_name", isGreaterThan: searchText).whereField("full_name", isLessThan: "\(searchText)ü").limit(to: 3)
-        
-        fullNameRef.getDocuments { (querySnap, error) in
-            if let err = error {
-                print("We have an error searching for Users: \(err.localizedDescription)")
-            } else {
-                for document in querySnap!.documents {
-                    addUser(document: document)
-                }
-                
-                stackCommunityPosts()
-                
-                self.communityPosts = nil
-                self.userResults = nil
-                self.postResults = nil
-                self.userResults = userResults
-                self.topicResults = nil
-                self.collectionView.reloadData()
-            }
-        }
-        
-        let nameRef = db.collection("Users").whereField("name", isGreaterThan: searchText).whereField("name", isLessThan: "\(searchText)ü").limit(to: 3)
-        
-        nameRef.getDocuments { (querySnap, error) in
-            if let err = error {
-                print("We have an error searching for Users: \(err.localizedDescription)")
-            } else {
-                for document in querySnap!.documents {
+            let fullNameRef = db.collection("Users").whereField("full_name", isGreaterThan: searchText).whereField("full_name", isLessThan: "\(searchText)ü").limit(to: 3)
+            
+            fullNameRef.getDocuments { (querySnap, error) in
+                if let err = error {
+                    print("We have an error searching for Users: \(err.localizedDescription)")
+                } else {
+                    for document in querySnap!.documents {
+                        addUser(document: document)
+                    }
                     
-                    addUser(document: document)
-                }
-                
-                stackCommunityPosts()
-                
-                self.communityPosts = nil
-                self.postResults = nil
-                self.userResults = userResults
-                self.topicResults = nil
-                self.collectionView.reloadData()
-            }
-        }
-        
-        let surnameRef = db.collection("Users").whereField("surname", isGreaterThan: searchText).whereField("surname", isLessThan: "\(searchText)ü").limit(to: 3)
-        
-        surnameRef.getDocuments { (querySnap, error) in
-            if let err = error {
-                print("We have an error searching for Users: \(err.localizedDescription)")
-            } else {
-                for document in querySnap!.documents {
+                    self.stackCommunityPosts()
                     
-                    addUser(document: document)
+                    self.communityPosts = nil
+                    self.userResults = nil
+                    self.postResults = nil
+                    self.userResults = userResults
+                    self.topicResults = nil
+                    self.collectionView.reloadData()
                 }
-                
-                stackCommunityPosts()
-                
-                self.communityPosts = nil
-                self.topicResults = nil
-                self.postResults = nil
-                self.userResults = userResults
-                self.collectionView.reloadData()
             }
-        }
+            
+            let nameRef = db.collection("Users").whereField("name", isGreaterThan: searchText).whereField("name", isLessThan: "\(searchText)ü").limit(to: 3)
+            
+            nameRef.getDocuments { (querySnap, error) in
+                if let err = error {
+                    print("We have an error searching for Users: \(err.localizedDescription)")
+                } else {
+                    for document in querySnap!.documents {
+                        addUser(document: document)
+                    }
+                    
+                    self.stackCommunityPosts()
+                    
+                    self.communityPosts = nil
+                    self.postResults = nil
+                    self.userResults = userResults
+                    self.topicResults = nil
+                    self.collectionView.reloadData()
+                }
+            }
+            
+            let surnameRef = db.collection("Users").whereField("surname", isGreaterThan: searchText).whereField("surname", isLessThan: "\(searchText)ü").limit(to: 3)
+            
+            surnameRef.getDocuments { (querySnap, error) in
+                if let err = error {
+                    print("We have an error searching for Users: \(err.localizedDescription)")
+                } else {
+                    for document in querySnap!.documents {
+                        
+                        addUser(document: document)
+                    }
+                    
+                    self.stackCommunityPosts()
+                    
+                    self.communityPosts = nil
+                    self.topicResults = nil
+                    self.postResults = nil
+                    self.userResults = userResults
+                    self.collectionView.reloadData()
+                }
+            }
         default:
             return
         }
@@ -538,30 +537,12 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
             if postIsAlreadyFetched {   // Check if we got the user in on of the other queries
                 return
             }
-            let post = Post()
-            if let docData = document.data() {
+            
+            if let post = postHelper.addThePost(document: document, isTopicPost: false, forFeed: false, language: language) {
                 
-                if let title = docData["title"] as? String, let type = docData["type"] as? String, let op = docData["originalPoster"] as? String, let createDate = docData["createTime"] as? Timestamp {
-                    let imageURL = docData["imageURL"] as? String
-                    let imageHeight = docData["imageHeight"] as? Double
-                    let imageWidth = docData["imageWidth"] as? Double
-                    post.title = title
-                    post.documentID = document.documentID
-                    post.imageURL = imageURL ?? ""
-                    if let postType = self.handyHelper.setPostType(fetchedString: type) {
-                        post.type = postType
-                    }
-                    post.mediaWidth = CGFloat(imageWidth ?? 0)
-                    post.mediaHeight = CGFloat(imageHeight ?? 0)
-                    post.documentID = document.documentID
-                    post.originalPosterUID = op
-                    post.createTime = createDate.dateValue().formatRelativeString()
-                    post.getUser(isAFriend: false)
-                    
-                    postResults.append(post)
-                    
-                }
+                postResults.append(post)
             }
+            
         }
         
         func addTopic(document: DocumentSnapshot) {
@@ -575,9 +556,9 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
                 let documentID = document.documentID
                 
                 guard let name = documentData["name"] as? String,
-                    let createTimestamp = documentData["createDate"] as? Timestamp
-                    else {
-                        return
+                      let createTimestamp = documentData["createDate"] as? Timestamp
+                else {
+                    return
                 }
                 
                 let date = createTimestamp.dateValue()
@@ -606,16 +587,19 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
                 topicResults.append(fact)
             }
         }
-        
-        func stackCommunityPosts() {
-            if self.communityPostsStack == nil {
-                if let posts = self.communityPosts {
-                    self.communityPostsStack = posts
-                }
+    }
+    
+    
+    
+    func stackCommunityPosts() {
+        if self.communityPostsStack == nil {
+            if let posts = self.communityPosts {
+                self.communityPostsStack = posts
             }
         }
     }
 }
+
 
 //MARK:-SearchCOllectionCell & Header
 

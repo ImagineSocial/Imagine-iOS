@@ -131,7 +131,7 @@ class MeldeAgreeViewController: UIViewController {
             
             if let post = post {
                 
-                var data: [String:Any] = ["category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported post":post.documentID]
+                var data: [String:Any] = ["time": Timestamp(date: Date()), "category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported post":post.documentID]
                 
                 if language == .english {
                     data["language"] = "en"
@@ -140,7 +140,7 @@ class MeldeAgreeViewController: UIViewController {
                 saveReportInDatabase(data: data)
                 
             } else if let comment = comment {
-                var data: [String:Any] = ["category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported comment": comment.commentID]
+                var data: [String:Any] = ["time": Timestamp(date: Date()), "category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported comment": comment.commentID]
                 
                 if language == .english {
                     data["language"] = "en"

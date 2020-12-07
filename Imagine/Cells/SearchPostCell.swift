@@ -29,13 +29,20 @@ class SearchPostCell: UITableViewCell {
                 case .youTubeVideo:
                     postImageView.image = UIImage(named: "youtubeIcon")
                 case .link:
-                    if #available(iOS 13.0, *) {
-                        postImageView.tintColor = .label
-                    } else {
-                        postImageView.tintColor = .black
-                    }
-                    postImageView.image = UIImage(named: "translate")
                     postImageView.contentMode = .scaleAspectFit
+                    
+                    if let music = post.music {
+                        if let url = URL(string: music.musicImageURL) {
+                            postImageView.sd_setImage(with: url, completed: nil)
+                        }
+                    } else {
+                        if #available(iOS 13.0, *) {
+                            postImageView.tintColor = .label
+                        } else {
+                            postImageView.tintColor = .black
+                        }
+                        postImageView.image = UIImage(named: "translate")
+                    }
                 case .thought:
                     postImageView.image = UIImage(named: "savePostImage")
                     postImageView.contentMode = .scaleAspectFit

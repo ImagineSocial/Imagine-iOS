@@ -7,7 +7,7 @@
 */
 
 
-NSLocationWhenInUseUsageDescription = "Wir würden gerne auf deinen Standort zugreifen, um dir die Auswahl des richtigen Ortes zu erleichtern";
+NSLocationWhenInUseUsageDescription = "Wir würden gerne auf deinen Standort zugreifen, um dir die Auswahl des richtigen Ortes zu erleichtern. Der ausgewählte Standort wird anschließend in deinem Profil oder unter einem Beitrag angezeigt.";
 NSPhotoLibraryUsageDescription = "Wir würden gerne auf deine Ordner zugreifen, damit du ein Foto zum posten auswählen kannst.";
 NSPhotoLibraryAddUsageDescription = "Wir würden gerne das aufgenommene Bild in deinem Fotoalbum speichern.";
 NSCameraUsageDescription = "Wir würden gerne auf deine Kamera zugreifen, damit du Bilder für den Feed oder dein Profil machen kannst.";
