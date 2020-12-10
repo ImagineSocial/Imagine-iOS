@@ -299,6 +299,13 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
             }
         }
         
+        if segue.identifier == "toFeedbackSegue" {
+            if let navVC = segue.destination as? UINavigationController {
+                if let vc = navVC.topViewController as? ReportABugViewController {
+                    vc.type = .feedback
+                }
+            }
+        }
     }
     
     func secretButtonTapped(_ sender: Any) {
@@ -327,8 +334,8 @@ extension CommunityCollectionViewController: CommunityCollectionCellDelegate, Ta
             performSegue(withIdentifier: "toProposalsSegue", sender: nil)
         case .imagineFund:
             performSegue(withIdentifier: "toImagineFundSegue", sender: nil)
-        case .vision:
-            performSegue(withIdentifier: "toVisionSegue", sender: nil)
+        case .feedback:
+            performSegue(withIdentifier: "toFeedbackSegue", sender: nil)
         case .settings:
             performSegue(withIdentifier: "toSettingsSegue", sender: nil)
         }

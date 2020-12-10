@@ -156,7 +156,7 @@
 		E9B79CE5224EC78900166EED /* CampaignCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B79CE4224EC78900166EED /* CampaignCell.swift */; };
 		E9B79CE7224F88CD00166EED /* RepostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B79CE6224F88CD00166EED /* RepostViewController.swift */; };
 		E9B79CE922510F1900166EED /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B79CE822510F1900166EED /* TabBarViewController.swift */; };
-		E9B85D4224112DCA00960942 /* ArgumentPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D4124112DCA00960942 /* ArgumentPageViewController.swift */; };
+		E9B85D4224112DCA00960942 /* CommunityPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D4124112DCA00960942 /* CommunityPageViewController.swift */; };
 		E9B85D482412483500960942 /* CollectionViewInTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B85D472412483500960942 /* CollectionViewInTableViewCell.xib */; };
 		E9B85D4C24124BB500960942 /* CollectionViewInTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D4B24124BB500960942 /* CollectionViewInTableViewCell.swift */; };
 		E9B85D522412D29A00960942 /* SmallPostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B85D512412D29A00960942 /* SmallPostCell.xib */; };
@@ -383,7 +383,7 @@
 		E9B79CE4224EC78900166EED /* CampaignCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignCell.swift; sourceTree = "<group>"; };
 		E9B79CE6224F88CD00166EED /* RepostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepostViewController.swift; sourceTree = "<group>"; };
 		E9B79CE822510F1900166EED /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
-		E9B85D4124112DCA00960942 /* ArgumentPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArgumentPageViewController.swift; sourceTree = "<group>"; };
+		E9B85D4124112DCA00960942 /* CommunityPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPageViewController.swift; sourceTree = "<group>"; };
 		E9B85D472412483500960942 /* CollectionViewInTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CollectionViewInTableViewCell.xib; sourceTree = "<group>"; };
 		E9B85D4B24124BB500960942 /* CollectionViewInTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewInTableViewCell.swift; sourceTree = "<group>"; };
 		E9B85D512412D29A00960942 /* SmallPostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SmallPostCell.xib; sourceTree = "<group>"; };
@@ -620,7 +620,7 @@
 			children = (
 				E9A5F5AB2440CFE900DCCFDF /* DiscussionVCs */,
 				E96CE88C22940A9F00BACD3B /* FactCollectionViewController.swift */,
-				E9B85D4124112DCA00960942 /* ArgumentPageViewController.swift */,
+				E9B85D4124112DCA00960942 /* CommunityPageViewController.swift */,
 				E96CE89322941C5C00BACD3B /* FactParentContainerViewController.swift */,
 				E9F6030E235DE5DF00A58D08 /* PostsOfFactTableViewController.swift */,
 				E904BF0124264525003EC8DF /* AddPostTableViewController.swift */,
@@ -1155,7 +1155,7 @@
 				E962AC38222DB46400C6D6EF /* MeldeOptionViewController.swift in Sources */,
 				E9BA724C232557D100DF3FB3 /* InfoTableViewController.swift in Sources */,
 				E9C0CA302528ADB80032E399 /* ImagineCommunityOptionsCell.swift in Sources */,
-				E9B85D4224112DCA00960942 /* ArgumentPageViewController.swift in Sources */,
+				E9B85D4224112DCA00960942 /* CommunityPageViewController.swift in Sources */,
 				E962AC34222DA04E00C6D6EF /* MeldenViewController.swift in Sources */,
 				E95B6B8724EECD2F0089BB19 /* SearchTableViewController.swift in Sources */,
 				E93F6F14253237FE0044EAA4 /* PopUpInfoView.swift in Sources */,
@@ -1458,7 +1458,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.6.8;
+				MARKETING_VERSION = 1.6.9;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -1481,7 +1481,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.6.8;
+				MARKETING_VERSION = 1.6.9;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;

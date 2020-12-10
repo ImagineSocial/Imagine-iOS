@@ -763,11 +763,12 @@ class NewCommunityItemTableViewController: UITableViewController {
     }
     
     func setUserChanges(documentID: String) {
-        let factParentVC = FactParentContainerViewController()
+        let header = CommunityHeaderView()
         let fact = Fact()
         fact.documentID = documentID
+        fact.language = language
         
-        factParentVC.followTopic(fact: fact)
+        header.followTopic(community: fact)
         
         if let user = Auth.auth().currentUser {
             let ref = db.collection("Users").document(user.uid)

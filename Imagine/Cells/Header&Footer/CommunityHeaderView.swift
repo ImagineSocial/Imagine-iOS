@@ -119,9 +119,9 @@ class CommunityHeaderView: UIView {
         if let _ = Auth.auth().currentUser {
             self.followButton.isEnabled = false
             if community.beingFollowed {
-                unfollowTopic()
+                unfollowTopic(community: community)
             } else {
-                followTopic()
+                followTopic(community: community)
             }
         } else {
             delegate?.notLoggedIn()
@@ -132,51 +132,58 @@ class CommunityHeaderView: UIView {
         delegate?.newPostTapped()
     }
     
-    func followTopic() {
-        if let community = community {
-            if let user = Auth.auth().currentUser {
-                let topicRef = db.collection("Users").document(user.uid).collection("topics").document(community.documentID)
-                
-                var data: [String: Any] = ["createDate": Timestamp(date: Date())]
-                
-                if community.language == .english {
-                    data["language"] = "en"
-                }
-                topicRef.setData(data) { (err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        print("Succesfully subscribed to topic")
+    func followTopic(community: Fact) {
+        if let user = Auth.auth().currentUser {
+            let topicRef = db.collection("Users").document(user.uid).collection("topics").document(community.documentID)
+            
+            var data: [String: Any] = ["createDate": Timestamp(date: Date())]
+            
+            if community.language == .english {
+                data["language"] = "en"
+            }
+            topicRef.setData(data) { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    print("Succesfully subscribed to topic")
+                    
+                    if let _ = self.community {
+                        // followTopic is called from other instances, where there ist no view instantiated, just the class
                         self.followButton.setTitle("Unfollow", for: .normal)
-                        community.beingFollowed = true
-                        self.updateFollowCount(fact: community, follow: true)
                     }
+                    community.beingFollowed = true
+                    self.updateFollowCount(fact: community, follow: true)
                 }
             }
         }
     }
     
-    func unfollowTopic() {
-        if let community = community {
-            if let user = Auth.auth().currentUser {
-                let topicRef = db.collection("Users").document(user.uid).collection("topics").document(community.documentID)
-                
-                topicRef.delete { (err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        community.beingFollowed = false
-                        print("Successfully unfollowed")
+    func unfollowTopic(community: Fact) {
+        if let user = Auth.auth().currentUser {
+            let topicRef = db.collection("Users").document(user.uid).collection("topics").document(community.documentID)
+            
+            topicRef.delete { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    community.beingFollowed = false
+                    print("Successfully unfollowed")
+                    
+                    if let _ = self.community {
+                        // followTopic is called from other instances, where there ist no view instantiated, just the class
                         self.followButton.setTitle("Follow", for: .normal)
-                        self.updateFollowCount(fact: community, follow: false)
                     }
+                    self.updateFollowCount(fact: community, follow: false)
                 }
             }
         }
     }
     
     func updateFollowCount(fact: Fact, follow: Bool) {
-        self.followButton.isEnabled = true
+        if let followButton = self.followButton {
+            followButton.isEnabled = true   // updateFollowCount is called from other instances, where there ist no view instantiated, just the class
+        }
+        
         if let user = Auth.auth().currentUser {
             
             var collectionRef: CollectionReference!

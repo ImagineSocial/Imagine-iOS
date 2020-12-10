@@ -9,7 +9,7 @@
 import UIKit
 
 enum CommunityCellButtonType {
-    case vision
+    case feedback
     case imagineFund
     case moreInfo
     case proposals
@@ -69,7 +69,7 @@ class ImagineCommunityOptionsCell: UICollectionViewCell {
     }
     
     @IBAction func visionButtonTapped(_ sender: Any) {
-        delegate?.buttonTapped(button: .vision)
+        delegate?.buttonTapped(button: .feedback)
     }
     
     @IBAction func helpWantedButtonTapped(_ sender: Any) {

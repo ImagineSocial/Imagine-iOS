@@ -3670,6 +3670,7 @@
                         <segue destination="g1J-bS-cZR" kind="show" identifier="toVoteDetailSegue" id="m6b-eV-Frv"/>
                         <segue destination="NAL-jA-H5h" kind="show" identifier="toJobOfferDetailSegue" id="Cdz-Pl-3MF"/>
                         <segue destination="aRV-HY-e8q" kind="show" identifier="toImagineFundSegue" id="XsC-Jj-iYH"/>
+                        <segue destination="xGg-iE-0gX" kind="show" identifier="toFeedbackSegue" id="9QY-S4-xl7"/>
                     </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Oct-Eg-ePx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -3875,7 +3876,7 @@
             <objects>
                 <tableViewController hidesBottomBarWhenPushed="YES" id="V73-u4-3cj" customClass="voteCampaignTableViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="cXR-BX-C4Q">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="591"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="lm3-e5-CDb">
@@ -4088,7 +4089,7 @@
                     <navigationItem key="navigationItem" title="Vorschläge" id="7hf-RH-7nb">
                         <barButtonItem key="backBarButtonItem" title=" " id="TQj-Ek-wP7"/>
                         <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" id="C6N-HW-MeF">
-                            <rect key="frame" x="75" y="11.5" width="225" height="33"/>
+                            <rect key="frame" x="75" y="5.5" width="225" height="33"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <segments>
                                 <segment title="Vorschläge"/>
@@ -4104,7 +4105,7 @@
                         </segmentedControl>
                         <barButtonItem key="rightBarButtonItem" style="plain" id="xg2-zg-9IZ">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" id="FIg-ez-N7F" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="334" y="16" width="25" height="24"/>
+                                <rect key="frame" x="334" y="10" width="25" height="24"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <connections>
                                     <action selector="infoButtonTapped:" destination="V73-u4-3cj" eventType="touchUpInside" id="WWk-Gb-g3b"/>
@@ -4140,11 +4141,11 @@
             <objects>
                 <viewController hidesBottomBarWhenPushed="YES" id="g1J-bS-cZR" customClass="VoteViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8uH-5I-O6l">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="874"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="950"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ep1-zI-FUB">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="874"/>
+                                <rect key="frame" x="0.0" y="44" width="375" height="906"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YdT-S2-r2d" userLabel="contentView">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="630.5"/>
@@ -4438,7 +4439,7 @@
                     <navigationItem key="navigationItem" id="sFd-ap-gjh">
                         <barButtonItem key="rightBarButtonItem" style="plain" id="3rW-5v-Gxb">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" id="6sW-oq-2P0">
-                                <rect key="frame" x="334" y="16" width="25" height="24"/>
+                                <rect key="frame" x="334" y="10" width="25" height="24"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <connections>
                                     <action selector="infoButtonTapped:" destination="g1J-bS-cZR" eventType="touchUpInside" id="JpV-Gh-edL"/>
@@ -4689,11 +4690,11 @@
             <objects>
                 <viewController id="D6t-ao-oDv" customClass="ReportABugViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qoH-tA-wq8">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Danke für deine Unterstützung, wo hakt's?" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wFQ-hk-dta">
-                                <rect key="frame" x="10" y="86" width="355" height="51.5"/>
+                                <rect key="frame" x="10" y="74" width="355" height="51.5"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="22"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -4702,13 +4703,13 @@
                                 </userDefinedRuntimeAttributes>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Problem" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BAC-lz-nUE">
-                                <rect key="frame" x="10" y="162.5" width="75" height="23.5"/>
+                                <rect key="frame" x="10" y="150.5" width="75" height="23.5"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PT5-FG-Usg">
-                                <rect key="frame" x="0.0" y="191" width="375" height="200"/>
+                                <rect key="frame" x="0.0" y="179" width="375" height="200"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cNw-bo-R47">
                                         <rect key="frame" x="10" y="10" width="355" height="180"/>
@@ -4727,7 +4728,7 @@
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pQ3-ZH-j8j">
-                                <rect key="frame" x="345" y="66" width="20" height="20"/>
+                                <rect key="frame" x="345" y="54" width="20" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="20" id="REa-gc-lKG"/>
                                     <constraint firstAttribute="height" constant="20" id="ROQ-ax-F8K"/>
@@ -4738,7 +4739,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p2E-xL-syA">
-                                <rect key="frame" x="10" y="391" width="355" height="82"/>
+                                <rect key="frame" x="10" y="379" width="355" height="82"/>
                                 <string key="text">Erkläre uns bitte mit deinen Worten kurz, wo es ein Problem gibt. Wir versuchen uns so schnell es geht darum zu kümmern.   Danke für deine Zeit!</string>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
                                 <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -4780,8 +4781,11 @@
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
+                        <outlet property="descriptionLabel" destination="p2E-xL-syA" id="GeP-uz-egq"/>
                         <outlet property="doneButton" destination="cvC-r9-Y4y" id="UMB-N5-ePv"/>
+                        <outlet property="headerLabel" destination="wFQ-hk-dta" id="Zet-xd-enF"/>
                         <outlet property="reportDescriptionTextView" destination="cNw-bo-R47" id="8dc-oM-LOn"/>
+                        <outlet property="subHeaderLabel" destination="BAC-lz-nUE" id="dm1-gz-ExF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wQC-03-1tL" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -7792,8 +7796,9 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="xGg-iE-0gX" sceneMemberID="viewController">
                     <toolbarItems/>
+                    <navigationItem key="navigationItem" id="lUk-sN-9Ax"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="jY0-1E-Zcw">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -8308,14 +8313,14 @@
             <objects>
                 <viewController id="xsq-BU-Pto" customClass="CampaignViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="MZZ-OS-v9Y">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="874"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="950"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gIv-jN-POc">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="874"/>
+                                <rect key="frame" x="0.0" y="44" width="375" height="906"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jbi-rr-Bnb" userLabel="contentView">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="874"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="950"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="25.03.2018 09:00" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="ecT-Ga-gxn">
@@ -8418,7 +8423,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Etg-Mk-euO" customClass="CommentTableView" customModule="Imagine" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="467.5" width="375" height="376.5"/>
+                                        <rect key="frame" x="0.0" y="467.5" width="375" height="452.5"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </tableView>
                                 </subviews>
@@ -8464,7 +8469,7 @@
                         <barButtonItem key="backBarButtonItem" title=" " id="Wtb-YO-uCX"/>
                         <barButtonItem key="rightBarButtonItem" style="plain" id="SYE-x7-sv0">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" id="0FD-hP-eEt">
-                                <rect key="frame" x="334" y="16" width="25" height="24"/>
+                                <rect key="frame" x="334" y="10" width="25" height="24"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <connections>
                                     <action selector="infoButtonTapped:" destination="xsq-BU-Pto" eventType="touchUpInside" id="CHV-FL-xup"/>
@@ -8864,24 +8869,25 @@
         </designable>
     </designables>
     <inferredMetricsTieBreakers>
-        <segue reference="xs1-n5-9PF"/>
+        <segue reference="abH-Sm-SDu"/>
         <segue reference="iX0-VT-UyP"/>
         <segue reference="z3o-Gg-hUh"/>
+        <segue reference="9QY-S4-xl7"/>
         <segue reference="ilO-fQ-UNL"/>
         <segue reference="Ry2-Md-ecH"/>
         <segue reference="TUn-Fj-dxB"/>
         <segue reference="W1P-Tf-4HL"/>
-        <segue reference="SpZ-08-BhO"/>
-        <segue reference="2Dh-7B-KeX"/>
+        <segue reference="HeY-vY-CcT"/>
+        <segue reference="4O7-Dd-y1Z"/>
         <segue reference="6ey-z4-yGI"/>
         <segue reference="RQq-29-OD8"/>
         <segue reference="WcQ-qJ-vYb"/>
         <segue reference="65n-8p-jc1"/>
-        <segue reference="BWd-PY-N3B"/>
-        <segue reference="1lb-LR-kGq"/>
-        <segue reference="JF5-eU-2la"/>
-        <segue reference="OH6-CE-32x"/>
-        <segue reference="s3U-v0-RhF"/>
+        <segue reference="m6b-eV-Frv"/>
+        <segue reference="ewF-Tj-uZk"/>
+        <segue reference="0po-Va-czT"/>
+        <segue reference="Cdz-Pl-3MF"/>
+        <segue reference="yNA-zh-mO4"/>
         <segue reference="2u8-IF-mSe"/>
         <segue reference="4yf-SZ-2gy"/>
         <segue reference="BSN-fi-jKu"/>

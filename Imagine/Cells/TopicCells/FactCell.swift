@@ -115,8 +115,8 @@ class FactCell:UICollectionViewCell {
         if let _ = Auth.auth().currentUser {
             if let fact = fact {
                 if !fact.beingFollowed {
-                    let parentVC = FactParentContainerViewController()
-                    parentVC.followTopic(fact: fact)
+                    let header = CommunityHeaderView()
+                    header.followTopic(community: fact)
                     
                     followButton.setImage(UIImage(named: "greenTik"), for: .normal)
                 }

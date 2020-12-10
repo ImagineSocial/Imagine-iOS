@@ -219,6 +219,8 @@
 //ReportABugViewController
 "more_information_alert" = "Ein bisschen genauer bitte";
 "thanks_alert_message" = "Nett, dass du uns unterstützt! Wir versuchen das Netzwerk durchgehend zu verbessern.";
+"reportABug_header" = "Jede Art der Rückmeldung ist hilfreich für uns!";
+"reportABug_description" = "Hat das Netzwerk potential? Was gefällt dir gut? Was muss deiner Meinung nach ausgebaut werden? \n\nWir sind über jede Rückmeldung dankbar denn wir stehen noch ganz am Anfang!";
 
 //VoteViewController
 "time_till_completion_in_month" = "%d Monate";
@@ -647,3 +649,4 @@
 "surveyCell_pickOrder_label" = "Wähle eine Reihenfolge von 1 bis 4 (am Meisten -> am Wenigsten) aus.";
 "surveyCell_writeComment_label" = "Schreibe uns deine Meinung.";
 "surveyCell_disclaimer" = "Die Daten werden anonym ausgewertet und helfen uns dabei unsere User besser zu verstehen. So gestalten wir das Netzwerk nach euren Vorstellungen und Wünschen.";
+"surveyCell_notes_label" = "Anmerkungen:";

@@ -148,60 +148,6 @@ class FactParentContainerViewController: UIViewController {
         }
     }
     
-    func followTopic(fact: Fact) {
-        if let user = Auth.auth().currentUser {
-            let topicRef = db.collection("Users").document(user.uid).collection("topics").document(fact.documentID)
-            
-            topicRef.setData(["createDate": Timestamp(date: Date())]) { (err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    print("Succesfully subscribed to topic")
-                    fact.beingFollowed = true
-                    self.updateFollowCount(fact: fact, follow: true)
-                }
-            }
-        } 
-    }
-    
-    func unfollowTopic(fact: Fact) {
-        if let user = Auth.auth().currentUser {
-            let topicRef = db.collection("Users").document(user.uid).collection("topics").document(fact.documentID)
-            
-            topicRef.delete { (err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    fact.beingFollowed = false
-                    print("Successfully unfollowed")
-                    self.updateFollowCount(fact: fact, follow: false)
-                }
-            }
-        }
-    }
-    
-    func updateFollowCount(fact: Fact, follow: Bool) {
-        if let user = Auth.auth().currentUser {
-            var collectionRef: CollectionReference!
-            if fact.language == .english {
-                collectionRef = db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = db.collection("Facts")
-            }
-            let ref = collectionRef.document(fact.documentID)
-            
-            if follow {
-                ref.updateData([
-                    "follower" : FieldValue.arrayUnion([user.uid])
-                ])
-            } else { //unfollowed
-                ref.updateData([
-                    "follower": FieldValue.arrayRemove([user.uid])
-                ])
-            }
-        }
-    }
-    
     //MARK:-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? ProFactTableViewController {
