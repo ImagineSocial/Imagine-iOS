@@ -188,6 +188,8 @@
 		E9D9561824F82791007E5D18 /* AddOnCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D9561724F82791007E5D18 /* AddOnCollectionViewController.swift */; };
 		E9D9561A24F8398F007E5D18 /* AddOnHeaderReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D9561924F8398F007E5D18 /* AddOnHeaderReusableView.swift */; };
 		E9D9561C24F839DB007E5D18 /* AddOnHeaderReusableView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9D9561B24F839DB007E5D18 /* AddOnHeaderReusableView.xib */; };
+		E9E21C5025AF703C002D5699 /* MemeInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E21C4F25AF703C002D5699 /* MemeInputView.swift */; };
+		E9E21C5525AF7470002D5699 /* MemeInputView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9E21C5425AF7470002D5699 /* MemeInputView.xib */; };
 		E9E49D2D2349E8AB002E371E /* NotificationCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9E49D2C2349E8AB002E371E /* NotificationCell.xib */; };
 		E9E521BA2458477F002585A2 /* NewAddOnTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E521B92458477F002585A2 /* NewAddOnTableViewController.swift */; };
 		E9E521BD245996D4002585A2 /* AddOnHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E521BC245996D4002585A2 /* AddOnHeaderView.swift */; };
@@ -415,6 +417,8 @@
 		E9D9561724F82791007E5D18 /* AddOnCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOnCollectionViewController.swift; sourceTree = "<group>"; };
 		E9D9561924F8398F007E5D18 /* AddOnHeaderReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOnHeaderReusableView.swift; sourceTree = "<group>"; };
 		E9D9561B24F839DB007E5D18 /* AddOnHeaderReusableView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddOnHeaderReusableView.xib; sourceTree = "<group>"; };
+		E9E21C4F25AF703C002D5699 /* MemeInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemeInputView.swift; sourceTree = "<group>"; };
+		E9E21C5425AF7470002D5699 /* MemeInputView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MemeInputView.xib; sourceTree = "<group>"; };
 		E9E49D2C2349E8AB002E371E /* NotificationCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NotificationCell.xib; sourceTree = "<group>"; };
 		E9E521B92458477F002585A2 /* NewAddOnTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewAddOnTableViewController.swift; sourceTree = "<group>"; };
 		E9E521BC245996D4002585A2 /* AddOnHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOnHeaderView.swift; sourceTree = "<group>"; };
@@ -636,6 +640,7 @@
 		E9871FA522C77AC5002D22F9 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				E9E21C5325AF7431002D5699 /* MemeInput */,
 				E97DBED822AEA81A007100E1 /* Post.swift */,
 				E948AC5122C77BA400DB9E69 /* Repost.swift */,
 				E9A02AA8232D3640000DAB69 /* Argument.swift */,
@@ -810,6 +815,15 @@
 				E97C834523CDE1CE00CE3D3C /* CreativeExampleViewController.swift */,
 			);
 			path = CreativeSpace;
+			sourceTree = "<group>";
+		};
+		E9E21C5325AF7431002D5699 /* MemeInput */ = {
+			isa = PBXGroup;
+			children = (
+				E9E21C4F25AF703C002D5699 /* MemeInputView.swift */,
+				E9E21C5425AF7470002D5699 /* MemeInputView.xib */,
+			);
+			path = MemeInput;
 			sourceTree = "<group>";
 		};
 		E9E521BB2459969D002585A2 /* Header&Footer */ = {
@@ -1010,6 +1024,7 @@
 				E940D8D4249676AB00018EF3 /* PlaceHolderCell.xib in Resources */,
 				E9F12BFE24FC01B3006BD9C3 /* CommunityHeaderView.xib in Resources */,
 				E991CCDA2273474F00940834 /* ThoughtPostCell.xib in Resources */,
+				E9E21C5525AF7470002D5699 /* MemeInputView.xib in Resources */,
 				E91A2B5E2473B9DC00B42353 /* AddOnHeaderView.xib in Resources */,
 				E97DBED022AC1335007100E1 /* Localizable.strings in Resources */,
 				E90AC38624FA52C4002A36F0 /* IBMPlexSans-SemiBold.ttf in Resources */,
@@ -1225,6 +1240,7 @@
 				E962AC2B2224446100C6D6EF /* PostHelper.swift in Sources */,
 				E962AC2D222448D400C6D6EF /* DesignableButton.swift in Sources */,
 				E9A360E52240FDCA008027CD /* SupportTheCommunityTableViewController.swift in Sources */,
+				E9E21C5025AF703C002D5699 /* MemeInputView.swift in Sources */,
 				E9E531FE229EA242004D0654 /* ChatModels.swift in Sources */,
 				E97CC1D322A028C800A23490 /* EmojiExtension.swift in Sources */,
 				E9B79CE7224F88CD00166EED /* RepostViewController.swift in Sources */,

@@ -22,7 +22,6 @@ enum PostSelection {
     case picture
     case link
     case thought
-    case event
     case multiPicture
 }
 
@@ -80,8 +79,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     let infoButtonSize: CGFloat = 22
     
+    var cropViewController: CropViewController?
+    
+    /// Is the keyboard up for better typing
     var up = false
     
+    //Link Fact With Post
     var linkedFact: Fact?
     var linkedLocation: Location?
     
@@ -91,13 +94,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var postOnlyInTopic = false
     var addOn: OptionalInformation?
     
+    // Constraints for the different animations
     var pictureViewHeight: NSLayoutConstraint?
     var linkViewHeight: NSLayoutConstraint?
     var eventViewHeight: NSLayoutConstraint?
     var locationViewHeight: NSLayoutConstraint?
     var optionViewHeight: NSLayoutConstraint?
     var stackViewHeight: NSLayoutConstraint?
-    
     var descriptionViewTopAnchor: NSLayoutConstraint?
     var pictureViewTopAnchor: NSLayoutConstraint?
     
@@ -105,6 +108,16 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var delegate: JustPostedDelegate?
     var newInstanceDelegate: NewFactDelegate?
     
+    //MemeMode
+    var memeView: MemeInputView?
+    
+    ///How many times did the MemeInputView flicker
+    var howManyFlickersIndex = 0
+    ///How fast will the next flicker happen
+    var flickerInterval = 0.3
+    let generator = UIImpactFeedbackGenerator(style: .light)
+    
+    //InfoViews
     var infoView: UIView?
     
     let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: InMemoryCache())
@@ -118,6 +131,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        //CollectionViewSettings for the previewImages
         previewCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
         
         previewCollectionView.dataSource = self
@@ -127,21 +141,21 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         previewCollectionView.setCollectionViewLayout(layout, animated: true)
         
         
-        
+        // Set Listener and delegates
         imagePicker.delegate = self
         titleTextView.delegate = self
-        
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        
         linkTextField.addTarget(self, action: #selector(self.textFieldDidChange(_:)), for: .editingChanged)
         
+        
+        
+        //Load the UI
         setCompleteUIForThought()
         setPictureViewUI()
         setLinkViewUI()
         setUpOptionViewUI() // Shows linked Fact in here, if there is one
         
         
+        //Settings when this view is called from inside the community
         if comingFromPostsOfFact || comingFromAddOnVC {
             if #available(iOS 13.0, *) {
                 //no need for a dismiss button
@@ -154,6 +168,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             distributionInformationLabel.text = "Community"
         }
         
+        //UI Changes
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        
         let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15) as Any]
         markPostSegmentControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
         markPostSegmentControl.tintColor = .imagineColor
@@ -164,6 +182,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
+        //Show Info view if not already shown before
         let infoAlreadyShown = UserDefaults.standard.bool(forKey: "newPostInfo")
         if !infoAlreadyShown {
             showNewPostInfoView()
@@ -687,7 +706,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "folder"), for: .normal)
-        button.addTarget(self, action: #selector(CamRollTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(camRollTapped), for: .touchUpInside)
         button.alpha = 0
         if #available(iOS 13.0, *) {
             button.tintColor = .label
@@ -994,6 +1013,38 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         return label
     }()
     
+    //MARK: - Meme Mode Button UI
+    
+    let memeModeButton: DesignableButton = {
+        let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        let tronColor = UIColor(red: 0.05, green: 0.97, blue: 0.97, alpha: 1.00)
+        
+        var color: UIColor!
+        if #available(iOS 13.0, *) {
+            color = .label
+        } else {
+            color = .black
+        }
+        
+        let text = NSMutableAttributedString()
+        text.append(NSAttributedString(string: "M", attributes: [NSAttributedString.Key.foregroundColor: color]))
+        text.append(NSAttributedString(string: "e", attributes: [NSAttributedString.Key.foregroundColor: tronColor]))
+        text.append(NSAttributedString(string: "m", attributes: [NSAttributedString.Key.foregroundColor: color]))
+        text.append(NSAttributedString(string: "e", attributes: [NSAttributedString.Key.foregroundColor: tronColor]))
+        text.append(NSAttributedString(string: " Mod", attributes: [NSAttributedString.Key.foregroundColor: color]))
+        text.append(NSAttributedString(string: "e", attributes: [NSAttributedString.Key.foregroundColor: tronColor]))
+        
+        button.setTitleColor(tronColor, for: .normal)
+        button.setAttributedTitle(text, for: .normal)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
+        button.tintColor = .imagineColor
+        button.addTarget(self, action: #selector(memeModeTapped), for: .touchUpInside)
+        
+        return button
+    }()
+        
+    
     //MARK: - Link Fact with Post UI
     
     let addFactButton: DesignableButton = {
@@ -1119,7 +1170,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         return button
     }()
     
-    //Location
+    //MARK:- LocationUI
     let locationDescriptionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -1288,6 +1339,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         optionStackView.bottomAnchor.constraint(equalTo: optionView.bottomAnchor, constant: -5).isActive = true
         stackViewHeight = optionStackView.heightAnchor.constraint(equalToConstant: 0)
         stackViewHeight!.isActive = true
+        
+        //Meme Mode Button
+        optionView.addSubview(memeModeButton)
+        memeModeButton.centerYAnchor.constraint(equalTo: optionButton.centerYAnchor).isActive = true
+        memeModeButton.trailingAnchor.constraint(equalTo: optionView.trailingAnchor, constant: -10).isActive = true
+        memeModeButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
                 
         
         self.view.addSubview(optionView)
@@ -1348,8 +1405,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
 //        explainFunctionOnFirstOpen()
     }
     
-    //MARK:-PostAsSomebodyElse-UI
-    //Just for Yvonne, Sophie and Malte
+    //MARK:- PostAsSomebodyElse-UI
     
     
     let fakeNameSegmentedControl: UISegmentedControl = {
@@ -1576,8 +1632,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                         offset = 125
                     case .link:
                         offset = 100
-                    case .event:
-                        offset = 175
                     }
                     
                     
@@ -1603,8 +1657,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 offset = 125
             case .link:
                 offset = 100
-            case .event:
-                offset = 175
             }
             
             self.view.frame.origin.y += offset
@@ -1647,11 +1699,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    // Geht einfacher
-    func getDate() -> Timestamp {
-        let date = Date()
-        return Timestamp(date: date)
-    }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         
@@ -1661,24 +1708,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
         }
         
-        switch selectedOption { // Title no longer than x characters
-        case .event:
-            return textView.text.count + (text.count - range.length) <= characterLimitForEventTitle  // Text no longer than 100 characters
-        default:
-            return textView.text.count + (text.count - range.length) <= characterLimitForTitle
-        }
+        return textView.text.count + (text.count - range.length) <= characterLimitForTitle
     }
     
     func textViewDidChange(_ textView: UITextView) {
         
-        switch selectedOption {
-        case .event:
-            let characterLeft = characterLimitForEventTitle-textView.text.count
-            self.characterCountLabel.text = String(characterLeft)
-        default:
-            let characterLeft = characterLimitForTitle-textView.text.count
-            self.characterCountLabel.text = String(characterLeft)
-        }
+        let characterLeft = characterLimitForTitle-textView.text.count
+        self.characterCountLabel.text = String(characterLeft)
     }
     
     func explainFunctionOnFirstOpen() {
@@ -1697,6 +1733,67 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
          DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
             self.linkFactExplanationTipView = EasyTipView(text: NSLocalizedString("link_fact_first_open_tip_view_text", comment: "how it works and such"))
             self.linkFactExplanationTipView!.show(forView: self.linkedFactView)
+        }
+    }
+    
+    //MARK: - MemeMode Maker
+    
+    @objc func memeModeTapped() {
+        let generator = UIImpactFeedbackGenerator(style: .heavy)
+        generator.impactOccurred()
+        
+        memeModeButton.isEnabled = false
+        showMemeMode()
+    }
+    
+    
+    func showMemeMode() {
+        if let window = UIApplication.shared.keyWindow {
+            let memeView: MemeInputView = MemeInputView.fromNib()
+            memeView.delegate = self
+            
+            window.addSubview(memeView)
+            self.memeView = memeView
+            
+            window.layoutSubviews()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.letItRezzle()
+            }
+        }
+    }
+    
+    
+    func letItRezzle() {    /// A little distorted effect for the meme view
+        if let memeView = memeView {
+            memeView.alpha = 0.98
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                
+                if self.howManyFlickersIndex <= 3 {
+                    
+                    memeView.alpha = 0
+                    DispatchQueue.main.asyncAfter(deadline: .now() + self.flickerInterval) {
+                        self.letItRezzle()
+                        self.generator.impactOccurred()
+                    }
+                    
+                    self.flickerInterval-=0.1
+                    self.howManyFlickersIndex+=1
+                } else {
+                    let heavyImpact = UIImpactFeedbackGenerator(style: .heavy)
+                    heavyImpact.impactOccurred()
+                    
+                    memeView.startUpMemeMode()
+                    self.memeModeButton.isEnabled = true
+                    
+                    if self.selectedOption != .picture || self.selectedOption != .multiPicture {
+                        //Switch to picture mode so the meme can be shown
+                        self.postSelectionSegmentedControl.selectedSegmentIndex = 1
+                        self.prepareForSelectionChange()
+                    }
+                }
+            }
         }
     }
     
@@ -1770,7 +1867,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.present(self.imagePicker, animated: true, completion: nil)
     }
     
-    @objc func CamRollTapped() {
+    @objc func camRollTapped() {
         if let _ = Auth.auth().currentUser {
             
             switch PHPhotoLibrary.authorizationStatus() {
@@ -1796,27 +1893,38 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func showPictureAlert() {
-        let alert = UIAlertController(title: NSLocalizedString("how_many_pics_alert_header", comment: "How many pics do you want to post?"), message: NSLocalizedString("how_many_pics_alert_message", comment: "How many pics do you want to post?"), preferredStyle: .actionSheet)
-
-        alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_just_one", comment: "just one"), style: .default, handler: { (_) in
-            self.imagePicker.sourceType = .photoLibrary
-            //imagePicker.allowsEditing = true
-            
-            self.selectedOption = .picture
-            self.present(self.imagePicker, animated: true, completion: nil)
-        }))
         
-
-        alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_three", comment: "two or three pics"), style: .default, handler: { (_) in
+        if let _ = memeView {  //Select image for meme, no multi picture possible
+            showImagePicker()
+        } else {
+            let alert = UIAlertController(title: NSLocalizedString("how_many_pics_alert_header", comment: "How many pics do you want to post?"), message: NSLocalizedString("how_many_pics_alert_message", comment: "How many pics do you want to post?"), preferredStyle: .actionSheet)
             
-            //toDo: remove the selection
-            self.selectedOption = .multiPicture
-            self.openMultiPictureImagePicker()
-        }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .destructive, handler: { (_) in
-            alert.dismiss(animated: true, completion: nil)
-        }))
-        self.present(alert, animated: true, completion: nil)
+            alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_just_one", comment: "just one"), style: .default, handler: { (_) in
+                self.showImagePicker()
+            }))
+            
+            
+            alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_three", comment: "two or three pics"), style: .default, handler: { (_) in
+                
+                //toDo: remove the selection
+                self.selectedOption = .multiPicture
+                self.openMultiPictureImagePicker()
+            }))
+            alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .destructive, handler: { (_) in
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func showImagePicker() {
+        self.imagePicker.sourceType = .photoLibrary
+        self.imagePicker.mediaTypes = ["public.image"]
+//        self.imagePicker.mediaTypes = ["public.movie", "public.image"]
+        //imagePicker.allowsEditing = true
+        
+        self.selectedOption = .picture
+        self.present(self.imagePicker, animated: true, completion: nil)
     }
     
     @objc func removePictureTapped() {
@@ -2011,7 +2119,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     @IBAction func postSelectionSegmentChanged(_ sender: Any) {
-        
+        prepareForSelectionChange()
+    }
+    
+    func prepareForSelectionChange() {
         self.postSelectionSegmentedControl.isEnabled = false
         
         switch self.selectedOption {
@@ -2049,49 +2160,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     self.setTheChange()
                 }
             }
-        case .event:
-            // Let the EventView disappear
-            
-            markPostSegmentControl.setTitle("Meinung", forSegmentAt: 0)
-            markPostSegmentControl.setTitle("Sensation", forSegmentAt: 1)
-            markPostSegmentControl.setTitle("Bearbeitet", forSegmentAt: 2)
-            
-            UIView.animate(withDuration: 0.1, animations: {
-                //Date
-                self.dateLabel.alpha = 0
-                self.timeLabel.alpha = 0
-                self.setTimeButton.alpha = 0
-                // Location
-                self.locationLabel.alpha = 0
-                self.locationTextField.alpha = 0
-                // TitlePicture
-                self.folderButton.alpha = 0
-                self.cameraButton.alpha = 0
-                self.pictureLabel.alpha = 0
-                
-            }) { (_) in
-                
-                self.eventViewHeight!.constant = 0
-                self.locationViewHeight!.constant = 0
-                self.pictureViewHeight!.constant = 0
-                
-                UIView.animate(withDuration: 0.4, animations: {
-                    self.view.layoutIfNeeded()
-                    
-                    self.markPostSwitch.alpha = 1
-                    self.markPostLabel.alpha = 1
-                    self.markPostSegmentControl.alpha = 0
-                }) { (_) in
-                    self.markPostSwitch.isHidden = false
-                    self.markPostLabel.isHidden = false
-                    self.markPostSegmentControl.isHidden = true
-                    
-                    self.pictureLabel.text = "Bild:"
-                    self.characterCountLabel.text = "200"
-                    
-                    self.setTheChange()
-                }
-            }
         default:
             self.setTheChange()
         }
@@ -2110,37 +2178,19 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.selectedOption = .link
             insertUIForLink()
         }
-        if postSelectionSegmentedControl.selectedSegmentIndex == 4 {
-            self.selectedOption = .event
-            self.pictureLabel.text = "Titelbild:"
-            self.characterCountLabel.text = "100"
-            insertUIForEvent()
-        }
     }
     
     
     @objc func markPostSegmentChanged() {
-        switch selectedOption {
-        case .event:
-            if markPostSegmentControl.selectedSegmentIndex == 0 {
-                eventType = .activity
-            }
-            if markPostSegmentControl.selectedSegmentIndex == 1 {
-                eventType = .project
-            }
-            if markPostSegmentControl.selectedSegmentIndex == 2 {
-                eventType = .event
-            }
-        default:
-            if markPostSegmentControl.selectedSegmentIndex == 0 {
-                reportType = .opinion
-            }
-            if markPostSegmentControl.selectedSegmentIndex == 1 {
-                reportType = .sensationalism
-            }
-            if markPostSegmentControl.selectedSegmentIndex == 2 {
-                reportType = .edited
-            }
+        
+        if markPostSegmentControl.selectedSegmentIndex == 0 {
+            reportType = .opinion
+        }
+        if markPostSegmentControl.selectedSegmentIndex == 1 {
+            reportType = .sensationalism
+        }
+        if markPostSegmentControl.selectedSegmentIndex == 2 {
+            reportType = .edited
         }
     }
     
@@ -2257,8 +2307,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     } else {
                         self.alert(message: NSLocalizedString("missing_info_alert_link", comment: "enter link please"))
                     }
-                case .event:
-                    self.postEvent(postRef: postRef, userID: userID)
                 }
             } else {
                 self.alert(message: NSLocalizedString("missing_info_alert_title", comment: "enter title pls"))
@@ -2536,12 +2584,25 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
+        var animated = true
+        if let _ = memeView {
+            animated = false
+        }
+        imagePicker.dismiss(animated: animated, completion: nil)
+        
         if picker.sourceType == .camera {
             self.camPic = true
         }
+        
         if let originalImage = info[.originalImage] as? UIImage {
-            imagePicker.dismiss(animated: true, completion: nil)
+            
             showCropView(image: originalImage)
+            print("#we have an image")
+                        
+        } else if let videoURL = info[.mediaURL] as? NSURL{
+            print("#We got a video")
+//            uploadVideo(videoURL: videoURL)
+            testVideo(videoURL: videoURL)
         }
     }
     
@@ -2549,17 +2610,39 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         let cropViewController = CropViewController(image: image)
         cropViewController.delegate = self
         cropViewController.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(cropViewController, animated: true)
+        if let _ = memeView {
+            cropViewController.aspectRatioLockEnabled = true
+            cropViewController.aspectRatioPreset = .preset16x9
+        } else {
+            cropViewController.aspectRatioLockEnabled = false
+        }
+        self.cropViewController = cropViewController
+        self.present(cropViewController, animated: true, completion: nil)
     }
     
     func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
         
-        navigationController?.popToViewController(self, animated: true)
+        if let cropVC = self.cropViewController {
+            var animated = true
+            if let _ = memeView {
+                animated = false
+            }
+            cropVC.dismiss(animated: animated) {
+                if let memeView = self.memeView {
+                    memeView.imageSelected(image: image)
+                } else {
+                    self.setImageAndShowPreviewImage(image: image)
+                }
+            }
+        }
+    }
+    
+    func setImageAndShowPreviewImage(image: UIImage) {
         
         selectedImageFromPicker = image
         selectedImageHeight = image.size.height
         selectedImageWidth = image.size.width
- 
+        
         self.increasePictureUI()
         self.previewPictures.removeAll()
         self.previewPictures.append(image)
@@ -2600,10 +2683,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     func savePicture(userID: String, postRef: DocumentReference) {
-                
+        
         if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 1) {
             let data = NSData(data: image)
-                
+            
             let imageSize = data.count/1000
             
             
@@ -2639,12 +2722,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         let storageRef = Storage.storage().reference().child("postPictures").child("\(postRef.documentID).png")
         
-        storageRef.putData(data, metadata: nil, completion: { (metadata, error) in    //Bild speichern
+        storageRef.putData(data, metadata: nil, completion: { (metadata, error) in    //Store image
             if let error = error {
                 print(error)
                 return
             }
-            storageRef.downloadURL(completion: { (url, err) in  // Hier wird die URL runtergezogen
+            storageRef.downloadURL(completion: { (url, err) in  // Download url and save it
                 if let err = err {
                     print(err)
                     return
@@ -2658,7 +2741,194 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         })
     }
     
+    //MARK:- UploadVideo
+    
+    func testVideo(videoURL: NSURL) {
+        let semaphore = DispatchSemaphore (value: 0)
+        
+        if let data = NSData(contentsOf: videoURL as URL) {
+            
+            let parameters = [
+                    "key": "video",
+                    "value": data,
+                    "type": "text"
+                ] as [String : Any]
+
+            let boundary = "Boundary-\(UUID().uuidString)"
+            var body = Data()
+
+            let paramName = parameters["key"]
+            body.append(contentsOf: "--\(boundary)\r\n".data(using: .utf8)!)
+            body.append("Content-Disposition:form-data; name=\"\(paramName)\"".data(using: .utf8)!)
+            
+            if let paramValue = parameters["value"] as? String {
+                body.append("\r\n\r\n\(paramValue)\r\n".data(using: .utf8)!)
+            } else {
+                body.append(data as Data)
+            }
+            
+            body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+    
+            let postData = body
+
+            var request = URLRequest(url: URL(string: "https://api.imgur.com/3/image")!,timeoutInterval: Double.infinity)
+            request.addValue("Client-ID \(imgurClientID)", forHTTPHeaderField: "Authorization")
+            request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            
+            request.httpMethod = "POST"
+            request.httpBody = postData
+            
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                guard let data = data else {
+                    print(String(describing: error))
+                    return
+                }
+                print(String(data: data, encoding: .utf8)!)
+                semaphore.signal()
+                
+            }
+            
+            task.resume()
+            semaphore.wait()
+            
+        }
+    }
+    
+//    func testVideo(videoURL: NSURL) {
+//        let semaphore = DispatchSemaphore (value: 0)
+//
+//        if let data = NSData(contentsOf: videoURL as URL) {
+//
+//            let parameters = [
+//                [
+//                    "key": "image",
+//                    "value": data.base64EncodedString(options: .lineLength64Characters),
+//                    "type": "text"
+//                ]] as [[String : Any]]
+//
+//            let boundary = "Boundary-\(UUID().uuidString)"
+//            var body = ""
+//            var error: Error? = nil
+//            for param in parameters {
+//                if param["disabled"] == nil {
+//                    let paramName = param["key"]!
+//                    body += "--\(boundary)\r\n"
+//                    body += "Content-Disposition:form-data; name=\"\(paramName)\""
+//                    let paramType = param["type"] as! String
+//                    if paramType == "text" {
+//                        let paramValue = param["value"] as! String
+//                        body += "\r\n\r\n\(paramValue)\r\n"
+//                    } else {
+//                        let paramSrc = param["src"] as! String
+//                        do {
+//                            let fileData = try NSData(contentsOfFile:paramSrc, options:[]) as Data
+//                            let fileContent = String(data: fileData, encoding: .utf8)!
+//                            body += "; filename=\"\(paramSrc)\"\r\n"
+//                                + "Content-Type: \"content-type header\"\r\n\r\n\(fileContent)\r\n"
+//                        } catch {
+//                            return
+//                        }
+//
+//                    }
+//                }
+//            }
+//            body += "--\(boundary)--\r\n";
+//            let postData = body.data(using: .utf8)
+//
+//            var request = URLRequest(url: URL(string: "https://api.imgur.com/3/image")!,timeoutInterval: Double.infinity)
+//            request.addValue("Client-ID \(imgurClientID)", forHTTPHeaderField: "Authorization")
+//            request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+//
+//            request.httpMethod = "POST"
+//            request.httpBody = postData
+//
+//            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+//                guard let data = data else {
+//                    print(String(describing: error))
+//                    return
+//                }
+//                print(String(data: data, encoding: .utf8)!)
+//                semaphore.signal()
+//
+//            }
+//
+//            task.resume()
+//            semaphore.wait()
+//
+//        }
+//    }
+    
+    func uploadVideo(videoURL: NSURL) {
+        if let url = URL(string: "https://api.imgur.com/3/upload") {
+            print("Upload Video")
+            
+            var request = URLRequest(url: url)
+            request.addValue("Client-ID \(imgurClientID)", forHTTPHeaderField: "Authorization")
+            request.httpMethod = "POST"
+            
+            if let data = NSData(contentsOf: videoURL as URL) {
+                let base64String = data.base64EncodedString(options: .lineLength64Characters)
+                
+//                // Build our multiform and add our base64 image
+//                let body = NSMutableData()
+////                body.append("Content-Disposition: form-data; name=\"image\"\r\n\r\n".data(using: .utf8)!)
+//                body.append(base64String.data(using: .utf8)!)
+//                request.httpBody = body as Data
+//                let body = "video"=\"\(base64Data)\", \"title\"=\"whatever bruh\", \"type\"=\"base64\", \"disable_audio=1"
+
+                let body = "image=\"\(base64String)\""
+                request.httpBody = body.data(using: .utf8)
+                print(body, "##boooody")
+                URLSession.shared.dataTask(with: request) { (data, response, err) in
+                    if let error = err {
+                        print("We have an error getting the video data: ", error.localizedDescription)
+                    } else {
+                        if let data = data {
+                            
+                            do {
+                                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
+                                    
+                                    guard let data = json["data"] as? [String: Any]
+                                    else {
+                                        print("Returne ohne daten: \(json)")
+                                        return
+                                    }
+                                    
+                                    print("Got data: ", json)
+//                                    if let jsonData = data.first {
+//                                        guard let type = jsonData["type"] as? String,
+//                                              let name = jsonData["name"] as? String,
+//                                              let link = jsonData["link"] as? String
+//                                        else {
+//                                            print("Returne ohne jsondaten: \(jsonData)")
+//                                            return
+//                                        }
+//
+//                                        print("type: \(type), name: \(name), link: \(link)")
+//                                    }
+                                    
+                                    
+                                } else {
+                                    print("Couldnt get the jsonData from Imgur API Call")
+                                }
+                            } catch {
+                                print("Could not get the jsonData from Imgur API Call")
+                            }
+                        }
+                    }
+                }.resume()
+            }
+        }
+    }
+    
+    let imgurClientID = "22e958a40c80519"
+    let imgurClientSecret = "02027ffe7b67b8f30cb5f3d9dd9820dc7391d5ac"
+    
     // MARK: - Upload the post
+    
+    func getDate() -> Timestamp {
+        return Timestamp(date: Date())
+    }
     
     func postThought(postRef: DocumentReference, userID: String) {
         
@@ -3227,9 +3497,48 @@ extension NewPostViewController: LinkFactWithPostDelegate {
         self.dismiss(animated: true, completion: nil)
     }
 }
+//MARK: - MemeViewDelegate
+extension NewPostViewController: MemeViewDelegate {
+    
+    func showAlert(alert: MemeViewAlert) {
+        
+        switch alert {
+        case .error:
+            self.alert(message: "Something went wrong, we're sorry! I don't know what it could be, to ask that you should try again is a bit annoying I know. Maybe flame the developers a bit, so they know where they should put more work in!", title: "Error")
+        case .needMoreInfo:
+            self.alert(message: "Please enter some text and add a picture.", title: "Not enough input")
+        case .successfullyStored:
+            self.alert(message: "Your meme has been saved!", title: "All done!")
+        }
+    }
+    
+    func selectImageForMemeTouched() {
+        self.camRollTapped()
+    }
+    
+    func memeViewDismissed(meme: UIImage?) {
+        if let meme = meme {
+            setImageAndShowPreviewImage(image: meme)
+            
+            let alert = UIAlertController(title: "Save your meme?", message: "Do you want to save your meme to your phone?", preferredStyle: .actionSheet)
+            let yesAlert = UIAlertAction(title: "Yes", style: .default) { (_) in
+                UIImageWriteToSavedPhotosAlbum(meme, nil, nil, nil)
+            }
+            let cancelAlert = UIAlertAction(title: "No thanks", style: .cancel) { (_) in
+                alert.dismiss(animated: true, completion: nil)
+            }
+            alert.addAction(yesAlert)
+            alert.addAction(cancelAlert)
+            self.present(alert, animated: true, completion: nil)
+        }
+        
+        self.memeView = nil
+    }
+    
+    
+}
 
-
-//MARK: -PreviewCollectionView
+//MARK: - PreviewCollectionView
 extension NewPostViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     

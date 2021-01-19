@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="wS3-IK-S5H" customClass="MemeInputView" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.40000000000000002" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="memeModeBackgroundTron" translatesAutoresizingMaskIntoConstraints="NO" id="5SP-gV-CSw">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                </imageView>
+                <button opaque="NO" alpha="0.40000000000000002" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qz5-Qa-6lZ" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                    <rect key="frame" x="364" y="40" width="34" height="34"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="34" id="82n-3A-GDH"/>
+                        <constraint firstAttribute="height" constant="34" id="KoP-xg-QsD"/>
+                    </constraints>
+                    <color key="tintColor" red="0.054901960780000002" green="0.97254901959999995" blue="0.97254901959999995" alpha="1" colorSpace="calibratedRGB"/>
+                    <inset key="imageEdgeInsets" minX="3" minY="3" maxX="3" maxY="3"/>
+                    <state key="normal" image="DismissTemplate"/>
+                    <connections>
+                        <action selector="dismissTapped:" destination="wS3-IK-S5H" eventType="touchUpInside" id="fAJ-AD-G2f"/>
+                    </connections>
+                </button>
+                <label opaque="NO" userInteractionEnabled="NO" alpha="0.40000000000000002" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Meme Mode" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nq0-lz-ACd">
+                    <rect key="frame" x="10" y="50" width="334" height="50"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="Eva-BJ-hLV"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="25"/>
+                    <color key="textColor" red="0.054901960780000002" green="0.97254901959999995" blue="0.97254901959999995" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" alpha="0.40000000000000002" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Text:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O25-eU-3sm">
+                    <rect key="frame" x="10" y="150" width="39.5" height="21"/>
+                    <color key="tintColor" red="0.054901960780000002" green="0.97254901959999995" blue="0.97254901959999995" alpha="1" colorSpace="calibratedRGB"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                    <color key="textColor" red="0.054901960780000002" green="0.97254901959999995" blue="0.97254901959999995" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Br9-EB-GUc">
+                    <rect key="frame" x="10" y="176" width="394" height="85"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="85" id="g8p-vk-jXE"/>
+                    </constraints>
+                    <color key="textColor" red="0.054901960780000002" green="0.97254901959999995" blue="0.97254901959999995" alpha="1" colorSpace="calibratedRGB"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                </textView>
+                <view alpha="0.59999999999999998" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3jU-WI-tyf">
+                    <rect key="frame" x="15" y="327" width="384" height="355"/>
+                    <subviews>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="whiteBackgroundMemeImage" translatesAutoresizingMaskIntoConstraints="NO" id="MsO-zT-9MO">
+                            <rect key="frame" x="0.0" y="0.0" width="384" height="355"/>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WcJ-WL-Rpr">
+                            <rect key="frame" x="10" y="25" width="364" height="105.5"/>
+                            <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                            <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="IQg-0H-xsj">
+                            <rect key="frame" x="10" y="140.5" width="364" height="204.5"/>
+                            <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                            <constraints>
+                                <constraint firstAttribute="width" secondItem="IQg-0H-xsj" secondAttribute="height" multiplier="16:9" id="ud4-pa-SAd"/>
+                            </constraints>
+                        </imageView>
+                        <button opaque="NO" alpha="0.40000000000000002" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yBG-gC-Tpc">
+                            <rect key="frame" x="10" y="140.5" width="364" height="204.5"/>
+                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                            <color key="tintColor" red="0.054901960780000002" green="0.97254901959999995" blue="0.97254901959999995" alpha="1" colorSpace="calibratedRGB"/>
+                            <state key="normal" title="Choose Your Image">
+                                <color key="titleColor" red="0.054901960780000002" green="0.97254901959999995" blue="0.97254901959999995" alpha="1" colorSpace="calibratedRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="selectImageButton:" destination="wS3-IK-S5H" eventType="touchUpInside" id="Y7m-Rp-xko"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jLT-Cd-yJR">
+                            <rect key="frame" x="10" y="25" width="364" height="105.5"/>
+                            <connections>
+                                <action selector="memeTextTapped:" destination="wS3-IK-S5H" eventType="touchUpInside" id="kku-VL-SXu"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="MsO-zT-9MO" secondAttribute="trailing" id="1sq-DU-Pop"/>
+                        <constraint firstItem="yBG-gC-Tpc" firstAttribute="trailing" secondItem="IQg-0H-xsj" secondAttribute="trailing" id="43t-Ts-vTD"/>
+                        <constraint firstItem="WcJ-WL-Rpr" firstAttribute="leading" secondItem="3jU-WI-tyf" secondAttribute="leading" constant="10" id="4Du-m6-et1"/>
+                        <constraint firstAttribute="bottom" secondItem="IQg-0H-xsj" secondAttribute="bottom" constant="10" id="7l7-6Y-fiI"/>
+                        <constraint firstItem="MsO-zT-9MO" firstAttribute="top" secondItem="3jU-WI-tyf" secondAttribute="top" id="AHK-N0-8of"/>
+                        <constraint firstItem="yBG-gC-Tpc" firstAttribute="bottom" secondItem="IQg-0H-xsj" secondAttribute="bottom" id="B8Q-5N-DHu"/>
+                        <constraint firstAttribute="width" secondItem="3jU-WI-tyf" secondAttribute="height" multiplier="1200:1110" id="Ew4-zc-yhd"/>
+                        <constraint firstAttribute="trailing" secondItem="IQg-0H-xsj" secondAttribute="trailing" constant="10" id="FHx-jN-k99"/>
+                        <constraint firstItem="jLT-Cd-yJR" firstAttribute="top" secondItem="WcJ-WL-Rpr" secondAttribute="top" id="H6k-dI-CLQ"/>
+                        <constraint firstItem="IQg-0H-xsj" firstAttribute="top" secondItem="WcJ-WL-Rpr" secondAttribute="bottom" constant="10" id="HUj-KC-f78"/>
+                        <constraint firstItem="WcJ-WL-Rpr" firstAttribute="top" secondItem="3jU-WI-tyf" secondAttribute="top" constant="25" id="IU8-cS-KBO"/>
+                        <constraint firstItem="yBG-gC-Tpc" firstAttribute="top" secondItem="IQg-0H-xsj" secondAttribute="top" id="Quy-SF-NHX"/>
+                        <constraint firstItem="IQg-0H-xsj" firstAttribute="leading" secondItem="3jU-WI-tyf" secondAttribute="leading" constant="10" id="hqH-aC-fpz"/>
+                        <constraint firstAttribute="bottom" secondItem="MsO-zT-9MO" secondAttribute="bottom" id="hwL-W5-oYY"/>
+                        <constraint firstItem="jLT-Cd-yJR" firstAttribute="leading" secondItem="WcJ-WL-Rpr" secondAttribute="leading" id="nkL-fS-q0z"/>
+                        <constraint firstItem="jLT-Cd-yJR" firstAttribute="bottom" secondItem="WcJ-WL-Rpr" secondAttribute="bottom" id="uZM-qf-fxh"/>
+                        <constraint firstItem="yBG-gC-Tpc" firstAttribute="leading" secondItem="IQg-0H-xsj" secondAttribute="leading" id="vNX-UR-3CC"/>
+                        <constraint firstAttribute="trailing" secondItem="WcJ-WL-Rpr" secondAttribute="trailing" constant="10" id="wAA-Bz-Aep"/>
+                        <constraint firstItem="jLT-Cd-yJR" firstAttribute="trailing" secondItem="WcJ-WL-Rpr" secondAttribute="trailing" id="wcU-8e-N6O"/>
+                        <constraint firstItem="MsO-zT-9MO" firstAttribute="leading" secondItem="3jU-WI-tyf" secondAttribute="leading" id="yto-uR-V1D"/>
+                    </constraints>
+                </view>
+                <label opaque="NO" userInteractionEnabled="NO" alpha="0.40000000000000002" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Your Meme:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qok-Xs-a5V">
+                    <rect key="frame" x="15" y="301" width="99.5" height="21"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                    <color key="textColor" red="0.054901960780000002" green="0.97254901959999995" blue="0.97254901959999995" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" alpha="0.40000000000000002" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vb9-XG-Hie" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                    <rect key="frame" x="361" y="707" width="38" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="G7j-pf-Rof"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
+                    <color key="tintColor" red="0.054901960780000002" green="0.97254901959999995" blue="0.97254901959999995" alpha="1" colorSpace="calibratedRGB"/>
+                    <state key="normal" title="Done"/>
+                    <connections>
+                        <action selector="doneButtonTapped:" destination="wS3-IK-S5H" eventType="touchUpInside" id="rdX-83-z0P"/>
+                    </connections>
+                </button>
+                <button opaque="NO" alpha="0.40000000000000002" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i26-CV-beb" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                    <rect key="frame" x="321" y="711" width="30" height="22"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="30" id="8Z0-ie-blg"/>
+                    </constraints>
+                    <color key="tintColor" red="0.054901960780000002" green="0.97254901959999995" blue="0.97254901959999995" alpha="1" colorSpace="calibratedRGB"/>
+                    <state key="normal" image="square.and.arrow.down" catalog="system"/>
+                    <connections>
+                        <action selector="downloadMemeTapped:" destination="wS3-IK-S5H" eventType="touchUpInside" id="jhQ-p1-tKc"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="Vb9-XG-Hie" firstAttribute="leading" secondItem="i26-CV-beb" secondAttribute="trailing" constant="10" id="07N-Df-tad"/>
+                <constraint firstItem="O25-eU-3sm" firstAttribute="leading" secondItem="wS3-IK-S5H" secondAttribute="leading" constant="10" id="3LL-0Q-qwc"/>
+                <constraint firstItem="i26-CV-beb" firstAttribute="centerY" secondItem="Vb9-XG-Hie" secondAttribute="centerY" id="DC9-uo-vgD"/>
+                <constraint firstAttribute="bottom" secondItem="5SP-gV-CSw" secondAttribute="bottom" id="LRO-YJ-rMM"/>
+                <constraint firstAttribute="trailing" secondItem="3jU-WI-tyf" secondAttribute="trailing" constant="15" id="Nes-Cy-sWD"/>
+                <constraint firstItem="Qok-Xs-a5V" firstAttribute="leading" secondItem="3jU-WI-tyf" secondAttribute="leading" id="OTD-33-eBG"/>
+                <constraint firstItem="Qz5-Qa-6lZ" firstAttribute="top" secondItem="wS3-IK-S5H" secondAttribute="top" constant="40" id="RI8-dm-C1K"/>
+                <constraint firstAttribute="trailing" secondItem="Br9-EB-GUc" secondAttribute="trailing" constant="10" id="TYU-1f-Vuq"/>
+                <constraint firstItem="Nq0-lz-ACd" firstAttribute="top" secondItem="wS3-IK-S5H" secondAttribute="top" constant="50" id="Un5-GI-TMd"/>
+                <constraint firstItem="O25-eU-3sm" firstAttribute="top" secondItem="Nq0-lz-ACd" secondAttribute="bottom" constant="50" id="XOs-M5-mzl"/>
+                <constraint firstItem="Vb9-XG-Hie" firstAttribute="trailing" secondItem="MsO-zT-9MO" secondAttribute="trailing" id="blf-Qr-N8r"/>
+                <constraint firstItem="Qok-Xs-a5V" firstAttribute="top" secondItem="Br9-EB-GUc" secondAttribute="bottom" constant="40" id="ca0-NX-QXv"/>
+                <constraint firstItem="Br9-EB-GUc" firstAttribute="top" secondItem="O25-eU-3sm" secondAttribute="bottom" constant="5" id="dF3-JZ-57v"/>
+                <constraint firstItem="5SP-gV-CSw" firstAttribute="top" secondItem="wS3-IK-S5H" secondAttribute="top" id="gn8-C0-FL4"/>
+                <constraint firstItem="Vb9-XG-Hie" firstAttribute="top" secondItem="3jU-WI-tyf" secondAttribute="bottom" constant="25" id="hv9-vY-nbO"/>
+                <constraint firstItem="5SP-gV-CSw" firstAttribute="leading" secondItem="wS3-IK-S5H" secondAttribute="leading" id="kcH-6c-yzK"/>
+                <constraint firstItem="Nq0-lz-ACd" firstAttribute="leading" secondItem="wS3-IK-S5H" secondAttribute="leading" constant="10" id="knB-w8-ZaR"/>
+                <constraint firstItem="3jU-WI-tyf" firstAttribute="leading" secondItem="wS3-IK-S5H" secondAttribute="leading" constant="15" id="lYx-di-OG0"/>
+                <constraint firstItem="3jU-WI-tyf" firstAttribute="top" secondItem="Qok-Xs-a5V" secondAttribute="bottom" constant="5" id="li1-bh-xzc"/>
+                <constraint firstItem="Qz5-Qa-6lZ" firstAttribute="leading" secondItem="Nq0-lz-ACd" secondAttribute="trailing" constant="20" id="nzT-aA-Na1"/>
+                <constraint firstAttribute="trailing" secondItem="Qz5-Qa-6lZ" secondAttribute="trailing" constant="16" id="qJL-BC-S2b"/>
+                <constraint firstAttribute="trailing" secondItem="5SP-gV-CSw" secondAttribute="trailing" id="s48-NA-pHH"/>
+                <constraint firstItem="Br9-EB-GUc" firstAttribute="leading" secondItem="O25-eU-3sm" secondAttribute="leading" id="tax-ps-08I"/>
+            </constraints>
+            <connections>
+                <outlet property="dismissButton" destination="Qz5-Qa-6lZ" id="9sP-cc-wts"/>
+                <outlet property="doneButton" destination="Vb9-XG-Hie" id="PlB-w7-tLO"/>
+                <outlet property="downloadMemeButton" destination="i26-CV-beb" id="Tff-cP-itf"/>
+                <outlet property="headerTitle" destination="Nq0-lz-ACd" id="haC-kn-GxJ"/>
+                <outlet property="memeImageView" destination="IQg-0H-xsj" id="zsV-2j-7z5"/>
+                <outlet property="memeInputTextView" destination="Br9-EB-GUc" id="ZKm-bU-g7O"/>
+                <outlet property="memeLabel" destination="Qok-Xs-a5V" id="4EK-du-aAV"/>
+                <outlet property="memeModeBackgroundImage" destination="5SP-gV-CSw" id="Vmc-Fc-5Wf"/>
+                <outlet property="memeTextViewTopToMemeTopConstraint" destination="IU8-cS-KBO" id="CIf-VE-5qL"/>
+                <outlet property="memeTitleLabel" destination="WcJ-WL-Rpr" id="TqL-LR-Ooj"/>
+                <outlet property="memeView" destination="3jU-WI-tyf" id="Uk6-TF-wL0"/>
+                <outlet property="selectMemeImageButton" destination="yBG-gC-Tpc" id="NfS-MC-FGX"/>
+                <outlet property="textLabel" destination="O25-eU-3sm" id="QYP-Ig-BAm"/>
+            </connections>
+            <point key="canvasLocation" x="-172.46376811594203" y="127.23214285714285"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="DismissTemplate" width="136" height="135"/>
+        <image name="memeModeBackgroundTron" width="2511" height="4317"/>
+        <image name="square.and.arrow.down" catalog="system" width="121" height="128"/>
+        <image name="whiteBackgroundMemeImage" width="1200" height="1110"/>
+        <systemColor name="secondarySystemBackgroundColor">
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
