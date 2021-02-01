@@ -152,6 +152,7 @@ class MemeInputView: UIView {
         UIView.animate(withDuration: 0.5) {
             self.alpha = 0
         } completion: { (_) in
+            self.delegate?.memeViewDismissed(meme: nil)
             self.removeFromSuperview()
         }
     }

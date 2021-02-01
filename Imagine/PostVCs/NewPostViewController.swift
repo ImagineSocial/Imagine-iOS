@@ -2610,6 +2610,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         let cropViewController = CropViewController(image: image)
         cropViewController.delegate = self
         cropViewController.hidesBottomBarWhenPushed = true
+        
         if let _ = memeView {
             cropViewController.aspectRatioLockEnabled = true
             cropViewController.aspectRatioPreset = .preset16x9
@@ -3534,8 +3535,6 @@ extension NewPostViewController: MemeViewDelegate {
         
         self.memeView = nil
     }
-    
-    
 }
 
 //MARK: - PreviewCollectionView
