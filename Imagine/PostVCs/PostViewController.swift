@@ -1220,11 +1220,12 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 
                 floatingCommentView!.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
                 floatingCommentView!.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
-                floatingCommentView!.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor).isActive = true
+                let bottomConstraint = floatingCommentView!.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor)
+                    bottomConstraint.isActive = true
+                floatingCommentView!.bottomConstraint = bottomConstraint
                 floatingCommentView!.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
                 
                 self.contentView.bringSubviewToFront(floatingCommentView!)
-                self.contentView.layoutIfNeeded()
             }
         }
     }
@@ -1246,15 +1247,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             if let view = floatingCommentView {
                 let offset = scrollView.contentOffset.y
                 let screenHeight = self.view.frame.height
-                let commentViewHeight = view.frame.height
-                let height = screenHeight-commentViewHeight
                 
-                if !view.answerTextField.isFirstResponder { //If the answerview is open
-                    view.frame = CGRect(x: 0, y: offset+height, width: view.frame.width, height: commentViewHeight)
-                } else {
-                    let keyboardSize = view.keyboardheight
-                    view.frame = CGRect(x: 0, y: offset+height-keyboardSize, width: view.frame.width, height: commentViewHeight)
-                }
+                print("Scroll View Did Scroll: \(offset)")
+                view.adjustPositionForScroll(contentOffset: offset, screenHeight: screenHeight)
             }
         }
     }
@@ -1301,8 +1296,7 @@ extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
     }
     
     func commentTypingBegins() {
-        //        let bottomOffset = CGPoint(x: 0, y: scrollView.contentSize.height - scrollView.bounds.size.height)
-        //        scrollView.setContentOffset(bottomOffset, animated: true)
+        
     }
     
     func commentGotReported(comment: Comment) {

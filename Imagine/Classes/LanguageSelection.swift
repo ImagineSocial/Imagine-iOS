@@ -19,20 +19,20 @@ class LanguageSelection {
     
     func getLanguage() -> Language {
         if let language = defaults.string(forKey: "languageSelection"){
-            print("**Das ist die Value for key languageSelectui: \(language)")
+
             if language == "de" {
                 return .german
             } else if language == "en" {
                 return .english
             }
         } else if pre != "de" {
-            print("**return english weil pre nicht deutsch ist")
+            //return english because pre isnt de
             return .english
         } else {
-            print("**return deutsch weil pre de ist")
+            //return de bacause it is pre
             return .german
         }
-        print("**return default englisch")
+        // Return english as default
         return .english
     }
     

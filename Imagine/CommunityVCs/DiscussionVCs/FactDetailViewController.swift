@@ -12,6 +12,11 @@ import FirebaseFirestore
 import FirebaseAuth
 import EasyTipView
 
+enum vote {
+    case upvote
+    case downvote
+}
+
 class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     
 
@@ -27,6 +32,7 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     @IBOutlet weak var headerTopicLabel: UILabel!
     @IBOutlet weak var headerProContraLabel: UILabel!
     @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var contentView: UIView!
     
     var floatingCommentView: CommentAnswerView?
     
@@ -45,6 +51,8 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
         scrollViewTap.cancelsTouchesInView = false  // Otherwise the tap on the TableViews are not recognized
         scrollView.addGestureRecognizer(scrollViewTap)
         
+        scrollView.delegate = self
+        
         commentTableView.initializeCommentTableView(section: .argument, notificationRecipients: nil)
         commentTableView.commentDelegate = self
         if let argument = argument {
@@ -55,9 +63,6 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        if let view = floatingCommentView {
-            view.removeFromSuperview()
-        }
         
         if let tipView = tipView {
             tipView.dismiss()
@@ -71,11 +76,24 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     func createFloatingCommentView() {
-        let height = UIScreen.main.bounds.height
-        floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: height-60, width: self.view.frame.width, height: 60))
-        floatingCommentView!.delegate = self
-        if let window = UIApplication.shared.keyWindow {
-            window.addSubview(floatingCommentView!)
+        let viewHeight = self.view.frame.height
+        
+        if floatingCommentView == nil {
+            let commentViewHeight: CGFloat = 60
+            floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: viewHeight-commentViewHeight, width: self.view.frame.width, height: commentViewHeight))
+            
+            
+            floatingCommentView!.delegate = self
+            self.contentView.addSubview(floatingCommentView!)
+            
+            floatingCommentView!.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+            floatingCommentView!.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
+            let bottomConstraint = floatingCommentView!.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor)
+                bottomConstraint.isActive = true
+            floatingCommentView!.bottomConstraint = bottomConstraint
+            floatingCommentView!.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
+            
+            self.contentView.bringSubviewToFront(floatingCommentView!)
         }
     }
     
@@ -133,10 +151,7 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
         print("Connection? :", isReachable)
     }
     
-    enum vote {
-        case upvote
-        case downvote
-    }
+    
     
     func voted(kindOfVote: vote) {
         if isConnected() {
@@ -222,6 +237,19 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let tipView = tipView {
             tipView.dismiss()
+        }
+    }
+}
+
+extension FactDetailViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == self.scrollView {
+            if let view = floatingCommentView {
+                let offset = scrollView.contentOffset.y
+                let screenHeight = self.view.frame.height
+                
+                view.adjustPositionForScroll(contentOffset: offset, screenHeight: screenHeight)
+            }
         }
     }
 }

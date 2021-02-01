@@ -26,7 +26,7 @@ class SourceTableViewController: UITableViewController {
         tableView.separatorStyle = .none
         
         tableView.register(AddFactCell.self, forCellReuseIdentifier: reuseIdentifier)
-        
+        print("SourceTableView loaded")
         getSources()
     }
     

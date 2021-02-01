@@ -41,20 +41,14 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
         
         createFloatingCommentView()
     }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        if let view = floatingCommentView {
-            view.removeFromSuperview()
-        }
-    }
+
     
     func setUpView() {
         if let source = source {
-            
             let length = source.title.count+1
             
-            let attributedString = NSMutableAttributedString(string: "Gehe zur Quelle: \(source.title)")
-            attributedString.addAttribute(.link, value: source.source, range: NSRange(location: 16, length: length))
+            let attributedString = NSMutableAttributedString(string: "Go to source: \(source.title)")
+            attributedString.addAttribute(.link, value: source.source, range: NSRange(location: 13, length: length))
             
             sourceTextView.attributedText = attributedString
             
@@ -80,6 +74,7 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
         UIApplication.shared.open(URL)
         return false
     }
+    
     @IBAction func showSourceButtonTapped(_ sender: Any) {
         if let source = source {
             performSegue(withIdentifier: "goToLink", sender: source.source)
@@ -107,12 +102,25 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
     
     
     func createFloatingCommentView() {
-        let height = UIScreen.main.bounds.height
-        floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: height-60, width: self.view.frame.width, height: 60))
-        floatingCommentView!.delegate = self
+        let viewHeight = self.view.frame.height
         
-        if let window = UIApplication.shared.keyWindow {
-            window.addSubview(floatingCommentView!)
+        if floatingCommentView == nil {
+            let commentViewHeight: CGFloat = 60
+            floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: viewHeight-commentViewHeight, width: self.view.frame.width, height: commentViewHeight))
+            
+            
+            floatingCommentView!.delegate = self
+            self.view.addSubview(floatingCommentView!)
+            
+            floatingCommentView!.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+            floatingCommentView!.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+            let bottomConstraint = floatingCommentView!.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+                bottomConstraint.isActive = true
+            floatingCommentView!.bottomConstraint = bottomConstraint
+            floatingCommentView!.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
+            
+            self.view.bringSubviewToFront(floatingCommentView!)
+            self.view.layoutIfNeeded()
         }
     }
 

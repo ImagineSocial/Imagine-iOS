@@ -25,6 +25,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     @IBOutlet weak var infoButton: UIBarButtonItem!
     @IBOutlet weak var commentTableView: CommentTableView!
     @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var contentView: UIView!
     
     var campaign = Campaign()
     let db = Firestore.firestore()
@@ -42,6 +43,8 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         scrollViewTap.cancelsTouchesInView = false  // Otherwise the tap on the TableViews are not recognized
         scrollView.addGestureRecognizer(scrollViewTap)
         
+        scrollView.delegate = self
+        
         commentTableView.initializeCommentTableView(section: .proposal, notificationRecipients: nil)
         commentTableView.commentDelegate = self
         commentTableView.proposal = campaign
@@ -50,10 +53,6 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        if let view = floatingCommentView {
-            view.removeFromSuperview()
-        }
-        
         if let tipView = tipView {
             tipView.dismiss()
         }
@@ -72,13 +71,27 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     func createFloatingCommentView() {
-        let height = UIScreen.main.bounds.height
-        floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: height-60, width: self.view.frame.width, height: 60))
-        floatingCommentView!.delegate = self
-        if let window = UIApplication.shared.keyWindow {
-            window.addSubview(floatingCommentView!)
+        let viewHeight = self.view.frame.height
+        
+        if floatingCommentView == nil {
+            let commentViewHeight: CGFloat = 60
+            floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: viewHeight-commentViewHeight, width: self.view.frame.width, height: commentViewHeight))
+            
+            
+            floatingCommentView!.delegate = self
+            self.contentView.addSubview(floatingCommentView!)
+            
+            floatingCommentView!.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+            floatingCommentView!.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
+            let bottomConstraint = floatingCommentView!.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor)
+                bottomConstraint.isActive = true
+            floatingCommentView!.bottomConstraint = bottomConstraint
+            floatingCommentView!.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
+            
+            self.contentView.bringSubviewToFront(floatingCommentView!)
         }
     }
+    
     
     func showCampaign() {
         shortBodyLabel.text = campaign.cellText
@@ -86,6 +99,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         createDateLabel.text = campaign.createDate
         supporterLabel.text = "\(campaign.supporter) Supporter"
         oppositionLabel.text = "\(campaign.opposition) Vetos"
+        navigationItem.title = campaign.title
     }
     
     @IBAction func supportPressed(_ sender: Any) {
@@ -115,7 +129,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
                 let newSupporter = campaign.supporter+1 // Could be the old number if anyone votes in between
                 campaign.supporter = newSupporter
                 
-                postRef.updateData(["campaignSupporter": newSupporter]) { err in
+                postRef.updateData(["supporter": newSupporter]) { err in
                     if let err = err {
                         print("Error updating document: \(err)")
                     } else {
@@ -126,7 +140,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
                 let newVetos = campaign.opposition+1 // Could be the old number if anyone votes in between
                 campaign.opposition = newVetos
                 
-                postRef.updateData(["campaignOpposition": newVetos]) { err in
+                postRef.updateData(["opposition": newVetos]) { err in
                     if let err = err {
                         print("Error updating document: \(err)")
                     } else {
@@ -207,10 +221,10 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
     func allowedToVote(supporter: Bool) {
         let alertController = UIAlertController(title: NSLocalizedString("sure_to_vote_title", comment: ""), message: NSLocalizedString("sure_to_vote_message", comment: ""), preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .destructive, handler: { (_) in
+        let cancelAction = UIAlertAction(title: NSLocalizedString("not_sure", comment: ""), style: .destructive, handler: { (_) in
             alertController.dismiss(animated: true, completion: nil)
         })
-        let stayAction = UIAlertAction(title: NSLocalizedString("not_sure", comment: ""), style: .cancel) { (_) in
+        let stayAction = UIAlertAction(title: NSLocalizedString("i_am_sure", comment: ""), style: .cancel) { (_) in
             self.voted(supporter: supporter)
         }
         alertController.addAction(stayAction)
@@ -246,13 +260,22 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
 }
 
-extension CampaignViewController: CommentViewDelegate, CommentTableViewDelegate {
+extension CampaignViewController: UIScrollViewDelegate {
     
-    func heightChanged() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.view.layoutSubviews()
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == self.scrollView {
+            if let view = floatingCommentView {
+                let offset = scrollView.contentOffset.y
+                let screenHeight = self.view.frame.height
+                print("Scroll View Did Scroll: \(offset)")
+
+                view.adjustPositionForScroll(contentOffset: offset, screenHeight: screenHeight)
+            }
         }
     }
+}
+
+extension CampaignViewController: CommentViewDelegate, CommentTableViewDelegate {
     
     func recipientChanged(isActive: Bool, userUID: String) {
         print("COming soon")

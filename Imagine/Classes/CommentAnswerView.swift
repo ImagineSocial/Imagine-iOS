@@ -14,7 +14,7 @@ protocol CommentViewDelegate {
     func commentTypingBegins()
 }
 
-class CommentAnswerView: UIView, UITextViewDelegate {
+class CommentAnswerView: UIView {
     
     var delegate: CommentViewDelegate?
     
@@ -26,6 +26,9 @@ class CommentAnswerView: UIView, UITextViewDelegate {
     let messageTextViewMaxHeight: CGFloat = 80
     
     let answerPlaceholderText = NSLocalizedString("comment_answer_placeholder", comment: "say something about it")
+    
+    /// Needs to be set when the commentAnswerView is initiated in order to automate the layout changes of the answerView 
+    var bottomConstraint: NSLayoutConstraint?   /* When the layout changes (e.g. new line when there are less than 4 lines of text in answerTextField) the view moves to the bottom because that is the initial constraint. THe constraint needs to be set and the view needs to be autoResizingMaskIntoCOnstraints because it changes size automatically with text input*/
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -39,9 +42,7 @@ class CommentAnswerView: UIView, UITextViewDelegate {
         answerTextField.delegate = self
         answerTextField.text = answerPlaceholderText
                 
-        addSubview(answerTextField)
-        addSubview(sendButton)
-        addSubview(anonymousButton)
+        setAnswerViewUI()
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
 
@@ -54,41 +55,29 @@ class CommentAnswerView: UIView, UITextViewDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func textViewDidChange(_ textView: UITextView) {
-        if textView.contentSize.height >= self.messageTextViewMaxHeight {
-            textView.isScrollEnabled = true
-        } else {
-//            textView.frame.size.height = textView.contentSize.height
-            textView.isScrollEnabled = false
-         }
-    }
-    
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        delegate?.commentTypingBegins()
+    func setAnswerViewUI() {
+        addSubview(answerTextField)
+        addSubview(sendButton)
+        addSubview(anonymousButton)
         
-        if textView.text == answerPlaceholderText {
-            answerTextField.text = ""
-        }
+        sendButton.centerYAnchor.constraint(equalTo: answerTextField.centerYAnchor).isActive = true
+        sendButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+        sendButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        sendButton.widthAnchor.constraint(equalToConstant: 35).isActive = true
         
-        if #available(iOS 13.0, *) {
-            textView.textColor = .label
-        } else {
-            textView.textColor = .black
-        }
+        anonymousButton.centerYAnchor.constraint(equalTo: answerTextField.centerYAnchor).isActive = true
+        anonymousButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        anonymousButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        anonymousButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
+        
+        answerTextField.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20).isActive = true
+        answerTextField.heightAnchor.constraint(lessThanOrEqualToConstant: 80).isActive = true
+        answerTextField.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
+        answerTextField.trailingAnchor.constraint(equalTo: sendButton.leadingAnchor, constant: -10).isActive = true
+        answerTextField.leadingAnchor.constraint(equalTo: anonymousButton.trailingAnchor, constant: 10).isActive = true
     }
     
-    func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text == "" {
-            textView.text = answerPlaceholderText
-            
-            if #available(iOS 13.0, *) {
-                textView.textColor = .secondaryLabel
-            } else {
-                textView.textColor = .lightGray
-            }
-        }
-    }
-    
+   
     @objc func anonymousTapped() {
         if isAnonymous {
             self.isAnonymous = false
@@ -111,33 +100,29 @@ class CommentAnswerView: UIView, UITextViewDelegate {
         sendButton.isEnabled = true
         answerTextField.text = ""
         answerTextField.frame.size.height = answerTextField.contentSize.height
+        
         self.layoutSubviews()
         if let _ = answerToComment {
             cancelRecipientTapped() // Remove the view, if there is any
         }
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        sendButton.centerYAnchor.constraint(equalTo: answerTextField.centerYAnchor).isActive = true
-        sendButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
-        sendButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
-        sendButton.widthAnchor.constraint(equalToConstant: 35).isActive = true
-        
-        anonymousButton.centerYAnchor.constraint(equalTo: answerTextField.centerYAnchor).isActive = true
-        anonymousButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        anonymousButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        anonymousButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
-        
-        answerTextField.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20).isActive = true
-//        answerTextField.heightAnchor.constraint(equalToConstant: 35).isActive = true
-        answerTextField.heightAnchor.constraint(lessThanOrEqualToConstant: 80).isActive = true
-        answerTextField.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
-        answerTextField.trailingAnchor.constraint(equalTo: sendButton.leadingAnchor, constant: -10).isActive = true
-        answerTextField.leadingAnchor.constraint(equalTo: anonymousButton.trailingAnchor, constant: 10).isActive = true
-        
+    ///Adjust the y position so the view stays on the bottom even when the view behind is scrolled
+    func adjustPositionForScroll(contentOffset: CGFloat, screenHeight: CGFloat) {
+
+        let commentViewHeight = self.frame.height
+        let height = screenHeight-commentViewHeight
+                
+        if !self.answerTextField.isFirstResponder { //If the answerview is closed
+            self.frame = CGRect(x: 0, y: contentOffset+height, width: self.frame.width, height: commentViewHeight)
+        } else {
+            let keyboardSize = self.keyboardheight
+            self.frame = CGRect(x: 0, y: contentOffset+height-keyboardSize, width: self.frame.width, height: commentViewHeight)
+        }
     }
+    
+    
+    //MARK:-RecipientView
     
     let recipientBackgroundViewHeight: CGFloat = 35
     
@@ -233,11 +218,15 @@ class CommentAnswerView: UIView, UITextViewDelegate {
     @objc func keyboardWillChange(notification: NSNotification) {
             if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
                 let heightDifference = keyboardSize.height-self.keyboardheight
-                
-                if heightDifference >= 200 {    // opens up
+
+                if heightDifference >= 200 {    //keyboard opens up
                     self.keyboardheight = keyboardSize.height-10
                     frame.origin.y = frame.origin.y-(keyboardheight)
-                } else {    // Changes Size
+                    
+                    if let bottomConstraint = self.bottomConstraint {
+                        bottomConstraint.constant = -keyboardheight
+                    }
+                } else {    // keyboard changes Size only
                     frame.origin.y = frame.origin.y-(heightDifference)
                     self.keyboardheight = self.keyboardheight+heightDifference
                 }
@@ -251,6 +240,9 @@ class CommentAnswerView: UIView, UITextViewDelegate {
     
     @objc func keyboardGotClosed() {
         self.keyboardheight = 0
+        if let bottomConstraint = self.bottomConstraint {
+            bottomConstraint.constant = 0
+        }
     }
     
     //MARK:-UI
@@ -333,5 +325,44 @@ class CommentAnswerView: UIView, UITextViewDelegate {
         
         return button
     }()
+    
+}
+
+//MARK:-TextViewDelegate
+extension CommentAnswerView: UITextViewDelegate {
+    
+    func textViewDidChange(_ textView: UITextView) {
+        if textView.contentSize.height >= self.messageTextViewMaxHeight {
+            textView.isScrollEnabled = true
+        } else {
+            textView.isScrollEnabled = false
+         }
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        delegate?.commentTypingBegins()
+        
+        if textView.text == answerPlaceholderText {
+            answerTextField.text = ""
+        }
+        
+        if #available(iOS 13.0, *) {
+            textView.textColor = .label
+        } else {
+            textView.textColor = .black
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text == "" {
+            textView.text = answerPlaceholderText
+            
+            if #available(iOS 13.0, *) {
+                textView.textColor = .secondaryLabel
+            } else {
+                textView.textColor = .lightGray
+            }
+        }
+    }
     
 }
