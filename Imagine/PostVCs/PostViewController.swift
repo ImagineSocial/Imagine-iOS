@@ -73,6 +73,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     var imageURLs = [String]()
     let layout:UICollectionViewFlowLayout = UICollectionViewFlowLayout.init()
     let identifier = "MultiPictureCell"
+    let panoramaHeightMaximum: CGFloat = 500
+    
+    //Comment
     let commentIdentifier = "CommentCell"
     var floatingCommentView: CommentAnswerView?
     
@@ -108,6 +111,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
         imageCollectionView.setCollectionViewLayout(layout, animated: true)
+        imageCollectionView.bounces = false
         
         if #available(iOS 13.0, *) {
             savePostButton.tintColor = .label
@@ -252,6 +256,19 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             
        
             imageCollectionViewHeightConstraint.constant = newHeight
+            imageCollectionView.reloadData()
+            
+        case .panorama:
+            
+            // No Post yet
+            if imageWidth == 0 || imageHeight == 0 {
+                return
+            }
+            var height = imageHeight
+            if height > panoramaHeightMaximum {
+                height = panoramaHeightMaximum
+            }
+            imageCollectionViewHeightConstraint.constant = height
             imageCollectionView.reloadData()
             
         case .picture:
@@ -678,7 +695,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             collectionViewPageControl.isHidden = false
             collectionViewPageControl.currentPage = 0
             
-            if let imageURLs = post.imageURLs {
+            guard let imageURLs = post.imageURLs else {
+                return
+            }
                 collectionViewPageControl.numberOfPages = imageURLs.count
                 if self.imageURLs.count != imageURLs.count {    // Append just once
                     self.collectionViewPageControl.numberOfPages = imageURLs.count
@@ -688,10 +707,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                         self.imageCollectionView.reloadData()
                     }
                 }
-            } else {
-                return
-            }
+        case .panorama:
+            self.imageURLs.append(post.imageURL)
             
+            self.imageCollectionView.isPagingEnabled = false
+            self.imageCollectionView.reloadData()
         case .picture:
             if self.imageURLs.count == 0 && post.imageURL != "" {
                 self.imageURLs.append(post.imageURL)
@@ -1248,7 +1268,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 let offset = scrollView.contentOffset.y
                 let screenHeight = self.view.frame.height
                 
-                print("Scroll View Did Scroll: \(offset)")
                 view.adjustPositionForScroll(contentOffset: offset, screenHeight: screenHeight)
             }
         }
@@ -1355,13 +1374,25 @@ extension PostViewController: UICollectionViewDelegate, UICollectionViewDataSour
             return cell
         }
         
-        print("Got a problem with the collectionviewcell")
         return UICollectionViewCell()
     }
     
     // MARK: UICollectionViewDelegate
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
+        if post.type == .panorama {
+            var height = post.mediaHeight
+            if height > panoramaHeightMaximum {
+                height = panoramaHeightMaximum
+            }
+            let width = post.mediaWidth
+            
+            let ratio = width/post.mediaHeight
+            let newWidth = ratio*height
+            
+            let panoSize = CGSize(width: newWidth, height: height)
+            return panoSize
+        }
         let size = CGSize(width: imageCollectionView.frame.width, height: imageCollectionView.frame.height)
         return size
     }

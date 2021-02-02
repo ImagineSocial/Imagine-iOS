@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -150,7 +150,7 @@
                                     <constraint firstAttribute="height" constant="35" id="OfN-7E-Ur0"/>
                                 </constraints>
                             </imageView>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="t4x-ao-7Mr">
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="t4x-ao-7Mr">
                                 <rect key="frame" x="5" y="89" width="486" height="250"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
@@ -370,6 +370,7 @@
                 <outlet property="multiPictureCollectionViewHeightConstraint" destination="SeL-PO-SOM" id="ivN-Qx-7Zt"/>
                 <outlet property="niceButton" destination="2sf-D0-pKn" id="4LB-Dl-UQ9"/>
                 <outlet property="pageControl" destination="YDM-1V-5Tr" id="57L-jC-84f"/>
+                <outlet property="pageControlHeight" destination="xB1-6K-47M" id="K3R-zU-Ifc"/>
                 <outlet property="pictureCountLabel" destination="Gkk-4e-fzE" id="e1Q-lM-C7d"/>
                 <outlet property="profilePictureImageView" destination="5Jn-2T-nth" id="DKz-j7-Ozt"/>
                 <outlet property="reportButton" destination="zPT-gn-RUc" id="MWD-AE-7yX"/>

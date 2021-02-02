@@ -771,12 +771,18 @@ class PostHelper {
                     }
 
                     let post = Post()
+                    
+                    let ratio = picWidth / picHeight
+                    if ratio > 2 {
+                        post.type = .panorama
+                    } else {
+                        post.type = .picture
+                    }
                     post.title = title
                     post.imageURL = imageURL
                     post.mediaHeight = CGFloat(picHeight)
                     post.mediaWidth = CGFloat(picWidth)
                     post.description = description
-                    post.type = .picture
                     post.documentID = documentID
                     post.createTime = stringDate
                     post.originalPosterUID = originalPoster

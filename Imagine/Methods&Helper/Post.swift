@@ -21,6 +21,7 @@ enum PostType {
     case youTubeVideo
     case GIF
     case multiPicture
+    case panorama
     case singleTopic
     case topTopicCell
     case nothingPostedYet
