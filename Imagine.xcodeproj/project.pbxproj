@@ -61,6 +61,12 @@
 		E95B6B8724EECD2F0089BB19 /* SearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95B6B8624EECD2F0089BB19 /* SearchTableViewController.swift */; };
 		E95B6B8924EFC3460089BB19 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95B6B8824EFC3460089BB19 /* MapViewController.swift */; };
 		E95B6B8B24EFD2550089BB19 /* LocationSearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95B6B8A24EFD2550089BB19 /* LocationSearchTableViewController.swift */; };
+		E95E907925EAB5B000E7B9DB /* Music.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95E907825EAB5B000E7B9DB /* Music.swift */; };
+		E95E907C25EAB5DC00E7B9DB /* Link.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95E907B25EAB5DC00E7B9DB /* Link.swift */; };
+		E95E907F25EAB60000E7B9DB /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95E907E25EAB60000E7B9DB /* User.swift */; };
+		E95E908225EAB63200E7B9DB /* ReportType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95E908125EAB63200E7B9DB /* ReportType.swift */; };
+		E95E908525EAB66200E7B9DB /* Votes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95E908425EAB66200E7B9DB /* Votes.swift */; };
+		E95E908825EAB67D00E7B9DB /* PostType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95E908725EAB67D00E7B9DB /* PostType.swift */; };
 		E9600E882235076C003E5A7A /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9600E872235076B003E5A7A /* PostViewController.swift */; };
 		E962AC172224430400C6D6EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E962AC162224430400C6D6EF /* AppDelegate.swift */; };
 		E962AC1C2224430400C6D6EF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E962AC1A2224430400C6D6EF /* Main.storyboard */; };
@@ -284,6 +290,12 @@
 		E95B6B8624EECD2F0089BB19 /* SearchTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableViewController.swift; sourceTree = "<group>"; };
 		E95B6B8824EFC3460089BB19 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		E95B6B8A24EFD2550089BB19 /* LocationSearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSearchTableViewController.swift; sourceTree = "<group>"; };
+		E95E907825EAB5B000E7B9DB /* Music.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music.swift; sourceTree = "<group>"; };
+		E95E907B25EAB5DC00E7B9DB /* Link.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Link.swift; sourceTree = "<group>"; };
+		E95E907E25EAB60000E7B9DB /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		E95E908125EAB63200E7B9DB /* ReportType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportType.swift; sourceTree = "<group>"; };
+		E95E908425EAB66200E7B9DB /* Votes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Votes.swift; sourceTree = "<group>"; };
+		E95E908725EAB67D00E7B9DB /* PostType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostType.swift; sourceTree = "<group>"; };
 		E9600E872235076B003E5A7A /* PostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
 		E962AC132224430400C6D6EF /* Imagine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Imagine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E962AC162224430400C6D6EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -538,8 +550,23 @@
 			isa = PBXGroup;
 			children = (
 				E97DBED822AEA81A007100E1 /* Post.swift */,
+				E95E907825EAB5B000E7B9DB /* Music.swift */,
+				E95E907B25EAB5DC00E7B9DB /* Link.swift */,
+				E95E907E25EAB60000E7B9DB /* User.swift */,
+				E95E908125EAB63200E7B9DB /* ReportType.swift */,
+				E95E908425EAB66200E7B9DB /* Votes.swift */,
+				E95E908725EAB67D00E7B9DB /* PostType.swift */,
 			);
 			path = PostClasses;
+			sourceTree = "<group>";
+		};
+		E95E908A25EAB72600E7B9DB /* CommunityClasses */ = {
+			isa = PBXGroup;
+			children = (
+				E9A02AAA232D3B02000DAB69 /* Fact.swift */,
+				E9A02AA8232D3640000DAB69 /* Argument.swift */,
+			);
+			path = CommunityClasses;
 			sourceTree = "<group>";
 		};
 		E9600E95223C0781003E5A7A /* Kalam */ = {
@@ -647,8 +674,6 @@
 			isa = PBXGroup;
 			children = (
 				E9E21C5325AF7431002D5699 /* MemeInput */,
-				E9A02AA8232D3640000DAB69 /* Argument.swift */,
-				E9A02AAA232D3B02000DAB69 /* Fact.swift */,
 				E9A02AAC232D4AE4000DAB69 /* Source.swift */,
 				E95A6FC7232E80E8008B32CC /* Reachability.swift */,
 				E98FAEA723FAD4780064A614 /* CommentAnswerView.swift */,
@@ -986,6 +1011,7 @@
 		E9F622F425EA48AF00AAD2C0 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				E95E908A25EAB72600E7B9DB /* CommunityClasses */,
 				E95E907625EAB4BC00E7B9DB /* PostClasses */,
 			);
 			path = Model;
@@ -1232,6 +1258,7 @@
 				E9F12BFA24FA6556006BD9C3 /* AddOnSingleCommunityCollectionViewCell.swift in Sources */,
 				E92CB98325068FF600D2FA45 /* Localizable.swift in Sources */,
 				E981B25E2483AFCC00F6C724 /* SurveyCell.swift in Sources */,
+				E95E908825EAB67D00E7B9DB /* PostType.swift in Sources */,
 				E9211AB9223FCBB100185A00 /* NewCampaignViewController.swift in Sources */,
 				E933553524705CD00060E331 /* SearchCollectionViewController.swift in Sources */,
 				E97FDFCE246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift in Sources */,
@@ -1295,6 +1322,7 @@
 				E94EDD9E2564328000B226C8 /* AddOnPlaylistCollectionViewCell.swift in Sources */,
 				E9CF237F233A279200D3B295 /* TopicCell.swift in Sources */,
 				E9EA7C9B22E5F47C0015C0EC /* VoteCell.swift in Sources */,
+				E95E908225EAB63200E7B9DB /* ReportType.swift in Sources */,
 				E93F6F1125322F1F0044EAA4 /* ImagineFundViewController.swift in Sources */,
 				E9B79CE5224EC78900166EED /* CampaignCell.swift in Sources */,
 				E9F622DD25E9501E00AAD2C0 /* RepostView.swift in Sources */,
@@ -1322,6 +1350,7 @@
 				E95B6B8924EFC3460089BB19 /* MapViewController.swift in Sources */,
 				E9879A2524C2276B004B497F /* Comment.swift in Sources */,
 				E9F31DCD23F6D6D2001D5D25 /* FactCell.swift in Sources */,
+				E95E907C25EAB5DC00E7B9DB /* Link.swift in Sources */,
 				E9A02AA523265822000DAB69 /* BlankContentFile.swift in Sources */,
 				E97E902822464B4700BA0295 /* JobOfferingViewController.swift in Sources */,
 				E97FDFCA246C1A770049E1E4 /* FollowedTopicCell.swift in Sources */,
@@ -1337,15 +1366,18 @@
 				E9879A2324BDB57A004B497F /* MusicCell.swift in Sources */,
 				E9A57A9F245360D100665007 /* AdvertisingCell.swift in Sources */,
 				E991CCDC2273476C00940834 /* ThoughtCell.swift in Sources */,
+				E95E908525EAB66200E7B9DB /* Votes.swift in Sources */,
 				E98B22F022CA6499000F965F /* ChatViewController.swift in Sources */,
 				E9A02AAB232D3B02000DAB69 /* Fact.swift in Sources */,
 				E96CE89222941A2D00BACD3B /* ContraFactTableViewController.swift in Sources */,
 				E9E521BA2458477F002585A2 /* NewAddOnTableViewController.swift in Sources */,
 				E971B8DC2247A48C001BBC1E /* LogInViewController.swift in Sources */,
 				E93665852513CC41008CC8A9 /* AddOnQAndACollectionViewCell.swift in Sources */,
+				E95E907925EAB5B000E7B9DB /* Music.swift in Sources */,
 				E97C834623CDE1CE00CE3D3C /* CreativeExampleViewController.swift in Sources */,
 				E9C6C23B22980FD8003F0F16 /* SourceTableViewController.swift in Sources */,
 				E9B85D542412D2C300960942 /* SmallPostCell.swift in Sources */,
+				E95E907F25EAB60000E7B9DB /* User.swift in Sources */,
 				E9E6876924167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift in Sources */,
 				E9F9B68B223D584600100F51 /* PageViewController.swift in Sources */,
 				E93665882513CCA2008CC8A9 /* BaseAddOnCollectionViewCell.swift in Sources */,
