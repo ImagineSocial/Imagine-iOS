@@ -17,7 +17,6 @@ enum PostType {
     case thought
     case repost
     case translation
-    case event
     case youTubeVideo
     case GIF
     case multiPicture
@@ -125,7 +124,6 @@ class Post {
     var user = User()
     var votes = Votes()
     var newUpvotes: Votes?
-    var event = Event()
     var repost: Post?
     var fact:Fact?
     var addOnTitle: String?    // Description in the OptionalInformation Section in the topic area
@@ -165,7 +163,7 @@ class Post {
                 } else if let document = document {
                     let postHelper = PostHelper()
                     
-                    if let post = postHelper.addThePost(document: document, isTopicPost: self.repostIsTopicPost, forFeed: false, language: self.repostLanguage) {
+                    if let post = postHelper.addThePost(document: document, isTopicPost: self.repostIsTopicPost, language: self.repostLanguage) {
                         
                         returnRepost(post)
                     }

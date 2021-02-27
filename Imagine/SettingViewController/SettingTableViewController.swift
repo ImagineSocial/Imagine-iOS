@@ -164,7 +164,7 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
     let db = Firestore.firestore()
     let storDB = Storage.storage().reference()
     
-    let postHelper = PostHelper()
+    let postHelper = FirestoreRequest()
     let dataHelper = DataHelper()
     var imagePicker = UIImagePickerController()
     

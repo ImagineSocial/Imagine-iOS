@@ -23,7 +23,7 @@ class AddOnPlaylistTrackTableViewCell: UITableViewCell {
     @IBOutlet weak var albumCoverHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var dismissButton: DesignableButton!
     
-    let postHelper = PostHelper()
+    let postHelper = FirestoreRequest()
     
     let defaultAlbumCoverHeight:CGFloat = 50
     

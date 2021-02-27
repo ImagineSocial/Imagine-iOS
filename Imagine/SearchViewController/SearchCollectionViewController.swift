@@ -101,7 +101,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
                     if let snap = snap {
                         var posts = [Post]()
                         for document in snap.documents {
-                            if let post = self.postHelper.addThePost(document: document, isTopicPost: true, forFeed: false, language: language) {
+                            if let post = self.postHelper.addThePost(document: document, isTopicPost: true, language: language) {
                                 posts.append(post)
                             }
                         }
@@ -538,7 +538,7 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
                 return
             }
             
-            if let post = postHelper.addThePost(document: document, isTopicPost: false, forFeed: false, language: language) {
+            if let post = postHelper.addThePost(document: document, isTopicPost: false, language: language) {
                 
                 postResults.append(post)
             }

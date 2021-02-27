@@ -112,7 +112,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
                 if let snap = snap {
                     for document in snap.documents {
                                                 
-                        if let post = self.postHelper.addThePost(document: document, isTopicPost: false, forFeed: false, language: language) {
+                        if let post = self.postHelper.addThePost(document: document, isTopicPost: false, language: language) {
                             self.posts.append(post)
                         }
                     }
@@ -146,7 +146,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
                 if let snap = snap {
                     for document in snap.documents {
                                                 
-                        if let post = self.postHelper.addThePost(document: document, isTopicPost: true, forFeed: false, language: language) {
+                        if let post = self.postHelper.addThePost(document: document, isTopicPost: true, language: language) {
                             self.topicPosts.append(post)
                         }
                     }
