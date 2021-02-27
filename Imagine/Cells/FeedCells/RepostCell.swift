@@ -16,7 +16,6 @@ class RePostCell : BaseFeedCell {
     @IBOutlet weak var originalCreateDateLabel: UILabel!
     @IBOutlet weak var originalTitleLabel: UILabel!
     @IBOutlet weak var cellImageView: UIImageView!
-//    @IBOutlet weak var cellImageViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var ogPosterNameLabel: UILabel!
     @IBOutlet weak var ogProfilePictureImageView: UIImageView!
     
@@ -115,8 +114,9 @@ class RePostCell : BaseFeedCell {
                     }
                     ogProfilePictureImageView.image = UIImage(named: "anonym-user")
                 } else {
-                    ogPosterNameLabel.text = post.user.displayName
-                    
+                    ogPosterNameLabel.text = repost.user.displayName
+                    titleLabel.text = post.title
+
                     // Profile Picture
                     if let url = URL(string: repost.user.imageURL) {
                         ogProfilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
