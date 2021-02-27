@@ -22,8 +22,8 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
     let db = Firestore.firestore()
     let dataHelper = DataRequest()
     
-    var topicFacts: [Fact]?
-    var discussionFacts: [Fact]?
+    var topicFacts: [Community]?
+    var discussionFacts: [Community]?
     
     var type: DisplayOption?
 
@@ -127,7 +127,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
                 print("We have an error: \(error.localizedDescription)")
             } else {
                 if let snap = snap {
-                    var facts = [Fact]()
+                    var facts = [Community]()
                     for document in snap.documents {
                         let data = document.data()
                         
@@ -141,7 +141,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
         }
     }
     
-    func showTopics(type: DisplayOption, topics: [Fact]) {
+    func showTopics(type: DisplayOption, topics: [Community]) {
         switch type {
         case .fact:
             self.discussionFacts = topics
@@ -163,7 +163,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toPageVC" {
             if let pageVC = segue.destination as? ArgumentPageViewController {
-                if let chosenFact = sender as? Fact {
+                if let chosenFact = sender as? Community {
                     pageVC.fact = chosenFact
                     pageVC.recentTopicDelegate = self
                 }
@@ -171,7 +171,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
         }
     }
     
-    func topicSelected(fact: Fact) {
+    func topicSelected(fact: Community) {
         let factVC = FactCollectionViewController()
         factVC.registerRecentFact(fact: fact)
     }

@@ -427,7 +427,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     
-    func checkIfFirstEntry(collectionReferenceString: String, fact: Fact, gotCollection: @escaping (Bool) -> Void) {
+    func checkIfFirstEntry(collectionReferenceString: String, fact: Community, gotCollection: @escaping (Bool) -> Void) {
         var collectionRef: CollectionReference!
         let language = LanguageSelection().getLanguage()
         if language == .english {

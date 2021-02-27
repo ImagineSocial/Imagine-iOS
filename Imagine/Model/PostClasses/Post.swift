@@ -39,7 +39,7 @@ class Post {
     var votes = Votes()
     var newUpvotes: Votes?
     var repost: Post?
-    var fact:Fact?
+    var fact:Community?
     var addOnTitle: String?    // Description in the OptionalInformation Section in the topic area
     var isTopicPost = false // Just postet in a topic, not in the main feed
     var language: Language = .german

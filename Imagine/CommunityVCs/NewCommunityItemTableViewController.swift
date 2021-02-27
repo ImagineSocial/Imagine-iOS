@@ -86,7 +86,7 @@ class NewCommunityItemTableViewController: UITableViewController {
     
     var new: NewCommunityItemType?
     
-    var fact: Fact?
+    var fact: Community?
     var argument: Argument?
     var deepArgument: Argument?
     
@@ -723,7 +723,7 @@ class NewCommunityItemTableViewController: UITableViewController {
                 var data = [String: Any]()
                 let name = title
                 let description = description
-                let fact = Fact()
+                let fact = Community()
                 
                 data = ["follower": [op.uid],"name": name, "description": description, "createDate": Timestamp(date: Date()), "OP": op.uid, "displayOption": displayOption.displayOption, "popularity": 0]
                 
@@ -764,7 +764,7 @@ class NewCommunityItemTableViewController: UITableViewController {
     
     func setUserChanges(documentID: String) {
         let header = CommunityHeaderView()
-        let fact = Fact()
+        let fact = Community()
         fact.documentID = documentID
         fact.language = language
         
@@ -886,7 +886,7 @@ extension NewCommunityItemTableViewController: NewCommunityItemDelegate, LinkFac
         }
     }
     
-    func selectedFact(fact: Fact, isViewAlreadyLoaded: Bool) {
+    func selectedFact(fact: Community, isViewAlreadyLoaded: Bool) {
         if fact.documentID != "" {
             self.selectedTopicIDForSingleTopicAddOn = fact.documentID
             if let indexPath = self.indexPathOfChooseTopicCell {
@@ -1159,7 +1159,7 @@ class NewCommunityArgumentCell: UITableViewCell {
     
     var delegate: NewCommunityItemDelegate?
     
-    var fact: Fact? {
+    var fact: Community? {
         didSet {
             if let fact = fact {
                 switch fact.factDisplayNames {

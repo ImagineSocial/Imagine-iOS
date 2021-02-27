@@ -14,7 +14,7 @@ import FirebaseAuth
 class SourceTableViewController: UITableViewController {
     
     var argument: Argument?
-    var fact :Fact?
+    var fact :Community?
     var sources = [Source]()
     
     let reuseIdentifier = "addCell"

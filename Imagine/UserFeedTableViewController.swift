@@ -1224,7 +1224,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             }
         }
         if segue.identifier == "toFactSegue" {
-            if let fact = sender as? Fact {
+            if let fact = sender as? Community {
                 if let factVC = segue.destination as? ArgumentPageViewController {
                     factVC.fact = fact
                 }

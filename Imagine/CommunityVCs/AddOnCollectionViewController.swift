@@ -44,7 +44,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     
     let collectionViewInsetsLeftAndRight: CGFloat = 40
     
-    var fact: Fact? {
+    var fact: Community? {
         didSet {
             getData(fact: fact!)
         }
@@ -73,7 +73,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     }
     
     //MARK:- Get Data
-    func getData(fact: Fact) {
+    func getData(fact: Community) {
         
         var collectionRef: CollectionReference!
         if fact.language == .english {
@@ -169,7 +169,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                         } else if let documentID = data["linkedFactID"] as? String {    //SingleTopic
                             if let headerTitle = data["headerTitle"] as? String, let description = data["description"] as? String,  let OP = data["OP"] as? String {
                                 
-                                let singleTopic = Fact()
+                                let singleTopic = Community()
                                 singleTopic.documentID = documentID
                                 
                                 let addOn = OptionalInformation(style: .singleTopic, OP: OP, documentID: document.documentID, fact: fact, headerTitle: headerTitle, description: description, singleTopic: singleTopic)
@@ -277,7 +277,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
         if segue.identifier == "toNewAddOnSegue" {
             if let vc = segue.destination as? NewAddOnTableViewController {
-                if let fact = sender as? Fact {
+                if let fact = sender as? Community {
                     vc.fact = fact
                     vc.delegate = self
                 }
@@ -285,7 +285,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
         if segue.identifier == "toFactSegue" {
             if let vc = segue.destination as? ArgumentPageViewController {
-                if let fact = sender as? Fact {
+                if let fact = sender as? Community {
                     vc.fact = fact
                 }
             }
@@ -511,7 +511,7 @@ extension AddOnCollectionViewController: AddOnCellDelegate, AddOnHeaderReusableV
     func itemTapped(item: Any) {
         if let post = item as? Post {
             performSegue(withIdentifier: "toPostSegue", sender: post)
-        } else if let fact = item as? Fact {
+        } else if let fact = item as? Community {
             performSegue(withIdentifier: "toFactSegue", sender: fact)
         } else {
             print("Unknown item")

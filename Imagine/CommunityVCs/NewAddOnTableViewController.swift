@@ -18,7 +18,7 @@ class NewAddOnTableViewController: UITableViewController {
     @IBOutlet weak var didSelectAddOnImageView: UIImageView!
     
     var optionalInformations = [OptionalInformation]()
-    var fact: Fact?
+    var fact: Community?
     var selectedAddOnStyle: OptionalInformationStyle?
     
     let addOnStoreCellIdentifier = "AddOnStoreImageTableViewCell"
@@ -50,11 +50,11 @@ class NewAddOnTableViewController: UITableViewController {
         self.doneBarButtonItem.isEnabled = false
         self.doneBarButtonItem.tintColor = UIColor.blue.withAlphaComponent(0.5)
         
-        let infoAll = OptionalInformation(style: .collection, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_collection_header", comment: "new collection text"), description: Constants.texts.AddOns.collectionText, singleTopic: nil)
-        let singleTopic = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_singleTopic_header", comment: "new singleTopicText"), description: Constants.texts.AddOns.singleTopicText, singleTopic: nil)
-        let QandA = OptionalInformation(style: .QandA, OP: "", documentID: "", fact: Fact(), description: Constants.texts.AddOns.QandAText)
-        let youTubePlaylist = OptionalInformation(style: .collectionWithYTPlaylist, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_youtube_playlist_header", comment: "new collection text"), description: NSLocalizedString("new_addOn_youtube_playlist_description", comment: ""), singleTopic: nil)
-        let playlistAddOn = OptionalInformation(style: .playlist, OP: "", documentID: "", fact: Fact(), headerTitle: NSLocalizedString("new_addOn_playlist_header", comment: "create playlist"), description: NSLocalizedString("new_addOn_playlist_description", comment: "whats up"), singleTopic: nil)
+        let infoAll = OptionalInformation(style: .collection, OP: "", documentID: "", fact: Community(), headerTitle: NSLocalizedString("new_addOn_collection_header", comment: "new collection text"), description: Constants.texts.AddOns.collectionText, singleTopic: nil)
+        let singleTopic = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Community(), headerTitle: NSLocalizedString("new_addOn_singleTopic_header", comment: "new singleTopicText"), description: Constants.texts.AddOns.singleTopicText, singleTopic: nil)
+        let QandA = OptionalInformation(style: .QandA, OP: "", documentID: "", fact: Community(), description: Constants.texts.AddOns.QandAText)
+        let youTubePlaylist = OptionalInformation(style: .collectionWithYTPlaylist, OP: "", documentID: "", fact: Community(), headerTitle: NSLocalizedString("new_addOn_youtube_playlist_header", comment: "new collection text"), description: NSLocalizedString("new_addOn_youtube_playlist_description", comment: ""), singleTopic: nil)
+        let playlistAddOn = OptionalInformation(style: .playlist, OP: "", documentID: "", fact: Community(), headerTitle: NSLocalizedString("new_addOn_playlist_header", comment: "create playlist"), description: NSLocalizedString("new_addOn_playlist_description", comment: "whats up"), singleTopic: nil)
         
         optionalInformations.append(contentsOf: [infoAll, singleTopic, QandA, youTubePlaylist, playlistAddOn])
         tableView.reloadData()
@@ -234,7 +234,7 @@ class NewAddOnTableViewController: UITableViewController {
         }
     }
     
-    func createNewQandAAddOn(user: FirebaseAuth.User, fact: Fact) {
+    func createNewQandAAddOn(user: FirebaseAuth.User, fact: Community) {
         var collectionRef: CollectionReference!
         if fact.language == .english {
             collectionRef = db.collection("Data").document("en").collection("topics")

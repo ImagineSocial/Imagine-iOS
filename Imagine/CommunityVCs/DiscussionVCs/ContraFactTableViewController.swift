@@ -14,7 +14,7 @@ import FirebaseAuth
 class ContraFactTableViewController: UITableViewController {
 
     var argumentList = [Argument]()
-    var fact: Fact?
+    var fact: Community?
     var downVotes = 90
     var upvotes = 140
     

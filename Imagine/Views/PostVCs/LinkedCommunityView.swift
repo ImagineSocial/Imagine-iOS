@@ -11,7 +11,7 @@ import UIKit
 class LinkedCommunityView: UIView {
     
     //MARK:- Variables
-    var community: Fact? {
+    var community: Community? {
         didSet {
             if let community = community {
                 linkedFactLabel.text = "'\(community.title)'"

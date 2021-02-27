@@ -14,7 +14,7 @@ import FirebaseAuth
 class ArgumentTableViewController: UITableViewController {
     
     var argument: Argument?
-    var fact: Fact?
+    var fact: Community?
     var argumentList = [Argument]()
     
     let identifier = "NibArgumentCell"

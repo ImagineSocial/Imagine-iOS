@@ -37,7 +37,7 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     var floatingCommentView: CommentAnswerView?
     
     var argument: Argument?
-    var fact: Fact?
+    var fact: Community?
     
     let db = Firestore.firestore()
     var tipView: EasyTipView?

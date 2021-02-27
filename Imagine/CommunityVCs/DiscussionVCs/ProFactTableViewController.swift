@@ -14,7 +14,7 @@ import FirebaseAuth
 class ProFactTableViewController: UITableViewController {
 
     var argumentList = [Argument]()
-    var fact: Fact?
+    var fact: Community?
     var downVotes = 80
     var upvotes = 150
     

@@ -20,7 +20,7 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
     
     @IBOutlet weak var infoButton: UIBarButtonItem!
     
-    var fact: Fact?
+    var fact: Community?
     
     var needNavigationController = false
     var displayOption: TableViewDisplayOptions = .normal
@@ -289,7 +289,7 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
         }
         
         if segue.identifier == "toFactSegue" {
-            if let fact = sender as? Fact {
+            if let fact = sender as? Community {
                 if let navCon = segue.destination as? UINavigationController {
                     if let factVC = navCon.topViewController as? FactParentContainerViewController {
                         factVC.fact = fact
@@ -300,7 +300,7 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
         }
         
         if segue.identifier == "goToNewPost" {
-            if let fact = sender as? Fact {
+            if let fact = sender as? Community {
                 if let navCon = segue.destination as? UINavigationController {
                     if let newPostVC = navCon.topViewController as? NewPostViewController {
                         newPostVC.selectedFact(fact: fact, isViewAlreadyLoaded: false)
@@ -313,7 +313,7 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
         }
         
         if segue.identifier == "toSettingSegue" {
-            if let fact = sender as? Fact {
+            if let fact = sender as? Community {
                 if let vc = segue.destination as? SettingTableViewController {
                     vc.topic = fact
                     vc.settingFor = .community

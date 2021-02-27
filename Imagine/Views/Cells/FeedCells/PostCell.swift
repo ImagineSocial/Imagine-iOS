@@ -17,7 +17,7 @@ protocol PostCellDelegate {
     func haTapped(post: Post)
     func niceTapped(post: Post)
     func linkTapped(post: Post)
-    func factTapped(fact: Fact)
+    func factTapped(fact: Community)
     func collectionViewTapped(post: Post)
 }
 

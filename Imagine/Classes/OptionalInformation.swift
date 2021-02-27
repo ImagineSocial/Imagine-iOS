@@ -44,7 +44,7 @@ class OptionalInformation {
     var headerTitle: String?
     var description: String
     var documentID: String  // DocumentID of the addOn
-    var fact: Fact
+    var fact: Community
     var imageURL: String?
     var OP: String
     var design: AddOnDesign = .normal
@@ -52,7 +52,7 @@ class OptionalInformation {
     var appleMusicPlaylistURL: String?
     var spotifyPlaylistURL: String?
     
-    var singleTopic: Fact?
+    var singleTopic: Community?
     
     var itemOrder: [String]?    // Order of the items in the addOn by DocumentID
     
@@ -64,7 +64,7 @@ class OptionalInformation {
     
     var items = [AddOnItem]()
     
-    init(style: OptionalInformationStyle, OP: String, documentID: String, fact: Fact, headerTitle: String, description: String, singleTopic: Fact?) {    /// For the normal AddOn & singleTopic initialization
+    init(style: OptionalInformationStyle, OP: String, documentID: String, fact: Community, headerTitle: String, description: String, singleTopic: Community?) {    /// For the normal AddOn & singleTopic initialization
         self.description = description
         self.headerTitle = headerTitle
         self.documentID = documentID
@@ -87,7 +87,7 @@ class OptionalInformation {
         }
     }
     
-    init(style: OptionalInformationStyle, OP: String, documentID: String, fact: Fact, description: String) {
+    init(style: OptionalInformationStyle, OP: String, documentID: String, fact: Community, description: String) {
         self.description = description
         self.documentID = documentID
         self.fact = fact
@@ -133,7 +133,7 @@ class OptionalInformation {
                                         continue
                                     }
                                     
-                                    let fact = Fact()
+                                    let fact = Community()
                                     fact.documentID = document.documentID
                                     if let displayOption = data["displayOption"] as? String {
                                         if displayOption == "topic" {
@@ -210,7 +210,7 @@ class OptionalInformation {
         
         let itemID: String!
         
-        if let fact = item as? Fact {
+        if let fact = item as? Community {
             itemID = fact.documentID
         } else if let post = item as? Post {
             itemID = post.documentID
@@ -231,7 +231,7 @@ class OptionalInformation {
         
         var data: [String: Any] = ["OP": user.uid, "createDate": Timestamp(date: Date())]
         
-        if let fact = item as? Fact {
+        if let fact = item as? Community {
             data["type"] = "fact"
 
             let newFactVC = NewCommunityItemTableViewController()
@@ -279,7 +279,7 @@ class OptionalInformation {
         }
     }
     
-    func notifyMalteForYouTubePlaylist(fact: Fact, addOn: String) {
+    func notifyMalteForYouTubePlaylist(fact: Community, addOn: String) {
         let notificationRef = db.collection("Users").document("CZOcL3VIwMemWwEfutKXGAfdlLy1").collection("notifications").document()
         let language = Locale.preferredLanguages[0]
         let notificationData: [String: Any] = ["type": "message", "message": "Wir haben einen neuen YouTubePost in \(fact.title) mit der ID: \(addOn)", "name": "System", "chatID": addOn, "sentAt": Timestamp(date: Date()), "messageID": "Dont Know", "language": language]

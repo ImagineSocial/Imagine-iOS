@@ -566,7 +566,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
             }
         }
         if segue.identifier == "toFactSegue" {
-            if let fact = sender as? Fact {
+            if let fact = sender as? Community {
                 if let factVC = segue.destination as? ArgumentPageViewController {
                     factVC.fact = fact
                     factVC.headerNeedsAdjustment = true
@@ -574,7 +574,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
             }
         }
         if segue.identifier == "goToPostsOfTopic" {
-            if let fact = sender as? Fact {
+            if let fact = sender as? Community {
                 if let factVC = segue.destination as? PostsOfFactTableViewController {
                     
                     factVC.fact = fact
@@ -585,7 +585,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         }
     }
     
-    func notifyFactCollectionViewController(fact: Fact) {
+    func notifyFactCollectionViewController(fact: Community) {
         if let viewControllers = self.tabBarController?.viewControllers {
             if let navVC = viewControllers[3] as? UINavigationController {
                 if let factVC = navVC.topViewController as? FactCollectionViewController {

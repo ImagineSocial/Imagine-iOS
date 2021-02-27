@@ -179,7 +179,7 @@ class BaseFeedCell : UITableViewCell {
     }
     
     ///Load the fact and return it asynchroniously
-    func loadFact(language: Language, fact: Fact, beingFollowed: Bool, completion: @escaping (Fact) -> Void) {
+    func loadFact(language: Language, fact: Community, beingFollowed: Bool, completion: @escaping (Community) -> Void) {
         
         if fact.documentID != "" {
             var collectionRef: CollectionReference!
@@ -198,7 +198,7 @@ class BaseFeedCell : UITableViewCell {
                             guard let name = data["name"] as? String else {
                                 return
                             }
-                            let fact = Fact()
+                            let fact = Community()
                             
                             if let displayString = data["displayOption"] as? String {
                                 if displayString == "topic" {

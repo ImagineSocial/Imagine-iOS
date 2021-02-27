@@ -152,7 +152,7 @@ extension AddOnHorizontalScrollCollectionViewCell: UICollectionViewDelegate, UIC
         if let info = info {
             if indexPath.item != info.items.count {
                 let item = info.items[indexPath.item]
-                if let fact = item.item as? Fact {      // Fact
+                if let fact = item.item as? Community {      // Fact
                     if fact.displayOption == .topic {
                         return CGSize(width: 250, height: collectionView.frame.height)
                     } else {
@@ -203,7 +203,7 @@ extension AddOnHorizontalScrollCollectionViewCell: UICollectionViewDelegate, UIC
                         
                         return cell
                     }
-                } else if let fact = item.item as? Fact {
+                } else if let fact = item.item as? Community {
                     
                     if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: smallFactIdentifier, for: indexPath) as? SmallFactCell {
                         

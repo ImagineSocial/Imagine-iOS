@@ -140,7 +140,7 @@ class MeldenViewController: UIViewController {
         }
     }
     
-    func deleteTopicPost(fact: Fact) {
+    func deleteTopicPost(fact: Community) {
         guard let post = post else { return }
         
         var collectionRef: CollectionReference!

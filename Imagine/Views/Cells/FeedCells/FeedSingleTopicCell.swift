@@ -86,8 +86,8 @@ class FeedSingleTopicCell: BaseFeedCell {
         }
     }
     
-    func loadSingleTopic(post: Post, community: Fact) {
-        let info = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Fact(), headerTitle: post.title, description: post.description, singleTopic: community)
+    func loadSingleTopic(post: Post, community: Community) {
+        let info = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Community(), headerTitle: post.title, description: post.description, singleTopic: community)
         
         self.addOnInfo = info
         post.fact = community

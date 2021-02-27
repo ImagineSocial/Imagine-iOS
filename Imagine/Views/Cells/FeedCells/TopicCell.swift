@@ -11,7 +11,7 @@ import Firebase
 
 protocol TopTopicCellDelegate {
     func owenTapped()
-    func factOfTheWeekTapped(fact:Fact)
+    func factOfTheWeekTapped(fact:Community)
 }
 
 class TopicCell: UITableViewCell {
@@ -34,7 +34,7 @@ class TopicCell: UITableViewCell {
     private let cornerRadius: CGFloat = 6
     
     var delegate: TopTopicCellDelegate?
-    var facts = [Fact]()
+    var facts = [Community]()
     var textOfTheWeek: String?
         
     override func awakeFromNib() {
@@ -105,7 +105,7 @@ class TopicCell: UITableViewCell {
         }
     }
     
-    func showFacts(facts: [Fact]) {
+    func showFacts(facts: [Community]) {
         
         var index = 0
         
@@ -133,7 +133,7 @@ class TopicCell: UITableViewCell {
         }
     }
     
-    func loadFacts(language: Language, factIDs: [String], completion: @escaping ([Fact]) -> Void) {
+    func loadFacts(language: Language, factIDs: [String], completion: @escaping ([Community]) -> Void) {
         
         for factID in factIDs {
             var collectionRef: CollectionReference!
@@ -152,7 +152,7 @@ class TopicCell: UITableViewCell {
                             guard let name = data["name"] as? String else {
                                 return
                             }
-                            let fact = Fact()
+                            let fact = Community()
                             
                             if let displayString = data["displayOption"] as? String {
                                 if displayString == "topic" {
@@ -229,7 +229,7 @@ class TopicCell: UITableViewCell {
         self.topicTapped(topic: topic)
     }
     
-    func topicTapped(topic: Fact) {
+    func topicTapped(topic: Community) {
         topic.getFollowStatus { (isFollowed) in
             if isFollowed {
                 topic.beingFollowed = true

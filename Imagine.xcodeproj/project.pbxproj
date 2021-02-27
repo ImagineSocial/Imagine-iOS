@@ -139,7 +139,7 @@
 		E9A02AA523265822000DAB69 /* BlankContentFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A02AA423265822000DAB69 /* BlankContentFile.swift */; };
 		E9A02AA7232D3181000DAB69 /* AddFactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A02AA6232D3181000DAB69 /* AddFactTableViewCell.swift */; };
 		E9A02AA9232D3640000DAB69 /* Argument.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A02AA8232D3640000DAB69 /* Argument.swift */; };
-		E9A02AAB232D3B02000DAB69 /* Fact.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A02AAA232D3B02000DAB69 /* Fact.swift */; };
+		E9A02AAB232D3B02000DAB69 /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A02AAA232D3B02000DAB69 /* Community.swift */; };
 		E9A02AAD232D4AE4000DAB69 /* Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A02AAC232D4AE4000DAB69 /* Source.swift */; };
 		E9A02AAF232E5EED000DAB69 /* BlogCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A02AAE232E5EED000DAB69 /* BlogCell.swift */; };
 		E9A360E52240FDCA008027CD /* SupportTheCommunityTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A360E42240FDCA008027CD /* SupportTheCommunityTableViewController.swift */; };
@@ -372,7 +372,7 @@
 		E9A02AA423265822000DAB69 /* BlankContentFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlankContentFile.swift; sourceTree = "<group>"; };
 		E9A02AA6232D3181000DAB69 /* AddFactTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFactTableViewCell.swift; sourceTree = "<group>"; };
 		E9A02AA8232D3640000DAB69 /* Argument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Argument.swift; sourceTree = "<group>"; };
-		E9A02AAA232D3B02000DAB69 /* Fact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fact.swift; sourceTree = "<group>"; };
+		E9A02AAA232D3B02000DAB69 /* Community.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
 		E9A02AAC232D4AE4000DAB69 /* Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Source.swift; sourceTree = "<group>"; };
 		E9A02AAE232E5EED000DAB69 /* BlogCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogCell.swift; sourceTree = "<group>"; };
 		E9A360E42240FDCA008027CD /* SupportTheCommunityTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportTheCommunityTableViewController.swift; sourceTree = "<group>"; };
@@ -563,13 +563,13 @@
 		E95E908A25EAB72600E7B9DB /* CommunityClasses */ = {
 			isa = PBXGroup;
 			children = (
-				E9A02AAA232D3B02000DAB69 /* Fact.swift */,
+				E9A02AAA232D3B02000DAB69 /* Community.swift */,
 				E9A02AA8232D3640000DAB69 /* Argument.swift */,
 			);
 			path = CommunityClasses;
 			sourceTree = "<group>";
 		};
-		E9600E95223C0781003E5A7A /* Kalam */ = {
+		E9600E95223C0781003E5A7A /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
 				E90AC38224FA52C4002A36F0 /* IBMPlexSans-Bold.ttf */,
@@ -580,7 +580,7 @@
 				E90AC37F24FA52B7002A36F0 /* IBMPlexSans-SemiBold.ttf */,
 				E90AC37C24FA52AB002A36F0 /* IBMPlexSans-Thin.ttf */,
 			);
-			path = Kalam;
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		E962AC0A2224430400C6D6EF = {
@@ -588,7 +588,7 @@
 			children = (
 				E962AC152224430400C6D6EF /* Imagine */,
 				E962AC142224430400C6D6EF /* Products */,
-				E9600E95223C0781003E5A7A /* Kalam */,
+				E9600E95223C0781003E5A7A /* Fonts */,
 				66199979602FCB98C67C9712 /* Pods */,
 				B810C08B97593C4F22408595 /* Frameworks */,
 			);
@@ -1368,7 +1368,7 @@
 				E991CCDC2273476C00940834 /* ThoughtCell.swift in Sources */,
 				E95E908525EAB66200E7B9DB /* Votes.swift in Sources */,
 				E98B22F022CA6499000F965F /* ChatViewController.swift in Sources */,
-				E9A02AAB232D3B02000DAB69 /* Fact.swift in Sources */,
+				E9A02AAB232D3B02000DAB69 /* Community.swift in Sources */,
 				E96CE89222941A2D00BACD3B /* ContraFactTableViewController.swift in Sources */,
 				E9E521BA2458477F002585A2 /* NewAddOnTableViewController.swift in Sources */,
 				E971B8DC2247A48C001BBC1E /* LogInViewController.swift in Sources */,

@@ -86,7 +86,7 @@ class DataRequest {
             orderString = "endOfVoteDate"
             
         case .facts:
-            list = [Fact]()
+            list = [Community]()
             dataPath = "Facts"
             if language == .english {
                 dataPath = "topics"
@@ -342,7 +342,7 @@ class DataRequest {
     }
     
     
-    func addFact(currentUser: Firebase.User?, documentID: String, data: [String: Any]) -> Fact? {
+    func addFact(currentUser: Firebase.User?, documentID: String, data: [String: Any]) -> Community? {
         
         guard let name = data["name"] as? String,
             let createTimestamp = data["createDate"] as? Timestamp,
@@ -354,7 +354,7 @@ class DataRequest {
         
         let stringDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
         
-        let fact = Fact()
+        let fact = Community()
         fact.documentID = documentID
         fact.title = name
         fact.createDate = stringDate
@@ -404,7 +404,7 @@ class DataRequest {
         return fact
     }
     
-    func loadFact(fact: Fact, loadedFact: @escaping (Fact?) -> Void) {
+    func loadFact(fact: Community, loadedFact: @escaping (Community?) -> Void) {
         
         if fact.documentID == "" {
             loadedFact(nil)
@@ -456,7 +456,7 @@ class DataRequest {
         }
     }
     
-    func getDeepData(fact: Fact, returnData: @escaping ([Any]) -> Void) {
+    func getDeepData(fact: Community, returnData: @escaping ([Any]) -> Void) {
         
         var argumentList = [Argument]()
         
@@ -523,7 +523,7 @@ class DataRequest {
         })
     }
     
-    func getDeepestArgument(fact: Fact, argumentID: String, deepDataType: DeepDataType , returnData: @escaping ([Any]) -> Void) {
+    func getDeepestArgument(fact: Community, argumentID: String, deepDataType: DeepDataType , returnData: @escaping ([Any]) -> Void) {
         
         var list = [Any]()
         

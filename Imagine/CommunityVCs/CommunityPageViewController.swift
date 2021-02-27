@@ -22,7 +22,7 @@ protocol PageViewHeaderDelegate {
 class ArgumentPageViewController: UIPageViewController {
     
     var argumentVCs = [UIViewController]()
-    var fact: Fact?
+    var fact: Community?
     
     var recentTopicDelegate: RecentTopicDelegate?
     
@@ -217,7 +217,7 @@ class ArgumentPageViewController: UIPageViewController {
     //MARK:-Prepare For Segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToNewPost" {
-            if let fact = sender as? Fact {
+            if let fact = sender as? Community {
                 if let navCon = segue.destination as? UINavigationController {
                     if let newPostVC = navCon.topViewController as? NewPostViewController {
                         newPostVC.selectedFact(fact: fact, isViewAlreadyLoaded: false)
@@ -230,7 +230,7 @@ class ArgumentPageViewController: UIPageViewController {
         }
         
         if segue.identifier == "shareTopicSegue" {
-            if let fact = sender as? Fact {
+            if let fact = sender as? Community {
                 if let navVC = segue.destination as? UINavigationController {
                     if let vc = navVC.topViewController as? NewCommunityItemTableViewController {
                         vc.fact = fact
@@ -242,7 +242,7 @@ class ArgumentPageViewController: UIPageViewController {
         }
         
         if segue.identifier == "toSettingSegue" {
-            if let fact = sender as? Fact {
+            if let fact = sender as? Community {
                 if let vc = segue.destination as? SettingTableViewController {
                     vc.topic = fact
                     vc.settingFor = .community

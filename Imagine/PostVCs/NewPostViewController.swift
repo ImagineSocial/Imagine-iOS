@@ -85,7 +85,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var up = false
     
     //Link Fact With Post
-    var linkedFact: Fact?
+    var linkedFact: Community?
     var linkedLocation: Location?
     
     var comingFromPostsOfFact = false
@@ -3443,7 +3443,7 @@ extension NewPostViewController: ChoosenLocationDelegate {
 
 extension NewPostViewController: LinkFactWithPostDelegate {
     
-    func selectedFact(fact: Fact, isViewAlreadyLoaded: Bool) {    // Link Fact with post - When posting, from postsOfFactTableVC and from OptionalInformationTableVC
+    func selectedFact(fact: Community, isViewAlreadyLoaded: Bool) {    // Link Fact with post - When posting, from postsOfFactTableVC and from OptionalInformationTableVC
         
         self.linkedFact = fact
         
@@ -3456,7 +3456,7 @@ extension NewPostViewController: LinkFactWithPostDelegate {
         }
     }
     
-    func showLinkedFact(fact: Fact) {
+    func showLinkedFact(fact: Community) {
         
         addFactButton.isHidden = true
         cancelLinkedFactButton.isHidden = false

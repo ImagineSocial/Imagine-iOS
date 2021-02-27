@@ -11,7 +11,7 @@ import EasyTipView
 import Firebase
 
 protocol RecentTopicDelegate {
-    func topicSelected(fact: Fact)
+    func topicSelected(fact: Community)
 }
 
 class FactParentContainerViewController: UIViewController {
@@ -24,7 +24,7 @@ class FactParentContainerViewController: UIViewController {
     
     @IBOutlet weak var infoButton: UIButton!
     
-    var fact:Fact?
+    var fact:Community?
     var proArgumentList = [Argument]()
     var contraArgumentList = [Argument]()
     var needNavigationController = false
@@ -82,7 +82,7 @@ class FactParentContainerViewController: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
-    func setUI(topic: Fact) {
+    func setUI(topic: Community) {
 //        if let user = Auth.auth().currentUser {
 //            for moderator in topic.moderators {
 //                if moderator == user.uid {
@@ -94,7 +94,7 @@ class FactParentContainerViewController: UIViewController {
         
     }
     
-    func getArguments(topic: Fact) {
+    func getArguments(topic: Community) {
         
         DataRequest().getDeepData(fact: topic) { (deepData) in // Fetch all Arguments for this fact
             if let arguments = deepData as? [Argument] {
@@ -169,7 +169,7 @@ class FactParentContainerViewController: UIViewController {
         }
         
         if segue.identifier == "toPostsSegue" {
-            if let chosenFact = sender as? Fact {
+            if let chosenFact = sender as? Community {
                 if let postVC = segue.destination as? PostsOfFactTableViewController {
                     postVC.fact = chosenFact
                 }
@@ -177,7 +177,7 @@ class FactParentContainerViewController: UIViewController {
         }
         
         if segue.identifier == "toSettingSegue" {
-            if let fact = sender as? Fact {
+            if let fact = sender as? Community {
                 if let vc = segue.destination as? SettingTableViewController {
                     vc.topic = fact
                     vc.settingFor = .community

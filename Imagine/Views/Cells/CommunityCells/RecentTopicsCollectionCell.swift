@@ -11,14 +11,14 @@ import Firebase
 import FirebaseFirestore
 
 protocol RecentTopicCellDelegate {
-    func topicTapped(fact: Fact)
+    func topicTapped(fact: Community)
 }
 
 class RecentTopicsCollectionCell: UICollectionViewCell {
     
     @IBOutlet weak var collectionView: UICollectionView!
     
-    var facts = [Fact]()
+    var facts = [Community]()
     let identifier = "SmallTopicCell"
     let placeHolderIdentifier = "PlaceHolderCell"
     
@@ -202,7 +202,7 @@ class SmallTopicCell: UICollectionViewCell {
         gradientView.layer.mask = gradient
     }
         
-        var fact: Fact? {
+        var fact: Community? {
             didSet {
                 if let fact = fact {
                     cellNameLabel.text = fact.title

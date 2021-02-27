@@ -20,7 +20,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
     
     var postResults: [Post]?
     var userResults: [User]?
-    var topicResults: [Fact]?
+    var topicResults: [Community]?
     
     var communityPosts: [Post]? // Default topicPosts queried by date and type
     var communityPostsStack: [Post]?
@@ -272,7 +272,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
         }
         if segue.identifier == "toTopicSegue" {
             if let pageVC = segue.destination as? ArgumentPageViewController {
-                if let chosenFact = sender as? Fact {
+                if let chosenFact = sender as? Community {
                     pageVC.fact = chosenFact
                 }
             }
@@ -340,7 +340,7 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
     func searchTheDatabase(searchText: String, searchScope: Int) {
         var postResults = [Post]()
         var userResults = [User]()
-        var topicResults = [Fact]()
+        var topicResults = [Community]()
         let language = LanguageSelection().getLanguage()
         switch searchScope {
         case 0: // Search Posts
@@ -564,7 +564,7 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
                 let date = createTimestamp.dateValue()
                 let stringDate = date.formatRelativeString()
                 
-                let fact = Fact()
+                let fact = Community()
                 fact.title = name
                 fact.createDate = stringDate
                 fact.documentID = documentID

@@ -13,7 +13,7 @@ import EasyTipView
 private let factCellIdentifier = "FactCell"
 
 protocol LinkFactWithPostDelegate {
-    func selectedFact(fact: Fact, isViewAlreadyLoaded: Bool)
+    func selectedFact(fact: Community, isViewAlreadyLoaded: Bool)
 }
 
 protocol TopOfCollectionViewDelegate {
@@ -35,9 +35,9 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     
     @IBOutlet weak var infoButton: UIBarButtonItem!
     
-    var topicFacts = [Fact]()
-    var discussionFacts = [Fact]()
-    var followedFacts = [Fact]()
+    var topicFacts = [Community]()
+    var discussionFacts = [Community]()
+    var followedFacts = [Community]()
     
 //    var displayOption: FactCollectionDisplayOption = .all
     
@@ -141,7 +141,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     func getFacts() {
         dataHelper.getData(get: .facts) { (facts) in    // gets the first 8 topic communities by popularity
             print("##1")
-            if let facts = facts as? [Fact] {
+            if let facts = facts as? [Community] {
                 self.topicFacts = facts
                 self.collectionView.reloadData()    //The user thinks it is loaded
                 
@@ -226,7 +226,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
         }
     }
     
-    func addFact(user: Firebase.User?, document: QueryDocumentSnapshot, returnedFact: @escaping (Fact?) -> Void) {
+    func addFact(user: Firebase.User?, document: QueryDocumentSnapshot, returnedFact: @escaping (Community?) -> Void) {
         let data = document.data()
         
         var collectionRef: CollectionReference = self.db.collection("Facts")
@@ -291,7 +291,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        var fact: Fact?
+        var fact: Community?
         
         if indexPath.section == 0 { // First wide cell for recentTopics
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: recentTopicsCellIdentifier, for: indexPath) as? RecentTopicsCollectionCell {
@@ -378,7 +378,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        var fact: Fact?
+        var fact: Community?
         
         if indexPath.section == 0 {
             
@@ -499,7 +499,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     }
     
     
-    func logUser(fact: Fact) {
+    func logUser(fact: Community) {
         if let user = Auth.auth().currentUser {
             if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" {
                 print("Nicht bei Malte loggen")
@@ -517,12 +517,12 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     
     //MARK: -Recent Topics
     
-    func topicSelected(fact: Fact) {
+    func topicSelected(fact: Community) {
         print("TopicSelected")
         registerRecentFact(fact: fact)
     }
     
-    func registerRecentFact(fact: Fact) {
+    func registerRecentFact(fact: Community) {
         // Safe the selected topic to display it later in the "currentTopic" CollectionView
         let defaults = UserDefaults.standard
         let key:String!
@@ -551,7 +551,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toPageVC" {
             if let pageVC = segue.destination as? ArgumentPageViewController {
-                if let chosenFact = sender as? Fact {
+                if let chosenFact = sender as? Community {
                     pageVC.fact = chosenFact
                     pageVC.recentTopicDelegate = self
                     
@@ -596,14 +596,14 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     
     //MARK: LinkFactAndPost
     
-    func setFactForPost(fact: Fact) {
+    func setFactForPost(fact: Community) {
         delegate?.selectedFact(fact: fact, isViewAlreadyLoaded: true) // True because 
         
         //Can be a opt. Info!
         self.dismiss(animated: true, completion: nil)
     }
     
-    func setFactForOptInfo(fact: Fact) {
+    func setFactForOptInfo(fact: Community) {
         if let addOn = addOn {
             addOn.delegate = self
             addOn.saveItem(item: fact)
@@ -635,7 +635,7 @@ extension FactCollectionViewController: OptionalInformationDelegate {
 extension FactCollectionViewController: TopOfCollectionViewDelegate, NewFactDelegate, TopicCollectionFooterDelegate, RecentTopicCellDelegate {
     
     //Topic in the recentTopic collectionView is tapped
-    func topicTapped(fact: Fact) {
+    func topicTapped(fact: Community) {
         
         if let addFactToPost = addFactToPost {
             if addFactToPost == .newPost {
@@ -657,7 +657,7 @@ extension FactCollectionViewController: TopOfCollectionViewDelegate, NewFactDele
     }
     
     func finishedCreatingNewInstance(item: Any?) {
-        if let fact = item as? Fact {
+        if let fact = item as? Community {
             performSegue(withIdentifier: "toPageVC", sender: fact)
         }
     }

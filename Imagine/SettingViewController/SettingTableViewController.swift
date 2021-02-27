@@ -65,7 +65,7 @@ class UserSetting {
 
 class AddOnSetting {
     var style: OptionalInformationStyle
-    var fact: Fact
+    var fact: Community
     var addOnDocumentID: String
     var description: String
     var items: [AddOnItem]
@@ -73,7 +73,7 @@ class AddOnSetting {
     var title: String?
     var itemOrder: [String]?
     
-    init(style: OptionalInformationStyle, fact: Fact, addOnDocumentID: String, description: String, items: [AddOnItem]) {
+    init(style: OptionalInformationStyle, fact: Community, addOnDocumentID: String, description: String, items: [AddOnItem]) {
         self.style = style
         self.fact = fact
         self.addOnDocumentID = addOnDocumentID
@@ -168,7 +168,7 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
     let dataHelper = DataRequest()
     var imagePicker = UIImagePickerController()
     
-    var topic: Fact?
+    var topic: Community?
     var topicSetting: TopicSetting?
     
     var user: User?
@@ -473,7 +473,7 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
                         print("Aint nobody got a post!")
                     }
                 }
-            } else if let fact = item.item as? Fact {
+            } else if let fact = item.item as? Community {
                 self.dataHelper.loadFact(fact: fact) { (fact) in
                     if let fact = fact {
                         let item = AddOnItem(documentID: fact.documentID, item: fact)
@@ -603,7 +603,7 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
             if let cell = tableView.dequeueReusableCell(withIdentifier: pickOrderSettingIdentifier, for: indexPath) as? SettingPickOrderCell {
                 if let post = item.item as? Post {
                     cell.post = post
-                } else if let fact = item.item as? Fact {
+                } else if let fact = item.item as? Community {
                     cell.fact = fact
                 }
                 
@@ -1476,7 +1476,7 @@ class SettingPickOrderCell: UITableViewCell {
         }
     }
     
-    var fact: Fact? {
+    var fact: Community? {
         didSet {
             if let fact = fact {
                 self.pickOrderLabel.text = fact.title

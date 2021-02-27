@@ -939,7 +939,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "toFactSegue" {
-            if let fact = sender as? Fact {
+            if let fact = sender as? Community {
                 if let factVC = segue.destination as? ArgumentPageViewController {
                     factVC.fact = fact
                     if linkedFactPageVCNeedsHeightCorrection {
@@ -950,7 +950,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
         
         if segue.identifier == "goToPostsOfTopic" {
-            if let fact = sender as? Fact {
+            if let fact = sender as? Community {
                 if let navCon = segue.destination as? UINavigationController {
                     if let factVC = navCon.topViewController as? PostsOfFactTableViewController {
                         factVC.fact = fact

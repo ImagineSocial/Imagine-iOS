@@ -34,7 +34,7 @@ class CommunityHeaderView: UIView {
     
     let db = Firestore.firestore()
     
-    var community: Fact? {
+    var community: Community? {
             didSet {
                 if let community = community {
                     
@@ -132,7 +132,7 @@ class CommunityHeaderView: UIView {
         delegate?.newPostTapped()
     }
     
-    func followTopic(community: Fact) {
+    func followTopic(community: Community) {
         if let user = Auth.auth().currentUser {
             let topicRef = db.collection("Users").document(user.uid).collection("topics").document(community.documentID)
             
@@ -158,7 +158,7 @@ class CommunityHeaderView: UIView {
         }
     }
     
-    func unfollowTopic(community: Fact) {
+    func unfollowTopic(community: Community) {
         if let user = Auth.auth().currentUser {
             let topicRef = db.collection("Users").document(user.uid).collection("topics").document(community.documentID)
             
@@ -179,7 +179,7 @@ class CommunityHeaderView: UIView {
         }
     }
     
-    func updateFollowCount(fact: Fact, follow: Bool) {
+    func updateFollowCount(fact: Community, follow: Bool) {
         if let followButton = self.followButton {
             followButton.isEnabled = true   // updateFollowCount is called from other instances, where there ist no view instantiated, just the class
         }
