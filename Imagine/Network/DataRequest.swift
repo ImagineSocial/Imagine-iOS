@@ -32,15 +32,18 @@ enum DeepDataType {
  }
  */
 
-class DataHelper {
+class DataRequest {
     
     /*  Every data from firebase which are not posts are fetched through this class
      */
     
+    //MARK:- Variables
     var dataPath = ""
     let db = Firestore.firestore()
     let handyHelper = HandyHelper()
     let user = Auth.auth().currentUser
+    
+    //MARK:- Get Data 
     
     func getData(get: DataType, returnData: @escaping ([Any]) -> Void) {
         // "get" Variable kann "campaign" für CommunityEntscheidungen, "jobOffer" für Hilfe der Community und "fact" für COmmunites Dings sein

@@ -252,8 +252,6 @@ class HandyHelper {
             postType = .thought
         case "link":
             postType = .link
-        case "event":
-            postType = .event
         case "repost":
             postType = .repost
         case "youTubeVideo":

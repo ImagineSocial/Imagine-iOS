@@ -30,7 +30,7 @@ class SmallPostCell: UICollectionViewCell {
     
     var delegate: SmallPostCellDelegate?
     
-    let postHelper = PostHelper()
+    let postHelper = FirestoreRequest()
     
     var gradient: CAGradientLayer?
     

@@ -454,7 +454,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             //No post data yet
             let toComments = post.toComments
             let votes = post.newUpvotes
-            PostHelper().getPostsFromDocumentIDs(posts: [post]) { (posts) in
+            FirestoreRequest().getPostsFromDocumentIDs(posts: [post]) { (posts) in
                 if let posts = posts {
                     if posts.count != 0 {
                         let post = posts[0]
