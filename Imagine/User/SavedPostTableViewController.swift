@@ -40,7 +40,7 @@ class SavedPostTableViewController: BaseFeedTableViewController {
         if isConnected() {
             
             if let user = Auth.auth().currentUser {
-                postHelper.getPostList(getMore: getMore, whichPostList: .savedPosts, userUID: user.uid) { (posts, initialFetch)  in
+                firestoreRequest.getPostList(getMore: getMore, whichPostList: .savedPosts, userUID: user.uid) { (posts, initialFetch)  in
                     
                     guard let posts = posts else {
                         print("No More Posts")

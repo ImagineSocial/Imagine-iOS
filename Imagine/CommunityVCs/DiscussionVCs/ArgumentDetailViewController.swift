@@ -114,7 +114,8 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
             
             floatingCommentView!.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
             floatingCommentView!.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-            let bottomConstraint = floatingCommentView!.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+            let bottomConstraint = floatingCommentView!.bottomAnchor.constraint(equalTo: self.view
+                                                                                    .bottomAnchor)
                 bottomConstraint.isActive = true
             floatingCommentView!.bottomConstraint = bottomConstraint
             floatingCommentView!.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true

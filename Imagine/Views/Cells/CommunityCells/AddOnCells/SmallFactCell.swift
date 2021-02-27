@@ -26,7 +26,7 @@ class SmallFactCell: UICollectionViewCell {
     
     
     let db = Firestore.firestore()
-    let dataHelper = DataHelper()
+    let dataHelper = DataRequest()
     
     var postTitle: String? {
         didSet {

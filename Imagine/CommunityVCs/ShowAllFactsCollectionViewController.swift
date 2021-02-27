@@ -20,7 +20,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
     let collectionViewSpacing:CGFloat = 30
     
     let db = Firestore.firestore()
-    let dataHelper = DataHelper()
+    let dataHelper = DataRequest()
     
     var topicFacts: [Fact]?
     var discussionFacts: [Fact]?

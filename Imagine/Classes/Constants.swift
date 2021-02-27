@@ -28,6 +28,9 @@ struct Constants {
         static let feedCornerRadius: CGFloat = 12
         static let communityHeaderHeight: CGFloat = 260
         static let feedShadowRadius: CGFloat = 4
+        
+        //multiPictureCell
+        static let panoramaCollectionViewHeight: CGFloat = 400
     }
     
     struct characterLimits {

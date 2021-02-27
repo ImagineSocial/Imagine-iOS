@@ -29,7 +29,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     let tableViewIdentifier = "TableViewInCollectionViewCell"
     let optionsCellIdentifier = "ImagineCommunityOptionsCell"
         
-    let dataHelper = DataHelper()
+    let dataHelper = DataRequest()
     
     override func viewDidLoad() {
         super.viewDidLoad()

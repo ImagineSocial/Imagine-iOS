@@ -33,7 +33,7 @@ class ArgumentTableViewController: UITableViewController {
     
     func getArguments() {
         if let argument = argument, let fact = fact {
-            DataHelper().getDeepestArgument(fact: fact, argumentID: argument.documentID, deepDataType: .arguments) { (deepestData) in
+            DataRequest().getDeepestArgument(fact: fact, argumentID: argument.documentID, deepDataType: .arguments) { (deepestData) in
                 if let arguments = deepestData as? [Argument] {
                     self.argumentList = arguments
                     self.tableView.reloadData()

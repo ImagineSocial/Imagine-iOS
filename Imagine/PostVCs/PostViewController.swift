@@ -18,6 +18,8 @@ import FirebaseFirestore
 
 class PostViewController: UIViewController, UIScrollViewDelegate {
     
+    
+    //MARK:- IBOutlets
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var contentView: UIView!
     
@@ -49,6 +51,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var linkPreviewDescription: UILabel!
     @IBOutlet weak var linkPreviewView: UIView!
     
+    
+    //MARK:- Variables
     var post = Post()
     
     let db = Firestore.firestore()
@@ -73,6 +77,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     var imageURLs = [String]()
     let layout:UICollectionViewFlowLayout = UICollectionViewFlowLayout.init()
     let identifier = "MultiPictureCell"
+    let panoramaHeightMaximum: CGFloat = 500
+    
+    //Comment
     let commentIdentifier = "CommentCell"
     var floatingCommentView: CommentAnswerView?
     
@@ -87,6 +94,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             avPlayer?.play()
         }
     }
+    
+    //Outsourced UIViews
+    lazy var repostView = RepostView(viewController: self)
+    lazy var linkedCommunityView = LinkedCommunityView()
+    
+    
+    //MARK:- View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -108,6 +122,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
         imageCollectionView.setCollectionViewLayout(layout, animated: true)
+        imageCollectionView.bounces = false
         
         if #available(iOS 13.0, *) {
             savePostButton.tintColor = .label
@@ -131,108 +146,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    func setupViewController() {
-        
-        if post.user.displayName == "" && !post.anonym {
-            print("1")
-            //No post data yet
-            let toComments = post.toComments
-            let votes = post.newUpvotes
-            PostHelper().getPostsFromDocumentIDs(posts: [post]) { (posts) in
-                if let posts = posts {
-                    if posts.count != 0 {
-                        let post = posts[0]
-                        
-                        self.post = post
-                        self.post.toComments = toComments
-                        self.post.newUpvotes = votes
-                        self.loadPost()
-                        if post.user.displayName == "" && !post.anonym {
-                            self.loadUser(post: post)
-                        }
-                    } else {
-                        print("Kein Post bekommen")
-                    }
-                } else {
-                    print("No Posts")
-                }
-            }
-        } else {
-            self.loadPost()
-        }
-    }
-    
-    var index = 0
-    func loadUser(post: Post) {
-        if post.user.displayName != "" {
-            self.nameLabel.text = post.user.displayName
-            if let url = URL(string: post.user.imageURL) {
-                self.profilePictureImageView.sd_setImage(with: url, completed: nil)
-            }
-        } else {
-            if index <= 15 {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self.loadUser(post: post)
-                    self.index+=1
-                }
-            }
-        }
-    }
-    
-    func loadPost() {
-        showPost()
-        createFloatingCommentView()
-    }
-    
-    func addLinkedFactView() {
-        let voteButtonWidth = ((self.view.frame.width-(6*15))/5)    // To match the width of 2 Buttons, which vary with the screensize
-        let linkedFactViewWidth = voteButtonWidth*3+30
-        
-        let buttonHeight: CGFloat = 35
-        
-        linkedFactView.addSubview(linkedFactImageView)
-        linkedFactImageView.leadingAnchor.constraint(equalTo: linkedFactView.leadingAnchor).isActive = true
-        linkedFactImageView.topAnchor.constraint(equalTo: linkedFactView.topAnchor).isActive = true
-        linkedFactImageView.widthAnchor.constraint(equalToConstant: buttonHeight).isActive = true
-        linkedFactImageView.heightAnchor.constraint(equalTo: linkedFactView.heightAnchor).isActive = true
-        
-        linkedFactView.addSubview(linkedFactLabel)
-        linkedFactLabel.leadingAnchor.constraint(equalTo: linkedFactImageView.trailingAnchor, constant: 10).isActive = true
-        linkedFactLabel.trailingAnchor.constraint(equalTo: linkedFactView.trailingAnchor, constant: -10).isActive = true
-        linkedFactLabel.centerYAnchor.constraint(equalTo: linkedFactImageView.centerYAnchor).isActive = true
-        
-        linkedFactView.addSubview(linkedFactButton)
-        linkedFactButton.leadingAnchor.constraint(equalTo: linkedFactView.leadingAnchor).isActive = true
-        linkedFactButton.trailingAnchor.constraint(equalTo: linkedFactView.trailingAnchor).isActive = true
-        linkedFactButton.heightAnchor.constraint(equalTo: linkedFactView.heightAnchor).isActive = true
-        linkedFactButton.widthAnchor.constraint(equalTo: linkedFactView.widthAnchor).isActive = true
-        
-        contentView.addSubview(linkedFactView)
-        linkedFactView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
-        linkedFactView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 15).isActive = true
-        linkedFactView.widthAnchor.constraint(equalToConstant: linkedFactViewWidth).isActive = true
-        linkedFactView.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
-    }
-    
-    func checkIfAlreadySaved() {
-        if let user = Auth.auth().currentUser {
-            let savedRef = db.collection("Users").document(user.uid).collection("saved").whereField("documentID", isEqualTo: post.documentID)
-            
-            savedRef.getDocuments { (snap, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    if snap!.documents.count != 0 {
-                        // Already saved
-                        self.savePostButton.tintColor = Constants.green
-                    }
-                }
-            }
-        }
-        
-    }
-    
-    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
@@ -252,6 +165,19 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             
        
             imageCollectionViewHeightConstraint.constant = newHeight
+            imageCollectionView.reloadData()
+            
+        case .panorama:
+            
+            // No Post yet
+            if imageWidth == 0 || imageHeight == 0 {
+                return
+            }
+            var height = imageHeight
+            if height > panoramaHeightMaximum {
+                height = panoramaHeightMaximum
+            }
+            imageCollectionViewHeightConstraint.constant = height
             imageCollectionView.reloadData()
             
         case .picture:
@@ -302,303 +228,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     
-    // MARK: - Setup Views
-    
-    func setUpLinkButton() {
-        contentView.addSubview(linkButton)
-        linkButton.leadingAnchor.constraint(equalTo: imageCollectionView.leadingAnchor).isActive = true
-        linkButton.bottomAnchor.constraint(equalTo: imageCollectionView.bottomAnchor).isActive = true
-        linkButton.widthAnchor.constraint(equalTo: imageCollectionView.widthAnchor).isActive = true
-        linkButton.heightAnchor.constraint(equalTo: imageCollectionView.heightAnchor).isActive = true
-    }
-    
-    func setUpYouTubeVideoUI() {
-        imageCollectionViewHeightConstraint.constant = 200
-        contentView.addSubview(youTubeView)
-        youTubeView.leadingAnchor.constraint(equalTo: imageCollectionView.leadingAnchor).isActive = true
-        youTubeView.trailingAnchor.constraint(equalTo: imageCollectionView.trailingAnchor).isActive = true
-        youTubeView.topAnchor.constraint(equalTo: imageCollectionView.topAnchor).isActive = true
-        youTubeView.bottomAnchor.constraint(equalTo: imageCollectionView.bottomAnchor).isActive = true
-        youTubeView.layoutIfNeeded() //?
-    }
-    
-    func setUpRepostUI() {
-        contentView.addSubview(repostView)
-        repostView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
-        repostView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
-        repostView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
-        repostView.layoutIfNeeded()
-        
-        repostView.addSubview(repostProfilePictureImageView)
-        repostProfilePictureImageView.leadingAnchor.constraint(equalTo: repostView.leadingAnchor, constant: 10).isActive = true
-        repostProfilePictureImageView.topAnchor.constraint(equalTo: repostView.topAnchor, constant: 10).isActive = true
-        repostProfilePictureImageView.widthAnchor.constraint(equalToConstant: 46).isActive = true
-        repostProfilePictureImageView.heightAnchor.constraint(equalToConstant: 46).isActive = true
-        repostProfilePictureImageView.layoutIfNeeded() // Damit er auch rund wird
-        
-        repostView.addSubview(repostNameLabel)
-        repostNameLabel.leadingAnchor.constraint(equalTo: repostProfilePictureImageView.trailingAnchor, constant: 10).isActive = true
-        repostNameLabel.topAnchor.constraint(equalTo: repostProfilePictureImageView.topAnchor).isActive = true
-        
-        repostView.addSubview(repostCreateDateLabel)
-        repostCreateDateLabel.leadingAnchor.constraint(equalTo: repostNameLabel.leadingAnchor).isActive = true
-        repostCreateDateLabel.topAnchor.constraint(equalTo: repostNameLabel.bottomAnchor, constant: 3).isActive = true
-        
-        repostView.addSubview(repostTitleLabel)
-        repostTitleLabel.leadingAnchor.constraint(equalTo: repostView.leadingAnchor, constant: 10).isActive = true
-        repostTitleLabel.trailingAnchor.constraint(equalTo: repostView.trailingAnchor, constant: -10).isActive = true
-        repostTitleLabel.topAnchor.constraint(equalTo: repostProfilePictureImageView.bottomAnchor, constant: 10).isActive = true
-        
-        repostView.addSubview(repostImageView)
-        repostImageView.leadingAnchor.constraint(equalTo: repostView.leadingAnchor).isActive = true
-        repostImageView.trailingAnchor.constraint(equalTo: repostView.trailingAnchor).isActive = true
-        repostImageView.topAnchor.constraint(equalTo: repostTitleLabel.bottomAnchor, constant: 10).isActive = true
-        repostView.bottomAnchor.constraint(equalTo: repostImageView.bottomAnchor).isActive = true
-        repostImageView.layoutIfNeeded() //?
-        
-        repostView.addSubview(repostViewButton)
-        repostViewButton.leadingAnchor.constraint(equalTo: repostView.leadingAnchor).isActive = true
-        repostViewButton.topAnchor.constraint(equalTo: repostView.topAnchor).isActive = true
-        repostViewButton.heightAnchor.constraint(equalTo: repostView.heightAnchor).isActive = true
-        repostViewButton.widthAnchor.constraint(equalTo: repostView.widthAnchor).isActive = true
-        
-        repostView.addSubview(repostUserButton)
-        repostUserButton.leadingAnchor.constraint(equalTo: repostProfilePictureImageView.leadingAnchor).isActive = true
-        repostUserButton.topAnchor.constraint(equalTo: repostProfilePictureImageView.topAnchor).isActive = true
-        repostUserButton.bottomAnchor.constraint(equalTo: repostProfilePictureImageView.bottomAnchor).isActive = true
-        repostUserButton.trailingAnchor.constraint(equalTo: repostNameLabel.trailingAnchor).isActive = true
-        
-    }
-    
-    // MARK: - Setup UI
-    
-    let repostView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .secondarySystemBackground
-        } else {
-            view.backgroundColor = UIColor(red:0.93, green:0.93, blue:0.93, alpha:1.0)
-        }
-        view.layer.cornerRadius = 5
-        view.layer.borderColor = UIColor.black.cgColor
-        view.layer.borderWidth = 1
-        view.clipsToBounds = true
-        
-        return view
-    }()
-    
-    let youTubeView: WKYTPlayerView = {
-        let ytv = WKYTPlayerView()
-        ytv.translatesAutoresizingMaskIntoConstraints = false
-        
-        return ytv
-    }()
-    
-    let translatePostButton : DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(translatePostTapped), for: .touchUpInside)
-        button.setImage(UIImage(named: "translate"), for: .normal)
-        button.imageView?.contentMode = .scaleAspectFit
-        button.imageEdgeInsets = UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1)
-        
-        if #available(iOS 13.0, *) {
-            button.setTitleColor(.label, for: .normal)
-            button.tintColor = .label
-        } else {
-            button.setTitleColor(.black, for: .normal)
-            button.tintColor = .black
-        }
-        
-        return button
-    }()
-    
-    let linkButton : DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(linkTapped), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    let linkedFactImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 4
-        imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.clear.cgColor
-        imageView.clipsToBounds = true
-        
-        return imageView
-    }()
-    
-    let linkedFactLabel: UILabel = {
-       let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 14)
-        label.minimumScaleFactor = 0.5
-        label.textAlignment = .center
-
-        return label
-    }()
-    
-    let linkedFactButton: DesignableButton = {
-       let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(linkedFactTapped), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    let linkedFactView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 4
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.clear.cgColor
-        
-        return view
-    }()
-    
-    
-    let separatorView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .separator
-        } else {
-            view.backgroundColor = .lightGray
-        }
-        
-        return view
-    }()
-    
-    let commentView : UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
-    }()
-    
-    let shareButton: DesignableButton = {
-        let shareButton = DesignableButton()
-        shareButton.setTitle("Share", for: .normal)
-        shareButton.backgroundColor = UIColor(red:0.47, green:0.68, blue:0.95, alpha:1.0)
-        shareButton.layer.cornerRadius = 4
-        shareButton.clipsToBounds = true
-        shareButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 14)
-        
-        return shareButton
-    }()
-    
-    let stackView : UIStackView = {
-        
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        stackView.axis  = NSLayoutConstraint.Axis.horizontal
-        stackView.distribution  = UIStackView.Distribution.fillEqually
-        stackView.alignment = UIStackView.Alignment.fill
-        stackView.spacing = 15.0
-        stackView.sizeToFit()
-        
-        return stackView
-    }()
-    
-    
-    
-    // MARK: - Set Up Repost UI
-    
-    let repostProfilePictureImageView : UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "default-user")
-        imageView.isUserInteractionEnabled = true
-        imageView.addGestureRecognizer(UIGestureRecognizer(target: self, action: #selector(postImageTapped)))
-        imageView.layer.masksToBounds = true
-        imageView.contentMode = .scaleAspectFill
-        
-        return imageView
-    }()
-    
-    let repostUserButton : DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(repostUserTapped), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    let repostViewButton : DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(repostViewTapped), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    let repostNameLabel : UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 16)
-        
-        return label
-    }()
-    
-    let repostCreateDateLabel : UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 10)
-        
-        return label
-    }()
-    
-    let repostTitleLabel : UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 20)
-        label.numberOfLines = 0
-        label.sizeToFit()
-        
-        return label
-    }()
-    
-    let repostImageView : UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "default")
-        imageView.contentMode = .scaleAspectFit
-        let layer = imageView.layer
-        imageView.isUserInteractionEnabled = true
-        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(postImageTapped)))
-        layer.cornerRadius = 4
-        layer.masksToBounds = true
-        imageView.clipsToBounds = true
-        
-        return imageView
-    }()
-    
-    let buttonLabel : UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        //        label.backgroundColor = .clear
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-        label.alpha = 0.8
-        label.backgroundColor = .clear
-        
-        label.layer.shadowColor = UIColor.black.cgColor
-        label.layer.shadowRadius = 2
-        label.layer.shadowOpacity = 0.5
-        label.layer.shadowOffset = CGSize(width: 0, height: 3)
-        label.layer.masksToBounds = false
-        
-        return label
-    }()
-    
-    // MARK: - Functions
+    //MARK:- Show Post
     
     func showPost() {
         let buttons = [thanksButton!, wowButton!, haButton!, niceButton!]
@@ -625,10 +255,10 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 self.niceButton.setTitle(String(post.votes.nice), for: .normal)
                                 
             } else {
-                self.setDefaultButtons(buttons: buttons)
+                self.setDefaultLikeButtons(buttons: buttons)
             }
         } else {
-            self.setDefaultButtons(buttons: buttons)
+            self.setDefaultLikeButtons(buttons: buttons)
         }
         
         self.view.activityStopAnimating()
@@ -644,14 +274,14 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if let fact = post.fact {   // Isnt attached if you come from search
             //Need boolean wether already fetched or not
             if fact.fetchComplete {
-                addLinkedFactView()
-                setFact()
+                addLinkedCommunityView()
+                setCommunity()
             } else {
                 let baseCell = BaseFeedCell()
                 baseCell.loadFact(language: post.language, fact: fact, beingFollowed: false) { (fact) in
                     self.post.fact = fact
-                    self.addLinkedFactView()
-                    self.setFact()
+                    self.addLinkedCommunityView()
+                    self.setCommunity()
                     if let view = self.floatingCommentView {
                         //Otherwise the linkedFactView would be over the keyboard of the commentField
                         self.contentView.bringSubviewToFront(view)
@@ -678,7 +308,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             collectionViewPageControl.isHidden = false
             collectionViewPageControl.currentPage = 0
             
-            if let imageURLs = post.imageURLs {
+            guard let imageURLs = post.imageURLs else {
+                return
+            }
                 collectionViewPageControl.numberOfPages = imageURLs.count
                 if self.imageURLs.count != imageURLs.count {    // Append just once
                     self.collectionViewPageControl.numberOfPages = imageURLs.count
@@ -688,10 +320,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                         self.imageCollectionView.reloadData()
                     }
                 }
-            } else {
-                return
-            }
+        case .panorama:
+            self.imageURLs.append(post.imageURL)
             
+            self.imageCollectionView.isPagingEnabled = false
+            self.imageCollectionView.reloadData()
         case .picture:
             if self.imageURLs.count == 0 && post.imageURL != "" {
                 self.imageURLs.append(post.imageURL)
@@ -740,9 +373,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             setUpRepostUI()
             
             if let repost = post.repost {
-                if let url = URL(string: repost.imageURL) {
-                    self.repostImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
-                }
+                showRepost()
             } else {
                 // No Post yet
                 return
@@ -765,7 +396,265 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         imageCollectionView.reloadData()    // To load the image, when the data has to be fetched in "setUpViewController"
     }
     
-    func setDefaultButtons(buttons: [DesignableButton]) {
+    //MARK:- Show User
+    
+    var index = 0
+    func loadUser(post: Post) {
+        if post.user.displayName != "" {
+            self.nameLabel.text = post.user.displayName
+            if let url = URL(string: post.user.imageURL) {
+                self.profilePictureImageView.sd_setImage(with: url, completed: nil)
+            }
+        } else {
+            if index <= 15 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.loadUser(post: post)
+                    self.index+=1
+                }
+            }
+        }
+    }
+    
+    func setUser() {
+        profilePictureImageView.layer.cornerRadius = profilePictureImageView.frame.width / 2
+        repostView.repostProfilePictureImageView.layer.cornerRadius = repostView.repostProfilePictureImageView.frame.width / 2
+        
+        if self.post.anonym {
+            profilePictureImageView.image = UIImage(named: "anonym-user")
+            if let anonymousName = post.anonymousName {
+                nameLabel.text = anonymousName
+            } else {
+                nameLabel.text = Constants.strings.anonymPosterName
+            }
+        } else {
+            nameLabel.text = post.user.displayName
+            
+            if let url = URL(string: post.user.imageURL) {
+                profilePictureImageView.sd_setImage(with: url, completed: nil)
+            }
+        }
+    }
+    
+    @IBAction func userButtonTapped(_ sender: Any) {
+        if post.originalPosterUID != "" {
+            if !post.anonym {
+                performSegue(withIdentifier: "toUserSegue", sender: post.user)
+            }
+        } else {
+            print("Kein User zu finden!")
+        }
+    }
+    
+    
+    //MARK:- Set Up View Controller
+    func setupViewController() {
+        
+        if post.user.displayName == "" && !post.anonym {
+
+            //No post data yet
+            let toComments = post.toComments
+            let votes = post.newUpvotes
+            FirestoreRequest().getPostsFromDocumentIDs(posts: [post]) { (posts) in
+                if let posts = posts {
+                    if posts.count != 0 {
+                        let post = posts[0]
+                        
+                        self.post = post
+                        self.post.toComments = toComments
+                        self.post.newUpvotes = votes
+                        self.loadPost()
+                        if post.user.displayName == "" && !post.anonym {
+                            self.loadUser(post: post)
+                        }
+                    } else {
+                        print("Kein Post bekommen")
+                    }
+                } else {
+                    print("No Posts")
+                }
+            }
+        } else {
+            self.loadPost()
+        }
+    }
+    
+    func loadPost() {
+        showPost()
+        createFloatingCommentView()
+    }
+    
+    func checkIfAlreadySaved() {
+        if let user = Auth.auth().currentUser {
+            let savedRef = db.collection("Users").document(user.uid).collection("saved").whereField("documentID", isEqualTo: post.documentID)
+            
+            savedRef.getDocuments { (snap, err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    if snap!.documents.count != 0 {
+                        // Already saved
+                        self.savePostButton.tintColor = Constants.green
+                    }
+                }
+            }
+        }
+    }
+    
+    // MARK:- Linked Community View
+    
+    func setCommunity() {
+        if let community = post.fact {
+            linkedCommunityView.community = community
+        }
+    }
+    
+    func addLinkedCommunityView() {
+        
+        // To match the width of 2 Buttons, which vary with the screensize
+        //15 is the space at start/end and in between the buttons
+        let voteButtonWidth = ((self.view.frame.width-(6*15))/5)
+        let linkedCommunityViewWidth = voteButtonWidth*3+30
+        
+        let buttonHeight: CGFloat = 35
+        
+        contentView.addSubview(linkedCommunityView)
+        linkedCommunityView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        linkedCommunityView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 15).isActive = true
+        linkedCommunityView.widthAnchor.constraint(equalToConstant: linkedCommunityViewWidth).isActive = true
+        linkedCommunityView.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
+        
+        contentView.addSubview(linkedCommunityButton)
+        linkedCommunityButton.leadingAnchor.constraint(equalTo: linkedCommunityView.leadingAnchor).isActive = true
+        linkedCommunityButton.trailingAnchor.constraint(equalTo: linkedCommunityView.trailingAnchor).isActive = true
+        linkedCommunityButton.heightAnchor.constraint(equalTo: linkedCommunityView.heightAnchor).isActive = true
+        linkedCommunityButton.widthAnchor.constraint(equalTo: linkedCommunityView.widthAnchor).isActive = true
+    }
+    
+    let linkedCommunityButton: DesignableButton = {
+       let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(linkedCommunityTapped), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    @objc func linkedCommunityTapped() {
+        if let fact = post.fact {
+            performSegue(withIdentifier: "toFactSegue", sender: fact)
+        }
+    }
+    
+    //MARK:- RepostView
+    
+    func setUpRepostUI() {
+        contentView.addSubview(repostView)
+        repostView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
+        repostView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
+        repostView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
+        repostView.bottomAnchor.constraint(equalTo: imageCollectionView.bottomAnchor).isActive = true
+    }
+    
+    func showRepost() {
+        if let repost = post.repost {
+            
+            //Calculate and set the height of the repost image
+            let ratio = repost.mediaWidth / repost.mediaHeight
+            let contentWidth = self.contentView.frame.width-40
+            let newHeight = contentWidth / ratio
+            
+            repostView.repostImageView.heightAnchor.constraint(equalToConstant: newHeight).isActive = true
+            
+            //Set the imageCOllectionViewHeight as this is the layout boundary for the repostView
+            imageCollectionViewHeightConstraint.constant = newHeight+135
+            
+            //set title, user etc. in the repostView
+            repostView.repost = repost
+        }
+    }
+    
+    // Repost functions
+    func repostViewTapped() {
+        if let repost = post.repost {
+            let postVC = self.storyboard?.instantiateViewController(withIdentifier: "PostVC") as! PostViewController
+            postVC.post = repost
+            self.navigationController?.pushViewController(postVC, animated: true)
+        }
+    }
+    
+    func repostUserTapped() {
+        if let repost = post.repost {
+            if repost.originalPosterUID != "" {
+                if !repost.anonym {
+                    self.toUserTapped(user: repost.user)
+                }
+            } else {
+                print("no user to find")
+            }
+        }
+    }
+    
+    //MARK:- Link Post
+    
+    func setUpLinkButton() {
+        contentView.addSubview(linkButton)
+        linkButton.leadingAnchor.constraint(equalTo: imageCollectionView.leadingAnchor).isActive = true
+        linkButton.bottomAnchor.constraint(equalTo: imageCollectionView.bottomAnchor).isActive = true
+        linkButton.widthAnchor.constraint(equalTo: imageCollectionView.widthAnchor).isActive = true
+        linkButton.heightAnchor.constraint(equalTo: imageCollectionView.heightAnchor).isActive = true
+    }
+    
+    let linkButton : DesignableButton = {
+        let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(linkTapped), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    @objc func linkTapped() {
+        performSegue(withIdentifier: "goToLink", sender: post)
+    }
+    
+    //MARK:- YouTube Post
+    
+    func setUpYouTubeVideoUI() {
+        imageCollectionViewHeightConstraint.constant = 200
+        contentView.addSubview(youTubeView)
+        youTubeView.leadingAnchor.constraint(equalTo: imageCollectionView.leadingAnchor).isActive = true
+        youTubeView.trailingAnchor.constraint(equalTo: imageCollectionView.trailingAnchor).isActive = true
+        youTubeView.topAnchor.constraint(equalTo: imageCollectionView.topAnchor).isActive = true
+        youTubeView.bottomAnchor.constraint(equalTo: imageCollectionView.bottomAnchor).isActive = true
+        youTubeView.layoutIfNeeded() //?
+    }
+    
+    let youTubeView: WKYTPlayerView = {
+        let ytv = WKYTPlayerView()
+        ytv.translatesAutoresizingMaskIntoConstraints = false
+        
+        return ytv
+    }()
+    
+    //MARK:- Like Buttons
+    
+    func setLikeButtonTitle(post: Post, button: DesignableButton) {
+        var title = String(post.votes.thanks)
+        
+        switch button {
+        case wowButton:
+            title = String(post.votes.wow)
+        case haButton:
+            title = String(post.votes.ha)
+        case niceButton:
+            title = String(post.votes.nice)
+        default:
+            title = String(post.votes.thanks)
+        }
+        
+        button.setImage(nil, for: .normal)
+        button.setTitle(title, for: .normal)
+    }
+    
+    func setDefaultLikeButtons(buttons: [DesignableButton]) {
         for button in buttons {
             button.imageView?.contentMode = .scaleAspectFit
             button.layer.borderWidth = 0.5
@@ -781,6 +670,54 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             }
         }
     }
+    
+    @IBAction func thanksTapped(_ sender: Any) {
+        thanksButton.isEnabled = false
+        updateLikeCount(button: .thanks)
+    }
+    
+    @IBAction func wowTapped(_ sender: Any) {
+        wowButton.isEnabled = false
+        updateLikeCount(button: .wow)
+    }
+    
+    @IBAction func haTapped(_ sender: Any) {
+        haButton.isEnabled = false
+        updateLikeCount(button: .ha)
+    }
+    
+    @IBAction func niceTapped(_ sender: Any) {
+        niceButton.isEnabled = false
+        updateLikeCount(button: .nice)
+    }
+    
+    func updateLikeCount(button: VoteButton) {
+        if let _ = Auth.auth().currentUser {
+            
+            var desButton = DesignableButton()
+            switch button {
+            case .thanks:
+                self.post.votes.thanks+=1
+                desButton = self.thanksButton
+            case .wow:
+                self.post.votes.wow+=1
+                desButton = self.wowButton
+            case .ha:
+                desButton = self.haButton
+                self.post.votes.ha+=1
+            case .nice:
+                desButton = self.niceButton
+                self.post.votes.nice+=1
+            }
+            
+            handyHelper.updatePost(button: button, post: self.post)
+            showButtonText(button: desButton)
+            setLikeButtonTitle(post: self.post, button: desButton)
+        } else {
+            self.notLoggedInAlert()
+        }
+    }
+    
     
     func getUpvotes(upvotes: Votes) {
         
@@ -834,110 +771,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    func setFact() {
-        if let fact = post.fact {
-            self.linkedFactLabel.text = "'\(fact.title)'"
-            
-            if let url = URL(string: fact.imageURL) {
-                self.linkedFactImageView.sd_setImage(with: url, completed: nil)
-            } else {
-                self.linkedFactImageView.image = UIImage(named: "FactStamp")
-            }
-            self.linkedFactView.layer.borderColor = UIColor.imagineColor.cgColor
-            self.linkedFactImageView.layer.borderColor = UIColor.imagineColor.cgColor
-        }
-    }
-    
-    func setUser() {
-        profilePictureImageView.layer.cornerRadius = profilePictureImageView.bounds.size.width / 2
-        repostProfilePictureImageView.layer.cornerRadius = profilePictureImageView.bounds.size.width / 2
-        
-        if self.post.anonym {
-            profilePictureImageView.image = UIImage(named: "anonym-user")
-            if let anonymousName = post.anonymousName {
-                nameLabel.text = anonymousName
-            } else {
-                nameLabel.text = Constants.strings.anonymPosterName
-            }
-        } else {
-            nameLabel.text = post.user.displayName
-            
-            if let url = URL(string: post.user.imageURL) {
-                profilePictureImageView.sd_setImage(with: url, completed: nil)
-            }
-        }
-    }
-    
-    func showRepost() {
-        if let repost = post.repost {
-            
-            let ratio = repost.mediaWidth / repost.mediaHeight
-            let contentWidth = self.contentView.frame.width - 10
-            let newHeight = contentWidth / ratio
-            
-            self.repostImageView.frame.size = CGSize(width: contentWidth, height: newHeight)
-            self.repostImageView.heightAnchor.constraint(equalToConstant: newHeight).isActive = true
-            
-            self.repostTitleLabel.text = repost.title
-            self.repostCreateDateLabel.text = repost.createTime
-            self.repostNameLabel.text = repost.user.displayName
-            
-            if let url = URL(string: repost.user.imageURL) {
-                self.repostProfilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
-            }
-        }
-    }
-    
-    func updatePost(button: VoteButton) {
-        if let _ = Auth.auth().currentUser {
-            
-            var desButton = DesignableButton()
-            switch button {
-            case .thanks:
-                self.post.votes.thanks+=1
-                desButton = self.thanksButton
-            case .wow:
-                self.post.votes.wow+=1
-                desButton = self.wowButton
-            case .ha:
-                desButton = self.haButton
-                self.post.votes.ha+=1
-            case .nice:
-                desButton = self.niceButton
-                self.post.votes.nice+=1
-            }
-            
-            handyHelper.updatePost(button: button, post: self.post)
-            showButtonText(button: desButton)
-            setLikeButtonTitle(post: self.post, button: desButton)
-        } else {
-            self.notLoggedInAlert()
-        }
-    }
-    
-    func setupGIFPlayer(){
-        self.avPlayer = AVPlayer(playerItem: self.videoPlayerItem)
-        avPlayerLayer = AVPlayerLayer(player: avPlayer)
-        avPlayerLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
-        avPlayer?.volume = 0
-        avPlayer?.actionAtItemEnd = .none
-        
-        avPlayerLayer?.frame = self.view.bounds
-        self.imageCollectionView.layer.addSublayer(avPlayerLayer!)
-        
-        //To Loop the Video
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(playerItemDidReachEnd(notification:)),
-                                               name: .AVPlayerItemDidPlayToEndTime,
-                                               object: avPlayer?.currentItem)
-    }
-    
-    //To Loop the Video
-    @objc func playerItemDidReachEnd(notification: Notification) {
-        if let playerItem = notification.object as? AVPlayerItem {
-            playerItem.seek(to: CMTime.zero, completionHandler: nil)
-        }
-    }
+    //MARK:- Like Button Animation
     
     func showButtonText(button: DesignableButton) {
 
@@ -984,43 +818,52 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    func setLikeButtonTitle(post: Post, button: DesignableButton) {
-        var title = String(post.votes.thanks)
+    let buttonLabel : UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        //        label.backgroundColor = .clear
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
+        label.alpha = 0.8
+        label.backgroundColor = .clear
         
-        switch button {
-        case wowButton:
-            title = String(post.votes.wow)
-        case haButton:
-            title = String(post.votes.ha)
-        case niceButton:
-            title = String(post.votes.nice)
-        default:
-            title = String(post.votes.thanks)
+        label.layer.shadowColor = UIColor.black.cgColor
+        label.layer.shadowRadius = 2
+        label.layer.shadowOpacity = 0.5
+        label.layer.shadowOffset = CGSize(width: 0, height: 3)
+        label.layer.masksToBounds = false
+        
+        return label
+    }()
+    
+    
+    // MARK: - GIF Player
+    
+    func setupGIFPlayer(){
+        self.avPlayer = AVPlayer(playerItem: self.videoPlayerItem)
+        avPlayerLayer = AVPlayerLayer(player: avPlayer)
+        avPlayerLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
+        avPlayer?.volume = 0
+        avPlayer?.actionAtItemEnd = .none
+        
+        avPlayerLayer?.frame = self.view.bounds
+        self.imageCollectionView.layer.addSublayer(avPlayerLayer!)
+        
+        //To Loop the Video
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(playerItemDidReachEnd(notification:)),
+                                               name: .AVPlayerItemDidPlayToEndTime,
+                                               object: avPlayer?.currentItem)
+    }
+    
+    //To Loop the Video
+    @objc func playerItemDidReachEnd(notification: Notification) {
+        if let playerItem = notification.object as? AVPlayerItem {
+            playerItem.seek(to: CMTime.zero, completionHandler: nil)
         }
-        
-        button.setImage(nil, for: .normal)
-        button.setTitle(title, for: .normal)
     }
     
-    
-    
-    @objc func writeCommentTapped() {
-        
-    }
-    
-    func goToEventUser(user: User) {
-        performSegue(withIdentifier: "toUserSegue", sender: user)
-    }
-    
-
-    @objc func scrollViewTapped() {
-        if let view = floatingCommentView {
-            print("ScrollViewTap")
-            view.answerTextField.resignFirstResponder()
-        }
-    }
-    
-    //MARK: - Buttons Tapped
+    //MARK: - Button Responder
     @objc func postImageTapped() {
         let pinchVC = PinchToZoomViewController()
         
@@ -1034,74 +877,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         self.navigationController?.pushViewController(pinchVC, animated: true)
     }
     
-    @objc func translatePostTapped() {
-        if post.type == .picture {
-            performSegue(withIdentifier: "toTranslateSegue", sender: post)
-        } else {
-            self.alert(message: NSLocalizedString("error_translate_not_supported", comment: "just picture is supported at the moment"))
-        }
-    }
-    
-    
-    
-    func eventUserTapped(user: User) {
-        self.performSegue(withIdentifier: "toUserSegue", sender: user)
-    }
-    
-    @objc func repostViewTapped() {
-        if let repost = post.repost {
-            let postVC = self.storyboard?.instantiateViewController(withIdentifier: "PostVC") as! PostViewController
-            postVC.post = repost
-            self.navigationController?.pushViewController(postVC, animated: true)
-        }
-    }
-    
-    @objc func repostUserTapped() {
-        if let repost = post.repost {
-            if repost.originalPosterUID != "" {
-                if repost.anonym {
-                    performSegue(withIdentifier: "toUserSegue", sender: repost.user)
-                }
-            } else {
-                print("no user to find")
-            }
-        }
-    }
-    
-    
-    @objc func linkTapped() {
-        performSegue(withIdentifier: "goToLink", sender: post)
-    }
-    
-    @IBAction func thanksTapped(_ sender: Any) {
-        thanksButton.isEnabled = false
-        updatePost(button: .thanks)
-    }
-    
-    @IBAction func wowTapped(_ sender: Any) {
-        wowButton.isEnabled = false
-        updatePost(button: .wow)
-    }
-    
-    @IBAction func haTapped(_ sender: Any) {
-        haButton.isEnabled = false
-        updatePost(button: .ha)
-    }
-    
-    @IBAction func niceTapped(_ sender: Any) {
-        niceButton.isEnabled = false
-        updatePost(button: .nice)
-    }
-    
-    @IBAction func userButtonTapped(_ sender: Any) {
-        if post.originalPosterUID != "" {
-            if !post.anonym {
-                performSegue(withIdentifier: "toUserSegue", sender: post.user)
-            }
-        } else {
-            print("Kein User zu finden!")
-        }
-    }
     
     @IBAction func savePostTapped(_ sender: Any) {
         if let user = Auth.auth().currentUser {
@@ -1130,13 +905,36 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         performSegue(withIdentifier: "reportSegue", sender: post)
     }
     
-    @objc func linkedFactTapped() {
-        if let fact = post.fact {
-            performSegue(withIdentifier: "toFactSegue", sender: fact)
+    //MARK:- Translate Post
+    
+    let translatePostButton : DesignableButton = {
+        let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(translatePostTapped), for: .touchUpInside)
+        button.setImage(UIImage(named: "translate"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.imageEdgeInsets = UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1)
+        
+        if #available(iOS 13.0, *) {
+            button.setTitleColor(.label, for: .normal)
+            button.tintColor = .label
+        } else {
+            button.setTitleColor(.black, for: .normal)
+            button.tintColor = .black
+        }
+        
+        return button
+    }()
+    
+    @objc func translatePostTapped() {
+        if post.type == .picture {
+            performSegue(withIdentifier: "toTranslateSegue", sender: post)
+        } else {
+            self.alert(message: NSLocalizedString("error_translate_not_supported", comment: "just picture is supported at the moment"))
         }
     }
     
-    //MARK:-
+    //MARK:- Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
@@ -1241,6 +1039,15 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         // Scroll to the end of the view
     }
     
+    
+    //MARK:- ScrollViewDelegate
+    
+    @objc func scrollViewTapped() {
+        if let view = floatingCommentView {
+            view.answerTextField.resignFirstResponder()
+        }
+    }
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
         if scrollView == self.scrollView {
@@ -1248,7 +1055,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 let offset = scrollView.contentOffset.y
                 let screenHeight = self.view.frame.height
                 
-                print("Scroll View Did Scroll: \(offset)")
                 view.adjustPositionForScroll(contentOffset: offset, screenHeight: screenHeight)
             }
         }
@@ -1263,6 +1069,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
 }
 
+//MARK:- Comment extensions
 extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
     
     func notLoggedIn() {
@@ -1330,10 +1137,10 @@ extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
     
 }
 
-//MARK: -multiPictureCollectionView
+//MARK: - MultiPictureCollectionView
 extension PostViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
-    
+    // MARK: MultiPictureCollectionViewDataSource
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         return imageURLs.count
@@ -1355,13 +1162,25 @@ extension PostViewController: UICollectionViewDelegate, UICollectionViewDataSour
             return cell
         }
         
-        print("Got a problem with the collectionviewcell")
         return UICollectionViewCell()
     }
     
-    // MARK: UICollectionViewDelegate
+    // MARK: MultiPictureCollectionViewDelegate
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
+        if post.type == .panorama {
+            var height = post.mediaHeight
+            if height > panoramaHeightMaximum {
+                height = panoramaHeightMaximum
+            }
+            let width = post.mediaWidth
+            
+            let ratio = width/post.mediaHeight
+            let newWidth = ratio*height
+            
+            let panoSize = CGSize(width: newWidth, height: height)
+            return panoSize
+        }
         let size = CGSize(width: imageCollectionView.frame.width, height: imageCollectionView.frame.height)
         return size
     }
@@ -1378,7 +1197,4 @@ extension PostViewController: UICollectionViewDelegate, UICollectionViewDataSour
         pinchVC.hidesBottomBarWhenPushed = true
         self.navigationController?.pushViewController(pinchVC, animated: true)
     }
-    
-    
-    
 }

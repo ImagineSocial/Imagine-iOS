@@ -80,7 +80,7 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
                 self.view.activityStartAnimating()
                 
                 DispatchQueue.global(qos: .default).async {
-                    self.postHelper.getPostsForCommunity(getMore: getMore, fact: fact) { (posts, initialFetch) in
+                    self.firestoreRequest.getPostsForCommunity(getMore: getMore, fact: fact) { (posts, initialFetch) in
                         if let posts = posts {
                             if initialFetch {   // Get the first batch of posts
                                 

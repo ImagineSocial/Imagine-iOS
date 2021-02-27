@@ -248,7 +248,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                     
                     self.view.activityStartAnimating()
                     
-                    postHelper.getPostList(getMore: getMore, whichPostList: .postsFromUser, userUID: user.userUID) { (posts, initialFetch)  in
+                    firestoreRequest.getPostList(getMore: getMore, whichPostList: .postsFromUser, userUID: user.userUID) { (posts, initialFetch)  in
                         
                         guard let posts = posts else {
                             print("No more Posts")
@@ -263,7 +263,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                             self.tableView.reloadData()
                             self.fetchesPosts = false
                             
-                            let count = self.postHelper.getTotalCount()
+                            let count = self.firestoreRequest.getTotalCount()
                             self.totalPostCountLabel.text = String(count)
                             
                             self.refreshControl?.endRefreshing()

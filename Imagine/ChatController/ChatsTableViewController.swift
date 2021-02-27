@@ -217,7 +217,7 @@ class ChatsTableViewController: UITableViewController {
                 }
             }
         }
-        let postHelper = PostHelper()
+        let postHelper = FirestoreRequest()
         //Get Friends of the current User to check when they load the user of the chats
         postHelper.getTheUsersFriend {friends in
             self.loadUsers(friends: friends)
