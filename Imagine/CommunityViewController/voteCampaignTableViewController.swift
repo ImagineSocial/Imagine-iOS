@@ -36,7 +36,7 @@ class voteCampaignTableViewController: UITableViewController {
     var campaigns = [Campaign]()
     var votes = [Vote]()
     var mode: suggestionMode = .vote
-    let dataHelper = DataHelper()
+    let dataHelper = DataRequest()
     
     var tipView: EasyTipView?
     

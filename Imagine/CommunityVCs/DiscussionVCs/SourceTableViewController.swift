@@ -32,7 +32,7 @@ class SourceTableViewController: UITableViewController {
     
     func getSources() {
         if let argument = argument, let fact = fact {
-            DataHelper().getDeepestArgument(fact: fact, argumentID: argument.documentID, deepDataType: .sources) { (deepestData) in
+            DataRequest().getDeepestArgument(fact: fact, argumentID: argument.documentID, deepDataType: .sources) { (deepestData) in
                 if let sources = deepestData as? [Source] {
                     self.sources = sources
                     self.tableView.reloadData()

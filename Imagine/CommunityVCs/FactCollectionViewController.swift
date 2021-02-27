@@ -42,7 +42,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
 //    var displayOption: FactCollectionDisplayOption = .all
     
     let db = Firestore.firestore()
-    let dataHelper = DataHelper()
+    let dataHelper = DataRequest()
     
     var addFactToPost : AddFactToPostType?
     var delegate: LinkFactWithPostDelegate?

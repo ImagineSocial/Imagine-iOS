@@ -59,7 +59,7 @@ class SupportTheCommunityTableViewController: UITableViewController {
     }
     
     func getJobOffers() {
-        DataHelper().getData(get: .jobOffer) { (jobOffers) in
+        DataRequest().getData(get: .jobOffer) { (jobOffers) in
             let jobOffer = JobOffer()   // Der erste Eintrag
             jobOffer.title = NSLocalizedString("helpVC_entry_title", comment: "we need you")
             jobOffer.cellText = NSLocalizedString("helpVC_entry_summary", comment: "...")

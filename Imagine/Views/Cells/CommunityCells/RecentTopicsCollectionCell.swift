@@ -23,7 +23,7 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
     let placeHolderIdentifier = "PlaceHolderCell"
     
     let db = Firestore.firestore()
-    let dataHelper = DataHelper()
+    let dataHelper = DataRequest()
     
     var delegate: RecentTopicCellDelegate?
     
