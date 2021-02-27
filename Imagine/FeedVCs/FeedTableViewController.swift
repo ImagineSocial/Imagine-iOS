@@ -194,7 +194,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
             
             DispatchQueue.global(qos: .default).async {
                 
-                self.postHelper.getPostsForMainFeed(getMore: getMore, sort: self.sortBy) { (posts,initialFetch)  in
+                self.firestoreRequest.getPostsForMainFeed(getMore: getMore, sort: self.sortBy) { (posts,initialFetch)  in
                     
                     print("\(posts.count) neue dazu")
                     if initialFetch {   // Get the first batch of posts
