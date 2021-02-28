@@ -18,7 +18,7 @@ class CommunityItem {
     }
 }
 
-class CommunityCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class ImagineCommunityCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
 
     var items = [CommunityItem]()
@@ -314,7 +314,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     
 }
 
-extension CommunityCollectionViewController: CommunityCollectionCellDelegate, TableViewInCollectionViewCellDelegate {
+extension ImagineCommunityCollectionViewController: CommunityCollectionCellDelegate, TableViewInCollectionViewCellDelegate {
     
     func itemTapped(item: Any) {
         if let jobOffer = item as? JobOffer {

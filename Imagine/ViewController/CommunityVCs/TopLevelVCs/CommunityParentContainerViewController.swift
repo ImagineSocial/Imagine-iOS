@@ -14,7 +14,7 @@ protocol RecentTopicDelegate {
     func topicSelected(fact: Community)
 }
 
-class FactParentContainerViewController: UIViewController {
+class CommunityParentContainerViewController: UIViewController {
     
     @IBOutlet weak var contraArgumentCountLabel: UILabel!
     @IBOutlet weak var proArgumentCountLabel: UILabel!

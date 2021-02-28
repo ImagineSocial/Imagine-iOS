@@ -31,7 +31,7 @@ enum AddFactToPostType {
     case newPost
 }
 
-class FactCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RecentTopicDelegate {
+class CommunityCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RecentTopicDelegate {
     
     @IBOutlet weak var infoButton: UIBarButtonItem!
     
@@ -611,7 +611,7 @@ class FactCollectionViewController: UICollectionViewController, UICollectionView
     }
 }
 
-extension FactCollectionViewController: OptionalInformationDelegate {
+extension CommunityCollectionViewController: OptionalInformationDelegate {
     func fetchCompleted() {
         print("not needed")
     }
@@ -632,7 +632,7 @@ extension FactCollectionViewController: OptionalInformationDelegate {
     }
 }
 
-extension FactCollectionViewController: TopOfCollectionViewDelegate, NewFactDelegate, TopicCollectionFooterDelegate, RecentTopicCellDelegate {
+extension CommunityCollectionViewController: TopOfCollectionViewDelegate, NewFactDelegate, TopicCollectionFooterDelegate, RecentTopicCellDelegate {
     
     //Topic in the recentTopic collectionView is tapped
     func topicTapped(fact: Community) {

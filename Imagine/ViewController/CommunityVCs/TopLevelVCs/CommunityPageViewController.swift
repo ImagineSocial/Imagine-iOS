@@ -266,7 +266,7 @@ class ArgumentPageViewController: UIPageViewController {
         
         if fact.displayOption == .fact {
         
-            if let factParentVC = storyboard?.instantiateViewController(withIdentifier: "factParentVC") as? FactParentContainerViewController {
+            if let factParentVC = storyboard?.instantiateViewController(withIdentifier: "factParentVC") as? CommunityParentContainerViewController {
                 
                 
                 
@@ -311,7 +311,7 @@ class ArgumentPageViewController: UIPageViewController {
                 Analytics.logEvent("DiscussionOpened", parameters: [
                     AnalyticsParameterTerm: ""
                 ])
-                if let secondVC = argumentVCs[1] as? FactParentContainerViewController {
+                if let secondVC = argumentVCs[1] as? CommunityParentContainerViewController {
                     setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
                 }
             } else {

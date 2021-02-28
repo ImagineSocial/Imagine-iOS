@@ -112,10 +112,10 @@
             </objects>
             <point key="canvasLocation" x="3365.5999999999999" y="258.62068965517244"/>
         </scene>
-        <!--Fact Collection View Controller-->
+        <!--Community Collection View Controller-->
         <scene sceneID="I0E-4u-dzq">
             <objects>
-                <collectionViewController automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="currentContext" id="5ed-kM-4uu" customClass="FactCollectionViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="currentContext" id="5ed-kM-4uu" customClass="CommunityCollectionViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="wda-yC-dxj">
                         <rect key="frame" x="0.0" y="0.0" width="275" height="466"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -274,10 +274,10 @@
             </objects>
             <point key="canvasLocation" x="-5451.1999999999998" y="2234.9325337331338"/>
         </scene>
-        <!--Fact Parent Container View Controller-->
+        <!--Community Parent Container View Controller-->
         <scene sceneID="WeI-dl-XJm">
             <objects>
-                <viewController storyboardIdentifier="factParentVC" hidesBottomBarWhenPushed="YES" id="gLM-xd-6dW" customClass="FactParentContainerViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="factParentVC" hidesBottomBarWhenPushed="YES" id="gLM-xd-6dW" customClass="CommunityParentContainerViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="n1e-MA-FZy">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -3589,7 +3589,7 @@
         <!--Imagine-->
         <scene sceneID="B0Z-Xd-EYH">
             <objects>
-                <collectionViewController id="hlb-oB-kxS" customClass="CommunityCollectionViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController id="hlb-oB-kxS" customClass="ImagineCommunityCollectionViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="fma-H8-uJW">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -4673,11 +4673,11 @@
             <objects>
                 <viewController id="D6t-ao-oDv" customClass="ReportABugViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qoH-tA-wq8">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Danke für deine Unterstützung, wo hakt's?" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wFQ-hk-dta">
-                                <rect key="frame" x="10" y="86" width="355" height="57.5"/>
+                                <rect key="frame" x="10" y="74" width="355" height="57.5"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="22"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -4686,13 +4686,13 @@
                                 </userDefinedRuntimeAttributes>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Problem" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BAC-lz-nUE">
-                                <rect key="frame" x="10" y="168.5" width="76" height="26"/>
+                                <rect key="frame" x="10" y="156.5" width="76" height="26"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PT5-FG-Usg">
-                                <rect key="frame" x="0.0" y="199.5" width="375" height="200"/>
+                                <rect key="frame" x="0.0" y="187.5" width="375" height="200"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cNw-bo-R47">
                                         <rect key="frame" x="10" y="10" width="355" height="180"/>
@@ -4711,7 +4711,7 @@
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pQ3-ZH-j8j">
-                                <rect key="frame" x="345" y="66" width="20" height="20"/>
+                                <rect key="frame" x="345" y="54" width="20" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="20" id="REa-gc-lKG"/>
                                     <constraint firstAttribute="height" constant="20" id="ROQ-ax-F8K"/>
@@ -4722,7 +4722,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p2E-xL-syA">
-                                <rect key="frame" x="10" y="399.5" width="355" height="82"/>
+                                <rect key="frame" x="10" y="387.5" width="355" height="82"/>
                                 <string key="text">Erkläre uns bitte mit deinen Worten kurz, wo es ein Problem gibt. Wir versuchen uns so schnell es geht darum zu kümmern.   Danke für deine Zeit!</string>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
                                 <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -7781,7 +7781,7 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="lUk-sN-9Ax"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="jY0-1E-Zcw">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -8876,22 +8876,22 @@
         <segue reference="abH-Sm-SDu"/>
         <segue reference="oN4-jG-mYq"/>
         <segue reference="841-F7-pRK"/>
-        <segue reference="5HF-ul-5iD"/>
+        <segue reference="9QY-S4-xl7"/>
         <segue reference="ilO-fQ-UNL"/>
         <segue reference="Ry2-Md-ecH"/>
         <segue reference="TUn-Fj-dxB"/>
         <segue reference="W1P-Tf-4HL"/>
         <segue reference="HeY-vY-CcT"/>
-        <segue reference="Zwt-mC-YlF"/>
+        <segue reference="4O7-Dd-y1Z"/>
         <segue reference="yPU-9a-S9h"/>
         <segue reference="Nkm-Bu-csR"/>
         <segue reference="qdf-cE-3ul"/>
         <segue reference="65n-8p-jc1"/>
-        <segue reference="BWd-PY-N3B"/>
+        <segue reference="m6b-eV-Frv"/>
         <segue reference="ewF-Tj-uZk"/>
         <segue reference="0po-Va-czT"/>
-        <segue reference="OH6-CE-32x"/>
-        <segue reference="s3U-v0-RhF"/>
+        <segue reference="Cdz-Pl-3MF"/>
+        <segue reference="yNA-zh-mO4"/>
         <segue reference="2u8-IF-mSe"/>
         <segue reference="DuH-Jg-LAd"/>
         <segue reference="BSN-fi-jKu"/>

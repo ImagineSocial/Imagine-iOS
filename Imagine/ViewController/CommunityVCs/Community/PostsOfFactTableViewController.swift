@@ -25,7 +25,7 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
     var needNavigationController = false
     var displayOption: TableViewDisplayOptions = .normal
     
-    let factParentVC = FactParentContainerViewController()
+    let factParentVC = CommunityParentContainerViewController()
     let radius:CGFloat = 6
     
     var tipView: EasyTipView?
@@ -291,7 +291,7 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
         if segue.identifier == "toFactSegue" {
             if let fact = sender as? Community {
                 if let navCon = segue.destination as? UINavigationController {
-                    if let factVC = navCon.topViewController as? FactParentContainerViewController {
+                    if let factVC = navCon.topViewController as? CommunityParentContainerViewController {
                         factVC.fact = fact
                         factVC.needNavigationController = true
                     }

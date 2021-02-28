@@ -588,7 +588,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     func notifyFactCollectionViewController(fact: Community) {
         if let viewControllers = self.tabBarController?.viewControllers {
             if let navVC = viewControllers[3] as? UINavigationController {
-                if let factVC = navVC.topViewController as? FactCollectionViewController {
+                if let factVC = navVC.topViewController as? CommunityCollectionViewController {
                     factVC.registerRecentFact(fact: fact)
                 }
             }

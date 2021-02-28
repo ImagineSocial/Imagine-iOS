@@ -828,7 +828,7 @@ class NewCommunityItemTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "selectFactSegue" {
             if let navCon = segue.destination as? UINavigationController {
-                if let factVC = navCon.topViewController as? FactCollectionViewController {
+                if let factVC = navCon.topViewController as? CommunityCollectionViewController {
                     factVC.addFactToPost = .newPost
                     factVC.delegate = self
                 }

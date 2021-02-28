@@ -35,6 +35,8 @@ enum SettingButtonType {
     case cancel
 }
 
+
+//Wasn't aware of the UIAlertAction from below when I build this
 class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     var FriendsTableVC:FriendsTableViewController?

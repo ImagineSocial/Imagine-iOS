@@ -172,7 +172,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
     }
     
     func topicSelected(fact: Community) {
-        let factVC = FactCollectionViewController()
+        let factVC = CommunityCollectionViewController()
         factVC.registerRecentFact(fact: fact)
     }
     

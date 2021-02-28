@@ -266,7 +266,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
             }
         }
         if segue.identifier == "toTopicsSegue" {
-            if let vc = segue.destination as? FactCollectionViewController {
+            if let vc = segue.destination as? CommunityCollectionViewController {
                 if let addOn = sender as? OptionalInformation {
                     vc.addOn = addOn
                     vc.addFactToPost = .optInfo

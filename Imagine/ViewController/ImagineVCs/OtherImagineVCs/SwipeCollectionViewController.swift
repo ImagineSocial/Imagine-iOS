@@ -25,7 +25,7 @@ class SwipeCollectionViewController: UICollectionViewController, UICollectionVie
     
     var diashow: SwipeCollectionDiashow = .intro
     
-    var communityVC: CommunityCollectionViewController?
+    var communityVC: ImagineCommunityCollectionViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
