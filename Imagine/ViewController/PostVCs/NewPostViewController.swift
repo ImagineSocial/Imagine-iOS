@@ -132,19 +132,19 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         super.viewDidLoad()
 
         //CollectionViewSettings for the previewImages
-        previewCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
+        pictureView.previewCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
         
-        previewCollectionView.dataSource = self
-        previewCollectionView.delegate = self
+        pictureView.previewCollectionView.dataSource = self
+        pictureView.previewCollectionView.delegate = self
         
         layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
-        previewCollectionView.setCollectionViewLayout(layout, animated: true)
+        pictureView.previewCollectionView.setCollectionViewLayout(layout, animated: true)
         
         
         // Set Listener and delegates
         imagePicker.delegate = self
-        titleTextView.delegate = self
-        linkTextField.addTarget(self, action: #selector(self.textFieldDidChange(_:)), for: .editingChanged)
+        titleView.titleTextView.delegate = self
+        linkView.linkTextField.addTarget(self, action: #selector(self.textFieldDidChange(_:)), for: .editingChanged)
         
         
         
@@ -256,9 +256,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }) { (_) in
         
             UIView.animate(withDuration: 0.1, animations: {
-                self.linkLabel.alpha = 1
-                self.linkTextField.alpha = 1
-                self.webImageViewStackView.alpha = 1
+                self.linkView.linkLabel.alpha = 1
+                self.linkView.linkTextField.alpha = 1
+                self.linkView.webImageViewStackView.alpha = 1
                 self.linkInfoButton.alpha = 1
             }, completion: { (_) in
                 self.postSelectionSegmentedControl.isEnabled = true
@@ -289,124 +289,20 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }) { (_) in
             
             UIView.animate(withDuration: 0.1, animations: {
-                self.cameraButton.alpha = 1
-                self.folderButton.alpha = 1
-                self.pictureLabel.alpha = 1
+                self.pictureView.cameraButton.alpha = 1
+                self.pictureView.folderButton.alpha = 1
+                self.pictureView.pictureLabel.alpha = 1
             }, completion: { (_) in
                 self.postSelectionSegmentedControl.isEnabled = true
             })
         }
     }
     
-    func insertUIForEvent() {
-        self.descriptionViewTopAnchor!.isActive = false
-        
-        
-        if let pictureTop = pictureViewTopAnchor {
-            pictureTop.isActive = false
-        }
-        
-        self.pictureViewTopAnchor = pictureView.topAnchor.constraint(equalTo: locationView.bottomAnchor, constant: 1)
-        self.pictureViewTopAnchor!.isActive = true
-        
-        self.descriptionViewTopAnchor! = descriptionView.topAnchor.constraint(equalTo: pictureView.bottomAnchor, constant: 1)
-        self.descriptionViewTopAnchor!.isActive = true
-        
-        self.eventViewHeight!.constant = 50
-        self.pictureViewHeight!.constant = 100
-        self.locationViewHeight!.constant = 50
-        
-        UIView.animate(withDuration: 0.4, animations: {
-            self.view.layoutIfNeeded()
-            
-            self.markPostSegmentControl.setTitle("Veranstaltung", forSegmentAt: 0)
-            self.markPostSegmentControl.setTitle("Projekt", forSegmentAt: 1)
-            self.markPostSegmentControl.setTitle("Event", forSegmentAt: 2)
-            
-            self.markPostSwitch.alpha = 0
-            self.markPostLabel.alpha = 0
-            self.markPostSegmentControl.alpha = 1
-            
-        }) { (_) in
-            self.markPostSegmentControl.isHidden = false
-            
-            UIView.animate(withDuration: 0.1, animations: {
-                self.timeLabel.alpha = 1
-                self.dateLabel.alpha = 1
-                self.setTimeButton.alpha = 1
-                
-                self.locationTextField.alpha = 1
-                self.locationLabel.alpha = 1
-                
-                self.cameraButton.alpha = 1
-                self.folderButton.alpha = 1
-                self.pictureLabel.alpha = 1
-                
-            }, completion: { (_) in
-                self.postSelectionSegmentedControl.isEnabled = true
-                self.markPostSwitch.isHidden = true
-                self.markPostLabel.isHidden = true
-            })
-        }
-    }
     
-    // MARK: - TitleViewUI
-    let titleView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
-
-        return view
-    }()
     
-    let titleLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = NSLocalizedString("newPost_title_label_text", comment: "title:")
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
-        
-        return label
-    }()
-    
-    let characterCountLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "200"
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 11)
-        
-        return label
-    }()
-    
-    let titleTextView: UITextView = {
-        let textView = UITextView()
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        textView.font = UIFont(name: "IBMPlexSans", size: 14)
-        textView.returnKeyType = UIReturnKeyType.next
-        textView.enablesReturnKeyAutomatically = true
-        
-        return textView
-    }()
+    let titleView = TitleView()
     
     func setTitleViewUI() {
-        titleView.addSubview(titleLabel)
-        titleLabel.topAnchor.constraint(equalTo: titleView.topAnchor, constant: 5).isActive = true
-        titleLabel.leadingAnchor.constraint(equalTo: titleView.leadingAnchor, constant: 10).isActive = true
-        titleLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        
-        titleView.addSubview(characterCountLabel)
-        characterCountLabel.trailingAnchor.constraint(equalTo: titleView.trailingAnchor, constant: -5).isActive = true
-        characterCountLabel.bottomAnchor.constraint(equalTo: titleView.bottomAnchor).isActive = true
-        characterCountLabel.heightAnchor.constraint(equalToConstant: 15).isActive = true
-        
-        titleView.addSubview(titleTextView)
-        titleTextView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor).isActive = true
-        titleTextView.leadingAnchor.constraint(equalTo: titleView.leadingAnchor, constant: 10).isActive = true
-        titleTextView.trailingAnchor.constraint(equalTo: titleView.trailingAnchor, constant: -10).isActive = true
-        titleTextView.bottomAnchor.constraint(equalTo: characterCountLabel.topAnchor).isActive = true
         
         self.view.addSubview(titleView)
         titleView.topAnchor.constraint(equalTo: postSelectionSegmentedControl.bottomAnchor, constant: 5).isActive = true
@@ -419,46 +315,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     // MARK: - DescriptionViewUI
-    let descriptionView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
-        
-        return view
-    }()
-    
-    let descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = NSLocalizedString("decriptionLabelText", comment: "...:")
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
-        
-        return label
-    }()
-    
-    let descriptionTextView: UITextView = {
-        let textView = UITextView()
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        textView.font = UIFont(name: "IBMPlexSans", size: 14)
-        
-        return textView
-    }()
+    let descriptionView = DescriptionView()
     
     func setDescriptionViewUI() {   // have to set descriptionview topanchor
-        descriptionView.addSubview(descriptionLabel)
-        descriptionLabel.topAnchor.constraint(equalTo: descriptionView.topAnchor, constant: 5).isActive = true
-        descriptionLabel.leadingAnchor.constraint(equalTo: descriptionView.leadingAnchor, constant: 10).isActive = true
-        descriptionLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        
-        descriptionView.addSubview(descriptionTextView)
-        descriptionTextView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor).isActive = true
-        descriptionTextView.leadingAnchor.constraint(equalTo: descriptionView.leadingAnchor, constant: 10).isActive = true
-        descriptionTextView.trailingAnchor.constraint(equalTo: descriptionView.trailingAnchor, constant: -10).isActive = true
-        descriptionTextView.bottomAnchor.constraint(equalTo: descriptionView.bottomAnchor).isActive = true
         
         self.view.addSubview(descriptionView)
         descriptionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
@@ -469,97 +328,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     // MARK: - LinkViewUI
-    let linkView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
-        
-        return view
-    }()
     
-    let linkLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Link:"
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
-        label.alpha = 0
-        
-        return label
-    }()
-    
-    let linkTextField: UITextField = {
-        let textField = UITextField()
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.borderStyle = .none
-        textField.placeholder = "https://..."
-        textField.alpha = 0
-        
-        return textField
-    }()
-    
-    let youTubeImageView: UIImageView = {
-       let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "YouTubeButtonIcon")
-        imageView.contentMode = .scaleAspectFit
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .secondaryLabel
-        } else {
-            imageView.tintColor = .black
-        }
-        imageView.alpha = 0.4
-        
-        return imageView
-    }()
-    
-    let GIFImageView: UIImageView = {
-       let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "GIFIcon")
-        imageView.contentMode = .scaleAspectFit
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .secondaryLabel
-        } else {
-            imageView.tintColor = .black
-        }
-        imageView.alpha = 0.4
-        
-        return imageView
-    }()
-    
-    let songWhipImageView: UIImageView = {
-       let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "MusicIcon")
-        imageView.contentMode = .scaleAspectFit
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .secondaryLabel
-        } else {
-            imageView.tintColor = .black
-        }
-        imageView.alpha = 0.4
-        
-        return imageView
-    }()
-    
-    let internetImageView: UIImageView = {
-       let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "translate")
-        imageView.contentMode = .scaleAspectFill
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .secondaryLabel
-        } else {
-            imageView.tintColor = .black
-        }
-        imageView.alpha = 0.4
-        
-        return imageView
-    }()
+    let linkView = LinkView()
     
     let linkInfoButton: DesignableButton = {
         let button = DesignableButton(type: .detailDisclosure)
@@ -571,57 +341,16 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         return button
     }()
     
-    let webImageViewStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.spacing = 10
-        stackView.clipsToBounds = true
-        stackView.alpha = 0
-        
-        return stackView
-    }()
-    
     func setLinkViewUI() {   // have to set descriptionview topanchor
-        linkView.addSubview(linkLabel)
-        linkLabel.topAnchor.constraint(equalTo: linkView.topAnchor, constant: 7).isActive = true
-        linkLabel.leadingAnchor.constraint(equalTo: linkView.leadingAnchor, constant: 10).isActive = true
-        linkLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
-        webImageViewStackView.addArrangedSubview(internetImageView)
-        webImageViewStackView.addArrangedSubview(youTubeImageView)
-        webImageViewStackView.addArrangedSubview(GIFImageView)
-        webImageViewStackView.addArrangedSubview(songWhipImageView)
-        
-        internetImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        internetImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        youTubeImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        youTubeImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        GIFImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        GIFImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        songWhipImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        songWhipImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        
-        
-        linkView.addSubview(webImageViewStackView)
-        webImageViewStackView.trailingAnchor.constraint(equalTo: linkView.trailingAnchor, constant: -10).isActive = true
-        webImageViewStackView.centerYAnchor.constraint(equalTo: linkLabel.centerYAnchor).isActive = true
-        webImageViewStackView.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        webImageViewStackView.widthAnchor.constraint(equalToConstant: 110).isActive = true
         
         linkView.addSubview(linkInfoButton)
-        linkView.addSubview(linkTextField)
         
-        linkInfoButton.centerYAnchor.constraint(equalTo: linkTextField.centerYAnchor).isActive = true
+        linkInfoButton.centerYAnchor.constraint(equalTo: linkView.linkTextField.centerYAnchor).isActive = true
         linkInfoButton.trailingAnchor.constraint(equalTo: linkView.trailingAnchor, constant: -10).isActive = true
         linkInfoButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
         linkInfoButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
         
-        linkTextField.topAnchor.constraint(equalTo: linkLabel.bottomAnchor, constant: 10).isActive = true
-        linkTextField.leadingAnchor.constraint(equalTo: linkView.leadingAnchor, constant: 10).isActive = true
-        linkTextField.trailingAnchor.constraint(equalTo: linkInfoButton.leadingAnchor, constant: -5).isActive = true
-        linkTextField.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
         self.view.addSubview(linkView)
         linkView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1).isActive = true
@@ -634,21 +363,21 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     @objc func textFieldDidChange(_ textField: UITextField) {
         if let text = textField.text {
             
-            internetImageView.alpha = 0.4
-            youTubeImageView.alpha = 0.4
-            songWhipImageView.alpha = 0.4
-            GIFImageView.alpha = 0.4
+            linkView.internetImageView.alpha = 0.4
+            linkView.youTubeImageView.alpha = 0.4
+            linkView.songWhipImageView.alpha = 0.4
+            linkView.GIFImageView.alpha = 0.4
             
             if text.isValidURL {
                 if let _ = text.youtubeID {
-                    youTubeImageView.alpha = 1
+                    linkView.youTubeImageView.alpha = 1
                 } else if text.contains("songwhip.com") || text.contains("music.apple.com") || text.contains("open.spotify.com/") || text.contains("deezer.page.link") {
-                    songWhipImageView.alpha = 1
+                    linkView.songWhipImageView.alpha = 1
                 } else if text.contains(".mp4") {
-                    GIFImageView.alpha = 1
+                    linkView.GIFImageView.alpha = 1
                     print("Got mp4")
                 } else {
-                    internetImageView.alpha = 1
+                    linkView.internetImageView.alpha = 1
                 }
             }
         }
@@ -665,87 +394,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     // MARK: - PictureViewUI
-    let pictureView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
-        
-        return view
-    }()
-    
-    let pictureLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = NSLocalizedString("pictureLabelText", comment: "picture:")
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
-        label.alpha = 0
-        
-        return label
-    }()
-    
-    let cameraButton :DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: "camera"), for: .normal)
-        button.addTarget(self, action: #selector(camTapped), for: .touchUpInside)
-        button.alpha = 0
-        if #available(iOS 13.0, *) {
-            button.tintColor = .label
-        } else {
-            button.tintColor = .black
-        }
-        
-        return button
-    }()
-    
-    let folderButton :DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: "folder"), for: .normal)
-        button.addTarget(self, action: #selector(camRollTapped), for: .touchUpInside)
-        button.alpha = 0
-        if #available(iOS 13.0, *) {
-            button.tintColor = .label
-        } else {
-            button.tintColor = .black
-        }
-        
-        return button
-    }()
-    
-    let removePictureButton :DesignableButton = {
-       let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: "DismissTemplate"), for: .normal)
-        button.alpha = 0
-        button.tintColor = .systemRed
-        button.backgroundColor = .white
-        button.cornerRadius = 9
-        button.addTarget(self, action: #selector(removePictureTapped), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    
-    
-    let previewCollectionView: UICollectionView = {
-       let collectView = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout.init())
-        collectView.translatesAutoresizingMaskIntoConstraints = false
-        collectView.allowsSelection = true  //Pictures clickable
-        collectView.layer.cornerRadius = 8
-        collectView.isPagingEnabled = true
-        if #available(iOS 13.0, *) {
-            collectView.backgroundColor = .systemBackground
-        } else {
-            collectView.backgroundColor = .white
-        }
-        
-        return collectView
-    }()
     
     @objc func showChoosenImage(tapGestureRecognizer: UITapGestureRecognizer) {
         print("To choosen Image")
@@ -759,36 +407,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
+    lazy var pictureView = PictureView(newPostVC: self)
+    
     func setPictureViewUI() {
-        pictureView.addSubview(pictureLabel)
-        pictureLabel.topAnchor.constraint(equalTo: pictureView.topAnchor, constant: 5).isActive = true
-        pictureLabel.leadingAnchor.constraint(equalTo: pictureView.leadingAnchor, constant: 10).isActive = true
-        pictureLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        
-        pictureView.addSubview(cameraButton)
-        cameraButton.topAnchor.constraint(equalTo: pictureView.topAnchor, constant: 15).isActive = true
-        cameraButton.leadingAnchor.constraint(equalTo: pictureLabel.trailingAnchor, constant: 25).isActive = true
-        cameraButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        cameraButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        
-        pictureView.addSubview(folderButton)
-        folderButton.bottomAnchor.constraint(equalTo: pictureView.bottomAnchor, constant: -10).isActive = true
-        folderButton.leadingAnchor.constraint(equalTo: cameraButton.leadingAnchor).isActive = true
-        folderButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        folderButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        
-        pictureView.addSubview(previewCollectionView)
-        previewCollectionView.topAnchor.constraint(equalTo: pictureView.topAnchor).isActive = true
-//        previewCollectionView.trailingAnchor.constraint(equalTo: pictureView.trailingAnchor, constant: -50).isActive = true
-        previewCollectionView.leadingAnchor.constraint(equalTo: cameraButton.trailingAnchor, constant: 75).isActive = true
-        previewCollectionView.widthAnchor.constraint(equalToConstant: 125).isActive = true
-        previewCollectionView.bottomAnchor.constraint(equalTo: pictureView.bottomAnchor).isActive = true
-        
-        pictureView.addSubview(removePictureButton)
-        removePictureButton.topAnchor.constraint(equalTo: previewCollectionView.topAnchor, constant: -5).isActive = true
-        removePictureButton.trailingAnchor.constraint(equalTo: previewCollectionView.trailingAnchor, constant: 5).isActive = true
-        removePictureButton.widthAnchor.constraint(equalToConstant: 18).isActive = true
-        removePictureButton.heightAnchor.constraint(equalToConstant: 18).isActive = true
         
         self.view.addSubview(pictureView)
         pictureView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
@@ -799,150 +420,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.pictureViewTopAnchor!.isActive = true
     }
     
-    // MARK: - EventViewUI
-    let eventView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
-        
-        return view
-    }()
     
-    let timeLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Zeit:"
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
-        label.alpha = 0
-        
-        return label
-    }()
-    
-    let dateLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = ""
-        label.font = UIFont(name: "IBMPlexSans", size: 14)
-        label.alpha = 0
-        label.textAlignment = .center
-        
-        return label
-    }()
-    
-    let setTimeButton :DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(timeButtonTapped), for: .touchUpInside)
-        button.setTitle("Zeit einstellen", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.layer.cornerRadius = 3
-        button.layer.borderColor = UIColor.black.cgColor
-        button.layer.borderWidth = 1
-        button.clipsToBounds = true
-        button.alpha = 0
-        
-        return button
-    }()
-    
-    let datePicker: UIDatePicker = {
-        let picker = UIDatePicker()
-        picker.translatesAutoresizingMaskIntoConstraints = false
-        picker.datePickerMode = .dateAndTime
-        picker.alpha = 0
-        
-        return picker
-    }()
-    
-    func setEventViewUI() {
-        eventView.addSubview(datePicker)
-        datePicker.topAnchor.constraint(equalTo: eventView.topAnchor).isActive = true
-        datePicker.trailingAnchor.constraint(equalTo: eventView.trailingAnchor).isActive = true
-        datePicker.leadingAnchor.constraint(equalTo: eventView.leadingAnchor).isActive = true
-        datePicker.bottomAnchor.constraint(equalTo: eventView.bottomAnchor, constant: -30).isActive = true
-        
-        eventView.addSubview(timeLabel)
-        timeLabel.topAnchor.constraint(equalTo: eventView.topAnchor, constant: 5).isActive = true
-        timeLabel.leadingAnchor.constraint(equalTo: eventView.leadingAnchor, constant: 10).isActive = true
-        timeLabel.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        timeLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        
-        eventView.addSubview(setTimeButton)
-//        setTimeButton.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: 5).isActive = true
-        setTimeButton.bottomAnchor.constraint(equalTo: eventView.bottomAnchor, constant: -10).isActive = true
-        setTimeButton.trailingAnchor.constraint(equalTo: eventView.trailingAnchor, constant: -15).isActive = true
-        setTimeButton.widthAnchor.constraint(equalToConstant: 130).isActive = true
-        setTimeButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        
-        eventView.addSubview(dateLabel)
-        dateLabel.trailingAnchor.constraint(equalTo: setTimeButton.leadingAnchor, constant: 10).isActive = true
-        dateLabel.leadingAnchor.constraint(equalTo: timeLabel.trailingAnchor, constant: 10).isActive = true
-        dateLabel.bottomAnchor.constraint(equalTo: eventView.bottomAnchor, constant: -10).isActive = true
-        
-        self.view.addSubview(eventView)
-        eventView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1).isActive = true
-        eventView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        eventView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        self.eventViewHeight = eventView.heightAnchor.constraint(equalToConstant: 0)
-        self.eventViewHeight!.isActive = true
-    }
-    
-    
-    // MARK: - EventLocationViewUI
-    let locationView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
-        
-        return view
-    }()
-    
-    let locationLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Location:"
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
-        label.alpha = 0
-        
-        return label
-    }()
-    
-    let locationTextField: UITextField = {
-        let textField = UITextField()
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.borderStyle = .none
-        textField.placeholder = "Neuersberg, An der Mühle 13..."
-        textField.alpha = 0
-        
-        return textField
-    }()
-    
-    func setLocationViewUI() {
-        locationView.addSubview(locationLabel)
-        locationLabel.topAnchor.constraint(equalTo: locationView.topAnchor, constant: 5).isActive = true
-        locationLabel.leadingAnchor.constraint(equalTo: locationView.leadingAnchor, constant: 10).isActive = true
-        locationLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        
-        locationView.addSubview(locationTextField)
-        locationTextField.topAnchor.constraint(equalTo: locationLabel.bottomAnchor).isActive = true
-        locationTextField.leadingAnchor.constraint(equalTo: locationView.leadingAnchor, constant: 10).isActive = true
-        locationTextField.trailingAnchor.constraint(equalTo: locationView.trailingAnchor, constant: -10).isActive = true
-        locationTextField.bottomAnchor.constraint(equalTo: locationView.bottomAnchor).isActive = true
-        
-        self.view.addSubview(locationView)
-        locationView.topAnchor.constraint(equalTo: eventView.bottomAnchor, constant: 1).isActive = true
-        locationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        locationView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        self.locationViewHeight = locationView.heightAnchor.constraint(equalToConstant: 0)
-        self.locationViewHeight!.isActive = true
-    }
     
     // MARK: - OptionViewUI
     let optionView: UIView = {
@@ -1029,11 +507,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         let text = NSMutableAttributedString()
         text.append(NSAttributedString(string: "M", attributes: [NSAttributedString.Key.foregroundColor: color]))
-        text.append(NSAttributedString(string: "e", attributes: [NSAttributedString.Key.foregroundColor: tronColor]))
-        text.append(NSAttributedString(string: "m", attributes: [NSAttributedString.Key.foregroundColor: color]))
-        text.append(NSAttributedString(string: "e", attributes: [NSAttributedString.Key.foregroundColor: tronColor]))
-        text.append(NSAttributedString(string: " Mod", attributes: [NSAttributedString.Key.foregroundColor: color]))
-        text.append(NSAttributedString(string: "e", attributes: [NSAttributedString.Key.foregroundColor: tronColor]))
+        text.append(NSAttributedString(string: "M", attributes: [NSAttributedString.Key.foregroundColor: tronColor]))
         
         button.setTitleColor(tronColor, for: .normal)
         button.setAttributedTitle(text, for: .normal)
@@ -1620,7 +1094,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         if !self.up {
             
             if let _ = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-                if descriptionTextView.isFirstResponder {
+                if descriptionView.descriptionTextView.isFirstResponder {
                     
                     var offset:CGFloat = 75
                     switch selectedOption {
@@ -1667,9 +1141,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     // MARK: - Functions
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        titleTextView.resignFirstResponder()
-        linkTextField.resignFirstResponder()
-        descriptionTextView.resignFirstResponder()
+        titleView.titleTextView.resignFirstResponder()
+        linkView.linkTextField.resignFirstResponder()
+        descriptionView.descriptionTextView.resignFirstResponder()
         
         self.removeTipViews()
     }
@@ -1702,9 +1176,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         
-        if textView == titleTextView {  // No lineBreaks in titleTextView
+        if textView == titleView.titleTextView {  // No lineBreaks in titleTextView
             guard text.rangeOfCharacter(from: CharacterSet.newlines) == nil else {
-                return descriptionTextView.becomeFirstResponder()   // Switch to description when "continue" is hit on keyboard
+                return descriptionView.descriptionTextView.becomeFirstResponder()   // Switch to description when "continue" is hit on keyboard
             }
         }
         
@@ -1714,7 +1188,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     func textViewDidChange(_ textView: UITextView) {
         
         let characterLeft = characterLimitForTitle-textView.text.count
-        self.characterCountLabel.text = String(characterLeft)
+        self.titleView.characterCountLabel.text = String(characterLeft)
     }
     
     func explainFunctionOnFirstOpen() {
@@ -1799,7 +1273,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     //MARK: - Buttons & Stuff
     
-    @objc func camTapped() {
+    func camTapped() {
         if let _ = Auth.auth().currentUser {
             
             let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
@@ -1867,7 +1341,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.present(self.imagePicker, animated: true, completion: nil)
     }
     
-    @objc func camRollTapped() {
+    func camRollTapped() {
         if let _ = Auth.auth().currentUser {
             
             switch PHPhotoLibrary.authorizationStatus() {
@@ -1927,15 +1401,15 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.present(self.imagePicker, animated: true, completion: nil)
     }
     
-    @objc func removePictureTapped() {
+    func removePictureTapped() {
         
         self.multiImageAssets.removeAll()
         self.previewPictures.removeAll()
-        self.previewCollectionView.reloadData()
+        self.pictureView.previewCollectionView.reloadData()
         
         UIView.animate(withDuration: 0.3, animations: {
-            self.removePictureButton.alpha = 0
-            self.removePictureButton.isEnabled = true
+            self.pictureView.removePictureButton.alpha = 0
+            self.pictureView.removePictureButton.isEnabled = true
         }) { (_) in
             self.decreasePictureUI()
             self.selectedImageFromPicker = nil
@@ -1943,45 +1417,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    @objc func timeButtonTapped() {
-        if selectDate {
-            selectDate = false
-            UIView.animate(withDuration: 0.1, animations: {
-                
-                self.datePicker.alpha = 0
-            }) { (_) in
-                self.eventViewHeight!.constant = 50
-                UIView.animate(withDuration: 0.5, animations: {
-                    self.view.layoutIfNeeded()
-                })
-            }
-            
-            selectedDate = datePicker.date
-            if let date = selectedDate {
-                
-                let formatter = DateFormatter()
-                formatter.dateFormat = "dd.MM.yyyy, HH:mm"
-                let stringDate = formatter.string(from: date)
-                
-                dateLabel.text = "\(stringDate) Uhr"
-            }
-            
-            setTimeButton.setTitle("Zeit einstellen", for: .normal)
-        } else {
-            self.eventViewHeight!.constant = 200
-            
-            UIView.animate(withDuration: 0.5, animations: {
-                self.view.layoutIfNeeded()
-                
-            }) { (_) in
-                UIView.animate(withDuration: 0.1, animations: {
-                    self.datePicker.alpha = 1
-                })
-            }
-            selectDate = true
-            setTimeButton.setTitle("Übernehmen", for: .normal)
-        }
-    }
+    
     
     @objc func markPostSwitchChanged() {
         if markPostSwitch.isOn {
@@ -2009,10 +1445,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @objc func optionButtonTapped() {
                 
-        if descriptionTextView.isFirstResponder {
-            descriptionTextView.resignFirstResponder()
-        } else if titleTextView.isFirstResponder {
-            titleTextView.resignFirstResponder()
+        if descriptionView.descriptionTextView.isFirstResponder {
+            descriptionView.descriptionTextView.resignFirstResponder()
+        } else if titleView.titleTextView.isFirstResponder {
+            titleView.titleTextView.resignFirstResponder()
         }
         if let height = optionViewHeight {
             if height.constant <= defaultOptionViewHeight {
@@ -2130,9 +1566,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             //Let the pictureView disappear
             UIView.animate(withDuration: 0.1, animations: {
-                self.folderButton.alpha = 0
-                self.cameraButton.alpha = 0
-                self.pictureLabel.alpha = 0
+                self.pictureView.folderButton.alpha = 0
+                self.pictureView.cameraButton.alpha = 0
+                self.pictureView.pictureLabel.alpha = 0
             }) { (_) in
                 
                 self.pictureViewHeight!.constant = 0
@@ -2147,9 +1583,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             // Let the LinkView disappear
             UIView.animate(withDuration: 0.1, animations: {
-                self.linkLabel.alpha = 0
-                self.linkTextField.alpha = 0
-                self.webImageViewStackView.alpha = 0
+                self.linkView.linkLabel.alpha = 0
+                self.linkView.linkTextField.alpha = 0
+                self.linkView.webImageViewStackView.alpha = 0
                 self.linkInfoButton.alpha = 0
             }) { (_) in
                 self.linkViewHeight!.constant = 0
@@ -2248,7 +1684,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 userID = id
             }
 
-            if titleTextView.text != "", let postRef = postRef {
+            if titleView.titleTextView.text != "", let postRef = postRef {
                 self.view.activityStartAnimating()
                 self.shareButton.isEnabled = false
                 
@@ -2260,7 +1696,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 case .picture:
                     self.savePicture(userID: userID, postRef: postRef)
                 case .link:
-                    if let text = linkTextField.text {
+                    if let text = linkView.linkTextField.text {
                         if text.contains(".mp4") {
                             self.postGIF(postRef: postRef, userID: userID)
                         } else if text.contains("music.apple.com") || text.contains("open.spotify.com/") || text.contains("deezer.page.link") {
@@ -2498,10 +1934,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     
                     if forPreview {
                         self.previewPictures.append(image)
-                        self.previewCollectionView.reloadData()
+                        self.pictureView.previewCollectionView.reloadData()
                         UIView.animate(withDuration: 0.3) {
-                            self.removePictureButton.alpha = 1
-                            self.removePictureButton.isEnabled = true
+                            self.pictureView.removePictureButton.alpha = 1
+                            self.pictureView.removePictureButton.isEnabled = true
                         }
                     } else {
                         if self.selectedImageWidth == 0 {   // Set the width just for the first Image
@@ -2647,11 +2083,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.increasePictureUI()
         self.previewPictures.removeAll()
         self.previewPictures.append(image)
-        self.previewCollectionView.reloadData()
+        self.pictureView.previewCollectionView.reloadData()
         
         UIView.animate(withDuration: 0.3) {
-            self.removePictureButton.alpha = 1
-            self.removePictureButton.isEnabled = true
+            self.pictureView.removePictureButton.alpha = 1
+            self.pictureView.removePictureButton.isEnabled = true
         }
     }
     
@@ -2933,12 +2369,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func postThought(postRef: DocumentReference, userID: String) {
         
-        let text = descriptionTextView.text.trimmingCharacters(in: .newlines)
+        let text = descriptionView.descriptionTextView.text.trimmingCharacters(in: .newlines)
         let descriptionText = text.replacingOccurrences(of: "\n", with: "\\n")  // Just the text of the description has got line breaks
         
         let tags = self.getTagsToSave()
         
-        let dataDictionary: [String: Any] = ["title": titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "thought", "report": getReportString(), "tags": tags]
+        let dataDictionary: [String: Any] = ["title": titleView.titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "thought", "report": getReportString(), "tags": tags]
         
         self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
         
@@ -2946,9 +2382,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func postLink(postRef: DocumentReference, userID: String, link: Link, songwhipData: [String: Any]?) {
-        if linkTextField.text != "", let title = titleTextView.text {
+        if linkView.linkTextField.text != "", let title = titleView.titleTextView.text {
             
-            let descriptionText = descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
+            let descriptionText = descriptionView.descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
             let tags = self.getTagsToSave()
             
             var dataDictionary: [String: Any] = ["title": title, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "link", "report": getReportString(), "link": link.link, "linkTitle": link.linkTitle, "linkDescription": link.linkDescription, "linkShortURL": link.shortURL, "tags": tags]
@@ -2972,9 +2408,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func postPicture(postRef: DocumentReference, userID: String) {
-        if let _ = selectedImageFromPicker, let url = imageURL, let title = titleTextView.text {
+        if let _ = selectedImageFromPicker, let url = imageURL, let title = titleView.titleTextView.text {
             
-            let descriptionText = descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
+            let descriptionText = descriptionView.descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
             let tags = self.getTagsToSave()
             
             let dataDictionary: [String: Any] = ["title": title, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "picture", "report": getReportString(), "imageURL": url, "imageHeight": Double(selectedImageHeight), "imageWidth": Double(selectedImageWidth), "tags": tags]
@@ -2991,10 +2427,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func postMultiplePictures(postRef: DocumentReference, userID: String) {
         
-        let descriptionText = descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
+        let descriptionText = descriptionView.descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
         let tags = self.getTagsToSave()
         
-        let dataDictionary: [String: Any] = ["title": titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "multiPicture", "report": getReportString(), "imageURLs": self.imageURLs, "imageHeight": Double(selectedImageHeight), "imageWidth": Double(selectedImageWidth), "tags": tags]
+        let dataDictionary: [String: Any] = ["title": titleView.titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "multiPicture", "report": getReportString(), "imageURLs": self.imageURLs, "imageHeight": Double(selectedImageHeight), "imageWidth": Double(selectedImageWidth), "tags": tags]
         
         self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
         print("multiPicture posted")
@@ -3003,7 +2439,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func postGIF(postRef: DocumentReference, userID: String) {
         
-        let text = linkTextField.text
+        let text = linkView.linkTextField.text
         
         var link: String?
         
@@ -3045,10 +2481,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.shareButton.isEnabled = true
             
             
-            let descriptionText = descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
+            let descriptionText = descriptionView.descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
             let tags = self.getTagsToSave()
 
-            let dataDictionary: [String: Any] = ["title": titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "GIF", "report": getReportString(), "link": link, "tags": tags]
+            let dataDictionary: [String: Any] = ["title": titleView.titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "GIF", "report": getReportString(), "link": link, "tags": tags]
 
             self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
 
@@ -3059,12 +2495,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     func postYTVideo(postRef: DocumentReference, userID: String) {
-        if let _ = linkTextField.text?.youtubeID {  // YouTubeVideo
+        if let _ = linkView.linkTextField.text?.youtubeID {  // YouTubeVideo
             
-            let descriptionText = descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
+            let descriptionText = descriptionView.descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
             let tags = self.getTagsToSave()
             
-            let dataDictionary: [String: Any] = ["title": titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "youTubeVideo", "report": getReportString(), "link": linkTextField.text!, "tags": tags]
+            let dataDictionary: [String: Any] = ["title": titleView.titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "youTubeVideo", "report": getReportString(), "link": linkView.linkTextField.text!, "tags": tags]
             
             self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
             
@@ -3073,33 +2509,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.view.activityStopAnimating()
             self.shareButton.isEnabled = true
             self.alert(message: "Du hast kein Youtube Link angegeben. Möchtest du kein Youtube-Video posten, wähle bitte eine andere Post-Option aus", title: "Kein YouTube Link")
-        }
-    }
-    
-    func postEvent(postRef: DocumentReference, userID: String) {
-        
-        if let date = selectedDate, let locationText = locationTextField.text {
-            
-            if let url = imageURL {
-                let timestamp = Timestamp(date: date)
-                let participants: [String] = [userID]
-                let tags = self.getTagsToSave()
-                
-                let descriptionText = descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
-                
-                let dataDictionary: [String: Any] = ["title": titleTextView.text, "description": descriptionText, "createDate": getDate(), "admin": userID, "location": locationText, "imageURL": url, "imageHeight": Double(selectedImageHeight), "imageWidth": Double(selectedImageWidth), "type": getEventTypeString(), "participants": participants, "time": timestamp, "tags": tags]
-                
-                self.uploadTheEvent(userID: userID, dataDictionary: dataDictionary)
-                
-            } else {
-                self.view.activityStopAnimating()
-                self.shareButton.isEnabled = true
-                self.alert(message: "Bitte füge ein Titelbild hinzu, das spricht die Menschen eher an. Danke!", title: "Kein Bild")
-            }
-        } else {
-            self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
-            self.alert(message: "Bitte gib Datum und Ort an, wenn du eine Veranstaltung erstellst", title: "Datum oder Ort fehlt")
         }
     }
     
@@ -3247,17 +2656,16 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             let alert = UIAlertController(title: "Done!", message: NSLocalizedString("message_after_done_posting", comment: "thanks"), preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
                 
-                self.descriptionTextView.text.removeAll()
-                self.linkTextField.text?.removeAll()
-                self.locationTextField.text?.removeAll()
-                self.titleTextView.text?.removeAll()
+                self.descriptionView.descriptionTextView.text.removeAll()
+                self.linkView.linkTextField.text?.removeAll()
+                self.titleView.titleTextView.text?.removeAll()
                 self.previewPictures.removeAll()
-                self.previewCollectionView.reloadData()
+                self.pictureView.previewCollectionView.reloadData()
                 
-                self.removePictureButton.alpha = 0
-                self.removePictureButton.isEnabled = false
+                self.pictureView.removePictureButton.alpha = 0
+                self.pictureView.removePictureButton.isEnabled = false
                 
-                self.characterCountLabel.text = "200"
+                self.titleView.characterCountLabel.text = "200"
                 self.pictureViewHeight!.constant = 100
                 
                 if self.optionViewHeight?.constant != self.defaultOptionViewHeight {
@@ -3268,11 +2676,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 self.addedFactImageView.layer.borderColor = UIColor.clear.cgColor
                 self.cancelLinkedFactTapped()
                 
-                self.titleTextView.resignFirstResponder()
-                self.descriptionTextView.resignFirstResponder()
-                self.linkTextField.resignFirstResponder()
-                self.locationTextField.resignFirstResponder()
-                
+                self.titleView.titleTextView.resignFirstResponder()
+                self.descriptionView.descriptionTextView.resignFirstResponder()
+                self.linkView.linkTextField.resignFirstResponder()
                 
                 
                 
@@ -3362,7 +2768,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     func getTagsToSave() -> [String] {
         // Detect the nouns in the title and save them to Firebase in an array. We cant really search in Firebase, but we search through an array, so that way we can at least give the search function in the feedtableviewcontroller some functionality
         var tags = [String]()
-        guard let title = titleTextView.text else { return [""] }
+        guard let title = titleView.titleTextView.text else { return [""] }
         
         let tagger = NSLinguisticTagger(tagSchemes: [.lexicalClass], options: 0)
         tagger.string = title
@@ -3565,7 +2971,7 @@ extension NewPostViewController: UICollectionViewDelegate, UICollectionViewDataS
     // MARK: UICollectionViewDelegate
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        let size = CGSize(width: previewCollectionView.frame.width, height: previewCollectionView.frame.height)
+        let size = CGSize(width: pictureView.previewCollectionView.frame.width, height: pictureView.previewCollectionView.frame.height)
         return size
     }
     
