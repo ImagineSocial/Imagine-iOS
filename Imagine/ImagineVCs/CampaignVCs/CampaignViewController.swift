@@ -309,7 +309,7 @@ extension CampaignViewController: CommentViewDelegate, CommentTableViewDelegate 
     func commentGotReported(comment: Comment) {
         
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let reportViewController = storyBoard.instantiateViewController(withIdentifier: "reportVC") as! MeldenViewController
+        let reportViewController = storyBoard.instantiateViewController(withIdentifier: "reportVC") as! ReportViewController
         reportViewController.reportComment = true
         reportViewController.modalTransitionStyle = .coverVertical
         reportViewController.modalPresentationStyle = .overFullScreen

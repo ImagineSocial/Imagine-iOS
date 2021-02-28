@@ -1218,7 +1218,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         }
         if segue.identifier == "meldenSegue" {
             if let chosenPost = sender as? Post {
-                if let reportVC = segue.destination as? MeldenViewController {
+                if let reportVC = segue.destination as? ReportViewController {
                     reportVC.post = chosenPost
                 }
             }
@@ -1227,13 +1227,6 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             if let fact = sender as? Community {
                 if let factVC = segue.destination as? ArgumentPageViewController {
                     factVC.fact = fact
-                }
-            }
-        }
-        if segue.identifier == "ChangeTheProfileSegue" {
-            if let user = sender as? User {
-                if let vc = segue.destination as? EditProfileViewController {
-                    vc.user = user
                 }
             }
         }

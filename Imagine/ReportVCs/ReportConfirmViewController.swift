@@ -11,7 +11,7 @@ import FirebaseFirestore
 import Firebase
 import FirebaseAuth
 
-class MeldeAgreeViewController: UIViewController {
+class ReportConfirmViewController: UIViewController {
 
     var reportCategory: reportCategory?
     var choosenReportOption: ReportOption?

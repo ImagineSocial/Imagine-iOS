@@ -12,7 +12,7 @@ import FirebaseFirestore
 import FirebaseAuth
 import EasyTipView
 
-class SupportTheCommunityTableViewController: UITableViewController {
+class JobOfferTableViewController: UITableViewController {
     
     @IBOutlet weak var infoButton: UIBarButtonItem!
     

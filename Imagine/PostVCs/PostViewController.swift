@@ -978,7 +978,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
         if segue.identifier == "reportSegue" {
             if let chosenPost = sender as? Post {
-                if let reportVC = segue.destination as? MeldenViewController {
+                if let reportVC = segue.destination as? ReportViewController {
                     reportVC.post = chosenPost
                     
                 }
@@ -1109,7 +1109,7 @@ extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
     func commentGotReported(comment: Comment) {
         
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let reportViewController = storyBoard.instantiateViewController(withIdentifier: "reportVC") as! MeldenViewController
+        let reportViewController = storyBoard.instantiateViewController(withIdentifier: "reportVC") as! ReportViewController
         reportViewController.reportComment = true
         reportViewController.modalTransitionStyle = .coverVertical
         reportViewController.modalPresentationStyle = .overFullScreen

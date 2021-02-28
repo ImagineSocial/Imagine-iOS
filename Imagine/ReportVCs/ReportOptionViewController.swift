@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MeldeOptionViewController: UIViewController {
+class ReportOptionViewController: UIViewController {
 
     var reportCategory:reportCategory?
     var choosenReportOption: ReportOption?
@@ -39,7 +39,7 @@ class MeldeOptionViewController: UIViewController {
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let embededVC = segue.destination as? MeldeTableViewController {
+        if let embededVC = segue.destination as? ReportTableViewController {
             if let reportCategory = self.reportCategory {
                 embededVC.reportCategory = reportCategory
                 embededVC.delegate = self
@@ -47,7 +47,7 @@ class MeldeOptionViewController: UIViewController {
                 self.dismiss(animated: true, completion: nil)
             }
         }
-        if let nextVC = segue.destination as? MeldeAgreeViewController {
+        if let nextVC = segue.destination as? ReportConfirmViewController {
             if let chosenPost = sender as? Post {
                 nextVC.post = chosenPost
             } else if let chosenComment = sender as? Comment {
@@ -63,7 +63,7 @@ class MeldeOptionViewController: UIViewController {
     }
     
 }
-extension MeldeOptionViewController:tableViewToContainerParentProtocol {
+extension ReportOptionViewController:tableViewToContainerParentProtocol {
     func passReportOption(option: ReportOption) {
         choosenReportOption = option
         nextButton.isEnabled = true

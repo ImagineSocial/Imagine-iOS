@@ -20,7 +20,7 @@ enum reportCategory {
     case content
 }
 
-class MeldenViewController: UIViewController {
+class ReportViewController: UIViewController {
     
     @IBOutlet weak var savePostButtonIcon: UIImageView!
     @IBOutlet weak var lowerStackView: UIStackView!
@@ -406,7 +406,7 @@ class MeldenViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-        if let nextVC = segue.destination as? MeldeOptionViewController {
+        if let nextVC = segue.destination as? ReportOptionViewController {
             guard let category = self.reportCategory else {
                 dismiss(animated: true, completion: nil)
                 return

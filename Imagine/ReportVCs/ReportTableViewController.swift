@@ -52,7 +52,7 @@ class ReportOption {
     // not now: "Circlejerk",NSLocalizedString("Pretentious", comment: "When the poster is just posting to sell themself"),, NSLocalizedString("Ignorant Thinking", comment: "If the poster is just looking at one side of the matter or problem")
 }
 
-class MeldeTableViewController: UITableViewController {
+class ReportTableViewController: UITableViewController {
     
     var reportCategory: reportCategory?
     var choosenOption: ReportOption?

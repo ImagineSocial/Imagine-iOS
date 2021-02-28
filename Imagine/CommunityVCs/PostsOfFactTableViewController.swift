@@ -282,7 +282,7 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
         
         if segue.identifier == "meldenSegue" {
             if let chosenPost = sender as? Post {
-                if let reportVC = segue.destination as? MeldenViewController {
+                if let reportVC = segue.destination as? ReportViewController {
                     reportVC.post = chosenPost
                 }
             }
