@@ -61,7 +61,7 @@ class FactCell:UICollectionViewCell {
         layer.shadowPath = UIBezierPath(roundedRect: contentView.frame, cornerRadius: cornerRadius).cgPath
     }
     
-    var fact: Fact? {
+    var fact: Community? {
         didSet {
             if let fact = fact {
                 factCellLabel.text = fact.title
@@ -80,7 +80,7 @@ class FactCell:UICollectionViewCell {
         }
     }
     
-    var unloadedFact: Fact? {
+    var unloadedFact: Community? {
         didSet {
             if let unloadedFact = unloadedFact, unloadedFact.documentID != "" {
                 var collectionRef: CollectionReference!

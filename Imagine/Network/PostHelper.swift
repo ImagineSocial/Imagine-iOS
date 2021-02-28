@@ -363,14 +363,14 @@ class PostHelper {
     
     //MARK:- Community
     
-    func addCommunity(communityID: String) -> Fact {
+    func addCommunity(communityID: String) -> Community {
         
         if let request = firestoreRequest {
             let community = request.addFact(factID: communityID)
             
             return community
         } else {
-            let community = Fact()
+            let community = Community()
             community.documentID = communityID
             
             return community

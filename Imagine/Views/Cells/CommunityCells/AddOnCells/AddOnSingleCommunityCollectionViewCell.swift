@@ -56,7 +56,7 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
         }
     }
     
-    func getPreviewPictures(community: Fact) {
+    func getPreviewPictures(community: Community) {
         if community.documentID != "" {
             if self.previewPosts == nil {
                 DispatchQueue.global(qos: .default).async {

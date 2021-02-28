@@ -13,7 +13,7 @@ class FollowedTopicCell: UICollectionViewCell {
     @IBOutlet weak var topicImageView: DesignableImage!
     @IBOutlet weak var topicNameLabel: UILabel!
     
-    var fact: Fact? {
+    var fact: Community? {
         didSet {
             if let fact = fact {
                 topicNameLabel.text = fact.title

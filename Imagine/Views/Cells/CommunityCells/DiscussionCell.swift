@@ -38,7 +38,7 @@ class DiscussionCell: UICollectionViewCell {
         })
     }
     
-    var fact: Fact? {
+    var fact: Community? {
         didSet {
             guard let fact = fact else { return }
             
@@ -70,7 +70,7 @@ class DiscussionCell: UICollectionViewCell {
         layer.shadowPath = UIBezierPath(roundedRect: contentView.frame, cornerRadius: cornerRadius).cgPath
     }
     
-    func getArguments(fact: Fact) {
+    func getArguments(fact: Community) {
         if fact.documentID == "" { return }
         
         var collectionRef: CollectionReference!
