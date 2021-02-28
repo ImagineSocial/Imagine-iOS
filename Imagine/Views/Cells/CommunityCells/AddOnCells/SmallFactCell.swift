@@ -39,7 +39,7 @@ class SmallFactCell: UICollectionViewCell {
         }
     }
     
-    var fact: Fact? {
+    var fact: Community? {
         didSet {
             guard let fact = fact else { return }
             
@@ -57,7 +57,7 @@ class SmallFactCell: UICollectionViewCell {
         }
     }
     
-    var unloadedFact: Fact? {
+    var unloadedFact: Community? {
         didSet {
             if let unloadedFact = unloadedFact {
                 DispatchQueue.global(qos: .default).async {
@@ -156,7 +156,7 @@ class SmallFactCell: UICollectionViewCell {
         }
     }
     
-    func getArguments(fact: Fact) {
+    func getArguments(fact: Community) {
         if fact.documentID == "" { return }
         
         var collectionRef: CollectionReference!

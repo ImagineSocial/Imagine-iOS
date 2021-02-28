@@ -433,7 +433,7 @@ class FirestoreRequest {
     
     //MARK:- Communities
     
-    func getPostsForCommunity(getMore: Bool, fact: Fact, returnPosts: @escaping ([Post]?, _ InitialFetch:Bool) -> Void) {
+    func getPostsForCommunity(getMore: Bool, fact: Community, returnPosts: @escaping ([Post]?, _ InitialFetch:Bool) -> Void) {
         
         if fact.documentID != "" {
             if morePostsToFetch {
@@ -516,7 +516,7 @@ class FirestoreRequest {
         }
     }
     
-    func getPreviewPicturesForCommunity(community: Fact, posts: @escaping ([Post]?) -> Void) {
+    func getPreviewPicturesForCommunity(community: Community, posts: @escaping ([Post]?) -> Void) {
         if community.documentID != "" {
             
             var collectionRef: CollectionReference!
@@ -640,8 +640,8 @@ class FirestoreRequest {
     
     //MARK:- Stuff
     
-    func addFact(factID: String) -> Fact {
-        let fact = Fact()
+    func addFact(factID: String) -> Community {
+        let fact = Community()
         fact.documentID = factID
         for topic in self.followedTopics {
             if factID == topic {
