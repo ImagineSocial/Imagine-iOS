@@ -609,34 +609,3 @@ class DataRequest {
         })
     }
 }
-
-
-class JobOffer {
-    var title = ""
-    var cellText = ""
-    var descriptionText = ""
-    var documentID = ""
-    var stringDate = ""
-    var interested = 0
-    var category = ""
-    var createDate = Date()
-}
-
-class Vote {
-    var title = ""
-    var subtitle = ""
-    var description = ""
-    var stringDate = ""
-    var endOfVoteDate = ""
-    var cost = ""
-    var costDescription = ""
-    var impact = Impact.light
-    var impactDescription = ""
-    var timeToRealization = 0   // In month
-    var realizationTimeDescription = ""
-    var commentCount = 0
-    var documentID = ""
-    var createDate = Date()
-}
-
-

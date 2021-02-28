@@ -109,6 +109,8 @@
 		E97FDFCE246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FDFCD246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift */; };
 		E9817B2625EBDB1C00E56FC6 /* AddOnItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9817B2525EBDB1C00E56FC6 /* AddOnItem.swift */; };
 		E9817B2925EBDC5E00E56FC6 /* BlogPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9817B2825EBDC5E00E56FC6 /* BlogPost.swift */; };
+		E9817B2C25EBDCCC00E56FC6 /* Vote.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9817B2B25EBDCCC00E56FC6 /* Vote.swift */; };
+		E9817B2F25EBDCE500E56FC6 /* JobOffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9817B2E25EBDCE500E56FC6 /* JobOffer.swift */; };
 		E981B25E2483AFCC00F6C724 /* SurveyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E981B25D2483AFCC00F6C724 /* SurveyCell.swift */; };
 		E983F51C23C1FBC2005F7FDE /* GifCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E983F51B23C1FBC2005F7FDE /* GifCell.xib */; };
 		E983F51E23C1FEA5005F7FDE /* GifCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983F51D23C1FEA5005F7FDE /* GifCell.swift */; };
@@ -344,6 +346,8 @@
 		E97FDFCD246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowAllFactsCollectionViewController.swift; sourceTree = "<group>"; };
 		E9817B2525EBDB1C00E56FC6 /* AddOnItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOnItem.swift; sourceTree = "<group>"; };
 		E9817B2825EBDC5E00E56FC6 /* BlogPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogPost.swift; sourceTree = "<group>"; };
+		E9817B2B25EBDCCC00E56FC6 /* Vote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vote.swift; sourceTree = "<group>"; };
+		E9817B2E25EBDCE500E56FC6 /* JobOffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobOffer.swift; sourceTree = "<group>"; };
 		E981B25D2483AFCC00F6C724 /* SurveyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyCell.swift; sourceTree = "<group>"; };
 		E983F51B23C1FBC2005F7FDE /* GifCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GifCell.xib; sourceTree = "<group>"; };
 		E983F51D23C1FEA5005F7FDE /* GifCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifCell.swift; sourceTree = "<group>"; };
@@ -647,6 +651,8 @@
 			children = (
 				E9CF17C323CB3F41000E5149 /* Campaign.swift */,
 				E9817B2825EBDC5E00E56FC6 /* BlogPost.swift */,
+				E9817B2B25EBDCCC00E56FC6 /* Vote.swift */,
+				E9817B2E25EBDCE500E56FC6 /* JobOffer.swift */,
 			);
 			path = Imagine;
 			sourceTree = "<group>";
@@ -1419,6 +1425,7 @@
 				E9C0CA302528ADB80032E399 /* ImagineCommunityOptionsCell.swift in Sources */,
 				E9B85D4224112DCA00960942 /* CommunityPageViewController.swift in Sources */,
 				E962AC34222DA04E00C6D6EF /* ReportViewController.swift in Sources */,
+				E9817B2F25EBDCE500E56FC6 /* JobOffer.swift in Sources */,
 				E95B6B8724EECD2F0089BB19 /* SearchTableViewController.swift in Sources */,
 				E93F6F14253237FE0044EAA4 /* PopUpInfoView.swift in Sources */,
 				E9530C4E22DCBF20007D6A00 /* PinchToZoomViewController.swift in Sources */,
@@ -1450,6 +1457,7 @@
 				E962AC292224442000C6D6EF /* FeedTableViewController.swift in Sources */,
 				E9A02AAF232E5EED000DAB69 /* BlogCell.swift in Sources */,
 				E9F6030F235DE5DF00A58D08 /* PostsOfFactTableViewController.swift in Sources */,
+				E9817B2C25EBDCCC00E56FC6 /* Vote.swift in Sources */,
 				E911EEF222DB173E00EDD056 /* SettingCell.swift in Sources */,
 				E904F268229C274A00383885 /* JobSurveyViewController.swift in Sources */,
 				E94EDDA12564350500B226C8 /* AddOnPlaylistTrackTableViewCell.swift in Sources */,
