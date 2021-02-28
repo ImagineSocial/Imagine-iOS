@@ -23,14 +23,6 @@ class SavedPostTableViewController: BaseFeedTableViewController {
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.isTranslucent = false
         
-        if #available(iOS 13.0, *) {
-            self.view.backgroundColor = .secondarySystemBackground
-            self.navigationController?.view.backgroundColor = .secondarySystemBackground
-        } else {
-            self.view.backgroundColor = UIColor(red: 242.0, green: 242.0, blue: 247.0, alpha: 1.0)
-            self.navigationController?.view.backgroundColor = UIColor(red: 242.0, green: 242.0, blue: 247.0, alpha: 1.0)
-        }
-        
         self.noPostsType = .savedPicture
         // navigationItem.rightBarButtonItem = editButtonItem
     }
