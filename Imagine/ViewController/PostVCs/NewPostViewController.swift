@@ -92,7 +92,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var comingFromAddOnVC = false   // This will create a difference reference for the post to be stored, to show it just in the topic and not in the main feed - later it will show up for those who follow this topic
     var addItemDelegate: AddItemDelegate?
     var postOnlyInTopic = false
-    var addOn: OptionalInformation?
+    var addOn: AddOn?
     
     // Constraints for the different animations
     var pictureViewHeight: NSLayoutConstraint?
@@ -3408,7 +3408,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
 }
 
-extension NewPostViewController: OptionalInformationDelegate {
+extension NewPostViewController: AddOnDelegate {
     func fetchCompleted() {
         print("Not needed")
     }

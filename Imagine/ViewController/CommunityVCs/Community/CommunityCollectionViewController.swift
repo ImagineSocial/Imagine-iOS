@@ -48,7 +48,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     var delegate: LinkFactWithPostDelegate?
     var addItemDelegate: AddItemDelegate?
     
-    var addOn: OptionalInformation?
+    var addOn: AddOn?
     
     var tipView: EasyTipView?
     
@@ -611,7 +611,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     }
 }
 
-extension CommunityCollectionViewController: OptionalInformationDelegate {
+extension CommunityCollectionViewController: AddOnDelegate {
     func fetchCompleted() {
         print("not needed")
     }

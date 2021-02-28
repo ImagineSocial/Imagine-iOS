@@ -639,17 +639,4 @@ class Vote {
     var createDate = Date()
 }
 
-class BlogPost {
-    var isCurrentProjectsCell = false
-    var title = ""
-    var subtitle = ""
-    var description = ""
-    var stringDate = ""
-    var category = ""
-    var poster = ""
-    var profileImageURL = ""
-    var imageURL = ""
-    var createDate = Date()
-}
-
 

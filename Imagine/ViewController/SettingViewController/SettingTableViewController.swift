@@ -64,7 +64,7 @@ class UserSetting {
 }
 
 class AddOnSetting {
-    var style: OptionalInformationStyle
+    var style: AddOnStyle
     var fact: Community
     var addOnDocumentID: String
     var description: String
@@ -73,7 +73,7 @@ class AddOnSetting {
     var title: String?
     var itemOrder: [String]?
     
-    init(style: OptionalInformationStyle, fact: Community, addOnDocumentID: String, description: String, items: [AddOnItem]) {
+    init(style: AddOnStyle, fact: Community, addOnDocumentID: String, description: String, items: [AddOnItem]) {
         self.style = style
         self.fact = fact
         self.addOnDocumentID = addOnDocumentID
@@ -174,7 +174,7 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
     var user: User?
     var userSetting: UserSetting?
     
-    var addOn: OptionalInformation?
+    var addOn: AddOn?
     var addOnSetting: AddOnSetting?
     
     var addOnItemsOrderArray: [String]?

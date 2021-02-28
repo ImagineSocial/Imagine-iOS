@@ -95,7 +95,7 @@
 		E97D714C242255A50018E27C /* VoteCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E97D714B242255A50018E27C /* VoteCell.xib */; };
 		E97DBED022AC1335007100E1 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E97DBED222AC1335007100E1 /* Localizable.strings */; };
 		E97DBED922AEA81A007100E1 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97DBED822AEA81A007100E1 /* Post.swift */; };
-		E97E7263243603AC0012F105 /* OptionalInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97E7262243603AC0012F105 /* OptionalInformation.swift */; };
+		E97E7263243603AC0012F105 /* AddOn.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97E7262243603AC0012F105 /* AddOn.swift */; };
 		E97E902822464B4700BA0295 /* JobOfferingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97E902722464B4700BA0295 /* JobOfferingViewController.swift */; };
 		E97FDFB924695FA40049E1E4 /* AddOnStoreImageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E97FDFB824695FA40049E1E4 /* AddOnStoreImageTableViewCell.xib */; };
 		E97FDFBC246A9E970049E1E4 /* TopicCollectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = E97FDFBB246A9E970049E1E4 /* TopicCollectionHeader.xib */; };
@@ -107,6 +107,8 @@
 		E97FDFCA246C1A770049E1E4 /* FollowedTopicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FDFC9246C1A770049E1E4 /* FollowedTopicCell.swift */; };
 		E97FDFCC246C33F80049E1E4 /* TopicCollectionFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FDFCB246C33F80049E1E4 /* TopicCollectionFooter.swift */; };
 		E97FDFCE246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97FDFCD246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift */; };
+		E9817B2625EBDB1C00E56FC6 /* AddOnItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9817B2525EBDB1C00E56FC6 /* AddOnItem.swift */; };
+		E9817B2925EBDC5E00E56FC6 /* BlogPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9817B2825EBDC5E00E56FC6 /* BlogPost.swift */; };
 		E981B25E2483AFCC00F6C724 /* SurveyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E981B25D2483AFCC00F6C724 /* SurveyCell.swift */; };
 		E983F51C23C1FBC2005F7FDE /* GifCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E983F51B23C1FBC2005F7FDE /* GifCell.xib */; };
 		E983F51E23C1FEA5005F7FDE /* GifCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983F51D23C1FEA5005F7FDE /* GifCell.swift */; };
@@ -327,7 +329,7 @@
 		E97DBED122AC1335007100E1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Resources/en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E97DBED322AC1382007100E1 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = Resources/de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E97DBED822AEA81A007100E1 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
-		E97E7262243603AC0012F105 /* OptionalInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalInformation.swift; sourceTree = "<group>"; };
+		E97E7262243603AC0012F105 /* AddOn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOn.swift; sourceTree = "<group>"; };
 		E97E902722464B4700BA0295 /* JobOfferingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobOfferingViewController.swift; sourceTree = "<group>"; };
 		E97EE6D122AC12A400EC9D68 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		E97FDFB824695FA40049E1E4 /* AddOnStoreImageTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddOnStoreImageTableViewCell.xib; sourceTree = "<group>"; };
@@ -340,6 +342,8 @@
 		E97FDFC9246C1A770049E1E4 /* FollowedTopicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowedTopicCell.swift; sourceTree = "<group>"; };
 		E97FDFCB246C33F80049E1E4 /* TopicCollectionFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicCollectionFooter.swift; sourceTree = "<group>"; };
 		E97FDFCD246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowAllFactsCollectionViewController.swift; sourceTree = "<group>"; };
+		E9817B2525EBDB1C00E56FC6 /* AddOnItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOnItem.swift; sourceTree = "<group>"; };
+		E9817B2825EBDC5E00E56FC6 /* BlogPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogPost.swift; sourceTree = "<group>"; };
 		E981B25D2483AFCC00F6C724 /* SurveyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyCell.swift; sourceTree = "<group>"; };
 		E983F51B23C1FBC2005F7FDE /* GifCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GifCell.xib; sourceTree = "<group>"; };
 		E983F51D23C1FEA5005F7FDE /* GifCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifCell.swift; sourceTree = "<group>"; };
@@ -558,7 +562,8 @@
 				E9A02AAA232D3B02000DAB69 /* Community.swift */,
 				E9A02AA8232D3640000DAB69 /* Argument.swift */,
 				E9A02AAC232D4AE4000DAB69 /* Source.swift */,
-				E97E7262243603AC0012F105 /* OptionalInformation.swift */,
+				E97E7262243603AC0012F105 /* AddOn.swift */,
+				E9817B2525EBDB1C00E56FC6 /* AddOnItem.swift */,
 			);
 			path = Community;
 			sourceTree = "<group>";
@@ -599,11 +604,11 @@
 			isa = PBXGroup;
 			children = (
 				E962AC162224430400C6D6EF /* AppDelegate.swift */,
-				E971190B25EBB9450078B2D3 /* ViewController */,
 				E971190925EBA03C0078B2D3 /* Constants */,
 				E9F622F525EA492800AAD2C0 /* Network */,
 				E9F622F425EA48AF00AAD2C0 /* Model */,
 				E9F622DA25E94FE200AAD2C0 /* Views */,
+				E971190B25EBB9450078B2D3 /* ViewController */,
 				E971195F25EBD2B60078B2D3 /* Resources */,
 				E924BB3623435CDD00BC6024 /* Imagine.entitlements */,
 				E962AC222224430600C6D6EF /* Info.plist */,
@@ -641,6 +646,7 @@
 			isa = PBXGroup;
 			children = (
 				E9CF17C323CB3F41000E5149 /* Campaign.swift */,
+				E9817B2825EBDC5E00E56FC6 /* BlogPost.swift */,
 			);
 			path = Imagine;
 			sourceTree = "<group>";
@@ -1470,7 +1476,7 @@
 				E9B79CE1224EC6D200166EED /* RepostCell.swift in Sources */,
 				E91A2B6124794EAE00B42353 /* SettingTableViewController.swift in Sources */,
 				E9526C0D250F99790088004F /* RunderProgress.swift in Sources */,
-				E97E7263243603AC0012F105 /* OptionalInformation.swift in Sources */,
+				E97E7263243603AC0012F105 /* AddOn.swift in Sources */,
 				E9B85D5E2413C28B00960942 /* TableViewInCollectionViewCell.swift in Sources */,
 				E9A02AA7232D3181000DAB69 /* AddFactTableViewCell.swift in Sources */,
 				E91824E124F42553009D7638 /* NewCommunityItemTableViewController.swift in Sources */,
@@ -1510,6 +1516,7 @@
 				E98B22F022CA6499000F965F /* ChatViewController.swift in Sources */,
 				E9A02AAB232D3B02000DAB69 /* Community.swift in Sources */,
 				E96CE89222941A2D00BACD3B /* ContraFactTableViewController.swift in Sources */,
+				E9817B2925EBDC5E00E56FC6 /* BlogPost.swift in Sources */,
 				E9E521BA2458477F002585A2 /* NewAddOnTableViewController.swift in Sources */,
 				E971B8DC2247A48C001BBC1E /* LogInViewController.swift in Sources */,
 				E93665852513CC41008CC8A9 /* AddOnQAndACollectionViewCell.swift in Sources */,
@@ -1534,6 +1541,7 @@
 				E988285023141AC8005ECB40 /* Extensions.swift in Sources */,
 				E9B9445F225800EE000145E2 /* UserFeedTableViewController.swift in Sources */,
 				E9C42EF12364396B00FC50BA /* SearchUserCell.swift in Sources */,
+				E9817B2625EBDB1C00E56FC6 /* AddOnItem.swift in Sources */,
 				E9332A9B23FE8A63004078FC /* CommentTableView.swift in Sources */,
 				E9B79CE922510F1900166EED /* TabBarViewController.swift in Sources */,
 				E9F12C0024FC040F006BD9C3 /* CommunityHeaderView.swift in Sources */,

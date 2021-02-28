@@ -42,7 +42,7 @@ class AddOnPlaylistCollectionViewCell: BaseAddOnCollectionViewCell {
     
     var tracks = [Post]()
     
-    var info: OptionalInformation? {
+    var info: AddOn? {
         didSet {
             if let info = info {
                 getTracks()
@@ -163,7 +163,7 @@ class AddOnPlaylistCollectionViewCell: BaseAddOnCollectionViewCell {
     
 }
 
-extension AddOnPlaylistCollectionViewCell: OptionalInformationDelegate {
+extension AddOnPlaylistCollectionViewCell: AddOnDelegate {
     
     func fetchCompleted() {
         if let info = info {
