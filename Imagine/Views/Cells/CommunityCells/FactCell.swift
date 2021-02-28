@@ -99,7 +99,7 @@ class FactCell:UICollectionViewCell {
                     } else {
                         if let snap = snap {
                             if let data = snap.data() {
-                                if let fact = DataRequest().addFact(currentUser: user,documentID: snap.documentID, data: data) {
+                                if let fact = CommunityHelper().getCommunity(currentUser: user,documentID: snap.documentID, data: data) {
                                     
                                     self.fact = fact
                                 }

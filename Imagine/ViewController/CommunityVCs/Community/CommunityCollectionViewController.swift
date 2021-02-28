@@ -170,7 +170,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
                             for document in snap.documents {
                                 let data = document.data()
                                 
-                                if let fact = self.dataHelper.addFact(currentUser: user, documentID: document.documentID, data: data) {
+                                if let fact = CommunityHelper().getCommunity(currentUser: user, documentID: document.documentID, data: data) {
                                     self.discussionFacts.append(fact)
                                 } else {
                                     discussionCount-=1
@@ -246,7 +246,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
             } else {
                 if let snap = snap {
                     if let data = snap.data() {
-                        if let fact = self.dataHelper.addFact(currentUser: user, documentID: snap.documentID, data: data) {
+                        if let fact = CommunityHelper().getCommunity(currentUser: user, documentID: snap.documentID, data: data) {
                             returnedFact(fact)
                         }
                     } else {
