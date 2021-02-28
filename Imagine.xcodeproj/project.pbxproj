@@ -609,16 +609,10 @@
 				E962AC162224430400C6D6EF /* AppDelegate.swift */,
 				E9871FA522C77AC5002D22F9 /* Classes */,
 				E9F9B690223D6D8500100F51 /* Methods&Helper */,
-				E9B1872D222ECC2C00923037 /* ReportVCs */,
 				E9530C5122DDE8D9007D6A00 /* User */,
 				E96CE88E229419D700BACD3B /* CommunityVCs */,
 				E9530C4C22DB9FBB007D6A00 /* VisionVCs */,
 				E9B79CEC225110D800166EED /* ImagineVCs */,
-				E9E531FA229E9191004D0654 /* FeedVCs */,
-				E988284E23105241005ECB40 /* PostVCs */,
-				E971191925EBC3DF0078B2D3 /* LocationVCs */,
-				E933553324705C740060E331 /* SearchViewController */,
-				E91A2B5F24794E8400B42353 /* SettingViewController */,
 				E991CCD72270972F00940834 /* WebViewController.swift */,
 				E97A5958231D709F00B072A1 /* ReportABugViewController.swift */,
 				E971B8DB2247A48C001BBC1E /* LogInViewController.swift */,
@@ -702,6 +696,12 @@
 		E971190B25EBB9450078B2D3 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				E91A2B5F24794E8400B42353 /* SettingViewController */,
+				E971191925EBC3DF0078B2D3 /* LocationVCs */,
+				E933553324705C740060E331 /* SearchViewController */,
+				E988284E23105241005ECB40 /* PostVCs */,
+				E9B1872D222ECC2C00923037 /* ReportVCs */,
+				E9E531FA229E9191004D0654 /* FeedVCs */,
 				E98B22EC22CA3936000F965F /* ChatController */,
 			);
 			path = ViewController;
@@ -947,8 +947,8 @@
 			isa = PBXGroup;
 			children = (
 				E9EA7C9222E1DA210015C0EC /* BaseFeedTableViewController.swift */,
-				E9B9445E225800EE000145E2 /* UserFeedTableViewController.swift */,
 				E962AC282224442000C6D6EF /* FeedTableViewController.swift */,
+				E9B9445E225800EE000145E2 /* UserFeedTableViewController.swift */,
 				E9530C5222DDE94D007D6A00 /* SavedPostTableViewController.swift */,
 			);
 			path = FeedVCs;
