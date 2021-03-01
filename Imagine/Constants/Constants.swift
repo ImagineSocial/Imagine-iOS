@@ -24,6 +24,12 @@ struct Constants {
         static let textOfTheWeek = "Tauscht euch aus, seid nett und lernt neue Menschen kennen!"
     }
     
+    struct NewPostConstants {
+        static let infoButtonSize: CGFloat = 22
+        static let labelHeight: CGFloat = 17
+        static let defaultOptionViewHeight: CGFloat = 45
+    }
+    
     struct Numbers {
         static let feedCornerRadius: CGFloat = 12
         static let communityHeaderHeight: CGFloat = 260

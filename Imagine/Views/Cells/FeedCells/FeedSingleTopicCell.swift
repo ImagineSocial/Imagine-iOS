@@ -21,7 +21,7 @@ class FeedSingleTopicCell: BaseFeedCell {
         }
     }
     
-    var addOnInfo: OptionalInformation?
+    var addOnInfo: AddOn?
     
     override func awakeFromNib() {
         collectionView.dataSource = self
@@ -87,7 +87,7 @@ class FeedSingleTopicCell: BaseFeedCell {
     }
     
     func loadSingleTopic(post: Post, community: Community) {
-        let info = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Community(), headerTitle: post.title, description: post.description, singleTopic: community)
+        let info = AddOn(style: .singleTopic, OP: "", documentID: "", fact: Community(), headerTitle: post.title, description: post.description, singleTopic: community)
         
         self.addOnInfo = info
         post.fact = community

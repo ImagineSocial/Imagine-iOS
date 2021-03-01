@@ -34,7 +34,7 @@ class AddOnHorizontalScrollCollectionViewCell: BaseAddOnCollectionViewCell {
     var itemRow: Int?
     var delegate: AddOnCellDelegate?
     
-    var info: OptionalInformation? {
+    var info: AddOn? {
             didSet {
                 if let info = info {
                     info.delegate = self
@@ -282,7 +282,7 @@ class AddItemCollectionViewCell: UICollectionViewCell {
     }()
 }
 
-extension AddOnHorizontalScrollCollectionViewCell: OptionalInformationDelegate {
+extension AddOnHorizontalScrollCollectionViewCell: AddOnDelegate {
     func itemAdded(successfull: Bool) {
         print("not needed")
     }

@@ -42,6 +42,7 @@ class DataRequest {
     let db = Firestore.firestore()
     let handyHelper = HandyHelper()
     let user = Auth.auth().currentUser
+    let communityHelper = CommunityHelper()
     
     //MARK:- Get Data 
     
@@ -256,7 +257,7 @@ class DataRequest {
                             list.append(vote)
                             
                         case .facts:
-                            if let fact = self.addFact(currentUser: self.user, documentID: documentID, data: documentData) {
+                            if let fact = self.communityHelper.getCommunity(currentUser: self.user, documentID: documentID, data: documentData) {
                                 list.append(fact)
                             }
                         case .jobOffer:
@@ -342,120 +343,6 @@ class DataRequest {
     }
     
     
-    func addFact(currentUser: Firebase.User?, documentID: String, data: [String: Any]) -> Community? {
-        
-        guard let name = data["name"] as? String,
-            let createTimestamp = data["createDate"] as? Timestamp,
-            let OP = data["OP"] as? String
-            else {
-                print("Der will nicht: \(documentID), mit den Daten: \(data)")
-                return nil
-        }
-        
-        let stringDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
-        
-        let fact = Community()
-        fact.documentID = documentID
-        fact.title = name
-        fact.createDate = stringDate
-        fact.moderators.append(OP)  //Later there will be more moderators, so it is an array
-        
-        if let postCount = data["postCount"] as? Int {
-            fact.postCount = postCount
-        }
-        
-        if let follower = data["follower"] as? [String] {
-            fact.followerCount = follower.count
-            if let user = currentUser {
-                for userID in follower {
-                    if userID == user.uid {
-                        fact.beingFollowed = true
-                    }
-                }
-            }
-        }
-        
-        if let language = data["language"] as? String {
-            if language == "en" {
-                fact.language = .english
-            }
-        }
-        
-        if let imageURL = data["imageURL"] as? String { // Not mandatory (in fact not selectable)
-            fact.imageURL = imageURL
-        }
-        if let description = data["description"] as? String {   // Was introduced later on
-            fact.description = description
-        }
-        if let displayType = data["displayOption"] as? String { // Was introduced later on
-            fact.displayOption = self.getDisplayType(string: displayType)
-        }
-        
-        if let displayNames = data["factDisplayNames"] as? String {
-            fact.factDisplayNames = self.getDisplayNames(string: displayNames)
-        }
-        
-        if let isAddOnFirstView = data["isAddOnFirstView"] as? Bool {
-            fact.isAddOnFirstView = isAddOnFirstView
-        }
-        
-        fact.fetchComplete = true
-        
-        return fact
-    }
-    
-    func loadFact(fact: Community, loadedFact: @escaping (Community?) -> Void) {
-        
-        if fact.documentID == "" {
-            loadedFact(nil)
-        }
-        
-        var collectionRef: CollectionReference!
-        if fact.language == .english {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let ref = collectionRef.document(fact.documentID)
-        
-        
-        ref.getDocument { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    if let data = snap.data() {
-                        if let fact = self.addFact(currentUser: self.user, documentID: snap.documentID, data: data) {
-                            loadedFact(fact)
-                        } else {
-                            loadedFact(nil)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    func getDisplayType(string: String) -> DisplayOption {
-        switch string {
-        case "topic":
-            return .topic
-        default:
-            return .fact
-        }
-    }
-    
-    func getDisplayNames(string: String) -> FactDisplayName {
-        switch string {
-        case "confirmDoubt":
-            return .confirmDoubt
-        case "advantage":
-            return .advantageDisadvantage
-        default:
-            return .proContra
-        }
-    }
-    
     func getDeepData(fact: Community, returnData: @escaping ([Any]) -> Void) {
         
         var argumentList = [Argument]()
@@ -488,7 +375,7 @@ class DataRequest {
                         let proOrContra = docData["proOrContra"] as? String,
                         let description = docData["description"] as? String
                         else {
-                            continue    // Falls er das nicht als (String) zuordnen kann
+                            continue
                     }
                     
                     let upvotes = docData["upvotes"] as? Int ?? 0
@@ -565,7 +452,7 @@ class DataRequest {
                             //                    let proOrContra = docData["proOrContra"] as? String,  // Not necessary?
                             let description = docData["description"] as? String
                             else {
-                                continue    // Falls er das nicht als (String) zuordnen kann
+                                continue
                         }
                         
                         let argument = Argument(addMoreDataCell: false)
@@ -609,47 +496,3 @@ class DataRequest {
         })
     }
 }
-
-
-class JobOffer {
-    var title = ""
-    var cellText = ""
-    var descriptionText = ""
-    var documentID = ""
-    var stringDate = ""
-    var interested = 0
-    var category = ""
-    var createDate = Date()
-}
-
-class Vote {
-    var title = ""
-    var subtitle = ""
-    var description = ""
-    var stringDate = ""
-    var endOfVoteDate = ""
-    var cost = ""
-    var costDescription = ""
-    var impact = Impact.light
-    var impactDescription = ""
-    var timeToRealization = 0   // In month
-    var realizationTimeDescription = ""
-    var commentCount = 0
-    var documentID = ""
-    var createDate = Date()
-}
-
-class BlogPost {
-    var isCurrentProjectsCell = false
-    var title = ""
-    var subtitle = ""
-    var description = ""
-    var stringDate = ""
-    var category = ""
-    var poster = ""
-    var profileImageURL = ""
-    var imageURL = ""
-    var createDate = Date()
-}
-
-

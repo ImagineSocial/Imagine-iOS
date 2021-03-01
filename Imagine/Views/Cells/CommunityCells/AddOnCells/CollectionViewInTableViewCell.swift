@@ -14,7 +14,7 @@ protocol CollectionViewInTableViewCellDelegate {
     func saveItems(section: Int, item: Any) //Return the fetched Posts
 }
 
-class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegate {
+class CollectionViewInTableViewCell: UITableViewCell, AddOnDelegate {
     
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var backgroundBorderView: DesignablePopUp!
@@ -24,7 +24,7 @@ class CollectionViewInTableViewCell: UITableViewCell, OptionalInformationDelegat
     
     var section: Int?
     
-    var info: OptionalInformation? {
+    var info: AddOn? {
         didSet {
             if let info = info {
                 info.delegate = self

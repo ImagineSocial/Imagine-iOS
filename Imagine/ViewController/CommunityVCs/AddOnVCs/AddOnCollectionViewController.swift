@@ -33,7 +33,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     let qAndACellIdentifier = "AddOnQAndACollectionViewCell"
     let playlistCellIdentifier = "AddOnPlaylistCollectionViewCell"
     
-    var optionalInformations = [OptionalInformation]()
+    var optionalInformations = [AddOn]()
     
     var noOptionalInformation = false
     var optionalInformationProposals = [ProposalForOptionalInformation(isFirstCell: true, headerText: NSLocalizedString("proposal_header_text", comment: "individualise your community"), detailText: NSLocalizedString("proposal_header_description", comment: "What are addOns")), ProposalForOptionalInformation(isFirstCell: false, headerText: NSLocalizedString("proposal_me_active_header", comment: "What can I do?"), detailText: NSLocalizedString("proposal_me_active_description", comment: "what ca i do to make it better")),  ProposalForOptionalInformation(isFirstCell: false, headerText: "Top-News", detailText: NSLocalizedString("proposal_top_news_description", comment: "top new for visibility")), ProposalForOptionalInformation(isFirstCell: false, headerText: "Beginners Guide", detailText: NSLocalizedString("proposal_beginners_guide_description", comment: "help younglings"))]
@@ -111,7 +111,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                                 if let title = data["title"] as? String,
                                    let description = data["description"] as? String,
                                    let OP = data["OP"] as? String {
-                                    let addOn = OptionalInformation(style: .playlist, OP: OP, documentID: document.documentID, fact: fact, headerTitle: title, description: description, singleTopic: nil)
+                                    let addOn = AddOn(style: .playlist, OP: OP, documentID: document.documentID, fact: fact, headerTitle: title, description: description, singleTopic: nil)
                                     
                                     if let thanksCount = data["thanksCount"] as? Int {
                                         addOn.thanksCount = thanksCount
@@ -141,7 +141,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                         }
                         
                         if let title = data["title"] as? String, let OP = data["OP"] as? String, let description = data["description"] as? String { //Normal collection
-                            let addOn = OptionalInformation(style: .collection, OP: OP, documentID: document.documentID, fact: fact, headerTitle: title, description: description, singleTopic: nil)
+                            let addOn = AddOn(style: .collection, OP: OP, documentID: document.documentID, fact: fact, headerTitle: title, description: description, singleTopic: nil)
                             
                             if let imageURL = data["imageURL"] as? String {
                                 addOn.imageURL = imageURL
@@ -172,7 +172,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                                 let singleTopic = Community()
                                 singleTopic.documentID = documentID
                                 
-                                let addOn = OptionalInformation(style: .singleTopic, OP: OP, documentID: document.documentID, fact: fact, headerTitle: headerTitle, description: description, singleTopic: singleTopic)
+                                let addOn = AddOn(style: .singleTopic, OP: OP, documentID: document.documentID, fact: fact, headerTitle: headerTitle, description: description, singleTopic: singleTopic)
                                 
                                 if let itemOrder = data["itemOrder"] as? [String] {
                                     addOn.itemOrder = itemOrder
@@ -187,7 +187,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                         } else if let type = data["type"] as? String, let OP = data["OP"] as? String {
                             if type == "QandA" {
                                 print("Adde QANDA")
-                                let addOn = OptionalInformation(style: .QandA, OP: OP, documentID: document.documentID, fact: fact, description: "")
+                                let addOn = AddOn(style: .QandA, OP: OP, documentID: document.documentID, fact: fact, description: "")
                                 self.optionalInformations.append(addOn)
                                 index+=1
                             } else {
@@ -220,7 +220,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         if segue.identifier == "toAddOnFeedVCSegue" {
             if let navVC = segue.destination as? UINavigationController {
                 if let feedVC = navVC.topViewController as? AddOnFeedTableViewController {
-                    if let addOn = sender as? OptionalInformation {
+                    if let addOn = sender as? AddOn {
                         feedVC.addOn = addOn
                     }
                 }
@@ -228,7 +228,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
         if segue.identifier == "toSettingSegue" {
             if let vc = segue.destination as? SettingTableViewController {
-                if let addOn = sender as? OptionalInformation {
+                if let addOn = sender as? AddOn {
                     vc.addOn = addOn
                     vc.settingFor = .addOn
                 }
@@ -236,7 +236,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
         if segue.identifier == "toAddAPostItemSegue" {
             if let vc = segue.destination as? AddPostTableViewController {
-                if let addOn = sender as? OptionalInformation {
+                if let addOn = sender as? AddOn {
                     vc.addItemDelegate = self
                     vc.addOn = addOn
                     if addOn.style == .playlist {
@@ -249,7 +249,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         if segue.identifier == "newPostSegue" {
             if let navCon = segue.destination as? UINavigationController {
                 if let newPostVC = navCon.topViewController as? NewPostViewController {
-                    if let addOn = sender as? OptionalInformation {
+                    if let addOn = sender as? AddOn {
                         newPostVC.comingFromAddOnVC = true
                         newPostVC.selectedFact(fact: addOn.fact, isViewAlreadyLoaded: false)
                         newPostVC.addItemDelegate = self
@@ -267,7 +267,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
         if segue.identifier == "toTopicsSegue" {
             if let vc = segue.destination as? CommunityCollectionViewController {
-                if let addOn = sender as? OptionalInformation {
+                if let addOn = sender as? AddOn {
                     vc.addOn = addOn
                     vc.addFactToPost = .optInfo
                     vc.navigationItem.hidesSearchBarWhenScrolling = false
@@ -480,7 +480,7 @@ extension AddOnCollectionViewController: AddOnCellDelegate, AddOnHeaderReusableV
         performSegue(withIdentifier: "toSettingSegue", sender: info)
     }
     
-    func thanksTapped(info: OptionalInformation) {
+    func thanksTapped(info: AddOn) {
         if let _ = Auth.auth().currentUser {
             if let fact = fact, info.documentID != "" {
                 var collectionRef: CollectionReference!
@@ -518,7 +518,7 @@ extension AddOnCollectionViewController: AddOnCellDelegate, AddOnHeaderReusableV
         }
     }
     
-    func newPostTapped(addOn: OptionalInformation) {   //New Item tapped inside an addOn
+    func newPostTapped(addOn: AddOn) {   //New Item tapped inside an addOn
         if let _ = Auth.auth().currentUser {
             
             

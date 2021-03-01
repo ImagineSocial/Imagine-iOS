@@ -23,7 +23,7 @@ class BaseCell: UICollectionViewCell {
     }
 }
 
-class SettingCell: BaseCell {
+class SelectionCell: BaseCell {
     
     let blockUserText = NSLocalizedString("settingCell_block_label", comment: "block person")
     let cameraText = NSLocalizedString("settingCell_camera_label", comment: "camera")

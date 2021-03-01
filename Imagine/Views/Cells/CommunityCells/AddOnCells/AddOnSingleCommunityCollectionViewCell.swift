@@ -30,7 +30,7 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
         
     var previewPosts: [Post]?
     
-    var info: OptionalInformation? {
+    var info: AddOn? {
         didSet {
             if let info = info {
                 if let fact = info.singleTopic {

@@ -37,7 +37,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     let db = Firestore.firestore()
     let postHelper = PostHelper()
     
-    var addOn: OptionalInformation? {
+    var addOn: AddOn? {
         didSet {
             if let addOn = addOn {
                 addOn.delegate = self
@@ -563,7 +563,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
 }
 
 //MARK:- OptionalInformationDelegate
-extension AddPostTableViewController: OptionalInformationDelegate {
+extension AddPostTableViewController: AddOnDelegate {
     func fetchCompleted() {
         print("not needed")
     }

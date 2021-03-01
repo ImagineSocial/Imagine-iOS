@@ -35,7 +35,7 @@ class AddOnQAndACollectionViewCell: BaseAddOnCollectionViewCell {
     
     var questions = [QandAQuestion]()
     
-    var info: OptionalInformation? {
+    var info: AddOn? {
         didSet {
             if let info = info {
                 if self.questions.count == 0 {
@@ -77,7 +77,7 @@ class AddOnQAndACollectionViewCell: BaseAddOnCollectionViewCell {
         }
     }
     
-    func getQuestions(info: OptionalInformation) {
+    func getQuestions(info: AddOn) {
         
         var collectionRef: CollectionReference!
         if info.fact.language == .english {
@@ -348,7 +348,7 @@ class AddOnQAndATextfieldCell: UITableViewCell {
             }
         }
     }
-    var info: OptionalInformation?
+    var info: AddOn?
     var questionID: String?
     
     var delegate: QandACellDelegate?
@@ -365,7 +365,7 @@ class AddOnQAndATextfieldCell: UITableViewCell {
         }
     }
     
-    func storeInFirebase(info: OptionalInformation, type: QandAAnswerType, text: String, user: Firebase.User) {
+    func storeInFirebase(info: AddOn, type: QandAAnswerType, text: String, user: Firebase.User) {
         
         var collectionRef: CollectionReference!
         if info.fact.language == .english {

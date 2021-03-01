@@ -17,7 +17,7 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var thanksButton: DesignableButton!
     
-    var addOn: OptionalInformation?
+    var addOn: AddOn?
     var addOnPosts = [Post]()
     
     var Headerview : UIView!
@@ -97,7 +97,7 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toSettingSegue" {
             if let vc = segue.destination as? SettingTableViewController {
-                if let addOn = sender as? OptionalInformation {
+                if let addOn = sender as? AddOn {
                     vc.addOn = addOn
                     vc.settingFor = .addOn
                 }

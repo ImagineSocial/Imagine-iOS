@@ -131,7 +131,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
                     for document in snap.documents {
                         let data = document.data()
                         
-                        if let fact = self.dataHelper.addFact(currentUser: user, documentID: document.documentID, data: data) {
+                        if let fact = CommunityHelper().getCommunity(currentUser: user, documentID: document.documentID, data: data) {
                             facts.append(fact)
                         }
                     }
