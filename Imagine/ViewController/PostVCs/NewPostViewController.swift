@@ -36,7 +36,7 @@ protocol JustPostedDelegate {
 }
 
 //TODO: Outsource the network POST requests, functions of outsources buttons
-class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate, CropViewControllerDelegate {
+class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CropViewControllerDelegate {
     
     //MARK:- IBOutlets
     @IBOutlet weak var headerLabel: UILabel!
@@ -138,6 +138,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let descriptionView = DescriptionView()
     lazy var linkView = LinkView(newPostVC: self)
     lazy var optionView = OptionView(newPostVC: self)
+    lazy var pictureView = PictureView(newPostVC: self)
     lazy var locationView = LocationView(newPostVC: self)
     lazy var linkCommunityView = LinkCommunityView(newPostVC: self)
     
@@ -239,7 +240,26 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    // MARK: - UI Initialization
+    //MARK:- Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "searchFactsSegue" {
+            if let navCon = segue.destination as? UINavigationController {
+                if let factVC = navCon.topViewController as? CommunityCollectionViewController {
+                    factVC.addFactToPost = .newPost
+                    factVC.delegate = self
+                }
+            }
+        }
+        
+        if segue.identifier == "toMapSegue" {
+            if let mapVC = segue.destination as? MapViewController {
+                mapVC.locationDelegate = self
+            }
+        }
+    }
+    
+    // MARK:- UI Initialization
     
     func setCompleteUIForThought() {
         
@@ -256,66 +276,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.postSelectionSegmentedControl.isEnabled = true
     }
     
-    //MARK: Animate changes
-    func insertUIForLink() {
-        self.descriptionViewTopAnchor!.isActive = false
-        
-        
-        self.descriptionViewTopAnchor! = descriptionView.topAnchor.constraint(equalTo: linkView.bottomAnchor, constant: 1)
-        self.descriptionViewTopAnchor!.isActive = true
-        
-        self.linkViewHeight!.constant = 75
-        
-        UIView.animate(withDuration: 0.4, animations: {
-            self.view.layoutIfNeeded()
-        }) { (_) in
-        
-            UIView.animate(withDuration: 0.1, animations: {
-                self.linkView.linkLabel.alpha = 1
-                self.linkView.linkTextField.alpha = 1
-                self.linkView.webImageViewStackView.alpha = 1
-                self.linkView.linkInfoButton.alpha = 1
-            }, completion: { (_) in
-                self.postSelectionSegmentedControl.isEnabled = true
-            })
-        }
-    }
     
-    
-    func insertUIForPicture() {
-        self.descriptionViewTopAnchor!.isActive = false
-        
-        
-        if let pictureTop = pictureViewTopAnchor {
-            pictureTop.isActive = false
-            
-        }
-        
-        self.pictureViewTopAnchor = pictureView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1)
-        self.pictureViewTopAnchor!.isActive = true
-        
-        self.pictureViewHeight!.constant = 100
-        
-        
-        self.descriptionViewTopAnchor! = descriptionView.topAnchor.constraint(equalTo: pictureView.bottomAnchor, constant: 1)
-        self.descriptionViewTopAnchor!.isActive = true
-        
-        UIView.animate(withDuration: 0.4, animations: {
-            self.view.layoutIfNeeded()
-        }) { (_) in
-            
-            UIView.animate(withDuration: 0.1, animations: {
-                self.pictureView.cameraButton.alpha = 1
-                self.pictureView.folderButton.alpha = 1
-                self.pictureView.pictureLabel.alpha = 1
-            }, completion: { (_) in
-                self.postSelectionSegmentedControl.isEnabled = true
-            })
-        }
-    }
-    
-    
-    //MARK:- TitleView UI
+    //MARK: TitleView UI
     
     
     func setTitleViewUI() {
@@ -342,7 +304,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     
-    // MARK: - LinkViewUI
+    // MARK: LinkViewUI
     
     func setLinkViewUI() {   // have to set descriptionview topanchor
         
@@ -387,7 +349,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    // MARK: - PictureViewUI
+    // MARK: PictureViewUI
     
     @objc func showChoosenImage(tapGestureRecognizer: UITapGestureRecognizer) {
         print("To choosen Image")
@@ -401,8 +363,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    lazy var pictureView = PictureView(newPostVC: self)
-    
     func setPictureViewUI() {
         
         self.view.addSubview(pictureView)
@@ -414,15 +374,33 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.pictureViewTopAnchor!.isActive = true
     }
     
+    //MARK: Change Picture UI
+    func increasePictureUI() {
+        if let pictureHeight = self.pictureViewHeight {
+            pictureHeight.constant = 150
+            
+            UIView.animate(withDuration: 0.6) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
     
+    func decreasePictureUI() {
+        if let pictureHeight = self.pictureViewHeight {
+            pictureHeight.constant = 100
+            
+            UIView.animate(withDuration: 0.6) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
     
-    // MARK: - OptionViewUI
+    // MARK: OptionViewUI
 
     func chooseLocationButtonTapped() {
         performSegue(withIdentifier: "toMapSegue", sender: nil)
     }
     
-    //MARK:- Set Up Options UI
     func setUpOptionViewUI() {
         let smallOptionViewHeight = defaultOptionViewHeight-4
         
@@ -480,7 +458,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         endView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
     }
     
-    //MARK:- PostAsSomebodyElse-UI
+    //MARK: PostAsSomebodyElse-UI
     
     
     let fakeNameSegmentedControl: UISegmentedControl = {
@@ -556,473 +534,65 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         performSegue(withIdentifier: "toProposals", sender: nil)
     }
     
-    
-    // MARK: - KeyboardGoesUp
-    
-    @objc func keyboardWillChange(notification: NSNotification) {
+    //MARK:- Animate changes
+    func insertUIForLink() {
+        self.descriptionViewTopAnchor!.isActive = false
         
-        if !self.up {
-            
-            if let _ = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-                if descriptionView.descriptionTextView.isFirstResponder {
-                    
-                    var offset:CGFloat = 75
-                    switch selectedOption {
-                    case .multiPicture:
-                        offset = 125
-                    case .thought:
-                        offset = 50
-                    case .picture:
-                        offset = 125
-                    case .link:
-                        offset = 100
-                    }
-                    
-                    
-                    self.view.frame.origin.y -= offset
-                    self.up = true
-                    
-                }
-            }
-        }
-    }
-    
-    @objc func keyboardWillHide() {
         
-        if self.up {
-            
-            var offset:CGFloat = 75
-            switch selectedOption {
-            case .multiPicture:
-                offset = 125
-            case .thought:
-                offset = 50
-            case .picture:
-                offset = 125
-            case .link:
-                offset = 100
-            }
-            
-            self.view.frame.origin.y += offset
-            self.up = false
-        }
-    }
-    
-    // MARK: - Functions
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        titleView.titleTextView.resignFirstResponder()
-        linkView.linkTextField.resignFirstResponder()
-        descriptionView.descriptionTextView.resignFirstResponder()
+        self.descriptionViewTopAnchor! = descriptionView.topAnchor.constraint(equalTo: linkView.bottomAnchor, constant: 1)
+        self.descriptionViewTopAnchor!.isActive = true
         
-        self.removeTipViews()
-    }
-    
-    func removeTipViews() {
-        if let tipView = self.postAnonymousTipView {
-            tipView.dismiss()
-            postAnonymousTipView = nil
-        }
-        if let tipView = self.linkedFactTipView {
-            tipView.dismiss()
-            linkedFactTipView = nil
-        }
-        if let tipView = self.markPostTipView {
-            tipView.dismiss()
-            markPostTipView = nil
-        }
+        self.linkViewHeight!.constant = 75
         
-        if let tipView = self.postLinkTipView {
-            tipView.dismiss()
-            postLinkTipView = nil
-        }
-        
-        if let tipView = self.linkFactExplanationTipView {
-            tipView.dismiss()
-            linkFactExplanationTipView = nil
-        }
-    }
-    
-    
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        
-        if textView == titleView.titleTextView {  // No lineBreaks in titleTextView
-            guard text.rangeOfCharacter(from: CharacterSet.newlines) == nil else {
-                return descriptionView.descriptionTextView.becomeFirstResponder()   // Switch to description when "continue" is hit on keyboard
-            }
-        }
-        
-        return textView.text.count + (text.count - range.length) <= characterLimitForTitle
-    }
-    
-    func textViewDidChange(_ textView: UITextView) {
-        
-        let characterLeft = characterLimitForTitle-textView.text.count
-        self.titleView.characterCountLabel.text = String(characterLeft)
-    }
-    
-    func explainFunctionOnFirstOpen() {
-        let defaults = UserDefaults.standard
-        
-        if let _ = defaults.string(forKey: "showExplanationForLinkFact") {
-            
-        } else {
-            showExplanationForLinkFactToPost()
-            defaults.set(true, forKey: "showExplanationForLinkFact")
-            print("NEW Post launched first time")
-        }
-    }
-    
-    func showExplanationForLinkFactToPost() {
-         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-            self.linkFactExplanationTipView = EasyTipView(text: NSLocalizedString("link_fact_first_open_tip_view_text", comment: "how it works and such"))
-            self.linkFactExplanationTipView!.show(forView: self.linkCommunityView)
-        }
-    }
-    
-    //MARK: - MemeMode Maker
-    
-    func memeModeTapped() {
-        let generator = UIImpactFeedbackGenerator(style: .heavy)
-        generator.impactOccurred()
-        
-        optionView.memeModeButton.isEnabled = false
-        showMemeMode()
-    }
-    
-    
-    func showMemeMode() {
-        if let window = UIApplication.shared.keyWindow {
-            let memeView: MemeInputView = MemeInputView.fromNib()
-            memeView.delegate = self
-            
-            window.addSubview(memeView)
-            self.memeView = memeView
-            
-            window.layoutSubviews()
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.letItRezzle()
-            }
-        }
-    }
-    
-    
-    func letItRezzle() {    /// A little distorted effect for the meme view
-        if let memeView = memeView {
-            memeView.alpha = 0.98
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                
-                if self.howManyFlickersIndex <= 3 {
-                    
-                    memeView.alpha = 0
-                    DispatchQueue.main.asyncAfter(deadline: .now() + self.flickerInterval) {
-                        self.letItRezzle()
-                        self.generator.impactOccurred()
-                    }
-                    
-                    self.flickerInterval-=0.1
-                    self.howManyFlickersIndex+=1
-                } else {
-                    let heavyImpact = UIImpactFeedbackGenerator(style: .heavy)
-                    heavyImpact.impactOccurred()
-                    
-                    memeView.startUpMemeMode()
-                    self.optionView.memeModeButton.isEnabled = true
-                    
-                    if self.selectedOption != .picture || self.selectedOption != .multiPicture {
-                        //Switch to picture mode so the meme can be shown
-                        self.postSelectionSegmentedControl.selectedSegmentIndex = 1
-                        self.prepareForSelectionChange()
-                    }
-                }
-            }
-        }
-    }
-    
-    //MARK: - Buttons & Stuff
-    
-    func camTapped() {
-        if let _ = Auth.auth().currentUser {
-            
-            let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
-            switch status {
-            case .authorized:
-                self.showCamera()
-                
-            case .notDetermined:
-                AVCaptureDevice.requestAccess(for: AVMediaType.video) { (granted) in
-                    if granted {
-                        self.showCamera()
-                    } else {
-                        self.camDenied()
-                    }
-                }
-                
-            case .denied:
-                self.camDenied()
-                
-            case .restricted:
-                let alert = UIAlertController(title: "Restricted",
-                                              message: "You've been restricted from using the camera on this device. Without camera access this feature won't work. Please contact the device owner so they can give you access.",
-                                              preferredStyle: .alert)
-                
-                let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-                alert.addAction(okAction)
-                self.present(alert, animated: true, completion: nil)
-            }
-        } else {
-            self.notLoggedInAlert()
-        }
-    }
-    
-    func camDenied() {
-        DispatchQueue.main.async {
-                var alertText = NSLocalizedString("newPost_camera_error_text", comment: "cant acces, what to do")
-
-                var alertButton = "OK"
-                var goAction = UIAlertAction(title: alertButton, style: .default, handler: nil)
-
-                if UIApplication.shared.canOpenURL(URL(string: UIApplication.openSettingsURLString)!) {
-                    alertText = NSLocalizedString("newPost_camera_error_text", comment: "CANT ACCESS    what to do")
-
-                    alertButton = "Go"
-
-                    goAction = UIAlertAction(title: alertButton, style: .default, handler: {(alert: UIAlertAction!) -> Void in
-                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
-                    })
-                }
-
-                let alert = UIAlertController(title: "Error", message: alertText, preferredStyle: .alert)
-                alert.addAction(goAction)
-                self.present(alert, animated: true, completion: nil)
-        }
-    }
-    
-    func showCamera() {
-        imagePicker.sourceType = .camera
-        imagePicker.cameraCaptureMode = .photo
-        imagePicker.cameraDevice = .rear
-        imagePicker.cameraFlashMode = .off
-        imagePicker.showsCameraControls = true
-        
-        //imagePicker.allowsEditing = true
-        self.present(self.imagePicker, animated: true, completion: nil)
-    }
-    
-    func camRollTapped() {
-        if let _ = Auth.auth().currentUser {
-            
-            switch PHPhotoLibrary.authorizationStatus() {
-            case .notDetermined:
-                PHPhotoLibrary.requestAuthorization { (status) in
-                    if status == .authorized {
-                        self.showPictureAlert()
-                    } else {
-                        self.alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
-                    }
-                }
-            case .restricted, .denied:
-                alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
-            case .authorized:
-                showPictureAlert()
-            case .limited:
-                showPictureAlert()
-            }
-            
-        } else {
-            self.notLoggedInAlert()
-        }
-    }
-    
-    func showPictureAlert() {
-        
-        if let _ = memeView {  //Select image for meme, no multi picture possible
-            showImagePicker()
-        } else {
-            let alert = UIAlertController(title: NSLocalizedString("how_many_pics_alert_header", comment: "How many pics do you want to post?"), message: NSLocalizedString("how_many_pics_alert_message", comment: "How many pics do you want to post?"), preferredStyle: .actionSheet)
-            
-            alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_just_one", comment: "just one"), style: .default, handler: { (_) in
-                self.showImagePicker()
-            }))
-            
-            
-            alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_three", comment: "two or three pics"), style: .default, handler: { (_) in
-                
-                //toDo: remove the selection
-                self.selectedOption = .multiPicture
-                self.openMultiPictureImagePicker()
-            }))
-            alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .destructive, handler: { (_) in
-                alert.dismiss(animated: true, completion: nil)
-            }))
-            self.present(alert, animated: true, completion: nil)
-        }
-    }
-    
-    func showImagePicker() {
-        self.imagePicker.sourceType = .photoLibrary
-        self.imagePicker.mediaTypes = ["public.image"]
-//        self.imagePicker.mediaTypes = ["public.movie", "public.image"]
-        //imagePicker.allowsEditing = true
-        
-        self.selectedOption = .picture
-        self.present(self.imagePicker, animated: true, completion: nil)
-    }
-    
-    func removePictureTapped() {
-        
-        self.multiImageAssets.removeAll()
-        self.previewPictures.removeAll()
-        self.pictureView.previewCollectionView.reloadData()
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.pictureView.removePictureButton.alpha = 0
-            self.pictureView.removePictureButton.isEnabled = true
+        UIView.animate(withDuration: 0.4, animations: {
+            self.view.layoutIfNeeded()
         }) { (_) in
-            self.decreasePictureUI()
-            self.selectedImageFromPicker = nil
-            self.selectedImagesFromPicker = []
-        }
-    }
-    
-    
-    
-    func markPostSwitchChanged() {
-        if optionView.markPostSwitch.isOn {
-            optionView.markPostSegmentControl.isHidden = false
-            optionView.markPostLabel.isHidden = true
-            
-            UIView.animate(withDuration: 0.3) {
-                self.optionView.markPostSegmentControl.alpha = 1
-            }
-            
-            
-            reportType = .opinion
-        } else {
         
-            UIView.animate(withDuration: 0.3, animations: {
-                self.optionView.markPostSegmentControl.alpha = 0
-            }) { (_) in
-                self.optionView.markPostSegmentControl.isHidden = true
-                self.optionView.markPostLabel.isHidden = false
-            }
-            
-            reportType = .normal
+            UIView.animate(withDuration: 0.1, animations: {
+                self.linkView.linkLabel.alpha = 1
+                self.linkView.linkTextField.alpha = 1
+                self.linkView.webImageViewStackView.alpha = 1
+                self.linkView.linkInfoButton.alpha = 1
+            }, completion: { (_) in
+                self.postSelectionSegmentedControl.isEnabled = true
+            })
         }
     }
     
-    func optionButtonTapped() {
-                
-        if descriptionView.descriptionTextView.isFirstResponder {
-            descriptionView.descriptionTextView.resignFirstResponder()
-        } else if titleView.titleTextView.isFirstResponder {
-            titleView.titleTextView.resignFirstResponder()
-        }
-        if let height = optionViewHeight {
-            if height.constant <= defaultOptionViewHeight {
-                height.constant = 125   //Previously 165
-                stackViewHeight!.isActive = false
-                
-                UIView.animate(withDuration: 0.4, animations: {
-                    self.view.layoutIfNeeded()
-                }) { (_) in
-                    self.optionView.optionStackView.isHidden = false
-                    UIView.animate(withDuration: 0.1) {
-                        self.optionView.optionStackView.alpha = 1
-                    }
-                }
-            } else {
-                stackViewHeight = optionView.optionStackView.heightAnchor.constraint(equalToConstant: 0)
-                stackViewHeight!.isActive = true
-                
-                height.constant = defaultOptionViewHeight
-                
-                UIView.animate(withDuration: 0.4, animations: {
-                    self.optionView.optionStackView.alpha = 0
-                    self.view.layoutIfNeeded()
-                }) { (_) in
-                    self.optionView.optionStackView.isHidden = true
-                }
-            }
-        }
-    }
     
-    func linkFactToPostTapped() {
-        performSegue(withIdentifier: "searchFactsSegue", sender: nil)
-    }
-    
-    func cancelLinkedFactTapped() {
-        linkCommunityView.distributionInformationLabel.text = "Feed"
-        linkCommunityView.distributionInformationImageView.image = UIImage(named: "Feed")
+    func insertUIForPicture() {
+        self.descriptionViewTopAnchor!.isActive = false
         
-        linkCommunityView.cancelLinkedFactButton.isHidden = true
-        linkCommunityView.addedFactImageView.removeFromSuperview()
-        linkCommunityView.addedFactDescriptionLabel.removeFromSuperview()
         
-        self.linkedFact = nil
-        self.postOnlyInTopic = false
+        if let pictureTop = pictureViewTopAnchor {
+            pictureTop.isActive = false
+            
+        }
         
-        linkCommunityView.addFactButton.isHidden = false
-    }
-    
-    func markPostInfoButtonPressed() {
-        if let tipView = self.markPostTipView {
-            tipView.dismiss()
-            markPostTipView = nil
-        } else {
-            self.markPostTipView = EasyTipView(text: Constants.texts.markPostText)
-            markPostTipView!.show(forView: optionView)
-        }
-    }
-    
-    func linkedFactInfoButtonTapped() {
-        if let tipView = self.linkedFactTipView {
-            tipView.dismiss()
-            linkedFactTipView = nil
-        } else {
-            self.linkedFactTipView = EasyTipView(text: NSLocalizedString("linked_fact_tip_view_text", comment: "how and why"))
-            linkedFactTipView!.show(forView: linkCommunityView)
-        }
-    }
-    
-    func postAnonymousButtonPressed() {
-        if let tipView = self.postAnonymousTipView {
-            tipView.dismiss()
-            postAnonymousTipView = nil
-        } else {
-            self.postAnonymousTipView = EasyTipView(text: Constants.texts.postAnonymousText)
-            postAnonymousTipView!.show(forView: optionView)
-        }
-    }
-    
-    func postAnonymousSwitchChanged() {
-        if optionView.postAnonymousSwitch.isOn {
-            self.postAnonymous = true
-            self.optionView.anonymousImageView.isHidden = false
+        self.pictureViewTopAnchor = pictureView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1)
+        self.pictureViewTopAnchor!.isActive = true
+        
+        self.pictureViewHeight!.constant = 100
+        
+        
+        self.descriptionViewTopAnchor! = descriptionView.topAnchor.constraint(equalTo: pictureView.bottomAnchor, constant: 1)
+        self.descriptionViewTopAnchor!.isActive = true
+        
+        UIView.animate(withDuration: 0.4, animations: {
+            self.view.layoutIfNeeded()
+        }) { (_) in
             
-            let alert = UIAlertController(title: NSLocalizedString("anonymous_name_alert_title", comment: "anonymous name"), message: NSLocalizedString("anonymous_name_alert_message", comment: "no real name and such"), preferredStyle: .alert)
-
-            alert.addTextField { (textField) in
-                textField.placeholder = NSLocalizedString("anonymous_name_placeholder", comment: "john doe")
-            }
-
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
-                let textField = alert!.textFields![0] // Force unwrapping because we know it exists.
-                
-                if let text = textField.text {
-                    self.anonymousName = text
-                    self.optionView.anonymousNameLabel.text = text
-                } //else: Default String will show in the feed
-            }))
-            self.present(alert, animated: true, completion: nil)
-            
-        } else {
-            self.postAnonymous = false
-            self.optionView.anonymousImageView.isHidden = true
+            UIView.animate(withDuration: 0.1, animations: {
+                self.pictureView.cameraButton.alpha = 1
+                self.pictureView.folderButton.alpha = 1
+                self.pictureView.pictureLabel.alpha = 1
+            }, completion: { (_) in
+                self.postSelectionSegmentedControl.isEnabled = true
+            })
         }
     }
+    
+    //MARK:- Animate Layout Change
     
     @IBAction func postSelectionSegmentChanged(_ sender: Any) {
         prepareForSelectionChange()
@@ -1100,22 +670,301 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "searchFactsSegue" {
-            if let navCon = segue.destination as? UINavigationController {
-                if let factVC = navCon.topViewController as? CommunityCollectionViewController {
-                    factVC.addFactToPost = .newPost
-                    factVC.delegate = self
+    // MARK: - MultiImagePicker
+    
+    func openMultiPictureImagePicker() {
+        let multiImagePicker = ImagePickerController()
+        let options = multiImagePicker.settings
+        options.selection.max = 3
+        let fetchOptions = options.fetch.album.options
+                options.fetch.album.fetchResults = [
+                    PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumRecentlyAdded, options: fetchOptions),
+                    PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: fetchOptions),
+                ]
+        
+        self.multiImageAssets.removeAll()
+        //TODo: change the selection
+        self.presentImagePicker(multiImagePicker,
+                                
+        select: { (asset) in
+            self.multiImageAssets.append(asset)
+        }, deselect: { (asset) in
+            self.multiImageAssets = self.multiImageAssets.filter{ $0 != asset}
+        }, cancel: { (asset) in
+            self.multiImageAssets.removeAll()
+        }, finish: { (asset) in
+            self.previewPictures.removeAll()
+            self.getImages(forPreview: true) { (_) in }
+            self.increasePictureUI()
+            })
+    }
+    
+    //MARK:- Prepare Picture Upload
+    
+    func getPictureInCompressedQuality(image: UIImage) -> Data? {
+        if let originalImage = image.jpegData(compressionQuality: 1) {
+            let data = NSData(data: originalImage)
+            
+            let imageSize = data.count/1000
+            
+            if imageSize <= 500 {   // When the imageSize is under 500kB it wont be compressed, because you can see the difference
+                // No compression
+                return originalImage
+            } else if imageSize <= 1000 {
+                if let smallerImage = image.jpegData(compressionQuality: 0.4) {
+                    
+                    return smallerImage
+                }
+            } else if imageSize <= 2000 {
+                if let smallerImage = image.jpegData(compressionQuality: 0.25) {
+                    
+                    return smallerImage
+                }
+            } else {
+                if let smallerImage = image.jpegData(compressionQuality: 0.1) {
+                    
+                    return smallerImage
                 }
             }
         }
         
-        if segue.identifier == "toMapSegue" {
-            if let mapVC = segue.destination as? MapViewController {
-                mapVC.locationDelegate = self
+        return nil
+    }
+    
+    func getImages(forPreview: Bool, images: @escaping ([Data]) -> Void)  {
+        self.selectedImagesFromPicker.removeAll()
+        
+        for asset in self.multiImageAssets {
+            
+            let options = PHImageRequestOptions()
+            options.isSynchronous = true
+            
+            // Request the maximum size. If you only need a smaller size make sure to request that instead.
+            PHImageManager.default().requestImage(for: asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFit, options: options) { (image, info) in
+                if let image = image {
+                    
+                    if forPreview {
+                        self.previewPictures.append(image)
+                        self.pictureView.previewCollectionView.reloadData()
+                        UIView.animate(withDuration: 0.3) {
+                            self.pictureView.removePictureButton.alpha = 1
+                            self.pictureView.removePictureButton.isEnabled = true
+                        }
+                    } else {
+                        if self.selectedImageWidth == 0 {   // Set the width just for the first Image
+                            let size = image.size
+                            
+                            self.selectedImageHeight = size.height
+                            self.selectedImageWidth = size.width
+                        } else {
+                            print("Height already set")
+                        }
+                        
+                        if let comImage = self.getPictureInCompressedQuality(image: image) {
+                            self.selectedImagesFromPicker.append(comImage)
+                            
+                            if self.selectedImagesFromPicker.count == self.multiImageAssets.count {
+                                images(self.selectedImagesFromPicker)
+                            }
+                            
+                            print("##Das ist das komprimierte Bild: \(comImage)")
+                        }
+                    }
+                } else {
+                    self.alert(message: NSLocalizedString("error_uploading_multiple_pictures_message", comment: "werid bug"), title: NSLocalizedString("error_title", comment: "we have error"))
+                    self.view.activityStopAnimating()
+                    self.shareButton.isEnabled = true
+                }
             }
         }
     }
+    
+    //MARK:- Upload Picture
+    func uploadImages(postRef: DocumentReference, userID: String) {
+        print("Upload Images")
+        if multiImageAssets.count >= 2 && multiImageAssets.count <= 3 {
+            
+            getImages(forPreview: false) { (data) in
+                
+                let count = data.count
+                var index = 0
+                
+                print("##So viele im selectedimagesfrompicker: \(count)")
+                
+                for image in data {
+                    
+                    let storageRef = Storage.storage().reference().child("postPictures").child("\(postRef.documentID)-\(index).png")
+                    
+                    index+=1
+                    print("## storageRef: \(storageRef)")
+                    storageRef.putData(image, metadata: nil, completion: { (metadata, error) in    //save picture
+                        if let error = error {
+                            print("We have an error: \(error)")
+                            return
+                        } else {
+                            storageRef.downloadURL(completion: { (url, err) in  // Hier wird die URL runtergezogen
+                                if let error = err {
+                                    print("We have an error: \(error)")
+                                    return
+                                } else {
+                                    if let url = url {
+                                        self.imageURLs.append(url.absoluteString)
+                                        
+                                        if self.imageURLs.count == count { // Uploaded all x Pictures and stored the urls in self.imageURLs
+                                            self.postMultiplePictures(postRef: postRef, userID: userID)
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                    })
+                }
+            }
+        } else {
+            self.alert(message: NSLocalizedString("error_choosing_multiple_pictures_message", comment: "choose more"), title: NSLocalizedString("error_title", comment: "got error"))
+            self.view.activityStopAnimating()
+            self.shareButton.isEnabled = true
+        }
+    }
+    
+    func savePicture(userID: String, postRef: DocumentReference) {
+        
+        if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 1) {
+            let data = NSData(data: image)
+            
+            let imageSize = data.count/1000
+            
+            
+            if imageSize <= 500 {   // When the imageSize is under 500kB it wont be compressed, because you can see the difference
+                // No compression
+                print("No compression")
+                self.storeImage(data: image, postRef: postRef, userID: userID)
+            } else if imageSize <= 1000 {
+                if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.4) {
+                    
+                    self.storeImage(data: image, postRef: postRef, userID: userID)
+                }
+            } else if imageSize <= 2000 {
+                if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.25) {
+                    
+                    self.storeImage(data: image, postRef: postRef, userID: userID)
+                }
+            } else {
+                if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.1) {
+                    
+                    self.storeImage(data: image, postRef: postRef, userID: userID)
+                }
+            }
+            
+        } else {
+            self.alert(message: NSLocalizedString("error_choosing_picture", comment: "got no pic"), title: NSLocalizedString("error_title", comment: "got error"))
+            self.view.activityStopAnimating()
+            self.shareButton.isEnabled = true
+        }
+    }
+    
+    func storeImage(data: Data, postRef: DocumentReference, userID: String) {
+        
+        let storageRef = Storage.storage().reference().child("postPictures").child("\(postRef.documentID).png")
+        
+        storageRef.putData(data, metadata: nil, completion: { (metadata, error) in    //Store image
+            if let error = error {
+                print(error)
+                return
+            }
+            storageRef.downloadURL(completion: { (url, err) in  // Download url and save it
+                if let err = err {
+                    print(err)
+                    return
+                }
+                if let url = url {
+                    self.imageURL = url.absoluteString
+                    
+                    self.postPicture(postRef: postRef, userID: userID)
+                }
+            })
+        })
+    }
+    
+    //MARK: - Image Picker
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        var animated = true
+        if let _ = memeView {
+            animated = false
+        }
+        imagePicker.dismiss(animated: animated, completion: nil)
+        
+        if picker.sourceType == .camera {
+            self.camPic = true
+        }
+        
+        if let originalImage = info[.originalImage] as? UIImage {
+            
+            showCropView(image: originalImage)
+            print("#we have an image")
+                        
+        } else if let videoURL = info[.mediaURL] as? NSURL{
+            print("#We got a video")
+//            uploadVideo(videoURL: videoURL)
+//            testVideo(videoURL: videoURL)
+        }
+    }
+    
+    func showCropView(image: UIImage) {
+        let cropViewController = CropViewController(image: image)
+        cropViewController.delegate = self
+        cropViewController.hidesBottomBarWhenPushed = true
+        
+        if let _ = memeView {
+            cropViewController.aspectRatioLockEnabled = true
+            cropViewController.aspectRatioPreset = .preset16x9
+        } else {
+            cropViewController.aspectRatioLockEnabled = false
+        }
+        self.cropViewController = cropViewController
+        self.present(cropViewController, animated: true, completion: nil)
+    }
+    
+    func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
+        
+        if let cropVC = self.cropViewController {
+            var animated = true
+            if let _ = memeView {
+                animated = false
+            }
+            cropVC.dismiss(animated: animated) {
+                if let memeView = self.memeView {
+                    memeView.imageSelected(image: image)
+                } else {
+                    self.setImageAndShowPreviewImage(image: image)
+                }
+            }
+        }
+    }
+    
+    func setImageAndShowPreviewImage(image: UIImage) {
+        
+        selectedImageFromPicker = image
+        selectedImageHeight = image.size.height
+        selectedImageWidth = image.size.width
+        
+        self.increasePictureUI()
+        self.previewPictures.removeAll()
+        self.previewPictures.append(image)
+        self.pictureView.previewCollectionView.reloadData()
+        
+        UIView.animate(withDuration: 0.3) {
+            self.pictureView.removePictureButton.alpha = 1
+            self.pictureView.removePictureButton.isEnabled = true
+        }
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
     
     //MARK:- SharePressed
     
@@ -1221,621 +1070,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.notLoggedInAlert()
         }
     }
+ 
     
-    //MARK:- LinkPreview
-    
-    func getLinkPreview(linkString: String, returnLink: @escaping (Link?) -> Void) {
-        if linkString.isValidURL {
-            slp.preview(linkString, onSuccess: { (response) in
-                var imageURL: String?
-                var shortURL = ""
-                var linkTitle = ""
-                var linkDescription = ""
-
-                if let URL = response.image {
-                    imageURL = URL
-                }
-                if let URL = response.canonicalUrl {
-                    shortURL = URL
-                }
-                if let title = response.title {
-                    linkTitle = title
-                }
-                if let description = response.description {
-                    linkDescription = description
-                }
-                let link = Link(link: linkString, title: linkTitle, description: linkDescription, shortURL: shortURL, imageURL: imageURL)
-
-                returnLink(link)
-
-            }) { (err) in
-                print("We have an error: \(err.localizedDescription)")
-                self.alert(message: err.localizedDescription, title: NSLocalizedString("error_title", comment: "got error"))
-                self.view.activityStopAnimating()
-                self.shareButton.isEnabled = true
-                
-                returnLink(nil)
-            }
-        } else {
-            self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
-            self.alert(message: NSLocalizedString("error_link_not_valid", comment: "not valid"), title: NSLocalizedString("error_title", comment: "got error"))
-            
-            returnLink(nil)
-        }
-    }
-
-    
-    func getSongwhipData(link: String, returnData: @escaping ([String: Any]?) -> Void) {
-        
-        if let url = URL(string: "https://songwhip.com/") {
-            
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-            let body = "{\"url\":\"\(link)\"}"
-            request.httpBody = body.data(using: .utf8)
-            
-            
-            URLSession.shared.dataTask(with: request) { (data, response, err) in
-                if let error = err {
-                    print("We have an error getting the songwhip Data: ", error.localizedDescription)
-                } else {
-                    if let data = data {
-                        
-                        do {
-                            if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
-                                
-                                guard let type = json["type"] as? String,
-                                      let name = json["name"] as? String,
-                                      let releaseDate = json["releaseDate"] as? String,
-                                      let link = json["url"] as? String,
-                                      let musicImage = json["image"] as? String,
-                                      let artistData = json["artists"] as? [[String: Any]]
-                                else {
-                                    print("Returne ohne daten")
-                                    return
-                                }
-                                
-                                guard let date = self.getReleaseDate(stringDate: releaseDate) else { return }
-                                
-                                if let artistInfo = artistData.first {
-                                    if let artistName = artistInfo["name"] as? String, let artistImage = artistInfo["image"] as? String {
-                                        
-                                        let songwhipData: [String: Any] = ["musicType": type, "name": name, "releaseDate": Timestamp(date: date), "link": link, "artist": artistName, "artistImage": artistImage, "musicImage": musicImage]
-                                        
-                                        returnData(songwhipData)
-                                    }
-                                }
-                            } else {
-                                print("Couldnt get the jsonData from Songwhip API Call")
-                                returnData(nil)
-                            }
-                        } catch {
-                            print("Couldnt get the jsonData from Songwhip API Call")
-                            returnData(nil)
-                        }
-                    }
-                }
-            }.resume()
-        }
-    }
-    
-    func getReleaseDate(stringDate: String) -> Date? {
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "de_DE")
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        let date = dateFormatter.date(from: stringDate)
-        
-        return date
-    }
-    
-    // MARK: - MultiImagePicker
-    
-    func openMultiPictureImagePicker() {
-        let multiImagePicker = ImagePickerController()
-        let options = multiImagePicker.settings
-        options.selection.max = 3
-        let fetchOptions = options.fetch.album.options
-                options.fetch.album.fetchResults = [
-                    PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumRecentlyAdded, options: fetchOptions),
-                    PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: fetchOptions),
-                ]
-        
-        self.multiImageAssets.removeAll()
-        //TODo: change the selection
-        self.presentImagePicker(multiImagePicker,
-                                
-        select: { (asset) in
-            self.multiImageAssets.append(asset)
-        }, deselect: { (asset) in
-            self.multiImageAssets = self.multiImageAssets.filter{ $0 != asset}
-        }, cancel: { (asset) in
-            self.multiImageAssets.removeAll()
-        }, finish: { (asset) in
-            self.previewPictures.removeAll()
-            self.getImages(forPreview: true) { (_) in }
-            self.increasePictureUI()
-            })
-    }
-    
-    
-    func getPictureInCompressedQuality(image: UIImage) -> Data? {
-        if let originalImage = image.jpegData(compressionQuality: 1) {
-            let data = NSData(data: originalImage)
-            
-            let imageSize = data.count/1000
-            
-            if imageSize <= 500 {   // When the imageSize is under 500kB it wont be compressed, because you can see the difference
-                // No compression
-                return originalImage
-            } else if imageSize <= 1000 {
-                if let smallerImage = image.jpegData(compressionQuality: 0.4) {
-                    
-                    return smallerImage
-                }
-            } else if imageSize <= 2000 {
-                if let smallerImage = image.jpegData(compressionQuality: 0.25) {
-                    
-                    return smallerImage
-                }
-            } else {
-                if let smallerImage = image.jpegData(compressionQuality: 0.1) {
-                    
-                    return smallerImage
-                }
-            }
-        }
-        
-        return nil
-    }
-    
-    func getImages(forPreview: Bool, images: @escaping ([Data]) -> Void)  {
-        self.selectedImagesFromPicker.removeAll()
-        
-        for asset in self.multiImageAssets {
-            
-            let options = PHImageRequestOptions()
-            options.isSynchronous = true
-            
-            // Request the maximum size. If you only need a smaller size make sure to request that instead.
-            PHImageManager.default().requestImage(for: asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFit, options: options) { (image, info) in
-                if let image = image {
-                    
-                    if forPreview {
-                        self.previewPictures.append(image)
-                        self.pictureView.previewCollectionView.reloadData()
-                        UIView.animate(withDuration: 0.3) {
-                            self.pictureView.removePictureButton.alpha = 1
-                            self.pictureView.removePictureButton.isEnabled = true
-                        }
-                    } else {
-                        if self.selectedImageWidth == 0 {   // Set the width just for the first Image
-                            let size = image.size
-                            
-                            self.selectedImageHeight = size.height
-                            self.selectedImageWidth = size.width
-                        } else {
-                            print("Height already set")
-                        }
-                        
-                        if let comImage = self.getPictureInCompressedQuality(image: image) {
-                            self.selectedImagesFromPicker.append(comImage)
-                            
-                            if self.selectedImagesFromPicker.count == self.multiImageAssets.count {
-                                images(self.selectedImagesFromPicker)
-                            }
-                            
-                            print("##Das ist das komprimierte Bild: \(comImage)")
-                        }
-                    }
-                } else {
-                    self.alert(message: NSLocalizedString("error_uploading_multiple_pictures_message", comment: "werid bug"), title: NSLocalizedString("error_title", comment: "we have error"))
-                    self.view.activityStopAnimating()
-                    self.shareButton.isEnabled = true
-                }
-            }
-        }
-    }
-    
-    func uploadImages(postRef: DocumentReference, userID: String) {
-        print("Upload Images")
-        if multiImageAssets.count >= 2 && multiImageAssets.count <= 3 {
-            
-            getImages(forPreview: false) { (data) in
-                
-                let count = data.count
-                var index = 0
-                
-                print("##So viele im selectedimagesfrompicker: \(count)")
-                
-                for image in data {
-                    
-                    let storageRef = Storage.storage().reference().child("postPictures").child("\(postRef.documentID)-\(index).png")
-                    
-                    index+=1
-                    print("## storageRef: \(storageRef)")
-                    storageRef.putData(image, metadata: nil, completion: { (metadata, error) in    //save picture
-                        if let error = error {
-                            print("We have an error: \(error)")
-                            return
-                        } else {
-                            storageRef.downloadURL(completion: { (url, err) in  // Hier wird die URL runtergezogen
-                                if let error = err {
-                                    print("We have an error: \(error)")
-                                    return
-                                } else {
-                                    if let url = url {
-                                        self.imageURLs.append(url.absoluteString)
-                                        
-                                        if self.imageURLs.count == count { // Uploaded all x Pictures and stored the urls in self.imageURLs
-                                            self.postMultiplePictures(postRef: postRef, userID: userID)
-                                        }
-                                    }
-                                }
-                            })
-                        }
-                    })
-                }
-            }
-        } else {
-            self.alert(message: NSLocalizedString("error_choosing_multiple_pictures_message", comment: "choose more"), title: NSLocalizedString("error_title", comment: "got error"))
-            self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
-        }
-        
-    }
-    
-    //MARK: - Image Picker
-    
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
-        var animated = true
-        if let _ = memeView {
-            animated = false
-        }
-        imagePicker.dismiss(animated: animated, completion: nil)
-        
-        if picker.sourceType == .camera {
-            self.camPic = true
-        }
-        
-        if let originalImage = info[.originalImage] as? UIImage {
-            
-            showCropView(image: originalImage)
-            print("#we have an image")
-                        
-        } else if let videoURL = info[.mediaURL] as? NSURL{
-            print("#We got a video")
-//            uploadVideo(videoURL: videoURL)
-            testVideo(videoURL: videoURL)
-        }
-    }
-    
-    func showCropView(image: UIImage) {
-        let cropViewController = CropViewController(image: image)
-        cropViewController.delegate = self
-        cropViewController.hidesBottomBarWhenPushed = true
-        
-        if let _ = memeView {
-            cropViewController.aspectRatioLockEnabled = true
-            cropViewController.aspectRatioPreset = .preset16x9
-        } else {
-            cropViewController.aspectRatioLockEnabled = false
-        }
-        self.cropViewController = cropViewController
-        self.present(cropViewController, animated: true, completion: nil)
-    }
-    
-    func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
-        
-        if let cropVC = self.cropViewController {
-            var animated = true
-            if let _ = memeView {
-                animated = false
-            }
-            cropVC.dismiss(animated: animated) {
-                if let memeView = self.memeView {
-                    memeView.imageSelected(image: image)
-                } else {
-                    self.setImageAndShowPreviewImage(image: image)
-                }
-            }
-        }
-    }
-    
-    func setImageAndShowPreviewImage(image: UIImage) {
-        
-        selectedImageFromPicker = image
-        selectedImageHeight = image.size.height
-        selectedImageWidth = image.size.width
-        
-        self.increasePictureUI()
-        self.previewPictures.removeAll()
-        self.previewPictures.append(image)
-        self.pictureView.previewCollectionView.reloadData()
-        
-        UIView.animate(withDuration: 0.3) {
-            self.pictureView.removePictureButton.alpha = 1
-            self.pictureView.removePictureButton.isEnabled = true
-        }
-    }
-    
-    
-    
-    func increasePictureUI() {
-        if let pictureHeight = self.pictureViewHeight {
-            pictureHeight.constant = 150
-            
-            UIView.animate(withDuration: 0.6) {
-                self.view.layoutIfNeeded()
-            }
-        }
-    }
-    
-    func decreasePictureUI() {
-        if let pictureHeight = self.pictureViewHeight {
-            pictureHeight.constant = 100
-            
-            UIView.animate(withDuration: 0.6) {
-                self.view.layoutIfNeeded()
-            }
-        }
-    }
-    
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        dismiss(animated: true, completion: nil)
-    }
-    
-    
-    
-    func savePicture(userID: String, postRef: DocumentReference) {
-        
-        if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 1) {
-            let data = NSData(data: image)
-            
-            let imageSize = data.count/1000
-            
-            
-            if imageSize <= 500 {   // When the imageSize is under 500kB it wont be compressed, because you can see the difference
-                // No compression
-                print("No compression")
-                self.storeImage(data: image, postRef: postRef, userID: userID)
-            } else if imageSize <= 1000 {
-                if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.4) {
-                    
-                    self.storeImage(data: image, postRef: postRef, userID: userID)
-                }
-            } else if imageSize <= 2000 {
-                if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.25) {
-                    
-                    self.storeImage(data: image, postRef: postRef, userID: userID)
-                }
-            } else {
-                if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.1) {
-                    
-                    self.storeImage(data: image, postRef: postRef, userID: userID)
-                }
-            }
-            
-        } else {
-            self.alert(message: NSLocalizedString("error_choosing_picture", comment: "got no pic"), title: NSLocalizedString("error_title", comment: "got error"))
-            self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
-        }
-    }
-    
-    func storeImage(data: Data, postRef: DocumentReference, userID: String) {
-        
-        let storageRef = Storage.storage().reference().child("postPictures").child("\(postRef.documentID).png")
-        
-        storageRef.putData(data, metadata: nil, completion: { (metadata, error) in    //Store image
-            if let error = error {
-                print(error)
-                return
-            }
-            storageRef.downloadURL(completion: { (url, err) in  // Download url and save it
-                if let err = err {
-                    print(err)
-                    return
-                }
-                if let url = url {
-                    self.imageURL = url.absoluteString
-                    
-                    self.postPicture(postRef: postRef, userID: userID)
-                }
-            })
-        })
-    }
-    
-    //MARK:- UploadVideo
-    
-    func testVideo(videoURL: NSURL) {
-        let semaphore = DispatchSemaphore (value: 0)
-        
-        if let data = NSData(contentsOf: videoURL as URL) {
-            
-            let parameters = [
-                    "key": "video",
-                    "value": data,
-                    "type": "text"
-                ] as [String : Any]
-
-            let boundary = "Boundary-\(UUID().uuidString)"
-            var body = Data()
-
-            let paramName = parameters["key"]
-            body.append(contentsOf: "--\(boundary)\r\n".data(using: .utf8)!)
-            body.append("Content-Disposition:form-data; name=\"\(paramName)\"".data(using: .utf8)!)
-            
-            if let paramValue = parameters["value"] as? String {
-                body.append("\r\n\r\n\(paramValue)\r\n".data(using: .utf8)!)
-            } else {
-                body.append(data as Data)
-            }
-            
-            body.append("--\(boundary)--\r\n".data(using: .utf8)!)
-    
-            let postData = body
-
-            var request = URLRequest(url: URL(string: "https://api.imgur.com/3/image")!,timeoutInterval: Double.infinity)
-            request.addValue("Client-ID \(imgurClientID)", forHTTPHeaderField: "Authorization")
-            request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-            
-            request.httpMethod = "POST"
-            request.httpBody = postData
-            
-            let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                guard let data = data else {
-                    print(String(describing: error))
-                    return
-                }
-                print(String(data: data, encoding: .utf8)!)
-                semaphore.signal()
-                
-            }
-            
-            task.resume()
-            semaphore.wait()
-            
-        }
-    }
-    
-//    func testVideo(videoURL: NSURL) {
-//        let semaphore = DispatchSemaphore (value: 0)
-//
-//        if let data = NSData(contentsOf: videoURL as URL) {
-//
-//            let parameters = [
-//                [
-//                    "key": "image",
-//                    "value": data.base64EncodedString(options: .lineLength64Characters),
-//                    "type": "text"
-//                ]] as [[String : Any]]
-//
-//            let boundary = "Boundary-\(UUID().uuidString)"
-//            var body = ""
-//            var error: Error? = nil
-//            for param in parameters {
-//                if param["disabled"] == nil {
-//                    let paramName = param["key"]!
-//                    body += "--\(boundary)\r\n"
-//                    body += "Content-Disposition:form-data; name=\"\(paramName)\""
-//                    let paramType = param["type"] as! String
-//                    if paramType == "text" {
-//                        let paramValue = param["value"] as! String
-//                        body += "\r\n\r\n\(paramValue)\r\n"
-//                    } else {
-//                        let paramSrc = param["src"] as! String
-//                        do {
-//                            let fileData = try NSData(contentsOfFile:paramSrc, options:[]) as Data
-//                            let fileContent = String(data: fileData, encoding: .utf8)!
-//                            body += "; filename=\"\(paramSrc)\"\r\n"
-//                                + "Content-Type: \"content-type header\"\r\n\r\n\(fileContent)\r\n"
-//                        } catch {
-//                            return
-//                        }
-//
-//                    }
-//                }
-//            }
-//            body += "--\(boundary)--\r\n";
-//            let postData = body.data(using: .utf8)
-//
-//            var request = URLRequest(url: URL(string: "https://api.imgur.com/3/image")!,timeoutInterval: Double.infinity)
-//            request.addValue("Client-ID \(imgurClientID)", forHTTPHeaderField: "Authorization")
-//            request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-//
-//            request.httpMethod = "POST"
-//            request.httpBody = postData
-//
-//            let task = URLSession.shared.dataTask(with: request) { data, response, error in
-//                guard let data = data else {
-//                    print(String(describing: error))
-//                    return
-//                }
-//                print(String(data: data, encoding: .utf8)!)
-//                semaphore.signal()
-//
-//            }
-//
-//            task.resume()
-//            semaphore.wait()
-//
-//        }
-//    }
-    
-    func uploadVideo(videoURL: NSURL) {
-        if let url = URL(string: "https://api.imgur.com/3/upload") {
-            print("Upload Video")
-            
-            var request = URLRequest(url: url)
-            request.addValue("Client-ID \(imgurClientID)", forHTTPHeaderField: "Authorization")
-            request.httpMethod = "POST"
-            
-            if let data = NSData(contentsOf: videoURL as URL) {
-                let base64String = data.base64EncodedString(options: .lineLength64Characters)
-                
-//                // Build our multiform and add our base64 image
-//                let body = NSMutableData()
-////                body.append("Content-Disposition: form-data; name=\"image\"\r\n\r\n".data(using: .utf8)!)
-//                body.append(base64String.data(using: .utf8)!)
-//                request.httpBody = body as Data
-//                let body = "video"=\"\(base64Data)\", \"title\"=\"whatever bruh\", \"type\"=\"base64\", \"disable_audio=1"
-
-                let body = "image=\"\(base64String)\""
-                request.httpBody = body.data(using: .utf8)
-                print(body, "##boooody")
-                URLSession.shared.dataTask(with: request) { (data, response, err) in
-                    if let error = err {
-                        print("We have an error getting the video data: ", error.localizedDescription)
-                    } else {
-                        if let data = data {
-                            
-                            do {
-                                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
-                                    
-                                    guard let data = json["data"] as? [String: Any]
-                                    else {
-                                        print("Returne ohne daten: \(json)")
-                                        return
-                                    }
-                                    
-                                    print("Got data: ", json)
-//                                    if let jsonData = data.first {
-//                                        guard let type = jsonData["type"] as? String,
-//                                              let name = jsonData["name"] as? String,
-//                                              let link = jsonData["link"] as? String
-//                                        else {
-//                                            print("Returne ohne jsondaten: \(jsonData)")
-//                                            return
-//                                        }
-//
-//                                        print("type: \(type), name: \(name), link: \(link)")
-//                                    }
-                                    
-                                    
-                                } else {
-                                    print("Couldnt get the jsonData from Imgur API Call")
-                                }
-                            } catch {
-                                print("Could not get the jsonData from Imgur API Call")
-                            }
-                        }
-                    }
-                }.resume()
-            }
-        }
-    }
-    
-    let imgurClientID = "22e958a40c80519"
-    let imgurClientSecret = "02027ffe7b67b8f30cb5f3d9dd9820dc7391d5ac"
-    
-    // MARK: - Upload the post
-    
-    func getDate() -> Timestamp {
-        return Timestamp(date: Date())
-    }
+    // MARK: - Prepare Upload Data
     
     func postThought(postRef: DocumentReference, userID: String) {
         
@@ -1982,7 +1219,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    
+    //MARK:- Upload Data
     func uploadTheData(postRef: DocumentReference, userID: String, dataDictionary: [String: Any]) {
         
         let documentID = postRef.documentID
@@ -2086,32 +1323,163 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    func uploadTheEvent(userID: String, dataDictionary: [String:Any]) {
-        let eventRef = db.collection("Events").document()
-        let documentID = eventRef.documentID
-        
-        let userRef = db.collection("Users").document(userID).collection("events").document(documentID)
-        
-        userRef.setData(["createTime": getDate()])      // add event to User
-        
-        eventRef.setData(dataDictionary) { (err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if self.camPic { // Um es auf in dem Handy-Photo Ordner zu speichern Geht besser :/
-                    if let selectedImage = self.selectedImageFromPicker {
-                        UIImageWriteToSavedPhotosAlbum(selectedImage, nil, nil, nil)
-                    }
-                }
-                
-                self.presentAlert(post: nil)
-            }
-        }
-        
+    //MARK:- GET Upload Data
+    
+    func getDate() -> Timestamp {
+        return Timestamp(date: Date())
     }
     
-    func presentAlert(post: Post?) {
+    //MARK: Get LinkPreview
+    
+    func getLinkPreview(linkString: String, returnLink: @escaping (Link?) -> Void) {
+        if linkString.isValidURL {
+            slp.preview(linkString, onSuccess: { (response) in
+                var imageURL: String?
+                var shortURL = ""
+                var linkTitle = ""
+                var linkDescription = ""
+
+                if let URL = response.image {
+                    imageURL = URL
+                }
+                if let URL = response.canonicalUrl {
+                    shortURL = URL
+                }
+                if let title = response.title {
+                    linkTitle = title
+                }
+                if let description = response.description {
+                    linkDescription = description
+                }
+                let link = Link(link: linkString, title: linkTitle, description: linkDescription, shortURL: shortURL, imageURL: imageURL)
+
+                returnLink(link)
+
+            }) { (err) in
+                print("We have an error: \(err.localizedDescription)")
+                self.alert(message: err.localizedDescription, title: NSLocalizedString("error_title", comment: "got error"))
+                self.view.activityStopAnimating()
+                self.shareButton.isEnabled = true
+                
+                returnLink(nil)
+            }
+        } else {
+            self.view.activityStopAnimating()
+            self.shareButton.isEnabled = true
+            self.alert(message: NSLocalizedString("error_link_not_valid", comment: "not valid"), title: NSLocalizedString("error_title", comment: "got error"))
+            
+            returnLink(nil)
+        }
+    }
+
+    //MARK: Get Songwhip Data
+    
+    func getSongwhipData(link: String, returnData: @escaping ([String: Any]?) -> Void) {
         
+        if let url = URL(string: "https://songwhip.com/") {
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            let body = "{\"url\":\"\(link)\"}"
+            request.httpBody = body.data(using: .utf8)
+            
+            
+            URLSession.shared.dataTask(with: request) { (data, response, err) in
+                if let error = err {
+                    print("We have an error getting the songwhip Data: ", error.localizedDescription)
+                } else {
+                    if let data = data {
+                        
+                        do {
+                            if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String : Any] {
+                                
+                                guard let type = json["type"] as? String,
+                                      let name = json["name"] as? String,
+                                      let releaseDate = json["releaseDate"] as? String,
+                                      let link = json["url"] as? String,
+                                      let musicImage = json["image"] as? String,
+                                      let artistData = json["artists"] as? [[String: Any]]
+                                else {
+                                    print("Returne ohne daten")
+                                    return
+                                }
+                                
+                                guard let date = self.getReleaseDate(stringDate: releaseDate) else { return }
+                                
+                                if let artistInfo = artistData.first {
+                                    if let artistName = artistInfo["name"] as? String, let artistImage = artistInfo["image"] as? String {
+                                        
+                                        let songwhipData: [String: Any] = ["musicType": type, "name": name, "releaseDate": Timestamp(date: date), "link": link, "artist": artistName, "artistImage": artistImage, "musicImage": musicImage]
+                                        
+                                        returnData(songwhipData)
+                                    }
+                                }
+                            } else {
+                                print("Couldnt get the jsonData from Songwhip API Call")
+                                returnData(nil)
+                            }
+                        } catch {
+                            print("Couldnt get the jsonData from Songwhip API Call")
+                            returnData(nil)
+                        }
+                    }
+                }
+            }.resume()
+        }
+    }
+    
+    //MARK: Get Music Release Date
+    func getReleaseDate(stringDate: String) -> Date? {
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "de_DE")
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        let date = dateFormatter.date(from: stringDate)
+        
+        return date
+    }
+    
+    //MARK: Get Tags to Save
+    func getTagsToSave() -> [String] {
+        // Detect the nouns in the title and save them to Firebase in an array. We cant really search in Firebase, but we search through an array, so that way we can at least give the search function in the feedtableviewcontroller some functionality
+        var tags = [String]()
+        guard let title = titleView.titleTextView.text else { return [""] }
+        
+        let tagger = NSLinguisticTagger(tagSchemes: [.lexicalClass], options: 0)
+        tagger.string = title
+        let range = NSRange(location: 0, length: title.utf16.count)
+        let options: NSLinguisticTagger.Options = [.omitPunctuation, .omitWhitespace]
+        tagger.enumerateTags(in: range, unit: .word, scheme: .lexicalClass, options: options) { tag, tokenRange, _ in
+            if let tag = tag {
+                let word = (title as NSString).substring(with: tokenRange)
+                print("\(word): \(tag)")
+                
+                if tag == NSLinguisticTag(rawValue: "Noun") {
+                    tags.append(word)
+                }
+            }
+        }
+        return tags
+    }
+    
+    func getReportString() -> String {
+        switch reportType {
+        case .normal:
+            return "normal"
+        case .opinion:
+            return "opinion"
+        case .sensationalism:
+            return "sensationalism"
+        case .edited:
+            return "edited"
+        default:
+            return "normal"
+        }
+    }
+    
+    //MARK:- Finished Posting
+    
+    func presentAlert(post: Post?) {
         
         if self.comingFromAddOnVC {
             if let addOn = addOn, let post = post {
@@ -2235,55 +1603,482 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.present(shareAlert, animated: true, completion: nil)
     }
     
-    func getTagsToSave() -> [String] {
-        // Detect the nouns in the title and save them to Firebase in an array. We cant really search in Firebase, but we search through an array, so that way we can at least give the search function in the feedtableviewcontroller some functionality
-        var tags = [String]()
-        guard let title = titleView.titleTextView.text else { return [""] }
+    // MARK: - Touches began
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        titleView.titleTextView.resignFirstResponder()
+        linkView.linkTextField.resignFirstResponder()
+        descriptionView.descriptionTextView.resignFirstResponder()
         
-        let tagger = NSLinguisticTagger(tagSchemes: [.lexicalClass], options: 0)
-        tagger.string = title
-        let range = NSRange(location: 0, length: title.utf16.count)
-        let options: NSLinguisticTagger.Options = [.omitPunctuation, .omitWhitespace]
-        tagger.enumerateTags(in: range, unit: .word, scheme: .lexicalClass, options: options) { tag, tokenRange, _ in
-            if let tag = tag {
-                let word = (title as NSString).substring(with: tokenRange)
-                print("\(word): \(tag)")
+        self.removeTipViews()
+    }
+    
+    
+    //MARK:- Info Views
+    
+    func explainFunctionOnFirstOpen() {
+        let defaults = UserDefaults.standard
+        
+        if let _ = defaults.string(forKey: "showExplanationForLinkFact") {
+            
+        } else {
+            showExplanationForLinkFactToPost()
+            defaults.set(true, forKey: "showExplanationForLinkFact")
+            print("NEW Post launched first time")
+        }
+    }
+    
+    func showExplanationForLinkFactToPost() {
+         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            self.linkFactExplanationTipView = EasyTipView(text: NSLocalizedString("link_fact_first_open_tip_view_text", comment: "how it works and such"))
+            self.linkFactExplanationTipView!.show(forView: self.linkCommunityView)
+        }
+    }
+    
+    func removeTipViews() {
+        if let tipView = self.postAnonymousTipView {
+            tipView.dismiss()
+            postAnonymousTipView = nil
+        }
+        if let tipView = self.linkedFactTipView {
+            tipView.dismiss()
+            linkedFactTipView = nil
+        }
+        if let tipView = self.markPostTipView {
+            tipView.dismiss()
+            markPostTipView = nil
+        }
+        
+        if let tipView = self.postLinkTipView {
+            tipView.dismiss()
+            postLinkTipView = nil
+        }
+        
+        if let tipView = self.linkFactExplanationTipView {
+            tipView.dismiss()
+            linkFactExplanationTipView = nil
+        }
+    }
+    
+    //MARK: - MemeMode Maker
+    
+    func memeModeTapped() {
+        let generator = UIImpactFeedbackGenerator(style: .heavy)
+        generator.impactOccurred()
+        
+        optionView.memeModeButton.isEnabled = false
+        showMemeMode()
+    }
+    
+    
+    func showMemeMode() {
+        if let window = UIApplication.shared.keyWindow {
+            let memeView: MemeInputView = MemeInputView.fromNib()
+            memeView.delegate = self
+            
+            window.addSubview(memeView)
+            self.memeView = memeView
+            
+            window.layoutSubviews()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.letItRezzle()
+            }
+        }
+    }
+    
+    
+    func letItRezzle() {    /// A little distorted effect for the meme view
+        if let memeView = memeView {
+            memeView.alpha = 0.98
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 
-                if tag == NSLinguisticTag(rawValue: "Noun") {
-                    tags.append(word)
+                if self.howManyFlickersIndex <= 3 {
+                    
+                    memeView.alpha = 0
+                    DispatchQueue.main.asyncAfter(deadline: .now() + self.flickerInterval) {
+                        self.letItRezzle()
+                        self.generator.impactOccurred()
+                    }
+                    
+                    self.flickerInterval-=0.1
+                    self.howManyFlickersIndex+=1
+                } else {
+                    let heavyImpact = UIImpactFeedbackGenerator(style: .heavy)
+                    heavyImpact.impactOccurred()
+                    
+                    memeView.startUpMemeMode()
+                    self.optionView.memeModeButton.isEnabled = true
+                    
+                    if self.selectedOption != .picture || self.selectedOption != .multiPicture {
+                        //Switch to picture mode so the meme can be shown
+                        self.postSelectionSegmentedControl.selectedSegmentIndex = 1
+                        self.prepareForSelectionChange()
+                    }
                 }
             }
         }
-        return tags
     }
     
-    func getReportString() -> String {
-        switch reportType {
-        case .normal:
-            return "normal"
-        case .opinion:
-            return "opinion"
-        case .sensationalism:
-            return "sensationalism"
-        case .edited:
-            return "edited"
-        default:
-            return "normal"
+    // MARK: - KeyboardGoesUp
+    
+    @objc func keyboardWillChange(notification: NSNotification) {
+        
+        if !self.up {
+            
+            if let _ = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+                if descriptionView.descriptionTextView.isFirstResponder {
+                    
+                    var offset:CGFloat = 75
+                    switch selectedOption {
+                    case .multiPicture:
+                        offset = 125
+                    case .thought:
+                        offset = 50
+                    case .picture:
+                        offset = 125
+                    case .link:
+                        offset = 100
+                    }
+                    
+                    
+                    self.view.frame.origin.y -= offset
+                    self.up = true
+                    
+                }
+            }
         }
     }
     
-    func getEventTypeString() -> String {
-        switch eventType {
-        case .activity:
-            return "activity"
-        case .project:
-            return "project"
-        case .event:
-            return "event"
+    @objc func keyboardWillHide() {
+        
+        if self.up {
+            
+            var offset:CGFloat = 75
+            switch selectedOption {
+            case .multiPicture:
+                offset = 125
+            case .thought:
+                offset = 50
+            case .picture:
+                offset = 125
+            case .link:
+                offset = 100
+            }
+            
+            self.view.frame.origin.y += offset
+            self.up = false
+        }
+    }
+    
+    //MARK: - Picture Post Actions
+    
+    func camTapped() {
+        if let _ = Auth.auth().currentUser {
+            
+            let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
+            switch status {
+            case .authorized:
+                self.showCamera()
+                
+            case .notDetermined:
+                AVCaptureDevice.requestAccess(for: AVMediaType.video) { (granted) in
+                    if granted {
+                        self.showCamera()
+                    } else {
+                        self.camDenied()
+                    }
+                }
+                
+            case .denied:
+                self.camDenied()
+                
+            case .restricted:
+                let alert = UIAlertController(title: "Restricted",
+                                              message: "You've been restricted from using the camera on this device. Without camera access this feature won't work. Please contact the device owner so they can give you access.",
+                                              preferredStyle: .alert)
+                
+                let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                alert.addAction(okAction)
+                self.present(alert, animated: true, completion: nil)
+            }
+        } else {
+            self.notLoggedInAlert()
+        }
+    }
+    
+    func camDenied() {
+        DispatchQueue.main.async {
+                var alertText = NSLocalizedString("newPost_camera_error_text", comment: "cant acces, what to do")
+
+                var alertButton = "OK"
+                var goAction = UIAlertAction(title: alertButton, style: .default, handler: nil)
+
+                if UIApplication.shared.canOpenURL(URL(string: UIApplication.openSettingsURLString)!) {
+                    alertText = NSLocalizedString("newPost_camera_error_text", comment: "CANT ACCESS    what to do")
+
+                    alertButton = "Go"
+
+                    goAction = UIAlertAction(title: alertButton, style: .default, handler: {(alert: UIAlertAction!) -> Void in
+                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
+                    })
+                }
+
+                let alert = UIAlertController(title: "Error", message: alertText, preferredStyle: .alert)
+                alert.addAction(goAction)
+                self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func showCamera() {
+        imagePicker.sourceType = .camera
+        imagePicker.cameraCaptureMode = .photo
+        imagePicker.cameraDevice = .rear
+        imagePicker.cameraFlashMode = .off
+        imagePicker.showsCameraControls = true
+        
+        //imagePicker.allowsEditing = true
+        self.present(self.imagePicker, animated: true, completion: nil)
+    }
+    
+    func camRollTapped() {
+        if let _ = Auth.auth().currentUser {
+            
+            switch PHPhotoLibrary.authorizationStatus() {
+            case .notDetermined:
+                PHPhotoLibrary.requestAuthorization { (status) in
+                    if status == .authorized {
+                        self.showPictureAlert()
+                    } else {
+                        self.alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
+                    }
+                }
+            case .restricted, .denied:
+                alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
+            case .authorized:
+                showPictureAlert()
+            case .limited:
+                showPictureAlert()
+            }
+            
+        } else {
+            self.notLoggedInAlert()
+        }
+    }
+    
+    func showPictureAlert() {
+        
+        if let _ = memeView {  //Select image for meme, no multi picture possible
+            showImagePicker()
+        } else {
+            let alert = UIAlertController(title: NSLocalizedString("how_many_pics_alert_header", comment: "How many pics do you want to post?"), message: NSLocalizedString("how_many_pics_alert_message", comment: "How many pics do you want to post?"), preferredStyle: .actionSheet)
+            
+            alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_just_one", comment: "just one"), style: .default, handler: { (_) in
+                self.showImagePicker()
+            }))
+            
+            
+            alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_three", comment: "two or three pics"), style: .default, handler: { (_) in
+                
+                //toDo: remove the selection
+                self.selectedOption = .multiPicture
+                self.openMultiPictureImagePicker()
+            }))
+            alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .destructive, handler: { (_) in
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func showImagePicker() {
+        self.imagePicker.sourceType = .photoLibrary
+        self.imagePicker.mediaTypes = ["public.image"]
+//        self.imagePicker.mediaTypes = ["public.movie", "public.image"]
+        //imagePicker.allowsEditing = true
+        
+        self.selectedOption = .picture
+        self.present(self.imagePicker, animated: true, completion: nil)
+    }
+    
+    func removePictureTapped() {
+        
+        self.multiImageAssets.removeAll()
+        self.previewPictures.removeAll()
+        self.pictureView.previewCollectionView.reloadData()
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.pictureView.removePictureButton.alpha = 0
+            self.pictureView.removePictureButton.isEnabled = true
+        }) { (_) in
+            self.decreasePictureUI()
+            self.selectedImageFromPicker = nil
+            self.selectedImagesFromPicker = []
+        }
+    }
+    
+    
+    //MARK:- Option Actions
+    func markPostSwitchChanged() {
+        if optionView.markPostSwitch.isOn {
+            optionView.markPostSegmentControl.isHidden = false
+            optionView.markPostLabel.isHidden = true
+            
+            UIView.animate(withDuration: 0.3) {
+                self.optionView.markPostSegmentControl.alpha = 1
+            }
+            
+            
+            reportType = .opinion
+        } else {
+        
+            UIView.animate(withDuration: 0.3, animations: {
+                self.optionView.markPostSegmentControl.alpha = 0
+            }) { (_) in
+                self.optionView.markPostSegmentControl.isHidden = true
+                self.optionView.markPostLabel.isHidden = false
+            }
+            
+            reportType = .normal
+        }
+    }
+    
+    func optionButtonTapped() {
+                
+        if descriptionView.descriptionTextView.isFirstResponder {
+            descriptionView.descriptionTextView.resignFirstResponder()
+        } else if titleView.titleTextView.isFirstResponder {
+            titleView.titleTextView.resignFirstResponder()
+        }
+        if let height = optionViewHeight {
+            if height.constant <= defaultOptionViewHeight {
+                height.constant = 125   //Previously 165
+                stackViewHeight!.isActive = false
+                
+                UIView.animate(withDuration: 0.4, animations: {
+                    self.view.layoutIfNeeded()
+                }) { (_) in
+                    self.optionView.optionStackView.isHidden = false
+                    UIView.animate(withDuration: 0.1) {
+                        self.optionView.optionStackView.alpha = 1
+                    }
+                }
+            } else {
+                stackViewHeight = optionView.optionStackView.heightAnchor.constraint(equalToConstant: 0)
+                stackViewHeight!.isActive = true
+                
+                height.constant = defaultOptionViewHeight
+                
+                UIView.animate(withDuration: 0.4, animations: {
+                    self.optionView.optionStackView.alpha = 0
+                    self.view.layoutIfNeeded()
+                }) { (_) in
+                    self.optionView.optionStackView.isHidden = true
+                }
+            }
+        }
+    }
+    
+    func linkFactToPostTapped() {
+        performSegue(withIdentifier: "searchFactsSegue", sender: nil)
+    }
+    
+    func cancelLinkedFactTapped() {
+        linkCommunityView.distributionInformationLabel.text = "Feed"
+        linkCommunityView.distributionInformationImageView.image = UIImage(named: "Feed")
+        
+        linkCommunityView.cancelLinkedFactButton.isHidden = true
+        linkCommunityView.addedFactImageView.removeFromSuperview()
+        linkCommunityView.addedFactDescriptionLabel.removeFromSuperview()
+        
+        self.linkedFact = nil
+        self.postOnlyInTopic = false
+        
+        linkCommunityView.addFactButton.isHidden = false
+    }
+    
+    func markPostInfoButtonPressed() {
+        if let tipView = self.markPostTipView {
+            tipView.dismiss()
+            markPostTipView = nil
+        } else {
+            self.markPostTipView = EasyTipView(text: Constants.texts.markPostText)
+            markPostTipView!.show(forView: optionView)
+        }
+    }
+    
+    func linkedFactInfoButtonTapped() {
+        if let tipView = self.linkedFactTipView {
+            tipView.dismiss()
+            linkedFactTipView = nil
+        } else {
+            self.linkedFactTipView = EasyTipView(text: NSLocalizedString("linked_fact_tip_view_text", comment: "how and why"))
+            linkedFactTipView!.show(forView: linkCommunityView)
+        }
+    }
+    
+    func postAnonymousButtonPressed() {
+        if let tipView = self.postAnonymousTipView {
+            tipView.dismiss()
+            postAnonymousTipView = nil
+        } else {
+            self.postAnonymousTipView = EasyTipView(text: Constants.texts.postAnonymousText)
+            postAnonymousTipView!.show(forView: optionView)
+        }
+    }
+    
+    func postAnonymousSwitchChanged() {
+        if optionView.postAnonymousSwitch.isOn {
+            self.postAnonymous = true
+            self.optionView.anonymousImageView.isHidden = false
+            
+            let alert = UIAlertController(title: NSLocalizedString("anonymous_name_alert_title", comment: "anonymous name"), message: NSLocalizedString("anonymous_name_alert_message", comment: "no real name and such"), preferredStyle: .alert)
+
+            alert.addTextField { (textField) in
+                textField.placeholder = NSLocalizedString("anonymous_name_placeholder", comment: "john doe")
+            }
+
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
+                let textField = alert!.textFields![0] // Force unwrapping because we know it exists.
+                
+                if let text = textField.text {
+                    self.anonymousName = text
+                    self.optionView.anonymousNameLabel.text = text
+                } //else: Default String will show in the feed
+            }))
+            self.present(alert, animated: true, completion: nil)
+            
+        } else {
+            self.postAnonymous = false
+            self.optionView.anonymousImageView.isHidden = true
         }
     }
 }
 
+//MARK:- TextViewDelegate
+
+extension NewPostViewController: UITextViewDelegate {
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        
+        if textView == titleView.titleTextView {  // No lineBreaks in titleTextView
+            guard text.rangeOfCharacter(from: CharacterSet.newlines) == nil else {
+                return descriptionView.descriptionTextView.becomeFirstResponder()   // Switch to description when "continue" is hit on keyboard
+            }
+        }
+        
+        return textView.text.count + (text.count - range.length) <= characterLimitForTitle
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        
+        let characterLeft = characterLimitForTitle-textView.text.count
+        self.titleView.characterCountLabel.text = String(characterLeft)
+    }
+}
+
+//MARK:- AddOnDelegate
 extension NewPostViewController: AddOnDelegate {
     func fetchCompleted() {
         print("Not needed")
@@ -2310,6 +2105,7 @@ extension NewPostViewController: AddOnDelegate {
     }
 }
 
+//MARK:- Location Delegate
 extension NewPostViewController: ChoosenLocationDelegate {
     func gotLocation(location: Location) {
         self.linkedLocation = location
@@ -2317,6 +2113,7 @@ extension NewPostViewController: ChoosenLocationDelegate {
     }
 }
 
+//MARK:- Link Community With Post Delegate
 extension NewPostViewController: LinkFactWithPostDelegate {
     
     func selectedFact(fact: Community, isViewAlreadyLoaded: Bool) {    // Link Fact with post - When posting, from postsOfFactTableVC and from OptionalInformationTableVC
@@ -2374,6 +2171,7 @@ extension NewPostViewController: LinkFactWithPostDelegate {
         self.dismiss(animated: true, completion: nil)
     }
 }
+
 //MARK: - MemeViewDelegate
 extension NewPostViewController: MemeViewDelegate {
     
