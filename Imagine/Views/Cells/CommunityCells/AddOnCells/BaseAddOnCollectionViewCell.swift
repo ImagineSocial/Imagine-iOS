@@ -11,11 +11,11 @@ import UIKit
 protocol AddOnCellDelegate {
     func showDescription()
     func settingsTapped(itemRow: Int)
-    func thanksTapped(info: OptionalInformation)
+    func thanksTapped(info: AddOn)
     
     //CollectionViewDelegate
     func itemTapped(item: Any)
-    func newPostTapped(addOn: OptionalInformation)
+    func newPostTapped(addOn: AddOn)
 }
 
 class BaseAddOnCollectionViewCell: UICollectionViewCell {

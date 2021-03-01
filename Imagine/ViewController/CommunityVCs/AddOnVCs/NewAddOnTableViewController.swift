@@ -17,9 +17,9 @@ class NewAddOnTableViewController: UITableViewController {
     @IBOutlet weak var selectedAddOnTypeLabel: UILabel!
     @IBOutlet weak var didSelectAddOnImageView: UIImageView!
     
-    var optionalInformations = [OptionalInformation]()
+    var optionalInformations = [AddOn]()
     var fact: Community?
-    var selectedAddOnStyle: OptionalInformationStyle?
+    var selectedAddOnStyle: AddOnStyle?
     
     let addOnStoreCellIdentifier = "AddOnStoreImageTableViewCell"
     let addOnHeaderIdentifier = "AddOnHeaderView"
@@ -50,11 +50,11 @@ class NewAddOnTableViewController: UITableViewController {
         self.doneBarButtonItem.isEnabled = false
         self.doneBarButtonItem.tintColor = UIColor.blue.withAlphaComponent(0.5)
         
-        let infoAll = OptionalInformation(style: .collection, OP: "", documentID: "", fact: Community(), headerTitle: NSLocalizedString("new_addOn_collection_header", comment: "new collection text"), description: Constants.texts.AddOns.collectionText, singleTopic: nil)
-        let singleTopic = OptionalInformation(style: .singleTopic, OP: "", documentID: "", fact: Community(), headerTitle: NSLocalizedString("new_addOn_singleTopic_header", comment: "new singleTopicText"), description: Constants.texts.AddOns.singleTopicText, singleTopic: nil)
-        let QandA = OptionalInformation(style: .QandA, OP: "", documentID: "", fact: Community(), description: Constants.texts.AddOns.QandAText)
-        let youTubePlaylist = OptionalInformation(style: .collectionWithYTPlaylist, OP: "", documentID: "", fact: Community(), headerTitle: NSLocalizedString("new_addOn_youtube_playlist_header", comment: "new collection text"), description: NSLocalizedString("new_addOn_youtube_playlist_description", comment: ""), singleTopic: nil)
-        let playlistAddOn = OptionalInformation(style: .playlist, OP: "", documentID: "", fact: Community(), headerTitle: NSLocalizedString("new_addOn_playlist_header", comment: "create playlist"), description: NSLocalizedString("new_addOn_playlist_description", comment: "whats up"), singleTopic: nil)
+        let infoAll = AddOn(style: .collection, OP: "", documentID: "", fact: Community(), headerTitle: NSLocalizedString("new_addOn_collection_header", comment: "new collection text"), description: Constants.texts.AddOns.collectionText, singleTopic: nil)
+        let singleTopic = AddOn(style: .singleTopic, OP: "", documentID: "", fact: Community(), headerTitle: NSLocalizedString("new_addOn_singleTopic_header", comment: "new singleTopicText"), description: Constants.texts.AddOns.singleTopicText, singleTopic: nil)
+        let QandA = AddOn(style: .QandA, OP: "", documentID: "", fact: Community(), description: Constants.texts.AddOns.QandAText)
+        let youTubePlaylist = AddOn(style: .collectionWithYTPlaylist, OP: "", documentID: "", fact: Community(), headerTitle: NSLocalizedString("new_addOn_youtube_playlist_header", comment: "new collection text"), description: NSLocalizedString("new_addOn_youtube_playlist_description", comment: ""), singleTopic: nil)
+        let playlistAddOn = AddOn(style: .playlist, OP: "", documentID: "", fact: Community(), headerTitle: NSLocalizedString("new_addOn_playlist_header", comment: "create playlist"), description: NSLocalizedString("new_addOn_playlist_description", comment: "whats up"), singleTopic: nil)
         
         optionalInformations.append(contentsOf: [infoAll, singleTopic, QandA, youTubePlaylist, playlistAddOn])
         tableView.reloadData()
@@ -204,7 +204,7 @@ class NewAddOnTableViewController: UITableViewController {
         if segue.identifier == "toNewAddOnSegue" {
             if let navVC = segue.destination as? UINavigationController {
                 if let vc = navVC.topViewController as? NewCommunityItemTableViewController {
-                    if let style = sender as? OptionalInformationStyle {
+                    if let style = sender as? AddOnStyle {
                         if let fact = fact {
                             if style == .singleTopic {
                                 vc.new = .singleTopicAddOn
@@ -263,7 +263,7 @@ extension NewAddOnTableViewController: NewFactDelegate, AddOnHeaderDelegate {
         print("Wont happen")
     }
     
-    func thanksTapped(info: OptionalInformation) {
+    func thanksTapped(info: AddOn) {
         print("Coming Soon maybe")
     }
     

@@ -23,7 +23,6 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
     let placeHolderIdentifier = "PlaceHolderCell"
     
     let db = Firestore.firestore()
-    let dataHelper = DataRequest()
     
     var delegate: RecentTopicCellDelegate?
     
@@ -87,7 +86,7 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
             } else {
                 if let snapshot = snap {
                     if let data = snapshot.data() {
-                        if let fact = self.dataHelper.addFact(currentUser: user, documentID: snapshot.documentID, data: data) {
+                        if let fact = CommunityHelper().getCommunity(currentUser: user, documentID: snapshot.documentID, data: data) {
                             
                             self.facts.insert(fact, at: 0)
                             self.collectionView.reloadData()

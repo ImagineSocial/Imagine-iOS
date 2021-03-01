@@ -157,7 +157,7 @@ extension TableViewInCollectionViewCell: UITableViewDelegate, UITableViewDataSou
                 
                 return cell
             }
-        } else if let info = items as? [OptionalInformation] {
+        } else if let info = items as? [AddOn] {
 //            if let cell = tableView.dequeueReusableCell(withIdentifier: addOnHeaderIdentifier, for: indexPath) as? InfoHeaderAddOnCell {
 //                
 ////                if info.count != 0 {

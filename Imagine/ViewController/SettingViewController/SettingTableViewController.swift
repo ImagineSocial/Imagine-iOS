@@ -23,96 +23,9 @@ protocol ChoosenLocationDelegate {
     func gotLocation(location: Location)
 }
 
-class TopicSetting {
-    var title: String
-    var description: String
-    var OP: String
-    var isAddOnFirstView = false
-    var imageURL: String?
-    
-    init(title: String, description: String, OP: String) {
-        self.title = title
-        self.description = description
-        self.OP = OP
-    }
-}
-
-class UserSetting {
-    var name: String
-    var statusText: String?
-    var OP: String
-    var imageURL: String?
-    var birthday: Date?
-    var location: Location?
-    var locationIsPublic = false
-    
-    var youTubeLink: String?
-    var youTubeDescription: String?
-    var patreonLink: String?
-    var patreonDescription: String?
-    var instagramLink: String?
-    var instagramDescription: String?
-    var twitterLink: String?
-    var twitterDescription: String?
-    var songwhipLink: String?
-    var songwhipDescription: String?
-    
-    init(name: String, OP: String) {
-        self.name = name
-        self.OP = OP
-    }
-}
-
-class AddOnSetting {
-    var style: OptionalInformationStyle
-    var fact: Community
-    var addOnDocumentID: String
-    var description: String
-    var items: [AddOnItem]
-    var imageURL: String?
-    var title: String?
-    var itemOrder: [String]?
-    
-    init(style: OptionalInformationStyle, fact: Community, addOnDocumentID: String, description: String, items: [AddOnItem]) {
-        self.style = style
-        self.fact = fact
-        self.addOnDocumentID = addOnDocumentID
-        self.description = description
-        self.items = items
-    }
-}
-
 enum TableViewSettingType {
     case normal
     case changeOrder
-}
-
-class TableViewSetting {
-    var headerText: String
-    var type: TableViewSettingType
-    var footerText: String?
-    var cells = [TableViewSettingCell]()
-    
-    var addOnItems = [AddOnItem]()
-    
-    init(type: TableViewSettingType, headerText: String) {
-        self.headerText = headerText
-        self.type = type
-    }
-}
-
-class TableViewSettingCell {
-    var type: SettingCellType
-    var settingChange: SettingChangeType
-    var titleText: String?
-    var characterLimit: Int?
-    var value: Any
-    
-    init(value: Any, type:SettingCellType, settingChange: SettingChangeType) {
-        self.value = value
-        self.type = type
-        self.settingChange = settingChange
-    }
 }
 
 enum SettingCellType {
@@ -123,48 +36,20 @@ enum SettingCellType {
     case locationCell
 }
 
-enum SettingChangeType {
-    //Topic
-    case changeTopicTitle
-    case changeTopicAddOnsAsFirstView
-    case changeTopicPicture
-    case changeTopicDescription
-    //User
-    case changeUserPicture
-    case changeUserStatusText
-    case changeUserAge
-    case changeUserLocation
-    case changeUserLocationPublicity
-    //User Social Media
-    case changeUserInstagramLink
-    case changeUserInstagramDescription
-    case changeUserPatreonLink
-    case changeUserPatreonDescription
-    case changeUserYouTubeLink
-    case changeUserYouTubeDescription
-    case changeUserTwitterLink
-    case changeUserTwitterDescription
-    case changeUserSongwhipLink
-    case changeUserSongwhipDescription
-    //AddOn
-    case changeAddOnPicture
-    case changeAddOnTitle
-    case changeAddOnDescription
-    case changeAddOnItemOrderArray
-}
-
 enum DestinationForSettings {
     case community
     case addOn
     case userProfile
 }
 
-class SettingTableViewController: UITableViewController, CropViewControllerDelegate {
+class SettingTableViewController: UITableViewController {
     
+    //MARK:- Variables
     let db = Firestore.firestore()
     let storDB = Storage.storage().reference()
     
     let postHelper = FirestoreRequest()
+    let communityHelper = CommunityHelper()
     let dataHelper = DataRequest()
     var imagePicker = UIImagePickerController()
     
@@ -174,7 +59,7 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
     var user: User?
     var userSetting: UserSetting?
     
-    var addOn: OptionalInformation?
+    var addOn: AddOn?
     var addOnSetting: AddOnSetting?
     
     var addOnItemsOrderArray: [String]?
@@ -198,6 +83,7 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
     var locationChangeType: SettingChangeType?
     var locationIndexPath: IndexPath?
 
+    //MARK:- View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -208,6 +94,7 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
         getData()
     }
     
+    //MARK:- Get Data
     func getData() {
         
         // Set the custom settings and fetch additional information if neccessarry
@@ -340,6 +227,8 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
         }
     }
     
+    //MARK:- Set Up View and Data
+    
     func setUpViewController() {
         
         // Add the custom SettingCells with the current database data
@@ -455,7 +344,7 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
     }
     
     
-    //MARK: -AddOnData for Ordering
+    //MARK: - AddOnData for Ordering
     var itemList = [AddOnItem]()
     var listCount = 0
     
@@ -474,7 +363,7 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
                     }
                 }
             } else if let fact = item.item as? Community {
-                self.dataHelper.loadFact(fact: fact) { (fact) in
+                self.communityHelper.loadCommunity(fact: fact) { (fact) in
                     if let fact = fact {
                         let item = AddOnItem(documentID: fact.documentID, item: fact)
                         self.itemList.append(item)
@@ -522,6 +411,7 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
         }
     }
     
+    //MARK:- Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toMapVCSegue" {
             if let vc = segue.destination as? MapViewController {
@@ -533,7 +423,7 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
         }
     }
 
-    // MARK: - Table view data source
+    // MARK: - TableView Data Source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         return settings.count
@@ -615,6 +505,18 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
         return UITableViewCell()
     }
     
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        let setting = settings[indexPath.section]
+        
+        if setting.type == .changeOrder {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    //MARK:- TableView Delegate
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let setting = settings[indexPath.section]
         
@@ -666,16 +568,6 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
         return false
     }
     
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        let setting = settings[indexPath.section]
-        
-        if setting.type == .changeOrder {
-            return true
-        } else {
-            return false
-        }
-    }
-    
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         let reorderedRow = self.settings[sourceIndexPath.section].addOnItems.remove(at: sourceIndexPath.row)
         self.settings[destinationIndexPath.section].addOnItems.insert(reorderedRow, at: destinationIndexPath.row)
@@ -712,6 +604,9 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
 
         return proposedDestinationIndexPath
     }
+    
+    
+    //MARK:- TableViewDelegate Header & Footer
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let setting = settings[section]
@@ -767,6 +662,8 @@ class SettingTableViewController: UITableViewController, CropViewControllerDeleg
 
 }
 
+//MARK:- Location Extension
+
 extension SettingTableViewController: ChoosenLocationDelegate {
     
     func gotLocation(location: Location) {
@@ -781,22 +678,31 @@ extension SettingTableViewController: ChoosenLocationDelegate {
     }
 }
 
-extension SettingTableViewController: SettingCellDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-        
-    func selectLocation(location: Location?, type: SettingChangeType, forIndexPath: IndexPath) {
-        performSegue(withIdentifier: "toMapVCSegue", sender: location)
-        self.locationChangeType = type
-        self.locationIndexPath = forIndexPath
+//MARK:- Image Picker & CropView Extension
+
+extension SettingTableViewController: UIImagePickerControllerDelegate, CropViewControllerDelegate {
+    
+    //MARK: UIImagePicker
+    
+    func showImagePicker() {
+        imagePicker.sourceType = .photoLibrary
+        self.present(imagePicker, animated: true) {
+            //Complete
+        }
     }
-    
-    
-    //MARK: - ImagePicker
+
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             imagePicker.dismiss(animated: true, completion: nil)
             showCropView(image: image)
         }
     }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        imagePicker.dismiss(animated: true, completion: nil)
+    }
+    
+    //MARK: CropViewController
     
     func showCropView(image: UIImage) {
         let cropViewController = CropViewController(image: image)
@@ -848,8 +754,83 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
         navigationController?.popToViewController(self, animated: true)
     }
     
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        imagePicker.dismiss(animated: true, completion: nil)
+    //MARK: Change User URL
+    
+    func savePictureURLInUserAuth(imageURL: String) {
+        let user = Auth.auth().currentUser
+        if let user = user {
+            let changeRequest = user.createProfileChangeRequest()
+            
+            if let url = URL(string: imageURL) {
+                changeRequest.photoURL = url
+            }
+            changeRequest.commitChanges { error in
+                if error != nil {
+                    // An error happened.
+                    print("Wir haben einen error beim changeRequest: \(String(describing: error?.localizedDescription))")
+                } else {
+                    // Profile updated.
+                    print("changeRequest hat geklappt")
+                }
+            }
+        }
+    }
+    
+    //MARK: Save Picture in Storage
+    
+    func savePictureInStorage(storageReference: StorageReference, imageData: Data) {
+        
+        storageReference.putData(imageData, metadata: nil, completion: { (metadata, error) in
+            if let error = error {
+                print(error)
+                return
+            } else {
+                print("Picture Saved")
+            }
+            storageReference.downloadURL(completion: { (url, err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                    return
+                } else {
+                    if let url = url {
+                        if let type = self.changeTypeOfImageSettingCell {
+                            self.gotChanged(type: type, value: url.absoluteString)
+                        }
+                    }
+                }
+            })
+        })
+    }
+    
+    func savePicture(imageData: Data) {
+        if let topic = topic {
+            let imageName = "\(topic.documentID).png"
+            let storageRef = storDB.child("factPictures").child(imageName)
+            
+            savePictureInStorage(storageReference: storageRef, imageData: imageData)
+        } else if let user = user {
+            let imageName = "\(user.userUID).profilePicture.png"
+            let storageRef = storDB.child("profilePictures").child(imageName)
+            
+            savePictureInStorage(storageReference: storageRef, imageData: imageData)
+        } else if let addOn = addOn {
+            let imageName = "\(addOn.documentID).png"
+            let storageRef = storDB.child("factPictures").child("addOnPictures").child(imageName)
+            
+            savePictureInStorage(storageReference: storageRef, imageData: imageData)
+        }
+    }
+    
+    //MARK: Delete Picture in Storage
+    
+    func deletePictureInStorage(storageReference: StorageReference) {
+        storageReference.delete { (err) in
+            if let err = err {
+                print("We have an error deleting the old profile Picture: \(err.localizedDescription)")
+            } else {
+                print("Picture Deleted")
+            }
+        }
     }
     
     func deletePicture() {  // In Firebase Storage
@@ -872,13 +853,28 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
         }
     }
     
-    func deletePictureInStorage(storageReference: StorageReference) {
-        storageReference.delete { (err) in
-            if let err = err {
-                print("We have an error deleting the old profile Picture: \(err.localizedDescription)")
-            } else {
-                print("Picture Deleted")
+    
+    
+    //MARK: Image Helper
+    func selectPicture(type: SettingChangeType, forIndexPath: IndexPath) {
+        self.indexPathOfImageSettingCell = forIndexPath
+        self.changeTypeOfImageSettingCell = type
+        
+        switch PHPhotoLibrary.authorizationStatus() {
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization { (status) in
+                if status == .authorized {
+                    self.showImagePicker()
+                } else {
+                    self.alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
+                }
             }
+        case .restricted, .denied:
+            alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
+        case .authorized:
+            showImagePicker()
+        case .limited:
+            self.showImagePicker()
         }
     }
     
@@ -910,99 +906,20 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
             }
         }
     }
-    
-    
-    func savePicture(imageData: Data) {
-        if let topic = topic {
-            let imageName = "\(topic.documentID).png"
-            let storageRef = storDB.child("factPictures").child(imageName)
-            
-            savePictureInStorage(storageReference: storageRef, imageData: imageData)
-        } else if let user = user {
-            let imageName = "\(user.userUID).profilePicture.png"
-            let storageRef = storDB.child("profilePictures").child(imageName)
-            
-            savePictureInStorage(storageReference: storageRef, imageData: imageData)
-        } else if let addOn = addOn {
-            let imageName = "\(addOn.documentID).png"
-            let storageRef = storDB.child("factPictures").child("addOnPictures").child(imageName)
-            
-            savePictureInStorage(storageReference: storageRef, imageData: imageData)
-        }
-    }
-    
-    func savePictureInStorage(storageReference: StorageReference, imageData: Data) {
+}
+
+//MARK:- SettingCellDelegate
+
+extension SettingTableViewController: SettingCellDelegate, UINavigationControllerDelegate {
         
-        storageReference.putData(imageData, metadata: nil, completion: { (metadata, error) in
-            if let error = error {
-                print(error)
-                return
-            } else {
-                print("Picture Saved")
-            }
-            storageReference.downloadURL(completion: { (url, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                    return
-                } else {
-                    if let url = url {
-                        if let type = self.changeTypeOfImageSettingCell {
-                            self.gotChanged(type: type, value: url.absoluteString)
-                        }
-                    }
-                }
-            })
-        })
+    func selectLocation(location: Location?, type: SettingChangeType, forIndexPath: IndexPath) {
+        performSegue(withIdentifier: "toMapVCSegue", sender: location)
+        self.locationChangeType = type
+        self.locationIndexPath = forIndexPath
     }
     
-    func savePictureURLInUserAuth(imageURL: String) {
-        let user = Auth.auth().currentUser
-        if let user = user {
-            let changeRequest = user.createProfileChangeRequest()
-            
-            if let url = URL(string: imageURL) {
-                changeRequest.photoURL = url
-            }
-            changeRequest.commitChanges { error in
-                if error != nil {
-                    // An error happened.
-                    print("Wir haben einen error beim changeRequest: \(String(describing: error?.localizedDescription))")
-                } else {
-                    // Profile updated.
-                    print("changeRequest hat geklappt")
-                }
-            }
-        }
-    }
     
-    func selectPicture(type: SettingChangeType, forIndexPath: IndexPath) {
-        self.indexPathOfImageSettingCell = forIndexPath
-        self.changeTypeOfImageSettingCell = type
-        
-        switch PHPhotoLibrary.authorizationStatus() {
-        case .notDetermined:
-            PHPhotoLibrary.requestAuthorization { (status) in
-                if status == .authorized {
-                    self.showImagePicker()
-                } else {
-                    self.alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
-                }
-            }
-        case .restricted, .denied:
-            alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
-        case .authorized:
-            showImagePicker()
-        case .limited:
-            self.showImagePicker()
-        }
-    }
     
-    func showImagePicker() {
-        imagePicker.sourceType = .photoLibrary
-        self.present(imagePicker, animated: true) {
-            //Complete
-        }
-    }
     
     func gotChanged(type: SettingChangeType, value: Any) {
         var firestoreKey = ""
@@ -1259,284 +1176,13 @@ extension SettingTableViewController: SettingCellDelegate, UIImagePickerControll
     }
 }
 
-class SettingImageCell: UITableViewCell {
-    
-    @IBOutlet weak var settingImageView: DesignableImage!
-    
-    var delegate: SettingCellDelegate?
-    var indexPath: IndexPath?
-    
-    var newImage: UIImage? {
-        didSet {
-            settingImageView.image = newImage!
-        }
-    }
-    
-    var settingFor: DestinationForSettings? {
-        didSet {
-            if let settingFor = settingFor  {
-                switch settingFor {
-                case .community:
-                    settingImageView.image = UIImage(named: "default")
-                case .userProfile:
-                    settingImageView.image = UIImage(named: "default-user")
-                case .addOn:
-                    settingImageView.image = UIImage(named: "default")
-                }
-            }
-        }
-    }
-    
-    var config: TableViewSettingCell? {
-        didSet {
-            if let setting = config {
-                if let imageURL = setting.value as? String {
-                    if let url = URL(string: imageURL) {
-                        settingImageView.sd_setImage(with: url, completed: nil)
-                    } else {
-                        settingImageView.image = UIImage(named: "default")
-                    }
-                }
-            }
-        }
-    }
-    
-    
-    @IBAction func changePictureTapped(_ sender: Any) {
-        if let indexPath = indexPath, let setting = config {
-            delegate?.selectPicture(type: setting.settingChange, forIndexPath: indexPath)
-        }
-    }
-    
-    func pictureSelected(imageURL: String) {
-        if let setting = config {
-            delegate?.gotChanged(type: setting.settingChange, value: imageURL)
-        }
-    }
-    
-}
-
-class SettingTextCell: UITableViewCell, UITextViewDelegate {
-    
-    @IBOutlet weak var settingTitleLabel: UILabel!
-    @IBOutlet weak var settingTextView: UITextView!
-    @IBOutlet weak var characterLimitLabel: UILabel!
-    
-    var delegate: SettingCellDelegate?
-    
-    var config: TableViewSettingCell? {
-        didSet {
-            if let setting = config {
-                settingTitleLabel.text = setting.titleText
-                if let maxCharacter = setting.characterLimit {
-                    if let value = setting.value as? String {
-                        let characterLeft = maxCharacter-value.count
-                        characterLimitLabel.text = String(characterLeft)
-                    }
-                } else {
-                    characterLimitLabel.isHidden = true
-                }
-                if let value = setting.value as? String {
-                    settingTextView.text = value
-                }
-            }
-        }
-    }
-    
-    func newTextReady(text: String) {
-        if let setting = config {
-            delegate?.gotChanged(type: setting.settingChange, value: text)
-        }
-    }
-    
-    override func awakeFromNib() {
-        settingTextView.delegate = self
-    }
-    
-    //TextViewDelegate
-    func textViewDidEndEditing(_ textView: UITextView) {
-        if let text = textView.text {
-            if text != "" {
-                newTextReady(text: text)
-            }
-        }
-    }
-    
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        if text == "\n" {       // If you hit return
-            textView.resignFirstResponder()
-            return false
-        }
-        if let setting = config {
-            if let maxCharacter = setting.characterLimit {
-                
-                return textView.text.count + (text.count - range.length) <= maxCharacter  // Text no longer than x characters
-            }
-        }
-        return true
-    }
-    
-    func textViewDidChange(_ textView: UITextView) {
-        if let setting = config {
-            if let maxCharacter = setting.characterLimit {
-                let characterLeft = maxCharacter-textView.text.count
-                self.characterLimitLabel.text = String(characterLeft)
-            }
-        }
-    }
-    
-}
-
-class SettingDateCell: UITableViewCell {
-    
-    @IBOutlet weak var settingTitleLabel: UILabel!
-    @IBOutlet weak var datePicker: UIDatePicker!
-    
-    var delegate: SettingCellDelegate?
-    
-    var config: TableViewSettingCell? {
-        didSet {
-            if let setting = config {
-                settingTitleLabel.text = setting.titleText
-                if let value = setting.value as? Date {
-                    datePicker.setDate(value, animated: true)
-                }
-            }
-        }
-    }
-    
-    func newTextReady(text: String) {
-        if let setting = config {
-            delegate?.gotChanged(type: setting.settingChange, value: text)
-        }
-    }
-    
-    override func awakeFromNib() {
-
-    }
-    
-    @IBAction func datePickerChanged(_ sender: Any) {
-        if let setting = config {
-            delegate?.gotChanged(type: setting.settingChange, value: datePicker.date)
-        }
-    }
-}
-
-
-class SettingSwitchCell: UITableViewCell {
-    
-    @IBOutlet weak var settingTitleLabel: UILabel!
-    @IBOutlet weak var settingSwitch: UISwitch!
-    
-    var delegate: SettingCellDelegate?
-    
-    var config: TableViewSettingCell? {
-        didSet {
-            if let setting = config {
-                settingTitleLabel.text = setting.titleText
-                
-                if let value = setting.value as? Bool {
-                    settingSwitch.isOn = value
-                }
-            }
-        }
-    }
-    
-    @IBAction func settingSwitchChanged(_ sender: Any) {
-        if let setting = config {
-            let switchState = settingSwitch.isOn
-            delegate?.gotChanged(type: setting.settingChange, value: switchState)
-        }
-    }
-}
-
-class SettingPickOrderCell: UITableViewCell {
-    
-    @IBOutlet weak var pickOrderLabel: UILabel!
-    @IBOutlet weak var pickOrderImageView: UIImageView!
-    
-    override func awakeFromNib() {
-        pickOrderLabel.font = UIFont(name: "IBMPlexSans", size: 14)
-        
-        pickOrderImageView.layer.cornerRadius = 6
-        
-    }
-    
-    var post: Post? {
-        didSet {
-            if let post = post {
-                self.pickOrderLabel.text = post.title
-
-                if post.imageURL != "" {
-                    if let url = URL(string: post.imageURL) {
-                        self.pickOrderImageView.sd_setImage(with: url, completed: nil)
-                    }
-                }
-            }
-        }
-    }
-    
-    var fact: Community? {
-        didSet {
-            if let fact = fact {
-                self.pickOrderLabel.text = fact.title
-                
-                if fact.imageURL != "" {
-                    if let url = URL(string: fact.imageURL) {
-                        self.pickOrderImageView.sd_setImage(with: url, completed: nil)
-                    }
-                }
-            }
-        }
-    }
-    
-    override func prepareForReuse() {
-        self.fact = nil
-        self.post = nil
-        
-        self.pickOrderImageView.image = nil
-        self.pickOrderLabel.text = ""
-    }
-    
-}
-
-class SettingLocationCell: UITableViewCell {
-    @IBOutlet weak var setLocationTitleLabel: UILabel!
-    @IBOutlet weak var choosenLocationLabel: UILabel!
-    
-    var delegate: SettingCellDelegate?
-    var indexPath: IndexPath?
-    
-    var config: TableViewSettingCell? {
-        didSet {
-            if let setting = config {
-                setLocationTitleLabel.text = setting.titleText
-                if let value = setting.value as? Location {
-                    choosenLocationLabel.text = value.title
-                } else {
-                    choosenLocationLabel.text = NSLocalizedString("setting_location_cell_text", comment: "choose a location")
-                }
-            }
-        }
-    }
-    
-    @IBAction func setLocationButtonTapped(_ sender: Any) {
-        if let setting = config, let indexPath = indexPath {
-            if let location = setting.value as? Location{
-                delegate?.selectLocation(location: location, type: setting.settingChange, forIndexPath: indexPath)
-            } else {
-                delegate?.selectLocation(location: nil, type: setting.settingChange, forIndexPath: indexPath)
-            }
-        }
-    }
-}
-
-
+//MARK:- SettingHeader
 class SettingHeaderView: UITableViewHeaderFooterView {
     @IBOutlet weak var settingTitleLabel: UILabel!
     
 }
 
+//MARK:- SettingFooter
 class SettingFooterView: UITableViewHeaderFooterView {
     
     @IBOutlet weak var settingDescriptionLabel: UILabel!

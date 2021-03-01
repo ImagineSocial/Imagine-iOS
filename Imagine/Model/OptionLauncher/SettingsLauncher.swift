@@ -39,6 +39,7 @@ enum SettingButtonType {
 //Wasn't aware of the UIAlertAction from below when I build this
 class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
+    //MARK:- Variables
     var FriendsTableVC:FriendsTableViewController?
     var userFeedVC: UserFeedTableViewController?
     
@@ -59,6 +60,28 @@ class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDe
     var settings: [Setting] = {
         return [Setting(type: .cancel)]
     }()
+    
+    //MARK:- Initialization
+    init(type: SettingFor) {
+       super.init()
+       
+       switch type {
+       case .friendsTableView:
+           let friendsSettings: [Setting] = [Setting(type: .chatWithUser), Setting(type: .deleteFriend), Setting(type: .blockUser), Setting(type: .cancel)]
+           self.settings = friendsSettings
+       case .profilePicture:
+           let profileSettings: [Setting] = [Setting(type: .viewPicture), Setting(type: .photoLibrary), Setting(type: .cancel)]
+           self.settings = profileSettings
+       case .userProfileOptions:
+           let profileSettings: [Setting] = [Setting(type: .blockUser), Setting(type: .cancel)]
+           self.settings = profileSettings
+       }
+       
+       collectionView.dataSource = self
+       collectionView.delegate = self
+       
+       collectionView.register(SelectionCell.self, forCellWithReuseIdentifier: cellId)
+   }
     
     func showSettings(for friend: Friend?) {
         //show menu
@@ -117,6 +140,7 @@ class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDe
         })
     }
     
+    //MARK:- CollectionView
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let setting = self.settings[indexPath.item]
@@ -128,7 +152,7 @@ class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDe
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! SettingCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! SelectionCell
         
         let setting = settings[indexPath.item]
         cell.setting = setting
@@ -143,28 +167,5 @@ class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDe
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 2
     }
-    
-    
-     init(type: SettingFor) {
-        super.init()
-        
-        switch type {
-        case .friendsTableView:
-            let friendsSettings: [Setting] = [Setting(type: .chatWithUser), Setting(type: .deleteFriend), Setting(type: .blockUser), Setting(type: .cancel)]
-            self.settings = friendsSettings
-        case .profilePicture:
-            let profileSettings: [Setting] = [Setting(type: .viewPicture), Setting(type: .photoLibrary), Setting(type: .cancel)]
-            self.settings = profileSettings
-        case .userProfileOptions:
-            let profileSettings: [Setting] = [Setting(type: .blockUser), Setting(type: .cancel)]
-            self.settings = profileSettings
-        }
-        
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        
-        collectionView.register(SettingCell.self, forCellWithReuseIdentifier: cellId)
-    }
-    
 }
 

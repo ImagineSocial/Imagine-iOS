@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import FirebaseFirestore
 
-protocol OptionalInformationDelegate {
+protocol AddOnDelegate {
     func fetchCompleted()
     func itemAdded(successfull: Bool)
 }
@@ -20,7 +20,7 @@ enum AddOnDesign {
     case youTubePlaylist
 }
 
-enum OptionalInformationStyle {
+enum AddOnStyle {
     case collection
     case singleTopic
     case QandA
@@ -28,19 +28,10 @@ enum OptionalInformationStyle {
     case playlist
 }
 
-class AddOnItem {   // Otherwise it is a pain in the ass to compare Any to the documentIDs in the itemOrder Array
-    var documentID: String
-    var item: Any
+class AddOn {
     
-    init(documentID: String, item: Any) {
-        self.documentID = documentID
-        self.item = item
-    }
-}
-
-class OptionalInformation {
-    
-    var style: OptionalInformationStyle
+    //MARK:- Variables
+    var style: AddOnStyle
     var headerTitle: String?
     var description: String
     var documentID: String  // DocumentID of the addOn
@@ -60,11 +51,13 @@ class OptionalInformation {
     
     let db = Firestore.firestore()
     
-    var delegate: OptionalInformationDelegate?
+    var delegate: AddOnDelegate?
     
     var items = [AddOnItem]()
     
-    init(style: OptionalInformationStyle, OP: String, documentID: String, fact: Community, headerTitle: String, description: String, singleTopic: Community?) {    /// For the normal AddOn & singleTopic initialization
+    
+    //MARK:- Initialization
+    init(style: AddOnStyle, OP: String, documentID: String, fact: Community, headerTitle: String, description: String, singleTopic: Community?) {    /// For the normal AddOn & singleTopic initialization
         self.description = description
         self.headerTitle = headerTitle
         self.documentID = documentID
@@ -87,7 +80,7 @@ class OptionalInformation {
         }
     }
     
-    init(style: OptionalInformationStyle, OP: String, documentID: String, fact: Community, description: String) {
+    init(style: AddOnStyle, OP: String, documentID: String, fact: Community, description: String) {
         self.description = description
         self.documentID = documentID
         self.fact = fact
@@ -95,16 +88,8 @@ class OptionalInformation {
         self.OP = OP
     }
     
-    func getDisplayOptions() {
-        //        if let displayType = data["displayOption"] as? String { // Was introduced later on
-        //            fact.displayOption = self.getDisplayType(string: displayType)
-        //        }
-        //
-        //        if let displayNames = data["factDisplayNames"] as? String {
-        //            fact.factDisplayNames = self.getDisplayNames(string: displayNames)
-        //        }
-    }
     
+    //MARK:- GetItems
     func getItems(postOnly: Bool) {
         
         if fact.documentID != "" && documentID != "" {
@@ -190,21 +175,7 @@ class OptionalInformation {
         }
     }
     
-    func addMusicObject(data: [String:Any]) -> Music? {
-        if let image = data["musicImage"] as? String,
-           let name = data["musicName"] as? String,
-           let artist = data["artist"] as? String,
-           let url = data["musicURL"] as? String {
-            let music = Music(type: .track, name: name, artist: artist, musicImageURL: image, songwhipURL: url)
-            
-            return music
-        } else {
-            return nil
-        }
-    }
-    
-    
-    //MARK:-Save Items
+    //MARK:- Set Items
     
     func saveItem(item: Any) {
         
@@ -279,21 +250,7 @@ class OptionalInformation {
         }
     }
     
-    func notifyMalteForYouTubePlaylist(fact: Community, addOn: String) {
-        let notificationRef = db.collection("Users").document("CZOcL3VIwMemWwEfutKXGAfdlLy1").collection("notifications").document()
-        let language = Locale.preferredLanguages[0]
-        let notificationData: [String: Any] = ["type": "message", "message": "Wir haben einen neuen YouTubePost in \(fact.title) mit der ID: \(addOn)", "name": "System", "chatID": addOn, "sentAt": Timestamp(date: Date()), "messageID": "Dont Know", "language": language]
-        
-        
-        notificationRef.setData(notificationData) { (err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                print("Successfully set notification")
-            }
-        }
-    }
-    
+    //MARK:- OrderArray
     func checkIfOrderArrayExists(documentReference: DocumentReference, documentIDOfItem: String) {
         documentReference.getDocument { (snap, err) in
             if let error = err {
@@ -328,6 +285,8 @@ class OptionalInformation {
         }
     }
     
+    //MARK:- Database Requests
+    
     func updateTopicPostInFact(addOnID: String, postDocumentID: String) {       //Add the AddOnDocumentIDs to the fact, so we can delete every trace of the post if you choose to delete it later. Otherwise there would be empty post in an AddOn
         
         var collectionRef: CollectionReference!
@@ -342,6 +301,36 @@ class OptionalInformation {
         ref.updateData([
             "addOnDocumentIDs": FieldValue.arrayUnion([addOnID])
         ])
+    }
+    
+    func notifyMalteForYouTubePlaylist(fact: Community, addOn: String) {
+        let notificationRef = db.collection("Users").document("CZOcL3VIwMemWwEfutKXGAfdlLy1").collection("notifications").document()
+        let language = Locale.preferredLanguages[0]
+        let notificationData: [String: Any] = ["type": "message", "message": "Wir haben einen neuen YouTubePost in \(fact.title) mit der ID: \(addOn)", "name": "System", "chatID": addOn, "sentAt": Timestamp(date: Date()), "messageID": "Dont Know", "language": language]
+        
+        
+        notificationRef.setData(notificationData) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                print("Successfully set notification")
+            }
+        }
+    }
+    
+    //MARK:- AddMusicObject
+    
+    func addMusicObject(data: [String:Any]) -> Music? {
+        if let image = data["musicImage"] as? String,
+           let name = data["musicName"] as? String,
+           let artist = data["artist"] as? String,
+           let url = data["musicURL"] as? String {
+            let music = Music(type: .track, name: name, artist: artist, musicImageURL: image, songwhipURL: url)
+            
+            return music
+        } else {
+            return nil
+        }
     }
 }
 

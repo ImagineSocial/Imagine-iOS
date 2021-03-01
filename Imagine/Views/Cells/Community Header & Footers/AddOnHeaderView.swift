@@ -13,7 +13,7 @@ protocol AddOnHeaderDelegate {
     func showDescription()
     func showAllPosts(documentID: String)
     func showPostsAsAFeed(section: Int)
-    func thanksTapped(info: OptionalInformation)
+    func thanksTapped(info: AddOn)
     func settingsTapped(section: Int)
 }
 
@@ -36,7 +36,7 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
     
     var section: Int?
     
-    var info: OptionalInformation? {
+    var info: AddOn? {
         didSet {
             if let info = info {
                 switch info.style {

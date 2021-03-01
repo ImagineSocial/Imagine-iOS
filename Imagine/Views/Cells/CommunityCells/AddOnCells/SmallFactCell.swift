@@ -26,7 +26,6 @@ class SmallFactCell: UICollectionViewCell {
     
     
     let db = Firestore.firestore()
-    let dataHelper = DataRequest()
     
     var postTitle: String? {
         didSet {
@@ -61,7 +60,7 @@ class SmallFactCell: UICollectionViewCell {
         didSet {
             if let unloadedFact = unloadedFact {
                 DispatchQueue.global(qos: .default).async {
-                    self.dataHelper.loadFact(fact: unloadedFact) { (fact) in
+                    CommunityHelper().loadCommunity(fact: unloadedFact) { (fact) in
                         if let fact = fact {
                             DispatchQueue.main.async {
                                 self.fact = fact
