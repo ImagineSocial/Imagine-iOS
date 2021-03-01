@@ -10,9 +10,15 @@ import UIKit
 
 class LinkView: UIView {
     
+    //MARK:- Variables
+    let infoButtonSize = Constants.NewPostConstants.infoButtonSize
+    var newPostVC: NewPostViewController?
+    
     //MARK:- Initialization
-    init() {
+    init(newPostVC: NewPostViewController) {
         super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        
+        self.newPostVC = newPostVC
         
         translatesAutoresizingMaskIntoConstraints = false
         if #available(iOS 13.0, *) {
@@ -122,6 +128,16 @@ class LinkView: UIView {
         return stackView
     }()
     
+    let linkInfoButton: DesignableButton = {
+        let button = DesignableButton(type: .detailDisclosure)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = .imagineColor
+        button.addTarget(self, action: #selector(linkInfoButtonTapped), for: .touchUpInside)
+        button.alpha = 0
+        
+        return button
+    }()
+    
     //MARK:- Set Up View
     func setLinkViewUI() {   // have to set descriptionview topanchor
         addSubview(linkLabel)
@@ -151,12 +167,23 @@ class LinkView: UIView {
         webImageViewStackView.widthAnchor.constraint(equalToConstant: 110).isActive = true
         
         addSubview(linkTextField)
-        
         linkTextField.topAnchor.constraint(equalTo: linkLabel.bottomAnchor, constant: 10).isActive = true
         linkTextField.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
         linkTextField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -35).isActive = true
         linkTextField.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
+        addSubview(linkInfoButton)
+        linkInfoButton.centerYAnchor.constraint(equalTo: linkTextField.centerYAnchor).isActive = true
+        linkInfoButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+        linkInfoButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
+        linkInfoButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
+    }
+    
+    //MARK:- Actions
+    
+    @objc func linkInfoButtonTapped() {
+        guard let newPostVC = newPostVC else { return }
+        newPostVC.linkInfoButtonTapped()
     }
     
 }

@@ -128,6 +128,9 @@
 		E9817B6525EC098300E56FC6 /* DescriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9817B6425EC098300E56FC6 /* DescriptionView.swift */; };
 		E9817B6825EC0BE700E56FC6 /* LinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9817B6725EC0BE700E56FC6 /* LinkView.swift */; };
 		E9817B6B25EC0E8000E56FC6 /* PictureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9817B6A25EC0E8000E56FC6 /* PictureView.swift */; };
+		E9817B6E25ECDD3F00E56FC6 /* OptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9817B6D25ECDD3F00E56FC6 /* OptionView.swift */; };
+		E9817B7125ECE73000E56FC6 /* LocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9817B7025ECE73000E56FC6 /* LocationView.swift */; };
+		E9817B7425ECEA2600E56FC6 /* LinkCommunityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9817B7325ECEA2600E56FC6 /* LinkCommunityView.swift */; };
 		E981B25E2483AFCC00F6C724 /* SurveyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E981B25D2483AFCC00F6C724 /* SurveyCell.swift */; };
 		E983F51C23C1FBC2005F7FDE /* GifCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E983F51B23C1FBC2005F7FDE /* GifCell.xib */; };
 		E983F51E23C1FEA5005F7FDE /* GifCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E983F51D23C1FEA5005F7FDE /* GifCell.swift */; };
@@ -382,6 +385,9 @@
 		E9817B6425EC098300E56FC6 /* DescriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptionView.swift; sourceTree = "<group>"; };
 		E9817B6725EC0BE700E56FC6 /* LinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkView.swift; sourceTree = "<group>"; };
 		E9817B6A25EC0E8000E56FC6 /* PictureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureView.swift; sourceTree = "<group>"; };
+		E9817B6D25ECDD3F00E56FC6 /* OptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionView.swift; sourceTree = "<group>"; };
+		E9817B7025ECE73000E56FC6 /* LocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationView.swift; sourceTree = "<group>"; };
+		E9817B7325ECEA2600E56FC6 /* LinkCommunityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkCommunityView.swift; sourceTree = "<group>"; };
 		E981B25D2483AFCC00F6C724 /* SurveyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyCell.swift; sourceTree = "<group>"; };
 		E983F51B23C1FBC2005F7FDE /* GifCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GifCell.xib; sourceTree = "<group>"; };
 		E983F51D23C1FEA5005F7FDE /* GifCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifCell.swift; sourceTree = "<group>"; };
@@ -906,6 +912,9 @@
 				E9817B6425EC098300E56FC6 /* DescriptionView.swift */,
 				E9817B6725EC0BE700E56FC6 /* LinkView.swift */,
 				E9817B6A25EC0E8000E56FC6 /* PictureView.swift */,
+				E9817B6D25ECDD3F00E56FC6 /* OptionView.swift */,
+				E9817B7025ECE73000E56FC6 /* LocationView.swift */,
+				E9817B7325ECEA2600E56FC6 /* LinkCommunityView.swift */,
 			);
 			path = NewPostViews;
 			sourceTree = "<group>";
@@ -1613,6 +1622,7 @@
 				E98B22F022CA6499000F965F /* ChatViewController.swift in Sources */,
 				E9A02AAB232D3B02000DAB69 /* Community.swift in Sources */,
 				E96CE89222941A2D00BACD3B /* ContraFactTableViewController.swift in Sources */,
+				E9817B7425ECEA2600E56FC6 /* LinkCommunityView.swift in Sources */,
 				E9817B2925EBDC5E00E56FC6 /* BlogPost.swift in Sources */,
 				E9E521BA2458477F002585A2 /* NewAddOnTableViewController.swift in Sources */,
 				E971B8DC2247A48C001BBC1E /* LogInViewController.swift in Sources */,
@@ -1637,6 +1647,7 @@
 				E9B85D5A2413BDB300960942 /* HairlineView.swift in Sources */,
 				E9E521C6245AE6EE002585A2 /* TrippyViewController.swift in Sources */,
 				E97DBED922AEA81A007100E1 /* Post.swift in Sources */,
+				E9817B6E25ECDD3F00E56FC6 /* OptionView.swift in Sources */,
 				E962AC36222DA19700C6D6EF /* DesignablePopUp.swift in Sources */,
 				E988285023141AC8005ECB40 /* Extensions.swift in Sources */,
 				E9B9445F225800EE000145E2 /* UserFeedTableViewController.swift in Sources */,
@@ -1645,6 +1656,7 @@
 				E9332A9B23FE8A63004078FC /* CommentTableView.swift in Sources */,
 				E9B79CE922510F1900166EED /* TabBarViewController.swift in Sources */,
 				E9F12C0024FC040F006BD9C3 /* CommunityHeaderView.swift in Sources */,
+				E9817B7125ECE73000E56FC6 /* LocationView.swift in Sources */,
 				E9925A9C23D8726300E1A9D4 /* MultiPictureCell.swift in Sources */,
 				E9B1872A222E981000923037 /* ReportConfirmViewController.swift in Sources */,
 			);

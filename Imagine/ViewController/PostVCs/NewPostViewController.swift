@@ -35,13 +35,16 @@ protocol JustPostedDelegate {
     func posted()
 }
 
+//TODO: Outsource the network POST requests, functions of outsources buttons
 class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate, CropViewControllerDelegate {
     
+    //MARK:- IBOutlets
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var postSelectionSegmentedControl: UISegmentedControl!
     @IBOutlet weak var shareButton: UIBarButtonItem!
     @IBOutlet weak var headerView: UIView!
     
+    //MARK:- Variables
     var imagePicker = UIImagePickerController()
     
     var imageURLs = [String]()
@@ -88,6 +91,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var linkedFact: Community?
     var linkedLocation: Location?
     
+    let labelHeight = Constants.NewPostConstants.labelHeight
+    
     var comingFromPostsOfFact = false
     var comingFromAddOnVC = false   // This will create a difference reference for the post to be stored, to show it just in the topic and not in the main feed - later it will show up for those who follow this topic
     var addItemDelegate: AddItemDelegate?
@@ -128,6 +133,15 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var postAnonymousTipView: EasyTipView?
     var linkFactExplanationTipView: EasyTipView?
     
+    //MARK: Outsourced Views
+    let titleView = TitleView()
+    let descriptionView = DescriptionView()
+    lazy var linkView = LinkView(newPostVC: self)
+    lazy var optionView = OptionView(newPostVC: self)
+    lazy var locationView = LocationView(newPostVC: self)
+    lazy var linkCommunityView = LinkCommunityView(newPostVC: self)
+    
+    //MARK:- View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -163,9 +177,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 setDismissButton()
             }
             
-            cancelLinkedFactButton.isEnabled = false
-            cancelLinkedFactButton.alpha = 0.5
-            distributionInformationLabel.text = "Community"
+            linkCommunityView.cancelLinkedFactButton.isEnabled = false
+            linkCommunityView.cancelLinkedFactButton.alpha = 0.5
+            linkCommunityView.distributionInformationLabel.text = "Community"
         }
         
         //UI Changes
@@ -173,8 +187,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.navigationController?.navigationBar.shadowImage = UIImage()
         
         let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15) as Any]
-        markPostSegmentControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
-        markPostSegmentControl.tintColor = .imagineColor
+        optionView.markPostSegmentControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
+        optionView.markPostSegmentControl.tintColor = .imagineColor
         postSelectionSegmentedControl.tintColor = .imagineColor
         postSelectionSegmentedControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
         
@@ -225,7 +239,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    // MARK: - Functions for the UI Initializing
+    // MARK: - UI Initialization
     
     func setCompleteUIForThought() {
         
@@ -242,6 +256,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.postSelectionSegmentedControl.isEnabled = true
     }
     
+    //MARK: Animate changes
     func insertUIForLink() {
         self.descriptionViewTopAnchor!.isActive = false
         
@@ -259,12 +274,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 self.linkView.linkLabel.alpha = 1
                 self.linkView.linkTextField.alpha = 1
                 self.linkView.webImageViewStackView.alpha = 1
-                self.linkInfoButton.alpha = 1
+                self.linkView.linkInfoButton.alpha = 1
             }, completion: { (_) in
                 self.postSelectionSegmentedControl.isEnabled = true
             })
         }
     }
+    
     
     func insertUIForPicture() {
         self.descriptionViewTopAnchor!.isActive = false
@@ -299,8 +315,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     
+    //MARK:- TitleView UI
     
-    let titleView = TitleView()
     
     func setTitleViewUI() {
         
@@ -314,8 +330,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     
-    // MARK: - DescriptionViewUI
-    let descriptionView = DescriptionView()
+    // MARK: DescriptionView UI
     
     func setDescriptionViewUI() {   // have to set descriptionview topanchor
         
@@ -329,28 +344,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     // MARK: - LinkViewUI
     
-    let linkView = LinkView()
-    
-    let linkInfoButton: DesignableButton = {
-        let button = DesignableButton(type: .detailDisclosure)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .imagineColor
-        button.addTarget(self, action: #selector(linkInfoButtonTapped), for: .touchUpInside)
-        button.alpha = 0
-        
-        return button
-    }()
-    
     func setLinkViewUI() {   // have to set descriptionview topanchor
-        
-        
-        linkView.addSubview(linkInfoButton)
-        
-        linkInfoButton.centerYAnchor.constraint(equalTo: linkView.linkTextField.centerYAnchor).isActive = true
-        linkInfoButton.trailingAnchor.constraint(equalTo: linkView.trailingAnchor, constant: -10).isActive = true
-        linkInfoButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
-        linkInfoButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
-        
         
         self.view.addSubview(linkView)
         linkView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1).isActive = true
@@ -383,7 +377,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    @objc func linkInfoButtonTapped() {
+    func linkInfoButtonTapped() {
         if let tipView = self.postLinkTipView {
             tipView.dismiss()
             postLinkTipView = nil
@@ -423,413 +417,34 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     // MARK: - OptionViewUI
-    let optionView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
-        
-        return view
-    }()
-    
-    let optionButton: DesignableButton = {  // little Burger Menu
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            button.setTitleColor(.label, for: .normal)
-            
-        } else {
-            button.setTitleColor(.black, for: .normal)
-        }
-        button.tintColor = .imagineColor
-        button.setImage(UIImage(named: "menu"), for: .normal)
-        button.addTarget(self, action: #selector(optionButtonTapped), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    let optionStackView: UIStackView = {
-       let stack = UIStackView()
-        stack.axis = .vertical
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.alpha = 0
-        stack.isHidden = true
-        stack.distribution = .fillEqually
-        
-        return stack
-    }()
-    
-    let anonymousImageView: UIImageView = {
-       let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "mask")
-        imageView.contentMode = .scaleAspectFit
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .label
-        } else {
-            imageView.tintColor = .black
-        }
-        imageView.isHidden = true
-        
-        return imageView
-    }()
-    
-    let anonymousNameLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 13)
-        label.minimumScaleFactor = 0.5
-//        if #available(iOS 13.0, *) {
-//            label.tintColor = .label
-//        } else {
-//            label.tintColor = .black
-//        }
-        
-        return label
-    }()
-    
-    //MARK: - Meme Mode Button UI
-    
-    let memeModeButton: DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        let tronColor = UIColor(red: 0.05, green: 0.97, blue: 0.97, alpha: 1.00)
-        
-        var color: UIColor!
-        if #available(iOS 13.0, *) {
-            color = .label
-        } else {
-            color = .black
-        }
-        
-        let text = NSMutableAttributedString()
-        text.append(NSAttributedString(string: "M", attributes: [NSAttributedString.Key.foregroundColor: color]))
-        text.append(NSAttributedString(string: "M", attributes: [NSAttributedString.Key.foregroundColor: tronColor]))
-        
-        button.setTitleColor(tronColor, for: .normal)
-        button.setAttributedTitle(text, for: .normal)
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
-        button.tintColor = .imagineColor
-        button.addTarget(self, action: #selector(memeModeTapped), for: .touchUpInside)
-        
-        return button
-    }()
-        
-    
-    //MARK: - Link Fact with Post UI
-    
-    let addFactButton: DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .imagineColor
-        button.setTitle(NSLocalizedString("distribution_button_text", comment: "link community"), for: .normal)
-        button.addTarget(self, action: #selector(linkFactToPostTapped), for: .touchUpInside)
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
-        button.setTitleColor(.imagineColor, for: .normal)
-        
-        return button
-    }()
-    
-    let addedFactImageView: UIImageView = {
-       let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 4
-        imageView.layer.borderColor = UIColor.black.cgColor
-        imageView.layer.borderWidth = 0.5
-        imageView.contentMode = .scaleAspectFill
-        
-        return imageView
-    }()
-    
-    let addedFactDescriptionLabel: UILabel = {
-       let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
-        label.textAlignment = .right
-        
-        return label
-    }()
-    
-    let distributionLabel: UILabel = {
-       let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
-        label.textAlignment = .left
-        label.text = NSLocalizedString("distribution_label_text", comment: "destination:")
-        if #available(iOS 13.0, *) {
-            label.textColor = .label
-        } else {
-            label.textColor = .black
-        }
-        
-        return label
-    }()
-    
-    let distributionInformationLabel: UILabel = {   // Shows where the post will be posted: In a topic only or in the main Feed
-       let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
-        label.textAlignment = .left
-        label.text = "Feed"
-        if #available(iOS 13.0, *) {
-            label.textColor = .secondaryLabel
-        } else {
-            label.textColor = .lightGray
-        }
-        
-        return label
-    }()
-    
-    let distributionInformationImageView: UIImageView = {
-       let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = UIImage(named: "Feed")    //topicIcon
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .secondaryLabel
-        } else {
-            imageView.tintColor = .lightGray
-        }
-        
-        return imageView
-    }()
-    
-    let distributionInformationView: UIView = {
-       let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
-        
-        return view
-    }()
-    
-    let linkedFactView: UIView = {
-       let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
-        
-        return view
-    }()
-    
-    let linkedFactInfoButton :DesignableButton = {
-        let button = DesignableButton(type: .detailDisclosure)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .imagineColor
-        button.addTarget(self, action: #selector(linkedFactInfoButtonTapped), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    let cancelLinkedFactButton: DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: "Dismiss"), for: .normal)
-        button.addTarget(self, action: #selector(cancelLinkedFactTapped), for: .touchUpInside)
-        button.isHidden = true
-        button.clipsToBounds = true
 
-        return button
-    }()
-    
-    //MARK:- LocationUI
-    let locationDescriptionLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = NSLocalizedString("location_label_text", comment: "location:")
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
-        
-        return label
-    }()
-    
-    let choosenLocationLabel : UILabel = {
-       let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
-        label.textAlignment = .center
-        
-        return label
-    }()
-    
-    let chooseLocationButton: DesignableButton = {
-       let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: "mapIcon"), for: .normal)
-        button.addTarget(self, action: #selector(chooseLocationButtonTapped), for: .touchUpInside)
-        button.tintColor = .imagineColor
-        
-        return button
-    }()
-    
-    let linkedLocationImageView: UIImageView = {
-       let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = UIImage(named: "locationCircle")
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .secondaryLabel
-        } else {
-            imageView.tintColor = .lightGray
-        }
-        
-        return imageView
-    }()
-    
-    let linkedLocationView: UIView = {
-       let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
-        
-        return view
-    }()
-    
-    @objc func chooseLocationButtonTapped() {
+    func chooseLocationButtonTapped() {
         performSegue(withIdentifier: "toMapSegue", sender: nil)
     }
     
     //MARK:- Set Up Options UI
     func setUpOptionViewUI() {
-        let labelHeight: CGFloat = 17
         let smallOptionViewHeight = defaultOptionViewHeight-4
         
-        //LocationView
-        linkedLocationView.addSubview(locationDescriptionLabel)
-        locationDescriptionLabel.topAnchor.constraint(equalTo: linkedLocationView.topAnchor, constant: 5).isActive = true
-        locationDescriptionLabel.leadingAnchor.constraint(equalTo: linkedLocationView.leadingAnchor, constant: 10).isActive = true
-        locationDescriptionLabel.heightAnchor.constraint(equalToConstant: labelHeight).isActive = true
+        self.view.addSubview(locationView)
+        locationView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 1).isActive = true
+        locationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+        locationView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        locationView.heightAnchor.constraint(equalToConstant: smallOptionViewHeight+labelHeight).isActive = true
         
-        linkedLocationView.addSubview(linkedLocationImageView)
-        linkedLocationImageView.centerYAnchor.constraint(equalTo: linkedLocationView.centerYAnchor, constant: (labelHeight/2)+2).isActive = true
-        linkedLocationImageView.leadingAnchor.constraint(equalTo: linkedLocationView.leadingAnchor, constant: 14).isActive = true
-        linkedLocationImageView.widthAnchor.constraint(equalToConstant: 17).isActive = true
-        linkedLocationImageView.heightAnchor.constraint(equalToConstant: 17).isActive = true
-        
-        linkedLocationView.addSubview(choosenLocationLabel)
-        choosenLocationLabel.centerYAnchor.constraint(equalTo: linkedLocationImageView.centerYAnchor).isActive = true
-        choosenLocationLabel.leadingAnchor.constraint(equalTo: locationDescriptionLabel.trailingAnchor, constant: 10).isActive = true
-        
-        linkedLocationView.addSubview(chooseLocationButton)
-        chooseLocationButton.leadingAnchor.constraint(equalTo: choosenLocationLabel.trailingAnchor, constant: 20).isActive = true
-        chooseLocationButton.trailingAnchor.constraint(equalTo: linkedLocationView.trailingAnchor, constant: -10).isActive = true
-        chooseLocationButton.centerYAnchor.constraint(equalTo: choosenLocationLabel.centerYAnchor).isActive = true
-        chooseLocationButton.heightAnchor.constraint(equalToConstant: infoButtonSize-1).isActive = true
-        chooseLocationButton.widthAnchor.constraint(equalToConstant: infoButtonSize-1).isActive = true
-        
-        self.view.addSubview(linkedLocationView)
-        linkedLocationView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 1).isActive = true
-        linkedLocationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        linkedLocationView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        linkedLocationView.heightAnchor.constraint(equalToConstant: smallOptionViewHeight+labelHeight).isActive = true
-        
-        //LinkedFactView
-        linkedFactView.addSubview(distributionLabel)
-        distributionLabel.topAnchor.constraint(equalTo: linkedFactView.topAnchor, constant: 5).isActive = true
-        distributionLabel.leadingAnchor.constraint(equalTo: linkedFactView.leadingAnchor, constant: 10).isActive = true
-        distributionLabel.heightAnchor.constraint(equalToConstant: labelHeight).isActive = true
-
-        linkedFactView.addSubview(linkedFactInfoButton)
-        linkedFactInfoButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: labelHeight/2).isActive = true
-        linkedFactInfoButton.trailingAnchor.constraint(equalTo: linkedFactView.trailingAnchor, constant: -10).isActive = true
-        linkedFactInfoButton.widthAnchor.constraint(equalToConstant: infoButtonSize-1).isActive = true
-        linkedFactInfoButton.heightAnchor.constraint(equalToConstant: infoButtonSize-1).isActive = true
-        
-        linkedFactView.addSubview(addFactButton)
-        addFactButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: labelHeight/2).isActive = true
-        addFactButton.trailingAnchor.constraint(equalTo: linkedFactInfoButton.leadingAnchor, constant: -20).isActive = true
-//        addFactButton.centerXAnchor.constraint(equalTo: linkedFactView.centerXAnchor).isActive = true
-        addFactButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
-        
-        distributionInformationView.addSubview(distributionInformationImageView)
-        distributionInformationImageView.leadingAnchor.constraint(equalTo: distributionInformationView.leadingAnchor).isActive = true
-        distributionInformationImageView.centerYAnchor.constraint(equalTo: distributionInformationView.centerYAnchor).isActive = true
-        distributionInformationImageView.widthAnchor.constraint(equalToConstant: 23).isActive = true
-        distributionInformationImageView.heightAnchor.constraint(equalToConstant: 23).isActive = true
-        
-        distributionInformationView.addSubview(distributionInformationLabel)
-        distributionInformationLabel.leadingAnchor.constraint(equalTo: distributionInformationImageView.trailingAnchor, constant: 2).isActive = true
-        distributionInformationLabel.trailingAnchor.constraint(equalTo: distributionInformationView.trailingAnchor, constant: -3).isActive = true
-        distributionInformationLabel.centerYAnchor.constraint(equalTo: distributionInformationView.centerYAnchor).isActive = true
-        
-        linkedFactView.addSubview(distributionInformationView)
-        distributionInformationView.leadingAnchor.constraint(equalTo: linkedFactView.leadingAnchor, constant: 10).isActive = true
-//        distributionInformationView.trailingAnchor.constraint(equalTo: addFactButton.leadingAnchor, constant: -3).isActive = true
-        distributionInformationView.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: labelHeight/2).isActive = true
-        distributionInformationView.heightAnchor.constraint(equalToConstant: smallOptionViewHeight-15).isActive = true
-
-        linkedFactView.addSubview(cancelLinkedFactButton)
-        cancelLinkedFactButton.trailingAnchor.constraint(equalTo: linkedFactInfoButton.leadingAnchor, constant: -10).isActive = true
-        cancelLinkedFactButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
-        cancelLinkedFactButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
-        cancelLinkedFactButton.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: labelHeight/2).isActive = true
-        
-        self.view.addSubview(linkedFactView)
-        linkedFactView.topAnchor.constraint(equalTo: linkedLocationView.bottomAnchor, constant: 1).isActive = true
-        linkedFactView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        linkedFactView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        linkedFactView.heightAnchor.constraint(equalToConstant: smallOptionViewHeight+labelHeight).isActive = true
-        
-        
-        // OptionView
-        optionView.addSubview(optionButton)
-        optionButton.topAnchor.constraint(equalTo: optionView.topAnchor, constant: 5).isActive = true
-        optionButton.leadingAnchor.constraint(equalTo: optionView.leadingAnchor, constant: 10).isActive = true
-        optionButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
-        
-        optionView.addSubview(anonymousImageView)
-        anonymousImageView.leadingAnchor.constraint(equalTo: optionButton.trailingAnchor, constant: 20).isActive = true
-        anonymousImageView.centerYAnchor.constraint(equalTo: optionButton.centerYAnchor).isActive = true
-        anonymousImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        anonymousImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        
-        optionView.addSubview(anonymousNameLabel)
-        anonymousNameLabel.leadingAnchor.constraint(equalTo: anonymousImageView.trailingAnchor, constant: 5).isActive = true
-        anonymousNameLabel.centerYAnchor.constraint(equalTo: anonymousImageView.centerYAnchor).isActive = true
-        anonymousNameLabel.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-10).isActive = true
-        
-        optionStackView.addArrangedSubview(markPostView)
-        optionStackView.addArrangedSubview(postAnonymousView)
-        
-        optionView.addSubview(optionStackView)
-        optionStackView.leadingAnchor.constraint(equalTo: optionView.leadingAnchor).isActive = true
-        optionStackView.trailingAnchor.constraint(equalTo: optionView.trailingAnchor).isActive = true
-        optionStackView.topAnchor.constraint(equalTo: optionButton.bottomAnchor, constant: 3).isActive = true
-        optionStackView.bottomAnchor.constraint(equalTo: optionView.bottomAnchor, constant: -5).isActive = true
-        stackViewHeight = optionStackView.heightAnchor.constraint(equalToConstant: 0)
-        stackViewHeight!.isActive = true
-        
-        //Meme Mode Button
-        optionView.addSubview(memeModeButton)
-        memeModeButton.centerYAnchor.constraint(equalTo: optionButton.centerYAnchor).isActive = true
-        memeModeButton.trailingAnchor.constraint(equalTo: optionView.trailingAnchor, constant: -10).isActive = true
-        memeModeButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
-                
+        self.view.addSubview(linkCommunityView)
+        linkCommunityView.topAnchor.constraint(equalTo: locationView.bottomAnchor, constant: 1).isActive = true
+        linkCommunityView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+        linkCommunityView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        linkCommunityView.heightAnchor.constraint(equalToConstant: smallOptionViewHeight+labelHeight).isActive = true
         
         self.view.addSubview(optionView)
-        optionView.topAnchor.constraint(equalTo: linkedFactView.bottomAnchor, constant: 1).isActive = true
+        optionView.topAnchor.constraint(equalTo: linkCommunityView.bottomAnchor, constant: 1).isActive = true
         optionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
         optionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
         optionViewHeight = optionView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight)
         optionViewHeight!.isActive = true
         
-        setMarkPostViewUI()
-        setPostAnonymousViewUI()
         
         // Here so it doesnt mess with the layout
         if let fact = linkedFact {
@@ -857,26 +472,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 fakeNameInfoLabel.leadingAnchor.constraint(equalTo: endView.leadingAnchor, constant: 10).isActive = true
             }
         }
-        
-//        endView.addSubview(blueOwenButton)
-//        blueOwenButton.topAnchor.constraint(equalTo: endView.topAnchor, constant: 10).isActive = true
-//        blueOwenButton.leadingAnchor.constraint(equalTo: endView.leadingAnchor, constant: 10).isActive = true
-//        blueOwenButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
-//        blueOwenButton.widthAnchor.constraint(equalToConstant: 85).isActive = true
-//
-//        endView.addSubview(blueOwenImageView)
-//        blueOwenImageView.centerYAnchor.constraint(equalTo: blueOwenButton.centerYAnchor).isActive = true
-//        blueOwenImageView.leadingAnchor.constraint(equalTo: blueOwenButton.trailingAnchor, constant: 3).isActive = true
-//        blueOwenImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
-//        blueOwenImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
 
         self.view.addSubview(endView)
         endView.topAnchor.constraint(equalTo: optionView.bottomAnchor, constant: 1).isActive = true
         endView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
         endView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
         endView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-        
-//        explainFunctionOnFirstOpen()
     }
     
     //MARK:- PostAsSomebodyElse-UI
@@ -955,137 +556,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         performSegue(withIdentifier: "toProposals", sender: nil)
     }
     
-    // MARK: - MarkPostViewUI
-    let markPostView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
-        
-        return view
-    }()
-    
-    let markPostLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = NSLocalizedString("markPostButtonText", comment: "mark your post text")
-        label.textAlignment = .center
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
-        
-        return label
-    }()
-    
-    let markPostSwitch: UISwitch = {
-        let switcher = UISwitch()
-        switcher.translatesAutoresizingMaskIntoConstraints = false
-        switcher.addTarget(self, action: #selector(markPostSwitchChanged), for: .valueChanged)
-        
-        
-        return switcher
-    }()
-    
-    let markPostSegmentControl :UISegmentedControl = {
-        let items = [NSLocalizedString("opinion", comment: "just opinion"), NSLocalizedString("sansational", comment: "sansational"), NSLocalizedString("edited", comment: "edited")]
-        let control = UISegmentedControl(items: items)
-        control.translatesAutoresizingMaskIntoConstraints = false
-        control.isHidden = true
-        control.alpha = 0
-        control.addTarget(self, action: #selector(markPostSegmentChanged), for: .touchUpInside)
-        
-        return control
-    }()
-    
-    let markPostButton :DesignableButton = {
-        let button = DesignableButton(type: .detailDisclosure)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .imagineColor
-        button.addTarget(self, action: #selector(markPostInfoButtonPressed), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    func setMarkPostViewUI() {
-        markPostView.addSubview(markPostSwitch)
-        markPostSwitch.centerYAnchor.constraint(equalTo: markPostView.centerYAnchor).isActive = true
-        markPostSwitch.leadingAnchor.constraint(equalTo: markPostView.leadingAnchor, constant: 5).isActive = true
-        
-        markPostView.addSubview(markPostSegmentControl)
-        markPostSegmentControl.topAnchor.constraint(equalTo: markPostView.topAnchor, constant: 8).isActive = true
-        markPostSegmentControl.leadingAnchor.constraint(equalTo: markPostSwitch.trailingAnchor, constant: 3).isActive = true
-        markPostSegmentControl.bottomAnchor.constraint(equalTo: markPostView.bottomAnchor, constant: -8).isActive = true
-        
-        markPostView.addSubview(markPostLabel)
-        markPostLabel.centerXAnchor.constraint(equalTo: markPostView.centerXAnchor).isActive = true
-        markPostLabel.centerYAnchor.constraint(equalTo: markPostView.centerYAnchor).isActive = true
-        
-        markPostView.addSubview(markPostButton)
-        markPostButton.centerYAnchor.constraint(equalTo: markPostView.centerYAnchor).isActive = true
-        markPostButton.trailingAnchor.constraint(equalTo: markPostView.trailingAnchor, constant: -10).isActive = true
-        markPostButton.leadingAnchor.constraint(equalTo: markPostSegmentControl.trailingAnchor, constant: 5).isActive = true
-        markPostButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
-        markPostButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
-        
-    }
-    
-    // MARK: - Post Anonymous UI
-    let postAnonymousView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
-        
-        return view
-    }()
-    
-    let postAnonymousLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = NSLocalizedString("post_anonymous_label", comment: "post anonymous")
-        label.textAlignment = .center
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
-        
-        return label
-    }()
-    
-    let postAnonymousSwitch: UISwitch = {
-       let switcher = UISwitch()
-        switcher.translatesAutoresizingMaskIntoConstraints = false
-        switcher.addTarget(self, action: #selector(postAnonymousSwitchChanged), for: .valueChanged)
-        
-        return switcher
-    }()
-    
-    let postAnonymousButton :DesignableButton = {
-        let button = DesignableButton(type: .detailDisclosure)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .imagineColor
-        button.addTarget(self, action: #selector(postAnonymousButtonPressed), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    func setPostAnonymousViewUI() {
-        postAnonymousView.addSubview(postAnonymousSwitch)
-        postAnonymousSwitch.centerYAnchor.constraint(equalTo: postAnonymousView.centerYAnchor).isActive = true
-        postAnonymousSwitch.leadingAnchor.constraint(equalTo: postAnonymousView.leadingAnchor, constant: 5).isActive = true
-        
-        postAnonymousView.addSubview(postAnonymousLabel)
-        postAnonymousLabel.centerYAnchor.constraint(equalTo: postAnonymousView.centerYAnchor).isActive = true
-        postAnonymousLabel.centerXAnchor.constraint(equalTo: postAnonymousView.centerXAnchor).isActive = true
-        
-        postAnonymousView.addSubview(postAnonymousButton)
-        postAnonymousButton.centerYAnchor.constraint(equalTo: postAnonymousView.centerYAnchor).isActive = true
-        postAnonymousButton.trailingAnchor.constraint(equalTo: postAnonymousView.trailingAnchor, constant: -10).isActive = true
-        postAnonymousButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
-        postAnonymousButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
-        
-    }
     
     // MARK: - KeyboardGoesUp
     
@@ -1206,17 +676,17 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     func showExplanationForLinkFactToPost() {
          DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
             self.linkFactExplanationTipView = EasyTipView(text: NSLocalizedString("link_fact_first_open_tip_view_text", comment: "how it works and such"))
-            self.linkFactExplanationTipView!.show(forView: self.linkedFactView)
+            self.linkFactExplanationTipView!.show(forView: self.linkCommunityView)
         }
     }
     
     //MARK: - MemeMode Maker
     
-    @objc func memeModeTapped() {
+    func memeModeTapped() {
         let generator = UIImpactFeedbackGenerator(style: .heavy)
         generator.impactOccurred()
         
-        memeModeButton.isEnabled = false
+        optionView.memeModeButton.isEnabled = false
         showMemeMode()
     }
     
@@ -1259,7 +729,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     heavyImpact.impactOccurred()
                     
                     memeView.startUpMemeMode()
-                    self.memeModeButton.isEnabled = true
+                    self.optionView.memeModeButton.isEnabled = true
                     
                     if self.selectedOption != .picture || self.selectedOption != .multiPicture {
                         //Switch to picture mode so the meme can be shown
@@ -1419,13 +889,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     
-    @objc func markPostSwitchChanged() {
-        if markPostSwitch.isOn {
-            markPostSegmentControl.isHidden = false
-            markPostLabel.isHidden = true
+    func markPostSwitchChanged() {
+        if optionView.markPostSwitch.isOn {
+            optionView.markPostSegmentControl.isHidden = false
+            optionView.markPostLabel.isHidden = true
             
             UIView.animate(withDuration: 0.3) {
-                self.markPostSegmentControl.alpha = 1
+                self.optionView.markPostSegmentControl.alpha = 1
             }
             
             
@@ -1433,17 +903,17 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         } else {
         
             UIView.animate(withDuration: 0.3, animations: {
-                self.markPostSegmentControl.alpha = 0
+                self.optionView.markPostSegmentControl.alpha = 0
             }) { (_) in
-                self.markPostSegmentControl.isHidden = true
-                self.markPostLabel.isHidden = false
+                self.optionView.markPostSegmentControl.isHidden = true
+                self.optionView.markPostLabel.isHidden = false
             }
             
             reportType = .normal
         }
     }
     
-    @objc func optionButtonTapped() {
+    func optionButtonTapped() {
                 
         if descriptionView.descriptionTextView.isFirstResponder {
             descriptionView.descriptionTextView.resignFirstResponder()
@@ -1458,46 +928,46 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 UIView.animate(withDuration: 0.4, animations: {
                     self.view.layoutIfNeeded()
                 }) { (_) in
-                    self.optionStackView.isHidden = false
+                    self.optionView.optionStackView.isHidden = false
                     UIView.animate(withDuration: 0.1) {
-                        self.optionStackView.alpha = 1
+                        self.optionView.optionStackView.alpha = 1
                     }
                 }
             } else {
-                stackViewHeight = optionStackView.heightAnchor.constraint(equalToConstant: 0)
+                stackViewHeight = optionView.optionStackView.heightAnchor.constraint(equalToConstant: 0)
                 stackViewHeight!.isActive = true
                 
                 height.constant = defaultOptionViewHeight
                 
                 UIView.animate(withDuration: 0.4, animations: {
-                    self.optionStackView.alpha = 0
+                    self.optionView.optionStackView.alpha = 0
                     self.view.layoutIfNeeded()
                 }) { (_) in
-                    self.optionStackView.isHidden = true
+                    self.optionView.optionStackView.isHidden = true
                 }
             }
         }
     }
     
-    @objc func linkFactToPostTapped() {
+    func linkFactToPostTapped() {
         performSegue(withIdentifier: "searchFactsSegue", sender: nil)
     }
     
-    @objc func cancelLinkedFactTapped() {
-        distributionInformationLabel.text = "Feed"
-        distributionInformationImageView.image = UIImage(named: "Feed")
+    func cancelLinkedFactTapped() {
+        linkCommunityView.distributionInformationLabel.text = "Feed"
+        linkCommunityView.distributionInformationImageView.image = UIImage(named: "Feed")
         
-        cancelLinkedFactButton.isHidden = true
-        addedFactImageView.removeFromSuperview()
-        addedFactDescriptionLabel.removeFromSuperview()
+        linkCommunityView.cancelLinkedFactButton.isHidden = true
+        linkCommunityView.addedFactImageView.removeFromSuperview()
+        linkCommunityView.addedFactDescriptionLabel.removeFromSuperview()
         
         self.linkedFact = nil
         self.postOnlyInTopic = false
         
-        addFactButton.isHidden = false
+        linkCommunityView.addFactButton.isHidden = false
     }
     
-    @objc func markPostInfoButtonPressed() {
+    func markPostInfoButtonPressed() {
         if let tipView = self.markPostTipView {
             tipView.dismiss()
             markPostTipView = nil
@@ -1507,17 +977,17 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    @objc func linkedFactInfoButtonTapped() {
+    func linkedFactInfoButtonTapped() {
         if let tipView = self.linkedFactTipView {
             tipView.dismiss()
             linkedFactTipView = nil
         } else {
             self.linkedFactTipView = EasyTipView(text: NSLocalizedString("linked_fact_tip_view_text", comment: "how and why"))
-            linkedFactTipView!.show(forView: linkedFactView)
+            linkedFactTipView!.show(forView: linkCommunityView)
         }
     }
     
-    @objc func postAnonymousButtonPressed() {
+    func postAnonymousButtonPressed() {
         if let tipView = self.postAnonymousTipView {
             tipView.dismiss()
             postAnonymousTipView = nil
@@ -1527,10 +997,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    @objc func postAnonymousSwitchChanged() {
-        if postAnonymousSwitch.isOn {
+    func postAnonymousSwitchChanged() {
+        if optionView.postAnonymousSwitch.isOn {
             self.postAnonymous = true
-            self.anonymousImageView.isHidden = false
+            self.optionView.anonymousImageView.isHidden = false
             
             let alert = UIAlertController(title: NSLocalizedString("anonymous_name_alert_title", comment: "anonymous name"), message: NSLocalizedString("anonymous_name_alert_message", comment: "no real name and such"), preferredStyle: .alert)
 
@@ -1543,14 +1013,14 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 
                 if let text = textField.text {
                     self.anonymousName = text
-                    self.anonymousNameLabel.text = text
+                    self.optionView.anonymousNameLabel.text = text
                 } //else: Default String will show in the feed
             }))
             self.present(alert, animated: true, completion: nil)
             
         } else {
             self.postAnonymous = false
-            self.anonymousImageView.isHidden = true
+            self.optionView.anonymousImageView.isHidden = true
         }
     }
     
@@ -1586,7 +1056,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 self.linkView.linkLabel.alpha = 0
                 self.linkView.linkTextField.alpha = 0
                 self.linkView.webImageViewStackView.alpha = 0
-                self.linkInfoButton.alpha = 0
+                self.linkView.linkInfoButton.alpha = 0
             }) { (_) in
                 self.linkViewHeight!.constant = 0
                 
@@ -1617,15 +1087,15 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     
-    @objc func markPostSegmentChanged() {
+    func markPostSegmentChanged() {
         
-        if markPostSegmentControl.selectedSegmentIndex == 0 {
+        if optionView.markPostSegmentControl.selectedSegmentIndex == 0 {
             reportType = .opinion
         }
-        if markPostSegmentControl.selectedSegmentIndex == 1 {
+        if optionView.markPostSegmentControl.selectedSegmentIndex == 1 {
             reportType = .sensationalism
         }
-        if markPostSegmentControl.selectedSegmentIndex == 2 {
+        if optionView.markPostSegmentControl.selectedSegmentIndex == 2 {
             reportType = .edited
         }
     }
@@ -2671,9 +2141,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 if self.optionViewHeight?.constant != self.defaultOptionViewHeight {
                     self.optionButtonTapped()
                 }
-                self.addedFactDescriptionLabel.text?.removeAll()
-                self.addedFactImageView.image = nil
-                self.addedFactImageView.layer.borderColor = UIColor.clear.cgColor
+                self.linkCommunityView.addedFactDescriptionLabel.text?.removeAll()
+                self.linkCommunityView.addedFactImageView.image = nil
+                self.linkCommunityView.addedFactImageView.layer.borderColor = UIColor.clear.cgColor
                 self.cancelLinkedFactTapped()
                 
                 self.titleView.titleTextView.resignFirstResponder()
@@ -2756,8 +2226,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }))
         shareAlert.addAction(UIAlertAction(title: NSLocalizedString("link_fact_destination_community", comment: "community"), style: .default, handler: { (_) in
             
-            self.distributionInformationLabel.text = "Community"
-            self.distributionInformationImageView.image = UIImage(named: "topicIcon")
+            self.linkCommunityView.distributionInformationLabel.text = "Community"
+            self.linkCommunityView.distributionInformationImageView.image = UIImage(named: "topicIcon")
             self.postOnlyInTopic = true
             
         }))
@@ -2843,7 +2313,7 @@ extension NewPostViewController: AddOnDelegate {
 extension NewPostViewController: ChoosenLocationDelegate {
     func gotLocation(location: Location) {
         self.linkedLocation = location
-        self.choosenLocationLabel.text = location.title
+        self.locationView.choosenLocationLabel.text = location.title
     }
 }
 
@@ -2864,27 +2334,27 @@ extension NewPostViewController: LinkFactWithPostDelegate {
     
     func showLinkedFact(fact: Community) {
         
-        addFactButton.isHidden = true
-        cancelLinkedFactButton.isHidden = false
+        linkCommunityView.addFactButton.isHidden = true
+        linkCommunityView.cancelLinkedFactButton.isHidden = false
         
-        linkedFactView.addSubview(addedFactImageView)
-        addedFactImageView.centerYAnchor.constraint(equalTo: linkedFactView.centerYAnchor, constant: 10).isActive = true
-        addedFactImageView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-15).isActive = true
-        addedFactImageView.trailingAnchor.constraint(equalTo: cancelLinkedFactButton.leadingAnchor, constant: -10).isActive = true
-        addedFactImageView.widthAnchor.constraint(equalToConstant: defaultOptionViewHeight-15).isActive = true
+        linkCommunityView.addSubview(linkCommunityView.addedFactImageView)
+        linkCommunityView.addedFactImageView.centerYAnchor.constraint(equalTo: linkCommunityView.centerYAnchor, constant: 10).isActive = true
+        linkCommunityView.addedFactImageView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-15).isActive = true
+        linkCommunityView.addedFactImageView.trailingAnchor.constraint(equalTo: linkCommunityView.cancelLinkedFactButton.leadingAnchor, constant: -10).isActive = true
+        linkCommunityView.addedFactImageView.widthAnchor.constraint(equalToConstant: defaultOptionViewHeight-15).isActive = true
         
-        linkedFactView.addSubview(addedFactDescriptionLabel)
-        addedFactDescriptionLabel.centerYAnchor.constraint(equalTo: addedFactImageView.centerYAnchor).isActive = true
-        addedFactDescriptionLabel.trailingAnchor.constraint(equalTo: addedFactImageView.leadingAnchor, constant: -10).isActive = true
+        linkCommunityView.addSubview(linkCommunityView.addedFactDescriptionLabel)
+        linkCommunityView.addedFactDescriptionLabel.centerYAnchor.constraint(equalTo: linkCommunityView.addedFactImageView.centerYAnchor).isActive = true
+        linkCommunityView.addedFactDescriptionLabel.trailingAnchor.constraint(equalTo: linkCommunityView.addedFactImageView.leadingAnchor, constant: -10).isActive = true
 //        addedFactDescriptionLabel.leadingAnchor.constraint(equalTo: addFactButton.trailingAnchor, constant: -2).isActive = true
         
         if let url = URL(string: fact.imageURL) {
-            addedFactImageView.sd_setImage(with: url, completed: nil)
+            linkCommunityView.addedFactImageView.sd_setImage(with: url, completed: nil)
         } else {
-            addedFactImageView.image = UIImage(named: "FactStamp")
+            linkCommunityView.addedFactImageView.image = UIImage(named: "FactStamp")
         }
          
-        addedFactDescriptionLabel.text = "'\(fact.title)'"
+        linkCommunityView.addedFactDescriptionLabel.text = "'\(fact.title)'"
     }
     
     func setDismissButton() {
