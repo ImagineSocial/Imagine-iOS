@@ -40,7 +40,8 @@ class voteCampaignTableViewController: UITableViewController {
     
     var tipView: EasyTipView?
     
-    let voteCellIdentifier = "VoteCell"
+    private let voteCellIdentifier = "VoteCell"
+    private let campaignCellIdentifier = "campaignCell"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,6 +61,7 @@ class voteCampaignTableViewController: UITableViewController {
         self.view.activityStartAnimating()
         
         tableView.register(UINib(nibName: "VoteCell", bundle: nil), forCellReuseIdentifier: voteCellIdentifier)
+        tableView.register(UINib(nibName: "CampaignCell", bundle: nil), forCellReuseIdentifier: campaignCellIdentifier)
         tableView.separatorStyle = .none
                 
         
@@ -139,7 +141,7 @@ class voteCampaignTableViewController: UITableViewController {
         
         switch mode {
         case .campaign:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "campaignCell", for: indexPath) as? CampaignCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: campaignCellIdentifier, for: indexPath) as? CampaignCell {
 
                 let campaign = campaigns[indexPath.row]
                 
@@ -152,7 +154,7 @@ class voteCampaignTableViewController: UITableViewController {
                 
                 let vote = votes[indexPath.row]
                 
-                
+                cell.vote = vote
                 
                 return cell
             }

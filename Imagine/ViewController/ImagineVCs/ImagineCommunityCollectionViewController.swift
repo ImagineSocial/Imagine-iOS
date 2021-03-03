@@ -21,16 +21,18 @@ class CommunityItem {
 class ImagineCommunityCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
 
+    //MARK:- Variables
     var items = [CommunityItem]()
     let insetTimesTwo:CGFloat = 20
     
     let blogPostIdentifier = "BlogCell"
-    let currentProjectsIdentifier = "CurrentProjectsCollectionCell"
-    let tableViewIdentifier = "TableViewInCollectionViewCell"
-    let optionsCellIdentifier = "ImagineCommunityOptionsCell"
+    private let currentProjectsIdentifier = "CurrentProjectsCollectionCell"
+    private let tableViewIdentifier = "TableViewInCollectionViewCell"
+    private let optionsCellIdentifier = "ImagineCommunityOptionsCell"
         
     let dataHelper = DataRequest()
     
+    //MARK:- View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -64,6 +66,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
        }
     }
     
+    //MARK:- Get Data
     func getData() {
 
         dataHelper.getData(get: .blogPosts) { (posts) in
@@ -75,10 +78,10 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 }
             }
             
-            self.dataHelper.getData(get: .jobOffer) { (jobOffer) in
-                for offer in jobOffer {
-                    if let offer = offer as? JobOffer {
-                        let item = CommunityItem(item: offer, createDate: offer.createDate)
+            self.dataHelper.getData(get: .campaign) { (campaigns) in
+                for campaign in campaigns {
+                    if let campaign = campaign as? Campaign {
+                        let item = CommunityItem(item: campaign, createDate: campaign.createTime)
                         self.items.append(item)
                     }
                 }
@@ -97,14 +100,8 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
             }
         }
     }
-   
-    @objc func showSecretButton(sender: UILongPressGestureRecognizer) {
-        if sender.state == .ended {
-            performSegue(withIdentifier: "toSecretSegue", sender: nil)
-        }
-    }
 
-    // MARK: UICollectionViewDataSource
+    // MARK:- UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
@@ -170,21 +167,16 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                         return cell
                     }
                 }
-            } else if let jobOffer = communityItem.item as? JobOffer {
+            } else {
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: tableViewIdentifier, for: indexPath) as? TableViewInCollectionViewCell {
+                    
+                    //The TableViewInCOllectionViewCell can show Vote, Campaign and JobOffer
+                    let item = communityItem.item
+                    
                     cell.delegate = self
                     cell.isEverySecondCell = isEverySecondCell
-                    cell.items = [jobOffer]
+                    cell.items = [item]
                     
-                    return cell
-                }
-            } else if let vote = communityItem.item as? Vote {
-                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: tableViewIdentifier, for: indexPath) as? TableViewInCollectionViewCell {
-                    cell.delegate = self
-                    
-                    cell.isEverySecondCell = isEverySecondCell
-                    cell.items = [vote]
-                   
                     return cell
                 }
             }
@@ -194,7 +186,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     }
     
     
-    
+    //MARK:- UICollectionViewFlowLayoutDelegate
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     
         let width = collectionView.frame.width-insetTimesTwo
@@ -212,12 +204,24 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 }
             } else if let _ = communityItem.item as? JobOffer {
                 return CGSize(width: width, height: 125)   // For JobOffer
+            } else if let _ = communityItem.item as? Campaign {
+                return CGSize(width: width, height: 150)   // For JobOffer
             }  else {
                 return CGSize(width: width, height: 225)
             }
         }
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        if section == 0 {
+            return CGSize.zero
+        } else {
+            return CGSize(width: collectionView.frame.width, height: 80)
+        }
+    }
+    
+    
+    //MARK:- UICollectionViewDelegate
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
 
         
@@ -232,13 +236,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         return UICollectionReusableView()
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if section == 0 {
-            return CGSize.zero
-        } else {
-            return CGSize(width: collectionView.frame.width, height: 80)
-        }
-    }
+    
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.section != 0 {
@@ -251,6 +249,8 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         }
     }
     
+    
+    //MARK:- Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toChatSegue" {
             if let chosenChat = sender as? Chat {
@@ -265,6 +265,12 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
             if let visionVC = segue.destination as? SwipeCollectionViewController {
                 visionVC.diashow = .vision
                 visionVC.communityVC = self
+            }
+        }
+        
+        if segue.identifier == "toCampaignSegue" {
+            if let campaignVC = segue.destination as? CampaignViewController, let campaign = sender as? Campaign {
+                campaignVC.campaign = campaign
             }
         }
         
@@ -308,12 +314,21 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         }
     }
     
+    //MARK:- Actions
+    
+    
     func secretButtonTapped(_ sender: Any) {
         performSegue(withIdentifier: "toSecretSegue", sender: nil)
     }
     
+    @objc func showSecretButton(sender: UILongPressGestureRecognizer) {
+        if sender.state == .ended {
+            performSegue(withIdentifier: "toSecretSegue", sender: nil)
+        }
+    }
 }
 
+//MARK:- Cell Delegates
 extension ImagineCommunityCollectionViewController: CommunityCollectionCellDelegate, TableViewInCollectionViewCellDelegate {
     
     func itemTapped(item: Any) {
@@ -321,6 +336,8 @@ extension ImagineCommunityCollectionViewController: CommunityCollectionCellDeleg
             performSegue(withIdentifier: "toJobOfferDetailSegue", sender: jobOffer)
         } else if let vote = item as? Vote {
             performSegue(withIdentifier: "toVoteDetailSegue", sender: vote)
+        } else if let campaign = item as? Campaign {
+            performSegue(withIdentifier: "toCampaignSegue", sender: campaign)
         }
     }
     

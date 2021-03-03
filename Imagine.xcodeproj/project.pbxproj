@@ -97,6 +97,7 @@
 		E97DBED922AEA81A007100E1 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97DBED822AEA81A007100E1 /* Post.swift */; };
 		E97E7263243603AC0012F105 /* AddOn.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97E7262243603AC0012F105 /* AddOn.swift */; };
 		E97E902822464B4700BA0295 /* JobOfferingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97E902722464B4700BA0295 /* JobOfferingViewController.swift */; };
+		E97EFB5625F00722007B2D73 /* CampaignCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E97EFB5525F00722007B2D73 /* CampaignCell.xib */; };
 		E97FDFB924695FA40049E1E4 /* AddOnStoreImageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E97FDFB824695FA40049E1E4 /* AddOnStoreImageTableViewCell.xib */; };
 		E97FDFBC246A9E970049E1E4 /* TopicCollectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = E97FDFBB246A9E970049E1E4 /* TopicCollectionHeader.xib */; };
 		E97FDFBE246AA4130049E1E4 /* ShowAllTopicsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E97FDFBD246AA4130049E1E4 /* ShowAllTopicsCell.xib */; };
@@ -354,6 +355,7 @@
 		E97E7262243603AC0012F105 /* AddOn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOn.swift; sourceTree = "<group>"; };
 		E97E902722464B4700BA0295 /* JobOfferingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobOfferingViewController.swift; sourceTree = "<group>"; };
 		E97EE6D122AC12A400EC9D68 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		E97EFB5525F00722007B2D73 /* CampaignCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CampaignCell.xib; sourceTree = "<group>"; };
 		E97FDFB824695FA40049E1E4 /* AddOnStoreImageTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddOnStoreImageTableViewCell.xib; sourceTree = "<group>"; };
 		E97FDFBB246A9E970049E1E4 /* TopicCollectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TopicCollectionHeader.xib; sourceTree = "<group>"; };
 		E97FDFBD246AA4130049E1E4 /* ShowAllTopicsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ShowAllTopicsCell.xib; sourceTree = "<group>"; };
@@ -1125,6 +1127,7 @@
 			children = (
 				E9EA7C9622E20DEB0015C0EC /* BlogPostCell.xib */,
 				E9A02AAE232E5EED000DAB69 /* BlogCell.swift */,
+				E97EFB5525F00722007B2D73 /* CampaignCell.xib */,
 				E9B79CE4224EC78900166EED /* CampaignCell.swift */,
 				E97D714B242255A50018E27C /* VoteCell.xib */,
 				E9EA7C9A22E5F47C0015C0EC /* VoteCell.swift */,
@@ -1366,6 +1369,7 @@
 				E97DBED022AC1335007100E1 /* Localizable.strings in Resources */,
 				E90AC38624FA52C4002A36F0 /* IBMPlexSans-SemiBold.ttf in Resources */,
 				E9B9446B2259E5EC000145E2 /* PostTableViewCell.xib in Resources */,
+				E97EFB5625F00722007B2D73 /* CampaignCell.xib in Resources */,
 				E997F763248CF21B00BF7F88 /* UserTableViewHeader.xib in Resources */,
 				E9B85D562412D5D000960942 /* SmallFactCell.xib in Resources */,
 				E97FDFC6246C00890049E1E4 /* TopicCollectionFooter.xib in Resources */,

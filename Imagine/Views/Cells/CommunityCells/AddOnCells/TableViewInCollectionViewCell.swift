@@ -18,10 +18,11 @@ class TableViewInCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var containerView: UIView!
     
     var items = [Any]()
-    let companyReuseIdentifier = "SmallCompanyTableViewCell"
-    let jobOfferReuseIdentifier = "SupportTheCommunityCell"
-    let voteCellIdentifier = "VoteCell"
-    let addOnHeaderIdentifier = "InfoHeaderAddOnCell"
+    private let companyReuseIdentifier = "SmallCompanyTableViewCell"
+    private let jobOfferReuseIdentifier = "SupportTheCommunityCell"
+    private let voteCellIdentifier = "VoteCell"
+    private let addOnHeaderIdentifier = "InfoHeaderAddOnCell"
+    private let campaignCellIdentifier = "campaignCell"
     
     var isEverySecondCell = false       // Change Design on every second Cell
     
@@ -41,7 +42,7 @@ class TableViewInCollectionViewCell: UICollectionViewCell {
         tableView.register(UINib(nibName: "JobOfferCell", bundle: nil), forCellReuseIdentifier: jobOfferReuseIdentifier)
         tableView.register(UINib(nibName: "VoteCell", bundle: nil), forCellReuseIdentifier: voteCellIdentifier)
         tableView.register(UINib(nibName: "InfoHeaderAddOnCell", bundle: nil), forCellReuseIdentifier: addOnHeaderIdentifier)
-        
+        tableView.register(UINib(nibName: "CampaignCell", bundle: nil), forCellReuseIdentifier: campaignCellIdentifier)
     }
     
     override func prepareForReuse() {
@@ -78,52 +79,9 @@ extension TableViewInCollectionViewCell: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-//        if let companys = items as? [Company] {
-//            let company = companys[indexPath.row]
-//
-//            if let cell = tableView.dequeueReusableCell(withIdentifier: companyReuseIdentifier) as? SmallCompanyTableViewCell {
-//                if isEverySecondCell {
-//
-//                    if #available(iOS 13.0, *) {
-//                        cell.contentView.backgroundColor = .secondarySystemBackground
-//                    } else {
-//                        cell.contentView.backgroundColor = .ios12secondarySystemBackground
-//                    }
-//                } else {
-//                    let layer = cell.contentView.layer
-//
-//                    if #available(iOS 13.0, *) {
-//                        layer.borderColor = UIColor.secondarySystemBackground.cgColor
-//                    } else {
-//                        layer.borderColor = UIColor.ios12secondarySystemBackground.cgColor
-//                    }
-//                    layer.borderWidth = 1
-//                    layer.cornerRadius = 5
-//                }
-//                cell.company = company
-//                return cell
-//            }
-//        } else
         if let jobOffer = items as? [JobOffer] {
             if let cell = tableView.dequeueReusableCell(withIdentifier: jobOfferReuseIdentifier) as? JobOfferCell {
                 
-                if isEverySecondCell {
-                
-                    if #available(iOS 13.0, *) {
-                        cell.contentView.backgroundColor = .secondarySystemBackground
-                    } else {
-                        cell.contentView.backgroundColor = .ios12secondarySystemBackground
-                    }
-                } else {
-                    let layer = cell.contentView.layer
-                    
-                    if #available(iOS 13.0, *) {
-                        layer.borderColor = UIColor.secondarySystemBackground.cgColor
-                    } else {
-                        layer.borderColor = UIColor.ios12secondarySystemBackground.cgColor
-                    }
-                    
-                }
                 cell.jobOffer = jobOffer[indexPath.row]
                 cell.needInsets = false
                 
@@ -132,42 +90,19 @@ extension TableViewInCollectionViewCell: UITableViewDelegate, UITableViewDataSou
         } else if let vote = items as? [Vote] {
             if let cell = tableView.dequeueReusableCell(withIdentifier: voteCellIdentifier) as? VoteCell {
                 
-                if isEverySecondCell {
-                
-                    if #available(iOS 13.0, *) {
-                        cell.contentView.backgroundColor = .secondarySystemBackground
-                    } else {
-                        cell.contentView.backgroundColor = .ios12secondarySystemBackground
-                    }
-                    cell.contentView.layer.cornerRadius = 5
-                } else {
-                    let layer = cell.contentView.layer
-                    
-                    if #available(iOS 13.0, *) {
-                        layer.borderColor = UIColor.secondarySystemBackground.cgColor
-                    } else {
-                        layer.borderColor = UIColor.ios12secondarySystemBackground.cgColor
-                    }
-                    layer.borderWidth = 1
-                    layer.cornerRadius = 5
-                }
-                
                 cell.needInsets = false
                 cell.vote = vote[indexPath.row]
                 
                 return cell
             }
-        } else if let info = items as? [AddOn] {
-//            if let cell = tableView.dequeueReusableCell(withIdentifier: addOnHeaderIdentifier, for: indexPath) as? InfoHeaderAddOnCell {
-//                
-////                if info.count != 0 {
-////                    if let header = info[0].addOnInfoHeader {
-////                        cell.addOnInfo = header
-////                    }
-////                }
-//                
-//                return cell
-//            }
+        } else if let campaigns = items as? [Campaign] {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: campaignCellIdentifier, for: indexPath) as? CampaignCell {
+                let campaign = campaigns[indexPath.row]
+                
+                cell.campaign = campaign
+                
+                return cell
+            }
         }
         
         
@@ -182,11 +117,8 @@ extension TableViewInCollectionViewCell: UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        if let _ = items as? [Company] {
-//            return 50
-//        } else {
+
             return tableView.frame.height
-//        }
     }
     
     

@@ -10,6 +10,7 @@ import UIKit
 
 class CampaignCell: UITableViewCell {
     
+    //MARK:- IBOutlets
     @IBOutlet weak var CellHeaderLabel: UILabel!
     @IBOutlet weak var cellBodyLabel: UILabel!
     @IBOutlet weak var cellCreateCampaignLabel: UILabel!
@@ -18,6 +19,7 @@ class CampaignCell: UITableViewCell {
     @IBOutlet weak var vetoLabel: UILabel!
     @IBOutlet weak var categoryLabel: UILabel!
     
+    //MARK:- Variables
     var campaign:Campaign? {
         didSet {
             if let campaign = campaign {
@@ -38,6 +40,7 @@ class CampaignCell: UITableViewCell {
         }
     }
     
+    //MARK:- Cell Lifecycle
     override func awakeFromNib() {
         super.awakeFromNib()
         
