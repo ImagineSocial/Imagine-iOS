@@ -206,6 +206,13 @@ class HandyHelper {
     
     func notifyUserForUpvote(button: VoteButton, post: Post) {
         
+        if let user = Auth.auth().currentUser {
+            if user.uid == post.originalPosterUID {
+                
+                //No notifications if you like your own posts for whatever reason
+                return
+            }
+        }
         var buttonString: String?
         
         switch button {
