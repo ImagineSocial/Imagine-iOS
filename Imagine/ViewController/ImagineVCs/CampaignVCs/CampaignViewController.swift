@@ -267,7 +267,6 @@ extension CampaignViewController: UIScrollViewDelegate {
             if let view = floatingCommentView {
                 let offset = scrollView.contentOffset.y
                 let screenHeight = self.view.frame.height
-                print("Scroll View Did Scroll: \(offset)")
 
                 view.adjustPositionForScroll(contentOffset: offset, screenHeight: screenHeight)
             }

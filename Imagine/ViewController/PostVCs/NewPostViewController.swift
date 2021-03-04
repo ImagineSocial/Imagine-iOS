@@ -924,22 +924,29 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             cropViewController.aspectRatioLockEnabled = false
         }
         self.cropViewController = cropViewController
-        self.present(cropViewController, animated: true, completion: nil)
+        
+        // Change the presenting style to allow the cropViewController to be displayed when MemeView ist there, normal NewPostVC and NewPostVC inside a community
+        if let _ = memeView {
+            self.present(cropViewController, animated: true, completion: nil)
+        } else {
+            self.navigationController?.pushViewController(cropViewController, animated: true)
+        }
     }
     
     func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
         
+        // Change the presenting style to allow the cropViewController to be displayed when MemeView ist there, normal NewPostVC and NewPostVC inside a community
         if let cropVC = self.cropViewController {
-            var animated = true
             if let _ = memeView {
-                animated = false
+                cropVC.dismiss(animated: false, completion: nil)
+            } else {
+                self.navigationController?.popViewController(animated: true)
             }
-            cropVC.dismiss(animated: animated) {
-                if let memeView = self.memeView {
-                    memeView.imageSelected(image: image)
-                } else {
-                    self.setImageAndShowPreviewImage(image: image)
-                }
+            
+            if let memeView = self.memeView {
+                memeView.imageSelected(image: image)
+            } else {
+                self.setImageAndShowPreviewImage(image: image)
             }
         }
     }
