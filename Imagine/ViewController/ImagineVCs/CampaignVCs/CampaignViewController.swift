@@ -52,9 +52,19 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         createFloatingCommentView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        if let commentView = floatingCommentView {
+            commentView.addKeyboardObserver()
+        }
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         if let tipView = tipView {
             tipView.dismiss()
+        }
+        
+        if let commentView = floatingCommentView {
+            commentView.removeKeyboardObserver()
         }
     }
     
@@ -87,6 +97,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
                 bottomConstraint.isActive = true
             floatingCommentView!.bottomConstraint = bottomConstraint
             floatingCommentView!.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
+            floatingCommentView!.addKeyboardObserver()
             
             self.contentView.bringSubviewToFront(floatingCommentView!)
         }

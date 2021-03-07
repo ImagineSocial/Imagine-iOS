@@ -146,6 +146,19 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        //Add Observer again when the view was temporarly left for a user or a community profile
+        if let commentView = floatingCommentView {
+            commentView.addKeyboardObserver()
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        if let commentView = floatingCommentView {
+            commentView.removeKeyboardObserver()
+        }
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
@@ -1022,6 +1035,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                     bottomConstraint.isActive = true
                 floatingCommentView!.bottomConstraint = bottomConstraint
                 floatingCommentView!.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
+                floatingCommentView!.addKeyboardObserver()
+                floatingCommentView!.commentSection = .post
                 
                 self.contentView.bringSubviewToFront(floatingCommentView!)
             }
@@ -1029,7 +1044,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("We got touches")
         if let view = floatingCommentView {
             view.answerTextField.resignFirstResponder()
         }
