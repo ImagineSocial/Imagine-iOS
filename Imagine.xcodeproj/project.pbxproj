@@ -197,8 +197,6 @@
 		E9B944672258B674000145E2 /* RePostTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B944662258B674000145E2 /* RePostTableViewCell.xib */; };
 		E9B9446B2259E5EC000145E2 /* PostTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B9446A2259E5EC000145E2 /* PostTableViewCell.xib */; };
 		E9BA724C232557D100DF3FB3 /* InfoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BA724B232557D100DF3FB3 /* InfoTableViewController.swift */; };
-		E9C0CA2D2528AA010032E399 /* ImagineCommunityOptionsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9C0CA2C2528AA010032E399 /* ImagineCommunityOptionsCell.xib */; };
-		E9C0CA302528ADB80032E399 /* ImagineCommunityOptionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0CA2F2528ADB80032E399 /* ImagineCommunityOptionsCell.swift */; };
 		E9C42EEF2364393400FC50BA /* SearchPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C42EEE2364393400FC50BA /* SearchPostCell.swift */; };
 		E9C42EF12364396B00FC50BA /* SearchUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C42EF02364396B00FC50BA /* SearchUserCell.swift */; };
 		E9C6969E2524E38200F02D94 /* LanguageSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C6969D2524E38200F02D94 /* LanguageSelection.swift */; };
@@ -222,6 +220,8 @@
 		E9E531FE229EA242004D0654 /* ChatModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E531FD229EA242004D0654 /* ChatModels.swift */; };
 		E9E6876724167AB600CB7AF8 /* CurrentProjectsCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9E6876624167AB600CB7AF8 /* CurrentProjectsCollectionCell.xib */; };
 		E9E6876924167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E6876824167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift */; };
+		E9E6BD0325F5448B0012A870 /* ImagineCommunityNavigationCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9E6BD0225F5448B0012A870 /* ImagineCommunityNavigationCell.xib */; };
+		E9E6BD0625F566E40012A870 /* ImagineCommunityNavigationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E6BD0525F566E40012A870 /* ImagineCommunityNavigationCell.swift */; };
 		E9EA2CFA22AFCA0800207702 /* NewBlogPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EA2CF922AFCA0800207702 /* NewBlogPostViewController.swift */; };
 		E9EA7C9322E1DA210015C0EC /* BaseFeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EA7C9222E1DA210015C0EC /* BaseFeedTableViewController.swift */; };
 		E9EA7C9722E20DEB0015C0EC /* BlogPostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9EA7C9622E20DEB0015C0EC /* BlogPostCell.xib */; };
@@ -455,8 +455,6 @@
 		E9B944662258B674000145E2 /* RePostTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RePostTableViewCell.xib; sourceTree = "<group>"; };
 		E9B9446A2259E5EC000145E2 /* PostTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PostTableViewCell.xib; sourceTree = "<group>"; };
 		E9BA724B232557D100DF3FB3 /* InfoTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoTableViewController.swift; sourceTree = "<group>"; };
-		E9C0CA2C2528AA010032E399 /* ImagineCommunityOptionsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImagineCommunityOptionsCell.xib; sourceTree = "<group>"; };
-		E9C0CA2F2528ADB80032E399 /* ImagineCommunityOptionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagineCommunityOptionsCell.swift; sourceTree = "<group>"; };
 		E9C42EEE2364393400FC50BA /* SearchPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchPostCell.swift; sourceTree = "<group>"; };
 		E9C42EF02364396B00FC50BA /* SearchUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserCell.swift; sourceTree = "<group>"; };
 		E9C6969D2524E38200F02D94 /* LanguageSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageSelection.swift; sourceTree = "<group>"; };
@@ -480,6 +478,8 @@
 		E9E531FD229EA242004D0654 /* ChatModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModels.swift; sourceTree = "<group>"; };
 		E9E6876624167AB600CB7AF8 /* CurrentProjectsCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentProjectsCollectionCell.xib; sourceTree = "<group>"; };
 		E9E6876824167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentProjectsCollectionCell.swift; sourceTree = "<group>"; };
+		E9E6BD0225F5448B0012A870 /* ImagineCommunityNavigationCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImagineCommunityNavigationCell.xib; sourceTree = "<group>"; };
+		E9E6BD0525F566E40012A870 /* ImagineCommunityNavigationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagineCommunityNavigationCell.swift; sourceTree = "<group>"; };
 		E9EA2CF922AFCA0800207702 /* NewBlogPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewBlogPostViewController.swift; sourceTree = "<group>"; };
 		E9EA7C9222E1DA210015C0EC /* BaseFeedTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseFeedTableViewController.swift; sourceTree = "<group>"; };
 		E9EA7C9622E20DEB0015C0EC /* BlogPostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BlogPostCell.xib; sourceTree = "<group>"; };
@@ -1136,8 +1136,8 @@
 				E9E6876824167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift */,
 				E97D714924223A930018E27C /* JobOfferCell.xib */,
 				E9B79CE2224EC72000166EED /* JobOfferCell.swift */,
-				E9C0CA2C2528AA010032E399 /* ImagineCommunityOptionsCell.xib */,
-				E9C0CA2F2528ADB80032E399 /* ImagineCommunityOptionsCell.swift */,
+				E9E6BD0225F5448B0012A870 /* ImagineCommunityNavigationCell.xib */,
+				E9E6BD0525F566E40012A870 /* ImagineCommunityNavigationCell.swift */,
 			);
 			path = ImagineCommunityCells;
 			sourceTree = "<group>";
@@ -1388,7 +1388,7 @@
 				E9A9934D226C7A8200448932 /* LinkCell.xib in Resources */,
 				E9F31DC523F6C334001D5D25 /* FactCell.xib in Resources */,
 				E97FDFB924695FA40049E1E4 /* AddOnStoreImageTableViewCell.xib in Resources */,
-				E9C0CA2D2528AA010032E399 /* ImagineCommunityOptionsCell.xib in Resources */,
+				E9E6BD0325F5448B0012A870 /* ImagineCommunityNavigationCell.xib in Resources */,
 				E97FDFC8246C19CA0049E1E4 /* FollowedTopicCell.xib in Resources */,
 				E9A02AA32326580B000DAB69 /* BlankContentCell.xib in Resources */,
 				E98BA592241BFF3700C62DA8 /* AddTopicCell.xib in Resources */,
@@ -1510,7 +1510,6 @@
 				E962AC172224430400C6D6EF /* AppDelegate.swift in Sources */,
 				E962AC38222DB46400C6D6EF /* ReportOptionViewController.swift in Sources */,
 				E9BA724C232557D100DF3FB3 /* InfoTableViewController.swift in Sources */,
-				E9C0CA302528ADB80032E399 /* ImagineCommunityOptionsCell.swift in Sources */,
 				E9B85D4224112DCA00960942 /* CommunityPageViewController.swift in Sources */,
 				E962AC34222DA04E00C6D6EF /* ReportViewController.swift in Sources */,
 				E9817B2F25EBDCE500E56FC6 /* JobOffer.swift in Sources */,
@@ -1532,6 +1531,7 @@
 				E9E521BD245996D4002585A2 /* AddOnHeaderView.swift in Sources */,
 				E9B1872F222ECC4E00923037 /* NewPostViewController.swift in Sources */,
 				E9C6969E2524E38200F02D94 /* LanguageSelection.swift in Sources */,
+				E9E6BD0625F566E40012A870 /* ImagineCommunityNavigationCell.swift in Sources */,
 				E9B85D4C24124BB500960942 /* CollectionViewInTableViewCell.swift in Sources */,
 				E9B79CE3224EC72000166EED /* JobOfferCell.swift in Sources */,
 				E929516A23328D4B006C37E3 /* Constants.swift in Sources */,

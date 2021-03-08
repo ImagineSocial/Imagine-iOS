@@ -29,6 +29,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     private let currentProjectsIdentifier = "CurrentProjectsCollectionCell"
     private let tableViewIdentifier = "TableViewInCollectionViewCell"
     private let optionsCellIdentifier = "ImagineCommunityOptionsCell"
+    private let navigationCellIdentifier = "ImagineCommunityNavigationCell"
         
     let dataHelper = DataRequest()
     
@@ -50,6 +51,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         self.collectionView.register(UINib(nibName: "ImagineCommunityOptionsCell", bundle: nil), forCellWithReuseIdentifier: optionsCellIdentifier)
         self.collectionView.register(UINib(nibName: "BlogPostCell", bundle: nil), forCellWithReuseIdentifier: blogPostIdentifier)
         self.collectionView.register(UINib(nibName: "CurrentProjectsCollectionCell", bundle: nil), forCellWithReuseIdentifier: currentProjectsIdentifier)
+        self.collectionView.register(UINib(nibName: "ImagineCommunityNavigationCell", bundle: nil), forCellWithReuseIdentifier: navigationCellIdentifier)
         collectionView.register(UINib(nibName: tableViewIdentifier, bundle: nil), forCellWithReuseIdentifier: tableViewIdentifier)
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
@@ -121,7 +123,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         
         if indexPath.section == 0 {
             
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: optionsCellIdentifier, for: indexPath) as? ImagineCommunityOptionsCell {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: navigationCellIdentifier, for: indexPath) as? ImagineCommunityNavigationCell {
                 
                 cell.delegate = self
                 
@@ -192,7 +194,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         let width = collectionView.frame.width-insetTimesTwo
         
         if indexPath.section == 0{
-            return CGSize(width: width, height: 265)
+            return CGSize(width: width, height: 230)
         } else {
             let communityItem = items[indexPath.item]
             
@@ -355,6 +357,17 @@ extension ImagineCommunityCollectionViewController: CommunityCollectionCellDeleg
             performSegue(withIdentifier: "toFeedbackSegue", sender: nil)
         case .settings:
             performSegue(withIdentifier: "toSettingsSegue", sender: nil)
+        case .website:
+            let language = LanguageSelection().getLanguage()
+            var url: URL?
+            if language == .german {
+                url = URL(string: "https://imagine.social")
+            } else {
+                url = URL(string: "https://en.imagine.social")
+            }
+            if let url = url {
+                UIApplication.shared.open(url)
+            }
         }
     }
 }
