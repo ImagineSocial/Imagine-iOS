@@ -29,7 +29,7 @@ class CurrentProjectsCollectionCell: UICollectionViewCell {
         let labels = [firstLabel!, secondLabel!, thirdLabel!, fourthLabel!]
         
         for view in views {
-            view.layer.cornerRadius = 4
+            view.layer.cornerRadius = 15
             if #available(iOS 13.0, *) {
                 view.layer.borderColor = UIColor.quaternarySystemFill.cgColor
             } else {

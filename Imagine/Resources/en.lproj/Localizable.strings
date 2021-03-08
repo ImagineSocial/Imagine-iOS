@@ -458,6 +458,8 @@
 
 //NewCampaignViewController
 
+"campaign_category_feature" = "Feature";
+
 "campaign_category_proposal" = "Proposal";
 
 "campaign_category_complaint" = "Complaint";
@@ -739,6 +741,7 @@
  
 
 //DataHelper
+"dataHelper_feature_label" = "Feature";
 
 "dataHelper_proposal_label" = "Proposal";
 

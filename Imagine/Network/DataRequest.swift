@@ -189,8 +189,8 @@ class DataRequest {
                                     let date = createTimestamp.dateValue()
                                     let stringDate = date.formatRelativeString()
                                     
-                                    let campaign = Campaign()       // Erst neue Campaign erstellen
-                                    campaign.title = title      // Dann die Sachen zuordnen
+                                    let campaign = Campaign()
+                                    campaign.title = title
                                     campaign.cellText = shortBody
                                     campaign.documentID = documentID
                                     campaign.createDate = stringDate
@@ -299,6 +299,8 @@ class DataRequest {
     
     func getCategoryLabelText(type: CampaignType) -> String {
         switch type {
+        case .feature:
+            return NSLocalizedString("dataHelper_feature_label", comment: "feature")
         case .proposal:
             return NSLocalizedString("dataHelper_proposal_label", comment: "proposal")
         case .complaint:
@@ -315,6 +317,8 @@ class DataRequest {
     func getCampaignType(categoryString: String) -> CampaignCategory {
         
         switch categoryString {
+        case "feature":
+            return CampaignCategory(title: getCategoryLabelText(type: .feature), type: .feature)
         case "complaint":
             return CampaignCategory(title: getCategoryLabelText(type: .complaint), type: .complaint)
         case "call":
@@ -353,7 +357,7 @@ class DataRequest {
         }
         
         var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
+
         if fact.language == .english {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {

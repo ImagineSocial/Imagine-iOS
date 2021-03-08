@@ -12,6 +12,7 @@ import FirebaseFirestore
 import EasyTipView
 
 enum CampaignType {
+    case feature
     case proposal
     case complaint
     case call
@@ -28,7 +29,7 @@ class NewCampaignViewController: UIViewController {
     @IBOutlet weak var categoryPickerView: UIPickerView!
     
     var up = false
-    let categories: [CampaignCategory] = [CampaignCategory(title: NSLocalizedString("campaign_category_proposal", comment: "proposal"), type: .proposal), CampaignCategory(title: NSLocalizedString("campaign_category_complaint", comment: "complaint"), type: .complaint), CampaignCategory(title: NSLocalizedString("campaign_category_call", comment: "call for action"), type: .call), CampaignCategory(title: NSLocalizedString("campaign_category_change", comment: "change"), type: .change), CampaignCategory(title: NSLocalizedString("campaign_category_addOn", comment: "comm addOn"), type: .topicAddOn)]
+    let categories: [CampaignCategory] = [CampaignCategory(title: NSLocalizedString("campaign_category_feature", comment: ""), type: .feature), CampaignCategory(title: NSLocalizedString("campaign_category_proposal", comment: "proposal"), type: .proposal), CampaignCategory(title: NSLocalizedString("campaign_category_complaint", comment: "complaint"), type: .complaint), CampaignCategory(title: NSLocalizedString("campaign_category_call", comment: "call for action"), type: .call), CampaignCategory(title: NSLocalizedString("campaign_category_change", comment: "change"), type: .change), CampaignCategory(title: NSLocalizedString("campaign_category_addOn", comment: "comm addOn"), type: .topicAddOn)]
     var chosenCategory: CampaignType = .proposal
     
     var tipView: EasyTipView?
@@ -75,6 +76,8 @@ class NewCampaignViewController: UIViewController {
     
     func getCategoryString() -> String {
         switch self.chosenCategory {
+        case .feature:
+            return "feature"
         case .proposal:
             return "proposal"
         case .complaint:

@@ -28,7 +28,7 @@ class TableViewInCollectionViewCell: UICollectionViewCell {
     
     var delegate: TableViewInCollectionViewCellDelegate?
     
-    let cornerRadius: CGFloat = 8
+    let cornerRadius: CGFloat = Constants.cellCornerRadius
     
     override func awakeFromNib() {
         

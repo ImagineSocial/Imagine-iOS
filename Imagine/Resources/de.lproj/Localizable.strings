@@ -231,6 +231,7 @@
 "vote_successfull_alert_message" = "Deine Stimme wurde angenommen.";
 
 //NewCampaignViewController
+"campaign_category_feature" = "Feature";
 "campaign_category_proposal" = "Vorschlag";
 "campaign_category_complaint" = "Beschwerde";
 "campaign_category_call" = "Aufruf";
@@ -368,6 +369,7 @@
 "sideMenu_setting_label" = "Einstellungen";
 
 //DataHelper
+"dataHelper_feature_label" = "Feature";
 "dataHelper_proposal_label" = "Vorschlag";
 "dataHelper_complaint_label" = "Beschwerde";
 "dataHelper_call_label" = "Aufruf";
