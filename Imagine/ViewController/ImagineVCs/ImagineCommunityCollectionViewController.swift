@@ -22,14 +22,16 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     
 
     //MARK:- Variables
-    var items = [CommunityItem]()
+    var campaigns = [Campaign]()
+    var sortedCampaigns: [Campaign]?
+    
     let insetTimesTwo:CGFloat = 20
     
     let blogPostIdentifier = "BlogCell"
     private let currentProjectsIdentifier = "CurrentProjectsCollectionCell"
     private let tableViewIdentifier = "TableViewInCollectionViewCell"
-    private let optionsCellIdentifier = "ImagineCommunityOptionsCell"
     private let navigationCellIdentifier = "ImagineCommunityNavigationCell"
+    private let proposalHeaderIdentifier = "ImagineCommunityProposalHeader"
         
     let dataHelper = DataRequest()
     
@@ -48,11 +50,12 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         self.view.addGestureRecognizer(gesture)
         
         // Register cell classes
-        self.collectionView.register(UINib(nibName: "ImagineCommunityOptionsCell", bundle: nil), forCellWithReuseIdentifier: optionsCellIdentifier)
-        self.collectionView.register(UINib(nibName: "BlogPostCell", bundle: nil), forCellWithReuseIdentifier: blogPostIdentifier)
-        self.collectionView.register(UINib(nibName: "CurrentProjectsCollectionCell", bundle: nil), forCellWithReuseIdentifier: currentProjectsIdentifier)
-        self.collectionView.register(UINib(nibName: "ImagineCommunityNavigationCell", bundle: nil), forCellWithReuseIdentifier: navigationCellIdentifier)
+        collectionView.register(UINib(nibName: "BlogPostCell", bundle: nil), forCellWithReuseIdentifier: blogPostIdentifier)
+        collectionView.register(UINib(nibName: "CurrentProjectsCollectionCell", bundle: nil), forCellWithReuseIdentifier: currentProjectsIdentifier)
+        collectionView.register(UINib(nibName: "ImagineCommunityNavigationCell", bundle: nil), forCellWithReuseIdentifier: navigationCellIdentifier)
         collectionView.register(UINib(nibName: tableViewIdentifier, bundle: nil), forCellWithReuseIdentifier: tableViewIdentifier)
+        // Register header classes
+        collectionView.register(UINib(nibName: "ImagineCommunityProposalHeader", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: proposalHeaderIdentifier)
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.headerReferenceSize = CGSize(width: self.collectionView.frame.size.width, height: 85)
@@ -70,36 +73,15 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     
     //MARK:- Get Data
     func getData() {
-
-        dataHelper.getData(get: .blogPosts) { (posts) in
-            
-            for post in posts {
-                if let post = post as? BlogPost {
-                    let item = CommunityItem(item: post, createDate: post.createDate)
-                    self.items.append(item)
-                }
+        
+        dataHelper.getData(get: .campaign) { (campaigns) in
+            if let campaigns = campaigns as? [Campaign] {
+                self.campaigns = campaigns
+            } else {
+                return
             }
             
-            self.dataHelper.getData(get: .campaign) { (campaigns) in
-                for campaign in campaigns {
-                    if let campaign = campaign as? Campaign {
-                        let item = CommunityItem(item: campaign, createDate: campaign.createTime)
-                        self.items.append(item)
-                    }
-                }
-                
-                self.items.sort {
-                    ($0.createDate) > ($1.createDate)
-                }
-                
-                let first = BlogPost()
-                first.isCurrentProjectsCell = true
-                let item = CommunityItem(item: first, createDate: Date())
-                self.items.insert(item, at: 0)
-                
-                self.collectionView.reloadData()
-                
-            }
+            self.collectionView.reloadData()
         }
     }
 
@@ -107,15 +89,21 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 2
+        return 3
     }
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if section == 0 {
             return 1
+        } else if section == 1 {
+            return 1
         } else {
-            return items.count
+            if let sortCampaigns = sortedCampaigns {
+                return sortCampaigns.count
+            } else {
+                return campaigns.count
+            }
         }
     }
     
@@ -129,59 +117,42 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 
                 return cell
             }
+        } else if indexPath.section == 1 {
             
-        } else {
-            let communityItem = items[indexPath.item]
-            
-            var isEverySecondCell = false
-            if indexPath.item % 2 == 0 {
-                isEverySecondCell = true
-            }
-
-            if let blogPost = communityItem.item as? BlogPost {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: currentProjectsIdentifier, for: indexPath) as? CurrentProjectsCollectionCell {
                 
-                if blogPost.isCurrentProjectsCell {
-                    if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: currentProjectsIdentifier, for: indexPath) as? CurrentProjectsCollectionCell {
-                        
-                        return cell
-                    }
-                } else {
-                    
-                    if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: blogPostIdentifier, for: indexPath) as? BlogCell {
-                        
-                        cell.post = blogPost
-                        if isEverySecondCell {
-                            
-                            if #available(iOS 13.0, *) {
-                                cell.contentView.backgroundColor = .secondarySystemBackground
-                            } else {
-                                cell.contentView.backgroundColor = .ios12secondarySystemBackground
-                            }
-                        } else {
-                            if #available(iOS 13.0, *) {
-                                cell.contentView.backgroundColor = .systemBackground
-                            } else {
-                                cell.contentView.backgroundColor = .white
-                            }
-                            
-                        }
-                        
-                        return cell
-                    }
-                }
-            } else {
-                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: tableViewIdentifier, for: indexPath) as? TableViewInCollectionViewCell {
-                    
-                    //The TableViewInCOllectionViewCell can show Vote, Campaign and JobOffer
-                    let item = communityItem.item
-                    
-                    cell.delegate = self
-                    cell.isEverySecondCell = isEverySecondCell
-                    cell.items = [item]
-                    
-                    return cell
-                }
+                return cell
             }
+        } else {
+            
+            var campaign: Campaign!
+            
+            if let sortedCampaigns = sortedCampaigns {
+                campaign = sortedCampaigns[indexPath.item]
+            } else {
+                campaign = campaigns[indexPath.item]
+            }
+            
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: tableViewIdentifier, for: indexPath) as? TableViewInCollectionViewCell {
+                
+                //The TableViewInCOllectionViewCell can show Vote, Campaign and JobOffer
+                
+                cell.delegate = self
+                cell.items = [campaign]
+                
+                return cell
+            }
+            
+//            if let blogPost = communityItem.item as? BlogPost {
+//
+//                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: blogPostIdentifier, for: indexPath) as? BlogCell {
+//
+//                    cell.post = blogPost
+//
+//                    return cell
+//                }
+//            } else {
+                
         }
         
         return UICollectionViewCell()
@@ -193,32 +164,32 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     
         let width = collectionView.frame.width-insetTimesTwo
         
-        if indexPath.section == 0{
-            return CGSize(width: width, height: 230)
+        if indexPath.section == 0 {
+            return CGSize(width: width, height: 205)
+        } else if indexPath.section == 1 {
+            return CGSize(width: width, height: 170)    // For CurrentProfectsCollectionCell
         } else {
-            let communityItem = items[indexPath.item]
+            return CGSize(width: width, height: 150)   // For Campaign
             
-            if let blogPost = communityItem.item as? BlogPost {
-                if blogPost.isCurrentProjectsCell {
-                    return CGSize(width: width, height: 170)    // For CurrentProfectsCollectionCell
-                } else {
-                    return CGSize(width: width, height: 220)   // For BlogCell
-                }
-            } else if let _ = communityItem.item as? JobOffer {
-                return CGSize(width: width, height: 125)   // For JobOffer
-            } else if let _ = communityItem.item as? Campaign {
-                return CGSize(width: width, height: 150)   // For JobOffer
-            }  else {
-                return CGSize(width: width, height: 225)
-            }
+//            if let _ = communityItem.item as? BlogPost {
+//                return CGSize(width: width, height: 220)   // For BlogCell
+//            } else if let _ = communityItem.item as? JobOffer {
+//                return CGSize(width: width, height: 125)   // For JobOffer
+//            } else if let _ = communityItem.item as? Campaign {
+//                return CGSize(width: width, height: 150)   // For Campaign
+//            }  else {
+//                return CGSize(width: width, height: 225)
+//            }
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         if section == 0 {
             return CGSize.zero
-        } else {
+        } else if section == 1 {
             return CGSize(width: collectionView.frame.width, height: 80)
+        } else {
+            return CGSize(width: collectionView.frame.width, height: 170)
         }
     }
     
@@ -226,14 +197,22 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     //MARK:- UICollectionViewDelegate
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
 
-        
-        if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "communityHeader", for: indexPath) as? CommunityHeader {
+        if indexPath.section == 1 {
+            if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "communityHeader", for: indexPath) as? CommunityHeader {
 
-                headerView.headerLabel.text = NSLocalizedString("latest_news_header", comment: "latest news")
+                    headerView.headerLabel.text = NSLocalizedString("latest_news_header", comment: "latest news")
 
-            return headerView
-        
+                return headerView
+            }
+        } else {
+            if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: proposalHeaderIdentifier, for: indexPath) as? ImagineCommunityProposalHeader {
+                
+                headerView.delegate = self
+                
+                return headerView
+            }
         }
+        
 
         return UICollectionReusableView()
     }
@@ -241,14 +220,14 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.section != 0 {
-            
-            if let item = items[indexPath.item].item as? BlogPost {
-                if !item.isCurrentProjectsCell {
-                    performSegue(withIdentifier: "toBlogPost", sender: item)
-                }
-            }
-        }
+//        if indexPath.section != 0 {
+//
+//            if let item = items[indexPath.item].item as? BlogPost {
+//                if !item.isCurrentProjectsCell {
+//                    performSegue(withIdentifier: "toBlogPost", sender: item)
+//                }
+//            }
+//        }
     }
     
     
@@ -372,6 +351,41 @@ extension ImagineCommunityCollectionViewController: CommunityCollectionCellDeleg
     }
 }
 
+//MARK:- ProposalHeaderDelegate
+
+extension ImagineCommunityCollectionViewController: ImagineCommunityProposalHeaderDelegate {
+    
+    func selectionChanged(selection: CampaignType) {
+        if selection == .all {
+            self.sortedCampaigns = nil
+            
+            self.campaigns.sort {
+                ($0.supporter) > ($1.supporter)
+            }
+            self.collectionView.reloadData()
+            
+            return
+        } else {
+            
+            self.sortedCampaigns?.removeAll()
+            var newSortCampaigns = [Campaign]()
+            
+            //Sort the fetched campaigns for the selected criteria
+            for campaign in campaigns {
+                if let category = campaign.category, category.type == selection {
+                    newSortCampaigns.append(campaign)
+                }
+            }
+            
+            newSortCampaigns.sort {
+                ($0.supporter) > ($1.supporter)
+            }
+            
+            self.sortedCampaigns = newSortCampaigns
+            self.collectionView.reloadData()
+        }
+    }
+}
 
 class CommunityHeader: UICollectionReusableView {
     

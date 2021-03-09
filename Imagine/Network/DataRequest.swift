@@ -311,6 +311,8 @@ class DataRequest {
             return NSLocalizedString("dataHelper_change_label", comment: "change")
         case .topicAddOn:
             return NSLocalizedString("dataHelper_topic_addOn", comment: "topic addOn")
+        case .all:
+            return NSLocalizedString("dataHelper_proposal_label", comment: "proposal")
         }
     }
     

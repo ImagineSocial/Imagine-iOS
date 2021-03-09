@@ -12,6 +12,7 @@ import FirebaseFirestore
 import EasyTipView
 
 enum CampaignType {
+    case all
     case feature
     case proposal
     case complaint
@@ -88,6 +89,8 @@ class NewCampaignViewController: UIViewController {
             return "change"
         case .topicAddOn:
             return "topicAddOn"
+        case .all:
+            return "proposal"
         }
     }
     

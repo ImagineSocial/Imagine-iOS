@@ -222,6 +222,8 @@
 		E9E6876924167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E6876824167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift */; };
 		E9E6BD0325F5448B0012A870 /* ImagineCommunityNavigationCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9E6BD0225F5448B0012A870 /* ImagineCommunityNavigationCell.xib */; };
 		E9E6BD0625F566E40012A870 /* ImagineCommunityNavigationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E6BD0525F566E40012A870 /* ImagineCommunityNavigationCell.swift */; };
+		E9E6BD0B25F77FC00012A870 /* ImagineCommunityProposalHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9E6BD0A25F77FC00012A870 /* ImagineCommunityProposalHeader.xib */; };
+		E9E6BD0E25F7842C0012A870 /* ImagineCommunityProposalHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E6BD0D25F7842C0012A870 /* ImagineCommunityProposalHeader.swift */; };
 		E9EA2CFA22AFCA0800207702 /* NewBlogPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EA2CF922AFCA0800207702 /* NewBlogPostViewController.swift */; };
 		E9EA7C9322E1DA210015C0EC /* BaseFeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EA7C9222E1DA210015C0EC /* BaseFeedTableViewController.swift */; };
 		E9EA7C9722E20DEB0015C0EC /* BlogPostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9EA7C9622E20DEB0015C0EC /* BlogPostCell.xib */; };
@@ -480,6 +482,8 @@
 		E9E6876824167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentProjectsCollectionCell.swift; sourceTree = "<group>"; };
 		E9E6BD0225F5448B0012A870 /* ImagineCommunityNavigationCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImagineCommunityNavigationCell.xib; sourceTree = "<group>"; };
 		E9E6BD0525F566E40012A870 /* ImagineCommunityNavigationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagineCommunityNavigationCell.swift; sourceTree = "<group>"; };
+		E9E6BD0A25F77FC00012A870 /* ImagineCommunityProposalHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImagineCommunityProposalHeader.xib; sourceTree = "<group>"; };
+		E9E6BD0D25F7842C0012A870 /* ImagineCommunityProposalHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagineCommunityProposalHeader.swift; sourceTree = "<group>"; };
 		E9EA2CF922AFCA0800207702 /* NewBlogPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewBlogPostViewController.swift; sourceTree = "<group>"; };
 		E9EA7C9222E1DA210015C0EC /* BaseFeedTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseFeedTableViewController.swift; sourceTree = "<group>"; };
 		E9EA7C9622E20DEB0015C0EC /* BlogPostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BlogPostCell.xib; sourceTree = "<group>"; };
@@ -1097,6 +1101,8 @@
 				E9F12C0524FE3630006BD9C3 /* AddOnCollectionViewFooter.xib */,
 				E9F12C0724FE369E006BD9C3 /* AddOnCollectionViewFooter.swift */,
 				E98FAEA523FAD2CC0064A614 /* CommentFooter.xib */,
+				E9E6BD0A25F77FC00012A870 /* ImagineCommunityProposalHeader.xib */,
+				E9E6BD0D25F7842C0012A870 /* ImagineCommunityProposalHeader.swift */,
 			);
 			path = "Community Header & Footers";
 			sourceTree = "<group>";
@@ -1360,6 +1366,7 @@
 				E9879A2124BDB4C1004B497F /* MusicCell.xib in Resources */,
 				E94EDD972564289500B226C8 /* AddOnPlaylistCollectionViewCell.xib in Resources */,
 				E98FAEA223FAB8760064A614 /* CommentCell.xib in Resources */,
+				E9E6BD0B25F77FC00012A870 /* ImagineCommunityProposalHeader.xib in Resources */,
 				E97FDFBE246AA4130049E1E4 /* ShowAllTopicsCell.xib in Resources */,
 				E940D8D4249676AB00018EF3 /* PlaceHolderCell.xib in Resources */,
 				E9F12BFE24FC01B3006BD9C3 /* CommunityHeaderView.xib in Resources */,
@@ -1591,6 +1598,7 @@
 				E962AC3A222DB5DB00C6D6EF /* ReportTableViewController.swift in Sources */,
 				E9817B6525EC098300E56FC6 /* DescriptionView.swift in Sources */,
 				E991CCD82270972F00940834 /* WebViewController.swift in Sources */,
+				E9E6BD0E25F7842C0012A870 /* ImagineCommunityProposalHeader.swift in Sources */,
 				E9D9561824F82791007E5D18 /* AddOnCollectionViewController.swift in Sources */,
 				E962AC2B2224446100C6D6EF /* FirestoreRequest.swift in Sources */,
 				E9817B6B25EC0E8000E56FC6 /* PictureView.swift in Sources */,
