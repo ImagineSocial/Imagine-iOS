@@ -29,7 +29,7 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="aWE-J5-IGn">
                                 <rect key="frame" x="10" y="10" width="162.5" height="216"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Users:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.85000002384185791" translatesAutoresizingMaskIntoConstraints="NO" id="OKx-Pt-dFM">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Registered Users:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.85000002384185791" translatesAutoresizingMaskIntoConstraints="NO" id="OKx-Pt-dFM">
                                         <rect key="frame" x="0.0" y="0.0" width="162.5" height="46.5"/>
                                         <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
                                         <nil key="textColor"/>
@@ -114,6 +114,10 @@
             <size key="customSize" width="327" height="231"/>
             <connections>
                 <outlet property="containerView" destination="6gZ-oA-Wok" id="ZZG-Dm-KZq"/>
+                <outlet property="donationsLabel" destination="4JM-2U-BkS" id="Et7-hz-ebw"/>
+                <outlet property="earningsLabel" destination="OZr-CC-RhS" id="LDQ-ya-4SO"/>
+                <outlet property="expensesLabel" destination="H9b-5m-iXE" id="54K-4h-Fk4"/>
+                <outlet property="userCountDataLabel" destination="Efq-Po-vD1" id="rCL-Qc-lJN"/>
             </connections>
             <point key="canvasLocation" x="-797.82608695652175" y="-11.71875"/>
         </collectionViewCell>

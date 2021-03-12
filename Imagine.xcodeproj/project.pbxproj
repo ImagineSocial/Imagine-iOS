@@ -258,6 +258,8 @@
 		E9FE46CC25FA9C8A00F4C973 /* DataReportCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FE46CB25FA9C8A00F4C973 /* DataReportCollectionViewCell.swift */; };
 		E9FE46CF25FB5AE500F4C973 /* UIViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FE46CE25FB5AE500F4C973 /* UIViewExtensions.swift */; };
 		E9FE46D225FB5C4D00F4C973 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FE46D125FB5C4D00F4C973 /* StringExtensions.swift */; };
+		E9FE46D525FB5DB500F4C973 /* ImagineDataRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FE46D425FB5DB500F4C973 /* ImagineDataRequest.swift */; };
+		E9FE46D825FB5E2A00F4C973 /* ReportData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FE46D725FB5E2A00F4C973 /* ReportData.swift */; };
 		E9FE65D622A2A42800FA4E68 /* HandyHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FE65D522A2A42800FA4E68 /* HandyHelper.swift */; };
 /* End PBXBuildFile section */
 
@@ -522,6 +524,8 @@
 		E9FE46CB25FA9C8A00F4C973 /* DataReportCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataReportCollectionViewCell.swift; sourceTree = "<group>"; };
 		E9FE46CE25FB5AE500F4C973 /* UIViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtensions.swift; sourceTree = "<group>"; };
 		E9FE46D125FB5C4D00F4C973 /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
+		E9FE46D425FB5DB500F4C973 /* ImagineDataRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagineDataRequest.swift; sourceTree = "<group>"; };
+		E9FE46D725FB5E2A00F4C973 /* ReportData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportData.swift; sourceTree = "<group>"; };
 		E9FE65D522A2A42800FA4E68 /* HandyHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandyHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -707,6 +711,7 @@
 				E9817B2825EBDC5E00E56FC6 /* BlogPost.swift */,
 				E9817B2B25EBDCCC00E56FC6 /* Vote.swift */,
 				E9817B2E25EBDCE500E56FC6 /* JobOffer.swift */,
+				E9FE46D725FB5E2A00F4C973 /* ReportData.swift */,
 			);
 			path = Imagine;
 			sourceTree = "<group>";
@@ -1282,6 +1287,7 @@
 				E93043B02293F06E00DC66D5 /* DataRequest.swift */,
 				E9F622F625EA497500AAD2C0 /* PostHelper.swift */,
 				E9817B3125EBDD8600E56FC6 /* CommunityHelper.swift */,
+				E9FE46D425FB5DB500F4C973 /* ImagineDataRequest.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -1524,6 +1530,7 @@
 				E9211AB9223FCBB100185A00 /* NewCampaignViewController.swift in Sources */,
 				E933553524705CD00060E331 /* SearchCollectionViewController.swift in Sources */,
 				E97FDFCE246D1EE00049E1E4 /* ShowAllFactsCollectionViewController.swift in Sources */,
+				E9FE46D825FB5E2A00F4C973 /* ReportData.swift in Sources */,
 				E9F622E125E96DD500AAD2C0 /* LinkedCommunityView.swift in Sources */,
 				E98FAEA823FAD4780064A614 /* CommentAnswerView.swift in Sources */,
 				E9CF17C423CB3F41000E5149 /* Campaign.swift in Sources */,
@@ -1539,6 +1546,7 @@
 				E9817B6125EC05AD00E56FC6 /* TitleView.swift in Sources */,
 				E9817B3D25EBE25100E56FC6 /* AddOnSetting.swift in Sources */,
 				E93F6F14253237FE0044EAA4 /* PopUpInfoView.swift in Sources */,
+				E9FE46D525FB5DB500F4C973 /* ImagineDataRequest.swift in Sources */,
 				E9530C4E22DCBF20007D6A00 /* PinchToZoomViewController.swift in Sources */,
 				E9526C0B250F99550088004F /* RadialGradientLayer.swift in Sources */,
 				E9D9561A24F8398F007E5D18 /* AddOnHeaderReusableView.swift in Sources */,
