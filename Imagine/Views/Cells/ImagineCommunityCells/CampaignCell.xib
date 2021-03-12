@@ -21,119 +21,132 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="campaignCell" rowHeight="219" id="NUe-ih-79c" customClass="CampaignCell" customModule="Imagine" customModuleProvider="target">
+        <tableViewCell contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="campaignCell" rowHeight="219" id="NUe-ih-79c" customClass="CampaignCell" customModule="Imagine" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="413" height="219"/>
             <autoresizingMask key="autoresizingMask"/>
-            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="NUe-ih-79c" id="px1-Gd-gVp">
+            <tableViewCellContentView key="contentView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="NUe-ih-79c" id="px1-Gd-gVp">
                 <rect key="frame" x="0.0" y="0.0" width="413" height="219"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rechte der Administratoren" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.64999997615814209" translatesAutoresizingMaskIntoConstraints="NO" id="QEz-zT-I6x">
-                        <rect key="frame" x="45" y="8" width="273" height="30"/>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cDl-ox-ebg">
+                        <rect key="frame" x="0.0" y="0.0" width="413" height="219"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rechte der Administratoren" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.64999997615814209" translatesAutoresizingMaskIntoConstraints="NO" id="fWa-QG-gV8">
+                                <rect key="frame" x="45" y="8" width="273" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="19e-Jr-L9H"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="17"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progressViewStyle="bar" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="B1k-gL-JIE">
+                                <rect key="frame" x="10" y="210" width="175" height="5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="175" id="PWO-rM-hRG"/>
+                                    <constraint firstAttribute="height" constant="4" id="ak2-Wx-bnb"/>
+                                </constraints>
+                                <color key="progressTintColor" red="0.36470588240000001" green="0.69803921570000005" blue="0.36862745099999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="trackTintColor" red="1" green="0.53725490200000003" blue="0.51764705879999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </progressView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kategorie" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="IYn-8b-p4s">
+                                <rect key="frame" x="323" y="14" width="80" height="18.5"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="80" id="L00-DY-6Du"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="14"/>
+                                <color key="textColor" systemColor="secondaryLabelColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019 10:00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ryo-Xh-ldq">
+                                <rect key="frame" x="287" y="193" width="116" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="2Bn-Ma-2SI"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wieviel Prozent dürfen die Administratoren, besonders Malte, nach dem ersten Jahr an Rechten haben?" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="2OC-0D-eTO">
+                                <rect key="frame" x="10" y="40" width="393" height="142"/>
+                                <fontDescription key="fontDescription" name="IBMPlexSans-Light" family="IBM Plex Sans" pointSize="15"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="idea" translatesAutoresizingMaskIntoConstraints="NO" id="XzJ-Zb-bYx" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
+                                <rect key="frame" x="10" y="10.5" width="25" height="25"/>
+                                <color key="tintColor" systemColor="labelColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="25" id="JN1-rd-wgJ"/>
+                                    <constraint firstAttribute="height" constant="25" id="QcA-YC-MXr"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="0.0"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="p7c-7G-P2I">
+                                <rect key="frame" x="110" y="192" width="75" height="16"/>
+                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="a9b-VA-9Wn">
+                                <rect key="frame" x="10" y="190" width="100" height="18"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="HbU-41-Ran"/>
+                                    <constraint firstAttribute="height" constant="18" id="kmC-zf-m7C"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="30" id="21y-kf-Pbl"/>
+                            <constraint firstItem="p7c-7G-P2I" firstAttribute="leading" secondItem="a9b-VA-9Wn" secondAttribute="trailing" id="2JZ-sK-23C"/>
+                            <constraint firstItem="fWa-QG-gV8" firstAttribute="top" secondItem="cDl-ox-ebg" secondAttribute="top" constant="8" id="2Nr-XK-eZg"/>
+                            <constraint firstItem="a9b-VA-9Wn" firstAttribute="leading" secondItem="B1k-gL-JIE" secondAttribute="leading" id="7gK-Dc-bGf"/>
+                            <constraint firstAttribute="trailing" secondItem="2OC-0D-eTO" secondAttribute="trailing" constant="10" id="EXb-5e-FIv"/>
+                            <constraint firstItem="B1k-gL-JIE" firstAttribute="leading" secondItem="2OC-0D-eTO" secondAttribute="leading" id="Gh4-hx-LWv"/>
+                            <constraint firstItem="B1k-gL-JIE" firstAttribute="top" secondItem="p7c-7G-P2I" secondAttribute="bottom" constant="2" id="IGS-i7-zxs"/>
+                            <constraint firstItem="XzJ-Zb-bYx" firstAttribute="leading" secondItem="cDl-ox-ebg" secondAttribute="leading" constant="10" id="Mo2-bx-vxR"/>
+                            <constraint firstItem="ryo-Xh-ldq" firstAttribute="bottom" secondItem="B1k-gL-JIE" secondAttribute="bottom" id="OuV-pn-9Nx"/>
+                            <constraint firstItem="2OC-0D-eTO" firstAttribute="leading" secondItem="cDl-ox-ebg" secondAttribute="leading" constant="10" id="XCg-jb-kF0"/>
+                            <constraint firstItem="2OC-0D-eTO" firstAttribute="top" secondItem="fWa-QG-gV8" secondAttribute="bottom" constant="2" id="YEx-JF-cqc"/>
+                            <constraint firstAttribute="bottom" secondItem="B1k-gL-JIE" secondAttribute="bottom" constant="5" id="YTZ-d3-jzo"/>
+                            <constraint firstItem="a9b-VA-9Wn" firstAttribute="top" secondItem="2OC-0D-eTO" secondAttribute="bottom" constant="8" id="aaG-VA-hEI"/>
+                            <constraint firstAttribute="trailing" secondItem="IYn-8b-p4s" secondAttribute="trailing" constant="10" id="dcH-A7-Wjt"/>
+                            <constraint firstAttribute="trailing" secondItem="ryo-Xh-ldq" secondAttribute="trailing" constant="10" id="ksc-DI-8AA"/>
+                            <constraint firstItem="fWa-QG-gV8" firstAttribute="leading" secondItem="XzJ-Zb-bYx" secondAttribute="trailing" constant="10" id="mic-8T-slj"/>
+                            <constraint firstItem="IYn-8b-p4s" firstAttribute="leading" secondItem="fWa-QG-gV8" secondAttribute="trailing" constant="5" id="nYd-0H-sJi"/>
+                            <constraint firstItem="IYn-8b-p4s" firstAttribute="centerY" secondItem="fWa-QG-gV8" secondAttribute="centerY" id="p1v-2x-D8b"/>
+                            <constraint firstItem="XzJ-Zb-bYx" firstAttribute="centerY" secondItem="fWa-QG-gV8" secondAttribute="centerY" id="pQw-2M-hEG"/>
+                            <constraint firstItem="p7c-7G-P2I" firstAttribute="trailing" secondItem="B1k-gL-JIE" secondAttribute="trailing" id="tzw-8A-eoO"/>
+                            <constraint firstItem="B1k-gL-JIE" firstAttribute="top" secondItem="a9b-VA-9Wn" secondAttribute="bottom" constant="2" id="w25-U9-D1Q"/>
                         </constraints>
-                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="17"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wieviel Prozent dürfen die Administratoren, besonders Malte, nach dem ersten Jahr an Rechten haben?" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="cyU-SE-7ui">
-                        <rect key="frame" x="8" y="40" width="395" height="142"/>
-                        <fontDescription key="fontDescription" name="IBMPlexSans-Light" family="IBM Plex Sans" pointSize="15"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019 10:00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gpM-Pc-saW">
-                        <rect key="frame" x="294" y="193" width="109" height="21"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="21" id="Eyr-do-8lp"/>
-                        </constraints>
-                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progressViewStyle="bar" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="ATP-w9-DYb">
-                        <rect key="frame" x="8" y="210" width="175" height="5"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="175" id="lBI-pb-v1Q"/>
-                            <constraint firstAttribute="height" constant="4" id="wUb-2i-fga"/>
-                        </constraints>
-                        <color key="progressTintColor" red="0.36470588240000001" green="0.69803921570000005" blue="0.36862745099999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <color key="trackTintColor" red="1" green="0.53725490200000003" blue="0.51764705879999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    </progressView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="IpQ-8y-i3W">
-                        <rect key="frame" x="8" y="190" width="100" height="18"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="100" id="RzV-mq-Lf6"/>
-                            <constraint firstAttribute="height" constant="18" id="xRR-Xj-Tjw"/>
-                        </constraints>
-                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="swA-yb-Qln">
-                        <rect key="frame" x="108" y="194" width="75" height="14"/>
-                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kategorie" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="fEA-y3-SLd">
-                        <rect key="frame" x="323" y="15" width="80" height="16.5"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="80" id="Hz5-I0-FXl"/>
-                        </constraints>
-                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="14"/>
-                        <color key="textColor" systemColor="secondaryLabelColor"/>
-                        <nil key="highlightedColor"/>
-                    </label>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="idea" translatesAutoresizingMaskIntoConstraints="NO" id="e3l-Iq-VeM" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="10" y="10.5" width="25" height="25"/>
-                        <color key="tintColor" systemColor="labelColor"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="25" id="ecS-Pw-xWM"/>
-                            <constraint firstAttribute="width" constant="25" id="iaU-vx-Ezm"/>
-                        </constraints>
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                <real key="value" value="0.0"/>
-                            </userDefinedRuntimeAttribute>
-                        </userDefinedRuntimeAttributes>
-                    </imageView>
+                    </view>
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                 <constraints>
-                    <constraint firstAttribute="bottom" secondItem="ATP-w9-DYb" secondAttribute="bottom" constant="5" id="6Y3-SH-wNf"/>
-                    <constraint firstItem="fEA-y3-SLd" firstAttribute="centerY" secondItem="QEz-zT-I6x" secondAttribute="centerY" id="6ZY-vP-Y2S"/>
-                    <constraint firstItem="swA-yb-Qln" firstAttribute="leading" secondItem="IpQ-8y-i3W" secondAttribute="trailing" id="7s7-NI-ztc"/>
-                    <constraint firstItem="gpM-Pc-saW" firstAttribute="bottom" secondItem="ATP-w9-DYb" secondAttribute="bottom" id="9rd-7G-1xv"/>
-                    <constraint firstAttribute="trailing" secondItem="gpM-Pc-saW" secondAttribute="trailing" constant="10" id="9wq-Yo-oRY"/>
-                    <constraint firstItem="ATP-w9-DYb" firstAttribute="leading" secondItem="cyU-SE-7ui" secondAttribute="leading" id="AuX-aM-p7T"/>
-                    <constraint firstItem="swA-yb-Qln" firstAttribute="trailing" secondItem="ATP-w9-DYb" secondAttribute="trailing" id="Ghj-qj-6Td"/>
-                    <constraint firstItem="e3l-Iq-VeM" firstAttribute="leading" secondItem="px1-Gd-gVp" secondAttribute="leading" constant="10" id="GsA-Lr-9TP"/>
-                    <constraint firstItem="ATP-w9-DYb" firstAttribute="top" secondItem="IpQ-8y-i3W" secondAttribute="bottom" constant="2" id="JRb-D4-jPN"/>
-                    <constraint firstAttribute="trailing" secondItem="fEA-y3-SLd" secondAttribute="trailing" constant="10" id="NpZ-Qw-aqJ"/>
-                    <constraint firstItem="fEA-y3-SLd" firstAttribute="leading" secondItem="QEz-zT-I6x" secondAttribute="trailing" constant="5" id="UtN-bQ-GvM"/>
-                    <constraint firstItem="QEz-zT-I6x" firstAttribute="top" secondItem="px1-Gd-gVp" secondAttribute="top" constant="8" id="bz0-cV-3gS"/>
-                    <constraint firstItem="cyU-SE-7ui" firstAttribute="top" secondItem="QEz-zT-I6x" secondAttribute="bottom" constant="2" id="djk-eY-tle"/>
-                    <constraint firstAttribute="trailing" secondItem="cyU-SE-7ui" secondAttribute="trailing" constant="10" id="e4L-wc-hjN"/>
-                    <constraint firstItem="QEz-zT-I6x" firstAttribute="leading" secondItem="e3l-Iq-VeM" secondAttribute="trailing" constant="10" id="ipC-gm-hto"/>
-                    <constraint firstItem="e3l-Iq-VeM" firstAttribute="centerY" secondItem="QEz-zT-I6x" secondAttribute="centerY" id="su5-MV-KdN"/>
-                    <constraint firstItem="IpQ-8y-i3W" firstAttribute="leading" secondItem="ATP-w9-DYb" secondAttribute="leading" id="twq-gV-wxl"/>
-                    <constraint firstItem="ATP-w9-DYb" firstAttribute="top" secondItem="swA-yb-Qln" secondAttribute="bottom" constant="2" id="u83-BK-jS8"/>
-                    <constraint firstItem="IpQ-8y-i3W" firstAttribute="top" secondItem="cyU-SE-7ui" secondAttribute="bottom" constant="8" id="vz5-d9-TcT"/>
-                    <constraint firstItem="cyU-SE-7ui" firstAttribute="leading" secondItem="px1-Gd-gVp" secondAttribute="leading" constant="8" id="zmv-vn-kvr"/>
+                    <constraint firstItem="cDl-ox-ebg" firstAttribute="top" secondItem="px1-Gd-gVp" secondAttribute="top" id="Raj-7N-UiF"/>
+                    <constraint firstItem="cDl-ox-ebg" firstAttribute="leading" secondItem="px1-Gd-gVp" secondAttribute="leading" id="hmF-XD-vyI"/>
+                    <constraint firstAttribute="bottom" secondItem="cDl-ox-ebg" secondAttribute="bottom" id="q1c-JU-tjh"/>
+                    <constraint firstAttribute="trailing" secondItem="cDl-ox-ebg" secondAttribute="trailing" id="zF3-EV-NPw"/>
                 </constraints>
             </tableViewCellContentView>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <connections>
-                <outlet property="CellHeaderLabel" destination="QEz-zT-I6x" id="Gqm-Ca-MPM"/>
-                <outlet property="categoryLabel" destination="fEA-y3-SLd" id="4cp-ST-Bb3"/>
-                <outlet property="cellBodyLabel" destination="cyU-SE-7ui" id="mVO-px-YTI"/>
-                <outlet property="cellCreateCampaignLabel" destination="gpM-Pc-saW" id="dwR-hB-kL0"/>
-                <outlet property="progressView" destination="ATP-w9-DYb" id="o0M-Z2-HTz"/>
-                <outlet property="supporterLabel" destination="IpQ-8y-i3W" id="61Q-7e-MSc"/>
-                <outlet property="vetoLabel" destination="swA-yb-Qln" id="71u-Vf-y0e"/>
+                <outlet property="CellHeaderLabel" destination="fWa-QG-gV8" id="DkI-7y-XMr"/>
+                <outlet property="categoryLabel" destination="IYn-8b-p4s" id="a0B-PF-Wqe"/>
+                <outlet property="cellBodyLabel" destination="2OC-0D-eTO" id="zY5-pX-KQo"/>
+                <outlet property="cellCreateCampaignLabel" destination="ryo-Xh-ldq" id="Pc2-LC-7hE"/>
+                <outlet property="containerView" destination="cDl-ox-ebg" id="s1w-ir-NId"/>
+                <outlet property="progressView" destination="B1k-gL-JIE" id="fhi-8e-S5c"/>
+                <outlet property="supporterLabel" destination="a9b-VA-9Wn" id="9cj-fa-nKY"/>
+                <outlet property="vetoLabel" destination="p7c-7G-P2I" id="Aun-fc-V2o"/>
             </connections>
             <point key="canvasLocation" x="-805.07246376811599" y="-48.549107142857139"/>
         </tableViewCell>
     </objects>
     <designables>
-        <designable name="e3l-Iq-VeM">
+        <designable name="XzJ-Zb-bYx">
             <size key="intrinsicContentSize" width="30" height="30"/>
         </designable>
     </designables>

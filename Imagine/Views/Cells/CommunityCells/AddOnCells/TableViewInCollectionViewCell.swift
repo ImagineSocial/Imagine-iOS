@@ -22,7 +22,6 @@ class TableViewInCollectionViewCell: UICollectionViewCell {
     private let jobOfferReuseIdentifier = "SupportTheCommunityCell"
     private let voteCellIdentifier = "VoteCell"
     private let addOnHeaderIdentifier = "InfoHeaderAddOnCell"
-    private let campaignCellIdentifier = "campaignCell"
     
     var isEverySecondCell = false       // Change Design on every second Cell
     
@@ -42,7 +41,6 @@ class TableViewInCollectionViewCell: UICollectionViewCell {
         tableView.register(UINib(nibName: "JobOfferCell", bundle: nil), forCellReuseIdentifier: jobOfferReuseIdentifier)
         tableView.register(UINib(nibName: "VoteCell", bundle: nil), forCellReuseIdentifier: voteCellIdentifier)
         tableView.register(UINib(nibName: "InfoHeaderAddOnCell", bundle: nil), forCellReuseIdentifier: addOnHeaderIdentifier)
-        tableView.register(UINib(nibName: "CampaignCell", bundle: nil), forCellReuseIdentifier: campaignCellIdentifier)
     }
     
     override func prepareForReuse() {
@@ -76,24 +74,7 @@ extension TableViewInCollectionViewCell: UITableViewDelegate, UITableViewDataSou
                 
                 return cell
             }
-        } else if let vote = items as? [Vote] {
-            if let cell = tableView.dequeueReusableCell(withIdentifier: voteCellIdentifier) as? VoteCell {
-                
-                cell.needInsets = false
-                cell.vote = vote[indexPath.row]
-                
-                return cell
-            }
-        } else if let campaigns = items as? [Campaign] {
-            if let cell = tableView.dequeueReusableCell(withIdentifier: campaignCellIdentifier, for: indexPath) as? CampaignCell {
-                let campaign = campaigns[indexPath.row]
-                
-                cell.campaign = campaign
-                
-                return cell
-            }
         }
-        
         
         return UITableViewCell()
     }

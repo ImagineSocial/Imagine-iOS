@@ -22,27 +22,26 @@ enum Impact {
     case strong
 }
 
-class voteCampaignTableViewController: UITableViewController {
+class CampaignVoteCollectionViewController: UICollectionViewController {
     
-//    @IBOutlet weak var spaceBetweenSubheaderAndDescriptionLabel: NSLayoutConstraint!
+    //MARK:- IBOutlets
     @IBOutlet weak var segmentedControl: UISegmentedControl!
-    @IBOutlet weak var headerLabel: UILabel!
-    @IBOutlet weak var subHeaderLabel: UILabel!
-    @IBOutlet weak var shareIdeaButton: DesignableButton!
-    @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var infoButton: UIBarButtonItem!
-    @IBOutlet weak var shareIdeaButtonIcon: UIImageView!
     
+    //MARK:- Variables
     var campaigns = [Campaign]()
     var votes = [Vote]()
-    var mode: suggestionMode = .vote
+    var mode: suggestionMode = .campaign
     let dataHelper = DataRequest()
+    let insetsTimesTwo: CGFloat = 20
     
     var tipView: EasyTipView?
     
     private let voteCellIdentifier = "VoteCell"
     private let campaignCellIdentifier = "campaignCell"
+    private let campaignHeaderIdentifier = "campaignCollectionHeaderView"
     
+    //MARK:- View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -60,10 +59,8 @@ class voteCampaignTableViewController: UITableViewController {
         
         self.view.activityStartAnimating()
         
-        tableView.register(UINib(nibName: "VoteCell", bundle: nil), forCellReuseIdentifier: voteCellIdentifier)
-        tableView.register(UINib(nibName: "CampaignCell", bundle: nil), forCellReuseIdentifier: campaignCellIdentifier)
-        tableView.separatorStyle = .none
-                
+        collectionView.register(UINib(nibName: "VoteCell", bundle: nil), forCellWithReuseIdentifier: voteCellIdentifier)
+        collectionView.register(UINib(nibName: "CampaignCell", bundle: nil), forCellWithReuseIdentifier: campaignCellIdentifier)
         
         let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(setCampaignUI))
         rightSwipe.direction = .right
@@ -79,11 +76,6 @@ class voteCampaignTableViewController: UITableViewController {
         let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15) as Any]
         segmentedControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
         segmentedControl.tintColor = .imagineColor
-        
-        let lay = shareIdeaButton.layer
-        lay.borderColor = UIColor.imagineColor.cgColor
-        lay.borderWidth = 1
-        
         
     }
     
@@ -109,12 +101,11 @@ class voteCampaignTableViewController: UITableViewController {
         dataHelper.getData(get: .vote) { (votes) in
             if let votez = votes as? [Vote] {
                 self.votes = votez
-                self.tableView.reloadData()
+                self.collectionView.reloadData()
                 self.view.activityStopAnimating()
             } else {
                 print("Couldnt get the votes: \(votes)")
                 self.view.activityStopAnimating()
-                self.descriptionLabel.text = "Hier ist etwas schief gelaufen"
             }
         }
         
@@ -125,9 +116,12 @@ class voteCampaignTableViewController: UITableViewController {
         }
     }
     
+    func MoreTapped(campaign: Campaign) {
+        performSegue(withIdentifier: "toCampaignSegue", sender: campaign)
+    }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-
+    //MARK:- CollectionView Data Source
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch mode {
         case .campaign:
             return campaigns.count
@@ -136,12 +130,14 @@ class voteCampaignTableViewController: UITableViewController {
         }
     }
     
+    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch mode {
         case .campaign:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: campaignCellIdentifier, for: indexPath) as? CampaignCell {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: campaignCellIdentifier, for: indexPath) as? CampaignCell {
 
                 let campaign = campaigns[indexPath.row]
                 
@@ -150,7 +146,7 @@ class voteCampaignTableViewController: UITableViewController {
                 return cell
             }
         case .vote:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: voteCellIdentifier, for: indexPath) as? VoteCell {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: voteCellIdentifier, for: indexPath) as? VoteCell {
                 
                 let vote = votes[indexPath.row]
                 
@@ -160,26 +156,24 @@ class voteCampaignTableViewController: UITableViewController {
             }
         }
         
-        return UITableViewCell()
+        return UICollectionViewCell()
     }
     
     
-    func MoreTapped(campaign: Campaign) {
-        performSegue(withIdentifier: "toCampaignSegue", sender: campaign)
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        
-        switch mode {
-        case .campaign:
-            return 165
-        case .vote:
-            return 185
+    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: campaignHeaderIdentifier, for: indexPath) as? CampaignCollectionHeaderView {
+            
+            view.delegate = self
+            
+            return view
         }
+        
+        return UICollectionReusableView()
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+    
+    //MARK:- CollectionView Delegate
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch mode {
         case .campaign:
             let campaign = campaigns[indexPath.row]
@@ -192,9 +186,10 @@ class voteCampaignTableViewController: UITableViewController {
         }
         
         
-        tableView.deselectRow(at: indexPath, animated: true)
+        collectionView.deselectItem(at: indexPath, animated: true)
     }
     
+    //MARK:- Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toCampaignSegue" {
             if let choosenCampaign = sender as? Campaign {
@@ -212,6 +207,7 @@ class voteCampaignTableViewController: UITableViewController {
         }
     }
     
+    //MARK:- Load UI Changes
     @objc func setCampaignUI() {
         switch mode {
         case .vote:
@@ -220,21 +216,9 @@ class voteCampaignTableViewController: UITableViewController {
             let option = UIView.AnimationOptions.transitionCrossDissolve
             
             UIView.transition(with: self.view, duration: 0.5, options: option, animations: {
-//                self.tableView.tableHeaderView?.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 180)
-                
-                self.shareIdeaButton.alpha = 1
-                self.shareIdeaButtonIcon.alpha = 1
-                
-//                self.spaceBetweenSubheaderAndDescriptionLabel.constant = 70
-                
                 self.segmentedControl.selectedSegmentIndex = 0
-                self.headerLabel.fadeTransition(0.5)
-                self.headerLabel.text = NSLocalizedString("proposal_header", comment: "")
-                self.subHeaderLabel.fadeTransition(0.5)
-//                self.subHeaderLabel.text = "Teile uns deine Ideen für ein besseres Erlebnis mit!"
-                self.descriptionLabel.fadeTransition(0.5)
-                self.descriptionLabel.text = NSLocalizedString("recent_campaign_header", comment: "")
-                self.tableView.reloadData()
+
+                self.collectionView.reloadData()
                 
             }) { (_) in
                 
@@ -253,19 +237,8 @@ class voteCampaignTableViewController: UITableViewController {
             let option = UIView.AnimationOptions.transitionCrossDissolve
             
             UIView.transition(with: self.view, duration: 0.5, options: option, animations: {
-                self.shareIdeaButton.alpha = 0
-                self.shareIdeaButtonIcon.alpha = 0
-//                self.tableView.tableHeaderView?.frame = CGRect(x: 0, y: 0, width: self.tableView.frame.width, height: 180)
-                
                 self.segmentedControl.selectedSegmentIndex = 1
-//                self.spaceBetweenSubheaderAndDescriptionLabel.constant = 10
-                self.headerLabel.fadeTransition(0.5)
-                self.headerLabel.text = NSLocalizedString("votes_header", comment: "")
-                self.subHeaderLabel.fadeTransition(0.5)
-//                self.subHeaderLabel.text = "Du entscheidest mit, wie sich dein Netzwerk verändert!"
-                self.descriptionLabel.fadeTransition(0.5)
-                self.descriptionLabel.text = NSLocalizedString("recent_votes_header", comment: "")
-                self.tableView.reloadData()
+                self.collectionView.reloadData()
                 
             }) { (_) in
                 
@@ -275,6 +248,16 @@ class voteCampaignTableViewController: UITableViewController {
         }
     }
     
+    func shareIdea() {
+        if let _ = Auth.auth().currentUser {
+            performSegue(withIdentifier: "toNewCampaignSegue", sender: nil)
+        } else {
+            self.notLoggedInAlert()
+        }
+    }
+    
+    //MARK:- IBActions
+    
     @IBAction func segmentControlChannged(_ sender: Any) {
         if segmentedControl.selectedSegmentIndex == 0 {
             
@@ -283,14 +266,6 @@ class voteCampaignTableViewController: UITableViewController {
         if segmentedControl.selectedSegmentIndex == 1 {
             
             setVoteModeUI()
-        }
-    }
-    
-    @IBAction func shareIdeaTapped(_ sender: Any) {
-        if let _ = Auth.auth().currentUser {
-            performSegue(withIdentifier: "toNewCampaignSegue", sender: nil)
-        } else {
-            self.notLoggedInAlert()
         }
     }
     
@@ -304,4 +279,36 @@ class voteCampaignTableViewController: UITableViewController {
     }
 }
 
+
+extension CampaignVoteCollectionViewController: UICollectionViewDelegateFlowLayout {
+
+    //MARK:- CollectionView Layout
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = collectionView.frame.width-insetsTimesTwo
+        
+        switch mode {
+        case .campaign:
+            return CGSize(width: width, height: 165)
+        case .vote:
+            return CGSize(width: width, height: 185)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        
+        let width = collectionView.frame.width
+        
+        return CGSize(width: width, height: 125)
+    }
+    
+}
+
+//MARK:- CampaignCollectionHeaderDelegate
+
+extension CampaignVoteCollectionViewController: CampaignCollectionHeaderDelegate {
+    
+    func newCampaignTapped() {
+        shareIdea()
+    }
+}
 

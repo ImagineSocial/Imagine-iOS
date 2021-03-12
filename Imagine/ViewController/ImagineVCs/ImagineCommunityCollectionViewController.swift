@@ -28,11 +28,10 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     let insetTimesTwo:CGFloat = 20
     
     let blogPostIdentifier = "BlogCell"
-    private let currentProjectsIdentifier = "CurrentProjectsCollectionCell"
-    private let tableViewIdentifier = "TableViewInCollectionViewCell"
     private let navigationCellIdentifier = "ImagineCommunityNavigationCell"
     private let proposalHeaderIdentifier = "ImagineCommunityProposalHeader"
     private let dataReportCellIdentifier = "DataReportCollectionViewCell"
+    private let campaignCellIdentifier = "campaignCell"
         
     let dataHelper = DataRequest()
     
@@ -52,10 +51,10 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         
         // Register cell classes
         collectionView.register(UINib(nibName: "BlogPostCell", bundle: nil), forCellWithReuseIdentifier: blogPostIdentifier)
-        collectionView.register(UINib(nibName: "CurrentProjectsCollectionCell", bundle: nil), forCellWithReuseIdentifier: currentProjectsIdentifier)
         collectionView.register(UINib(nibName: "ImagineCommunityNavigationCell", bundle: nil), forCellWithReuseIdentifier: navigationCellIdentifier)
         collectionView.register(UINib(nibName: "DataReportCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: dataReportCellIdentifier)
-        collectionView.register(UINib(nibName: tableViewIdentifier, bundle: nil), forCellWithReuseIdentifier: tableViewIdentifier)
+        collectionView.register(UINib(nibName: "CampaignCell", bundle: nil), forCellWithReuseIdentifier: campaignCellIdentifier)
+        
         // Register header classes
         collectionView.register(UINib(nibName: "ImagineCommunityProposalHeader", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: proposalHeaderIdentifier)
         
@@ -135,12 +134,11 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 campaign = campaigns[indexPath.item]
             }
             
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: tableViewIdentifier, for: indexPath) as? TableViewInCollectionViewCell {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: campaignCellIdentifier, for: indexPath) as? CampaignCell {
                 
                 //The TableViewInCOllectionViewCell can show Vote, Campaign and JobOffer
                 
-                cell.delegate = self
-                cell.items = [campaign]
+                cell.campaign = campaign
                 
                 return cell
             }
