@@ -3618,19 +3618,35 @@
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Imagine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pq2-fy-EPP">
-                                    <rect key="frame" x="15" y="10" width="350" height="60"/>
+                                    <rect key="frame" x="15" y="40" width="291" height="30"/>
                                     <fontDescription key="fontDescription" name="IBMPlexSans-Bold" family="IBM Plex Sans" pointSize="26"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
+                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zxa-xN-bdk" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                    <rect key="frame" x="321" y="38" width="34" height="34"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="34" id="TjY-uh-a9s"/>
+                                        <constraint firstAttribute="width" constant="34" id="rF9-Ly-a1f"/>
+                                    </constraints>
+                                    <color key="tintColor" systemColor="secondaryLabelColor"/>
+                                    <inset key="imageEdgeInsets" minX="5" minY="5" maxX="5" maxY="5"/>
+                                    <state key="normal" image="down"/>
+                                    <connections>
+                                        <action selector="expandButtonTapped:" destination="gQm-pS-GCK" eventType="touchUpInside" id="RTV-09-pEC"/>
+                                    </connections>
+                                </button>
                             </subviews>
                             <constraints>
+                                <constraint firstItem="zxa-xN-bdk" firstAttribute="centerY" secondItem="pq2-fy-EPP" secondAttribute="centerY" id="5ju-Zl-gOR"/>
                                 <constraint firstAttribute="bottom" secondItem="pq2-fy-EPP" secondAttribute="bottom" constant="10" id="Kqk-cJ-clF"/>
-                                <constraint firstItem="pq2-fy-EPP" firstAttribute="top" secondItem="gQm-pS-GCK" secondAttribute="top" constant="10" id="omW-tg-2vP"/>
+                                <constraint firstAttribute="trailing" secondItem="zxa-xN-bdk" secondAttribute="trailing" constant="20" id="m4x-fd-I8K"/>
+                                <constraint firstItem="zxa-xN-bdk" firstAttribute="leading" secondItem="pq2-fy-EPP" secondAttribute="trailing" constant="15" id="oYf-Np-UOo"/>
+                                <constraint firstItem="pq2-fy-EPP" firstAttribute="top" secondItem="gQm-pS-GCK" secondAttribute="top" constant="40" id="omW-tg-2vP"/>
                                 <constraint firstItem="pq2-fy-EPP" firstAttribute="leading" secondItem="gQm-pS-GCK" secondAttribute="leading" constant="15" id="sQJ-AW-UcR"/>
-                                <constraint firstAttribute="trailing" secondItem="pq2-fy-EPP" secondAttribute="trailing" constant="10" id="yMM-0x-4pi"/>
                             </constraints>
                             <connections>
+                                <outlet property="expandButton" destination="zxa-xN-bdk" id="amd-gf-xsx"/>
                                 <outlet property="headerLabel" destination="pq2-fy-EPP" id="nGe-5w-f5l"/>
                             </connections>
                         </collectionReusableView>
@@ -8755,7 +8771,7 @@
     </designables>
     <inferredMetricsTieBreakers>
         <segue reference="abH-Sm-SDu"/>
-        <segue reference="MRt-X8-Vhc"/>
+        <segue reference="7cY-mc-4HM"/>
         <segue reference="oN4-jG-mYq"/>
         <segue reference="841-F7-pRK"/>
         <segue reference="9QY-S4-xl7"/>
@@ -8769,7 +8785,7 @@
         <segue reference="Nkm-Bu-csR"/>
         <segue reference="Li3-Sa-Yuw"/>
         <segue reference="65n-8p-jc1"/>
-        <segue reference="LDA-ou-ct8"/>
+        <segue reference="m6b-eV-Frv"/>
         <segue reference="UZQ-mt-HvY"/>
         <segue reference="0po-Va-czT"/>
         <segue reference="Cdz-Pl-3MF"/>
@@ -8801,6 +8817,7 @@
         <image name="comments" width="30" height="30"/>
         <image name="default" width="1191" height="670"/>
         <image name="default-user" width="415" height="415"/>
+        <image name="down" width="200" height="200"/>
         <image name="downvote" width="179" height="116"/>
         <image name="folder" width="700" height="589"/>
         <image name="gallery" width="30" height="30"/>

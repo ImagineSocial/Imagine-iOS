@@ -27,16 +27,22 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     
     let insetTimesTwo:CGFloat = 20
     
-    let blogPostIdentifier = "BlogCell"
     private let navigationCellIdentifier = "ImagineCommunityNavigationCell"
     private let proposalHeaderIdentifier = "ImagineCommunityProposalHeader"
     private let dataReportCellIdentifier = "DataReportCollectionViewCell"
     private let campaignCellIdentifier = "campaignCell"
+    private let finishedWordCellIdentifier = "FinishedWorkCollectionViewCell"
+    
+    //FinishWorkCell Boolean
+    private var isOpen = false
+    private var finishedWorkItems = [FinishedWorkItem]()
 
+    //It can get a bit confusing otherwise
     private struct Section {
         let navigationSection = 0
         let dataReportSection = 1
-        let campaignSection = 2
+        let finishedSection = 2
+        let campaignSection = 3
     }
     
     private let section = Section()
@@ -58,10 +64,10 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         self.view.addGestureRecognizer(gesture)
         
         // Register cell classes
-        collectionView.register(UINib(nibName: "BlogPostCell", bundle: nil), forCellWithReuseIdentifier: blogPostIdentifier)
         collectionView.register(UINib(nibName: "ImagineCommunityNavigationCell", bundle: nil), forCellWithReuseIdentifier: navigationCellIdentifier)
         collectionView.register(UINib(nibName: "DataReportCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: dataReportCellIdentifier)
         collectionView.register(UINib(nibName: "CampaignCell", bundle: nil), forCellWithReuseIdentifier: campaignCellIdentifier)
+        collectionView.register(UINib(nibName: "FinishedWorkCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: finishedWordCellIdentifier)
         
         // Register header classes
         collectionView.register(UINib(nibName: "ImagineCommunityProposalHeader", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: proposalHeaderIdentifier)
@@ -92,13 +98,23 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
             
             self.collectionView.reloadData()
         }
+        
+        let request = ImagineDataRequest()
+        request.getFinishedWorkload { (data) in
+            if let workItems = data {
+                self.finishedWorkItems = workItems
+                self.collectionView.reloadData()
+            } else {
+                return
+            }
+        }
     }
 
     // MARK:- UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 3
+
+        return 4
     }
 
 
@@ -113,6 +129,17 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 return sortCampaigns.count
             } else {
                 return campaigns.count
+            }
+        } else if section == self.section.finishedSection {
+            if isOpen {
+                return finishedWorkItems.count
+            } else {
+                if finishedWorkItems.count == 0 {
+                    //Not yet fetched
+                    return 0
+                } else {
+                    return 4
+                }
             }
         } else {
             return 0
@@ -135,6 +162,16 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 
                 return cell
             }
+        } else if indexPath.section == self.section.finishedSection {
+            
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: finishedWordCellIdentifier, for: indexPath) as? FinishedWorkCollectionViewCell {
+                
+                let workItem = finishedWorkItems[indexPath.item]
+                
+                cell.finishedWorkItem = workItem
+                
+                return cell
+            }
         } else if indexPath.section == self.section.campaignSection {
             
             var campaign: Campaign!
@@ -146,9 +183,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
             }
             
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: campaignCellIdentifier, for: indexPath) as? CampaignCell {
-                
-                //The TableViewInCOllectionViewCell can show Vote, Campaign and JobOffer
-                
+                                
                 cell.campaign = campaign
                 
                 return cell
@@ -165,11 +200,24 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         let width = collectionView.frame.width-insetTimesTwo
         
         if indexPath.section == self.section.navigationSection {
-            return CGSize(width: width, height: 205)
+            return CGSize(width: width, height: 200)
         } else if indexPath.section == self.section.dataReportSection {
             return CGSize(width: width, height: 140)
         } else if indexPath.section == self.section.campaignSection {
             return CGSize(width: width, height: 150)
+        } else if indexPath.section == self.section.finishedSection {
+            
+            let item = finishedWorkItems[indexPath.item]
+            
+            if item.showDescription {
+                
+                let attributedString = NSAttributedString(string: item.description, attributes: [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15)!])
+                let boundingRect = attributedString.boundingRect(with: CGSize(width: width, height: CGFloat.greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
+                
+                return CGSize(width: width, height: 40+boundingRect.height)
+            } else {
+                return CGSize(width: width, height: 30)
+            }
         } else {
             return CGSize.zero
         }
@@ -179,35 +227,43 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         if section == self.section.navigationSection {
             return CGSize.zero
         } else if section == self.section.dataReportSection {
-            return CGSize(width: collectionView.frame.width, height: 80)
+            return CGSize(width: collectionView.frame.width, height: 100)
         } else if section == self.section.campaignSection {
-            return CGSize(width: collectionView.frame.width, height: 170)
+            return CGSize(width: collectionView.frame.width, height: 200)
+        } else if section == self.section.finishedSection {
+            return CGSize(width: collectionView.frame.width, height: 100)
         } else {
             return CGSize.zero
         }
     }
     
-    
     //MARK:- UICollectionViewDelegate
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
 
-        if indexPath.section == 1 {
-            if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "communityHeader", for: indexPath) as? CommunityHeader {
-
-                
-                    headerView.headerLabel.text = "\(getMonthString()) Report"
-
-                return headerView
-            }
-        } else {
+        if indexPath.section == self.section.campaignSection {
+            
             if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: proposalHeaderIdentifier, for: indexPath) as? ImagineCommunityProposalHeader {
                 
                 headerView.delegate = self
                 
                 return headerView
             }
+            
+        } else {
+            if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "communityHeader", for: indexPath) as? CommunityHeader {
+
+                if indexPath.section == self.section.dataReportSection {
+                    headerView.headerLabel.text = "\(getMonthString()) Report"
+                } else if indexPath.section == self.section.finishedSection {
+                    headerView.headerLabel.text = "Just finished"
+                    headerView.expandButton.isHidden = false
+                    headerView.delegate = self
+                    headerView.isOpen = self.isOpen
+                }
+                    
+                return headerView
+            }
         }
-        
 
         return UICollectionReusableView()
     }
@@ -225,6 +281,34 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
             }
             
             performSegue(withIdentifier: "toCampaignSegue", sender: campaign)
+            
+        } else if indexPath.section == self.section.finishedSection {
+            
+            let item = finishedWorkItems[indexPath.item]
+            
+            if let cell = self.collectionView.cellForItem(at: indexPath) as? FinishedWorkCollectionViewCell {
+                if item.showDescription {
+                    item.showDescription = false
+                    cell.hideDescription()
+                } else {
+                    item.showDescription = true
+                    cell.showDescription()
+                }
+            }
+            
+            //Animate the changes
+            collectionView.performBatchUpdates {
+                collectionView.reloadData()
+            } completion: { (_) in
+            }
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        if section == self.section.finishedSection {
+            return 10
+        } else {
+            return 20
         }
     }
     
@@ -385,8 +469,17 @@ extension ImagineCommunityCollectionViewController: ImagineCommunityProposalHead
     }
 }
 
-class CommunityHeader: UICollectionReusableView {
+//MARK:- CommunityHeaderDelegate
+extension ImagineCommunityCollectionViewController: ImagineCommunityHeaderDelegate {
     
-    @IBOutlet weak var headerLabel: UILabel!
-    
+    func expandButtonTapped() {
+        
+        if isOpen {
+            isOpen = false
+        } else {
+            isOpen = true
+        }
+        
+        collectionView.reloadData()
+    }
 }

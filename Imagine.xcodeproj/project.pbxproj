@@ -19,6 +19,10 @@
 		E90AC38924FA52C4002A36F0 /* IBMPlexSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E90AC38224FA52C4002A36F0 /* IBMPlexSans-Bold.ttf */; };
 		E90C892B23F29407005CE1D0 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90C892A23F29407005CE1D0 /* SettingViewController.swift */; };
 		E90E1A3425FB973E00855FE1 /* CampaignCollectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A3325FB973E00855FE1 /* CampaignCollectionHeaderView.swift */; };
+		E90E1A3725FBA0AA00855FE1 /* FinishedWorkCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E90E1A3625FBA0AA00855FE1 /* FinishedWorkCollectionViewCell.xib */; };
+		E90E1A3A25FBA17C00855FE1 /* FinishedWorkCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A3925FBA17C00855FE1 /* FinishedWorkCollectionViewCell.swift */; };
+		E90E1A3D25FBC7F700855FE1 /* CommunityHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A3C25FBC7F700855FE1 /* CommunityHeader.swift */; };
+		E90E1A4025FBCB3C00855FE1 /* FinishedWorkItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A3F25FBCB3C00855FE1 /* FinishedWorkItem.swift */; };
 		E911EEF022DB157500EDD056 /* SettingsLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEEF22DB157500EDD056 /* SettingsLauncher.swift */; };
 		E911EEF222DB173E00EDD056 /* SelectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEF122DB173E00EDD056 /* SelectionCell.swift */; };
 		E911EEF422DB630300EDD056 /* SideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEF322DB630300EDD056 /* SideMenu.swift */; };
@@ -279,6 +283,10 @@
 		E90AC38224FA52C4002A36F0 /* IBMPlexSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-Bold.ttf"; sourceTree = "<group>"; };
 		E90C892A23F29407005CE1D0 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		E90E1A3325FB973E00855FE1 /* CampaignCollectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignCollectionHeaderView.swift; sourceTree = "<group>"; };
+		E90E1A3625FBA0AA00855FE1 /* FinishedWorkCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FinishedWorkCollectionViewCell.xib; sourceTree = "<group>"; };
+		E90E1A3925FBA17C00855FE1 /* FinishedWorkCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishedWorkCollectionViewCell.swift; sourceTree = "<group>"; };
+		E90E1A3C25FBC7F700855FE1 /* CommunityHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityHeader.swift; sourceTree = "<group>"; };
+		E90E1A3F25FBCB3C00855FE1 /* FinishedWorkItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishedWorkItem.swift; sourceTree = "<group>"; };
 		E911EEEF22DB157500EDD056 /* SettingsLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLauncher.swift; sourceTree = "<group>"; };
 		E911EEF122DB173E00EDD056 /* SelectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionCell.swift; sourceTree = "<group>"; };
 		E911EEF322DB630300EDD056 /* SideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenu.swift; sourceTree = "<group>"; };
@@ -714,6 +722,7 @@
 				E9817B2B25EBDCCC00E56FC6 /* Vote.swift */,
 				E9817B2E25EBDCE500E56FC6 /* JobOffer.swift */,
 				E9FE46D725FB5E2A00F4C973 /* ReportData.swift */,
+				E90E1A3F25FBCB3C00855FE1 /* FinishedWorkItem.swift */,
 			);
 			path = Imagine;
 			sourceTree = "<group>";
@@ -1158,6 +1167,8 @@
 				E9E6BD0525F566E40012A870 /* ImagineCommunityNavigationCell.swift */,
 				E9D212DB25F7FACF00C68984 /* DataReportCollectionViewCell.xib */,
 				E9FE46CB25FA9C8A00F4C973 /* DataReportCollectionViewCell.swift */,
+				E90E1A3625FBA0AA00855FE1 /* FinishedWorkCollectionViewCell.xib */,
+				E90E1A3925FBA17C00855FE1 /* FinishedWorkCollectionViewCell.swift */,
 			);
 			path = ImagineCommunityCells;
 			sourceTree = "<group>";
@@ -1318,6 +1329,7 @@
 				E9E6BD0A25F77FC00012A870 /* ImagineCommunityProposalHeader.xib */,
 				E9E6BD0D25F7842C0012A870 /* ImagineCommunityProposalHeader.swift */,
 				E90E1A3325FB973E00855FE1 /* CampaignCollectionHeaderView.swift */,
+				E90E1A3C25FBC7F700855FE1 /* CommunityHeader.swift */,
 			);
 			path = ImagineCommunity;
 			sourceTree = "<group>";
@@ -1395,6 +1407,7 @@
 				E90AC38324FA52C4002A36F0 /* IBMPlexSans-Thin.ttf in Resources */,
 				E9B85D482412483500960942 /* CollectionViewInTableViewCell.xib in Resources */,
 				E997F761248CE90300BF7F88 /* SurveyCell.xib in Resources */,
+				E90E1A3725FBA0AA00855FE1 /* FinishedWorkCollectionViewCell.xib in Resources */,
 				E94EDD9B2564307700B226C8 /* AddOnPlaylistTrackTableViewCell.xib in Resources */,
 				E9E49D2D2349E8AB002E371E /* NotificationCell.xib in Resources */,
 				E96CE89622959E6D00BACD3B /* ArgumentCell.xib in Resources */,
@@ -1543,6 +1556,7 @@
 				E938105022E708510086F199 /* YouTubeCell.swift in Sources */,
 				E9F12BFA24FA6556006BD9C3 /* AddOnSingleCommunityCollectionViewCell.swift in Sources */,
 				E92CB98325068FF600D2FA45 /* Localizable.swift in Sources */,
+				E90E1A3D25FBC7F700855FE1 /* CommunityHeader.swift in Sources */,
 				E981B25E2483AFCC00F6C724 /* SurveyCell.swift in Sources */,
 				E9FE46D225FB5C4D00F4C973 /* StringExtensions.swift in Sources */,
 				E95E908825EAB67D00E7B9DB /* PostType.swift in Sources */,
@@ -1638,6 +1652,7 @@
 				E9CF17C223CB27CE000E5149 /* CreativeSpaceIntroViewController.swift in Sources */,
 				E9959EAA24F81A670067174A /* AddOnHorizontalScrollCollectionViewCell.swift in Sources */,
 				E9526C0A250F99550088004F /* PathBuilder.swift in Sources */,
+				E90E1A4025FBCB3C00855FE1 /* FinishedWorkItem.swift in Sources */,
 				E962AC3A222DB5DB00C6D6EF /* ReportTableViewController.swift in Sources */,
 				E9817B6525EC098300E56FC6 /* DescriptionView.swift in Sources */,
 				E991CCD82270972F00940834 /* WebViewController.swift in Sources */,
@@ -1687,6 +1702,7 @@
 				E93665852513CC41008CC8A9 /* AddOnQAndACollectionViewCell.swift in Sources */,
 				E95E907925EAB5B000E7B9DB /* Music.swift in Sources */,
 				E97C834623CDE1CE00CE3D3C /* CreativeExampleViewController.swift in Sources */,
+				E90E1A3A25FBA17C00855FE1 /* FinishedWorkCollectionViewCell.swift in Sources */,
 				E9C6C23B22980FD8003F0F16 /* SourceTableViewController.swift in Sources */,
 				E9B85D542412D2C300960942 /* SmallPostCell.swift in Sources */,
 				E95E907F25EAB60000E7B9DB /* User.swift in Sources */,

@@ -50,4 +50,38 @@ class ImagineDataRequest {
             }
         }
     }
+    
+    public func getFinishedWorkload(returnData: @escaping ([FinishedWorkItem]?) -> Void) {
+        
+        let dataRef = db.collection("TopTopicData").document("FinishedProjects").collection("finishedProjects").order(by: "createDate", descending: true)
+        
+        dataRef.getDocuments { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    
+                    var workItems = [FinishedWorkItem]()
+                    
+                    for document in snap.documents {
+                        let data = document.data()
+                        
+                        guard let title = data["title"] as? String,
+                              let description = data["description"] as? String,
+                              let createDate = data["createDate"] as? Timestamp
+                        else {
+                            returnData(nil)
+                            return
+                        }
+                        let date = createDate.dateValue()
+                        let workItem = FinishedWorkItem(title: title, description: description, createDate: date)
+                        
+                        workItems.append(workItem)
+                    }
+                    
+                    returnData(workItems)
+                }
+            }
+        }
+    }
 }
