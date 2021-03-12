@@ -52,20 +52,9 @@ class TableViewInCollectionViewCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        let layer = contentView.layer
-        layer.cornerRadius = cornerRadius
         containerView.layer.cornerRadius = cornerRadius
-        if #available(iOS 13.0, *) {
-            layer.shadowColor = UIColor.label.cgColor
-        } else {
-            layer.shadowColor = UIColor.black.cgColor
-        }
-        layer.shadowOffset = CGSize(width: 0, height: 0)
-        layer.shadowRadius = 3
-        layer.shadowOpacity = 0.5
         
-        let rect = CGRect(x: 0, y: 0, width: contentView.frame.width, height: contentView.frame.height)
-        layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius).cgPath
+        contentView.setDefaultShadow()
     }
     
 }

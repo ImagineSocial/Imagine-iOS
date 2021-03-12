@@ -32,6 +32,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     private let tableViewIdentifier = "TableViewInCollectionViewCell"
     private let navigationCellIdentifier = "ImagineCommunityNavigationCell"
     private let proposalHeaderIdentifier = "ImagineCommunityProposalHeader"
+    private let dataReportCellIdentifier = "DataReportCollectionViewCell"
         
     let dataHelper = DataRequest()
     
@@ -53,6 +54,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         collectionView.register(UINib(nibName: "BlogPostCell", bundle: nil), forCellWithReuseIdentifier: blogPostIdentifier)
         collectionView.register(UINib(nibName: "CurrentProjectsCollectionCell", bundle: nil), forCellWithReuseIdentifier: currentProjectsIdentifier)
         collectionView.register(UINib(nibName: "ImagineCommunityNavigationCell", bundle: nil), forCellWithReuseIdentifier: navigationCellIdentifier)
+        collectionView.register(UINib(nibName: "DataReportCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: dataReportCellIdentifier)
         collectionView.register(UINib(nibName: tableViewIdentifier, bundle: nil), forCellWithReuseIdentifier: tableViewIdentifier)
         // Register header classes
         collectionView.register(UINib(nibName: "ImagineCommunityProposalHeader", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: proposalHeaderIdentifier)
@@ -119,7 +121,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
             }
         } else if indexPath.section == 1 {
             
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: currentProjectsIdentifier, for: indexPath) as? CurrentProjectsCollectionCell {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: dataReportCellIdentifier, for: indexPath) as? DataReportCollectionViewCell {
                 
                 return cell
             }
@@ -167,19 +169,9 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         if indexPath.section == 0 {
             return CGSize(width: width, height: 205)
         } else if indexPath.section == 1 {
-            return CGSize(width: width, height: 170)    // For CurrentProfectsCollectionCell
+            return CGSize(width: width, height: 140)    // For DataReportCell
         } else {
             return CGSize(width: width, height: 150)   // For Campaign
-            
-//            if let _ = communityItem.item as? BlogPost {
-//                return CGSize(width: width, height: 220)   // For BlogCell
-//            } else if let _ = communityItem.item as? JobOffer {
-//                return CGSize(width: width, height: 125)   // For JobOffer
-//            } else if let _ = communityItem.item as? Campaign {
-//                return CGSize(width: width, height: 150)   // For Campaign
-//            }  else {
-//                return CGSize(width: width, height: 225)
-//            }
         }
     }
     
@@ -200,7 +192,8 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         if indexPath.section == 1 {
             if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "communityHeader", for: indexPath) as? CommunityHeader {
 
-                    headerView.headerLabel.text = NSLocalizedString("latest_news_header", comment: "latest news")
+                
+                    headerView.headerLabel.text = "\(getMonthString()) Report"
 
                 return headerView
             }
@@ -230,6 +223,16 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
 //        }
     }
     
+    
+    //MARK:- Get Month
+    func getMonthString() -> String {
+        let now = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "LLLL"
+        let nameOfMonth = dateFormatter.string(from: now)
+        
+        return nameOfMonth
+    }
     
     //MARK:- Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
