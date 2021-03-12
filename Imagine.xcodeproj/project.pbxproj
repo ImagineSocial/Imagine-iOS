@@ -257,6 +257,7 @@
 		E9F9B68D223D6C9500100F51 /* voteCampaignTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F9B68C223D6C9500100F51 /* voteCampaignTableViewController.swift */; };
 		E9FE46CC25FA9C8A00F4C973 /* DataReportCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FE46CB25FA9C8A00F4C973 /* DataReportCollectionViewCell.swift */; };
 		E9FE46CF25FB5AE500F4C973 /* UIViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FE46CE25FB5AE500F4C973 /* UIViewExtensions.swift */; };
+		E9FE46D225FB5C4D00F4C973 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FE46D125FB5C4D00F4C973 /* StringExtensions.swift */; };
 		E9FE65D622A2A42800FA4E68 /* HandyHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FE65D522A2A42800FA4E68 /* HandyHelper.swift */; };
 /* End PBXBuildFile section */
 
@@ -520,6 +521,7 @@
 		E9F9B68C223D6C9500100F51 /* voteCampaignTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = voteCampaignTableViewController.swift; sourceTree = "<group>"; };
 		E9FE46CB25FA9C8A00F4C973 /* DataReportCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataReportCollectionViewCell.swift; sourceTree = "<group>"; };
 		E9FE46CE25FB5AE500F4C973 /* UIViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtensions.swift; sourceTree = "<group>"; };
+		E9FE46D125FB5C4D00F4C973 /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		E9FE65D522A2A42800FA4E68 /* HandyHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandyHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1290,6 +1292,7 @@
 				E9FE65D522A2A42800FA4E68 /* HandyHelper.swift */,
 				E988284F23141AC8005ECB40 /* Extensions.swift */,
 				E9FE46CE25FB5AE500F4C973 /* UIViewExtensions.swift */,
+				E9FE46D125FB5C4D00F4C973 /* StringExtensions.swift */,
 			);
 			path = HelperClasses;
 			sourceTree = "<group>";
@@ -1516,6 +1519,7 @@
 				E9F12BFA24FA6556006BD9C3 /* AddOnSingleCommunityCollectionViewCell.swift in Sources */,
 				E92CB98325068FF600D2FA45 /* Localizable.swift in Sources */,
 				E981B25E2483AFCC00F6C724 /* SurveyCell.swift in Sources */,
+				E9FE46D225FB5C4D00F4C973 /* StringExtensions.swift in Sources */,
 				E95E908825EAB67D00E7B9DB /* PostType.swift in Sources */,
 				E9211AB9223FCBB100185A00 /* NewCampaignViewController.swift in Sources */,
 				E933553524705CD00060E331 /* SearchCollectionViewController.swift in Sources */,
