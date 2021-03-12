@@ -8,9 +8,6 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
-        <array key="IBMPlexSans-Light.ttf">
-            <string>IBMPlexSans-Light</string>
-        </array>
         <array key="IBMPlexSans-Medium.ttf">
             <string>IBMPlexSans-Medium</string>
         </array>
@@ -40,7 +37,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progressViewStyle="bar" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="B1k-gL-JIE">
-                                <rect key="frame" x="10" y="210" width="175" height="5"/>
+                                <rect key="frame" x="10" y="205" width="175" height="5"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="175" id="PWO-rM-hRG"/>
                                     <constraint firstAttribute="height" constant="4" id="ak2-Wx-bnb"/>
@@ -58,7 +55,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019 10:00" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ryo-Xh-ldq">
-                                <rect key="frame" x="287" y="193" width="116" height="21"/>
+                                <rect key="frame" x="287" y="188" width="116" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="2Bn-Ma-2SI"/>
                                 </constraints>
@@ -66,8 +63,8 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wieviel Prozent dürfen die Administratoren, besonders Malte, nach dem ersten Jahr an Rechten haben?" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="2OC-0D-eTO">
-                                <rect key="frame" x="10" y="40" width="393" height="142"/>
-                                <fontDescription key="fontDescription" name="IBMPlexSans-Light" family="IBM Plex Sans" pointSize="15"/>
+                                <rect key="frame" x="10" y="40" width="393" height="137"/>
+                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="idea" translatesAutoresizingMaskIntoConstraints="NO" id="XzJ-Zb-bYx" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
@@ -84,12 +81,12 @@
                                 </userDefinedRuntimeAttributes>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="p7c-7G-P2I">
-                                <rect key="frame" x="110" y="192" width="75" height="16"/>
+                                <rect key="frame" x="110" y="187" width="75" height="16"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="a9b-VA-9Wn">
-                                <rect key="frame" x="10" y="190" width="100" height="18"/>
+                                <rect key="frame" x="10" y="185" width="100" height="18"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="HbU-41-Ran"/>
                                     <constraint firstAttribute="height" constant="18" id="kmC-zf-m7C"/>
@@ -110,7 +107,7 @@
                             <constraint firstItem="ryo-Xh-ldq" firstAttribute="bottom" secondItem="B1k-gL-JIE" secondAttribute="bottom" id="OuV-pn-9Nx"/>
                             <constraint firstItem="2OC-0D-eTO" firstAttribute="leading" secondItem="cDl-ox-ebg" secondAttribute="leading" constant="10" id="XCg-jb-kF0"/>
                             <constraint firstItem="2OC-0D-eTO" firstAttribute="top" secondItem="fWa-QG-gV8" secondAttribute="bottom" constant="2" id="YEx-JF-cqc"/>
-                            <constraint firstAttribute="bottom" secondItem="B1k-gL-JIE" secondAttribute="bottom" constant="5" id="YTZ-d3-jzo"/>
+                            <constraint firstAttribute="bottom" secondItem="B1k-gL-JIE" secondAttribute="bottom" constant="10" id="YTZ-d3-jzo"/>
                             <constraint firstItem="a9b-VA-9Wn" firstAttribute="top" secondItem="2OC-0D-eTO" secondAttribute="bottom" constant="8" id="aaG-VA-hEI"/>
                             <constraint firstAttribute="trailing" secondItem="IYn-8b-p4s" secondAttribute="trailing" constant="10" id="dcH-A7-Wjt"/>
                             <constraint firstAttribute="trailing" secondItem="ryo-Xh-ldq" secondAttribute="trailing" constant="10" id="ksc-DI-8AA"/>

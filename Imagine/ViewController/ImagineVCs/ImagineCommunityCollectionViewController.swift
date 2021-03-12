@@ -32,6 +32,14 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     private let proposalHeaderIdentifier = "ImagineCommunityProposalHeader"
     private let dataReportCellIdentifier = "DataReportCollectionViewCell"
     private let campaignCellIdentifier = "campaignCell"
+
+    private struct Section {
+        let navigationSection = 0
+        let dataReportSection = 1
+        let campaignSection = 2
+    }
+    
+    private let section = Section()
         
     let dataHelper = DataRequest()
     
@@ -95,22 +103,25 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if section == 0 {
+                
+        if section == self.section.navigationSection {
             return 1
-        } else if section == 1 {
+        } else if section == self.section.dataReportSection {
             return 1
-        } else {
+        } else if section == self.section.campaignSection{
             if let sortCampaigns = sortedCampaigns {
                 return sortCampaigns.count
             } else {
                 return campaigns.count
             }
+        } else {
+            return 0
         }
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        if indexPath.section == 0 {
+        if indexPath.section == self.section.navigationSection {
             
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: navigationCellIdentifier, for: indexPath) as? ImagineCommunityNavigationCell {
                 
@@ -118,13 +129,13 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 
                 return cell
             }
-        } else if indexPath.section == 1 {
+        } else if indexPath.section == self.section.dataReportSection {
             
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: dataReportCellIdentifier, for: indexPath) as? DataReportCollectionViewCell {
                 
                 return cell
             }
-        } else {
+        } else if indexPath.section == self.section.campaignSection {
             
             var campaign: Campaign!
             
@@ -142,17 +153,6 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 
                 return cell
             }
-            
-//            if let blogPost = communityItem.item as? BlogPost {
-//
-//                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: blogPostIdentifier, for: indexPath) as? BlogCell {
-//
-//                    cell.post = blogPost
-//
-//                    return cell
-//                }
-//            } else {
-                
         }
         
         return UICollectionViewCell()
@@ -164,22 +164,26 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     
         let width = collectionView.frame.width-insetTimesTwo
         
-        if indexPath.section == 0 {
+        if indexPath.section == self.section.navigationSection {
             return CGSize(width: width, height: 205)
-        } else if indexPath.section == 1 {
-            return CGSize(width: width, height: 140)    // For DataReportCell
+        } else if indexPath.section == self.section.dataReportSection {
+            return CGSize(width: width, height: 140)
+        } else if indexPath.section == self.section.campaignSection {
+            return CGSize(width: width, height: 150)
         } else {
-            return CGSize(width: width, height: 150)   // For Campaign
+            return CGSize.zero
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if section == 0 {
+        if section == self.section.navigationSection {
             return CGSize.zero
-        } else if section == 1 {
+        } else if section == self.section.dataReportSection {
             return CGSize(width: collectionView.frame.width, height: 80)
-        } else {
+        } else if section == self.section.campaignSection {
             return CGSize(width: collectionView.frame.width, height: 170)
+        } else {
+            return CGSize.zero
         }
     }
     
@@ -211,14 +215,17 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        if indexPath.section != 0 {
-//
-//            if let item = items[indexPath.item].item as? BlogPost {
-//                if !item.isCurrentProjectsCell {
-//                    performSegue(withIdentifier: "toBlogPost", sender: item)
-//                }
-//            }
-//        }
+        if indexPath.section == self.section.campaignSection {
+            var campaign: Campaign!
+            
+            if let sortedCampaigns = sortedCampaigns {
+                campaign = sortedCampaigns[indexPath.item]
+            } else {
+                campaign = campaigns[indexPath.item]
+            }
+            
+            performSegue(withIdentifier: "toCampaignSegue", sender: campaign)
+        }
     }
     
     
@@ -298,7 +305,6 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     
     //MARK:- Actions
     
-    
     func secretButtonTapped(_ sender: Any) {
         performSegue(withIdentifier: "toSecretSegue", sender: nil)
     }
@@ -311,17 +317,8 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
 }
 
 //MARK:- Cell Delegates
-extension ImagineCommunityCollectionViewController: CommunityCollectionCellDelegate, TableViewInCollectionViewCellDelegate {
+extension ImagineCommunityCollectionViewController: CommunityCollectionCellDelegate {
     
-    func itemTapped(item: Any) {
-        if let jobOffer = item as? JobOffer {
-            performSegue(withIdentifier: "toJobOfferDetailSegue", sender: jobOffer)
-        } else if let vote = item as? Vote {
-            performSegue(withIdentifier: "toVoteDetailSegue", sender: vote)
-        } else if let campaign = item as? Campaign {
-            performSegue(withIdentifier: "toCampaignSegue", sender: campaign)
-        }
-    }
     
     func buttonTapped(button: CommunityCellButtonType) {
         switch button {
