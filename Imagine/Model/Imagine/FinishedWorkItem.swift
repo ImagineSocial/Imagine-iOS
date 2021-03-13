@@ -10,13 +10,17 @@ import Foundation
 
 class FinishedWorkItem {
     
+    //MARK:- Variables
     var title: String
     var description: String
     var createDate: Date
     var createDateString: String
     
     var showDescription = false
+
+    var campaignID: String?
     
+    //MARK:- Initialization
     init(title: String, description: String, createDate: Date) {
         self.title = title
         self.description = description

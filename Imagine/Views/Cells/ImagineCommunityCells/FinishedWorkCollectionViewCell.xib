@@ -49,10 +49,25 @@
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="W2L-is-AcV" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                        <rect key="frame" x="472" y="219" width="26" height="26"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="26" id="AOS-RN-NfI"/>
+                            <constraint firstAttribute="height" constant="26" id="Egd-kE-95h"/>
+                        </constraints>
+                        <color key="tintColor" red="0.31537210939999999" green="0.46283984179999998" blue="0.65801352260000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <inset key="imageEdgeInsets" minX="3" minY="3" maxX="3" maxY="3"/>
+                        <state key="normal" image="idea"/>
+                        <connections>
+                            <action selector="showCampaignTapped:" destination="vhr-z8-f4d" eventType="touchUpInside" id="hYq-4Y-Lwu"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
+                    <constraint firstAttribute="trailing" secondItem="W2L-is-AcV" secondAttribute="trailing" constant="5" id="1sd-Qe-BFG"/>
                     <constraint firstItem="P6r-o0-7un" firstAttribute="centerY" secondItem="J3M-wK-r1p" secondAttribute="centerY" id="7KM-g4-otY"/>
                     <constraint firstItem="J3M-wK-r1p" firstAttribute="leading" secondItem="2lh-OH-t1L" secondAttribute="leading" constant="10" id="Ctw-cz-1YS"/>
+                    <constraint firstAttribute="bottom" secondItem="W2L-is-AcV" secondAttribute="bottom" constant="5" id="D0S-n4-eGw"/>
                     <constraint firstItem="P6r-o0-7un" firstAttribute="leading" secondItem="J3M-wK-r1p" secondAttribute="trailing" constant="5" id="DhA-Hc-9Ce"/>
                     <constraint firstItem="SQb-rC-b8q" firstAttribute="leading" secondItem="2lh-OH-t1L" secondAttribute="leading" constant="10" id="Dwg-8n-ZPp"/>
                     <constraint firstItem="SQb-rC-b8q" firstAttribute="top" secondItem="J3M-wK-r1p" secondAttribute="bottom" constant="2" id="HjN-EG-khZ"/>
@@ -68,8 +83,12 @@
                 <outlet property="dateLabel" destination="P6r-o0-7un" id="IDw-XO-4VN"/>
                 <outlet property="descriptionLabel" destination="SQb-rC-b8q" id="B3j-zj-yUU"/>
                 <outlet property="mainLabel" destination="J3M-wK-r1p" id="Hsy-72-ylj"/>
+                <outlet property="showCampaignButton" destination="W2L-is-AcV" id="7Ra-PI-ZkI"/>
             </connections>
             <point key="canvasLocation" x="-121.0144927536232" y="107.14285714285714"/>
         </collectionViewCell>
     </objects>
+    <resources>
+        <image name="idea" width="30" height="30"/>
+    </resources>
 </document>

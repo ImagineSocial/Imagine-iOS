@@ -14,7 +14,7 @@ import EasyTipView
 
 class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
-
+    //MARK:- IBOutlets
     @IBOutlet weak var shortBodyLabel: UILabel!
     @IBOutlet weak var longBodyLabel: UILabel!
     @IBOutlet weak var createDateLabel: UILabel!
@@ -27,13 +27,33 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var contentView: UIView!
     
-    var campaign = Campaign()
-    let db = Firestore.firestore()
+    //MARK:- Variables
+    private let db = Firestore.firestore()
     
-    var floatingCommentView: CommentAnswerView?
+    private var floatingCommentView: CommentAnswerView?
     
-    var tipView: EasyTipView?
+    private var tipView: EasyTipView?
     
+    var campaign: Campaign?
+    
+    var campaignID: String? {
+        didSet {
+            if let id = campaignID {
+                
+                let imagineDataRequest = ImagineDataRequest()
+                imagineDataRequest.getCampaign(documentID: id) { (campaign) in
+                    if let campaign = campaign {
+                        self.campaign = campaign
+                        self.showCampaign()
+                    } else {
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                }
+            }
+        }
+    }
+    
+    //MARK:- View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -47,7 +67,6 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         
         commentTableView.initializeCommentTableView(section: .proposal, notificationRecipients: nil)
         commentTableView.commentDelegate = self
-        commentTableView.proposal = campaign
         
         createFloatingCommentView()
     }
@@ -105,12 +124,17 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
     
     func showCampaign() {
+        guard let campaign = campaign else {
+            return
+        }
         shortBodyLabel.text = campaign.cellText
         longBodyLabel.text = campaign.descriptionText
         createDateLabel.text = campaign.createDate
         supporterLabel.text = "\(campaign.supporter) Supporter"
         oppositionLabel.text = "\(campaign.opposition) Vetos"
         navigationItem.title = campaign.title
+        
+        commentTableView.proposal = campaign
     }
     
     @IBAction func supportPressed(_ sender: Any) {
@@ -126,6 +150,10 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     func voted(supporter: Bool) {
+        guard let campaign = campaign else {
+            return
+        }
+        
         var collectionRef: CollectionReference!
         let language = LanguageSelection().getLanguage()
         if language == .english {
@@ -164,6 +192,10 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
     func registerVoter(userUID: String) {
         
+        guard let campaign = campaign else {
+            return
+        }
+        
         var collectionRef: CollectionReference!
         let language = LanguageSelection().getLanguage()
         if language == .english {
@@ -181,8 +213,8 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
             } else {
                 self.view.activityStopAnimating()
                 self.alert(message: NSLocalizedString("thanks_for_vote_message", comment: ""), title: NSLocalizedString("thanks_for_support", comment: ""))
-                self.oppositionLabel.text = "\(self.campaign.opposition) Vetos"
-                self.supporterLabel.text = "\(self.campaign.supporter) Supporter"
+                self.oppositionLabel.text = "\(campaign.opposition) Vetos"
+                self.supporterLabel.text = "\(campaign.supporter) Supporter"
                 self.supportButton.isEnabled = false
                 self.oppositionButton.isEnabled = false
                 print("Document successfully updated")
@@ -192,6 +224,11 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     func checkIfAllowedToVote(supporter: Bool) {
+        
+        guard let campaign = campaign else {
+            return
+        }
+        
         if isConnected() {
             if let user = Auth.auth().currentUser {
                 var collectionRef: CollectionReference!

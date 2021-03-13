@@ -51,6 +51,8 @@ class ImagineDataRequest {
         }
     }
     
+    
+    //MARK:- FinishedWork
     public func getFinishedWorkload(returnData: @escaping ([FinishedWorkItem]?) -> Void) {
         
         let dataRef = db.collection("TopTopicData").document("FinishedProjects").collection("finishedProjects").order(by: "createDate", descending: true)
@@ -76,10 +78,35 @@ class ImagineDataRequest {
                         let date = createDate.dateValue()
                         let workItem = FinishedWorkItem(title: title, description: description, createDate: date)
                         
+                        if let id = data["campaignID"] as? String {
+                            workItem.campaignID = id
+                        }
+                        
                         workItems.append(workItem)
                     }
                     
                     returnData(workItems)
+                }
+            }
+        }
+    }
+    
+    //MARK:- Get Campaign
+    func getCampaign(documentID: String, returnCampaign: @escaping (Campaign?) -> Void) {
+        let ref = db.collection("Data").document("en").collection("campaigns").document(documentID)
+        
+        ref.getDocument { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap, let data = snap.data() {
+                    let dataRequest = DataRequest()
+                    
+                    if let campaign = dataRequest.getCampaign(documentID: documentID, documentData: data) {
+                        returnCampaign(campaign)
+                    } else {
+                        returnCampaign(nil)
+                    }
                 }
             }
         }

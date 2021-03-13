@@ -8,12 +8,17 @@
 
 import UIKit
 
+protocol FinishedWorkCellDelegate {
+    func showCampaignTapped(campaignID: String)
+}
+
 class FinishedWorkCollectionViewCell: UICollectionViewCell {
     
     //MARK:- IBOutlets
     @IBOutlet weak var mainLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
+    @IBOutlet weak var showCampaignButton: DesignableButton!
     
     //MARK:- Variables
     var finishedWorkItem: FinishedWorkItem? {
@@ -24,18 +29,22 @@ class FinishedWorkCollectionViewCell: UICollectionViewCell {
             }
         }
     }
+    var delegate: FinishedWorkCellDelegate?
     
     //MARK:- Show/Hide Description
     func showDescription() {
         if let item = finishedWorkItem {
 
+            if item.campaignID != nil {
+                showCampaignButton.isHidden = false
+            }
             descriptionLabel.text = item.description
             mainLabel.font = UIFont(name: "IBMPlexSans-Medium", size: 16)
         }
     }
     
     func hideDescription() {
-        
+        showCampaignButton.isHidden = true
         descriptionLabel.text = ""
         mainLabel.font = UIFont(name: "IBMPlexSans", size: 15)
     }
@@ -53,8 +62,13 @@ class FinishedWorkCollectionViewCell: UICollectionViewCell {
     }
     
     override func prepareForReuse() {
-        descriptionLabel.text = ""
-        mainLabel.font = UIFont(name: "IBMPlexSans", size: 15)
+        hideDescription()
     }
     
+    //MARK:- IBActions
+    @IBAction func showCampaignTapped(_ sender: Any) {
+        if let finishedWorkItem = self.finishedWorkItem, let id = finishedWorkItem.campaignID {
+            delegate?.showCampaignTapped(campaignID: id)
+        }
+    }
 }

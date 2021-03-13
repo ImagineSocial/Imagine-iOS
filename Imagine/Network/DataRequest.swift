@@ -173,38 +173,12 @@ class DataRequest {
                             
                             list.append(blogPost)
                         case .campaign:
-                            if let campaignType = documentData["type"] as? String {
-                                if campaignType == "normal" {
-                                    
-                                    guard let title = documentData["title"] as? String,
-                                          let shortBody = documentData["summary"] as? String,
-                                          let createTimestamp = documentData["createTime"] as? Timestamp,
-                                          let supporter = documentData["supporter"] as? Int,
-                                          let opposition = documentData["opposition"] as? Int,
-                                          let category = documentData["category"] as? String
-                                    else {
-                                        continue    // Falls er das nicht als (String) zuordnen kann
-                                    }
-                                    
-                                    let date = createTimestamp.dateValue()
-                                    let stringDate = date.formatRelativeString()
-                                    
-                                    let campaign = Campaign()
-                                    campaign.title = title
-                                    campaign.cellText = shortBody
-                                    campaign.documentID = documentID
-                                    campaign.createDate = stringDate
-                                    campaign.supporter = supporter
-                                    campaign.opposition = opposition
-                                    campaign.createTime = date
-                                    campaign.category = self.getCampaignType(categoryString: category)
-                                    
-                                    if let description = documentData["description"] as? String {
-                                        campaign.descriptionText = description
-                                    }
-                                    
-                                    list.append(campaign)
-                                }
+                            
+                            if let campaign = self.getCampaign(documentID: documentID, documentData: documentData) {
+                                
+                                list.append(campaign)
+                            } else {
+                                continue
                             }
                         case .vote:
                             guard let title = documentData["title"] as? String,
@@ -295,6 +269,47 @@ class DataRequest {
                 }
             }
         }
+    }
+    
+    func getCampaign(documentID: String, documentData: [String: Any]) -> Campaign? {
+        
+        if let campaignType = documentData["type"] as? String {
+            if campaignType == "normal" {
+                
+                guard let title = documentData["title"] as? String,
+                      let shortBody = documentData["summary"] as? String,
+                      let createTimestamp = documentData["createTime"] as? Timestamp,
+                      let supporter = documentData["supporter"] as? Int,
+                      let opposition = documentData["opposition"] as? Int,
+                      let category = documentData["category"] as? String
+                else {
+                    return nil
+                }
+                
+                let date = createTimestamp.dateValue()
+                let stringDate = date.formatRelativeString()
+                
+                let campaign = Campaign()
+                campaign.title = title
+                campaign.cellText = shortBody
+                campaign.documentID = documentID
+                campaign.createDate = stringDate
+                campaign.supporter = supporter
+                campaign.opposition = opposition
+                campaign.createTime = date
+                campaign.category = self.getCampaignType(categoryString: category)
+                
+                if let description = documentData["description"] as? String {
+                    campaign.descriptionText = description
+                }
+                
+                return campaign
+            }
+        } else {
+            return nil
+        }
+        
+        return nil
     }
     
     func getCategoryLabelText(type: CampaignType) -> String {

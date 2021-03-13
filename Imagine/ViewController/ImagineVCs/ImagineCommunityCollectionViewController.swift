@@ -169,6 +169,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 let workItem = finishedWorkItems[indexPath.item]
                 
                 cell.finishedWorkItem = workItem
+                cell.delegate = self
                 
                 return cell
             }
@@ -342,8 +343,12 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         }
         
         if segue.identifier == "toCampaignSegue" {
-            if let campaignVC = segue.destination as? CampaignViewController, let campaign = sender as? Campaign {
-                campaignVC.campaign = campaign
+            if let campaignVC = segue.destination as? CampaignViewController {
+                if let campaign = sender as? Campaign {
+                    campaignVC.campaign = campaign
+                } else if let campaignID = sender as? String {
+                    campaignVC.campaignID = campaignID
+                }
             }
         }
         
@@ -481,5 +486,13 @@ extension ImagineCommunityCollectionViewController: ImagineCommunityHeaderDelega
         }
         
         collectionView.reloadData()
+    }
+}
+
+//MARK:- FinishedWorkCellDelegate
+extension ImagineCommunityCollectionViewController: FinishedWorkCellDelegate {
+    
+    func showCampaignTapped(campaignID: String) {
+        performSegue(withIdentifier: "toCampaignSegue", sender: campaignID)
     }
 }
