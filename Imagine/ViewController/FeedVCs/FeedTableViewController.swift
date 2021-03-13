@@ -17,9 +17,11 @@ import EasyTipView
 
 class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNUserNotificationCenterDelegate {
     
+    //MARK:- IBOutlets
     @IBOutlet weak var sortPostsButton: DesignableButton!
     @IBOutlet weak var viewAboveTableView: UIView!
         
+    //MARK:- Variables
     var screenEdgeRecognizer: UIScreenEdgePanGestureRecognizer!
     var statusBarView: UIView?
     
@@ -35,6 +37,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     
     let defaults = UserDefaults.standard
     
+    //MARK:- View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -68,57 +71,6 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                 }
             }
         }
-    }
-    
-    override func presentInfoView() {
-        //Called from BaseFeedTableVC because it is called in CellForRowAt if you are new and after 6 posts are displayed
-        let infoViewShown = UserDefaults.standard.bool(forKey: "likesInfo")
-        if infoViewShown == false {
-            showInfoView()
-        }
-    }
-    
-    func showInfoView() {
-        //Show Info View that shows what the like buttons mean and stuff like this
-        let upperHeight = UIApplication.shared.statusBarFrame.height +
-              self.navigationController!.navigationBar.frame.height
-        let height = upperHeight+40
-        
-        let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
-        let popUpView = PopUpInfoView(frame: frame)
-        popUpView.alpha = 0
-        popUpView.type = .likes
-        
-        if let window = UIApplication.shared.keyWindow {
-            window.addSubview(popUpView)
-        }
-        
-        UIView.animate(withDuration: 0.5) {
-            popUpView.alpha = 1
-        }
-    }
-    
-    func setPlaceholderAndGetPosts() {
-        // Show empty cells while fetching the posts
-        var index = 0
-        
-        let post = Post()
-        post.type = .topTopicCell
-        self.posts.insert(post, at: 0)
-        
-        while index <= 3 {
-            let post2 = Post()
-            if index == 1 {
-                post2.type = .picture
-            } else {
-                post2.type = .thought
-            }
-            self.posts.append(post2)
-            index+=1
-        }
-        
-        self.tableView.reloadData()
-        getPosts(getMore: true)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -180,7 +132,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         
     }
     
-    // MARK: - Methods
+    //MARK:- Get Data
     
     @objc override func getPosts(getMore:Bool) {
         /*
@@ -264,216 +216,32 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         }
     }
     
-    /// Call to load User in SideMenu and set notifications after dismissal of the logInViewController
-    func loadUser() {
-        self.setNotificationListener()
-        self.checkForLoggedInUser()
-        self.setNotifications()
-        sideMenu.showUser()
-    }
-    
-    
-    
-    func setNotifications() {   // Ask for persmission to send Notifications
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            appDelegate.registerForPushNoticications(application: UIApplication.shared)
-        }
-    }
-    
-    func checkForLoggedInUser() {
-        print("check")
-        if let _ = Auth.auth().currentUser {
-            //Still logged in
-            self.loadBarButtonItem()
-            self.screenEdgeRecognizer.isEnabled = true
-        } else {
-            if let items = self.tabBarController?.tabBar.items {
-                let tabItem = items[1]
-                tabItem.badgeValue = nil
-            }
-            self.screenEdgeRecognizer.isEnabled = false
-            self.loadBarButtonItem()
-            
-            if let listener = self.notificationListener {
-                listener.remove()
-            }
-        }
-    }
-    
-    func setNotificationListener() {
-        // If logged in get notifications and listen for new ones
-        if let _ = notificationListener {
-            print("Listener already Set")
-        } else {
-            print("Set listener")
-            if let user = Auth.auth().currentUser {
-                let notRef = db.collection("Users").document(user.uid).collection("notifications")
-                
-                notificationListener = notRef.addSnapshotListener { (snap, err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        
-                        if let snapshot = snap {
-                            snapshot.documentChanges.forEach { (change) in
-                                let data = change.document.data()
-                                
-                                 
-                                if let type = data["type"] as? String {
-                                    
-                                    switch change.type {
-                                        
-                                    case .added:
-                                        
-                                        switch type {
-                                        case "friend":
-                                            
-                                            self.friendRequests = self.friendRequests+1
-                                        case "comment":
-                                            if let text = data["comment"] as? String, let author = data["name"] as? String, let postID = data["postID"] as? String {
-                                                let comment = Comment(commentSection: .post, sectionItemID: postID, commentID: change.document.documentID)
-                                                
-                                                if let isTopicPost = data["isTopicPist"] as? Bool {
-                                                    comment.isTopicPost = isTopicPost
-                                                }
-                                                if let language = data["language"] as? String {
-                                                    if language == "en" {
-                                                        comment.sectionItemLanguage = .english
-                                                    }
-                                                }
-                                                comment.author = author
-                                                comment.text = text
-                                                self.notifications.append(comment)
-                                            }
-                                            self.newComments = self.newComments+1
-                                        case "message":
-                                            self.newMessages = self.newMessages+1
-                                        case "blogPost":
-                                            self.newBlogPost = self.newBlogPost+1
-                                        case "upvote":
-                                            if let postID = data["postID"] as? String, let button = data["button"] as? String, let title = data["title"] as? String {
-                                                
-                                                if let upvote = self.upvotes.first(where: {$0.sectionItemID == postID}) {
-                                                    
-                                                    self.addUpvote(comment: upvote, buttonType: button)
-                                                } else {
-                                                    let comment = Comment(commentSection: .post, sectionItemID: postID, commentID: change.document.documentID)
-                            
-                                                    comment.sectionItemID =  postID
-                                                    comment.upvotes = Votes()
-                                                    comment.title = title
-                                                    if let isTopicPost = data["isTopicPost"] as? Bool {
-                                                        comment.isTopicPost = isTopicPost
-                                                    }
-                                                    if let language = data["language"] as? String {
-                                                        if language == "en" {
-                                                            comment.sectionItemLanguage = .english
-                                                        }
-                                                    }
-                                                    
-                                                    self.upvotes.append(comment)
-                                                    
-                                                    self.addUpvote(comment: comment, buttonType: button)
-                                                    
-                                                    self.newComments = self.newComments+1
-                                                }
-                                            }
-                                        default:
-                                            print("Unknown Type")
-                                        }
-                                    case .removed:
-                                        switch type {
-                                        case "friend":
-                                            self.friendRequests = self.friendRequests-1
-                                        case "comment":
-                                            self.newComments = self.newComments-1
-                                            if let postID = data["postID"] as? String {
-                                                print("Delete notification out of array")
-                                                self.notifications = self.notifications.filter{$0.sectionItemID != postID}
-                                            }
-                                        case "message":
-                                            self.newMessages = self.newMessages-1
-                                        case "blogPost":
-                                            self.newBlogPost = self.newBlogPost-1
-                                        case "upvote":
-                                            if let postID = data["postID"] as? String {
-                                                print("Delete upvote out of array")
-                                                
-                                                let count = self.upvotes.count
-                                                self.upvotes = self.upvotes.filter{$0.sectionItemID != postID}
-                                                
-                                                if count != self.upvotes.count {
-                                                    self.newComments = self.newComments-1
-                                                }
-                                            }
-                                        default:
-                                            print("Unknown Type")
-                                        }
-                                        
-                                    default:
-                                        print("These cant get modifier")
-                                    }
-                                }
-                            }
-                            let notifications = self.newComments+self.friendRequests
-                            self.setBarButtonProfileBadge(notifications: notifications, newChats: self.newMessages)
-                            self.setBlogPostBadge(value: self.newBlogPost)
-//                            self.setChatBadge(value: self.newMessages)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    func addUpvote(comment: Comment, buttonType: String) {
-        if let votes = comment.upvotes {
-
-            switch buttonType {
-            case "thanks":
-                votes.thanks = votes.thanks+1
-            case "wow":
-                votes.wow = votes.wow+1
-            case "ha":
-                votes.ha = votes.ha+1
-            case "nice":
-                votes.nice = votes.nice+1
-            default:
-                print("Something went wrong")
-            }
-        }
-    }
-    
-    func setBarButtonProfileBadge(notifications: Int, newChats: Int) {
+    //MARK: Present Data
+    func setPlaceholderAndGetPosts() {
+        // Show empty cells while fetching the posts
+        var index = 0
         
-        if notifications >= 1 {
-            self.smallNumberForNotifications.text = String(notifications)
-            self.smallNumberForNotifications.isHidden = false
-        } else {
-            self.smallNumberForNotifications.isHidden = true
-        }
+        let post = Post()
+        post.type = .topTopicCell
+        self.posts.insert(post, at: 0)
         
-        if newChats >= 1 {
-            self.smallNumberForNewChats.text = String(newChats)
-            self.smallNumberForNewChats.isHidden = false
-        } else {
-            self.smallNumberForNewChats.isHidden = true
-        }
-    }
-    
-    func setBlogPostBadge(value: Int) {
-        if let tabItems = tabBarController?.tabBar.items {
-            let tabItem = tabItems[4] //CommunityCollectionVC
-            
-            if value != 0 {
-                tabItem.badgeValue = String(value)
+        while index <= 3 {
+            let post2 = Post()
+            if index == 1 {
+                post2.type = .picture
             } else {
-                tabItem.badgeValue = nil
+                post2.type = .thought
             }
+            self.posts.append(post2)
+            index+=1
         }
+        
+        self.tableView.reloadData()
+        getPosts(getMore: true)
     }
     
-    // MARK: - TableViewStuff
+    
+    // MARK: - TableViewDelegate
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
@@ -493,19 +261,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    func changePostLocation(post: Post) {
-        let dataDictionary: [String: Any] = ["title": post.title, "description": post.description, "createTime": Timestamp(date: Date()), "originalPoster": post.user.userUID, "thanksCount":post.votes.thanks, "wowCount":post.votes.thanks, "haCount":post.votes.thanks, "niceCount":post.votes.thanks, "type": "picture", "report": "normal", "imageURL": post.imageURL, "imageHeight": post.mediaHeight, "imageWidth": post.mediaWidth]
-        
-        let ref = db.collection("Posts").document()
-        
-        ref.setData(dataDictionary) { (err) in
-            if let error = err {
-                print("error:", error.localizedDescription)
-            }
-        }
-    }
-    
-    // MARK: - PrepareForSegue
+    // MARK:- Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showPost" {
@@ -742,26 +498,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         performSegue(withIdentifier: "toUserSegue", sender: post.user)
     }
     
-    // MARK: - EasyTipViewPreferences
-    func setUpEasyTipViewPreferences() {
-        var preferences = EasyTipView.Preferences()
-        preferences.drawing.font = UIFont(name: "IBMPlexSans", size: 18)!
-        preferences.drawing.foregroundColor = UIColor.black
-        preferences.drawing.backgroundColor = UIColor.white
-        preferences.drawing.arrowPosition = EasyTipView.ArrowPosition.top
-        preferences.drawing.textAlignment = .left
-        preferences.drawing.cornerRadius = 10
-        preferences.drawing.shadowColor = .lightGray
-        preferences.drawing.shadowOpacity = 1
-        preferences.drawing.shadowOffset = .zero
-        preferences.drawing.shadowRadius = 7
-        preferences.positioning.bubbleHInset = 10
-        preferences.positioning.bubbleVInset = 10
-        preferences.positioning.maxWidth = self.view.frame.width-40
-        // Maximum of 800 Words
-        
-        EasyTipView.globalPreferences = preferences
-    }
+    
     
     // MARK: - Reachability
     required init?(coder aDecoder: NSCoder) {
@@ -843,8 +580,6 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         return sideMenu
     }()
     
-    
-    
     func sideMenuButtonTapped(whichButton: SideMenuButton, comment: Comment?) {
         //Called when the sideMenu is closed with an call to action
         switch whichButton {
@@ -887,6 +622,247 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
             print("nothing happens")
         }
         
+    }
+    
+    //MARK: Side Menu User
+    
+    /// Call to load User in SideMenu and set notifications after dismissal of the logInViewController
+    func loadUser() {
+        self.setNotificationListener()
+        self.checkForLoggedInUser()
+        self.setNotifications()
+        sideMenu.showUser()
+    }
+    
+    
+    func checkForLoggedInUser() {
+        print("check")
+        if let _ = Auth.auth().currentUser {
+            //Still logged in
+            self.loadBarButtonItem()
+            self.screenEdgeRecognizer.isEnabled = true
+        } else {
+            if let items = self.tabBarController?.tabBar.items {
+                let tabItem = items[1]
+                tabItem.badgeValue = nil
+            }
+            self.screenEdgeRecognizer.isEnabled = false
+            self.loadBarButtonItem()
+            
+            if let listener = self.notificationListener {
+                listener.remove()
+            }
+        }
+    }
+    
+    //MARK: Side Menu Notifications
+    
+    func setNotifications() {   // Ask for persmission to send Notifications
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            appDelegate.registerForPushNoticications(application: UIApplication.shared)
+        }
+    }
+    
+    func setNotificationListener() {
+        // If logged in get notifications and listen for new ones
+        if let _ = notificationListener {
+            print("Listener already Set")
+        } else {
+            print("Set listener")
+            if let user = Auth.auth().currentUser {
+                let notRef = db.collection("Users").document(user.uid).collection("notifications")
+                
+                notificationListener = notRef.addSnapshotListener { (snap, err) in
+                    if let error = err {
+                        print("We have an error: \(error.localizedDescription)")
+                    } else {
+                        
+                        if let snapshot = snap {
+                            snapshot.documentChanges.forEach { (change) in
+                                let data = change.document.data()
+                                
+                                 
+                                if let type = data["type"] as? String {
+                                    
+                                    switch change.type {
+                                        
+                                    case .added:
+                                        
+                                        switch type {
+                                        case "friend":
+                                            
+                                            self.friendRequests = self.friendRequests+1
+                                        case "comment":
+                                            if let text = data["comment"] as? String, let author = data["name"] as? String, let postID = data["postID"] as? String {
+                                                let comment = Comment(commentSection: .post, sectionItemID: postID, commentID: change.document.documentID)
+                                                
+                                                if let isTopicPost = data["isTopicPist"] as? Bool {
+                                                    comment.isTopicPost = isTopicPost
+                                                }
+                                                if let language = data["language"] as? String {
+                                                    if language == "en" {
+                                                        comment.sectionItemLanguage = .english
+                                                    }
+                                                }
+                                                comment.author = author
+                                                comment.text = text
+                                                self.notifications.append(comment)
+                                            }
+                                            self.newComments = self.newComments+1
+                                        case "message":
+                                            self.newMessages = self.newMessages+1
+                                        case "blogPost":
+                                            self.newBlogPost = self.newBlogPost+1
+                                        case "upvote":
+                                            if let postID = data["postID"] as? String, let button = data["button"] as? String, let title = data["title"] as? String {
+                                                
+                                                if let upvote = self.upvotes.first(where: {$0.sectionItemID == postID}) {
+                                                    
+                                                    self.addUpvote(comment: upvote, buttonType: button)
+                                                } else {
+                                                    let comment = Comment(commentSection: .post, sectionItemID: postID, commentID: change.document.documentID)
+                            
+                                                    comment.sectionItemID =  postID
+                                                    comment.upvotes = Votes()
+                                                    comment.title = title
+                                                    if let isTopicPost = data["isTopicPost"] as? Bool {
+                                                        comment.isTopicPost = isTopicPost
+                                                    }
+                                                    if let language = data["language"] as? String {
+                                                        if language == "en" {
+                                                            comment.sectionItemLanguage = .english
+                                                        }
+                                                    }
+                                                    
+                                                    self.upvotes.append(comment)
+                                                    
+                                                    self.addUpvote(comment: comment, buttonType: button)
+                                                    
+                                                    self.newComments = self.newComments+1
+                                                }
+                                            }
+                                        default:
+                                            print("Unknown Type")
+                                        }
+                                    case .removed:
+                                        switch type {
+                                        case "friend":
+                                            self.friendRequests = self.friendRequests-1
+                                        case "comment":
+                                            self.newComments = self.newComments-1
+                                            if let postID = data["postID"] as? String {
+                                                print("Delete notification out of array")
+                                                self.notifications = self.notifications.filter{$0.sectionItemID != postID}
+                                            }
+                                        case "message":
+                                            self.newMessages = self.newMessages-1
+                                        case "blogPost":
+                                            self.newBlogPost = self.newBlogPost-1
+                                        case "upvote":
+                                            if let postID = data["postID"] as? String {
+                                                print("Delete upvote out of array")
+                                                
+                                                let count = self.upvotes.count
+                                                self.upvotes = self.upvotes.filter{$0.sectionItemID != postID}
+                                                
+                                                if count != self.upvotes.count {
+                                                    self.newComments = self.newComments-1
+                                                }
+                                            }
+                                        default:
+                                            print("Unknown Type")
+                                        }
+                                        
+                                    default:
+                                        print("These cant get modifier")
+                                    }
+                                }
+                            }
+                            let notifications = self.newComments+self.friendRequests
+                            self.setBarButtonProfileBadge(notifications: notifications, newChats: self.newMessages)
+                            self.setBlogPostBadge(value: self.newBlogPost)
+//                            self.setChatBadge(value: self.newMessages)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func addUpvote(comment: Comment, buttonType: String) {
+        if let votes = comment.upvotes {
+
+            switch buttonType {
+            case "thanks":
+                votes.thanks = votes.thanks+1
+            case "wow":
+                votes.wow = votes.wow+1
+            case "ha":
+                votes.ha = votes.ha+1
+            case "nice":
+                votes.nice = votes.nice+1
+            default:
+                print("Something went wrong")
+            }
+        }
+    }
+    
+    func setBarButtonProfileBadge(notifications: Int, newChats: Int) {
+        
+        if notifications >= 1 {
+            self.smallNumberForNotifications.text = String(notifications)
+            self.smallNumberForNotifications.isHidden = false
+        } else {
+            self.smallNumberForNotifications.isHidden = true
+        }
+        
+        if newChats >= 1 {
+            self.smallNumberForNewChats.text = String(newChats)
+            self.smallNumberForNewChats.isHidden = false
+        } else {
+            self.smallNumberForNewChats.isHidden = true
+        }
+    }
+    
+    func setBlogPostBadge(value: Int) {
+        if let tabItems = tabBarController?.tabBar.items {
+            let tabItem = tabItems[4] //CommunityCollectionVC
+            
+            if value != 0 {
+                tabItem.badgeValue = String(value)
+            } else {
+                tabItem.badgeValue = nil
+            }
+        }
+    }
+    
+    //MARK:- Info Views
+    override func presentInfoView() {
+        //Called from BaseFeedTableVC because it is called in CellForRowAt if you are new and after 6 posts are displayed
+        let infoViewShown = UserDefaults.standard.bool(forKey: "likesInfo")
+        if infoViewShown == false {
+            showInfoView()
+        }
+    }
+    
+    func showInfoView() {
+        //Show Info View that shows what the like buttons mean and stuff like this
+        let upperHeight = UIApplication.shared.statusBarFrame.height +
+              self.navigationController!.navigationBar.frame.height
+        let height = upperHeight+40
+        
+        let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
+        let popUpView = PopUpInfoView(frame: frame)
+        popUpView.alpha = 0
+        popUpView.type = .likes
+        
+        if let window = UIApplication.shared.keyWindow {
+            window.addSubview(popUpView)
+        }
+        
+        UIView.animate(withDuration: 0.5) {
+            popUpView.alpha = 1
+        }
     }
     
     func isAppAlreadyLaunchedOnce() -> Bool {
@@ -948,8 +924,42 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
             return true
         }
     }
+    
+    // MARK: EasyTipViewPreferences
+    func setUpEasyTipViewPreferences() {
+        var preferences = EasyTipView.Preferences()
+        preferences.drawing.font = UIFont(name: "IBMPlexSans", size: 18)!
+        preferences.drawing.foregroundColor = UIColor.black
+        preferences.drawing.backgroundColor = UIColor.white
+        preferences.drawing.arrowPosition = EasyTipView.ArrowPosition.top
+        preferences.drawing.textAlignment = .left
+        preferences.drawing.cornerRadius = 10
+        preferences.drawing.shadowColor = .lightGray
+        preferences.drawing.shadowOpacity = 1
+        preferences.drawing.shadowOffset = .zero
+        preferences.drawing.shadowRadius = 7
+        preferences.positioning.bubbleHInset = 10
+        preferences.positioning.bubbleVInset = 10
+        preferences.positioning.maxWidth = self.view.frame.width-40
+        // Maximum of 800 Words
+        
+        EasyTipView.globalPreferences = preferences
+    }
+    
+//    func changePostLocation(post: Post) {
+//        let dataDictionary: [String: Any] = ["title": post.title, "description": post.description, "createTime": Timestamp(date: Date()), "originalPoster": post.user.userUID, "thanksCount":post.votes.thanks, "wowCount":post.votes.thanks, "haCount":post.votes.thanks, "niceCount":post.votes.thanks, "type": "picture", "report": "normal", "imageURL": post.imageURL, "imageHeight": post.mediaHeight, "imageWidth": post.mediaWidth]
+//
+//        let ref = db.collection("Posts").document()
+//
+//        ref.setData(dataDictionary) { (err) in
+//            if let error = err {
+//                print("error:", error.localizedDescription)
+//            }
+//        }
+//    }
 }
 
+//MARK:- LogOutDelegate
 extension FeedTableViewController: LogOutDelegate {
 
     func deleteListener() {     
@@ -965,6 +975,8 @@ extension FeedTableViewController: LogOutDelegate {
         sideMenu.removeUser()
     }
 }
+
+//MARK:- JustPostedDelegate
 
 extension FeedTableViewController: JustPostedDelegate {
     func posted() {
