@@ -47,7 +47,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     
     private let section = Section()
         
-    let dataHelper = DataRequest()
+    let imagineDataRequest = ImagineDataRequest()
     
     //MARK:- View Lifecycle
     override func viewDidLoad() {
@@ -89,14 +89,13 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     //MARK:- Get Data
     func getData() {
         
-        dataHelper.getData(get: .campaign) { (campaigns) in
-            if let campaigns = campaigns as? [Campaign] {
+        imagineDataRequest.getCampaigns(onlyFinishedCampaigns: false) { (campaigns) in
+            if let campaigns = campaigns {
                 self.campaigns = campaigns
+                self.collectionView.reloadData()
             } else {
-                return
+                //TODO: Error handling
             }
-            
-            self.collectionView.reloadData()
         }
         
         let request = ImagineDataRequest()

@@ -3988,7 +3988,7 @@
                             </segments>
                             <color key="tintColor" red="0.32549019610000002" green="0.46666666670000001" blue="0.65098039220000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <userDefinedRuntimeAttributes>
-                                <userDefinedRuntimeAttribute type="string" keyPath="xibLocKeys" value="campaignVC_segment_proposal,campaignVC_segment_vote"/>
+                                <userDefinedRuntimeAttribute type="string" keyPath="xibLocKeys" value="campaignVC_segment_open_proposal,campaignVC_segment_done_proposal"/>
                             </userDefinedRuntimeAttributes>
                             <connections>
                                 <action selector="segmentControlChannged:" destination="Kgk-mM-njZ" eventType="valueChanged" id="gB7-k9-bsp"/>
@@ -8772,7 +8772,7 @@
     </designables>
     <inferredMetricsTieBreakers>
         <segue reference="abH-Sm-SDu"/>
-        <segue reference="7cY-mc-4HM"/>
+        <segue reference="MRt-X8-Vhc"/>
         <segue reference="oN4-jG-mYq"/>
         <segue reference="841-F7-pRK"/>
         <segue reference="9QY-S4-xl7"/>
@@ -8786,7 +8786,7 @@
         <segue reference="Nkm-Bu-csR"/>
         <segue reference="Li3-Sa-Yuw"/>
         <segue reference="65n-8p-jc1"/>
-        <segue reference="m6b-eV-Frv"/>
+        <segue reference="LDA-ou-ct8"/>
         <segue reference="UZQ-mt-HvY"/>
         <segue reference="0po-Va-czT"/>
         <segue reference="Cdz-Pl-3MF"/>

@@ -581,6 +581,8 @@
 "campaignVC_description" = "Treffen wir die Entscheidungen gemeinsam! Stelle deine Ideen vor und entscheide über die Vorschläge von anderen.";
 "campaignVC_shareButton" = "Teile deine Idee";
 "campaignVC_segment_proposal" = "Vorschläge";
+"campaignVC_segment_open_proposal" = "Offen";
+"campaignVC_segment_done_proposal" = "Fertig";
 "campaignVC_segment_vote" = "Abstimmungen";
 
 //ShareProposalVC

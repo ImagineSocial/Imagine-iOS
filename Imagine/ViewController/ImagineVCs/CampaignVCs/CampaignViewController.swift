@@ -41,7 +41,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
             if let id = campaignID {
                 
                 let imagineDataRequest = ImagineDataRequest()
-                imagineDataRequest.getCampaign(documentID: id) { (campaign) in
+                imagineDataRequest.getSingleCampaign(documentID: id) { (campaign) in
                     if let campaign = campaign {
                         self.campaign = campaign
                         self.showCampaign()

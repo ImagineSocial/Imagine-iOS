@@ -12,7 +12,7 @@ import FirebaseAuth
 import EasyTipView
 
 enum suggestionMode {
-    case vote
+    case doneCampaigns
     case campaign
 }
 
@@ -30,14 +30,13 @@ class CampaignVoteCollectionViewController: UICollectionViewController {
     
     //MARK:- Variables
     var campaigns = [Campaign]()
-    var votes = [Vote]()
+    var doneCampaigns = [Campaign]()
     var mode: suggestionMode = .campaign
-    let dataHelper = DataRequest()
+    let imagineDataRequest = ImagineDataRequest()
     let insetsTimesTwo: CGFloat = 20
     
     var tipView: EasyTipView?
     
-    private let voteCellIdentifier = "VoteCell"
     private let campaignCellIdentifier = "campaignCell"
     private let campaignHeaderIdentifier = "campaignCollectionHeaderView"
     
@@ -59,7 +58,6 @@ class CampaignVoteCollectionViewController: UICollectionViewController {
         
         self.view.activityStartAnimating()
         
-        collectionView.register(UINib(nibName: "VoteCell", bundle: nil), forCellWithReuseIdentifier: voteCellIdentifier)
         collectionView.register(UINib(nibName: "CampaignCell", bundle: nil), forCellWithReuseIdentifier: campaignCellIdentifier)
         
         let rightSwipe = UISwipeGestureRecognizer(target: self, action: #selector(setCampaignUI))
@@ -67,7 +65,7 @@ class CampaignVoteCollectionViewController: UICollectionViewController {
         
         self.view.addGestureRecognizer(rightSwipe)
         
-        let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(setVoteModeUI))
+        let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(setDoneCampaignsUI))
         leftSwipe.direction = .left
         self.view.addGestureRecognizer(leftSwipe)
         
@@ -98,20 +96,24 @@ class CampaignVoteCollectionViewController: UICollectionViewController {
     }()
     
     func getCampaigns() {
-        dataHelper.getData(get: .vote) { (votes) in
-            if let votez = votes as? [Vote] {
-                self.votes = votez
+
+        imagineDataRequest.getCampaigns(onlyFinishedCampaigns: false) { (campaigns) in
+            if let campaigns = campaigns {
+                self.campaigns = campaigns
                 self.collectionView.reloadData()
                 self.view.activityStopAnimating()
             } else {
-                print("Couldnt get the votes: \(votes)")
+                print("COuld not fetch the campaigns")
                 self.view.activityStopAnimating()
             }
         }
         
-        dataHelper.getData(get: .campaign) { (campaigns) in
-            if let campaignz = campaigns as? [Campaign] {
-                self.campaigns = campaignz
+        imagineDataRequest.getCampaigns(onlyFinishedCampaigns: true) { (campaigns) in
+            if let campaigns = campaigns {
+                self.doneCampaigns = campaigns
+                self.collectionView.reloadData()
+            } else {
+                print("COuld not fetch the done campaigns")
             }
         }
     }
@@ -125,8 +127,8 @@ class CampaignVoteCollectionViewController: UICollectionViewController {
         switch mode {
         case .campaign:
             return campaigns.count
-        case .vote:
-            return votes.count
+        case .doneCampaigns:
+            return doneCampaigns.count
         }
     }
     
@@ -135,25 +137,21 @@ class CampaignVoteCollectionViewController: UICollectionViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        switch mode {
-        case .campaign:
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: campaignCellIdentifier, for: indexPath) as? CampaignCell {
-
-                let campaign = campaigns[indexPath.row]
+        
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: campaignCellIdentifier, for: indexPath) as? CampaignCell {
+            
+            var campaign: Campaign!
                 
-                cell.campaign = campaign
-                
-                return cell
+            switch mode {
+            case .campaign:
+                campaign = campaigns[indexPath.item]
+            case .doneCampaigns:
+                campaign = doneCampaigns[indexPath.item]
             }
-        case .vote:
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: voteCellIdentifier, for: indexPath) as? VoteCell {
-                
-                let vote = votes[indexPath.row]
-                
-                cell.vote = vote
-                
-                return cell
-            }
+            
+            cell.campaign = campaign
+            
+            return cell
         }
         
         return UICollectionViewCell()
@@ -174,17 +172,16 @@ class CampaignVoteCollectionViewController: UICollectionViewController {
     
     //MARK:- CollectionView Delegate
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        var campaign: Campaign!
+        
         switch mode {
         case .campaign:
-            let campaign = campaigns[indexPath.row]
-            
-            performSegue(withIdentifier: "toCampaignSegue", sender: campaign)
-        case .vote:
-            let vote = votes[indexPath.row]
-            
-            performSegue(withIdentifier: "toVoteSegue", sender: vote)
+            campaign = campaigns[indexPath.item]
+        case .doneCampaigns:
+            campaign = doneCampaigns[indexPath.item]
         }
         
+        performSegue(withIdentifier: "toCampaignSegue", sender: campaign)
         
         collectionView.deselectItem(at: indexPath, animated: true)
     }
@@ -210,7 +207,7 @@ class CampaignVoteCollectionViewController: UICollectionViewController {
     //MARK:- Load UI Changes
     @objc func setCampaignUI() {
         switch mode {
-        case .vote:
+        case .doneCampaigns:
             mode = .campaign
             
             let option = UIView.AnimationOptions.transitionCrossDissolve
@@ -228,11 +225,11 @@ class CampaignVoteCollectionViewController: UICollectionViewController {
         }
     }
     
-    @objc func setVoteModeUI() {
+    @objc func setDoneCampaignsUI() {
         
         switch mode {
         case .campaign:
-            mode = .vote
+            mode = .doneCampaigns
             
             let option = UIView.AnimationOptions.transitionCrossDissolve
             
@@ -265,7 +262,7 @@ class CampaignVoteCollectionViewController: UICollectionViewController {
         }
         if segmentedControl.selectedSegmentIndex == 1 {
             
-            setVoteModeUI()
+            setDoneCampaignsUI()
         }
     }
     
@@ -286,12 +283,7 @@ extension CampaignVoteCollectionViewController: UICollectionViewDelegateFlowLayo
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width-insetsTimesTwo
         
-        switch mode {
-        case .campaign:
-            return CGSize(width: width, height: 165)
-        case .vote:
-            return CGSize(width: width, height: 185)
-        }
+        return CGSize(width: width, height: 160)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {

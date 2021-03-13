@@ -13,6 +13,7 @@ class ImagineDataRequest {
     
     private let db = Firestore.firestore()
     
+    //MARK:- Get Monthly Report
     public func getReportData(returnData: @escaping (ReportData?) -> Void) {
         
         let dataRef = db.collection("TopTopicData").document("TopTopicData")
@@ -52,7 +53,7 @@ class ImagineDataRequest {
     }
     
     
-    //MARK:- FinishedWork
+    //MARK:- Get FinishedWork
     public func getFinishedWorkload(returnData: @escaping ([FinishedWorkItem]?) -> Void) {
         
         let dataRef = db.collection("TopTopicData").document("FinishedProjects").collection("finishedProjects").order(by: "createDate", descending: true)
@@ -91,8 +92,41 @@ class ImagineDataRequest {
         }
     }
     
-    //MARK:- Get Campaign
-    func getCampaign(documentID: String, returnCampaign: @escaping (Campaign?) -> Void) {
+    //MARK:- Get Campaigns
+    func getCampaigns(onlyFinishedCampaigns: Bool, returnCampaigns: @escaping ([Campaign]?) -> Void) {
+
+        var ref: Query!
+            
+        if onlyFinishedCampaigns {
+            ref = db.collection("Data").document("en").collection("campaigns").whereField("state", isEqualTo: "done")
+        } else {
+            ref = db.collection("Data").document("en").collection("campaigns").whereField("state", isEqualTo: "open").order(by: "supporter", descending: true)
+        }
+
+        ref.getDocuments { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+                returnCampaigns(nil)
+            } else if let snap = snap {
+                
+                var campaigns = [Campaign]()
+                
+                for document in snap.documents {
+                    let data = document.data()
+                    
+                    if let campaign = ImagineDataHelper.getCampaign(documentID: document.documentID, documentData: data) {
+                        campaigns.append(campaign)
+                    } else {
+                        continue
+                    }
+                }
+                returnCampaigns(campaigns)
+            }
+        }
+    }
+    
+    //MARK:- Get Single Campaign
+    func getSingleCampaign(documentID: String, returnCampaign: @escaping (Campaign?) -> Void) {
         let ref = db.collection("Data").document("en").collection("campaigns").document(documentID)
         
         ref.getDocument { (snap, err) in
@@ -100,9 +134,8 @@ class ImagineDataRequest {
                 print("We have an error: \(error.localizedDescription)")
             } else {
                 if let snap = snap, let data = snap.data() {
-                    let dataRequest = DataRequest()
                     
-                    if let campaign = dataRequest.getCampaign(documentID: documentID, documentData: data) {
+                    if let campaign = ImagineDataHelper.getCampaign(documentID: documentID, documentData: data) {
                         returnCampaign(campaign)
                     } else {
                         returnCampaign(nil)
