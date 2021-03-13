@@ -231,6 +231,7 @@
 "vote_successfull_alert_message" = "Deine Stimme wurde angenommen.";
 
 //NewCampaignViewController
+"campaign_category_feature" = "Feature";
 "campaign_category_proposal" = "Vorschlag";
 "campaign_category_complaint" = "Beschwerde";
 "campaign_category_call" = "Aufruf";
@@ -368,6 +369,7 @@
 "sideMenu_setting_label" = "Einstellungen";
 
 //DataHelper
+"dataHelper_feature_label" = "Feature";
 "dataHelper_proposal_label" = "Vorschlag";
 "dataHelper_complaint_label" = "Beschwerde";
 "dataHelper_call_label" = "Aufruf";
@@ -579,6 +581,8 @@
 "campaignVC_description" = "Treffen wir die Entscheidungen gemeinsam! Stelle deine Ideen vor und entscheide über die Vorschläge von anderen.";
 "campaignVC_shareButton" = "Teile deine Idee";
 "campaignVC_segment_proposal" = "Vorschläge";
+"campaignVC_segment_open_proposal" = "Offen";
+"campaignVC_segment_done_proposal" = "Fertig";
 "campaignVC_segment_vote" = "Abstimmungen";
 
 //ShareProposalVC

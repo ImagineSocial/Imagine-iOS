@@ -41,6 +41,18 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
         
         createFloatingCommentView()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if let commentView = floatingCommentView {
+            commentView.addKeyboardObserver()
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        if let commentView = floatingCommentView {
+            commentView.removeKeyboardObserver()
+        }
+    }
 
     
     func setUpView() {
@@ -119,6 +131,7 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
                 bottomConstraint.isActive = true
             floatingCommentView!.bottomConstraint = bottomConstraint
             floatingCommentView!.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
+            floatingCommentView!.addKeyboardObserver()
             
             self.view.bringSubviewToFront(floatingCommentView!)
             self.view.layoutIfNeeded()

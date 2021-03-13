@@ -21,16 +21,35 @@ class CommunityItem {
 class ImagineCommunityCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
 
-    var items = [CommunityItem]()
+    //MARK:- Variables
+    var campaigns = [Campaign]()
+    var sortedCampaigns: [Campaign]?
+    
     let insetTimesTwo:CGFloat = 20
     
-    let blogPostIdentifier = "BlogCell"
-    let currentProjectsIdentifier = "CurrentProjectsCollectionCell"
-    let tableViewIdentifier = "TableViewInCollectionViewCell"
-    let optionsCellIdentifier = "ImagineCommunityOptionsCell"
-        
-    let dataHelper = DataRequest()
+    private let navigationCellIdentifier = "ImagineCommunityNavigationCell"
+    private let proposalHeaderIdentifier = "ImagineCommunityProposalHeader"
+    private let dataReportCellIdentifier = "DataReportCollectionViewCell"
+    private let campaignCellIdentifier = "campaignCell"
+    private let finishedWordCellIdentifier = "FinishedWorkCollectionViewCell"
     
+    //FinishWorkCell Boolean
+    private var isOpen = false
+    private var finishedWorkItems = [FinishedWorkItem]()
+
+    //It can get a bit confusing otherwise
+    private struct Section {
+        let navigationSection = 0
+        let dataReportSection = 1
+        let finishedSection = 2
+        let campaignSection = 3
+    }
+    
+    private let section = Section()
+        
+    let imagineDataRequest = ImagineDataRequest()
+    
+    //MARK:- View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -45,10 +64,13 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         self.view.addGestureRecognizer(gesture)
         
         // Register cell classes
-        self.collectionView.register(UINib(nibName: "ImagineCommunityOptionsCell", bundle: nil), forCellWithReuseIdentifier: optionsCellIdentifier)
-        self.collectionView.register(UINib(nibName: "BlogPostCell", bundle: nil), forCellWithReuseIdentifier: blogPostIdentifier)
-        self.collectionView.register(UINib(nibName: "CurrentProjectsCollectionCell", bundle: nil), forCellWithReuseIdentifier: currentProjectsIdentifier)
-        collectionView.register(UINib(nibName: tableViewIdentifier, bundle: nil), forCellWithReuseIdentifier: tableViewIdentifier)
+        collectionView.register(UINib(nibName: "ImagineCommunityNavigationCell", bundle: nil), forCellWithReuseIdentifier: navigationCellIdentifier)
+        collectionView.register(UINib(nibName: "DataReportCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: dataReportCellIdentifier)
+        collectionView.register(UINib(nibName: "CampaignCell", bundle: nil), forCellWithReuseIdentifier: campaignCellIdentifier)
+        collectionView.register(UINib(nibName: "FinishedWorkCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: finishedWordCellIdentifier)
+        
+        // Register header classes
+        collectionView.register(UINib(nibName: "ImagineCommunityProposalHeader", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: proposalHeaderIdentifier)
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.headerReferenceSize = CGSize(width: self.collectionView.frame.size.width, height: 85)
@@ -64,129 +86,107 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
        }
     }
     
+    //MARK:- Get Data
     func getData() {
-
-        dataHelper.getData(get: .blogPosts) { (posts) in
-            
-            for post in posts {
-                if let post = post as? BlogPost {
-                    let item = CommunityItem(item: post, createDate: post.createDate)
-                    self.items.append(item)
-                }
-            }
-            
-            self.dataHelper.getData(get: .jobOffer) { (jobOffer) in
-                for offer in jobOffer {
-                    if let offer = offer as? JobOffer {
-                        let item = CommunityItem(item: offer, createDate: offer.createDate)
-                        self.items.append(item)
-                    }
-                }
-                
-                self.items.sort {
-                    ($0.createDate) > ($1.createDate)
-                }
-                
-                let first = BlogPost()
-                first.isCurrentProjectsCell = true
-                let item = CommunityItem(item: first, createDate: Date())
-                self.items.insert(item, at: 0)
-                
+        
+        imagineDataRequest.getCampaigns(onlyFinishedCampaigns: false) { (campaigns) in
+            if let campaigns = campaigns {
+                self.campaigns = campaigns
                 self.collectionView.reloadData()
-                
+            } else {
+                //TODO: Error handling
+            }
+        }
+        
+        let request = ImagineDataRequest()
+        request.getFinishedWorkload { (data) in
+            if let workItems = data {
+                self.finishedWorkItems = workItems
+                self.collectionView.reloadData()
+            } else {
+                return
             }
         }
     }
-   
-    @objc func showSecretButton(sender: UILongPressGestureRecognizer) {
-        if sender.state == .ended {
-            performSegue(withIdentifier: "toSecretSegue", sender: nil)
-        }
-    }
 
-    // MARK: UICollectionViewDataSource
+    // MARK:- UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 2
+
+        return 4
     }
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if section == 0 {
+                
+        if section == self.section.navigationSection {
             return 1
+        } else if section == self.section.dataReportSection {
+            return 1
+        } else if section == self.section.campaignSection{
+            if let sortCampaigns = sortedCampaigns {
+                return sortCampaigns.count
+            } else {
+                return campaigns.count
+            }
+        } else if section == self.section.finishedSection {
+            if isOpen {
+                return finishedWorkItems.count
+            } else {
+                if finishedWorkItems.count == 0 {
+                    //Not yet fetched
+                    return 0
+                } else {
+                    return 4
+                }
+            }
         } else {
-            return items.count
+            return 0
         }
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        if indexPath.section == 0 {
+        if indexPath.section == self.section.navigationSection {
             
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: optionsCellIdentifier, for: indexPath) as? ImagineCommunityOptionsCell {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: navigationCellIdentifier, for: indexPath) as? ImagineCommunityNavigationCell {
                 
                 cell.delegate = self
                 
                 return cell
             }
+        } else if indexPath.section == self.section.dataReportSection {
             
-        } else {
-            let communityItem = items[indexPath.item]
-            
-            var isEverySecondCell = false
-            if indexPath.item % 2 == 0 {
-                isEverySecondCell = true
-            }
-
-            if let blogPost = communityItem.item as? BlogPost {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: dataReportCellIdentifier, for: indexPath) as? DataReportCollectionViewCell {
                 
-                if blogPost.isCurrentProjectsCell {
-                    if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: currentProjectsIdentifier, for: indexPath) as? CurrentProjectsCollectionCell {
-                        
-                        return cell
-                    }
-                } else {
-                    
-                    if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: blogPostIdentifier, for: indexPath) as? BlogCell {
-                        
-                        cell.post = blogPost
-                        if isEverySecondCell {
-                            
-                            if #available(iOS 13.0, *) {
-                                cell.contentView.backgroundColor = .secondarySystemBackground
-                            } else {
-                                cell.contentView.backgroundColor = .ios12secondarySystemBackground
-                            }
-                        } else {
-                            if #available(iOS 13.0, *) {
-                                cell.contentView.backgroundColor = .systemBackground
-                            } else {
-                                cell.contentView.backgroundColor = .white
-                            }
-                            
-                        }
-                        
-                        return cell
-                    }
-                }
-            } else if let jobOffer = communityItem.item as? JobOffer {
-                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: tableViewIdentifier, for: indexPath) as? TableViewInCollectionViewCell {
-                    cell.delegate = self
-                    cell.isEverySecondCell = isEverySecondCell
-                    cell.items = [jobOffer]
-                    
-                    return cell
-                }
-            } else if let vote = communityItem.item as? Vote {
-                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: tableViewIdentifier, for: indexPath) as? TableViewInCollectionViewCell {
-                    cell.delegate = self
-                    
-                    cell.isEverySecondCell = isEverySecondCell
-                    cell.items = [vote]
-                   
-                    return cell
-                }
+                return cell
+            }
+        } else if indexPath.section == self.section.finishedSection {
+            
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: finishedWordCellIdentifier, for: indexPath) as? FinishedWorkCollectionViewCell {
+                
+                let workItem = finishedWorkItems[indexPath.item]
+                
+                cell.finishedWorkItem = workItem
+                cell.delegate = self
+                
+                return cell
+            }
+        } else if indexPath.section == self.section.campaignSection {
+            
+            var campaign: Campaign!
+            
+            if let sortedCampaigns = sortedCampaigns {
+                campaign = sortedCampaigns[indexPath.item]
+            } else {
+                campaign = campaigns[indexPath.item]
+            }
+            
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: campaignCellIdentifier, for: indexPath) as? CampaignCell {
+                                
+                cell.campaign = campaign
+                
+                return cell
             }
         }
         
@@ -194,63 +194,136 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     }
     
     
-    
+    //MARK:- UICollectionViewFlowLayoutDelegate
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     
         let width = collectionView.frame.width-insetTimesTwo
         
-        if indexPath.section == 0{
-            return CGSize(width: width, height: 265)
-        } else {
-            let communityItem = items[indexPath.item]
+        if indexPath.section == self.section.navigationSection {
+            return CGSize(width: width, height: 200)
+        } else if indexPath.section == self.section.dataReportSection {
+            return CGSize(width: width, height: 140)
+        } else if indexPath.section == self.section.campaignSection {
+            return CGSize(width: width, height: 150)
+        } else if indexPath.section == self.section.finishedSection {
             
-            if let blogPost = communityItem.item as? BlogPost {
-                if blogPost.isCurrentProjectsCell {
-                    return CGSize(width: width, height: 170)    // For CurrentProfectsCollectionCell
-                } else {
-                    return CGSize(width: width, height: 220)   // For BlogCell
-                }
-            } else if let _ = communityItem.item as? JobOffer {
-                return CGSize(width: width, height: 125)   // For JobOffer
-            }  else {
-                return CGSize(width: width, height: 225)
+            let item = finishedWorkItems[indexPath.item]
+            
+            if item.showDescription {
+                
+                let attributedString = NSAttributedString(string: item.description, attributes: [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15)!])
+                let boundingRect = attributedString.boundingRect(with: CGSize(width: width, height: CGFloat.greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil)
+                
+                return CGSize(width: width, height: 40+boundingRect.height)
+            } else {
+                return CGSize(width: width, height: 30)
             }
+        } else {
+            return CGSize.zero
         }
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        if section == self.section.navigationSection {
+            return CGSize.zero
+        } else if section == self.section.dataReportSection {
+            return CGSize(width: collectionView.frame.width, height: 100)
+        } else if section == self.section.campaignSection {
+            return CGSize(width: collectionView.frame.width, height: 200)
+        } else if section == self.section.finishedSection {
+            return CGSize(width: collectionView.frame.width, height: 100)
+        } else {
+            return CGSize.zero
+        }
+    }
+    
+    //MARK:- UICollectionViewDelegate
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
 
-        
-        if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "communityHeader", for: indexPath) as? CommunityHeader {
+        if indexPath.section == self.section.campaignSection {
+            
+            if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: proposalHeaderIdentifier, for: indexPath) as? ImagineCommunityProposalHeader {
+                
+                headerView.delegate = self
+                
+                return headerView
+            }
+            
+        } else {
+            if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "communityHeader", for: indexPath) as? CommunityHeader {
 
-                headerView.headerLabel.text = NSLocalizedString("latest_news_header", comment: "latest news")
-
-            return headerView
-        
+                if indexPath.section == self.section.dataReportSection {
+                    headerView.headerLabel.text = "\(getMonthString()) Report"
+                } else if indexPath.section == self.section.finishedSection {
+                    headerView.headerLabel.text = "Just finished"
+                    headerView.expandButton.isHidden = false
+                    headerView.delegate = self
+                    headerView.isOpen = self.isOpen
+                }
+                    
+                return headerView
+            }
         }
 
         return UICollectionReusableView()
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if section == 0 {
-            return CGSize.zero
-        } else {
-            return CGSize(width: collectionView.frame.width, height: 80)
-        }
-    }
+    
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.section != 0 {
+        if indexPath.section == self.section.campaignSection {
+            var campaign: Campaign!
             
-            if let item = items[indexPath.item].item as? BlogPost {
-                if !item.isCurrentProjectsCell {
-                    performSegue(withIdentifier: "toBlogPost", sender: item)
+            if let sortedCampaigns = sortedCampaigns {
+                campaign = sortedCampaigns[indexPath.item]
+            } else {
+                campaign = campaigns[indexPath.item]
+            }
+            
+            performSegue(withIdentifier: "toCampaignSegue", sender: campaign)
+            
+        } else if indexPath.section == self.section.finishedSection {
+            
+            let item = finishedWorkItems[indexPath.item]
+            
+            if let cell = self.collectionView.cellForItem(at: indexPath) as? FinishedWorkCollectionViewCell {
+                if item.showDescription {
+                    item.showDescription = false
+                    cell.hideDescription()
+                } else {
+                    item.showDescription = true
+                    cell.showDescription()
                 }
+            }
+            
+            //Animate the changes
+            collectionView.performBatchUpdates {
+                collectionView.reloadData()
+            } completion: { (_) in
             }
         }
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        if section == self.section.finishedSection {
+            return 10
+        } else {
+            return 20
+        }
+    }
+    
+    
+    //MARK:- Get Month
+    func getMonthString() -> String {
+        let now = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "LLLL"
+        let nameOfMonth = dateFormatter.string(from: now)
+        
+        return nameOfMonth
+    }
+    
+    //MARK:- Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toChatSegue" {
             if let chosenChat = sender as? Chat {
@@ -265,6 +338,16 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
             if let visionVC = segue.destination as? SwipeCollectionViewController {
                 visionVC.diashow = .vision
                 visionVC.communityVC = self
+            }
+        }
+        
+        if segue.identifier == "toCampaignSegue" {
+            if let campaignVC = segue.destination as? CampaignViewController {
+                if let campaign = sender as? Campaign {
+                    campaignVC.campaign = campaign
+                } else if let campaignID = sender as? String {
+                    campaignVC.campaignID = campaignID
+                }
             }
         }
         
@@ -308,21 +391,22 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         }
     }
     
+    //MARK:- Actions
+    
     func secretButtonTapped(_ sender: Any) {
         performSegue(withIdentifier: "toSecretSegue", sender: nil)
     }
     
-}
-
-extension ImagineCommunityCollectionViewController: CommunityCollectionCellDelegate, TableViewInCollectionViewCellDelegate {
-    
-    func itemTapped(item: Any) {
-        if let jobOffer = item as? JobOffer {
-            performSegue(withIdentifier: "toJobOfferDetailSegue", sender: jobOffer)
-        } else if let vote = item as? Vote {
-            performSegue(withIdentifier: "toVoteDetailSegue", sender: vote)
+    @objc func showSecretButton(sender: UILongPressGestureRecognizer) {
+        if sender.state == .ended {
+            performSegue(withIdentifier: "toSecretSegue", sender: nil)
         }
     }
+}
+
+//MARK:- Cell Delegates
+extension ImagineCommunityCollectionViewController: CommunityCollectionCellDelegate {
+    
     
     func buttonTapped(button: CommunityCellButtonType) {
         switch button {
@@ -338,13 +422,76 @@ extension ImagineCommunityCollectionViewController: CommunityCollectionCellDeleg
             performSegue(withIdentifier: "toFeedbackSegue", sender: nil)
         case .settings:
             performSegue(withIdentifier: "toSettingsSegue", sender: nil)
+        case .website:
+            let language = LanguageSelection().getLanguage()
+            var url: URL?
+            if language == .german {
+                url = URL(string: "https://imagine.social")
+            } else {
+                url = URL(string: "https://en.imagine.social")
+            }
+            if let url = url {
+                UIApplication.shared.open(url)
+            }
         }
     }
 }
 
+//MARK:- ProposalHeaderDelegate
 
-class CommunityHeader: UICollectionReusableView {
+extension ImagineCommunityCollectionViewController: ImagineCommunityProposalHeaderDelegate {
     
-    @IBOutlet weak var headerLabel: UILabel!
+    func selectionChanged(selection: CampaignType) {
+        if selection == .all {
+            self.sortedCampaigns = nil
+            
+            self.campaigns.sort {
+                ($0.supporter) > ($1.supporter)
+            }
+            self.collectionView.reloadData()
+            
+            return
+        } else {
+            
+            self.sortedCampaigns?.removeAll()
+            var newSortCampaigns = [Campaign]()
+            
+            //Sort the fetched campaigns for the selected criteria
+            for campaign in campaigns {
+                if let category = campaign.category, category.type == selection {
+                    newSortCampaigns.append(campaign)
+                }
+            }
+            
+            newSortCampaigns.sort {
+                ($0.supporter) > ($1.supporter)
+            }
+            
+            self.sortedCampaigns = newSortCampaigns
+            self.collectionView.reloadData()
+        }
+    }
+}
+
+//MARK:- CommunityHeaderDelegate
+extension ImagineCommunityCollectionViewController: ImagineCommunityHeaderDelegate {
     
+    func expandButtonTapped() {
+        
+        if isOpen {
+            isOpen = false
+        } else {
+            isOpen = true
+        }
+        
+        collectionView.reloadData()
+    }
+}
+
+//MARK:- FinishedWorkCellDelegate
+extension ImagineCommunityCollectionViewController: FinishedWorkCellDelegate {
+    
+    func showCampaignTapped(campaignID: String) {
+        performSegue(withIdentifier: "toCampaignSegue", sender: campaignID)
+    }
 }

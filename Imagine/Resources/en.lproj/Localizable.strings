@@ -458,6 +458,8 @@
 
 //NewCampaignViewController
 
+"campaign_category_feature" = "Feature";
+
 "campaign_category_proposal" = "Proposal";
 
 "campaign_category_complaint" = "Complaint";
@@ -739,6 +741,7 @@
  
 
 //DataHelper
+"dataHelper_feature_label" = "Feature";
 
 "dataHelper_proposal_label" = "Proposal";
 
@@ -1124,6 +1127,8 @@ Offer a detailed insight, a different point of view or an easy start. There are 
 "campaignVC_description" = "Let's decide together! Present your ideas and decide on the suggestions of others.";
 "campaignVC_shareButton" = "Share your idea";
 "campaignVC_segment_proposal" = "Proposals";
+"campaignVC_segment_open_proposal" = "Open";
+"campaignVC_segment_done_proposal" = "Done";
 "campaignVC_segment_vote" = "Votes";
 
 //ShareProposalVC

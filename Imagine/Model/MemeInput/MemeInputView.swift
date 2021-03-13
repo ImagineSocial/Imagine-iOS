@@ -22,6 +22,7 @@ enum MemeViewAlert {
 
 class MemeInputView: UIView {
     
+    //MARK:- IBOutlets
     @IBOutlet weak var headerTitle: UILabel!
     @IBOutlet weak var textLabel: UILabel!
     @IBOutlet weak var memeLabel: UILabel!
@@ -36,11 +37,13 @@ class MemeInputView: UIView {
     @IBOutlet weak var downloadMemeButton: DesignableButton!
     @IBOutlet weak var memeTextViewTopToMemeTopConstraint: NSLayoutConstraint!
     
-    
+    //MARK:- Variables
     let radius: CGFloat = 10
     var delegate: MemeViewDelegate?
     var memeImage: UIImage?
     
+    
+    //MARK:- View Lifecycle
     override func awakeFromNib() {
         //Input TextField
         memeInputTextView.delegate = self
@@ -71,16 +74,7 @@ class MemeInputView: UIView {
         memeTitleLabel.font = UIFont(name: "Helvetica Neue Medium", size: fontSize)
     }
     
-    @objc func dismissKeyboard() {
-        memeInputTextView.resignFirstResponder()
-    }
-    
-    func imageSelected(image: UIImage) {
-        memeImageView.image = image
-        self.memeImage = image
-        
-        selectMemeImageButton.setTitle("", for: .normal)    //Otherwise the text overlays the selected image
-    }
+    //MARK:- Create Meme
     
     func createMeme(text: String, image: UIImage) -> UIImage? {
         
@@ -124,7 +118,7 @@ class MemeInputView: UIView {
     }
     
     
-    //MARK:- Button Interactions
+    //MARK:- Button Actions
     @IBAction func doneButtonTapped(_ sender: Any) {
         let text = memeInputTextView.text
         
@@ -143,27 +137,29 @@ class MemeInputView: UIView {
         }
     }
     
-    @IBAction func dismissTapped(_ sender: Any) {
-        //TODO: Alert if dismiss when selected something already
-        dismissMemeView()
+    
+    @IBAction func memeTextTapped(_ sender: Any) {
+        memeInputTextView.becomeFirstResponder()
     }
     
-    func dismissMemeView() {
-        UIView.animate(withDuration: 0.5) {
-            self.alpha = 0
-        } completion: { (_) in
-            self.delegate?.memeViewDismissed(meme: nil)
-            self.removeFromSuperview()
-        }
+    @objc func dismissKeyboard() {
+        memeInputTextView.resignFirstResponder()
     }
+    
+    //MARK:- Select Image
     
     @IBAction func selectImageButton(_ sender: Any) {
         delegate?.selectImageForMemeTouched()
     }
     
-    @IBAction func memeTextTapped(_ sender: Any) {
-        memeInputTextView.becomeFirstResponder()
+    func imageSelected(image: UIImage) {
+        memeImageView.image = image
+        self.memeImage = image
+        
+        selectMemeImageButton.setTitle("", for: .normal)    //Otherwise the text overlays the selected image
     }
+    
+    //MARK:- Download Meme
     
     @IBAction func downloadMemeTapped(_ sender: Any) {
         let text = memeInputTextView.text
@@ -194,9 +190,22 @@ class MemeInputView: UIView {
         }
     }
     
+    //MARK:- Dismiss View
+    @IBAction func dismissTapped(_ sender: Any) {
+        //TODO: Alert if dismiss when selected something already
+        dismissMemeView()
+    }
     
+    func dismissMemeView() {
+        UIView.animate(withDuration: 0.5) {
+            self.alpha = 0
+        } completion: { (_) in
+            self.delegate?.memeViewDismissed(meme: nil)
+            self.removeFromSuperview()
+        }
+    }
     
-    //MARK:- Special Intro Stuff
+    //MARK:- Special Intro Animation
     
     func startUpMemeMode() {    ///Load everything one after one so it seems that it is starting up in a retro fashion
         
@@ -261,6 +270,8 @@ class MemeInputView: UIView {
     }
     
 }
+
+//MARK:- TextView Delegate
 
 extension MemeInputView: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
