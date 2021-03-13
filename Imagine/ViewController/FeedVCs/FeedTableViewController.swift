@@ -341,6 +341,41 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         }
     }
     
+    //MARK:- Hide/Show Tab Bar
+    
+    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+
+        let yValue = scrollView.panGestureRecognizer.translation(in: scrollView).y
+        if yValue < -0.1 {
+            //hide tabBar
+            changeTabBar(hidden: true, animated: true)
+        } else if yValue > 0.1 {
+            //show tabBar
+            changeTabBar(hidden: false, animated: true)
+        }
+    }
+    
+    func changeTabBar(hidden:Bool, animated: Bool) {
+        guard let tabBar = self.tabBarController?.tabBar else {
+            return
+        }
+        if tabBar.isHidden == hidden{
+            return
+        }
+        
+        let frame = tabBar.frame
+        let offset = hidden ? frame.size.height : -frame.size.height
+        let duration:TimeInterval = (animated ? 0.5 : 0.0)
+        tabBar.isHidden = false
+
+        UIView.animate(withDuration: duration, animations: {
+            tabBar.frame = frame.offsetBy(dx: 0, dy: offset)
+        }, completion: { (true) in
+            tabBar.isHidden = hidden
+        })
+    }
+    
+    //MARK:- Register Recent Community
     func notifyFactCollectionViewController(fact: Community) {
         if let viewControllers = self.tabBarController?.viewControllers {
             if let navVC = viewControllers[3] as? UINavigationController {
