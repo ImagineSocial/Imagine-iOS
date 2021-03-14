@@ -1786,36 +1786,42 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
             switch status {
-            case .authorized:
-                self.showCamera()
-                
             case .notDetermined:
                 AVCaptureDevice.requestAccess(for: AVMediaType.video) { (granted) in
                     if granted {
                         self.showCamera()
                     } else {
-                        self.camDenied()
+                        self.showCamDeniedAlert()
                     }
                 }
                 
+            case .authorized:
+                self.showCamera()
+                
             case .denied:
-                self.camDenied()
+                self.showCamDeniedAlert()
                 
             case .restricted:
-                let alert = UIAlertController(title: "Restricted",
-                                              message: "You've been restricted from using the camera on this device. Without camera access this feature won't work. Please contact the device owner so they can give you access.",
-                                              preferredStyle: .alert)
-                
-                let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-                alert.addAction(okAction)
-                self.present(alert, animated: true, completion: nil)
+                self.showCamRestrictedAlert()
             }
         } else {
             self.notLoggedInAlert()
         }
     }
     
-    func camDenied() {
+    func showCamRestrictedAlert() {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Restricted",
+                                          message: "You've been restricted from using the camera on this device. Without camera access this feature won't work. Please contact the device owner so they can give you access.",
+                                          preferredStyle: .alert)
+            
+            let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(okAction)
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func showCamDeniedAlert() {
         DispatchQueue.main.async {
                 var alertText = NSLocalizedString("newPost_camera_error_text", comment: "cant acces, what to do")
 
@@ -1839,14 +1845,16 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func showCamera() {
-        imagePicker.sourceType = .camera
-        imagePicker.cameraCaptureMode = .photo
-        imagePicker.cameraDevice = .rear
-        imagePicker.cameraFlashMode = .off
-        imagePicker.showsCameraControls = true
-        
-        //imagePicker.allowsEditing = true
-        self.present(self.imagePicker, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            
+            self.imagePicker.sourceType = .camera
+            self.imagePicker.cameraCaptureMode = .photo
+            self.imagePicker.cameraDevice = .rear
+            self.imagePicker.cameraFlashMode = .off
+            self.imagePicker.showsCameraControls = true
+            
+            self.present(self.imagePicker, animated: true, completion: nil)
+        }
     }
     
     func camRollTapped() {
@@ -1854,48 +1862,61 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             switch PHPhotoLibrary.authorizationStatus() {
             case .notDetermined:
+                
+                //Not yet decided - ask the user for authorization
                 PHPhotoLibrary.requestAuthorization { (status) in
-                    if status == .authorized {
+                    switch status {
+                    case .limited:
                         self.showPictureAlert()
-                    } else {
-                        self.alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
+                    case .authorized:
+                        self.showPictureAlert()
+                    default:
+                        self.showPermissionDeniedAlert()
                     }
                 }
             case .restricted, .denied:
-                alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
+                self.showPermissionDeniedAlert()
             case .authorized:
                 showPictureAlert()
             case .limited:
                 showPictureAlert()
             }
-            
         } else {
             self.notLoggedInAlert()
         }
     }
     
+    func showPermissionDeniedAlert() {
+        DispatchQueue.main.async {
+            self.alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
+        }
+    }
+    
     func showPictureAlert() {
         
-        if let _ = memeView {  //Select image for meme, no multi picture possible
-            showImagePicker()
-        } else {
-            let alert = UIAlertController(title: NSLocalizedString("how_many_pics_alert_header", comment: "How many pics do you want to post?"), message: NSLocalizedString("how_many_pics_alert_message", comment: "How many pics do you want to post?"), preferredStyle: .actionSheet)
+        DispatchQueue.main.async {
             
-            alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_just_one", comment: "just one"), style: .default, handler: { (_) in
+            if let _ = self.memeView {  //Select image for meme, no multi picture possible
                 self.showImagePicker()
-            }))
-            
-            
-            alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_three", comment: "two or three pics"), style: .default, handler: { (_) in
+            } else {
+                let alert = UIAlertController(title: NSLocalizedString("how_many_pics_alert_header", comment: "How many pics do you want to post?"), message: NSLocalizedString("how_many_pics_alert_message", comment: "How many pics do you want to post?"), preferredStyle: .actionSheet)
                 
-                //toDo: remove the selection
-                self.selectedOption = .multiPicture
-                self.openMultiPictureImagePicker()
-            }))
-            alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .destructive, handler: { (_) in
-                alert.dismiss(animated: true, completion: nil)
-            }))
-            self.present(alert, animated: true, completion: nil)
+                alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_just_one", comment: "just one"), style: .default, handler: { (_) in
+                    self.showImagePicker()
+                }))
+                
+                
+                alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_three", comment: "two or three pics"), style: .default, handler: { (_) in
+                    
+                    //toDo: remove the selection
+                    self.selectedOption = .multiPicture
+                    self.openMultiPictureImagePicker()
+                }))
+                alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .destructive, handler: { (_) in
+                    alert.dismiss(animated: true, completion: nil)
+                }))
+                self.present(alert, animated: true, completion: nil)
+            }
         }
     }
     
