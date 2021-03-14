@@ -165,8 +165,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         // Set Listener and delegates
         imagePicker.delegate = self
         titleView.titleTextView.delegate = self
+        
         linkView.linkTextField.addTarget(self, action: #selector(self.textFieldDidChange(_:)), for: .editingChanged)
         
+        let tap = UITapGestureRecognizer(target: self, action: #selector(letFirstRespondersResign))
+        contentView.addGestureRecognizer(tap)
+        
+        //Set up view
         setUpScrollView()
         
         //Settings when this view is called from inside the community
@@ -210,6 +215,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
+    //MARK:- Set Up View
     let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -232,7 +238,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         return view
     }()
     
-    //MARK:- Set Up View
     func setUpScrollView() {
         self.view.addSubview(scrollView)
         scrollView.addSubview(contentView)
@@ -1131,38 +1136,45 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             let alert = UIAlertController(title: "Done!", message: NSLocalizedString("message_after_done_posting", comment: "thanks"), preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
                 
-                self.descriptionView.descriptionTextView.text.removeAll()
-                self.linkView.linkTextField.text?.removeAll()
-                self.titleView.titleTextView.text?.removeAll()
-                self.previewPictures.removeAll()
-                self.pictureView.previewCollectionView.reloadData()
-                
-                self.pictureView.removePictureButton.alpha = 0
-                self.pictureView.removePictureButton.isEnabled = false
-                
-                self.titleView.characterCountLabel.text = "200"
-                self.pictureViewHeight!.constant = self.pictureViewHeightConstant
-                
-                if self.optionViewHeight?.constant != self.defaultOptionViewHeight {
-                    self.optionButtonTapped()
-                }
-                self.linkCommunityView.addedFactDescriptionLabel.text?.removeAll()
-                self.linkCommunityView.addedFactImageView.image = nil
-                self.linkCommunityView.addedFactImageView.layer.borderColor = UIColor.clear.cgColor
-                self.cancelLinkedFactTapped()
-                
-                self.titleView.titleTextView.resignFirstResponder()
-                self.descriptionView.descriptionTextView.resignFirstResponder()
-                self.linkView.linkTextField.resignFirstResponder()
-                
-                
-                
-                Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.donePosting), userInfo: nil, repeats: false)
+                self.removeInputDataAndResetView()
                 
             }))
             self.present(alert, animated: true) {
             }
         }
+    }
+    
+    func removeInputDataAndResetView() {
+        //remove text
+        self.descriptionView.descriptionTextView.text.removeAll()
+        self.linkView.linkTextField.text?.removeAll()
+        self.titleView.titleTextView.text?.removeAll()
+        self.titleView.characterCountLabel.text = "200"
+        
+        //remove picture/s
+        self.previewPictures.removeAll()
+        self.pictureView.previewCollectionView.reloadData()
+        self.selectedImageFromPicker = nil
+        self.selectedImagesFromPicker.removeAll()
+        self.pictureView.removePictureButton.alpha = 0
+        self.pictureView.removePictureButton.isEnabled = false
+        
+        
+        self.pictureViewHeight!.constant = self.pictureViewHeightConstant
+        
+        if self.optionViewHeight?.constant != self.defaultOptionViewHeight {
+            self.optionButtonTapped()
+        }
+        self.linkCommunityView.addedFactDescriptionLabel.text?.removeAll()
+        self.linkCommunityView.addedFactImageView.image = nil
+        self.linkCommunityView.addedFactImageView.layer.borderColor = UIColor.clear.cgColor
+        self.cancelLinkedFactTapped()
+        
+        self.titleView.titleTextView.resignFirstResponder()
+        self.descriptionView.descriptionTextView.resignFirstResponder()
+        self.linkView.linkTextField.resignFirstResponder()
+        
+        Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.donePosting), userInfo: nil, repeats: false)
     }
     
     func showInfoView() {
@@ -1243,6 +1255,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     // MARK: - Touches began
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        letFirstRespondersResign()
+    }
+    
+    @objc func letFirstRespondersResign() {
         titleView.titleTextView.resignFirstResponder()
         linkView.linkTextField.resignFirstResponder()
         descriptionView.descriptionTextView.resignFirstResponder()
