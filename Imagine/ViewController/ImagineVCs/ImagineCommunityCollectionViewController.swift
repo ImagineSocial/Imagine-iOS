@@ -89,6 +89,10 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     //MARK:- Get Data
     func getData() {
         
+        //Show placeholder cells to avoid a big UI jump when they are fetched
+        let workItem = FinishedWorkItem(title: "", description: "", createDate: Date())
+        finishedWorkItems.append(contentsOf: [workItem, workItem, workItem, workItem])
+        
         imagineDataRequest.getCampaigns(onlyFinishedCampaigns: false) { (campaigns) in
             if let campaigns = campaigns {
                 self.campaigns = campaigns
@@ -101,6 +105,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         let request = ImagineDataRequest()
         request.getFinishedWorkload { (data) in
             if let workItems = data {
+                self.finishedWorkItems.removeAll()
                 self.finishedWorkItems = workItems
                 self.collectionView.reloadData()
             } else {
@@ -133,12 +138,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
             if isOpen {
                 return finishedWorkItems.count
             } else {
-                if finishedWorkItems.count == 0 {
-                    //Not yet fetched
-                    return 0
-                } else {
-                    return 4
-                }
+                return 4
             }
         } else {
             return 0

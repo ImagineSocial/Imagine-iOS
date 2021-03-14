@@ -7,6 +7,6 @@
 */
 
 NSLocationWhenInUseUsageDescription = "We would like to access your location to help you choose the right place. The selected location will then be displayed in your profile or under a post.";
-NSPhotoLibraryUsageDescription = "We would like to access your folders so you can select a photo to post.";
-NSPhotoLibraryAddUsageDescription = "We would like to save the captured image in your photo album.";
-NSCameraUsageDescription = "We would like to access your camera so you can take pictures to post or to select for your profile.";
+NSPhotoLibraryUsageDescription = "We would like to access your photo library, so you can select one or more photos to post them here, or to select a profile picture.";
+NSPhotoLibraryAddUsageDescription = "We would like to save the captured image in your photo library.";
+NSCameraUsageDescription = "We would like to access your camera, so that you can take pictures and post them or to use it as your profile picture.";

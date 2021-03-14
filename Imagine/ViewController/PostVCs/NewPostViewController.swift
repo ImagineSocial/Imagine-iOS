@@ -45,19 +45,26 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var headerView: UIView!
     
     //MARK:- Variables
+    //image variables
     var imagePicker = UIImagePickerController()
-    
+    private let pictureViewHeightConstant: CGFloat = 100
+    private let increasedPictureViewHeightConstraint: CGFloat = 200
     var imageURLs = [String]()
     var multiImageAssets = [PHAsset]()
     var previewPictures = [UIImage]()
+    
+    ///Data used to upload, only available after you start to post the images
     var selectedImagesFromPicker = [Data]()
     var selectedImageFromPicker:UIImage?
+    
     var selectedImageHeight: CGFloat = 0.0
     var selectedImageWidth: CGFloat = 0.0
     var imageURL:String?
+    var camPic = false
+    
     var reportType :ReportType = .normal
     var eventType: EventType = .activity
-    var camPic = false
+    
     var selectDate = false
     var selectedDate: Date?
     
@@ -77,7 +84,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let labelFont = UIFont(name: "IBMPlexSans-Medium", size: 15)
     
     let characterLimitForTitle = Constants.characterLimits.postTitleCharacterLimit
-    let characterLimitForEventTitle = 100
     let defaultOptionViewHeight: CGFloat = 45
     
     let infoButtonSize: CGFloat = 22
@@ -159,16 +165,14 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         // Set Listener and delegates
         imagePicker.delegate = self
         titleView.titleTextView.delegate = self
+        
         linkView.linkTextField.addTarget(self, action: #selector(self.textFieldDidChange(_:)), for: .editingChanged)
         
+        let tap = UITapGestureRecognizer(target: self, action: #selector(letFirstRespondersResign))
+        contentView.addGestureRecognizer(tap)
         
-        
-        //Load the UI
-        setCompleteUIForThought()
-        setPictureViewUI()
-        setLinkViewUI()
-        setUpOptionViewUI() // Shows linked Fact in here, if there is one
-        
+        //Set up view
+        setUpScrollView()
         
         //Settings when this view is called from inside the community
         if comingFromPostsOfFact || comingFromAddOnVC {
@@ -182,16 +186,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             linkCommunityView.cancelLinkedFactButton.alpha = 0.5
             linkCommunityView.distributionInformationLabel.text = "Community"
         }
-        
-        //UI Changes
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        
-        let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15) as Any]
-        optionView.markPostSegmentControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
-        optionView.markPostSegmentControl.tintColor = .imagineColor
-        postSelectionSegmentedControl.tintColor = .imagineColor
-        postSelectionSegmentedControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
         
         //KeyboardGoesUp
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -221,23 +215,75 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    func showNewPostInfoView() {
-        let upperHeight = UIApplication.shared.statusBarFrame.height +
-              self.navigationController!.navigationBar.frame.height
-        let height = upperHeight+40
+    //MARK:- Set Up View
+    let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.clipsToBounds = true
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.bounces = false
         
-        let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
-        let popUpView = PopUpInfoView(frame: frame)
-        popUpView.alpha = 0
-        popUpView.type = .newPost
-        
-        if let window = UIApplication.shared.keyWindow {
-            window.addSubview(popUpView)
+        return scrollView
+    }()
+    
+    let contentView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .secondarySystemBackground
+        } else {
+            view.backgroundColor = .lightGray
         }
         
-        UIView.animate(withDuration: 0.5) {
-            popUpView.alpha = 1
-        }
+        return view
+    }()
+    
+    func setUpScrollView() {
+        self.view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        let contentGuide = scrollView.contentLayoutGuide
+        
+        NSLayoutConstraint.activate([
+            scrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            scrollView.topAnchor.constraint(equalTo: postSelectionSegmentedControl.bottomAnchor, constant: 8),
+            scrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            
+            scrollView.frameLayoutGuide.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.frameLayoutGuide.topAnchor.constraint(equalTo: postSelectionSegmentedControl.bottomAnchor, constant: 8),
+            scrollView.frameLayoutGuide.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.frameLayoutGuide.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            contentGuide.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            contentGuide.topAnchor.constraint(equalTo: contentView.topAnchor),
+            contentGuide.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            contentGuide.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            
+            contentGuide.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor)
+        ])
+        
+        //Load the different views into the contentView
+        setUpViewUI()
+    }
+    
+    func setUpViewUI() {
+        
+        //Style the view a bit
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        
+        let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 15) as Any]
+        optionView.markPostSegmentControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
+        optionView.markPostSegmentControl.tintColor = .imagineColor
+        postSelectionSegmentedControl.tintColor = .imagineColor
+        postSelectionSegmentedControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
+        
+        
+        //Load the UI
+        setCompleteUIForThought()
+        setPictureViewUI()
+        setLinkViewUI()
+        setUpOptionViewUI() // Shows linked Fact in here, if there is one
     }
     
     //MARK:- Navigation
@@ -259,417 +305,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    // MARK:- UI Initialization
-    
-    func setCompleteUIForThought() {
-        
-        if let topAnchor = self.descriptionViewTopAnchor {
-            topAnchor.isActive = false
-        }
-        
-        setTitleViewUI()
-        setDescriptionViewUI()
-        
-        self.descriptionViewTopAnchor = descriptionView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1)
-        self.descriptionViewTopAnchor!.isActive = true
-        
-        self.postSelectionSegmentedControl.isEnabled = true
-    }
-    
-    
-    //MARK: TitleView UI
-    
-    
-    func setTitleViewUI() {
-        
-        self.view.addSubview(titleView)
-        titleView.topAnchor.constraint(equalTo: postSelectionSegmentedControl.bottomAnchor, constant: 5).isActive = true
-        titleView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        titleView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        titleView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        
-    }
-    
-    
-    
-    // MARK: DescriptionView UI
-    
-    func setDescriptionViewUI() {   // have to set descriptionview topanchor
-        
-        self.view.addSubview(descriptionView)
-        descriptionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        descriptionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        descriptionView.heightAnchor.constraint(equalToConstant: 110).isActive = true
-    }
-    
-    
-    
-    // MARK: LinkViewUI
-    
-    func setLinkViewUI() {   // have to set descriptionview topanchor
-        
-        self.view.addSubview(linkView)
-        linkView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1).isActive = true
-        linkView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        linkView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        self.linkViewHeight = linkView.heightAnchor.constraint(equalToConstant: 0)
-        self.linkViewHeight!.isActive = true
-    }
-    
-    @objc func textFieldDidChange(_ textField: UITextField) {
-        if let text = textField.text {
-            
-            linkView.internetImageView.alpha = 0.4
-            linkView.youTubeImageView.alpha = 0.4
-            linkView.songWhipImageView.alpha = 0.4
-            linkView.GIFImageView.alpha = 0.4
-            
-            if text.isValidURL {
-                if let _ = text.youtubeID {
-                    linkView.youTubeImageView.alpha = 1
-                } else if text.contains("songwhip.com") || text.contains("music.apple.com") || text.contains("open.spotify.com/") || text.contains("deezer.page.link") {
-                    linkView.songWhipImageView.alpha = 1
-                } else if text.contains(".mp4") {
-                    linkView.GIFImageView.alpha = 1
-                    print("Got mp4")
-                } else {
-                    linkView.internetImageView.alpha = 1
-                }
-            }
-        }
-    }
-    
-    func linkInfoButtonTapped() {
-        if let tipView = self.postLinkTipView {
-            tipView.dismiss()
-            postLinkTipView = nil
-        } else {
-            self.postLinkTipView = EasyTipView(text: NSLocalizedString("postLinkTipViewText", comment: "What you can post and such"))
-            postLinkTipView!.show(forView: linkView)
-        }
-    }
-    
-    // MARK: PictureViewUI
-    
-    @objc func showChoosenImage(tapGestureRecognizer: UITapGestureRecognizer) {
-        print("To choosen Image")
-        if let imageView = tapGestureRecognizer.view as? UIImageView {
-            if let image = imageView.image {
-                let pinchVC = PinchToZoomViewController()
-            
-                pinchVC.imageView.image = image
-                self.navigationController?.pushViewController(pinchVC, animated: true)
-            }
-        }
-    }
-    
-    func setPictureViewUI() {
-        
-        self.view.addSubview(pictureView)
-        pictureView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        pictureView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        self.pictureViewHeight = pictureView.heightAnchor.constraint(equalToConstant: 0)
-        self.pictureViewHeight!.isActive = true
-        self.pictureViewTopAnchor = pictureView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1)
-        self.pictureViewTopAnchor!.isActive = true
-    }
-    
-    //MARK: Change Picture UI
-    func increasePictureUI() {
-        if let pictureHeight = self.pictureViewHeight {
-            pictureHeight.constant = 150
-            
-            UIView.animate(withDuration: 0.6) {
-                self.view.layoutIfNeeded()
-            }
-        }
-    }
-    
-    func decreasePictureUI() {
-        if let pictureHeight = self.pictureViewHeight {
-            pictureHeight.constant = 100
-            
-            UIView.animate(withDuration: 0.6) {
-                self.view.layoutIfNeeded()
-            }
-        }
-    }
-    
-    // MARK: OptionViewUI
-
-    func chooseLocationButtonTapped() {
-        performSegue(withIdentifier: "toMapSegue", sender: nil)
-    }
-    
-    func setUpOptionViewUI() {
-        let smallOptionViewHeight = defaultOptionViewHeight-4
-        
-        self.view.addSubview(locationView)
-        locationView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 1).isActive = true
-        locationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        locationView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        locationView.heightAnchor.constraint(equalToConstant: smallOptionViewHeight+labelHeight).isActive = true
-        
-        self.view.addSubview(linkCommunityView)
-        linkCommunityView.topAnchor.constraint(equalTo: locationView.bottomAnchor, constant: 1).isActive = true
-        linkCommunityView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        linkCommunityView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        linkCommunityView.heightAnchor.constraint(equalToConstant: smallOptionViewHeight+labelHeight).isActive = true
-        
-        self.view.addSubview(optionView)
-        optionView.topAnchor.constraint(equalTo: linkCommunityView.bottomAnchor, constant: 1).isActive = true
-        optionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        optionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        optionViewHeight = optionView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight)
-        optionViewHeight!.isActive = true
-        
-        
-        // Here so it doesnt mess with the layout
-        if let fact = linkedFact {
-            self.showLinkedFact(fact: fact)
-        }
-        
-        let endView = UIView()
-        if #available(iOS 13.0, *) {
-            endView.backgroundColor = .systemBackground
-        } else {
-            endView.backgroundColor = .white
-        }
-        endView.translatesAutoresizingMaskIntoConstraints = false
-        
-        if let user = Auth.auth().currentUser {
-            if user.uid == Constants.userIDs.uidMalte || user.uid == Constants.userIDs.uidSophie || user.uid == Constants.userIDs.uidYvonne {
-                endView.addSubview(fakeNameSegmentedControl)
-                fakeNameSegmentedControl.leadingAnchor.constraint(equalTo: endView.leadingAnchor, constant: 10).isActive = true
-                fakeNameSegmentedControl.trailingAnchor.constraint(equalTo: endView.trailingAnchor, constant: -10).isActive = true
-                fakeNameSegmentedControl.topAnchor.constraint(equalTo: endView.topAnchor, constant: 10).isActive = true
-                fakeNameSegmentedControl.heightAnchor.constraint(equalToConstant: 30).isActive = true
-                
-                endView.addSubview(fakeNameInfoLabel)
-                fakeNameInfoLabel.topAnchor.constraint(equalTo: fakeNameSegmentedControl.bottomAnchor, constant: 10).isActive = true
-                fakeNameInfoLabel.leadingAnchor.constraint(equalTo: endView.leadingAnchor, constant: 10).isActive = true
-            }
-        }
-
-        self.view.addSubview(endView)
-        endView.topAnchor.constraint(equalTo: optionView.bottomAnchor, constant: 1).isActive = true
-        endView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        endView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        endView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-    }
-    
-    //MARK: PostAsSomebodyElse-UI
-    
-    
-    let fakeNameSegmentedControl: UISegmentedControl = {
-        let items = ["Me","FM", "MR", "AN", "LV", "LM"]
-       let control = UISegmentedControl(items: items)
-        control.translatesAutoresizingMaskIntoConstraints = false
-        control.addTarget(self, action: #selector(segmentControlChanged(sender:)), for: .valueChanged)
-        control.selectedSegmentIndex = 0
-        
-        return control
-    }()
-    
-    @objc func segmentControlChanged(sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
-            if let user = Auth.auth().currentUser {
-                fakeProfileUserID = user.uid
-                fakeNameInfoLabel.text = "Dein persönliches Profil"
-            }
-        case 1:
-            fakeProfileUserID = Constants.userIDs.FrankMeindlID
-            fakeNameInfoLabel.text = "Frank Meindl"
-        case 2:
-            fakeProfileUserID = Constants.userIDs.MarkusRiesID
-            fakeNameInfoLabel.text = "Markus Ries"
-        case 3:
-            fakeProfileUserID = Constants.userIDs.AnnaNeuhausID
-            fakeNameInfoLabel.text = "Anna Neuhaus"
-        case 4:
-            fakeProfileUserID = Constants.userIDs.LaraVoglerID
-            fakeNameInfoLabel.text = "Lara Vogler"
-        case 5:
-            fakeProfileUserID = Constants.userIDs.LenaMasgarID
-            fakeNameInfoLabel.text = "Lena Masgar"
-        default:
-            fakeProfileUserID = Constants.userIDs.FrankMeindlID
-        }
-    }
-    
-    let fakeNameInfoLabel: UILabel = {
-       let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 13)
-        
-        return label
-    }()
-    
-    // Just for the moment, so the people get a sense of what is possible
-    let blueOwenButton :DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitleColor(.imagineColor, for: .normal)
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 13)
-        button.setTitle("Nur Freunde", for: .normal)
-        button.addTarget(self, action: #selector(blueOwenTapped), for: .touchUpInside)
-        button.cornerRadius = 4
-        button.layer.borderColor = UIColor.imagineColor.cgColor
-        button.layer.borderWidth = 0.5
-        
-        return button
-    }()
-    
-    let blueOwenImageView: UIImageView = {
-       let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "wow")
-        imageView.contentMode = .scaleAspectFill
-                
-        return imageView
-    }()
-    
-    @objc func blueOwenTapped() {
-        performSegue(withIdentifier: "toProposals", sender: nil)
-    }
-    
-    //MARK:- Animate changes
-    func insertUIForLink() {
-        self.descriptionViewTopAnchor!.isActive = false
-        
-        
-        self.descriptionViewTopAnchor! = descriptionView.topAnchor.constraint(equalTo: linkView.bottomAnchor, constant: 1)
-        self.descriptionViewTopAnchor!.isActive = true
-        
-        self.linkViewHeight!.constant = 75
-        
-        UIView.animate(withDuration: 0.4, animations: {
-            self.view.layoutIfNeeded()
-        }) { (_) in
-        
-            UIView.animate(withDuration: 0.1, animations: {
-                self.linkView.linkLabel.alpha = 1
-                self.linkView.linkTextField.alpha = 1
-                self.linkView.webImageViewStackView.alpha = 1
-                self.linkView.linkInfoButton.alpha = 1
-            }, completion: { (_) in
-                self.postSelectionSegmentedControl.isEnabled = true
-            })
-        }
-    }
-    
-    
-    func insertUIForPicture() {
-        self.descriptionViewTopAnchor!.isActive = false
-        
-        
-        if let pictureTop = pictureViewTopAnchor {
-            pictureTop.isActive = false
-            
-        }
-        
-        self.pictureViewTopAnchor = pictureView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1)
-        self.pictureViewTopAnchor!.isActive = true
-        
-        self.pictureViewHeight!.constant = 100
-        
-        
-        self.descriptionViewTopAnchor! = descriptionView.topAnchor.constraint(equalTo: pictureView.bottomAnchor, constant: 1)
-        self.descriptionViewTopAnchor!.isActive = true
-        
-        UIView.animate(withDuration: 0.4, animations: {
-            self.view.layoutIfNeeded()
-        }) { (_) in
-            
-            UIView.animate(withDuration: 0.1, animations: {
-                self.pictureView.cameraButton.alpha = 1
-                self.pictureView.folderButton.alpha = 1
-                self.pictureView.pictureLabel.alpha = 1
-            }, completion: { (_) in
-                self.postSelectionSegmentedControl.isEnabled = true
-            })
-        }
-    }
-    
-    //MARK:- Animate Layout Change
-    
-    @IBAction func postSelectionSegmentChanged(_ sender: Any) {
-        prepareForSelectionChange()
-    }
-    
-    func prepareForSelectionChange() {
-        self.postSelectionSegmentedControl.isEnabled = false
-        
-        switch self.selectedOption {
-        case .picture:
-            
-            //Let the pictureView disappear
-            UIView.animate(withDuration: 0.1, animations: {
-                self.pictureView.folderButton.alpha = 0
-                self.pictureView.cameraButton.alpha = 0
-                self.pictureView.pictureLabel.alpha = 0
-            }) { (_) in
-                
-                self.pictureViewHeight!.constant = 0
-                
-                UIView.animate(withDuration: 0.4, animations: {
-                    self.view.layoutIfNeeded()
-                }) { (_) in
-                    self.setTheChange()
-                }
-            }
-        case .link:
-            
-            // Let the LinkView disappear
-            UIView.animate(withDuration: 0.1, animations: {
-                self.linkView.linkLabel.alpha = 0
-                self.linkView.linkTextField.alpha = 0
-                self.linkView.webImageViewStackView.alpha = 0
-                self.linkView.linkInfoButton.alpha = 0
-            }) { (_) in
-                self.linkViewHeight!.constant = 0
-                
-                UIView.animate(withDuration: 0.4, animations: {
-                    self.view.layoutIfNeeded()
-                }) { (_) in
-                    self.setTheChange()
-                }
-            }
-        default:
-            self.setTheChange()
-        }
-    }
-    
-    func setTheChange() {
-        if postSelectionSegmentedControl.selectedSegmentIndex == 0 {
-            self.selectedOption = .thought
-            setCompleteUIForThought()
-        }
-        if postSelectionSegmentedControl.selectedSegmentIndex == 1 {
-            self.selectedOption = .picture
-            insertUIForPicture()
-        }
-        if postSelectionSegmentedControl.selectedSegmentIndex == 2 {
-            self.selectedOption = .link
-            insertUIForLink()
-        }
-    }
-    
-    
-    func markPostSegmentChanged() {
-        
-        if optionView.markPostSegmentControl.selectedSegmentIndex == 0 {
-            reportType = .opinion
-        }
-        if optionView.markPostSegmentControl.selectedSegmentIndex == 1 {
-            reportType = .sensationalism
-        }
-        if optionView.markPostSegmentControl.selectedSegmentIndex == 2 {
-            reportType = .edited
-        }
-    }
-    
     // MARK: - MultiImagePicker
     
     func openMultiPictureImagePicker() {
@@ -677,18 +312,20 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         let options = multiImagePicker.settings
         options.selection.max = 3
         let fetchOptions = options.fetch.album.options
-                options.fetch.album.fetchResults = [
-                    PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumRecentlyAdded, options: fetchOptions),
-                    PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: fetchOptions),
-                ]
+        
+        options.fetch.album.fetchResults = [
+            PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumRecentlyAdded, options: fetchOptions),
+            PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: fetchOptions),
+        ]
         
         self.multiImageAssets.removeAll()
+        
         //TODo: change the selection
-        self.presentImagePicker(multiImagePicker,
-                                
-        select: { (asset) in
+        self.presentImagePicker(multiImagePicker, select: { (asset) in
+            
             self.multiImageAssets.append(asset)
         }, deselect: { (asset) in
+            //Remove asset from array
             self.multiImageAssets = self.multiImageAssets.filter{ $0 != asset}
         }, cancel: { (asset) in
             self.multiImageAssets.removeAll()
@@ -696,7 +333,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.previewPictures.removeAll()
             self.getImages(forPreview: true) { (_) in }
             self.increasePictureUI()
-            })
+        })
     }
     
     //MARK:- Prepare Picture Upload
@@ -781,16 +418,14 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     //MARK:- Upload Picture
     func uploadImages(postRef: DocumentReference, userID: String) {
-        print("Upload Images")
+
         if multiImageAssets.count >= 2 && multiImageAssets.count <= 3 {
             
             getImages(forPreview: false) { (data) in
                 
                 let count = data.count
                 var index = 0
-                
-                print("##So viele im selectedimagesfrompicker: \(count)")
-                
+                                
                 for image in data {
                     
                     let storageRef = Storage.storage().reference().child("postPictures").child("\(postRef.documentID)-\(index).png")
@@ -1080,7 +715,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
  
     
     // MARK: - Prepare Upload Data
-    
+    //TODO: Cut the code and tidy up
     func postThought(postRef: DocumentReference, userID: String) {
         
         let text = descriptionView.descriptionTextView.text.trimmingCharacters(in: .newlines)
@@ -1501,38 +1136,45 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             let alert = UIAlertController(title: "Done!", message: NSLocalizedString("message_after_done_posting", comment: "thanks"), preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
                 
-                self.descriptionView.descriptionTextView.text.removeAll()
-                self.linkView.linkTextField.text?.removeAll()
-                self.titleView.titleTextView.text?.removeAll()
-                self.previewPictures.removeAll()
-                self.pictureView.previewCollectionView.reloadData()
-                
-                self.pictureView.removePictureButton.alpha = 0
-                self.pictureView.removePictureButton.isEnabled = false
-                
-                self.titleView.characterCountLabel.text = "200"
-                self.pictureViewHeight!.constant = 100
-                
-                if self.optionViewHeight?.constant != self.defaultOptionViewHeight {
-                    self.optionButtonTapped()
-                }
-                self.linkCommunityView.addedFactDescriptionLabel.text?.removeAll()
-                self.linkCommunityView.addedFactImageView.image = nil
-                self.linkCommunityView.addedFactImageView.layer.borderColor = UIColor.clear.cgColor
-                self.cancelLinkedFactTapped()
-                
-                self.titleView.titleTextView.resignFirstResponder()
-                self.descriptionView.descriptionTextView.resignFirstResponder()
-                self.linkView.linkTextField.resignFirstResponder()
-                
-                
-                
-                Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.donePosting), userInfo: nil, repeats: false)
+                self.removeInputDataAndResetView()
                 
             }))
             self.present(alert, animated: true) {
             }
         }
+    }
+    
+    func removeInputDataAndResetView() {
+        //remove text
+        self.descriptionView.descriptionTextView.text.removeAll()
+        self.linkView.linkTextField.text?.removeAll()
+        self.titleView.titleTextView.text?.removeAll()
+        self.titleView.characterCountLabel.text = "200"
+        
+        //remove picture/s
+        self.previewPictures.removeAll()
+        self.pictureView.previewCollectionView.reloadData()
+        self.selectedImageFromPicker = nil
+        self.selectedImagesFromPicker.removeAll()
+        self.pictureView.removePictureButton.alpha = 0
+        self.pictureView.removePictureButton.isEnabled = false
+        
+        
+        self.pictureViewHeight!.constant = self.pictureViewHeightConstant
+        
+        if self.optionViewHeight?.constant != self.defaultOptionViewHeight {
+            self.optionButtonTapped()
+        }
+        self.linkCommunityView.addedFactDescriptionLabel.text?.removeAll()
+        self.linkCommunityView.addedFactImageView.image = nil
+        self.linkCommunityView.addedFactImageView.layer.borderColor = UIColor.clear.cgColor
+        self.cancelLinkedFactTapped()
+        
+        self.titleView.titleTextView.resignFirstResponder()
+        self.descriptionView.descriptionTextView.resignFirstResponder()
+        self.linkView.linkTextField.resignFirstResponder()
+        
+        Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.donePosting), userInfo: nil, repeats: false)
     }
     
     func showInfoView() {
@@ -1613,6 +1255,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     // MARK: - Touches began
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        letFirstRespondersResign()
+    }
+    
+    @objc func letFirstRespondersResign() {
         titleView.titleTextView.resignFirstResponder()
         linkView.linkTextField.resignFirstResponder()
         descriptionView.descriptionTextView.resignFirstResponder()
@@ -1622,6 +1268,25 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     //MARK:- Info Views
+    
+    func showNewPostInfoView() {
+        let upperHeight = UIApplication.shared.statusBarFrame.height +
+              self.navigationController!.navigationBar.frame.height
+        let height = upperHeight+40
+        
+        let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
+        let popUpView = PopUpInfoView(frame: frame)
+        popUpView.alpha = 0
+        popUpView.type = .newPost
+        
+        if let window = UIApplication.shared.keyWindow {
+            window.addSubview(popUpView)
+        }
+        
+        UIView.animate(withDuration: 0.5) {
+            popUpView.alpha = 1
+        }
+    }
     
     func explainFunctionOnFirstOpen() {
         let defaults = UserDefaults.standard
@@ -1786,36 +1451,42 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             let status = AVCaptureDevice.authorizationStatus(for: AVMediaType.video)
             switch status {
-            case .authorized:
-                self.showCamera()
-                
             case .notDetermined:
                 AVCaptureDevice.requestAccess(for: AVMediaType.video) { (granted) in
                     if granted {
                         self.showCamera()
                     } else {
-                        self.camDenied()
+                        self.showCamDeniedAlert()
                     }
                 }
                 
+            case .authorized:
+                self.showCamera()
+                
             case .denied:
-                self.camDenied()
+                self.showCamDeniedAlert()
                 
             case .restricted:
-                let alert = UIAlertController(title: "Restricted",
-                                              message: "You've been restricted from using the camera on this device. Without camera access this feature won't work. Please contact the device owner so they can give you access.",
-                                              preferredStyle: .alert)
-                
-                let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-                alert.addAction(okAction)
-                self.present(alert, animated: true, completion: nil)
+                self.showCamRestrictedAlert()
             }
         } else {
             self.notLoggedInAlert()
         }
     }
     
-    func camDenied() {
+    func showCamRestrictedAlert() {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Restricted",
+                                          message: "You've been restricted from using the camera on this device. Without camera access this feature won't work. Please contact the device owner so they can give you access.",
+                                          preferredStyle: .alert)
+            
+            let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(okAction)
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    func showCamDeniedAlert() {
         DispatchQueue.main.async {
                 var alertText = NSLocalizedString("newPost_camera_error_text", comment: "cant acces, what to do")
 
@@ -1839,14 +1510,16 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func showCamera() {
-        imagePicker.sourceType = .camera
-        imagePicker.cameraCaptureMode = .photo
-        imagePicker.cameraDevice = .rear
-        imagePicker.cameraFlashMode = .off
-        imagePicker.showsCameraControls = true
-        
-        //imagePicker.allowsEditing = true
-        self.present(self.imagePicker, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            
+            self.imagePicker.sourceType = .camera
+            self.imagePicker.cameraCaptureMode = .photo
+            self.imagePicker.cameraDevice = .rear
+            self.imagePicker.cameraFlashMode = .off
+            self.imagePicker.showsCameraControls = true
+            
+            self.present(self.imagePicker, animated: true, completion: nil)
+        }
     }
     
     func camRollTapped() {
@@ -1854,48 +1527,61 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             switch PHPhotoLibrary.authorizationStatus() {
             case .notDetermined:
+                
+                //Not yet decided - ask the user for authorization
                 PHPhotoLibrary.requestAuthorization { (status) in
-                    if status == .authorized {
+                    switch status {
+                    case .limited:
                         self.showPictureAlert()
-                    } else {
-                        self.alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
+                    case .authorized:
+                        self.showPictureAlert()
+                    default:
+                        self.showPermissionDeniedAlert()
                     }
                 }
             case .restricted, .denied:
-                alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
+                self.showPermissionDeniedAlert()
             case .authorized:
                 showPictureAlert()
             case .limited:
                 showPictureAlert()
             }
-            
         } else {
             self.notLoggedInAlert()
         }
     }
     
+    func showPermissionDeniedAlert() {
+        DispatchQueue.main.async {
+            self.alert(message: NSLocalizedString("photoAccess_permission_denied_text", comment: "how you can change that"), title: "Something seems to be wrong")
+        }
+    }
+    
     func showPictureAlert() {
         
-        if let _ = memeView {  //Select image for meme, no multi picture possible
-            showImagePicker()
-        } else {
-            let alert = UIAlertController(title: NSLocalizedString("how_many_pics_alert_header", comment: "How many pics do you want to post?"), message: NSLocalizedString("how_many_pics_alert_message", comment: "How many pics do you want to post?"), preferredStyle: .actionSheet)
+        DispatchQueue.main.async {
             
-            alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_just_one", comment: "just one"), style: .default, handler: { (_) in
+            if let _ = self.memeView {  //Select image for meme, no multi picture possible
                 self.showImagePicker()
-            }))
-            
-            
-            alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_three", comment: "two or three pics"), style: .default, handler: { (_) in
+            } else {
+                let alert = UIAlertController(title: NSLocalizedString("how_many_pics_alert_header", comment: "How many pics do you want to post?"), message: NSLocalizedString("how_many_pics_alert_message", comment: "How many pics do you want to post?"), preferredStyle: .actionSheet)
                 
-                //toDo: remove the selection
-                self.selectedOption = .multiPicture
-                self.openMultiPictureImagePicker()
-            }))
-            alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .destructive, handler: { (_) in
-                alert.dismiss(animated: true, completion: nil)
-            }))
-            self.present(alert, animated: true, completion: nil)
+                alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_just_one", comment: "just one"), style: .default, handler: { (_) in
+                    self.showImagePicker()
+                }))
+                
+                
+                alert.addAction(UIAlertAction(title: NSLocalizedString("how_many_three", comment: "two or three pics"), style: .default, handler: { (_) in
+                    
+                    //toDo: remove the selection
+                    self.selectedOption = .multiPicture
+                    self.openMultiPictureImagePicker()
+                }))
+                alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .destructive, handler: { (_) in
+                    alert.dismiss(animated: true, completion: nil)
+                }))
+                self.present(alert, animated: true, completion: nil)
+            }
         }
     }
     
@@ -2059,6 +1745,442 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         } else {
             self.postAnonymous = false
             self.optionView.anonymousImageView.isHidden = true
+        }
+    }
+    
+    
+    // MARK:- UI Initialization
+    
+    func setCompleteUIForThought() {
+        
+        if let topAnchor = self.descriptionViewTopAnchor {
+            topAnchor.isActive = false
+        }
+        
+        setTitleViewUI()
+        setDescriptionViewUI()
+        
+        self.descriptionViewTopAnchor = descriptionView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1)
+        self.descriptionViewTopAnchor!.isActive = true
+        
+        self.postSelectionSegmentedControl.isEnabled = true
+    }
+    
+    
+    //MARK: TitleView UI
+    
+    
+    func setTitleViewUI() {
+        
+        self.contentView.addSubview(titleView)
+        titleView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        titleView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        titleView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
+        titleView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        
+//        self.view.addSubview(titleView)
+//        titleView.topAnchor.constraint(equalTo: postSelectionSegmentedControl.bottomAnchor, constant: 5).isActive = true
+//        titleView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+//        titleView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+//        titleView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        
+    }
+    
+    
+    
+    // MARK: DescriptionView UI
+    
+    func setDescriptionViewUI() {   // have to set descriptionview topanchor
+        
+        self.contentView.addSubview(descriptionView)
+        descriptionView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        descriptionView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
+        descriptionView.heightAnchor.constraint(equalToConstant: 110).isActive = true
+    }
+    
+    
+    
+    // MARK: LinkViewUI
+    
+    func setLinkViewUI() {   // have to set descriptionview topanchor
+        
+        self.contentView.addSubview(linkView)
+        linkView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1).isActive = true
+        linkView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        linkView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
+        self.linkViewHeight = linkView.heightAnchor.constraint(equalToConstant: 0)
+        self.linkViewHeight!.isActive = true
+    }
+    
+    @objc func textFieldDidChange(_ textField: UITextField) {
+        if let text = textField.text {
+            
+            linkView.internetImageView.alpha = 0.4
+            linkView.youTubeImageView.alpha = 0.4
+            linkView.songWhipImageView.alpha = 0.4
+            linkView.GIFImageView.alpha = 0.4
+            
+            if text.isValidURL {
+                if let _ = text.youtubeID {
+                    linkView.youTubeImageView.alpha = 1
+                } else if text.contains("songwhip.com") || text.contains("music.apple.com") || text.contains("open.spotify.com/") || text.contains("deezer.page.link") {
+                    linkView.songWhipImageView.alpha = 1
+                } else if text.contains(".mp4") {
+                    linkView.GIFImageView.alpha = 1
+                    print("Got mp4")
+                } else {
+                    linkView.internetImageView.alpha = 1
+                }
+            }
+        }
+    }
+    
+    func linkInfoButtonTapped() {
+        if let tipView = self.postLinkTipView {
+            tipView.dismiss()
+            postLinkTipView = nil
+        } else {
+            self.postLinkTipView = EasyTipView(text: NSLocalizedString("postLinkTipViewText", comment: "What you can post and such"))
+            postLinkTipView!.show(forView: linkView)
+        }
+    }
+    
+    // MARK: PictureViewUI
+    
+    @objc func showChoosenImage(tapGestureRecognizer: UITapGestureRecognizer) {
+        print("To choosen Image")
+        if let imageView = tapGestureRecognizer.view as? UIImageView {
+            if let image = imageView.image {
+                let pinchVC = PinchToZoomViewController()
+            
+                pinchVC.imageView.image = image
+                self.navigationController?.pushViewController(pinchVC, animated: true)
+            }
+        }
+    }
+    
+    func setPictureViewUI() {
+        
+        self.contentView.addSubview(pictureView)
+        pictureView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        pictureView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
+        self.pictureViewHeight = pictureView.heightAnchor.constraint(equalToConstant: 0)
+        self.pictureViewHeight!.isActive = true
+        self.pictureViewTopAnchor = pictureView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1)
+        self.pictureViewTopAnchor!.isActive = true
+    }
+    
+    //MARK: Change Picture UI
+    func increasePictureUI() {
+        if let pictureHeight = self.pictureViewHeight {
+            pictureHeight.constant = increasedPictureViewHeightConstraint
+            
+            UIView.animate(withDuration: 0.6) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
+    
+    func decreasePictureUI() {
+        if let pictureHeight = self.pictureViewHeight {
+            pictureHeight.constant = pictureViewHeightConstant
+            
+            UIView.animate(withDuration: 0.6) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
+    
+    // MARK: OptionViewUI
+
+    func chooseLocationButtonTapped() {
+        performSegue(withIdentifier: "toMapSegue", sender: nil)
+    }
+    
+    func setUpOptionViewUI() {
+        let smallOptionViewHeight = defaultOptionViewHeight-4
+        
+        self.contentView.addSubview(locationView)
+        locationView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 1).isActive = true
+        locationView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        locationView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
+        locationView.heightAnchor.constraint(equalToConstant: smallOptionViewHeight+labelHeight).isActive = true
+        
+        self.contentView.addSubview(linkCommunityView)
+        linkCommunityView.topAnchor.constraint(equalTo: locationView.bottomAnchor, constant: 1).isActive = true
+        linkCommunityView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        linkCommunityView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
+        linkCommunityView.heightAnchor.constraint(equalToConstant: smallOptionViewHeight+labelHeight).isActive = true
+        
+        self.contentView.addSubview(optionView)
+        optionView.topAnchor.constraint(equalTo: linkCommunityView.bottomAnchor, constant: 1).isActive = true
+        optionView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        optionView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
+        optionViewHeight = optionView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight)
+        optionViewHeight!.isActive = true
+        
+        
+        // Here so it doesnt mess with the layout
+        if let fact = linkedFact {
+            self.showLinkedFact(fact: fact)
+        }
+        
+        let endView = UIView()
+        if #available(iOS 13.0, *) {
+            endView.backgroundColor = .systemBackground
+        } else {
+            endView.backgroundColor = .white
+        }
+        endView.translatesAutoresizingMaskIntoConstraints = false
+        
+        //When you want to post as somebody else
+//        if let user = Auth.auth().currentUser {
+//            if user.uid == Constants.userIDs.uidMalte || user.uid == Constants.userIDs.uidSophie || user.uid == Constants.userIDs.uidYvonne {
+//                endView.addSubview(fakeNameSegmentedControl)
+//                fakeNameSegmentedControl.leadingAnchor.constraint(equalTo: endView.leadingAnchor, constant: 10).isActive = true
+//                fakeNameSegmentedControl.trailingAnchor.constraint(equalTo: endView.trailingAnchor, constant: -10).isActive = true
+//                fakeNameSegmentedControl.topAnchor.constraint(equalTo: endView.topAnchor, constant: 10).isActive = true
+//                fakeNameSegmentedControl.heightAnchor.constraint(equalToConstant: 30).isActive = true
+//
+//                endView.addSubview(fakeNameInfoLabel)
+//                fakeNameInfoLabel.topAnchor.constraint(equalTo: fakeNameSegmentedControl.bottomAnchor, constant: 10).isActive = true
+//                fakeNameInfoLabel.leadingAnchor.constraint(equalTo: endView.leadingAnchor, constant: 10).isActive = true
+//            }
+//        }
+
+        self.contentView.addSubview(endView)
+        endView.topAnchor.constraint(equalTo: optionView.bottomAnchor, constant: 1).isActive = true
+        endView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        endView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
+        endView.heightAnchor.constraint(equalToConstant:50).isActive = true
+        endView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor).isActive = true
+    }
+    
+    //MARK: PostAsSomebodyElse-UI
+    
+    
+    let fakeNameSegmentedControl: UISegmentedControl = {
+        let items = ["Me","FM", "MR", "AN", "LV", "LM"]
+       let control = UISegmentedControl(items: items)
+        control.translatesAutoresizingMaskIntoConstraints = false
+        control.addTarget(self, action: #selector(segmentControlChanged(sender:)), for: .valueChanged)
+        control.selectedSegmentIndex = 0
+        
+        return control
+    }()
+    
+    @objc func segmentControlChanged(sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            if let user = Auth.auth().currentUser {
+                fakeProfileUserID = user.uid
+                fakeNameInfoLabel.text = "Dein persönliches Profil"
+            }
+        case 1:
+            fakeProfileUserID = Constants.userIDs.FrankMeindlID
+            fakeNameInfoLabel.text = "Frank Meindl"
+        case 2:
+            fakeProfileUserID = Constants.userIDs.MarkusRiesID
+            fakeNameInfoLabel.text = "Markus Ries"
+        case 3:
+            fakeProfileUserID = Constants.userIDs.AnnaNeuhausID
+            fakeNameInfoLabel.text = "Anna Neuhaus"
+        case 4:
+            fakeProfileUserID = Constants.userIDs.LaraVoglerID
+            fakeNameInfoLabel.text = "Lara Vogler"
+        case 5:
+            fakeProfileUserID = Constants.userIDs.LenaMasgarID
+            fakeNameInfoLabel.text = "Lena Masgar"
+        default:
+            fakeProfileUserID = Constants.userIDs.FrankMeindlID
+        }
+    }
+    
+    let fakeNameInfoLabel: UILabel = {
+       let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans", size: 13)
+        
+        return label
+    }()
+    
+    // Just for the moment, so the people get a sense of what is possible
+    let blueOwenButton :DesignableButton = {
+        let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitleColor(.imagineColor, for: .normal)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 13)
+        button.setTitle("Nur Freunde", for: .normal)
+        button.addTarget(self, action: #selector(blueOwenTapped), for: .touchUpInside)
+        button.cornerRadius = 4
+        button.layer.borderColor = UIColor.imagineColor.cgColor
+        button.layer.borderWidth = 0.5
+        
+        return button
+    }()
+    
+    let blueOwenImageView: UIImageView = {
+       let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "wow")
+        imageView.contentMode = .scaleAspectFill
+                
+        return imageView
+    }()
+    
+    @objc func blueOwenTapped() {
+        performSegue(withIdentifier: "toProposals", sender: nil)
+    }
+    
+    //MARK:- Animate UI Changes
+    func insertUIForLink() {
+        self.descriptionViewTopAnchor!.isActive = false
+        
+        
+        self.descriptionViewTopAnchor! = descriptionView.topAnchor.constraint(equalTo: linkView.bottomAnchor, constant: 1)
+        self.descriptionViewTopAnchor!.isActive = true
+        
+        self.linkViewHeight!.constant = 75
+        
+        UIView.animate(withDuration: 0.4, animations: {
+            self.view.layoutIfNeeded()
+        }) { (_) in
+        
+            UIView.animate(withDuration: 0.1, animations: {
+                self.linkView.linkLabel.alpha = 1
+                self.linkView.linkTextField.alpha = 1
+                self.linkView.webImageViewStackView.alpha = 1
+                self.linkView.linkInfoButton.alpha = 1
+            }, completion: { (_) in
+                self.postSelectionSegmentedControl.isEnabled = true
+            })
+        }
+    }
+    
+    
+    func insertUIForPicture() {
+        self.descriptionViewTopAnchor!.isActive = false
+        
+        
+        if let pictureTop = pictureViewTopAnchor {
+            pictureTop.isActive = false
+            
+        }
+        
+        self.pictureViewTopAnchor = pictureView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1)
+        self.pictureViewTopAnchor!.isActive = true
+        
+        var imageIsPresented = false
+        
+        if self.selectedImageFromPicker != nil || self.multiImageAssets.count != 0 {
+            imageIsPresented = true
+            print("* Image is presented")
+        }
+        
+        if imageIsPresented {
+            self.pictureViewHeight!.constant = increasedPictureViewHeightConstraint
+        } else {
+            self.pictureViewHeight!.constant = pictureViewHeightConstant
+        }
+        
+        self.descriptionViewTopAnchor! = descriptionView.topAnchor.constraint(equalTo: pictureView.bottomAnchor, constant: 1)
+        self.descriptionViewTopAnchor!.isActive = true
+        
+        UIView.animate(withDuration: 0.4, animations: {
+            self.view.layoutIfNeeded()
+        }) { (_) in
+            
+            UIView.animate(withDuration: 0.1, animations: {
+                self.pictureView.cameraButton.alpha = 1
+                self.pictureView.folderButton.alpha = 1
+                self.pictureView.pictureLabel.alpha = 1
+                self.pictureView.previewCollectionView.alpha = 1
+                if imageIsPresented {
+                    self.pictureView.removePictureButton.alpha = 1
+                }
+            }, completion: { (_) in
+                self.postSelectionSegmentedControl.isEnabled = true
+            })
+        }
+    }
+    
+    //MARK:- Animate Layout Change
+    
+    @IBAction func postSelectionSegmentChanged(_ sender: Any) {
+        prepareForSelectionChange()
+    }
+    
+    func prepareForSelectionChange() {
+        self.postSelectionSegmentedControl.isEnabled = false
+        
+        switch self.selectedOption {
+        case .picture, .multiPicture:
+            
+            //Let the pictureView disappear
+            UIView.animate(withDuration: 0.1, animations: {
+                self.pictureView.folderButton.alpha = 0
+                self.pictureView.cameraButton.alpha = 0
+                self.pictureView.pictureLabel.alpha = 0
+                self.pictureView.removePictureButton.alpha = 0
+                self.pictureView.previewCollectionView.alpha = 0
+            }) { (_) in
+                
+                self.pictureViewHeight!.constant = 0
+                
+                UIView.animate(withDuration: 0.4, animations: {
+                    self.view.layoutIfNeeded()
+                }) { (_) in
+                    self.setTheChange()
+                }
+            }
+        case .link:
+            
+            // Let the LinkView disappear
+            UIView.animate(withDuration: 0.1, animations: {
+                self.linkView.linkLabel.alpha = 0
+                self.linkView.linkTextField.alpha = 0
+                self.linkView.webImageViewStackView.alpha = 0
+                self.linkView.linkInfoButton.alpha = 0
+            }) { (_) in
+                self.linkViewHeight!.constant = 0
+                
+                UIView.animate(withDuration: 0.4, animations: {
+                    self.view.layoutIfNeeded()
+                }) { (_) in
+                    self.setTheChange()
+                }
+            }
+        default:
+            self.setTheChange()
+        }
+    }
+    
+    func setTheChange() {
+        if postSelectionSegmentedControl.selectedSegmentIndex == 0 {
+            self.selectedOption = .thought
+            setCompleteUIForThought()
+        }
+        if postSelectionSegmentedControl.selectedSegmentIndex == 1 {
+            self.selectedOption = .picture
+            insertUIForPicture()
+        }
+        if postSelectionSegmentedControl.selectedSegmentIndex == 2 {
+            self.selectedOption = .link
+            insertUIForLink()
+        }
+    }
+    
+    
+    func markPostSegmentChanged() {
+        
+        if optionView.markPostSegmentControl.selectedSegmentIndex == 0 {
+            reportType = .opinion
+        }
+        if optionView.markPostSegmentControl.selectedSegmentIndex == 1 {
+            reportType = .sensationalism
+        }
+        if optionView.markPostSegmentControl.selectedSegmentIndex == 2 {
+            reportType = .edited
         }
     }
 }

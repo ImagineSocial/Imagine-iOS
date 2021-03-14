@@ -30,6 +30,7 @@ class DataReportCollectionViewCell: UICollectionViewCell {
                 earningsLabel.text = "$\(data.earnings)"
                 expensesLabel.text = "$\(data.expenses)"
                 donationsLabel.text = "$\(data.donations)"
+                contentView.clipsToBounds = false
             }
         }
     }
