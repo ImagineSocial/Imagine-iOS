@@ -39,26 +39,35 @@ class PictureView: UIView {
         addSubview(pictureLabel)
         pictureLabel.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
         pictureLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
+        pictureLabel.widthAnchor.constraint(equalToConstant: 80).isActive = true
         pictureLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
         
         addSubview(cameraButton)
-        cameraButton.topAnchor.constraint(equalTo: topAnchor, constant: 15).isActive = true
-        cameraButton.leadingAnchor.constraint(equalTo: pictureLabel.trailingAnchor, constant: 25).isActive = true
-        cameraButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        cameraButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        cameraButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
+        cameraButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 15).isActive = true
+        cameraButton.widthAnchor.constraint(equalToConstant: 34).isActive = true
+        cameraButton.heightAnchor.constraint(equalToConstant: 34).isActive = true
+        cameraButton.layer.cornerRadius = 17
+        if #available(iOS 13.0, *) {
+            cameraButton.backgroundColor = .secondarySystemBackground
+            folderButton.backgroundColor = .secondarySystemBackground
+        } else {
+            // Fallback on earlier versions
+        }
         
         addSubview(folderButton)
         folderButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
-        folderButton.leadingAnchor.constraint(equalTo: cameraButton.leadingAnchor).isActive = true
-        folderButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        folderButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        folderButton.leadingAnchor.constraint(equalTo: cameraButton.trailingAnchor, constant: 15).isActive = true
+        folderButton.widthAnchor.constraint(equalToConstant: 34).isActive = true
+        folderButton.heightAnchor.constraint(equalToConstant: 34).isActive = true
+        folderButton.layer.cornerRadius = 17
         
         addSubview(previewCollectionView)
-        previewCollectionView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-//        previewCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -50).isActive = true
-        previewCollectionView.leadingAnchor.constraint(equalTo: cameraButton.trailingAnchor, constant: 75).isActive = true
+        previewCollectionView.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
+        previewCollectionView.leadingAnchor.constraint(equalTo: folderButton.trailingAnchor, constant: 25).isActive = true
+        previewCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
         previewCollectionView.widthAnchor.constraint(equalToConstant: 125).isActive = true
-        previewCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        previewCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
         
         addSubview(removePictureButton)
         removePictureButton.topAnchor.constraint(equalTo: previewCollectionView.topAnchor, constant: -5).isActive = true
@@ -85,12 +94,14 @@ class PictureView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "camera"), for: .normal)
         button.addTarget(self, action: #selector(camTapped), for: .touchUpInside)
+        button.imageEdgeInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
         button.alpha = 0
         if #available(iOS 13.0, *) {
             button.tintColor = .label
         } else {
             button.tintColor = .black
         }
+        button.tintColor = .imagineColor
         
         return button
     }()
@@ -100,12 +111,14 @@ class PictureView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "folder"), for: .normal)
         button.addTarget(self, action: #selector(camRollTapped), for: .touchUpInside)
+        button.imageEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
         button.alpha = 0
         if #available(iOS 13.0, *) {
             button.tintColor = .label
         } else {
             button.tintColor = .black
         }
+        button.tintColor = .imagineColor
         
         return button
     }()

@@ -45,19 +45,26 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var headerView: UIView!
     
     //MARK:- Variables
+    //image variables
     var imagePicker = UIImagePickerController()
-    
+    private let pictureViewHeightConstant: CGFloat = 100
+    private let increasedPictureViewHeightConstraint: CGFloat = 200
     var imageURLs = [String]()
     var multiImageAssets = [PHAsset]()
     var previewPictures = [UIImage]()
+    
+    ///Data used to upload, only available after you start to post the images
     var selectedImagesFromPicker = [Data]()
     var selectedImageFromPicker:UIImage?
+    
     var selectedImageHeight: CGFloat = 0.0
     var selectedImageWidth: CGFloat = 0.0
     var imageURL:String?
+    var camPic = false
+    
     var reportType :ReportType = .normal
     var eventType: EventType = .activity
-    var camPic = false
+    
     var selectDate = false
     var selectedDate: Date?
     
@@ -77,7 +84,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let labelFont = UIFont(name: "IBMPlexSans-Medium", size: 15)
     
     let characterLimitForTitle = Constants.characterLimits.postTitleCharacterLimit
-    let characterLimitForEventTitle = 100
     let defaultOptionViewHeight: CGFloat = 45
     
     let infoButtonSize: CGFloat = 22
@@ -161,14 +167,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         titleView.titleTextView.delegate = self
         linkView.linkTextField.addTarget(self, action: #selector(self.textFieldDidChange(_:)), for: .editingChanged)
         
-        
-        
-        //Load the UI
-        setCompleteUIForThought()
-        setPictureViewUI()
-        setLinkViewUI()
-        setUpOptionViewUI() // Shows linked Fact in here, if there is one
-        
+        setUpScrollView()
         
         //Settings when this view is called from inside the community
         if comingFromPostsOfFact || comingFromAddOnVC {
@@ -182,16 +181,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             linkCommunityView.cancelLinkedFactButton.alpha = 0.5
             linkCommunityView.distributionInformationLabel.text = "Community"
         }
-        
-        //UI Changes
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        
-        let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 15) as Any]
-        optionView.markPostSegmentControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
-        optionView.markPostSegmentControl.tintColor = .imagineColor
-        postSelectionSegmentedControl.tintColor = .imagineColor
-        postSelectionSegmentedControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
         
         //KeyboardGoesUp
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -221,23 +210,75 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    func showNewPostInfoView() {
-        let upperHeight = UIApplication.shared.statusBarFrame.height +
-              self.navigationController!.navigationBar.frame.height
-        let height = upperHeight+40
+    let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.clipsToBounds = true
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.bounces = false
         
-        let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
-        let popUpView = PopUpInfoView(frame: frame)
-        popUpView.alpha = 0
-        popUpView.type = .newPost
-        
-        if let window = UIApplication.shared.keyWindow {
-            window.addSubview(popUpView)
+        return scrollView
+    }()
+    
+    let contentView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        if #available(iOS 13.0, *) {
+            view.backgroundColor = .secondarySystemBackground
+        } else {
+            view.backgroundColor = .lightGray
         }
         
-        UIView.animate(withDuration: 0.5) {
-            popUpView.alpha = 1
-        }
+        return view
+    }()
+    
+    //MARK:- Set Up View
+    func setUpScrollView() {
+        self.view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        let contentGuide = scrollView.contentLayoutGuide
+        
+        NSLayoutConstraint.activate([
+            scrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            scrollView.topAnchor.constraint(equalTo: postSelectionSegmentedControl.bottomAnchor, constant: 8),
+            scrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            
+            scrollView.frameLayoutGuide.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.frameLayoutGuide.topAnchor.constraint(equalTo: postSelectionSegmentedControl.bottomAnchor, constant: 8),
+            scrollView.frameLayoutGuide.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.frameLayoutGuide.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            contentGuide.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            contentGuide.topAnchor.constraint(equalTo: contentView.topAnchor),
+            contentGuide.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            contentGuide.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            
+            contentGuide.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor)
+        ])
+        
+        //Load the different views into the contentView
+        setUpViewUI()
+    }
+    
+    func setUpViewUI() {
+        
+        //Style the view a bit
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        
+        let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 15) as Any]
+        optionView.markPostSegmentControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
+        optionView.markPostSegmentControl.tintColor = .imagineColor
+        postSelectionSegmentedControl.tintColor = .imagineColor
+        postSelectionSegmentedControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
+        
+        
+        //Load the UI
+        setCompleteUIForThought()
+        setPictureViewUI()
+        setLinkViewUI()
+        setUpOptionViewUI() // Shows linked Fact in here, if there is one
     }
     
     //MARK:- Navigation
@@ -266,18 +307,20 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         let options = multiImagePicker.settings
         options.selection.max = 3
         let fetchOptions = options.fetch.album.options
-                options.fetch.album.fetchResults = [
-                    PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumRecentlyAdded, options: fetchOptions),
-                    PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: fetchOptions),
-                ]
+        
+        options.fetch.album.fetchResults = [
+            PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumRecentlyAdded, options: fetchOptions),
+            PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: fetchOptions),
+        ]
         
         self.multiImageAssets.removeAll()
+        
         //TODo: change the selection
-        self.presentImagePicker(multiImagePicker,
-                                
-        select: { (asset) in
+        self.presentImagePicker(multiImagePicker, select: { (asset) in
+            
             self.multiImageAssets.append(asset)
         }, deselect: { (asset) in
+            //Remove asset from array
             self.multiImageAssets = self.multiImageAssets.filter{ $0 != asset}
         }, cancel: { (asset) in
             self.multiImageAssets.removeAll()
@@ -285,7 +328,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.previewPictures.removeAll()
             self.getImages(forPreview: true) { (_) in }
             self.increasePictureUI()
-            })
+        })
     }
     
     //MARK:- Prepare Picture Upload
@@ -370,16 +413,14 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     //MARK:- Upload Picture
     func uploadImages(postRef: DocumentReference, userID: String) {
-        print("Upload Images")
+
         if multiImageAssets.count >= 2 && multiImageAssets.count <= 3 {
             
             getImages(forPreview: false) { (data) in
                 
                 let count = data.count
                 var index = 0
-                
-                print("##So viele im selectedimagesfrompicker: \(count)")
-                
+                                
                 for image in data {
                     
                     let storageRef = Storage.storage().reference().child("postPictures").child("\(postRef.documentID)-\(index).png")
@@ -1100,7 +1141,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 self.pictureView.removePictureButton.isEnabled = false
                 
                 self.titleView.characterCountLabel.text = "200"
-                self.pictureViewHeight!.constant = 100
+                self.pictureViewHeight!.constant = self.pictureViewHeightConstant
                 
                 if self.optionViewHeight?.constant != self.defaultOptionViewHeight {
                     self.optionButtonTapped()
@@ -1211,6 +1252,25 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     //MARK:- Info Views
+    
+    func showNewPostInfoView() {
+        let upperHeight = UIApplication.shared.statusBarFrame.height +
+              self.navigationController!.navigationBar.frame.height
+        let height = upperHeight+40
+        
+        let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
+        let popUpView = PopUpInfoView(frame: frame)
+        popUpView.alpha = 0
+        popUpView.type = .newPost
+        
+        if let window = UIApplication.shared.keyWindow {
+            window.addSubview(popUpView)
+        }
+        
+        UIView.animate(withDuration: 0.5) {
+            popUpView.alpha = 1
+        }
+    }
     
     func explainFunctionOnFirstOpen() {
         let defaults = UserDefaults.standard
@@ -1696,11 +1756,17 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func setTitleViewUI() {
         
-        self.view.addSubview(titleView)
-        titleView.topAnchor.constraint(equalTo: postSelectionSegmentedControl.bottomAnchor, constant: 5).isActive = true
-        titleView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        titleView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        self.contentView.addSubview(titleView)
+        titleView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        titleView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        titleView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
         titleView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        
+//        self.view.addSubview(titleView)
+//        titleView.topAnchor.constraint(equalTo: postSelectionSegmentedControl.bottomAnchor, constant: 5).isActive = true
+//        titleView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+//        titleView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+//        titleView.heightAnchor.constraint(equalToConstant: 100).isActive = true
         
     }
     
@@ -1710,9 +1776,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func setDescriptionViewUI() {   // have to set descriptionview topanchor
         
-        self.view.addSubview(descriptionView)
-        descriptionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        descriptionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        self.contentView.addSubview(descriptionView)
+        descriptionView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        descriptionView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
         descriptionView.heightAnchor.constraint(equalToConstant: 110).isActive = true
     }
     
@@ -1722,10 +1788,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func setLinkViewUI() {   // have to set descriptionview topanchor
         
-        self.view.addSubview(linkView)
+        self.contentView.addSubview(linkView)
         linkView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1).isActive = true
-        linkView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        linkView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        linkView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        linkView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
         self.linkViewHeight = linkView.heightAnchor.constraint(equalToConstant: 0)
         self.linkViewHeight!.isActive = true
     }
@@ -1779,9 +1845,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func setPictureViewUI() {
         
-        self.view.addSubview(pictureView)
-        pictureView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        pictureView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        self.contentView.addSubview(pictureView)
+        pictureView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        pictureView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
         self.pictureViewHeight = pictureView.heightAnchor.constraint(equalToConstant: 0)
         self.pictureViewHeight!.isActive = true
         self.pictureViewTopAnchor = pictureView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1)
@@ -1791,7 +1857,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     //MARK: Change Picture UI
     func increasePictureUI() {
         if let pictureHeight = self.pictureViewHeight {
-            pictureHeight.constant = 150
+            pictureHeight.constant = increasedPictureViewHeightConstraint
             
             UIView.animate(withDuration: 0.6) {
                 self.view.layoutIfNeeded()
@@ -1801,7 +1867,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     func decreasePictureUI() {
         if let pictureHeight = self.pictureViewHeight {
-            pictureHeight.constant = 100
+            pictureHeight.constant = pictureViewHeightConstant
             
             UIView.animate(withDuration: 0.6) {
                 self.view.layoutIfNeeded()
@@ -1818,22 +1884,22 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     func setUpOptionViewUI() {
         let smallOptionViewHeight = defaultOptionViewHeight-4
         
-        self.view.addSubview(locationView)
+        self.contentView.addSubview(locationView)
         locationView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 1).isActive = true
-        locationView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        locationView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        locationView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        locationView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
         locationView.heightAnchor.constraint(equalToConstant: smallOptionViewHeight+labelHeight).isActive = true
         
-        self.view.addSubview(linkCommunityView)
+        self.contentView.addSubview(linkCommunityView)
         linkCommunityView.topAnchor.constraint(equalTo: locationView.bottomAnchor, constant: 1).isActive = true
-        linkCommunityView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        linkCommunityView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        linkCommunityView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        linkCommunityView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
         linkCommunityView.heightAnchor.constraint(equalToConstant: smallOptionViewHeight+labelHeight).isActive = true
         
-        self.view.addSubview(optionView)
+        self.contentView.addSubview(optionView)
         optionView.topAnchor.constraint(equalTo: linkCommunityView.bottomAnchor, constant: 1).isActive = true
-        optionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        optionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        optionView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        optionView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
         optionViewHeight = optionView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight)
         optionViewHeight!.isActive = true
         
@@ -1866,11 +1932,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
 //            }
 //        }
 
-        self.view.addSubview(endView)
+        self.contentView.addSubview(endView)
         endView.topAnchor.constraint(equalTo: optionView.bottomAnchor, constant: 1).isActive = true
-        endView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-        endView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-        endView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        endView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
+        endView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
+        endView.heightAnchor.constraint(equalToConstant:50).isActive = true
+        endView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor).isActive = true
     }
     
     //MARK: PostAsSomebodyElse-UI
@@ -1949,7 +2016,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         performSegue(withIdentifier: "toProposals", sender: nil)
     }
     
-    //MARK:- Animate changes
+    //MARK:- Animate UI Changes
     func insertUIForLink() {
         self.descriptionViewTopAnchor!.isActive = false
         
@@ -1987,8 +2054,18 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.pictureViewTopAnchor = pictureView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1)
         self.pictureViewTopAnchor!.isActive = true
         
-        self.pictureViewHeight!.constant = 100
+        var imageIsPresented = false
         
+        if self.selectedImageFromPicker != nil || self.multiImageAssets.count != 0 {
+            imageIsPresented = true
+            print("* Image is presented")
+        }
+        
+        if imageIsPresented {
+            self.pictureViewHeight!.constant = increasedPictureViewHeightConstraint
+        } else {
+            self.pictureViewHeight!.constant = pictureViewHeightConstant
+        }
         
         self.descriptionViewTopAnchor! = descriptionView.topAnchor.constraint(equalTo: pictureView.bottomAnchor, constant: 1)
         self.descriptionViewTopAnchor!.isActive = true
@@ -2001,6 +2078,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 self.pictureView.cameraButton.alpha = 1
                 self.pictureView.folderButton.alpha = 1
                 self.pictureView.pictureLabel.alpha = 1
+                self.pictureView.previewCollectionView.alpha = 1
+                if imageIsPresented {
+                    self.pictureView.removePictureButton.alpha = 1
+                }
             }, completion: { (_) in
                 self.postSelectionSegmentedControl.isEnabled = true
             })
@@ -2017,13 +2098,15 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.postSelectionSegmentedControl.isEnabled = false
         
         switch self.selectedOption {
-        case .picture:
+        case .picture, .multiPicture:
             
             //Let the pictureView disappear
             UIView.animate(withDuration: 0.1, animations: {
                 self.pictureView.folderButton.alpha = 0
                 self.pictureView.cameraButton.alpha = 0
                 self.pictureView.pictureLabel.alpha = 0
+                self.pictureView.removePictureButton.alpha = 0
+                self.pictureView.previewCollectionView.alpha = 0
             }) { (_) in
                 
                 self.pictureViewHeight!.constant = 0
