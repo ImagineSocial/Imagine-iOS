@@ -17,9 +17,11 @@ import EasyTipView
 
 class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNUserNotificationCenterDelegate {
     
+    //MARK:- IBOutlets
     @IBOutlet weak var sortPostsButton: DesignableButton!
     @IBOutlet weak var viewAboveTableView: UIView!
         
+    //MARK:- Variables
     var screenEdgeRecognizer: UIScreenEdgePanGestureRecognizer!
     var statusBarView: UIView?
     
@@ -35,6 +37,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     
     let defaults = UserDefaults.standard
     
+    //MARK:- View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -68,57 +71,6 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                 }
             }
         }
-    }
-    
-    override func presentInfoView() {
-        //Called from BaseFeedTableVC because it is called in CellForRowAt if you are new and after 6 posts are displayed
-        let infoViewShown = UserDefaults.standard.bool(forKey: "likesInfo")
-        if infoViewShown == false {
-            showInfoView()
-        }
-    }
-    
-    func showInfoView() {
-        //Show Info View that shows what the like buttons mean and stuff like this
-        let upperHeight = UIApplication.shared.statusBarFrame.height +
-              self.navigationController!.navigationBar.frame.height
-        let height = upperHeight+40
-        
-        let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
-        let popUpView = PopUpInfoView(frame: frame)
-        popUpView.alpha = 0
-        popUpView.type = .likes
-        
-        if let window = UIApplication.shared.keyWindow {
-            window.addSubview(popUpView)
-        }
-        
-        UIView.animate(withDuration: 0.5) {
-            popUpView.alpha = 1
-        }
-    }
-    
-    func setPlaceholderAndGetPosts() {
-        // Show empty cells while fetching the posts
-        var index = 0
-        
-        let post = Post()
-        post.type = .topTopicCell
-        self.posts.insert(post, at: 0)
-        
-        while index <= 3 {
-            let post2 = Post()
-            if index == 1 {
-                post2.type = .picture
-            } else {
-                post2.type = .thought
-            }
-            self.posts.append(post2)
-            index+=1
-        }
-        
-        self.tableView.reloadData()
-        getPosts(getMore: true)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -180,7 +132,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         
     }
     
-    // MARK: - Methods
+    //MARK:- Get Data
     
     @objc override func getPosts(getMore:Bool) {
         /*
@@ -264,6 +216,451 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         }
     }
     
+    //MARK: Present Data
+    func setPlaceholderAndGetPosts() {
+        // Show empty cells while fetching the posts
+        var index = 0
+        
+        let post = Post()
+        post.type = .topTopicCell
+        self.posts.insert(post, at: 0)
+        
+        while index <= 3 {
+            let post2 = Post()
+            if index == 1 {
+                post2.type = .picture
+            } else {
+                post2.type = .thought
+            }
+            self.posts.append(post2)
+            index+=1
+        }
+        
+        self.tableView.reloadData()
+        getPosts(getMore: true)
+    }
+    
+    
+    // MARK: - TableViewDelegate
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let post = posts[indexPath.row]
+        
+        if post.type == .topTopicCell {
+            tableView.deselectRow(at: indexPath, animated: false)
+        } else if post.type == .singleTopic {
+            if let fact = post.fact {
+                performSegue(withIdentifier: "toFactSegue", sender: fact)
+            }
+        } else {
+//            changePostLocation(post: post)
+            performSegue(withIdentifier: "showPost", sender: post)
+        }
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    // MARK:- Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showPost" {
+            if let chosenPost = sender as? Post {
+                if let postVC = segue.destination as? PostViewController {
+                    postVC.post = chosenPost
+                    postVC.linkedFactPageVCNeedsHeightCorrection = true
+                }
+            }
+        }
+        
+        if segue.identifier == "toIntroView" {
+            if let introVC = segue.destination as? SwipeCollectionViewController {
+                introVC.diashow = .intro
+            }
+        }
+        
+        if segue.identifier == "meldenSegue" {
+            if let chosenPost = sender as? Post {
+                if let reportVC = segue.destination as? ReportViewController {
+                    reportVC.post = chosenPost
+                    
+                }
+            }
+        }
+        if segue.identifier == "goToLink" {
+            if let webVC = segue.destination as? WebViewController {
+                if let chosenPost = sender as? Post {
+                    
+                    webVC.post = chosenPost
+                    
+                } else if let chosenLink = sender as? String {
+                    webVC.link = chosenLink
+                }
+            }
+        }
+        if segue.identifier == "toUserSegue" {
+            if let userVC = segue.destination as? UserFeedTableViewController {
+                if let chosenUser = sender as? User {   // Another User
+                    userVC.userOfProfile = chosenUser
+                    userVC.currentState = .otherUser
+                } else { // The CurrentUser
+                    userVC.delegate = self
+                    userVC.currentState = .ownProfileWithEditing
+                }
+            }
+        }
+        if segue.identifier == "toBlogPost" {
+            if let chosenPost = sender as? BlogPost {
+                if let blogVC = segue.destination as? BlogPostViewController {
+                    blogVC.blogPost = chosenPost
+                }
+            }
+        }
+        if segue.identifier == "toLogInSegue" {
+            if let vc = segue.destination as? LogInViewController {
+                vc.delegate = self
+            }
+        }
+        if segue.identifier == "toFactSegue" {
+            if let fact = sender as? Community {
+                if let factVC = segue.destination as? ArgumentPageViewController {
+                    factVC.fact = fact
+                    factVC.headerNeedsAdjustment = true
+                }
+            }
+        }
+        if segue.identifier == "goToPostsOfTopic" {
+            if let fact = sender as? Community {
+                if let factVC = segue.destination as? PostsOfFactTableViewController {
+                    
+                    factVC.fact = fact
+                    self.notifyFactCollectionViewController(fact: fact)
+                    
+                }
+            }
+        }
+    }
+    
+    //MARK:- Hide/Show Tab Bar
+    
+    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+
+        let yValue = scrollView.panGestureRecognizer.translation(in: scrollView).y
+        if yValue < -0.1 {
+            //hide tabBar
+            changeTabBar(hidden: true, animated: true)
+        } else if yValue > 0.1 {
+            //show tabBar
+            changeTabBar(hidden: false, animated: true)
+        }
+    }
+    
+    func changeTabBar(hidden:Bool, animated: Bool) {
+        guard let tabBar = self.tabBarController?.tabBar else {
+            return
+        }
+        if tabBar.isHidden == hidden{
+            return
+        }
+        
+        let frame = tabBar.frame
+        let offset = hidden ? frame.size.height : -frame.size.height
+        let duration:TimeInterval = (animated ? 0.5 : 0.0)
+        tabBar.isHidden = false
+
+        UIView.animate(withDuration: duration, animations: {
+            tabBar.frame = frame.offsetBy(dx: 0, dy: offset)
+        }, completion: { (true) in
+            tabBar.isHidden = hidden
+        })
+    }
+    
+    //MARK:- Register Recent Community
+    func notifyFactCollectionViewController(fact: Community) {
+        if let viewControllers = self.tabBarController?.viewControllers {
+            if let navVC = viewControllers[3] as? UINavigationController {
+                if let factVC = navVC.topViewController as? CommunityCollectionViewController {
+                    factVC.registerRecentFact(fact: fact)
+                }
+            }
+        }
+    }
+    
+    
+    
+    
+    // MARK: - Navigation Items
+    
+    func loadBarButtonItem() {
+        
+        if isConnected() {
+            
+            // needs Internet to check if User is logged in and/or profilePicture
+            
+            if self.navigationItem.leftBarButtonItem == nil {
+                
+                self.createBarButton()
+                
+                self.setNotificationListener()
+            } else {    // Already got barButtons
+                
+                if let _ = Auth.auth().currentUser {
+                    if self.loggedIn == false { // Logged in but no profileButton
+                        self.createBarButton()
+                    }
+                } else {
+                    if self.loggedIn {
+                        self.createBarButton()  // Not logged in but still proileButton
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    func createBarButton() {
+        // View so there can be a small number for Invitations
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        view.widthAnchor.constraint(equalToConstant: 35).isActive = true
+        
+        //create new Button for the profilePictureButton
+        let button = DesignableButton(type: .custom)
+        button.frame = CGRect(x: 0, y: 0, width: 35, height: 35)    // Apparently needed for the rounded corners
+        button.layer.masksToBounds = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        
+        // If somebody is logged in add a profilePicture button to open the sidemenu
+        if let user = Auth.auth().currentUser {
+            self.loggedIn = true
+            
+            button.widthAnchor.constraint(equalToConstant: 35).isActive = true
+            button.heightAnchor.constraint(equalToConstant: 35).isActive = true
+            button.imageView?.contentMode = .scaleAspectFill
+            button.layer.cornerRadius = button.frame.width/2
+            button.addTarget(self, action: #selector(self.BarButtonItemTapped), for: .touchUpInside)
+            button.layer.borderWidth =  0.1
+            button.layer.borderColor = UIColor.imagineColor.cgColor
+            
+            
+            if let url = user.photoURL{ // Set Photo
+                
+                do {
+                    let data = try Data(contentsOf: url)
+                    
+                    if let image = UIImage(data: data) {
+                        
+                        //set image for button
+                        button.setImage(image, for: .normal)
+                    }
+                } catch {
+                    print(error.localizedDescription)
+                }
+                
+            } else {    // If no profile picture is set
+                button.setImage(UIImage(named: "default-user"), for: .normal)
+            }
+            
+            view.addSubview(button)
+            view.addSubview(self.smallNumberForNewChats)
+            view.addSubview(self.smallNumberForNotifications)
+            
+        } else {    // If nobody is logged in just show the logIn Button
+            self.loggedIn = false
+            
+            self.smallNumberForNotifications.isHidden = true
+            self.smallNumberForNewChats.isHidden = true
+
+            button.layer.cornerRadius = 4
+            button.addTarget(self, action: #selector(self.logInButtonTapped), for: .touchUpInside)
+            button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 15)
+            button.setTitle("Log-In", for: .normal)
+            button.setTitleColor(UIColor.imagineColor, for: .normal)
+
+            
+            view.addSubview(button)
+        }
+        
+        let barButton = UIBarButtonItem(customView: view)
+        self.navigationItem.leftBarButtonItem = barButton
+        
+    }
+    
+    
+    
+    let smallNumberForNotifications: UILabel = {
+        let label = UILabel.init(frame: CGRect.init(x: 27, y: 0, width: 14, height: 14))
+        label.backgroundColor = .red
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 7
+        label.textColor = UIColor.white
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 10)
+        label.isHidden = true
+        
+        return label
+    }()
+    
+    let smallNumberForNewChats: UILabel = {
+        let label = UILabel.init(frame: CGRect.init(x: 16, y: 0, width: 14, height: 14))
+        label.backgroundColor = UIColor(red: 23/255, green: 145/255, blue: 255/255, alpha: 1)
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 7
+        label.textColor = UIColor.white
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 10)
+        label.isHidden = true
+        
+        return label
+    }()
+    
+    
+    @objc func BarButtonItemTapped() {
+        sideMenu.showMenu()
+        
+        let notifications = self.notifications+self.upvotes
+        sideMenu.checkNotifications(invitations: self.friendRequests, notifications: notifications, newChats: self.newMessages)
+    }
+    
+    @objc func logInButtonTapped() {
+        performSegue(withIdentifier: "toLogInSegue", sender: nil)
+    }
+    
+    override func userTapped(post: Post) {
+        performSegue(withIdentifier: "toUserSegue", sender: post.user)
+    }
+    
+    
+    
+    // MARK: - Reachability
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        
+        print("Observer activated")
+        addReachabilityObserver()
+    }
+    
+    deinit {
+        removeReachabilityObserver()
+    }
+    
+    override func reachabilityChanged(_ isReachable: Bool) {
+        
+        if isReachable {
+            if fetchRequested { // To automatically redo the requested task
+                self.getPosts(getMore: true)
+            }
+            
+            if self.navigationItem.leftBarButtonItem == nil {
+                self.loadBarButtonItem()
+            }
+            
+            self.view.removeNoConncectionView()
+        } else {
+            self.view.showNoInternetConnectionView()
+            // Tell User no Connection
+        }
+    }
+    
+    //MARK: - TopView
+    
+    @IBAction func sortPostsTapped(_ sender: Any) {
+                
+        UIView.animate(withDuration: 0.2, animations: {
+            self.sortPostsButton.alpha = 0
+        }) { (_) in
+            self.increaseTopView()
+        }
+    }
+    
+    override func decreaseTopView() {
+        
+        guard let headerView = tableView.tableHeaderView else {
+          return
+        }
+        
+        let size = CGSize(width: self.view.frame.width, height: 30)
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.sortingStackView.alpha = 0
+        }) { (_) in
+            self.sortingStackView.isHidden = true
+        }
+        
+        if headerView.frame.size.height != size.height {
+            headerView.frame.size.height = size.height
+        }
+        
+        self.tableView.tableHeaderView = headerView
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.view.layoutIfNeeded()
+        }) { (_) in
+            UIView.animate(withDuration: 0.1) {
+                self.sortPostsButton.alpha = 1
+            }
+        }
+        
+        
+    }
+    
+    // MARK: - Side Menu
+    
+    lazy var sideMenu: SideMenu = {
+        let sideMenu = SideMenu()
+        sideMenu.FeedTableView = self
+        return sideMenu
+    }()
+    
+    func sideMenuButtonTapped(whichButton: SideMenuButton, comment: Comment?) {
+        //Called when the sideMenu is closed with an call to action
+        switch whichButton {
+        case .toUser:
+            self.performSegue(withIdentifier: "toUserSegue", sender: nil)
+        case .toFriends:
+            performSegue(withIdentifier: "toFriendsSegue", sender: nil)
+        case .toChats:
+            performSegue(withIdentifier: "toChatsTapped", sender: nil)
+        case .toSavedPosts:
+            performSegue(withIdentifier: "toSavedPosts", sender: nil)
+        case .toEULA:
+            performSegue(withIdentifier: "toEULASegue", sender: nil)
+        case .toPost:
+            if let comment = comment{
+                let post = Post()
+                post.documentID = comment.sectionItemID
+                post.isTopicPost = comment.isTopicPost
+                post.language = comment.sectionItemLanguage
+                post.newUpvotes = comment.upvotes
+
+                if let user = Auth.auth().currentUser {     //Only works if you get notifications for your own posts
+                    post.originalPosterUID = user.uid
+                }
+                performSegue(withIdentifier: "showPost", sender: post)
+            }
+        case .toComment:
+            if let comment = comment {
+                let post = Post()
+                post.documentID = comment.sectionItemID
+                post.isTopicPost = comment.isTopicPost
+                post.toComments = true
+                post.language = comment.sectionItemLanguage
+                if let user = Auth.auth().currentUser {
+                    post.originalPosterUID = user.uid
+                }
+                performSegue(withIdentifier: "showPost", sender: post)
+            }
+        default:
+            print("nothing happens")
+        }
+        
+    }
+    
+    //MARK: Side Menu User
+    
     /// Call to load User in SideMenu and set notifications after dismissal of the logInViewController
     func loadUser() {
         self.setNotificationListener()
@@ -272,13 +669,6 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         sideMenu.showUser()
     }
     
-    
-    
-    func setNotifications() {   // Ask for persmission to send Notifications
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            appDelegate.registerForPushNoticications(application: UIApplication.shared)
-        }
-    }
     
     func checkForLoggedInUser() {
         print("check")
@@ -297,6 +687,14 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
             if let listener = self.notificationListener {
                 listener.remove()
             }
+        }
+    }
+    
+    //MARK: Side Menu Notifications
+    
+    func setNotifications() {   // Ask for persmission to send Notifications
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            appDelegate.registerForPushNoticications(application: UIApplication.shared)
         }
     }
     
@@ -473,420 +871,33 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         }
     }
     
-    // MARK: - TableViewStuff
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        let post = posts[indexPath.row]
-        
-        if post.type == .topTopicCell {
-            tableView.deselectRow(at: indexPath, animated: false)
-        } else if post.type == .singleTopic {
-            if let fact = post.fact {
-                performSegue(withIdentifier: "toFactSegue", sender: fact)
-            }
-        } else {
-//            changePostLocation(post: post)
-            performSegue(withIdentifier: "showPost", sender: post)
-        }
-        
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
-    func changePostLocation(post: Post) {
-        let dataDictionary: [String: Any] = ["title": post.title, "description": post.description, "createTime": Timestamp(date: Date()), "originalPoster": post.user.userUID, "thanksCount":post.votes.thanks, "wowCount":post.votes.thanks, "haCount":post.votes.thanks, "niceCount":post.votes.thanks, "type": "picture", "report": "normal", "imageURL": post.imageURL, "imageHeight": post.mediaHeight, "imageWidth": post.mediaWidth]
-        
-        let ref = db.collection("Posts").document()
-        
-        ref.setData(dataDictionary) { (err) in
-            if let error = err {
-                print("error:", error.localizedDescription)
-            }
+    //MARK:- Info Views
+    override func presentInfoView() {
+        //Called from BaseFeedTableVC because it is called in CellForRowAt if you are new and after 6 posts are displayed
+        let infoViewShown = UserDefaults.standard.bool(forKey: "likesInfo")
+        if infoViewShown == false {
+            showInfoView()
         }
     }
     
-    // MARK: - PrepareForSegue
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showPost" {
-            if let chosenPost = sender as? Post {
-                if let postVC = segue.destination as? PostViewController {
-                    postVC.post = chosenPost
-                    postVC.linkedFactPageVCNeedsHeightCorrection = true
-                }
-            }
+    func showInfoView() {
+        //Show Info View that shows what the like buttons mean and stuff like this
+        let upperHeight = UIApplication.shared.statusBarFrame.height +
+              self.navigationController!.navigationBar.frame.height
+        let height = upperHeight+40
+        
+        let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
+        let popUpView = PopUpInfoView(frame: frame)
+        popUpView.alpha = 0
+        popUpView.type = .likes
+        
+        if let window = UIApplication.shared.keyWindow {
+            window.addSubview(popUpView)
         }
         
-        if segue.identifier == "toIntroView" {
-            if let introVC = segue.destination as? SwipeCollectionViewController {
-                introVC.diashow = .intro
-            }
+        UIView.animate(withDuration: 0.5) {
+            popUpView.alpha = 1
         }
-        
-        if segue.identifier == "meldenSegue" {
-            if let chosenPost = sender as? Post {
-                if let reportVC = segue.destination as? ReportViewController {
-                    reportVC.post = chosenPost
-                    
-                }
-            }
-        }
-        if segue.identifier == "goToLink" {
-            if let webVC = segue.destination as? WebViewController {
-                if let chosenPost = sender as? Post {
-                    
-                    webVC.post = chosenPost
-                    
-                } else if let chosenLink = sender as? String {
-                    webVC.link = chosenLink
-                }
-            }
-        }
-        if segue.identifier == "toUserSegue" {
-            if let userVC = segue.destination as? UserFeedTableViewController {
-                if let chosenUser = sender as? User {   // Another User
-                    userVC.userOfProfile = chosenUser
-                    userVC.currentState = .otherUser
-                } else { // The CurrentUser
-                    userVC.delegate = self
-                    userVC.currentState = .ownProfileWithEditing
-                }
-            }
-        }
-        if segue.identifier == "toBlogPost" {
-            if let chosenPost = sender as? BlogPost {
-                if let blogVC = segue.destination as? BlogPostViewController {
-                    blogVC.blogPost = chosenPost
-                }
-            }
-        }
-        if segue.identifier == "toLogInSegue" {
-            if let vc = segue.destination as? LogInViewController {
-                vc.delegate = self
-            }
-        }
-        if segue.identifier == "toFactSegue" {
-            if let fact = sender as? Community {
-                if let factVC = segue.destination as? ArgumentPageViewController {
-                    factVC.fact = fact
-                    factVC.headerNeedsAdjustment = true
-                }
-            }
-        }
-        if segue.identifier == "goToPostsOfTopic" {
-            if let fact = sender as? Community {
-                if let factVC = segue.destination as? PostsOfFactTableViewController {
-                    
-                    factVC.fact = fact
-                    self.notifyFactCollectionViewController(fact: fact)
-                    
-                }
-            }
-        }
-    }
-    
-    func notifyFactCollectionViewController(fact: Community) {
-        if let viewControllers = self.tabBarController?.viewControllers {
-            if let navVC = viewControllers[3] as? UINavigationController {
-                if let factVC = navVC.topViewController as? CommunityCollectionViewController {
-                    factVC.registerRecentFact(fact: fact)
-                }
-            }
-        }
-    }
-    
-    
-    
-    
-    // MARK: - Navigation Items
-    
-    func loadBarButtonItem() {
-        
-        if isConnected() {
-            
-            // needs Internet to check if User is logged in and/or profilePicture
-            
-            if self.navigationItem.leftBarButtonItem == nil {
-                
-                self.createBarButton()
-                
-                self.setNotificationListener()
-            } else {    // Already got barButtons
-                
-                if let _ = Auth.auth().currentUser {
-                    if self.loggedIn == false { // Logged in but no profileButton
-                        self.createBarButton()
-                    }
-                } else {
-                    if self.loggedIn {
-                        self.createBarButton()  // Not logged in but still proileButton
-                    }
-                }
-            }
-        }
-    }
-    
-    
-    func createBarButton() {
-        // View so there can be a small number for Invitations
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.heightAnchor.constraint(equalToConstant: 35).isActive = true
-        view.widthAnchor.constraint(equalToConstant: 35).isActive = true
-        
-        //create new Button for the profilePictureButton
-        let button = DesignableButton(type: .custom)
-        button.frame = CGRect(x: 0, y: 0, width: 35, height: 35)    // Apparently needed for the rounded corners
-        button.layer.masksToBounds = true
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
-        
-        
-        // If somebody is logged in add a profilePicture button to open the sidemenu
-        if let user = Auth.auth().currentUser {
-            self.loggedIn = true
-            
-            button.widthAnchor.constraint(equalToConstant: 35).isActive = true
-            button.heightAnchor.constraint(equalToConstant: 35).isActive = true
-            button.imageView?.contentMode = .scaleAspectFill
-            button.layer.cornerRadius = button.frame.width/2
-            button.addTarget(self, action: #selector(self.BarButtonItemTapped), for: .touchUpInside)
-            button.layer.borderWidth =  0.1
-            button.layer.borderColor = UIColor.imagineColor.cgColor
-            
-            
-            if let url = user.photoURL{ // Set Photo
-                
-                do {
-                    let data = try Data(contentsOf: url)
-                    
-                    if let image = UIImage(data: data) {
-                        
-                        //set image for button
-                        button.setImage(image, for: .normal)
-                    }
-                } catch {
-                    print(error.localizedDescription)
-                }
-                
-            } else {    // If no profile picture is set
-                button.setImage(UIImage(named: "default-user"), for: .normal)
-            }
-            
-            view.addSubview(button)
-            view.addSubview(self.smallNumberForNewChats)
-            view.addSubview(self.smallNumberForNotifications)
-            
-        } else {    // If nobody is logged in just show the logIn Button
-            self.loggedIn = false
-            
-            self.smallNumberForNotifications.isHidden = true
-            self.smallNumberForNewChats.isHidden = true
-
-            button.layer.cornerRadius = 4
-            button.addTarget(self, action: #selector(self.logInButtonTapped), for: .touchUpInside)
-            button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 15)
-            button.setTitle("Log-In", for: .normal)
-            button.setTitleColor(UIColor.imagineColor, for: .normal)
-
-            
-            view.addSubview(button)
-        }
-        
-        let barButton = UIBarButtonItem(customView: view)
-        self.navigationItem.leftBarButtonItem = barButton
-        
-    }
-    
-    
-    
-    let smallNumberForNotifications: UILabel = {
-        let label = UILabel.init(frame: CGRect.init(x: 27, y: 0, width: 14, height: 14))
-        label.backgroundColor = .red
-        label.clipsToBounds = true
-        label.layer.cornerRadius = 7
-        label.textColor = UIColor.white
-        label.textAlignment = .center
-        label.font = .systemFont(ofSize: 10)
-        label.isHidden = true
-        
-        return label
-    }()
-    
-    let smallNumberForNewChats: UILabel = {
-        let label = UILabel.init(frame: CGRect.init(x: 16, y: 0, width: 14, height: 14))
-        label.backgroundColor = UIColor(red: 23/255, green: 145/255, blue: 255/255, alpha: 1)
-        label.clipsToBounds = true
-        label.layer.cornerRadius = 7
-        label.textColor = UIColor.white
-        label.textAlignment = .center
-        label.font = .systemFont(ofSize: 10)
-        label.isHidden = true
-        
-        return label
-    }()
-    
-    
-    @objc func BarButtonItemTapped() {
-        sideMenu.showMenu()
-        
-        let notifications = self.notifications+self.upvotes
-        sideMenu.checkNotifications(invitations: self.friendRequests, notifications: notifications, newChats: self.newMessages)
-    }
-    
-    @objc func logInButtonTapped() {
-        performSegue(withIdentifier: "toLogInSegue", sender: nil)
-    }
-    
-    override func userTapped(post: Post) {
-        performSegue(withIdentifier: "toUserSegue", sender: post.user)
-    }
-    
-    // MARK: - EasyTipViewPreferences
-    func setUpEasyTipViewPreferences() {
-        var preferences = EasyTipView.Preferences()
-        preferences.drawing.font = UIFont(name: "IBMPlexSans", size: 18)!
-        preferences.drawing.foregroundColor = UIColor.black
-        preferences.drawing.backgroundColor = UIColor.white
-        preferences.drawing.arrowPosition = EasyTipView.ArrowPosition.top
-        preferences.drawing.textAlignment = .left
-        preferences.drawing.cornerRadius = 10
-        preferences.drawing.shadowColor = .lightGray
-        preferences.drawing.shadowOpacity = 1
-        preferences.drawing.shadowOffset = .zero
-        preferences.drawing.shadowRadius = 7
-        preferences.positioning.bubbleHInset = 10
-        preferences.positioning.bubbleVInset = 10
-        preferences.positioning.maxWidth = self.view.frame.width-40
-        // Maximum of 800 Words
-        
-        EasyTipView.globalPreferences = preferences
-    }
-    
-    // MARK: - Reachability
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        
-        print("Observer activated")
-        addReachabilityObserver()
-    }
-    
-    deinit {
-        removeReachabilityObserver()
-    }
-    
-    override func reachabilityChanged(_ isReachable: Bool) {
-        
-        if isReachable {
-            if fetchRequested { // To automatically redo the requested task
-                self.getPosts(getMore: true)
-            }
-            
-            if self.navigationItem.leftBarButtonItem == nil {
-                self.loadBarButtonItem()
-            }
-            
-            self.view.removeNoConncectionView()
-        } else {
-            self.view.showNoInternetConnectionView()
-            // Tell User no Connection
-        }
-    }
-    
-    //MARK: - TopView
-    
-    @IBAction func sortPostsTapped(_ sender: Any) {
-                
-        UIView.animate(withDuration: 0.2, animations: {
-            self.sortPostsButton.alpha = 0
-        }) { (_) in
-            self.increaseTopView()
-        }
-    }
-    
-    override func decreaseTopView() {
-        
-        guard let headerView = tableView.tableHeaderView else {
-          return
-        }
-        
-        let size = CGSize(width: self.view.frame.width, height: 30)
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.sortingStackView.alpha = 0
-        }) { (_) in
-            self.sortingStackView.isHidden = true
-        }
-        
-        if headerView.frame.size.height != size.height {
-            headerView.frame.size.height = size.height
-        }
-        
-        self.tableView.tableHeaderView = headerView
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.view.layoutIfNeeded()
-        }) { (_) in
-            UIView.animate(withDuration: 0.1) {
-                self.sortPostsButton.alpha = 1
-            }
-        }
-        
-        
-    }
-    
-    // MARK: - Side Menu
-    
-    lazy var sideMenu: SideMenu = {
-        let sideMenu = SideMenu()
-        sideMenu.FeedTableView = self
-        return sideMenu
-    }()
-    
-    
-    
-    func sideMenuButtonTapped(whichButton: SideMenuButton, comment: Comment?) {
-        //Called when the sideMenu is closed with an call to action
-        switch whichButton {
-        case .toUser:
-            self.performSegue(withIdentifier: "toUserSegue", sender: nil)
-        case .toFriends:
-            performSegue(withIdentifier: "toFriendsSegue", sender: nil)
-        case .toChats:
-            performSegue(withIdentifier: "toChatsTapped", sender: nil)
-        case .toSavedPosts:
-            performSegue(withIdentifier: "toSavedPosts", sender: nil)
-        case .toEULA:
-            performSegue(withIdentifier: "toEULASegue", sender: nil)
-        case .toPost:
-            if let comment = comment{
-                let post = Post()
-                post.documentID = comment.sectionItemID
-                post.isTopicPost = comment.isTopicPost
-                post.language = comment.sectionItemLanguage
-                post.newUpvotes = comment.upvotes
-
-                if let user = Auth.auth().currentUser {     //Only works if you get notifications for your own posts
-                    post.originalPosterUID = user.uid
-                }
-                performSegue(withIdentifier: "showPost", sender: post)
-            }
-        case .toComment:
-            if let comment = comment {
-                let post = Post()
-                post.documentID = comment.sectionItemID
-                post.isTopicPost = comment.isTopicPost
-                post.toComments = true
-                post.language = comment.sectionItemLanguage
-                if let user = Auth.auth().currentUser {
-                    post.originalPosterUID = user.uid
-                }
-                performSegue(withIdentifier: "showPost", sender: post)
-            }
-        default:
-            print("nothing happens")
-        }
-        
     }
     
     func isAppAlreadyLaunchedOnce() -> Bool {
@@ -948,8 +959,42 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
             return true
         }
     }
+    
+    // MARK: EasyTipViewPreferences
+    func setUpEasyTipViewPreferences() {
+        var preferences = EasyTipView.Preferences()
+        preferences.drawing.font = UIFont(name: "IBMPlexSans", size: 18)!
+        preferences.drawing.foregroundColor = UIColor.black
+        preferences.drawing.backgroundColor = UIColor.white
+        preferences.drawing.arrowPosition = EasyTipView.ArrowPosition.top
+        preferences.drawing.textAlignment = .left
+        preferences.drawing.cornerRadius = 10
+        preferences.drawing.shadowColor = .lightGray
+        preferences.drawing.shadowOpacity = 1
+        preferences.drawing.shadowOffset = .zero
+        preferences.drawing.shadowRadius = 7
+        preferences.positioning.bubbleHInset = 10
+        preferences.positioning.bubbleVInset = 10
+        preferences.positioning.maxWidth = self.view.frame.width-40
+        // Maximum of 800 Words
+        
+        EasyTipView.globalPreferences = preferences
+    }
+    
+//    func changePostLocation(post: Post) {
+//        let dataDictionary: [String: Any] = ["title": post.title, "description": post.description, "createTime": Timestamp(date: Date()), "originalPoster": post.user.userUID, "thanksCount":post.votes.thanks, "wowCount":post.votes.thanks, "haCount":post.votes.thanks, "niceCount":post.votes.thanks, "type": "picture", "report": "normal", "imageURL": post.imageURL, "imageHeight": post.mediaHeight, "imageWidth": post.mediaWidth]
+//
+//        let ref = db.collection("Posts").document()
+//
+//        ref.setData(dataDictionary) { (err) in
+//            if let error = err {
+//                print("error:", error.localizedDescription)
+//            }
+//        }
+//    }
 }
 
+//MARK:- LogOutDelegate
 extension FeedTableViewController: LogOutDelegate {
 
     func deleteListener() {     
@@ -965,6 +1010,8 @@ extension FeedTableViewController: LogOutDelegate {
         sideMenu.removeUser()
     }
 }
+
+//MARK:- JustPostedDelegate
 
 extension FeedTableViewController: JustPostedDelegate {
     func posted() {

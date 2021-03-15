@@ -62,7 +62,16 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
         createFloatingCommentView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        if let commentView = floatingCommentView {
+            commentView.addKeyboardObserver()
+        }
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
+        if let commentView = floatingCommentView {
+            commentView.removeKeyboardObserver()
+        }
         
         if let tipView = tipView {
             tipView.dismiss()
@@ -92,6 +101,7 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
                 bottomConstraint.isActive = true
             floatingCommentView!.bottomConstraint = bottomConstraint
             floatingCommentView!.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
+            floatingCommentView!.addKeyboardObserver()
             
             self.contentView.bringSubviewToFront(floatingCommentView!)
         }

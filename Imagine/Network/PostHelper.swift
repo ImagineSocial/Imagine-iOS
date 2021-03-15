@@ -70,8 +70,6 @@ class PostHelper {
                         }
                     }
                     
-                    let post = Post()
-                    post.documentID = documentID
                     var surveyTypeEnum: SurveyType = .pickOrder
                     
                     if surveyType == "pickOne" {
@@ -82,8 +80,11 @@ class PostHelper {
                     
                     let survey = Survey(type: surveyTypeEnum, question: question)
                     post.survey = survey
-                    
-                    if let firstAnswer = documentData["firstAnswer"] as? String, let secondAnswer = documentData["secondAnswer"] as? String, let thirdAnswer = documentData["thirdAnswer"] as? String, let fourthAnswer = documentData["fourthAnswer"] as? String {
+
+                    if let firstAnswer = documentData["firstAnswer"] as? String,
+                       let secondAnswer = documentData["secondAnswer"] as? String,
+                       let thirdAnswer = documentData["thirdAnswer"] as? String,
+                       let fourthAnswer = documentData["fourthAnswer"] as? String {
                         
                         survey.firstAnswer = firstAnswer
                         survey.secondAnswer = secondAnswer

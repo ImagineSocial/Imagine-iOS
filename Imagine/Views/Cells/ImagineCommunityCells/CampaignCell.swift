@@ -8,8 +8,10 @@
 
 import UIKit
 
-class CampaignCell: UITableViewCell {
+class CampaignCell: UICollectionViewCell {
     
+    //MARK:- IBOutlets
+    @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var CellHeaderLabel: UILabel!
     @IBOutlet weak var cellBodyLabel: UILabel!
     @IBOutlet weak var cellCreateCampaignLabel: UILabel!
@@ -18,6 +20,7 @@ class CampaignCell: UITableViewCell {
     @IBOutlet weak var vetoLabel: UILabel!
     @IBOutlet weak var categoryLabel: UILabel!
     
+    //MARK:- Variables
     var campaign:Campaign? {
         didSet {
             if let campaign = campaign {
@@ -38,23 +41,20 @@ class CampaignCell: UITableViewCell {
         }
     }
     
+    //MARK:- Cell Lifecycle
     override func awakeFromNib() {
         super.awakeFromNib()
         
         progressView.layer.cornerRadius = 2
         progressView.clipsToBounds = true
-        
-        // add corner radius on `contentView`
-        contentView.layer.cornerRadius = 5
-        contentView.clipsToBounds = true
-        backgroundColor =  .clear
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        //set the values for top,left,bottom,right margins
-        let margins = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        contentView.frame = contentView.frame.inset(by: margins)
+
+        let cornerRadius = Constants.cellCornerRadius
+        containerView.layer.cornerRadius = cornerRadius
+        contentView.setDefaultShadow()
     }
     
 }

@@ -24,7 +24,7 @@ class InfoScreen: NSObject {
     
     let blackView = UIView()
     let imageView = UIImageView()
-    var voteCampaignVC: voteCampaignTableViewController?
+    var voteCampaignVC: CampaignVoteCollectionViewController?
     
     func showInfoScreen() {
         if let window = UIApplication.shared.keyWindow {

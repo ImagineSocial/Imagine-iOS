@@ -15,7 +15,6 @@ enum DataType {
     case facts
     case blogPosts
     case vote
-    case campaign
 }
 
 enum DeepDataType {
@@ -66,16 +65,6 @@ class DataRequest {
             }
             
             orderString = "createDate"
-            
-        case .campaign:
-            list = [Campaign]()
-            dataPath = "Campaigns"
-            if language == .english {
-                dataPath = "campaigns"
-            }
-            
-            orderString = "supporter"
-            descending = true
             
         case .vote:
             list = [Vote]()
@@ -172,40 +161,6 @@ class DataRequest {
                             }
                             
                             list.append(blogPost)
-                        case .campaign:
-                            if let campaignType = documentData["type"] as? String {
-                                if campaignType == "normal" {
-                                    
-                                    guard let title = documentData["title"] as? String,
-                                          let shortBody = documentData["summary"] as? String,
-                                          let createTimestamp = documentData["createTime"] as? Timestamp,
-                                          let supporter = documentData["supporter"] as? Int,
-                                          let opposition = documentData["opposition"] as? Int,
-                                          let category = documentData["category"] as? String
-                                    else {
-                                        continue    // Falls er das nicht als (String) zuordnen kann
-                                    }
-                                    
-                                    let date = createTimestamp.dateValue()
-                                    let stringDate = date.formatRelativeString()
-                                    
-                                    let campaign = Campaign()       // Erst neue Campaign erstellen
-                                    campaign.title = title      // Dann die Sachen zuordnen
-                                    campaign.cellText = shortBody
-                                    campaign.documentID = documentID
-                                    campaign.createDate = stringDate
-                                    campaign.supporter = supporter
-                                    campaign.opposition = opposition
-                                    campaign.createTime = date
-                                    campaign.category = self.getCampaignType(categoryString: category)
-                                    
-                                    if let description = documentData["description"] as? String {
-                                        campaign.descriptionText = description
-                                    }
-                                    
-                                    list.append(campaign)
-                                }
-                            }
                         case .vote:
                             guard let title = documentData["title"] as? String,
                                   let subtitle = documentData["subtitle"] as? String,
@@ -297,36 +252,6 @@ class DataRequest {
         }
     }
     
-    func getCategoryLabelText(type: CampaignType) -> String {
-        switch type {
-        case .proposal:
-            return NSLocalizedString("dataHelper_proposal_label", comment: "proposal")
-        case .complaint:
-            return NSLocalizedString("dataHelper_complaint_label", comment: "complaint")
-        case .call:
-            return NSLocalizedString("dataHelper_call_label", comment: "call for action")
-        case .change:
-            return NSLocalizedString("dataHelper_change_label", comment: "change")
-        case .topicAddOn:
-            return NSLocalizedString("dataHelper_topic_addOn", comment: "topic addOn")
-        }
-    }
-    
-    func getCampaignType(categoryString: String) -> CampaignCategory {
-        
-        switch categoryString {
-        case "complaint":
-            return CampaignCategory(title: getCategoryLabelText(type: .complaint), type: .complaint)
-        case "call":
-            return CampaignCategory(title: getCategoryLabelText(type: .call), type: .call)
-        case "change":
-            return CampaignCategory(title: getCategoryLabelText(type: .change), type: .change)
-        case "topicAddOn":
-            return CampaignCategory(title: getCategoryLabelText(type: .topicAddOn), type: .topicAddOn)
-        default:
-            return CampaignCategory(title: getCategoryLabelText(type: .proposal), type: .proposal)
-        }
-    }
     
     func getFollowedTopicDocuments(userUID: String, documents: @escaping ([QueryDocumentSnapshot]) -> Void) {
         let topicRef = db.collection("Users").document(userUID).collection("topics")
@@ -353,7 +278,7 @@ class DataRequest {
         }
         
         var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
+
         if fact.language == .english {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {

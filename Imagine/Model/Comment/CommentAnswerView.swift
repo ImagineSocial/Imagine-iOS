@@ -14,12 +14,17 @@ protocol CommentViewDelegate {
     func commentTypingBegins()
 }
 
+//The CommentAnswerView is used in the PostViewController/CampaignViewController/FactDetailViewController/ArgumentDetailViewController
+///The view must have the delegate and the bottomConstraint set when initialized, commentSection when it comes from the PostViewController. When the parent VC will appear/disappear the keyboardObserver functions 'add/remove' must be used respectively.
 class CommentAnswerView: UIView {
     
+    //MARK:- Variables
     var delegate: CommentViewDelegate?
     
     var isAnonymous = false
     var answerToCommentView: UIView?
+    
+    var commentSection: CommentSection?
     
     var answerToComment: Comment?
     
@@ -29,6 +34,8 @@ class CommentAnswerView: UIView {
     
     /// Needs to be set when the commentAnswerView is initiated in order to automate the layout changes of the answerView 
     var bottomConstraint: NSLayoutConstraint?   /* When the layout changes (e.g. new line when there are less than 4 lines of text in answerTextField) the view moves to the bottom because that is the initial constraint. THe constraint needs to be set and the view needs to be autoResizingMaskIntoCOnstraints because it changes size automatically with text input*/
+    
+    //MARK:- View Initialization
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -42,19 +49,27 @@ class CommentAnswerView: UIView {
         answerTextField.delegate = self
         answerTextField.text = answerPlaceholderText
                 
-        setAnswerViewUI()
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardGotClosed), name: UIResponder.keyboardDidHideNotification, object: nil)
+        setAnswerViewUI()        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK:- Keyboard Movement Observer
+    func addKeyboardObserver() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardGotClosed), name: UIResponder.keyboardDidHideNotification, object: nil)
+    }
+    
+    func removeKeyboardObserver() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidHideNotification, object: nil)
+    }
+    
+    //MARK:- Set Up View
     func setAnswerViewUI() {
         addSubview(answerTextField)
         addSubview(sendButton)
@@ -77,36 +92,8 @@ class CommentAnswerView: UIView {
         answerTextField.leadingAnchor.constraint(equalTo: anonymousButton.trailingAnchor, constant: 10).isActive = true
     }
     
-   
-    @objc func anonymousTapped() {
-        if isAnonymous {
-            self.isAnonymous = false
-            anonymousButton.tintColor = .imagineColor
-        } else {
-            self.isAnonymous = true
-            anonymousButton.tintColor = Constants.green
-        }
-    }
     
-    @objc func sendTapped() {
-        if let answer = answerTextField.text, answer != "" {
-            sendButton.isEnabled = false
-            delegate?.sendButtonTapped(text: answer, isAnonymous: isAnonymous, answerToComment: answerToComment)
-            answerTextField.resignFirstResponder()
-        }
-    }
-    
-    func doneSaving() {
-        sendButton.isEnabled = true
-        answerTextField.text = ""
-        answerTextField.frame.size.height = answerTextField.contentSize.height
-        
-        self.layoutSubviews()
-        if let _ = answerToComment {
-            cancelRecipientTapped() // Remove the view, if there is any
-        }
-    }
-    
+    //MARK:- Adjust View when scrolled
     ///Adjust the y position so the view stays on the bottom even when the view behind is scrolled
     func adjustPositionForScroll(contentOffset: CGFloat, screenHeight: CGFloat) {
 
@@ -206,25 +193,21 @@ class CommentAnswerView: UIView {
     
     var keyboardheight:CGFloat = 0
     
-    override func willMove(toSuperview newSuperview: UIView?) {
-        //remove the notification listener wenn the view is exited
-        if newSuperview == nil {
-            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-        }
-    }
-    
     
     @objc func keyboardWillChange(notification: NSNotification) {
             if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
                 let heightDifference = keyboardSize.height-self.keyboardheight
 
                 if heightDifference >= 200 {    //keyboard opens up
-                    self.keyboardheight = keyboardSize.height-10
+                    self.keyboardheight = keyboardSize.height   //-10
                     frame.origin.y = frame.origin.y-(keyboardheight)
                     
-                    if let bottomConstraint = self.bottomConstraint {
-                        bottomConstraint.constant = -keyboardheight
+                    // Don't set the bottomConstraint.constant in the PostViewController, or the commentView will disappear after the keyboard closes
+                    if let section = self.commentSection, section == .post {
+                    } else {
+                        if let bottomConstraint = self.bottomConstraint {
+                            bottomConstraint.constant = -keyboardheight
+                        }
                     }
                 } else {    // keyboard changes Size only
                     frame.origin.y = frame.origin.y-(heightDifference)
@@ -245,7 +228,38 @@ class CommentAnswerView: UIView {
         }
     }
     
-    //MARK:-UI
+    //MARK:- Actions
+    @objc func anonymousTapped() {
+        if isAnonymous {
+            self.isAnonymous = false
+            anonymousButton.tintColor = .imagineColor
+        } else {
+            self.isAnonymous = true
+            anonymousButton.tintColor = Constants.green
+        }
+    }
+    
+    //MARK: Send Comment
+    @objc func sendTapped() {
+        if let answer = answerTextField.text, answer != "" {
+            sendButton.isEnabled = false
+            delegate?.sendButtonTapped(text: answer, isAnonymous: isAnonymous, answerToComment: answerToComment)
+            answerTextField.resignFirstResponder()
+        }
+    }
+    
+    func doneSaving() {
+        sendButton.isEnabled = true
+        answerTextField.text = ""
+        answerTextField.frame.size.height = answerTextField.contentSize.height
+        
+        self.layoutSubviews()
+        if let _ = answerToComment {
+            cancelRecipientTapped() // Remove the view, if there is any
+        }
+    }
+    
+    //MARK:- UI Initialization
     
     let anonymousButton: DesignableButton = {
        let button = DesignableButton()
@@ -328,7 +342,7 @@ class CommentAnswerView: UIView {
     
 }
 
-//MARK:-TextViewDelegate
+//MARK:- TextViewDelegate
 extension CommentAnswerView: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {

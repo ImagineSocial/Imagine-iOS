@@ -8,7 +8,9 @@
 
 import UIKit
 
-class VoteCell: UITableViewCell {
+class VoteCell: UICollectionViewCell {
+    
+    //MARK:- IBOutlets
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var bodyLabel: UILabel!
     @IBOutlet weak var voteTillDateLabel: UILabel!
@@ -17,6 +19,7 @@ class VoteCell: UITableViewCell {
     @IBOutlet weak var impactLabel: UILabel!
     @IBOutlet weak var commentCountLabel: UILabel!
     
+    //MARK:- Variables
     var needInsets = true
     
     var vote: Vote? {
@@ -47,6 +50,7 @@ class VoteCell: UITableViewCell {
         }
     }
     
+    //MARK:- Cell Lifecycle
     override func awakeFromNib() {
         super.awakeFromNib()
         

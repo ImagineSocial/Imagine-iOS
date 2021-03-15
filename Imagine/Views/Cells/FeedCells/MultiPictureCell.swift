@@ -76,6 +76,7 @@ class MultiPictureCell: BaseFeedCell {
         
         pageControlHeight.constant = pageControlHeightValue
         pageControl.isHidden = false
+        pageControl.currentPage = 0
         
         collectionView.setContentOffset(CGPoint.zero, animated: false)  //Set collectionView to the beginning
         

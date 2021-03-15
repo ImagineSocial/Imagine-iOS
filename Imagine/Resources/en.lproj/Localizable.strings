@@ -294,7 +294,7 @@
 
 "postLinkTipViewText" = "Share links in different forms on Imagine:\n\nNormal websites are shown with a preview and the title of your post. Videos from YouTube are presented in the standard YouTube format.\nLinks tat end with \".mp4\" are displayed directly in your feed.\nLinks from Songwhip.com let users choose their preferred streaming service, making them more easily accessible.\n\nIf you have any other ideas for special link formats like Netflix or IMDB, share them on the Imagine Tab!";
 
-"pictureLabelText" = "Photo:";
+"pictureLabelText" = "Picture:";
 
 "markPostButtonText" = "Mark post";
 
@@ -457,6 +457,8 @@
  
 
 //NewCampaignViewController
+
+"campaign_category_feature" = "Feature";
 
 "campaign_category_proposal" = "Proposal";
 
@@ -739,6 +741,7 @@
  
 
 //DataHelper
+"dataHelper_feature_label" = "Feature";
 
 "dataHelper_proposal_label" = "Proposal";
 
@@ -1005,7 +1008,7 @@ Offer a detailed insight, a different point of view or an easy start. There are 
 
 //PhotoAccess
 
-"photoAccess_permission_denied_text" = "It seems that your settings prevent us from accessing your image folders. You can change this as follows:\n\n1. Close the app.\n\n2. Open the settings.\n\n3. Scroll down and select Imagine.\n\n4. Change the folder settings.\n\n5. Open the app and try again";
+"photoAccess_permission_denied_text" = "It seems that your settings prevent us from accessing your image folders. You can change this as follows:\n\n1. Close the app.\n\n2. Open the settings app.\n\n3. Scroll down and select Imagine.\n\n4. Change the picture settings.\n\n5. Open the app and try again";
 
  
 
@@ -1124,6 +1127,8 @@ Offer a detailed insight, a different point of view or an easy start. There are 
 "campaignVC_description" = "Let's decide together! Present your ideas and decide on the suggestions of others.";
 "campaignVC_shareButton" = "Share your idea";
 "campaignVC_segment_proposal" = "Proposals";
+"campaignVC_segment_open_proposal" = "Open";
+"campaignVC_segment_done_proposal" = "Done";
 "campaignVC_segment_vote" = "Votes";
 
 //ShareProposalVC

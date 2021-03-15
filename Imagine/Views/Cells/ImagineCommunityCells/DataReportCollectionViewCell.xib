@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSans-Medium.ttf">
+            <string>IBMPlexSans-Medium</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="DataReportCollectionViewCell" id="epj-Ou-mHQ" customClass="DataReportCollectionViewCell" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="327" height="231"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="7mR-2k-H7X">
+                <rect key="frame" x="0.0" y="0.0" width="327" height="231"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6gZ-oA-Wok">
+                        <rect key="frame" x="0.0" y="0.0" width="325" height="236"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="aWE-J5-IGn">
+                                <rect key="frame" x="10" y="10" width="162.5" height="216"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Registered Users:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.85000002384185791" translatesAutoresizingMaskIntoConstraints="NO" id="OKx-Pt-dFM">
+                                        <rect key="frame" x="0.0" y="0.0" width="162.5" height="46.5"/>
+                                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Earnings/month:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.85000002384185791" id="dDh-xz-k4H">
+                                        <rect key="frame" x="0.0" y="56.5" width="162.5" height="46.5"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Expenses/month:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.85000002384185791" id="if3-KM-utM">
+                                        <rect key="frame" x="0.0" y="113" width="162.5" height="46.5"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fund-Donations/month:" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.85000002384185791" id="icr-Vl-sZ2">
+                                        <rect key="frame" x="0.0" y="169.5" width="162.5" height="46.5"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Ciw-SW-CY9">
+                                <rect key="frame" x="222.5" y="10" width="92.5" height="216"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.85000002384185791" translatesAutoresizingMaskIntoConstraints="NO" id="Efq-Po-vD1">
+                                        <rect key="frame" x="0.0" y="0.0" width="92.5" height="46.5"/>
+                                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.85000002384185791" id="OZr-CC-RhS">
+                                        <rect key="frame" x="0.0" y="56.5" width="92.5" height="46.5"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.85000002384185791" id="H9b-5m-iXE">
+                                        <rect key="frame" x="0.0" y="113" width="92.5" height="46.5"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.85000002384185791" id="4JM-2U-BkS">
+                                        <rect key="frame" x="0.0" y="169.5" width="92.5" height="46.5"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="16"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="aWE-J5-IGn" firstAttribute="width" secondItem="6gZ-oA-Wok" secondAttribute="width" multiplier="0.5" id="0Fb-EW-QAc"/>
+                            <constraint firstItem="Ciw-SW-CY9" firstAttribute="leading" secondItem="aWE-J5-IGn" secondAttribute="trailing" constant="50" id="Xjt-Cm-ZBt"/>
+                            <constraint firstItem="aWE-J5-IGn" firstAttribute="leading" secondItem="6gZ-oA-Wok" secondAttribute="leading" constant="10" id="You-1P-FTW"/>
+                            <constraint firstAttribute="bottom" secondItem="Ciw-SW-CY9" secondAttribute="bottom" constant="10" id="fsv-8C-W9z"/>
+                            <constraint firstItem="Ciw-SW-CY9" firstAttribute="top" secondItem="6gZ-oA-Wok" secondAttribute="top" constant="10" id="myO-jb-zdE"/>
+                            <constraint firstItem="aWE-J5-IGn" firstAttribute="top" secondItem="6gZ-oA-Wok" secondAttribute="top" constant="10" id="nnG-qs-mmE"/>
+                            <constraint firstAttribute="trailing" secondItem="Ciw-SW-CY9" secondAttribute="trailing" constant="10" id="qdw-d2-QWC"/>
+                            <constraint firstAttribute="bottom" secondItem="aWE-J5-IGn" secondAttribute="bottom" constant="10" id="roO-c9-AhV"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="6gZ-oA-Wok" firstAttribute="leading" secondItem="7mR-2k-H7X" secondAttribute="leading" id="2o8-Xj-y4M"/>
+                    <constraint firstAttribute="bottom" secondItem="6gZ-oA-Wok" secondAttribute="bottom" id="BvW-XG-0uO"/>
+                    <constraint firstItem="6gZ-oA-Wok" firstAttribute="top" secondItem="7mR-2k-H7X" secondAttribute="top" id="HKf-er-fyH"/>
+                    <constraint firstAttribute="trailing" secondItem="6gZ-oA-Wok" secondAttribute="trailing" id="d0Q-ts-wtc"/>
+                </constraints>
+            </collectionViewCellContentView>
+            <size key="customSize" width="327" height="231"/>
+            <connections>
+                <outlet property="containerView" destination="6gZ-oA-Wok" id="ZZG-Dm-KZq"/>
+                <outlet property="donationsLabel" destination="4JM-2U-BkS" id="Et7-hz-ebw"/>
+                <outlet property="earningsLabel" destination="OZr-CC-RhS" id="LDQ-ya-4SO"/>
+                <outlet property="expensesLabel" destination="H9b-5m-iXE" id="54K-4h-Fk4"/>
+                <outlet property="userCountDataLabel" destination="Efq-Po-vD1" id="rCL-Qc-lJN"/>
+            </connections>
+            <point key="canvasLocation" x="-797.82608695652175" y="-11.71875"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

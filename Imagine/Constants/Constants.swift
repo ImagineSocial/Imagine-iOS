@@ -19,6 +19,8 @@ struct Constants {
     static let red = UIColor(red:1.00, green:0.54, blue:0.52, alpha:1.0)
     static let backgroundColorForTableViews = UIColor(red:0.33, green:0.47, blue:0.65, alpha:0.5)
     
+    static let cellCornerRadius: CGFloat = 15
+    
     struct strings {
         static let anonymPosterName = NSLocalizedString("constants_anonymousPosterName", comment: "an anonymous user")
         static let textOfTheWeek = "Tauscht euch aus, seid nett und lernt neue Menschen kennen!"
