@@ -53,7 +53,8 @@ class RePostCell : BaseFeedCell {
     //MARK:- Set Cell
     override func setCell(){
         if let post = post {
-                        
+            feedUserView.delegate = self
+            
             if ownProfile { // Set in the UserFeedTableViewController DataSource
                 
                 if let _ = cellStyle {
@@ -133,11 +134,7 @@ class RePostCell : BaseFeedCell {
     }
     
     //MARK:- IBActions
-    @IBAction func moreTapped(_ sender: Any) {
-        if let post = post {
-            delegate?.reportTapped(post: post)
-        }
-    }
+
     @IBAction func thanksButtonTapped(_ sender: Any) {
         if let post = post {
             registerVote(post: post, button: thanksButton)

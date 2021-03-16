@@ -39,6 +39,9 @@
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vwb-kM-63T" userLabel="userButton">
                     <rect key="frame" x="7" y="2" width="51" height="41"/>
+                    <connections>
+                        <action selector="userButtonTapped:" destination="-1" eventType="touchUpInside" id="PYL-tT-8bc"/>
+                    </connections>
                 </button>
                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="9aV-nY-z9U">
                     <rect key="frame" x="535" y="7.5" width="30" height="30"/>
@@ -72,6 +75,9 @@
                 </imageView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="m5U-G4-nLp">
                     <rect key="frame" x="532" y="4.5" width="36" height="36"/>
+                    <connections>
+                        <action selector="linkedCommunityButtonTapped:" destination="-1" eventType="touchUpInside" id="3wZ-0r-G2b"/>
+                    </connections>
                 </button>
                 <label userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="253" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AFN-l0-lor">
                     <rect key="frame" x="55" y="5" width="0.0" height="0.0"/>
@@ -98,6 +104,9 @@
                             <real key="value" value="3"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="reportPressed:" destination="-1" eventType="touchUpInside" id="laz-FV-fD5"/>
+                    </connections>
                 </button>
             </subviews>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>

@@ -63,6 +63,7 @@ class PostCell : BaseFeedCell {
     //MARK:- Set Cell
     override func setCell() {
         if let post = post {
+            feedUserView.delegate = self
             
             if ownProfile { // Set in the UserFeedTableViewController DataSource
                 
@@ -158,27 +159,6 @@ class PostCell : BaseFeedCell {
     @IBAction func niceButtonTapped(_ sender: Any) {
         if let post = post {
             self.registerVote(post: post, button: self.niceButton)
-        }
-    }
-    
-    @IBAction func reportPressed(_ sender: Any) {
-        if let post = post {
-            delegate?.reportTapped(post: post)
-        }
-    }
-    
-    
-    @IBAction func userButtonTapped(_ sender: Any) {
-        if let post = post {
-            if !post.anonym {
-                delegate?.userTapped(post: post)
-            }
-        }
-    }
-    
-    @IBAction func linkedFactTapped(_ sender: Any) {
-        if let fact = post?.fact {
-            delegate?.factTapped(fact: fact)
         }
     }
 }

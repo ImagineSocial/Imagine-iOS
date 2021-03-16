@@ -154,6 +154,7 @@ class BaseFeedCell : UITableViewCell {
     
     //MARK:- SetCell
     /// Set the desired functions and layout for the cell
+    /// Set the FeedUserDelegate here, so the buttons in the user view are connected
     func setCell() {
         
     }
@@ -267,4 +268,27 @@ class BaseFeedCell : UITableViewCell {
         generator.impactOccurred()
     }
     
+}
+
+extension BaseFeedCell: FeedUserViewDelegate {
+    
+    func reportButtonTapped() {
+        if let post = post {
+            delegate?.reportTapped(post: post)
+        }
+    }
+    
+    func userButtonTapped() {
+        if let post = post {
+            if !post.anonym {
+                delegate?.userTapped(post: post)
+            }
+        }
+    }
+    
+    func linkedCommunityButtonTapped() {
+        if let fact = post?.fact {
+            delegate?.factTapped(fact: fact)
+        }
+    }
 }

@@ -26,6 +26,7 @@
 		E90E1A4325FCC8BF00855FE1 /* ImagineDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A4225FCC8BF00855FE1 /* ImagineDataHelper.swift */; };
 		E90E1A4A25FF640800855FE1 /* FeedUserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E90E1A4925FF640800855FE1 /* FeedUserView.xib */; };
 		E90E1A4D25FF655300855FE1 /* FeedUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A4C25FF655300855FE1 /* FeedUserView.swift */; };
+		E90E1AA62600B81D00855FE1 /* NibLoadableExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1AA52600B81C00855FE1 /* NibLoadableExtension.swift */; };
 		E911EEF022DB157500EDD056 /* SettingsLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEEF22DB157500EDD056 /* SettingsLauncher.swift */; };
 		E911EEF222DB173E00EDD056 /* SelectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEF122DB173E00EDD056 /* SelectionCell.swift */; };
 		E911EEF422DB630300EDD056 /* SideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEF322DB630300EDD056 /* SideMenu.swift */; };
@@ -293,6 +294,7 @@
 		E90E1A4225FCC8BF00855FE1 /* ImagineDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagineDataHelper.swift; sourceTree = "<group>"; };
 		E90E1A4925FF640800855FE1 /* FeedUserView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedUserView.xib; sourceTree = "<group>"; };
 		E90E1A4C25FF655300855FE1 /* FeedUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUserView.swift; sourceTree = "<group>"; };
+		E90E1AA52600B81C00855FE1 /* NibLoadableExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NibLoadableExtension.swift; sourceTree = "<group>"; };
 		E911EEEF22DB157500EDD056 /* SettingsLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLauncher.swift; sourceTree = "<group>"; };
 		E911EEF122DB173E00EDD056 /* SelectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionCell.swift; sourceTree = "<group>"; };
 		E911EEF322DB630300EDD056 /* SideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenu.swift; sourceTree = "<group>"; };
@@ -1327,6 +1329,7 @@
 				E988284F23141AC8005ECB40 /* Extensions.swift */,
 				E9FE46CE25FB5AE500F4C973 /* UIViewExtensions.swift */,
 				E9FE46D125FB5C4D00F4C973 /* StringExtensions.swift */,
+				E90E1AA52600B81C00855FE1 /* NibLoadableExtension.swift */,
 			);
 			path = HelperClasses;
 			sourceTree = "<group>";
@@ -1660,6 +1663,7 @@
 				E90E1A4325FCC8BF00855FE1 /* ImagineDataHelper.swift in Sources */,
 				E9959EA624F5885E0067174A /* AddOnFeedTableViewController.swift in Sources */,
 				E9817B5425EC036500E56FC6 /* SettingDateCell.swift in Sources */,
+				E90E1AA62600B81D00855FE1 /* NibLoadableExtension.swift in Sources */,
 				E9B79CE1224EC6D200166EED /* RepostCell.swift in Sources */,
 				E91A2B6124794EAE00B42353 /* SettingTableViewController.swift in Sources */,
 				E9526C0D250F99790088004F /* RunderProgress.swift in Sources */,

@@ -15,6 +15,8 @@ protocol TopTopicCellDelegate {
 }
 
 class TopicCell: UITableViewCell {
+    
+    //MARK:- IBOutlets
     @IBOutlet weak var weeklyTopicView: UIView!
     @IBOutlet weak var topLevelFactImageView: UIImageView!
     @IBOutlet weak var topLevelFactLabel: UILabel!
@@ -30,13 +32,15 @@ class TopicCell: UITableViewCell {
     @IBOutlet weak var stackBackgroundView: UIView!
     @IBOutlet weak var textOfTheWeekLabel: UILabel!
     
-    let db = Firestore.firestore()
+    //MARK:- Variables
+    private let db = Firestore.firestore()
     private let cornerRadius: CGFloat = 6
     
     var delegate: TopTopicCellDelegate?
-    var facts = [Community]()
-    var textOfTheWeek: String?
+    private var facts = [Community]()
+    private var textOfTheWeek: String?
         
+    //MARK:- Cell Lifecycle
     override func awakeFromNib() {
         selectionStyle = .none
         
@@ -71,6 +75,14 @@ class TopicCell: UITableViewCell {
         }
     }
     
+    override func layoutSubviews() {
+            super.layoutSubviews()
+            
+            let margins = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
+            contentView.frame = contentView.frame.inset(by: margins)
+    }
+    
+    //MARK:- Get Data
     func getData() {
         var collectionRef: CollectionReference!
         let language = LanguageSelection().getLanguage()
@@ -189,13 +201,7 @@ class TopicCell: UITableViewCell {
         }
     }
     
-    override func layoutSubviews() {
-            super.layoutSubviews()
-            
-            let margins = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
-            contentView.frame = contentView.frame.inset(by: margins)
-    }
-    
+    //MARK:- IBActions
     @IBAction func owenButtonTapped(_ sender: Any) {
         owenWidth.constant = 600
         owenHeight.constant = 600
