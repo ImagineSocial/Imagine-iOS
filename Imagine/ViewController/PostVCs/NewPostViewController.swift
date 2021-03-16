@@ -90,9 +90,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     var cropViewController: CropViewController?
     
-    /// Is the keyboard up for better typing
-    var up = false
-    
     //Link Fact With Post
     var linkedFact: Community?
     var linkedLocation: Location?
@@ -186,10 +183,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             linkCommunityView.cancelLinkedFactButton.alpha = 0.5
             linkCommunityView.distributionInformationLabel.text = "Community"
         }
-        
-        //KeyboardGoesUp
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChange(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         //Show Info view if not already shown before
         let infoAlreadyShown = UserDefaults.standard.bool(forKey: "newPostInfo")
@@ -1390,57 +1383,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     }
                 }
             }
-        }
-    }
-    
-    // MARK: - KeyboardGoesUp
-    
-    @objc func keyboardWillChange(notification: NSNotification) {
-        
-        if !self.up {
-            
-            if let _ = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-                if descriptionView.descriptionTextView.isFirstResponder {
-                    
-                    var offset:CGFloat = 75
-                    switch selectedOption {
-                    case .multiPicture:
-                        offset = 125
-                    case .thought:
-                        offset = 50
-                    case .picture:
-                        offset = 125
-                    case .link:
-                        offset = 100
-                    }
-                    
-                    
-                    self.view.frame.origin.y -= offset
-                    self.up = true
-                    
-                }
-            }
-        }
-    }
-    
-    @objc func keyboardWillHide() {
-        
-        if self.up {
-            
-            var offset:CGFloat = 75
-            switch selectedOption {
-            case .multiPicture:
-                offset = 125
-            case .thought:
-                offset = 50
-            case .picture:
-                offset = 125
-            case .link:
-                offset = 100
-            }
-            
-            self.view.frame.origin.y += offset
-            self.up = false
         }
     }
     
