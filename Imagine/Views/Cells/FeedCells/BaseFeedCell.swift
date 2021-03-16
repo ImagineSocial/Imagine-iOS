@@ -16,6 +16,24 @@ enum CellType {
 
 class BaseFeedCell : UITableViewCell {
     
+    //MARK:- IBOutlets
+    @IBOutlet weak var thanksButton: DesignableButton!
+    @IBOutlet weak var wowButton: DesignableButton!
+    @IBOutlet weak var haButton: DesignableButton!
+    @IBOutlet weak var niceButton: DesignableButton!
+    @IBOutlet weak var commentCountLabel: UILabel!
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var descriptionPreviewLabel: UILabel!
+    @IBOutlet weak var containerView: UIView!
+    //ReportView
+    @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var reportViewLabel: UILabel!
+    @IBOutlet weak var reportView: DesignablePopUp!
+    @IBOutlet weak var reportViewButtonInTop: DesignableButton!
+    //User & linked Community
+    @IBOutlet weak var feedUserView: FeedUserView!
+    
+    //MARK:- Variables
     let handyHelper = HandyHelper()
     
     var centerX: NSLayoutConstraint?
@@ -25,38 +43,16 @@ class BaseFeedCell : UITableViewCell {
     
     var cellStyle: CellType?
     var ownProfile: Bool = false
+    var delegate: PostCellDelegate?
     
-    @IBOutlet weak var thanksButton: DesignableButton!
-    @IBOutlet weak var wowButton: DesignableButton!
-    @IBOutlet weak var haButton: DesignableButton!
-    @IBOutlet weak var niceButton: DesignableButton!
-    @IBOutlet weak var reportButton: DesignableButton!
-    @IBOutlet weak var linkedFactButton: UIButton!
-    @IBOutlet weak var factImageView: UIImageView!
-    @IBOutlet weak var profilePictureImageView: UIImageView!
-    @IBOutlet weak var createDateLabel: UILabel!
-    @IBOutlet weak var OPNameLabel: UILabel!
-    @IBOutlet weak var commentCountLabel: UILabel!
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var followTopicImageView: DesignableImage!
-    @IBOutlet weak var descriptionPreviewLabel: UILabel!
-    @IBOutlet weak var containerView: UIView!
-    //ReportView
-    @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var reportViewLabel: UILabel!
-    @IBOutlet weak var reportView: DesignablePopUp!
-    @IBOutlet weak var reportViewButtonInTop: DesignableButton!
+    /// Set this post in the TableViewDataSource to fill the cell with life
+    var post:Post? {
+        didSet {
+            setCell()
+        }
+    }
     
-    let buttonLabel : UILabel = {
-        let label = UILabel()
-        label.textColor = .white
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-        label.alpha = 0.8
-        
-        return label
-    }()
-    
+    //MARK:- Cell Lifecycle
     override func prepareForReuse() {
         super.prepareForReuse()
         
@@ -66,62 +62,11 @@ class BaseFeedCell : UITableViewCell {
             haButton.setImage(nil, for: .normal)
             niceButton.setImage(nil, for: .normal)
         } else {
-            thanksButton.setImage(UIImage(named: "thanks"), for: .normal)
-            wowButton.setImage(UIImage(named: "wow"), for: .normal)
-            haButton.setImage(UIImage(named: "ha"), for: .normal)
-            niceButton.setImage(UIImage(named: "nice"), for: .normal)
+            thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
+            wowButton.setImage(UIImage(named: "wowButton"), for: .normal)
+            haButton.setImage(UIImage(named: "haButton"), for: .normal)
+            niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
         }
-    }
-    
-    /// Set the default values for the standard buttons and imageviews
-    func initiateCell(thanksButton: DesignableButton, wowButton: DesignableButton, haButton: DesignableButton, niceButton: DesignableButton, factImageView: UIImageView, profilePictureImageView: UIImageView) {
-        
-        factImageView.layer.cornerRadius = 3
-        factImageView.layer.borderWidth = 1
-        factImageView.layer.borderColor = UIColor.clear.cgColor
-        
-        thanksButton.setImage(nil, for: .normal)
-        wowButton.setImage(nil, for: .normal)
-        haButton.setImage(nil, for: .normal)
-        niceButton.setImage(nil, for: .normal)
-        
-        thanksButton.imageView?.contentMode = .scaleAspectFit
-        wowButton.imageView?.contentMode = .scaleAspectFit
-        haButton.imageView?.contentMode = .scaleAspectFit
-        niceButton.imageView?.contentMode = .scaleAspectFit
-        
-        if #available(iOS 13.0, *) {
-            thanksButton.layer.borderColor = UIColor.secondaryLabel.cgColor
-            wowButton.layer.borderColor = UIColor.secondaryLabel.cgColor
-            haButton.layer.borderColor = UIColor.secondaryLabel.cgColor
-            niceButton.layer.borderColor = UIColor.secondaryLabel.cgColor
-        } else {
-            thanksButton.layer.borderColor = UIColor.black.cgColor
-            wowButton.layer.borderColor = UIColor.black.cgColor
-            haButton.layer.borderColor = UIColor.black.cgColor
-            niceButton.layer.borderColor = UIColor.black.cgColor
-        }
-        thanksButton.layer.borderWidth = 0.5
-        wowButton.layer.borderWidth = 0.5
-        haButton.layer.borderWidth = 0.5
-        niceButton.layer.borderWidth = 0.5
-        
-        print("Initialized")
-        
-        // Profile Picture
-        let layer = profilePictureImageView.layer
-        layer.cornerRadius = profilePictureImageView.frame.width/2
-    }
-    
-    ///Set the view above the post: Zero Height if it is normal, if the post is flagged it will show the report reason
-    func setReportView(post: Post, reportView: DesignablePopUp, reportLabel: UILabel, reportButton: DesignableButton, reportViewHeightConstraint: NSLayoutConstraint) {
-        // Set ReportView
-        let reportViewOptions = handyHelper.setReportView(post: post)
-        
-        reportViewHeightConstraint.constant = reportViewOptions.heightConstant
-        reportButton.isHidden = reportViewOptions.buttonHidden
-        reportLabel.text = reportViewOptions.labelText
-        reportView.backgroundColor = reportViewOptions.backgroundColor
     }
     
     override func layoutSubviews() {
@@ -146,95 +91,99 @@ class BaseFeedCell : UITableViewCell {
         
     }
     
-    override func awakeFromNib() {
+    //MARK:- Initialization
+    /// Set the default values for the standard buttons
+    func initiateCell() {
         
+        let buttons = [thanksButton!, wowButton!, haButton!, niceButton!]
+        
+        for button in buttons {
+            button.setImage(nil, for: .normal)
+            button.imageView?.contentMode = .scaleAspectFit
+            button.layer.borderWidth = 0.5
+            
+            if #available(iOS 13.0, *) {
+                button.layer.borderColor = UIColor.secondaryLabel.cgColor
+            } else {
+                button.layer.borderColor = UIColor.black.cgColor
+            }
+        }
     }
     
     /// If you look at your own Feed at UserFeedTableView
-    func setOwnCell() {
+    func setOwnCell(post: Post) {
         
-        if #available(iOS 13.0, *) {
-            thanksButton.backgroundColor = .tertiaryLabel
-            wowButton.backgroundColor = .tertiaryLabel
-            haButton.backgroundColor = .tertiaryLabel
-            niceButton.backgroundColor = .tertiaryLabel
+        let buttons = [thanksButton!, wowButton!, haButton!, niceButton!]
+        
+        for button in buttons {
             
-        } else {
-            thanksButton.backgroundColor = .darkGray
-            wowButton.backgroundColor = .darkGray
-            haButton.backgroundColor = .darkGray
-            niceButton.backgroundColor = .darkGray
+            button.setTitleColor(.white, for: .normal)
+            button.layer.borderWidth = 0
             
+            if #available(iOS 13.0, *) {
+                button.backgroundColor = .tertiaryLabel
+            } else {
+                button.backgroundColor = .darkGray
+            }
         }
         
-        thanksButton.setTitleColor(.white, for: .normal)
-        wowButton.setTitleColor(.white, for: .normal)
-        haButton.setTitleColor(.white, for: .normal)
-        niceButton.setTitleColor(.white, for: .normal)
-        
-        thanksButton.layer.borderWidth = 0
-        wowButton.layer.borderWidth = 0
-        haButton.layer.borderWidth = 0
-        niceButton.layer.borderWidth = 0
+        //Set vote count
+        thanksButton.setTitle(String(post.votes.thanks), for: .normal)
+        wowButton.setTitle(String(post.votes.wow), for: .normal)
+        haButton.setTitle(String(post.votes.ha), for: .normal)
+        niceButton.setTitle(String(post.votes.nice), for: .normal)
     }
     
-    ///Load the fact and return it asynchroniously
-    func loadFact(language: Language, fact: Community, beingFollowed: Bool, completion: @escaping (Community) -> Void) {
+    func setDefaultButtonImages() {
+        thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
+        wowButton.setImage(UIImage(named: "wowButton"), for: .normal)
+        haButton.setImage(UIImage(named: "haButton"), for: .normal)
+        niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
+    }
+    
+    ///Set the view above the post: Zero Height if it is normal, if the post is flagged it will show the report reason
+    func setReportView(post: Post, reportView: DesignablePopUp, reportLabel: UILabel, reportButton: DesignableButton, reportViewHeightConstraint: NSLayoutConstraint) {
+        // Set ReportView
+        let reportViewOptions = handyHelper.setReportView(post: post)
         
-        if fact.documentID != "" {
+        reportViewHeightConstraint.constant = reportViewOptions.heightConstant
+        reportButton.isHidden = reportViewOptions.buttonHidden
+        reportLabel.text = reportViewOptions.labelText
+        reportView.backgroundColor = reportViewOptions.backgroundColor
+    }
+    
+    //MARK:- SetCell
+    /// Set the desired functions and layout for the cell
+    func setCell() {
+        
+    }
+    
+    //MARK:- Get Community
+    ///Load the fact and return it asynchroniously
+    func getCommunity(language: Language, community: Community, beingFollowed: Bool, completion: @escaping (Community) -> Void) {
+        
+        if community.documentID != "" {
             var collectionRef: CollectionReference!
             if language == .english {
                 collectionRef = db.collection("Data").document("en").collection("topics")
             } else {
                 collectionRef = db.collection("Facts")
             }
-            let ref = collectionRef.document(fact.documentID)
+            let ref = collectionRef.document(community.documentID)
             ref.getDocument { (doc, err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
                     if let document = doc {
                         if let data = document.data() {
-                            guard let name = data["name"] as? String else {
-                                return
-                            }
-                            let fact = Community()
+                            let communityHelper = CommunityHelper()
+                            let user = Auth.auth().currentUser
                             
-                            if let displayString = data["displayOption"] as? String {
-                                if displayString == "topic" {
-                                    fact.displayOption = .topic
-                                } else {
-                                    fact.displayOption = .fact
-                                }
+                            if let community = communityHelper.getCommunity(currentUser: user, documentID: document.documentID, data: data) {
+                                completion(community)
+                            } else {
+                                print("Error: COuldnt get a community")
                             }
-                            
-                            if let postCount = data["postCount"] as? Int {
-                                fact.postCount = postCount
-                            }
-                            
-                            if let follower = data["follower"] as? [String] {
-                                fact.followerCount = follower.count
-                            }
-                            
-                            if beingFollowed {
-                                fact.beingFollowed = true
-                            }
-                            if let url = data["imageURL"] as? String {
-                                fact.imageURL = url
-                            }
-                            if let description = data["description"] as? String {
-                                fact.description = description
-                            }
-                            if let isAddOnFirstView = data ["isAddOnFirstView"] as? Bool {
-                                fact.isAddOnFirstView = isAddOnFirstView
-                            }
-                            
-                            fact.language = language
-                            fact.title = name
-                            fact.documentID = document.documentID
-                            fact.fetchComplete = true
-                            
-                            completion(fact)
                         }
                     }
                 }
@@ -242,48 +191,74 @@ class BaseFeedCell : UITableViewCell {
         }
     }
     
-    func showButtonText(post: Post, button: DesignableButton) {
-//        buttonLabel.alpha = 1
-//
-//        if let _ = centerX {
-//            centerX!.isActive = false
-//            distanceConstraint!.isActive = false
-//        }
-        
-//        centerX = buttonLabel.centerXAnchor.constraint(equalTo: button.centerXAnchor)
-//        centerX!.priority = UILayoutPriority(rawValue: 250)
-//        centerX!.isActive = true
-//
-//        distanceConstraint = buttonLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -45)
-//        distanceConstraint!.priority = UILayoutPriority(rawValue: 250)
-//        distanceConstraint!.isActive = true
-//        self.layoutIfNeeded()
+    //MARK:- User
+    var index = 0
+    func getUser() {
+        if index < 20 {
+            if let post = self.post {
+                if post.user.displayName == "" {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        self.getUser()
+                        self.index+=1
+                    }
+                } else {
+                    setUser()
+                }
+            }
+        }
+    }
+    
+    func setUser() {
+        if let post = post {
+            feedUserView.setUser(post: post)
+        }
+    }
+    
+    //MARK:- Community
+    func getCommunity(beingFollowed: Bool) {
+        if let post = post, let fact = post.fact {
+            self.getCommunity(language: post.language, community: fact, beingFollowed: beingFollowed) {
+                (fact) in
+                post.fact = fact
+                
+                self.setCommunity(post: post)
+            }
+        }
+    }
+    
+    func setCommunity(post: Post) {
+        feedUserView.setCommunity(post: post)
+    }
+    
+    //MARK:- Set Vote Button Title
+    func registerVote(post: Post, button: DesignableButton) {
         
         var title = String(post.votes.thanks)
         
         switch button {
         case thanksButton:
-//            buttonLabel.text = "danke"
             title = String(post.votes.thanks)
+            thanksButton.isEnabled = false
+            delegate?.thanksTapped(post: post)
+            post.votes.thanks = post.votes.thanks+1
         case wowButton:
-//            buttonLabel.text = "wow"
+            wowButton.isEnabled = false
+            delegate?.wowTapped(post: post)
+            post.votes.wow = post.votes.wow+1
             title = String(post.votes.wow)
         case haButton:
-//            buttonLabel.text = "ha"
+            haButton.isEnabled = false
+            delegate?.haTapped(post: post)
+            post.votes.ha = post.votes.ha+1
             title = String(post.votes.ha)
         case niceButton:
-//            buttonLabel.text = "nice"
+            niceButton.isEnabled = false
+            delegate?.niceTapped(post: post)
+            post.votes.nice = post.votes.nice+1
             title = String(post.votes.nice)
         default:
-            buttonLabel.text = "so nicht"
+            title = String(post.votes.thanks)
         }
-        
-//        distanceConstraint!.constant = -60
-//
-//        UIView.animate(withDuration: 1) {
-////            self.layoutIfNeeded()
-//            self.buttonLabel.alpha = 0
-//        }
         
         button.setImage(nil, for: .normal)
         button.setTitle(title, for: .normal)

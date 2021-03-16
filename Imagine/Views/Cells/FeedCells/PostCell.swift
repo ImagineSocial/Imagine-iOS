@@ -23,16 +23,16 @@ protocol PostCellDelegate {
 
 class PostCell : BaseFeedCell {
     
+    //MARK:- IBOutlets
     @IBOutlet weak var cellImageView: UIImageView!
-    //    @IBOutlet weak var titleLabelHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var cellImageViewHeightConstraint: NSLayoutConstraint!
+
     
-    var delegate: PostCellDelegate?
-    
+    //MARK:- Cell Lifecycle
     override func awakeFromNib() {
         selectionStyle = .none
         
-        self.initiateCell(thanksButton: thanksButton, wowButton: wowButton, haButton: haButton, niceButton: niceButton, factImageView: factImageView, profilePictureImageView: profilePictureImageView)
+        self.initiateCell()
                 
         titleLabel.adjustsFontSizeToFitWidth = true
         
@@ -41,9 +41,7 @@ class PostCell : BaseFeedCell {
         
         let pinch = UIPinchGestureRecognizer(target: self, action: #selector(self.pinch(sender:)))
         self.cellImageView.addGestureRecognizer(pinch)
-    
-        self.addSubview(buttonLabel)
-        
+            
         // add corner radius on `contentView`
         cellImageView.layer.cornerRadius = 8
     }
@@ -56,93 +54,46 @@ class PostCell : BaseFeedCell {
         cellImageView.sd_cancelCurrentImageLoad()
         cellImageView.image = nil
         
-        profilePictureImageView.sd_cancelCurrentImageLoad()
-        profilePictureImageView.image = nil
-        
-        factImageView.layer.borderColor = UIColor.clear.cgColor
-        factImageView.image = nil
-        factImageView.backgroundColor = .clear
-        
-        followTopicImageView.isHidden = true
-        
         thanksButton.isEnabled = true
         wowButton.isEnabled = true
         haButton.isEnabled = true
         niceButton.isEnabled = true
     }
     
-
-    var post:Post? {
-        didSet {
-            setCell()
-        }
-    }
-    
-    func setCell() {
+    //MARK:- Set Cell
+    override func setCell() {
         if let post = post {
             
             if ownProfile { // Set in the UserFeedTableViewController DataSource
-                thanksButton.setTitle(String(post.votes.thanks), for: .normal)
-                wowButton.setTitle(String(post.votes.wow), for: .normal)
-                haButton.setTitle(String(post.votes.ha), for: .normal)
-                niceButton.setTitle(String(post.votes.nice), for: .normal)
                 
                 if let _ = cellStyle {
                     print("Already Set")
                 } else {
                     cellStyle = .ownCell
-                    setOwnCell()
+                    setOwnCell(post: post)
                 }
-                
             } else {
-                thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
-                wowButton.setImage(UIImage(named: "wowButton"), for: .normal)
-                haButton.setImage(UIImage(named: "haButton"), for: .normal)
-                niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
+                setDefaultButtonImages()
             }
-           /*
-            let imageHeight = post.mediaHeight
-            let imageWidth = post.mediaWidth
-            
-            let ratio = imageWidth / imageHeight
-            let width = self.contentView.frame.width
-            
-            let newHeight = width / ratio
-            
-                    
-            if newHeight <= 300 {
-                let newWidth = 300*ratio
-                pictureScrollView.contentSize = CGSize(width: newWidth, height: 300)
-                print("Set ScrollViewContent Wide: \(newWidth), Height: \(newHeight), ratio: \(ratio), originalHeight: \(imageHeight), originalWidth: \(imageWidth), imageWidth: \(cellImageView.frame.width), scrollviewWidth: \(pictureScrollView.frame.width)")
-            } else {
-                print("Normal Picture")
-            }
-            */
+           
             if post.user.displayName == "" {
                 if post.anonym {
                     self.setUser()
                 } else {
-                    self.getName()
+                    self.getUser()
                 }
             } else {
                 setUser()
             }
             
             if let fact = post.fact {
-                if #available(iOS 13.0, *) {
-                    self.factImageView.layer.borderColor = UIColor.secondaryLabel.cgColor
-                } else {
-                    self.factImageView.layer.borderColor = UIColor.darkGray.cgColor
-                }
-                                
                 if fact.title == "" {
-                    self.getFact(beingFollowed: fact.beingFollowed)
+                    self.getCommunity(beingFollowed: fact.beingFollowed)
                 } else {
-                    self.loadFact(post: post)
+                    self.setCommunity(post: post)
                 }
             }
             
-            createDateLabel.text = post.createTime
             titleLabel.text = post.title
             descriptionPreviewLabel.text = post.description
             commentCountLabel.text = String(post.commentCount)
@@ -158,77 +109,8 @@ class PostCell : BaseFeedCell {
         }
     }
     
-    func setUser() {
-        if let post = post {
-            
-            if post.anonym {
-                if let anonymousName = post.anonymousName {
-                    OPNameLabel.text = anonymousName
-                } else {
-                    OPNameLabel.text = Constants.strings.anonymPosterName
-                }
-                profilePictureImageView.image = UIImage(named: "anonym-user")
-            } else {
-                OPNameLabel.text = post.user.displayName
-                
-                // Profile Picture
-                if let url = URL(string: post.user.imageURL) {
-                    profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
-                } else {
-                    profilePictureImageView.image = UIImage(named: "default-user")
-                }
-            }
-        }
-    }
     
-    
-    var index = 0
-    func getName() {
-        if index < 20 {
-            if let post = self.post {
-                if post.user.displayName == "" {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.getName()
-                        self.index+=1
-                    }
-                } else {
-                    setUser()
-                }
-            }
-        }
-    }
-    
-    func getFact(beingFollowed: Bool) {
-        if let post = post {
-            if let fact = post.fact {
-                self.loadFact(language: post.language, fact: fact, beingFollowed: beingFollowed) {
-                    (fact) in
-                    post.fact = fact
-                    
-                    self.loadFact(post: post)
-                }
-            }
-        }
-    }
-    
-    func loadFact(post: Post) {
-        if post.isTopicPost {
-            followTopicImageView.isHidden = false
-        }
-        
-        if let url = URL(string: post.fact!.imageURL) {
-            self.factImageView.sd_setImage(with: url, completed: nil)
-        } else {
-            print("Set default Picture")
-            if #available(iOS 13.0, *) {
-                self.factImageView.backgroundColor = .systemBackground
-            } else {
-                self.factImageView.backgroundColor = .white
-            }
-            self.factImageView.image = UIImage(named: "FactStamp")
-        }
-    }
-    
+    //MARK:- Pinch To Zoom
     @objc func pinch(sender:UIPinchGestureRecognizer) {
         // From this nice tutorial: https://medium.com/@jeremysh/instagram-pinch-to-zoom-pan-gesture-tutorial-772681660dfe
         if sender.state == .changed {
@@ -257,37 +139,25 @@ class PostCell : BaseFeedCell {
     }
     
     
-    
+    //MARK:- IBActions
     @IBAction func thanksButtonTapped(_ sender: Any) {
         if let post = post {
-            thanksButton.isEnabled = false
-            delegate?.thanksTapped(post: post)
-            post.votes.thanks = post.votes.thanks+1
-            showButtonText(post: post, button: thanksButton)
+            registerVote(post: post, button: thanksButton)
         }
     }
     @IBAction func wowButtonTapped(_ sender: Any) {
         if let post = post {
-            wowButton.isEnabled = false
-            delegate?.wowTapped(post: post)
-            post.votes.wow = post.votes.wow+1
-            showButtonText(post: post, button: wowButton)
+            registerVote(post: post, button: wowButton)
         }
     }
     @IBAction func haButtonTapped(_ sender: Any) {
         if let post = post {
-            haButton.isEnabled = false
-            delegate?.haTapped(post: post)
-            post.votes.ha = post.votes.ha+1
-            showButtonText(post: post, button: haButton)
+            registerVote(post: post, button: haButton)
         }
     }
     @IBAction func niceButtonTapped(_ sender: Any) {
         if let post = post {
-            niceButton.isEnabled = false
-            delegate?.niceTapped(post: post)
-            post.votes.nice = post.votes.nice+1
-            self.showButtonText(post: post, button: self.niceButton)
+            self.registerVote(post: post, button: self.niceButton)
         }
     }
     

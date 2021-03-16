@@ -24,6 +24,8 @@
 		E90E1A3D25FBC7F700855FE1 /* CommunityHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A3C25FBC7F700855FE1 /* CommunityHeader.swift */; };
 		E90E1A4025FBCB3C00855FE1 /* FinishedWorkItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A3F25FBCB3C00855FE1 /* FinishedWorkItem.swift */; };
 		E90E1A4325FCC8BF00855FE1 /* ImagineDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A4225FCC8BF00855FE1 /* ImagineDataHelper.swift */; };
+		E90E1A4A25FF640800855FE1 /* FeedUserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E90E1A4925FF640800855FE1 /* FeedUserView.xib */; };
+		E90E1A4D25FF655300855FE1 /* FeedUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A4C25FF655300855FE1 /* FeedUserView.swift */; };
 		E911EEF022DB157500EDD056 /* SettingsLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEEF22DB157500EDD056 /* SettingsLauncher.swift */; };
 		E911EEF222DB173E00EDD056 /* SelectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEF122DB173E00EDD056 /* SelectionCell.swift */; };
 		E911EEF422DB630300EDD056 /* SideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E911EEF322DB630300EDD056 /* SideMenu.swift */; };
@@ -289,6 +291,8 @@
 		E90E1A3C25FBC7F700855FE1 /* CommunityHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityHeader.swift; sourceTree = "<group>"; };
 		E90E1A3F25FBCB3C00855FE1 /* FinishedWorkItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishedWorkItem.swift; sourceTree = "<group>"; };
 		E90E1A4225FCC8BF00855FE1 /* ImagineDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagineDataHelper.swift; sourceTree = "<group>"; };
+		E90E1A4925FF640800855FE1 /* FeedUserView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedUserView.xib; sourceTree = "<group>"; };
+		E90E1A4C25FF655300855FE1 /* FeedUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUserView.swift; sourceTree = "<group>"; };
 		E911EEEF22DB157500EDD056 /* SettingsLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLauncher.swift; sourceTree = "<group>"; };
 		E911EEF122DB173E00EDD056 /* SelectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionCell.swift; sourceTree = "<group>"; };
 		E911EEF322DB630300EDD056 /* SideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenu.swift; sourceTree = "<group>"; };
@@ -568,6 +572,15 @@
 				41B6ABEE519CECD54D4C7F4F /* Pods_Imagine.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E90E1A4825FF632000855FE1 /* CellViews */ = {
+			isa = PBXGroup;
+			children = (
+				E90E1A4925FF640800855FE1 /* FeedUserView.xib */,
+				E90E1A4C25FF655300855FE1 /* FeedUserView.swift */,
+			);
+			path = CellViews;
 			sourceTree = "<group>";
 		};
 		E91A2B5F24794E8400B42353 /* SettingViewController */ = {
@@ -1063,6 +1076,7 @@
 		E9B79CDD224EC66C00166EED /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				E90E1A4825FF632000855FE1 /* CellViews */,
 				E9F31DC923F6D20A001D5D25 /* CommunityCells */,
 				E98FAEA023FAB8230064A614 /* FeedCells */,
 				E9E6876A2416AFB700CB7AF8 /* ImagineCommunityCells */,
@@ -1478,6 +1492,7 @@
 				E936659125150832008CC8A9 /* AddOnQAndAQuestionCell.xib in Resources */,
 				E90AC38424FA52C4002A36F0 /* IBMPlexSans-Regular.ttf in Resources */,
 				E9F31DCB23F6D2A3001D5D25 /* FactCollectionHeader.xib in Resources */,
+				E90E1A4A25FF640800855FE1 /* FeedUserView.xib in Resources */,
 				E9F31DC823F6D109001D5D25 /* RecentTopicsCollectionCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1663,6 +1678,7 @@
 				E9E6BD0E25F7842C0012A870 /* ImagineCommunityProposalHeader.swift in Sources */,
 				E9D9561824F82791007E5D18 /* AddOnCollectionViewController.swift in Sources */,
 				E962AC2B2224446100C6D6EF /* FirestoreRequest.swift in Sources */,
+				E90E1A4D25FF655300855FE1 /* FeedUserView.swift in Sources */,
 				E9817B6B25EC0E8000E56FC6 /* PictureView.swift in Sources */,
 				E9817B3225EBDD8600E56FC6 /* CommunityHelper.swift in Sources */,
 				E962AC2D222448D400C6D6EF /* DesignableButton.swift in Sources */,
@@ -1914,7 +1930,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -1937,7 +1953,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7;
+				MARKETING_VERSION = 1.7.1;
 				PRODUCT_BUNDLE_IDENTIFIER = Malte.Imagine;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;

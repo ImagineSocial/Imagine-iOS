@@ -291,7 +291,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 setCommunity()
             } else {
                 let baseCell = BaseFeedCell()
-                baseCell.loadFact(language: post.language, fact: fact, beingFollowed: false) { (fact) in
+                baseCell.getCommunity(language: post.language, community: fact, beingFollowed: false) { (fact) in
                     self.post.fact = fact
                     self.addLinkedCommunityView()
                     self.setCommunity()

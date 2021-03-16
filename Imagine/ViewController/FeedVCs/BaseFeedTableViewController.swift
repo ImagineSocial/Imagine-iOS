@@ -301,7 +301,7 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
                     cell.ownProfile = isOwnProfile
                     cell.post = post
                     cell.delegate = self
-                    cell.webViewDelegate = self
+                    cell.musicPostDelegate = self
                     
                     return cell
                 }

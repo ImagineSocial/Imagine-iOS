@@ -71,7 +71,7 @@ class AddOn {
                 if singleTopic.documentID != "" {
                     let baseFeedCell = BaseFeedCell()
                     DispatchQueue.global(qos: .default).async {
-                        baseFeedCell.loadFact(language: fact.language, fact: singleTopic, beingFollowed: false) { (fact) in
+                        baseFeedCell.getCommunity(language: fact.language, community: singleTopic, beingFollowed: false) { (fact) in
                             self.singleTopic = fact
                         }
                     }

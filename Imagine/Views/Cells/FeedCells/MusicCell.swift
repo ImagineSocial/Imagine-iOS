@@ -16,6 +16,7 @@ protocol MusicPostDelegate {
 
 class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
     
+    //MARK:- IBOutlets
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var webViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var expandViewButton: DesignableButton!
@@ -27,21 +28,20 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
     @IBOutlet weak var musicViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var songwhipButton: UIButton!
     
-    var delegate: PostCellDelegate?
-    var webViewDelegate: MusicPostDelegate?
+    //MARK:- Variables
+    var musicPostDelegate: MusicPostDelegate?
     
-    var position: CGPoint?
-    var webViewFinished = false
+    private var position: CGPoint?
+    private var webViewFinished = false
     
+    //MARK:- Cell Lifecycle
     override func awakeFromNib() {
         selectionStyle = .none
         
-        self.initiateCell(thanksButton: thanksButton, wowButton: wowButton, haButton: haButton, niceButton: niceButton, factImageView: factImageView, profilePictureImageView: profilePictureImageView)
+        self.initiateCell()
         
         titleLabel.adjustsFontSizeToFitWidth = true
-                
-        self.addSubview(buttonLabel)
-                
+                                
         webView.navigationDelegate = self
         webView.layer.cornerRadius = 8
         webView.clipsToBounds = true
@@ -90,17 +90,8 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         super.prepareForReuse()
         descriptionPreviewLabel.text = nil
         
-        profilePictureImageView.sd_cancelCurrentImageLoad()
-        profilePictureImageView.image = nil
-        
-        factImageView.layer.borderColor = UIColor.clear.cgColor
-        factImageView.image = nil
-        factImageView.backgroundColor = .clear
-        followTopicImageView.isHidden = true
-        
         webViewHeightConstraint.constant = 250
         
-//        viewAboveWebView.isHidden = false
         expandViewButton.isHidden = false
         expandViewButton.alpha = 1
         
@@ -128,6 +119,72 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         
     }
     
+    //MARK:- Set Cell
+    override func setCell() {
+        if let post = post {
+            
+            if let url = URL(string: post.linkURL) {
+                let request = URLRequest(url: url)
+                webView.load(request)
+            }
+            
+            if let music = post.music {
+                if let url = URL(string: music.musicImageURL) {
+                    albumPreviewImageView.sd_setImage(with: url, completed: nil)
+                }
+                
+                musicTitleLabel.text = music.name
+                artistLabel.text = music.artist
+                if let releaseDate = music.releaseDate {
+                    releaseYearLabel.text = getYearFromDate(date: releaseDate)
+                }
+            }
+            
+            if ownProfile { // Set in the UserFeedTableViewController DataSource
+                
+                if let _ = cellStyle {
+                    print("Already Set")
+                } else {
+                    cellStyle = .ownCell
+                    setOwnCell(post: post)
+                }
+            } else {
+                setDefaultButtonImages()
+            }
+            
+            if post.user.displayName == "" {
+                if post.anonym {
+                    self.setUser()
+                } else {
+                    self.getUser()
+                }
+            } else {
+                setUser()
+            }
+            
+            titleLabel.text = post.title
+            descriptionPreviewLabel.text = post.description
+            commentCountLabel.text = String(post.commentCount)
+            
+            
+            if let fact = post.fact {
+                                
+                if fact.title == "" {
+                    if fact.beingFollowed {
+                        self.getCommunity(beingFollowed: true)
+                    } else {
+                        self.getCommunity(beingFollowed: false)
+                    }
+                } else {
+                    self.setCommunity(post: post)
+                }
+            }
+            
+            setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
+        }
+    }
+    
+    //MARK:- Animate Web View
     func expandWebView() {
         let height = musicViewHeightConstraint.constant
         
@@ -143,7 +200,7 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
             
             self.layoutIfNeeded()
         } completion: { (_) in            
-            self.webViewDelegate?.expandView()
+            self.musicPostDelegate?.expandView()
 
             self.albumPreviewImageView.isHidden = true
             self.albumPreviewShadowView.isHidden = true
@@ -175,157 +232,8 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         return stringDate
     }
     
-    var post: Post? {
-        didSet {
-            if let post = post {
-                
-                if let url = URL(string: post.linkURL) {
-                    let request = URLRequest(url: url)
-                    webView.load(request)
-                }
-                
-                if let music = post.music {
-                    if let url = URL(string: music.musicImageURL) {
-                        albumPreviewImageView.sd_setImage(with: url, completed: nil)
-                    }
-                    
-                    musicTitleLabel.text = music.name
-                    artistLabel.text = music.artist
-                    if let releaseDate = music.releaseDate {
-                        releaseYearLabel.text = getYearFromDate(date: releaseDate)
-                    }
-                }
-                
-                if ownProfile {
-                    thanksButton.setTitle(String(post.votes.thanks), for: .normal)
-                    wowButton.setTitle(String(post.votes.wow), for: .normal)
-                    haButton.setTitle(String(post.votes.ha), for: .normal)
-                    niceButton.setTitle(String(post.votes.nice), for: .normal)
-                    
-                    if let _ = cellStyle {
-                        print("Already Set")
-                    } else {
-                        cellStyle = .ownCell
-                        setOwnCell()
-                    }
-                    
-                } else {
-                    thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
-                    wowButton.setImage(UIImage(named: "wowButton"), for: .normal)
-                    haButton.setImage(UIImage(named: "haButton"), for: .normal)
-                    niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
-                }
-                
-                if post.user.displayName == "" {
-                    if post.anonym {
-                        self.setUser()
-                    } else {
-                        self.getName()
-                    }
-                } else {
-                    setUser()
-                }
-                
-                createDateLabel.text = post.createTime
-                titleLabel.text = post.title
-                descriptionPreviewLabel.text = post.description
-                commentCountLabel.text = String(post.commentCount)
-                
-                
-                if let fact = post.fact {
-                    if #available(iOS 13.0, *) {
-                        self.factImageView.layer.borderColor = UIColor.secondaryLabel.cgColor
-                    } else {
-                        self.factImageView.layer.borderColor = UIColor.darkGray.cgColor
-                    }
-                                    
-                    if fact.title == "" {
-                        if fact.beingFollowed {
-                            self.getFact(beingFollowed: true)
-                        } else {
-                            self.getFact(beingFollowed: false)
-                        }
-                    } else {
-                        self.loadFact()
-                    }
-                }
-                
-                setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
-            }
-        }
-    }
-    
-    func getFact(beingFollowed: Bool) {
-        if let post = post {
-            if let fact = post.fact {
-                self.loadFact(language: post.language, fact: fact, beingFollowed: beingFollowed) {
-                    (fact) in
-                    post.fact = fact
-                    
-                    self.loadFact()
-                }
-            }
-        }
-    }
-    
-    func loadFact() {
-        if post!.isTopicPost {
-            followTopicImageView.isHidden = false
-        }
-        
-        if let url = URL(string: post!.fact!.imageURL) {
-            self.factImageView.sd_setImage(with: url, completed: nil)
-        } else {
-            print("Set default Picture")
-            if #available(iOS 13.0, *) {
-                self.factImageView.backgroundColor = .systemBackground
-            } else {
-                self.factImageView.backgroundColor = .white
-            }
-            self.factImageView.image = UIImage(named: "FactStamp")
-        }
-    }
-    
-    func setUser() {
-        if let post = post {
-            
-            if post.anonym {
-                if let anonymousName = post.anonymousName {
-                    OPNameLabel.text = anonymousName
-                } else {
-                    OPNameLabel.text = Constants.strings.anonymPosterName
-                }
-                profilePictureImageView.image = UIImage(named: "anonym-user")
-            } else {
-                OPNameLabel.text = post.user.displayName
-                
-                // Profile Picture
-                if let url = URL(string: post.user.imageURL) {
-                    profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
-                } else {
-                    profilePictureImageView.image = UIImage(named: "default-user")
-                }
-            }
-        }
-    }
-    
-    var index = 0
-    func getName() {
-        if index < 20 {
-            if let post = self.post {
-                if post.user.displayName == "" {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.getName()
-                        self.index+=1
-                    }
-                } else {
-                    setUser()
-                }
-            }
-        }
-    }
-    
 
+    //MARK:- IBActions
     @IBAction func expandViewButtonTapped(_ sender: Any) {
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
@@ -337,37 +245,25 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
     
     @IBAction func thanksButtonTapped(_ sender: Any) {
         if let post = post {
-            thanksButton.isEnabled = false
-            delegate?.thanksTapped(post: post)
-            post.votes.thanks = post.votes.thanks+1
-            showButtonText(post: post, button: thanksButton)
+            registerVote(post: post, button: thanksButton)
         }
     }
     
     @IBAction func wowButtonTapped(_ sender: Any) {
         if let post = post {
-            wowButton.isEnabled = false
-            delegate?.wowTapped(post: post)
-            post.votes.wow = post.votes.wow+1
-            showButtonText(post: post, button: wowButton)
+            registerVote(post: post, button: wowButton)
         }
     }
     
     @IBAction func haButtonTapped(_ sender: Any) {
         if let post = post {
-            haButton.isEnabled = false
-            delegate?.haTapped(post: post)
-            post.votes.ha = post.votes.ha+1
-            showButtonText(post: post, button: haButton)
+            registerVote(post: post, button: haButton)
         }
     }
     
     @IBAction func niceButtonTapped(_ sender: Any) {
         if let post = post {
-            niceButton.isEnabled = false
-            delegate?.niceTapped(post: post)
-            post.votes.nice = post.votes.nice+1
-            showButtonText(post: post, button: niceButton)
+            registerVote(post: post, button: niceButton)
         }
     }
     

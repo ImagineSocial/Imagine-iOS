@@ -10,7 +10,7 @@ import UIKit
 
 class RePostCell : BaseFeedCell {
     
-    
+    //MARK:- IBOutlets
     @IBOutlet weak var translatedTitleLabel: UILabel!
     @IBOutlet weak var OGPostView: DesignablePopUp!
     @IBOutlet weak var originalCreateDateLabel: UILabel!
@@ -19,16 +19,13 @@ class RePostCell : BaseFeedCell {
     @IBOutlet weak var ogPosterNameLabel: UILabel!
     @IBOutlet weak var ogProfilePictureImageView: UIImageView!
     
-    var delegate: PostCellDelegate?
-    
+        
+    //MARK:- View Lifecycle
     override func awakeFromNib() {
         selectionStyle = .none
-        self.addSubview(buttonLabel)
         
-        self.initiateCell(thanksButton: thanksButton, wowButton: wowButton, haButton: haButton, niceButton: niceButton, factImageView: factImageView, profilePictureImageView: profilePictureImageView)
-        
-        buttonLabel.textColor = .black
-        
+        self.initiateCell()
+                
         // Profile Picture
         ogProfilePictureImageView.layer.cornerRadius = ogProfilePictureImageView.frame.width/2
         
@@ -44,9 +41,6 @@ class RePostCell : BaseFeedCell {
         ogProfilePictureImageView.sd_cancelCurrentImageLoad()
         ogProfilePictureImageView.image = nil
         
-        profilePictureImageView.sd_cancelCurrentImageLoad()
-        profilePictureImageView.image = nil
-        
         originalTitleLabel.text = nil
         translatedTitleLabel.text = nil
         
@@ -56,39 +50,27 @@ class RePostCell : BaseFeedCell {
         niceButton.isEnabled = true
     }
     
-    var post: Post? {
-        didSet {
-            setCell()
-        }
-    }
-    
-    func setCell(){
+    //MARK:- Set Cell
+    override func setCell(){
         if let post = post {
                         
-            if ownProfile {
-                thanksButton.setTitle(String(post.votes.thanks), for: .normal)
-                wowButton.setTitle(String(post.votes.wow), for: .normal)
-                haButton.setTitle(String(post.votes.ha), for: .normal)
-                niceButton.setTitle(String(post.votes.nice), for: .normal)
+            if ownProfile { // Set in the UserFeedTableViewController DataSource
                 
                 if let _ = cellStyle {
                     print("Already Set")
                 } else {
                     cellStyle = .ownCell
-                    setOwnCell()
+                    setOwnCell(post: post)
                 }
             } else {
-                thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
-                wowButton.setImage(UIImage(named: "wowButton"), for: .normal)
-                haButton.setImage(UIImage(named: "haButton"), for: .normal)
-                niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
+                setDefaultButtonImages()
             }
             
             if post.user.displayName == "" {
                 if post.anonym {
                     self.setUser()
                 } else {
-                    self.getName()
+                    self.getUser()
                 }
             } else {
                 setUser()
@@ -96,7 +78,6 @@ class RePostCell : BaseFeedCell {
             
             // Post Sachen einstellen
             translatedTitleLabel.text = post.title
-            createDateLabel.text = post.createTime
             
             commentCountLabel.text = String(post.commentCount)
             
@@ -107,11 +88,6 @@ class RePostCell : BaseFeedCell {
                 originalCreateDateLabel.text = repost.createTime
                 
                 if repost.anonym {
-                    if let anonymousName = post.anonymousName {
-                        OPNameLabel.text = anonymousName
-                    } else {
-                        OPNameLabel.text = Constants.strings.anonymPosterName
-                    }
                     ogProfilePictureImageView.image = UIImage(named: "anonym-user")
                 } else {
                     ogPosterNameLabel.text = repost.user.displayName
@@ -156,44 +132,7 @@ class RePostCell : BaseFeedCell {
         }
     }
     
-    func setUser() {
-        if let post = post {
-            if post.anonym {
-                if let anonymousName = post.anonymousName {
-                    OPNameLabel.text = anonymousName
-                } else {
-                    OPNameLabel.text = Constants.strings.anonymPosterName
-                }
-                profilePictureImageView.image = UIImage(named: "anonym-user")
-            } else {
-                OPNameLabel.text = post.user.displayName
-                // Profile Picture
-                
-                // Profile Picture
-                if let url = URL(string: post.user.imageURL) {
-                    profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
-                }
-            }
-        }
-    }
-    
-    
-    var index = 0
-    func getName() {
-        if index < 20 {
-            if let post = self.post {
-                if post.user.displayName == "" {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.getName()
-                        self.index+=1
-                    }
-                } else {
-                    setUser()
-                }
-            }
-        }
-    }
-    
+    //MARK:- IBActions
     @IBAction func moreTapped(_ sender: Any) {
         if let post = post {
             delegate?.reportTapped(post: post)
@@ -201,32 +140,24 @@ class RePostCell : BaseFeedCell {
     }
     @IBAction func thanksButtonTapped(_ sender: Any) {
         if let post = post {
-            delegate?.thanksTapped(post: post)
-            post.votes.thanks = post.votes.thanks+1
-            showButtonText(post: post, button: thanksButton)
+            registerVote(post: post, button: thanksButton)
         }
     }
     @IBAction func wowButtonTapped(_ sender: Any) {
         if let post = post {
-            delegate?.wowTapped(post: post)
-            post.votes.wow = post.votes.wow+1
-            showButtonText(post: post, button: wowButton)
+            registerVote(post: post, button: wowButton)
         }
     }
     
     @IBAction func haButtonTapped(_ sender: Any) {
         if let post = post {
-            delegate?.haTapped(post: post)
-            post.votes.ha = post.votes.ha+1
-            showButtonText(post: post, button: haButton)
+            registerVote(post: post, button: haButton)
         }
     }
     
     @IBAction func niceButtonTapped(_ sender: Any) {
         if let post = post {
-            delegate?.niceTapped(post: post)
-            post.votes.nice = post.votes.nice+1
-            showButtonText(post: post, button: niceButton)
+            registerVote(post: post, button: niceButton)
         }
     }
 }
