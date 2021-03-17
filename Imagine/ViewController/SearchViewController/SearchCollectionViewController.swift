@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseAnalytics
 import AVKit
 
 class SearchCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {

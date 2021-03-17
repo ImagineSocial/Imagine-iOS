@@ -12,6 +12,7 @@ import MapKit
 import CropViewController
 import Photos
 import FirebaseFirestore
+import FirebaseAnalytics
 
 protocol SettingCellDelegate {
     func gotChanged(type: SettingChangeType, value: Any)

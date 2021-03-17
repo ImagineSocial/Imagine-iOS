@@ -10,7 +10,6 @@ import Foundation
 import Firebase
 import FirebaseFirestore
 import SDWebImage
-import PromiseKit
 
 
 // This enum differentiates between savedPosts or posts for the "getTheSavedPosts" function

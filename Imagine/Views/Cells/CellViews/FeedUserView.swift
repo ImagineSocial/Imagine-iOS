@@ -27,6 +27,11 @@ class FeedUserView: UIView, NibLoadable {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var menuButton: DesignableButton!
     
+    //Constraints
+    @IBOutlet weak var nameLabelLeadingToSuperViewLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet weak var nameLabelLeadingToProfilePictureTrailingConstraint: NSLayoutConstraint!
+    
+    
     //MARK:- Variables
     var delegate: FeedUserViewDelegate?
     
@@ -36,6 +41,7 @@ class FeedUserView: UIView, NibLoadable {
         setupFromNib()
         
         setUpUI()
+        NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
     
     //MARK:- SetUp UI
@@ -47,6 +53,14 @@ class FeedUserView: UIView, NibLoadable {
         linkedCommunityImageView.layer.cornerRadius = 3
         linkedCommunityImageView.layer.borderWidth = 1
         linkedCommunityImageView.layer.borderColor = UIColor.clear.cgColor
+        
+        hideProfilePicture()
+    }
+    
+    /// We need to check if the view will enter the foreground again after the user moved it to the background because the unchecked "installed" constraint from the nameLabelLeadingToSuperViewLeadingCOnstraint
+    @objc func willEnterForeground() {
+        
+        hideProfilePicture()
     }
     
     //MARK:- User
@@ -70,6 +84,13 @@ class FeedUserView: UIView, NibLoadable {
                 profilePictureImageView.image = UIImage(named: "default-user")
             }
         }
+    }
+    
+    private func hideProfilePicture() {
+        profilePictureImageView.isHidden = true
+        nameLabelLeadingToProfilePictureTrailingConstraint.isActive = false
+        nameLabelLeadingToSuperViewLeadingConstraint.isActive = true
+        nameLabel.font = UIFont(name: "IBMPlexSans-Medium", size: 12)
     }
     
     //MARK:- LinkedCommunity

@@ -12,6 +12,7 @@ import Firebase
 import FirebaseFirestore
 import FirebaseStorage
 import FirebaseAuth
+import FirebaseAnalytics
 import EasyTipView
 import BSImagePicker
 import Photos
@@ -266,8 +267,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.navigationController?.navigationBar.shadowImage = UIImage()
         
         let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 15) as Any]
-        optionView.markPostSegmentControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
-        optionView.markPostSegmentControl.tintColor = .imagineColor
         postSelectionSegmentedControl.tintColor = .imagineColor
         postSelectionSegmentedControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
         
@@ -533,11 +532,12 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             showCropView(image: originalImage)
             print("#we have an image")
                         
-        } else if let videoURL = info[.mediaURL] as? NSURL{
-            print("#We got a video")
+        }
+//        else if let videoURL = info[.mediaURL] as? NSURL{
+//            print("#We got a video")
 //            uploadVideo(videoURL: videoURL)
 //            testVideo(videoURL: videoURL)
-        }
+//        }
     }
     
     func showCropView(image: UIImage) {
@@ -1556,27 +1556,27 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     //MARK:- Option Actions
     func markPostSwitchChanged() {
-        if optionView.markPostSwitch.isOn {
-            optionView.markPostSegmentControl.isHidden = false
-            optionView.markPostLabel.isHidden = true
-            
-            UIView.animate(withDuration: 0.3) {
-                self.optionView.markPostSegmentControl.alpha = 1
-            }
-            
-            
-            reportType = .opinion
-        } else {
-        
-            UIView.animate(withDuration: 0.3, animations: {
-                self.optionView.markPostSegmentControl.alpha = 0
-            }) { (_) in
-                self.optionView.markPostSegmentControl.isHidden = true
-                self.optionView.markPostLabel.isHidden = false
-            }
-            
-            reportType = .normal
-        }
+//        if optionView.markPostSwitch.isOn {
+//            optionView.markPostSegmentControl.isHidden = false
+//            optionView.markPostLabel.isHidden = true
+//
+//            UIView.animate(withDuration: 0.3) {
+//                self.optionView.markPostSegmentControl.alpha = 1
+//            }
+//
+//
+//            reportType = .opinion
+//        } else {
+//
+//            UIView.animate(withDuration: 0.3, animations: {
+//                self.optionView.markPostSegmentControl.alpha = 0
+//            }) { (_) in
+//                self.optionView.markPostSegmentControl.isHidden = true
+//                self.optionView.markPostLabel.isHidden = false
+//            }
+//
+//            reportType = .normal
+//        }
     }
     
     func optionButtonTapped() {
@@ -1586,10 +1586,16 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         } else if titleView.titleTextView.isFirstResponder {
             titleView.titleTextView.resignFirstResponder()
         }
+        
         if let height = optionViewHeight {
             if height.constant <= defaultOptionViewHeight {
-                height.constant = 125   //Previously 165
+                height.constant = 125   //Previously 125
                 stackViewHeight!.isActive = false
+                
+//                //increase the height so that the user can enter text in the optionView and see what he is typing
+//                if let endViewHeight = self.endViewHeightConstraint {
+//                    endViewHeight.constant = 250
+//                }
                 
                 UIView.animate(withDuration: 0.4, animations: {
                     self.view.layoutIfNeeded()
@@ -1604,6 +1610,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 stackViewHeight!.isActive = true
                 
                 height.constant = defaultOptionViewHeight
+                
+//                if let endViewHeight = self.endViewHeightConstraint {
+//                    endViewHeight.constant = 50
+//                }
                 
                 UIView.animate(withDuration: 0.4, animations: {
                     self.optionView.optionStackView.alpha = 0
@@ -1894,12 +1904,14 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         endView.topAnchor.constraint(equalTo: optionView.bottomAnchor, constant: 1).isActive = true
         endView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
         endView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
-        endView.heightAnchor.constraint(equalToConstant:50).isActive = true
+        endViewHeightConstraint = endView.heightAnchor.constraint(equalToConstant: 50)
+        endViewHeightConstraint!.isActive = true
         endView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor).isActive = true
     }
     
-    //MARK: PostAsSomebodyElse-UI
+    var endViewHeightConstraint: NSLayoutConstraint?
     
+    //MARK: PostAsSomebodyElse-UI
     
     let fakeNameSegmentedControl: UISegmentedControl = {
         let items = ["Me","FM", "MR", "AN", "LV", "LM"]
@@ -2109,20 +2121,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         if postSelectionSegmentedControl.selectedSegmentIndex == 2 {
             self.selectedOption = .link
             insertUIForLink()
-        }
-    }
-    
-    
-    func markPostSegmentChanged() {
-        
-        if optionView.markPostSegmentControl.selectedSegmentIndex == 0 {
-            reportType = .opinion
-        }
-        if optionView.markPostSegmentControl.selectedSegmentIndex == 1 {
-            reportType = .sensationalism
-        }
-        if optionView.markPostSegmentControl.selectedSegmentIndex == 2 {
-            reportType = .edited
         }
     }
 }

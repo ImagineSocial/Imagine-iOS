@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseAnalytics
 import SDWebImage
 import Reachability
 import EasyTipView
@@ -987,8 +988,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         preferences.drawing.shadowOpacity = 1
         preferences.drawing.shadowOffset = .zero
         preferences.drawing.shadowRadius = 7
-        preferences.positioning.bubbleHInset = 10
-        preferences.positioning.bubbleVInset = 10
+        preferences.positioning.bubbleInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         preferences.positioning.maxWidth = self.view.frame.width-40
         // Maximum of 800 Words
         

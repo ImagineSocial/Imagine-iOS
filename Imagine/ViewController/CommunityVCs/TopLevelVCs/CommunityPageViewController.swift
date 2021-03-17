@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseAnalytics
 
 protocol PageViewHeaderDelegate {
     func childScrollViewScrolled(offset: CGFloat)

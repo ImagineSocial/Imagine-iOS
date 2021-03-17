@@ -97,7 +97,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     //Outsourced UIViews
     lazy var repostView = RepostView(viewController: self)
-    lazy var linkedCommunityView = LinkedCommunityView()
+    lazy var linkedCommunityView = LinkedCommunityView(postViewController: self)
     
     
     //MARK:- View Lifecycle
@@ -535,23 +535,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         linkedCommunityView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 15).isActive = true
         linkedCommunityView.widthAnchor.constraint(equalToConstant: linkedCommunityViewWidth).isActive = true
         linkedCommunityView.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
-        
-        contentView.addSubview(linkedCommunityButton)
-        linkedCommunityButton.leadingAnchor.constraint(equalTo: linkedCommunityView.leadingAnchor).isActive = true
-        linkedCommunityButton.trailingAnchor.constraint(equalTo: linkedCommunityView.trailingAnchor).isActive = true
-        linkedCommunityButton.heightAnchor.constraint(equalTo: linkedCommunityView.heightAnchor).isActive = true
-        linkedCommunityButton.widthAnchor.constraint(equalTo: linkedCommunityView.widthAnchor).isActive = true
     }
     
-    let linkedCommunityButton: DesignableButton = {
-       let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(linkedCommunityTapped), for: .touchUpInside)
+    func linkedCommunityTapped() {
         
-        return button
-    }()
-    
-    @objc func linkedCommunityTapped() {
+        print("linkedComm tapped: ", post.fact?.title)
         if let fact = post.fact {
             performSegue(withIdentifier: "toFactSegue", sender: fact)
         }

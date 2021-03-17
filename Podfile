@@ -22,7 +22,7 @@ target 'Imagine' do
  pod 'ReachabilitySwift'
  pod 'EasyTipView'
  pod 'BSImagePicker', '~> 3.0'
- pod 'PromiseKit', "~> 6.8"
  pod 'CropViewController'
+ pod 'IQKeyboardManagerSwift'
  
 end

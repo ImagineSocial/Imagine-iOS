@@ -10,6 +10,7 @@ import UIKit
 import EasyTipView
 import Firebase
 import FirebaseFirestore
+import FirebaseAnalytics
 
 class NewAddOnTableViewController: UITableViewController {
     

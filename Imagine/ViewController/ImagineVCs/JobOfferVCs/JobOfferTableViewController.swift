@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import FirebaseFirestore
 import FirebaseAuth
+import FirebaseAnalytics
 import EasyTipView
 
 class JobOfferTableViewController: UITableViewController {
