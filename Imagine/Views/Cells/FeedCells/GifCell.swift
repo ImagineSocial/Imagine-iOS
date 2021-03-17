@@ -41,12 +41,7 @@ class GifCell: BaseFeedCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         
-        descriptionPreviewLabel.text = nil
-        
-        thanksButton.isEnabled = true
-        wowButton.isEnabled = true
-        haButton.isEnabled = true
-        niceButton.isEnabled = true
+        resetValues()
     }
     
     override func layoutSubviews() {

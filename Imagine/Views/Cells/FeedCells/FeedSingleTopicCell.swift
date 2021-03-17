@@ -28,6 +28,12 @@ class FeedSingleTopicCell: BaseFeedCell {
         self.initiateCell()
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        resetValues()
+    }
+    
     //MARK:- Set Cell
     override func setCell() {
         if let post = post {

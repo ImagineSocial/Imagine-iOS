@@ -25,15 +25,8 @@ class ThoughtCell : BaseFeedCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        
-        descriptionPreviewLabel.text = ""
-        
-        titleLabel.text = nil
-        
-        thanksButton.isEnabled = true
-        wowButton.isEnabled = true
-        haButton.isEnabled = true
-        niceButton.isEnabled = true
+                        
+        resetValues()
     }
     
     //MARK:- Set Cell

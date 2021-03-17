@@ -91,6 +91,23 @@ class BaseFeedCell : UITableViewCell {
         
     }
     
+    //MARK:- Reset Values
+    func resetValues() {
+        
+        //Text
+        titleLabel.text = nil
+        descriptionPreviewLabel.text = nil
+        
+        //buttons
+        thanksButton.isEnabled = true
+        wowButton.isEnabled = true
+        haButton.isEnabled = true
+        niceButton.isEnabled = true
+        
+        //feedUserView data
+        feedUserView.prepareForReuse()
+    }
+    
     //MARK:- Initialization
     /// Set the default values for the standard buttons
     func initiateCell() {

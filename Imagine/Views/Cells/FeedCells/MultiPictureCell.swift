@@ -70,19 +70,14 @@ class MultiPictureCell: BaseFeedCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        
-        descriptionPreviewLabel.text = nil
-        
+                
         pageControlHeight.constant = pageControlHeightValue
         pageControl.isHidden = false
         pageControl.currentPage = 0
         
         collectionView.setContentOffset(CGPoint.zero, animated: false)  //Set collectionView to the beginning
         
-        thanksButton.isEnabled = true
-        wowButton.isEnabled = true
-        haButton.isEnabled = true
-        niceButton.isEnabled = true
+        resetValues()
     }
     
     //MARK:- Set Cell

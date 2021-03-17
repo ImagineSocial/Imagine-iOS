@@ -44,10 +44,7 @@ class RePostCell : BaseFeedCell {
         originalTitleLabel.text = nil
         translatedTitleLabel.text = nil
         
-        thanksButton.isEnabled = true
-        wowButton.isEnabled = true
-        haButton.isEnabled = true
-        niceButton.isEnabled = true
+        resetValues()
     }
     
     //MARK:- Set Cell

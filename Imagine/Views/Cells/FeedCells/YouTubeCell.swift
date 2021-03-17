@@ -30,15 +30,10 @@ class YouTubeCell: BaseFeedCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        descriptionPreviewLabel.text = nil
-        titleLabel.text = nil
         
         playerView.stopVideo()
         
-        thanksButton.isEnabled = true
-        wowButton.isEnabled = true
-        haButton.isEnabled = true
-        niceButton.isEnabled = true
+        resetValues()
     }
     
     //MARK:- Set Cell

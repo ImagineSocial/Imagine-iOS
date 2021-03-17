@@ -88,17 +88,12 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        descriptionPreviewLabel.text = nil
         
         webViewHeightConstraint.constant = 250
         
         expandViewButton.isHidden = false
         expandViewButton.alpha = 1
         
-        thanksButton.isEnabled = true
-        wowButton.isEnabled = true
-        haButton.isEnabled = true
-        niceButton.isEnabled = true
         
         musicViewHeightConstraint.constant = 400
         webViewHeightConstraint.constant = 0
@@ -116,7 +111,7 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         releaseYearLabel.isHidden = false
         expandViewButton.isHidden = false
         
-        
+        resetValues()
     }
     
     //MARK:- Set Cell

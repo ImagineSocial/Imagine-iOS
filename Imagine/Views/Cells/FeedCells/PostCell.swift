@@ -48,16 +48,11 @@ class PostCell : BaseFeedCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        
-        descriptionPreviewLabel.text = ""
-        
+                
         cellImageView.sd_cancelCurrentImageLoad()
         cellImageView.image = nil
         
-        thanksButton.isEnabled = true
-        wowButton.isEnabled = true
-        haButton.isEnabled = true
-        niceButton.isEnabled = true
+        resetValues()
     }
     
     //MARK:- Set Cell

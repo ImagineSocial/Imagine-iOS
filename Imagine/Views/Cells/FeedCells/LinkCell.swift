@@ -34,7 +34,6 @@ class LinkCell : BaseFeedCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        descriptionPreviewLabel.text = ""
         
         self.linkThumbNailImageView.image = UIImage(named: "link-default")
         
@@ -49,10 +48,7 @@ class LinkCell : BaseFeedCell {
             preview.cancel()
         }
         
-        thanksButton.isEnabled = true
-        wowButton.isEnabled = true
-        haButton.isEnabled = true
-        niceButton.isEnabled = true
+        resetValues()
     }
     
     //MARK:- Set Cell
