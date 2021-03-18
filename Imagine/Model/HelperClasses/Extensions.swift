@@ -49,7 +49,7 @@ extension Date {
         if calendar.isDateInToday(self) {
             
             if date.hoursLater(than: self) == 0 {
-                feedString = "Vor ein paar Minuten"
+                feedString = NSLocalizedString("few_moments_ago", comment: "few_moments_ago")
             } else {
                 let hoursAgoString = NSLocalizedString("%d hours ago", comment: "How many hours is the post old")
                 

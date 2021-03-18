@@ -22,7 +22,7 @@ struct Constants {
     static let cellCornerRadius: CGFloat = 15
     
     struct strings {
-        static let anonymPosterName = NSLocalizedString("constants_anonymousPosterName", comment: "an anonymous user")
+        static let anonymPosterName = "Somebody"
         static let textOfTheWeek = "Tauscht euch aus, seid nett und lernt neue Menschen kennen!"
     }
     

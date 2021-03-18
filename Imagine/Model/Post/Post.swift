@@ -88,7 +88,7 @@ class Post {
     }
     
     //MARK:- Get User
-    
+    //TODO: Makes no Sense here, should go into User class
     func getUser(isAFriend: Bool) {
         
         // User Daten raussuchen
