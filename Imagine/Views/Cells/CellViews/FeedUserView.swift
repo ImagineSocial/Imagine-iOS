@@ -53,8 +53,6 @@ class FeedUserView: UIView, NibLoadable {
         linkedCommunityImageView.layer.cornerRadius = 3
         linkedCommunityImageView.layer.borderWidth = 1
         linkedCommunityImageView.layer.borderColor = UIColor.clear.cgColor
-        
-        hideProfilePicture()
     }
     
     /// We need to check if the view will enter the foreground again after the user moved it to the background because the unchecked "installed" constraint from the nameLabelLeadingToSuperViewLeadingCOnstraint
@@ -65,6 +63,11 @@ class FeedUserView: UIView, NibLoadable {
     
     //MARK:- User
     func setUser(post: Post) {
+        
+        //just for testing
+        if post.user.displayName == "Malte Schoppe" {
+            hideProfilePicture()
+        }
         
         createDateLabel.text = post.createTime
         if post.anonym {
@@ -109,7 +112,6 @@ class FeedUserView: UIView, NibLoadable {
         if let url = URL(string: post.fact!.imageURL) {
             self.linkedCommunityImageView.sd_setImage(with: url, completed: nil)
         } else {
-            print("Set default Picture")
             if #available(iOS 13.0, *) {
                 self.linkedCommunityImageView.backgroundColor = .systemBackground
             } else {
@@ -122,13 +124,21 @@ class FeedUserView: UIView, NibLoadable {
     
     //MARK:- Reuse
     func prepareForReuse() {
+        //Reset User
         profilePictureImageView.sd_cancelCurrentImageLoad()
         profilePictureImageView.image = nil
         
+        //Reset linked COmmunity
         linkedCommunityImageView.layer.borderColor = UIColor.clear.cgColor
         linkedCommunityImageView.image = nil
         linkedCommunityImageView.backgroundColor = .clear
         communityPostImageView.isHidden = true
+        
+        //reset hideProfilePicture stuff
+        profilePictureImageView.isHidden = false
+        nameLabelLeadingToProfilePictureTrailingConstraint.isActive = true
+        nameLabelLeadingToSuperViewLeadingConstraint.isActive = false
+        nameLabel.font = UIFont(name: "IBMPlexSans", size: 12)
     }
     
     //MARK:- IBActions
