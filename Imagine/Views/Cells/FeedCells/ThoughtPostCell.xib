@@ -200,7 +200,7 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lag-SI-PTk">
-                                <rect key="frame" x="10" y="160" width="335" height="25"/>
+                                <rect key="frame" x="10" y="160" width="335" height="24"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans-Thin" family="IBM Plex Sans" pointSize="9"/>
                                 <nil key="highlightedColor"/>
@@ -216,7 +216,7 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="Lag-SI-PTk" firstAttribute="top" secondItem="tKN-cc-W6j" secondAttribute="bottom" id="3ha-wT-6Us"/>
-                            <constraint firstItem="pTl-mA-M4a" firstAttribute="top" secondItem="Lag-SI-PTk" secondAttribute="bottom" id="LfX-R9-WVV"/>
+                            <constraint firstItem="pTl-mA-M4a" firstAttribute="top" secondItem="Lag-SI-PTk" secondAttribute="bottom" constant="1" id="LfX-R9-WVV"/>
                             <constraint firstItem="Lag-SI-PTk" firstAttribute="leading" secondItem="r8g-de-6MK" secondAttribute="leading" constant="10" id="RhM-ri-pbO"/>
                             <constraint firstItem="4bP-aJ-f1X" firstAttribute="leading" secondItem="r8g-de-6MK" secondAttribute="leading" id="RyK-JJ-QO3"/>
                             <constraint firstItem="aPP-Gw-vgS" firstAttribute="top" secondItem="4bP-aJ-f1X" secondAttribute="bottom" constant="5" id="TJY-WF-RsB"/>

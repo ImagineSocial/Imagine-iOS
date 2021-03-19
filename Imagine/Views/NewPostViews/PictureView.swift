@@ -12,6 +12,7 @@ class PictureView: UIView {
     
     //MARK:- Variables
     var newPostVC: NewPostViewController?
+    private var collectionViewWidthConstraint: NSLayoutConstraint?
     
     //MARK:- Initialization
     init(newPostVC: NewPostViewController) {
@@ -33,9 +34,44 @@ class PictureView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK:- View Functions
+    override func layoutSubviews() {
+        removePictureButton.cornerRadius = removePictureButton.frame.height/2
+    }
+    
+    //MARK:- Show Picture
+    func showPicture(image: UIImage?) {
+        
+        guard let widthConstraint = collectionViewWidthConstraint else {
+            return
+        }
+        
+        //Calculate the perfect fit, so that whenever possible, the whole image will be displayed
+        if let image = image {
+            let imageHeight = image.size.height
+            let imageWidth = image.size.width
+            
+            let pictureViewHeight = Constants.NewPostConstants.increasedPictureViewHeightConstraint
+            
+            let ratio = imageWidth / imageHeight
+            let height = pictureViewHeight-20  // 10+10 from top and bottom space
+            let newWidth = height * ratio
+            
+            widthConstraint.constant = newWidth
+        }
+        
+        previewCollectionView.reloadData()
+        
+        UIView.animate(withDuration: 0.3) {
+            self.layoutIfNeeded()
+            self.removePictureButton.alpha = 1
+            self.removePictureButton.isEnabled = true
+        }
+    }
+    
     //MARK:- Set Up View
     
-    func setPictureViewUI() {
+    private func setPictureViewUI() {
         addSubview(pictureLabel)
         pictureLabel.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
         pictureLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
@@ -52,7 +88,8 @@ class PictureView: UIView {
             cameraButton.backgroundColor = .secondarySystemBackground
             folderButton.backgroundColor = .secondarySystemBackground
         } else {
-            // Fallback on earlier versions
+            cameraButton.backgroundColor = .ios12secondarySystemBackground
+            folderButton.backgroundColor = .ios12secondarySystemBackground
         }
         
         addSubview(folderButton)
@@ -64,16 +101,18 @@ class PictureView: UIView {
         
         addSubview(previewCollectionView)
         previewCollectionView.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
-        previewCollectionView.leadingAnchor.constraint(equalTo: folderButton.trailingAnchor, constant: 25).isActive = true
+        previewCollectionView.leadingAnchor.constraint(greaterThanOrEqualTo: folderButton.trailingAnchor, constant: 25).isActive = true  //greaterThanOrE
         previewCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
-        previewCollectionView.widthAnchor.constraint(equalToConstant: 125).isActive = true
+        collectionViewWidthConstraint = previewCollectionView.widthAnchor.constraint(equalToConstant: 200)
+        collectionViewWidthConstraint!.isActive = true
+        collectionViewWidthConstraint!.priority = UILayoutPriority(750)
         previewCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
         
         addSubview(removePictureButton)
-        removePictureButton.topAnchor.constraint(equalTo: previewCollectionView.topAnchor, constant: -5).isActive = true
-        removePictureButton.trailingAnchor.constraint(equalTo: previewCollectionView.trailingAnchor, constant: 5).isActive = true
-        removePictureButton.widthAnchor.constraint(equalToConstant: 18).isActive = true
-        removePictureButton.heightAnchor.constraint(equalToConstant: 18).isActive = true
+        removePictureButton.topAnchor.constraint(equalTo: previewCollectionView.topAnchor, constant: -8).isActive = true
+        removePictureButton.trailingAnchor.constraint(equalTo: previewCollectionView.trailingAnchor, constant: 8).isActive = true
+        removePictureButton.widthAnchor.constraint(equalToConstant: 22).isActive = true
+        removePictureButton.heightAnchor.constraint(equalToConstant: 22).isActive = true
         
     }
     
@@ -128,9 +167,13 @@ class PictureView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "DismissTemplate"), for: .normal)
         button.alpha = 0
-        button.tintColor = .systemRed
-        button.backgroundColor = .white
-        button.cornerRadius = 9
+        button.tintColor = .darkRed
+        button.imageEdgeInsets = UIEdgeInsets(top: 2,left: 2,bottom: 2,right: 2)
+        if #available(iOS 13.0, *) {
+            button.backgroundColor = .systemBackground
+        } else {
+            button.backgroundColor = .white
+        }
         button.addTarget(self, action: #selector(removePictureTapped), for: .touchUpInside)
         
         return button

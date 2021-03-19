@@ -34,9 +34,39 @@ class LinkCommunityView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK:- Show Linked Community
+    func showLinkedCommunity(community: Community) {
+        
+        addFactButton.isHidden = true
+        cancelLinkedFactButton.isHidden = false
+        cancelLinkedFactButton.cornerRadius = cancelLinkedFactButton.frame.width/2
+        addedFactImageView.isHidden = false
+        addedFactDescriptionLabel.isHidden = false
+        
+        if let url = URL(string: community.imageURL) {
+            addedFactImageView.sd_setImage(with: url, completed: nil)
+        } else {
+            addedFactImageView.image = UIImage(named: "FactStamp")
+        }
+         
+        addedFactDescriptionLabel.text = "'\(community.title)'"
+    }
+    
+    //MARK:- Hide Linked Community
+    func hideLinkedCommunity() {
+        distributionInformationLabel.text = "Feed"
+        distributionInformationImageView.image = UIImage(named: "Feed")
+        
+        cancelLinkedFactButton.isHidden = true
+        addedFactImageView.isHidden = true
+        addedFactDescriptionLabel.isHidden = true
+        addFactButton.isHidden = false
+    }
+    
+    
     //MARK:- Set Up View
     
-    func setUpLinkedCommunityViewUI() {
+    private func setUpLinkedCommunityViewUI() {
 
         let labelHeight: CGFloat = 17
         let smallOptionViewHeight = defaultOptionViewHeight-4
@@ -54,8 +84,7 @@ class LinkCommunityView: UIView {
         
         addSubview(addFactButton)
         addFactButton.centerYAnchor.constraint(equalTo: centerYAnchor, constant: labelHeight/2).isActive = true
-        addFactButton.trailingAnchor.constraint(equalTo: linkedFactInfoButton.leadingAnchor, constant: -20).isActive = true
-//        addFactButton.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        addFactButton.trailingAnchor.constraint(equalTo: linkedFactInfoButton.leadingAnchor, constant: -10).isActive = true
         addFactButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
         
         distributionInformationView.addSubview(distributionInformationImageView)
@@ -65,7 +94,7 @@ class LinkCommunityView: UIView {
         distributionInformationImageView.heightAnchor.constraint(equalToConstant: 23).isActive = true
         
         distributionInformationView.addSubview(distributionInformationLabel)
-        distributionInformationLabel.leadingAnchor.constraint(equalTo: distributionInformationImageView.trailingAnchor, constant: 2).isActive = true
+        distributionInformationLabel.leadingAnchor.constraint(equalTo: distributionInformationImageView.trailingAnchor, constant: 5).isActive = true
         distributionInformationLabel.trailingAnchor.constraint(equalTo: distributionInformationView.trailingAnchor, constant: -3).isActive = true
         distributionInformationLabel.centerYAnchor.constraint(equalTo: distributionInformationView.centerYAnchor).isActive = true
         
@@ -75,11 +104,24 @@ class LinkCommunityView: UIView {
         distributionInformationView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: labelHeight/2).isActive = true
         distributionInformationView.heightAnchor.constraint(equalToConstant: smallOptionViewHeight-15).isActive = true
 
+        addSubview(addedFactImageView)
         addSubview(cancelLinkedFactButton)
-        cancelLinkedFactButton.trailingAnchor.constraint(equalTo: linkedFactInfoButton.leadingAnchor, constant: -10).isActive = true
-        cancelLinkedFactButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
-        cancelLinkedFactButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
-        cancelLinkedFactButton.centerYAnchor.constraint(equalTo: centerYAnchor, constant: labelHeight/2).isActive = true
+        addSubview(addedFactDescriptionLabel)
+        
+        NSLayoutConstraint.activate([
+            addedFactImageView.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 10),
+            addedFactImageView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-15),
+            addedFactImageView.trailingAnchor.constraint(equalTo: linkedFactInfoButton.leadingAnchor, constant: -10),
+            addedFactImageView.widthAnchor.constraint(equalToConstant: defaultOptionViewHeight-15),
+            
+            addedFactDescriptionLabel.centerYAnchor.constraint(equalTo: addedFactImageView.centerYAnchor),
+            addedFactDescriptionLabel.trailingAnchor.constraint(equalTo: addedFactImageView.leadingAnchor, constant: -10),
+            
+            cancelLinkedFactButton.trailingAnchor.constraint(equalTo: addedFactImageView.trailingAnchor, constant: 9),
+            cancelLinkedFactButton.topAnchor.constraint(equalTo: addedFactImageView.topAnchor, constant: -9),
+            cancelLinkedFactButton.widthAnchor.constraint(equalToConstant: 18),
+            cancelLinkedFactButton.heightAnchor.constraint(equalToConstant: 18)
+        ])
     }
 
     
@@ -105,6 +147,7 @@ class LinkCommunityView: UIView {
         imageView.layer.borderColor = UIColor.black.cgColor
         imageView.layer.borderWidth = 0.5
         imageView.contentMode = .scaleAspectFill
+        imageView.isHidden = true
         
         return imageView
     }()
@@ -188,8 +231,15 @@ class LinkCommunityView: UIView {
     let cancelLinkedFactButton: DesignableButton = {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: "Dismiss"), for: .normal)
+        button.setImage(UIImage(named: "DismissTemplate"), for: .normal)
         button.addTarget(self, action: #selector(cancelLinkedFactTapped), for: .touchUpInside)
+        button.tintColor = .darkRed
+        if #available(iOS 13.0, *) {
+            button.backgroundColor = .systemBackground
+        } else {
+            button.backgroundColor = .white
+        }
+        button.imageEdgeInsets = UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1)
         button.isHidden = true
         button.clipsToBounds = true
 

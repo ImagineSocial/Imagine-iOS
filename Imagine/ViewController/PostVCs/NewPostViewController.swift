@@ -48,8 +48,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     //MARK:- Variables
     //image variables
     var imagePicker = UIImagePickerController()
-    private let pictureViewHeightConstant: CGFloat = 100
-    private let increasedPictureViewHeightConstraint: CGFloat = 200
+    private let pictureViewHeightConstant = Constants.NewPostConstants.pictureViewHeightConstant
+    private let increasedPictureViewHeightConstraint = Constants.NewPostConstants.increasedPictureViewHeightConstraint
     var imageURLs = [String]()
     var multiImageAssets = [PHAsset]()
     var previewPictures = [UIImage]()
@@ -588,12 +588,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.increasePictureUI()
         self.previewPictures.removeAll()
         self.previewPictures.append(image)
-        self.pictureView.previewCollectionView.reloadData()
         
-        UIView.animate(withDuration: 0.3) {
-            self.pictureView.removePictureButton.alpha = 1
-            self.pictureView.removePictureButton.isEnabled = true
-        }
+        pictureView.showPicture(image: image)
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -867,7 +863,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         } else {
             self.view.activityStopAnimating()
             self.shareButton.isEnabled = true
-            self.alert(message: "Du hast kein Youtube Link angegeben. Möchtest du kein Youtube-Video posten, wähle bitte eine andere Post-Option aus", title: "No YouTube Link")
         }
     }
     
@@ -1622,13 +1617,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         if let height = optionViewHeight {
             if height.constant <= defaultOptionViewHeight {
-                height.constant = 125   //Previously 125
+                height.constant = 125   
                 stackViewHeight!.isActive = false
                 
-//                //increase the height so that the user can enter text in the optionView and see what he is typing
-//                if let endViewHeight = self.endViewHeightConstraint {
-//                    endViewHeight.constant = 250
-//                }
                 
                 UIView.animate(withDuration: 0.4, animations: {
                     self.view.layoutIfNeeded()
@@ -1643,10 +1634,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 stackViewHeight!.isActive = true
                 
                 height.constant = defaultOptionViewHeight
-                
-//                if let endViewHeight = self.endViewHeightConstraint {
-//                    endViewHeight.constant = 50
-//                }
                 
                 UIView.animate(withDuration: 0.4, animations: {
                     self.optionView.optionStackView.alpha = 0
@@ -1663,17 +1650,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func cancelLinkedFactTapped() {
-        linkCommunityView.distributionInformationLabel.text = "Feed"
-        linkCommunityView.distributionInformationImageView.image = UIImage(named: "Feed")
-        
-        linkCommunityView.cancelLinkedFactButton.isHidden = true
-        linkCommunityView.addedFactImageView.removeFromSuperview()
-        linkCommunityView.addedFactDescriptionLabel.removeFromSuperview()
+        linkCommunityView.hideLinkedCommunity()
         
         self.linkedFact = nil
         self.postOnlyInTopic = false
-        
-        linkCommunityView.addFactButton.isHidden = false
     }
     
     func markPostInfoButtonPressed() {
@@ -1735,13 +1715,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         titleView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
         titleView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
         titleView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        
-//        self.view.addSubview(titleView)
-//        titleView.topAnchor.constraint(equalTo: postSelectionSegmentedControl.bottomAnchor, constant: 5).isActive = true
-//        titleView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
-//        titleView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
-//        titleView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-        
+                
     }
     
     
@@ -1880,7 +1854,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         // Here so it doesnt mess with the layout
         if let fact = linkedFact {
-            self.showLinkedFact(fact: fact)
+            self.showLinkedFact(community: fact)
         }
         
         let endView = UIView()
@@ -2194,7 +2168,7 @@ extension NewPostViewController: LinkFactWithPostDelegate {
         self.linkedFact = fact
         
         if isViewAlreadyLoaded {  // Means it is coming from the selection of a topic to link with, so the view is already loaded, so it doesnt crash
-            showLinkedFact(fact: fact)
+            showLinkedFact(community: fact)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { //I know, I know
                 self.showShareAlert()
@@ -2202,29 +2176,9 @@ extension NewPostViewController: LinkFactWithPostDelegate {
         }
     }
     
-    func showLinkedFact(fact: Community) {
+    func showLinkedFact(community: Community) {
         
-        linkCommunityView.addFactButton.isHidden = true
-        linkCommunityView.cancelLinkedFactButton.isHidden = false
-        
-        linkCommunityView.addSubview(linkCommunityView.addedFactImageView)
-        linkCommunityView.addedFactImageView.centerYAnchor.constraint(equalTo: linkCommunityView.centerYAnchor, constant: 10).isActive = true
-        linkCommunityView.addedFactImageView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-15).isActive = true
-        linkCommunityView.addedFactImageView.trailingAnchor.constraint(equalTo: linkCommunityView.cancelLinkedFactButton.leadingAnchor, constant: -10).isActive = true
-        linkCommunityView.addedFactImageView.widthAnchor.constraint(equalToConstant: defaultOptionViewHeight-15).isActive = true
-        
-        linkCommunityView.addSubview(linkCommunityView.addedFactDescriptionLabel)
-        linkCommunityView.addedFactDescriptionLabel.centerYAnchor.constraint(equalTo: linkCommunityView.addedFactImageView.centerYAnchor).isActive = true
-        linkCommunityView.addedFactDescriptionLabel.trailingAnchor.constraint(equalTo: linkCommunityView.addedFactImageView.leadingAnchor, constant: -10).isActive = true
-//        addedFactDescriptionLabel.leadingAnchor.constraint(equalTo: addFactButton.trailingAnchor, constant: -2).isActive = true
-        
-        if let url = URL(string: fact.imageURL) {
-            linkCommunityView.addedFactImageView.sd_setImage(with: url, completed: nil)
-        } else {
-            linkCommunityView.addedFactImageView.image = UIImage(named: "FactStamp")
-        }
-         
-        linkCommunityView.addedFactDescriptionLabel.text = "'\(fact.title)'"
+        linkCommunityView.showLinkedCommunity(community: community)
     }
     
     func setDismissButton() {

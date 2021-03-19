@@ -576,13 +576,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		E90E1A4825FF632000855FE1 /* CellViews */ = {
+		E90E1A4825FF632000855FE1 /* FeedCellViews */ = {
 			isa = PBXGroup;
 			children = (
 				E90E1A4925FF640800855FE1 /* FeedUserView.xib */,
 				E90E1A4C25FF655300855FE1 /* FeedUserView.swift */,
 			);
-			path = CellViews;
+			path = FeedCellViews;
 			sourceTree = "<group>";
 		};
 		E91A2B5F24794E8400B42353 /* SettingViewController */ = {
@@ -1078,9 +1078,9 @@
 		E9B79CDD224EC66C00166EED /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				E90E1A4825FF632000855FE1 /* CellViews */,
 				E9F31DC923F6D20A001D5D25 /* CommunityCells */,
 				E98FAEA023FAB8230064A614 /* FeedCells */,
+				E90E1A4825FF632000855FE1 /* FeedCellViews */,
 				E9E6876A2416AFB700CB7AF8 /* ImagineCommunityCells */,
 				E9817B4B25EC025000E56FC6 /* SettingCells */,
 				E9F622E725EA432000AAD2C0 /* NotificationCells */,

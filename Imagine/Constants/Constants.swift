@@ -30,6 +30,8 @@ struct Constants {
         static let infoButtonSize: CGFloat = 22
         static let labelHeight: CGFloat = 17
         static let defaultOptionViewHeight: CGFloat = 45
+        static let pictureViewHeightConstant: CGFloat = 100
+        static let increasedPictureViewHeightConstraint: CGFloat = 200
     }
     
     struct Numbers {
