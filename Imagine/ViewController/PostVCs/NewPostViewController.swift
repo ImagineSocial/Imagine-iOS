@@ -628,11 +628,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 postRef = collectionRef.document()
             }
 
-            if self.postAnonymous {
-                userID = anonymousString
-            } else {
-                userID = user.uid
-            }
+            userID = user.uid
             
             if let id = fakeProfileUserID {
                 userID = id
@@ -707,29 +703,66 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
  
     
-    // MARK: - Prepare Upload Data
-    //TODO: Cut the code and tidy up
-    func postThought(postRef: DocumentReference, userID: String) {
+    // MARK:- Prepare Upload Data
+    
+    private func getDefaultUploadData(userID: String) -> [String: Any] {
         
         let text = descriptionView.descriptionTextView.text.trimmingCharacters(in: .newlines)
-        let descriptionText = text.replacingOccurrences(of: "\n", with: "\\n")  // Just the text of the description has got line breaks
+        let descriptionText = text.replacingOccurrences(of: "\n", with: "\\n")  // Save line breaks in a way that we can extract them later
         
+        let title = titleView.titleTextView.text!
         let tags = self.getTagsToSave()
         
-        let dataDictionary: [String: Any] = ["title": titleView.titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "thought", "report": getReportString(), "tags": tags]
+        var dataDictionary: [String: Any] = ["title": title, "description": descriptionText, "createTime": getDate(), "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "report": getReportString(), "tags": tags]
         
-        self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
+        let options = optionView.getSettings()
         
-        print("thought posted")
+        //Set right user reference
+        let userString: String!
+        let hideProfileOption: [String: Any] = ["hideProfile": true]
+        
+        if options.postAnonymous {
+            userString = anonymousString
+            
+            dataDictionary["designOptions"] = hideProfileOption
+            
+            if let synonym = options.synonymString {
+                // Add the synonym, set in the optionView
+                dataDictionary["anonymousName"] = synonym
+            }
+        } else {
+            userString = userID
+        }
+        
+        dataDictionary["originalPoster"] = userString
+        
+        //If you want to hide the profilePicture in a non anonymous post
+        if options.hideProfile {
+            dataDictionary["designOptions"] = hideProfileOption
+        }
+        
+        return dataDictionary
     }
     
-    func postLink(postRef: DocumentReference, userID: String, link: Link, songwhipData: [String: Any]?) {
-        if linkView.linkTextField.text != "", let title = titleView.titleTextView.text {
+    private func postThought(postRef: DocumentReference, userID: String) {
+        
+        var data = getDefaultUploadData(userID: userID)
+        data["type"] = "thought"
+        
+        self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: data)
+        
+        print("post thought")
+    }
+    
+    private func postLink(postRef: DocumentReference, userID: String, link: Link, songwhipData: [String: Any]?) {
+        if linkView.linkTextField.text != "" {
             
-            let descriptionText = descriptionView.descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
-            let tags = self.getTagsToSave()
-            
-            var dataDictionary: [String: Any] = ["title": title, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "link", "report": getReportString(), "link": link.link, "linkTitle": link.linkTitle, "linkDescription": link.linkDescription, "linkShortURL": link.shortURL, "tags": tags]
+            var dataDictionary = getDefaultUploadData(userID: userID)
+            dataDictionary["type"] = "link"
+            dataDictionary["link"] = link.link
+            dataDictionary["linkTitle"] = link.linkTitle
+            dataDictionary["linkDescription"] = link.linkDescription
+            dataDictionary["linkShortURL"] = link.shortURL
             
             if let dictionary = songwhipData {
                 //Merge the uploaddata and the songwhip data to one dictionary and keep the songwhip link, not the streaming service link
@@ -741,7 +774,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
                             
             self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
-            
+            print("post link")
         } else {
             self.view.activityStopAnimating()
             self.shareButton.isEnabled = true
@@ -749,16 +782,17 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    func postPicture(postRef: DocumentReference, userID: String) {
-        if let _ = selectedImageFromPicker, let url = imageURL, let title = titleView.titleTextView.text {
+    private func postPicture(postRef: DocumentReference, userID: String) {
+        if let _ = selectedImageFromPicker, let url = imageURL {
             
-            let descriptionText = descriptionView.descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
-            let tags = self.getTagsToSave()
-            
-            let dataDictionary: [String: Any] = ["title": title, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "picture", "report": getReportString(), "imageURL": url, "imageHeight": Double(selectedImageHeight), "imageWidth": Double(selectedImageWidth), "tags": tags]
+            var dataDictionary = getDefaultUploadData(userID: userID)
+            dataDictionary["type"] = "picture"
+            dataDictionary["imageURL"] = url
+            dataDictionary["imageHeight"] = Double(selectedImageHeight)
+            dataDictionary["imageWidth"] = Double(selectedImageWidth)
             
             self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
-            print("picture posted")
+            print("post picture")
             
         } else {
             self.view.activityStopAnimating()
@@ -767,24 +801,25 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    func postMultiplePictures(postRef: DocumentReference, userID: String) {
+    private func postMultiplePictures(postRef: DocumentReference, userID: String) {
         
-        let descriptionText = descriptionView.descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
-        let tags = self.getTagsToSave()
-        
-        let dataDictionary: [String: Any] = ["title": titleView.titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "multiPicture", "report": getReportString(), "imageURLs": self.imageURLs, "imageHeight": Double(selectedImageHeight), "imageWidth": Double(selectedImageWidth), "tags": tags]
+        var dataDictionary = getDefaultUploadData(userID: userID)
+        dataDictionary["type"] = "multiPicture"
+        dataDictionary["imageURLs"] = self.imageURLs
+        dataDictionary["imageHeight"] = Double(selectedImageHeight)
+        dataDictionary["imageWidth"] = Double(selectedImageWidth)
         
         self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
-        print("multiPicture posted")
-        
+        print("post multiPicture")
     }
     
-    func postGIF(postRef: DocumentReference, userID: String) {
+    private func postGIF(postRef: DocumentReference, userID: String) {
         
         let text = linkView.linkTextField.text
         
         var link: String?
         
+        //Check if GIF
         if let text = text {
             if text.contains(".mp4") {
                 link = text
@@ -795,18 +830,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 ])
                 self.alert(message: NSLocalizedString("error_gif_wrong_ending", comment: "just .mp4"), title: NSLocalizedString("error_title", comment: "got error"))
                 return
-                
-//                if let imgurID = text.imgurID { // Check if Imgur
-//                    let imgurLink = "https://i.imgur.com/\(imgurID).mp4"
-//
-//                    link = imgurLink
-//                } else {
-//                    self.alert(message: "Wir können dein GIF leider nicht hochladen. Im Moment sind nur Links mit Endung '.mp4' oder von der Internetseite imgur.com möglich. Sag uns aber gerne bescheid, wie du deine GIFs verbreiten möchtest!", title: "Tut uns Leid...")
-//                    self.view.activityStopAnimating()
-//                    self.shareButton.isEnabled = true
-//
-//                    return
-//                }
             }
         } else {
             self.alert(message: "Bitte gib einen link zu deinem GIF ein.", title: "Kein Link angegeben")
@@ -818,39 +841,33 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
                     
         if let link = link {
-            print("Das ist der GIF Link: \(link)")
-            self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
             
-            
-            let descriptionText = descriptionView.descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
-            let tags = self.getTagsToSave()
+            var dataDictionary = getDefaultUploadData(userID: userID)
 
-            let dataDictionary: [String: Any] = ["title": titleView.titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "GIF", "report": getReportString(), "link": link, "tags": tags]
+            dataDictionary["type"] = "GIF"
+            dataDictionary["link"] = link
 
             self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
 
-            print("GIF Postet")
-            
+            print("post GIF")
         }
     }
     
     
-    func postYTVideo(postRef: DocumentReference, userID: String) {
+    private func postYTVideo(postRef: DocumentReference, userID: String) {
         if let _ = linkView.linkTextField.text?.youtubeID {  // YouTubeVideo
             
-            let descriptionText = descriptionView.descriptionTextView.text.replacingOccurrences(of: "\n", with: "\\n")
-            let tags = self.getTagsToSave()
-            
-            let dataDictionary: [String: Any] = ["title": titleView.titleTextView.text, "description": descriptionText, "createTime": getDate(), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "youTubeVideo", "report": getReportString(), "link": linkView.linkTextField.text!, "tags": tags]
+            var dataDictionary = getDefaultUploadData(userID: userID)
+            dataDictionary["type"] = "youTubeVideo"
+            dataDictionary["link"] = linkView.linkTextField.text!
             
             self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
             
-            print("YouTubeVideo Postet")
+            print("post YouTubeVideo")
         } else {
             self.view.activityStopAnimating()
             self.shareButton.isEnabled = true
-            self.alert(message: "Du hast kein Youtube Link angegeben. Möchtest du kein Youtube-Video posten, wähle bitte eine andere Post-Option aus", title: "Kein YouTube Link")
+            self.alert(message: "Du hast kein Youtube Link angegeben. Möchtest du kein Youtube-Video posten, wähle bitte eine andere Post-Option aus", title: "No YouTube Link")
         }
     }
     
@@ -859,15 +876,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         let documentID = postRef.documentID
         
-        var userRef: DocumentReference?
-        var collectionRef: CollectionReference!
         let language = LanguageSelection().getLanguage()
-        
-        if postAnonymous {
-            userRef = db.collection("AnonymousPosts").document(documentID)
-        } else {
-            userRef = db.collection("Users").document(userID).collection("posts").document(documentID)
-        }
         
         var data = dataDictionary
         data["notificationRecipients"] = [userID]   //So he can set notifications off in his own post
@@ -882,78 +891,102 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             data["linkedFactID"] = fact.documentID
             
             // Add the post to the specific fact, so that it can be looked into
-            
-            if language == .english {
-                collectionRef = self.db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = self.db.collection("Facts")
-            }
-            
-            let topicRef = collectionRef.document(fact.documentID).collection("posts").document(documentID)
-            
-            var data: [String: Any] = ["createTime": self.getDate()]
-            
-            if self.comingFromAddOnVC || postOnlyInTopic {
-                data["type"] = "topicPost"  // To fetch in a different ref when loading the posts of the topic
-            }
-            
-            topicRef.setData(data) { (err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    print("FactReference successfully added")
-                }
-            }
+            uploadCommunityPostData(postDocumentID: documentID, communityID: fact.documentID, language: language)
         }
         
-        if userID == anonymousString {
-            if let anonymousName = anonymousName {
-                // Add the anonymousName, set in the alert, to the array
-                data["anonymousName"] = anonymousName
-            }
-        }
         
         postRef.setData(data) { (err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
-                // Inform User
+                //TODO: Inform User
             } else {
-                if let userRef = userRef {
-                    
-                    var data: [String: Any] = ["createTime": self.getDate()]
-                    
-                    if language == .english {
-                        data["language"] = "en"
-                    }
-                    
-                    if self.postAnonymous {
-                        if let user = Auth.auth().currentUser {
-                            data["originalPoster"] = user.uid
-                            
-                            userRef.setData(data)
-                        }
-                    } else {
-                        if self.comingFromAddOnVC || self.postOnlyInTopic {
-                            data["isTopicPost"] = true  // To fetch in a different ref when loading the posts of the topic
-                        }
-                        userRef.setData(data)      // add the post to the user
-                    }
-                }
+                
+                //upload data to the user
+                self.uploadUserPostData(postDocumentID: documentID, userID: userID, language: language)
+                
                 if self.camPic { // To Save on your device, not the best solution though
-                    if let selectedImage = self.selectedImageFromPicker {
-                        UIImageWriteToSavedPhotosAlbum(selectedImage, nil, nil, nil)
-                    }
+                    self.savePhotoToAlbum(image: self.selectedImageFromPicker)
                 }
                 
+                //Finish posting process
                 if self.comingFromAddOnVC {
                     let post = Post()
                     post.documentID = documentID
-                    post.isTopicPost = true  // To fetch in a different ref when loading the posts of the topic
+                    post.isTopicPost = true
                     
                     self.presentAlert(post: post)
                 } else {
                     self.presentAlert(post: nil)
                 }
+            }
+        }
+    }
+    
+    private func savePhotoToAlbum(image: UIImage?) {
+        if let selectedImage = image {
+            UIImageWriteToSavedPhotosAlbum(selectedImage, nil, nil, nil)
+        }
+    }
+    
+    private func uploadUserPostData(postDocumentID: String, userID: String, language: Language) {
+        
+        var userRef: DocumentReference!
+        
+        if postAnonymous {
+            //Make a reference to the poster if there should be any violations
+            userRef = db.collection("AnonymousPosts").document(postDocumentID)
+        } else {
+            userRef = db.collection("Users").document(userID).collection("posts").document(postDocumentID)
+        }
+        
+        
+        var data: [String: Any] = ["createTime": self.getDate()]
+        
+        if language == .english {
+            data["language"] = "en"
+        }
+        
+        // To fetch in a different ref when loading the posts of the topic
+        if self.comingFromAddOnVC || self.postOnlyInTopic {
+            data["isTopicPost"] = true
+        }
+        
+        // Get reference to OP
+        if postAnonymous {
+            data["originalPoster"] = userID
+        }
+        
+        userRef.setData(data) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                print("Successfully set UserData")
+            }
+        }
+    }
+    
+    private func uploadCommunityPostData(postDocumentID: String, communityID: String, language: Language) {
+        var collectionRef: CollectionReference!
+
+        if language == .english {
+            collectionRef = self.db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = self.db.collection("Facts")
+        }
+        
+        let topicRef = collectionRef.document(communityID).collection("posts").document(postDocumentID)
+        
+        var data: [String: Any] = ["createTime": self.getDate()]
+        
+        if self.comingFromAddOnVC || postOnlyInTopic {
+            data["type"] = "topicPost"  // To fetch in a different ref when loading the posts of the topic
+        }
+        
+        topicRef.setData(data) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                print("FactReference successfully added")
             }
         }
     }
@@ -1673,33 +1706,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    func postAnonymousSwitchChanged() {
-        if optionView.postAnonymousSwitch.isOn {
-            self.postAnonymous = true
-            self.optionView.anonymousImageView.isHidden = false
-            
-            let alert = UIAlertController(title: NSLocalizedString("anonymous_name_alert_title", comment: "anonymous name"), message: NSLocalizedString("anonymous_name_alert_message", comment: "no real name and such"), preferredStyle: .alert)
-
-            alert.addTextField { (textField) in
-                textField.placeholder = NSLocalizedString("anonymous_name_placeholder", comment: "john doe")
-            }
-
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
-                let textField = alert!.textFields![0] // Force unwrapping because we know it exists.
-                
-                if let text = textField.text {
-                    self.anonymousName = text
-                    self.optionView.anonymousNameLabel.text = text
-                } //else: Default String will show in the feed
-            }))
-            self.present(alert, animated: true, completion: nil)
-            
-        } else {
-            self.postAnonymous = false
-            self.optionView.anonymousImageView.isHidden = true
-        }
-    }
-    
     
     // MARK:- UI Initialization
     
@@ -1904,12 +1910,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         endView.topAnchor.constraint(equalTo: optionView.bottomAnchor, constant: 1).isActive = true
         endView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
         endView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
-        endViewHeightConstraint = endView.heightAnchor.constraint(equalToConstant: 50)
-        endViewHeightConstraint!.isActive = true
+        endView.heightAnchor.constraint(equalToConstant: 50).isActive = true
         endView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor).isActive = true
     }
     
-    var endViewHeightConstraint: NSLayoutConstraint?
     
     //MARK: PostAsSomebodyElse-UI
     

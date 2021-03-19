@@ -27,12 +27,13 @@ class LinkedCommunityView: UIView {
             }
         }
     }
+    var postViewController: PostViewController?
     
     //MARK:- View Initializer
-    init() {
+    init(postViewController: PostViewController) {
         super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         
-        
+        self.postViewController = postViewController
         translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = 4
         layer.borderWidth = 1
@@ -61,6 +62,11 @@ class LinkedCommunityView: UIView {
         linkedFactLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
         linkedFactLabel.centerYAnchor.constraint(equalTo: linkedFactImageView.centerYAnchor).isActive = true
         
+        addSubview(linkedCommunityButton)
+        linkedCommunityButton.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        linkedCommunityButton.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        linkedCommunityButton.heightAnchor.constraint(equalTo: heightAnchor).isActive = true
+        linkedCommunityButton.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
     }
     
     
@@ -87,4 +93,18 @@ class LinkedCommunityView: UIView {
 
         return label
     }()
+    
+    let linkedCommunityButton: DesignableButton = {
+       let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(linkedCommunityTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    @objc func linkedCommunityTapped() {
+        guard let postVC = postViewController else {
+            return
+        }
+        postVC.linkedCommunityTapped()
+    }
 }
