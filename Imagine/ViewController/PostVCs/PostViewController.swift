@@ -51,6 +51,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var linkPreviewDescription: UILabel!
     @IBOutlet weak var linkPreviewView: UIView!
     
+    //hide Profile Picture
+    @IBOutlet weak var leadingNameLabelToSuperviewConstraint: NSLayoutConstraint!
+    @IBOutlet weak var leadingNameLabelToProfilePictureConstraint: NSLayoutConstraint!
+    
+    
     
     //MARK:- Variables
     var post = Post()
@@ -414,10 +419,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     var index = 0
     func loadUser(post: Post) {
         if post.user.displayName != "" {
-            self.nameLabel.text = post.user.displayName
-            if let url = URL(string: post.user.imageURL) {
-                self.profilePictureImageView.sd_setImage(with: url, completed: nil)
-            }
+            setUser()
         } else {
             if index <= 15 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -444,6 +446,15 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             
             if let url = URL(string: post.user.imageURL) {
                 profilePictureImageView.sd_setImage(with: url, completed: nil)
+            }
+        }
+        
+        if let designOptions = self.post.designOptions {
+            if designOptions.hideProfilePicture {
+                leadingNameLabelToProfilePictureConstraint.isActive = false
+                leadingNameLabelToSuperviewConstraint.isActive = true
+                profilePictureImageView.isHidden = true
+                nameLabel.font = UIFont(name: "IBMPlexSans-Medium", size: 13)
             }
         }
     }

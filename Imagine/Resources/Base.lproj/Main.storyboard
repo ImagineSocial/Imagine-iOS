@@ -5554,7 +5554,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="591"/>
                                         <subviews>
                                             <label userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kge-gu-BhA">
-                                                <rect key="frame" x="55" y="75" width="53.5" height="13"/>
+                                                <rect key="frame" x="55" y="76" width="50.5" height="12"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="10"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -5625,7 +5625,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yK1-Iq-JXU" userLabel="userButton">
-                                                <rect key="frame" x="7" y="52" width="51" height="41"/>
+                                                <rect key="frame" x="5" y="52" width="53" height="41"/>
                                                 <connections>
                                                     <action selector="userButtonTapped:" destination="Ll6-Iq-u30" eventType="touchUpInside" id="jUa-m9-EM9"/>
                                                 </connections>
@@ -5810,10 +5810,10 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Q5g-tS-Gpr" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="263" width="355" height="45.5"/>
+                                                <rect key="frame" x="10" y="263" width="355" height="44"/>
                                                 <subviews>
                                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="ANp-O4-qgC">
-                                                        <rect key="frame" x="5" y="5" width="345" height="35.5"/>
+                                                        <rect key="frame" x="5" y="5" width="345" height="34"/>
                                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                                         <color key="textColor" systemColor="labelColor"/>
                                                         <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
@@ -5877,13 +5877,14 @@
                                             <constraint firstItem="yK1-Iq-JXU" firstAttribute="top" secondItem="TRU-bq-0jb" secondAttribute="top" constant="-3" id="CGE-Uj-Xrd"/>
                                             <constraint firstItem="kge-gu-BhA" firstAttribute="bottom" secondItem="TRU-bq-0jb" secondAttribute="bottom" constant="-2" id="CtK-Lv-BoV"/>
                                             <constraint firstItem="bFX-oy-ix1" firstAttribute="leading" secondItem="nwF-9b-Sdf" secondAttribute="leading" id="EIh-gI-sWi"/>
-                                            <constraint firstItem="yK1-Iq-JXU" firstAttribute="leading" secondItem="TRU-bq-0jb" secondAttribute="leading" constant="-3" id="EZh-Ng-k1u"/>
+                                            <constraint firstItem="yK1-Iq-JXU" firstAttribute="leading" secondItem="nwF-9b-Sdf" secondAttribute="leading" constant="5" id="EZh-Ng-k1u"/>
                                             <constraint firstItem="Q5g-tS-Gpr" firstAttribute="top" secondItem="KFW-rE-sMG" secondAttribute="bottom" constant="15" id="GDA-O9-ZeH"/>
                                             <constraint firstAttribute="trailing" secondItem="nXu-xj-4GQ" secondAttribute="trailing" id="HCP-jB-vMs"/>
                                             <constraint firstItem="KFW-rE-sMG" firstAttribute="leading" secondItem="nwF-9b-Sdf" secondAttribute="leading" constant="10" id="IGM-J8-ZQ4"/>
                                             <constraint firstItem="KFW-rE-sMG" firstAttribute="top" secondItem="OZc-aM-9Aw" secondAttribute="bottom" id="JQw-3V-eaM"/>
                                             <constraint firstItem="x6J-Nz-Mdj" firstAttribute="top" secondItem="qSs-Bd-EY5" secondAttribute="bottom" id="Jq8-EA-NAY"/>
                                             <constraint firstItem="nXu-xj-4GQ" firstAttribute="leading" secondItem="nwF-9b-Sdf" secondAttribute="leading" id="KdI-PC-FUv"/>
+                                            <constraint firstItem="rh2-zi-Qnd" firstAttribute="leading" secondItem="nwF-9b-Sdf" secondAttribute="leading" constant="10" id="Mkq-7X-sRn"/>
                                             <constraint firstAttribute="trailing" secondItem="KFW-rE-sMG" secondAttribute="trailing" constant="10" id="Mw7-1r-2w7"/>
                                             <constraint firstItem="qSs-Bd-EY5" firstAttribute="leading" secondItem="nwF-9b-Sdf" secondAttribute="leading" id="R1T-ld-GBR"/>
                                             <constraint firstItem="TRU-bq-0jb" firstAttribute="top" secondItem="bFX-oy-ix1" secondAttribute="bottom" constant="15" id="SDf-sG-8Zx"/>
@@ -5894,7 +5895,7 @@
                                             <constraint firstItem="rh2-zi-Qnd" firstAttribute="top" secondItem="TRU-bq-0jb" secondAttribute="top" id="Yq7-vp-2J6"/>
                                             <constraint firstItem="KFW-rE-sMG" firstAttribute="top" secondItem="nXu-xj-4GQ" secondAttribute="bottom" constant="15" id="bZL-7b-OlX"/>
                                             <constraint firstItem="yK1-Iq-JXU" firstAttribute="height" secondItem="TRU-bq-0jb" secondAttribute="height" constant="6" id="d8i-KC-YXs"/>
-                                            <constraint firstItem="kge-gu-BhA" firstAttribute="leading" secondItem="TRU-bq-0jb" secondAttribute="trailing" constant="10" id="dd4-cz-9uA"/>
+                                            <constraint firstItem="kge-gu-BhA" firstAttribute="leading" secondItem="rh2-zi-Qnd" secondAttribute="leading" id="dd4-cz-9uA"/>
                                             <constraint firstAttribute="trailing" secondItem="b1k-lP-LGv" secondAttribute="trailing" constant="10" id="gA3-p8-AGT"/>
                                             <constraint firstItem="b1k-lP-LGv" firstAttribute="centerY" secondItem="TRU-bq-0jb" secondAttribute="centerY" id="hQQ-tC-N8Y"/>
                                             <constraint firstItem="OZc-aM-9Aw" firstAttribute="top" secondItem="nXu-xj-4GQ" secondAttribute="bottom" id="hd3-6C-S3R"/>
@@ -5909,6 +5910,11 @@
                                             <constraint firstItem="qSs-Bd-EY5" firstAttribute="top" secondItem="Q5g-tS-Gpr" secondAttribute="bottom" constant="60" id="y0U-sz-l6r"/>
                                             <constraint firstItem="nXu-xj-4GQ" firstAttribute="top" secondItem="Hez-vl-L2L" secondAttribute="bottom" constant="10" id="zgn-2P-EMj"/>
                                         </constraints>
+                                        <variation key="default">
+                                            <mask key="constraints">
+                                                <exclude reference="Mkq-7X-sRn"/>
+                                            </mask>
+                                        </variation>
                                     </view>
                                 </subviews>
                                 <constraints>
@@ -5952,6 +5958,8 @@
                         <outlet property="haButton" destination="P5g-gB-b2v" id="7nw-Cb-Exk"/>
                         <outlet property="imageCollectionView" destination="nXu-xj-4GQ" id="1oJ-gW-KwD"/>
                         <outlet property="imageCollectionViewHeightConstraint" destination="rdB-JU-Mmq" id="mwb-D1-lCg"/>
+                        <outlet property="leadingNameLabelToProfilePictureConstraint" destination="7Tv-FM-dqm" id="icX-xK-WlR"/>
+                        <outlet property="leadingNameLabelToSuperviewConstraint" destination="Mkq-7X-sRn" id="nHo-qX-tZ4"/>
                         <outlet property="linkPreviewDescription" destination="jsd-zh-aSb" id="l1r-sp-shJ"/>
                         <outlet property="linkPreviewTitle" destination="Svu-Sm-1dK" id="pIr-tj-J15"/>
                         <outlet property="linkPreviewView" destination="fgj-qh-Nuz" id="KFX-hS-Ydr"/>
