@@ -37,6 +37,9 @@ class PictureView: UIView {
     //MARK:- View Functions
     override func layoutSubviews() {
         removePictureButton.cornerRadius = removePictureButton.frame.height/2
+        
+        //resize the layout
+        previewCollectionView.reloadData()
     }
     
     //MARK:- Show Picture
@@ -58,8 +61,13 @@ class PictureView: UIView {
             let newWidth = height * ratio
             
             widthConstraint.constant = newWidth
+            if !widthConstraint.isActive {
+                widthConstraint.isActive = true
+            }
+        } else {
+            //multiPicture
+            widthConstraint.isActive = false
         }
-        
         previewCollectionView.reloadData()
         
         UIView.animate(withDuration: 0.3) {

@@ -367,6 +367,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             
             let options = PHImageRequestOptions()
             options.isSynchronous = true
+            options.isNetworkAccessAllowed = true
+            
+            options.progressHandler = {  (progress, error, stop, info) in
+                print("progress: \(progress)")
+            }
             
             // Request the maximum size. If you only need a smaller size make sure to request that instead.
             PHImageManager.default().requestImage(for: asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFit, options: options) { (image, info) in
@@ -374,10 +379,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     
                     if forPreview {
                         self.previewPictures.append(image)
-                        self.pictureView.previewCollectionView.reloadData()
-                        UIView.animate(withDuration: 0.3) {
-                            self.pictureView.removePictureButton.alpha = 1
-                            self.pictureView.removePictureButton.isEnabled = true
+                        
+                        if self.previewPictures.count == self.multiImageAssets.count {
+                            self.pictureView.showPicture(image: nil)
                         }
                     } else {
                         if self.selectedImageWidth == 0 {   // Set the width just for the first Image
@@ -394,9 +398,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                             
                             if self.selectedImagesFromPicker.count == self.multiImageAssets.count {
                                 images(self.selectedImagesFromPicker)
-                            }
-                            
-                            print("##Das ist das komprimierte Bild: \(comImage)")
+                            }                            
                         }
                     }
                 } else {
@@ -728,6 +730,14 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             }
         } else {
             userString = userID
+            dataDictionary["notificationRecipients"] = [userID]   //So he can set notifications off in his own post
+        }
+        
+        //location
+        if let location = linkedLocation {
+            dataDictionary["locationName"] = location.title
+            let geoPoint = GeoPoint(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+            dataDictionary["locationCoordinate"] = geoPoint
         }
         
         dataDictionary["originalPoster"] = userString
@@ -874,13 +884,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         let language = LanguageSelection().getLanguage()
         
         var data = dataDictionary
-        data["notificationRecipients"] = [userID]   //So he can set notifications off in his own post
-        
-        if let location = linkedLocation {
-            data["locationName"] = location.title
-            let geoPoint = GeoPoint(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-            data["locationCoordinate"] = geoPoint
-        }
         
         if let fact = self.linkedFact { // If there is a fact that should be linked to this post, and append its ID to the array
             data["linkedFactID"] = fact.documentID
@@ -1654,16 +1657,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         self.linkedFact = nil
         self.postOnlyInTopic = false
-    }
-    
-    func markPostInfoButtonPressed() {
-        if let tipView = self.markPostTipView {
-            tipView.dismiss()
-            markPostTipView = nil
-        } else {
-            self.markPostTipView = EasyTipView(text: Constants.texts.markPostText)
-            markPostTipView!.show(forView: optionView)
-        }
     }
     
     func linkedFactInfoButtonTapped() {

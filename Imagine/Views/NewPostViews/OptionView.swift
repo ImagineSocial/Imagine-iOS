@@ -135,7 +135,7 @@ class OptionView: UIView {
             previewDateLabel.bottomAnchor.constraint(equalTo: previewImageView.bottomAnchor),
             previewDateLabel.trailingAnchor.constraint(greaterThanOrEqualTo: previewView.trailingAnchor, constant: -15),
             
-            previewView.leadingAnchor.constraint(equalTo: optionButton.trailingAnchor, constant: 20),
+            previewView.leadingAnchor.constraint(equalTo: optionButton.trailingAnchor, constant: 15),
             previewView.centerYAnchor.constraint(equalTo: optionButton.centerYAnchor),
             previewView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-10),
             previewView.trailingAnchor.constraint(lessThanOrEqualTo: memeModeButton.leadingAnchor, constant: -10)
@@ -166,12 +166,6 @@ class OptionView: UIView {
         hideProfilePictureLabel.centerXAnchor.constraint(equalTo: hideProfilePictureView.centerXAnchor).isActive = true
         hideProfilePictureLabel.leadingAnchor.constraint(equalTo: hideProfilePictureView.leadingAnchor, constant: 100).isActive = true
         hideProfilePictureLabel.centerYAnchor.constraint(equalTo: hideProfilePictureView.centerYAnchor).isActive = true
-        
-        hideProfilePictureView.addSubview(hideProfilePictureButton)
-        hideProfilePictureButton.centerYAnchor.constraint(equalTo: hideProfilePictureView.centerYAnchor).isActive = true
-        hideProfilePictureButton.trailingAnchor.constraint(equalTo: hideProfilePictureView.trailingAnchor, constant: -10).isActive = true
-        hideProfilePictureButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
-        hideProfilePictureButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
     }
     
     func setPostAnonymousViewUI() {
@@ -323,11 +317,6 @@ class OptionView: UIView {
     
     //MARK: Hide Picture
     
-    @objc func hideProfilePictureInfoButtonPressed() {
-        guard let newPostVC = newPostVC else {return}
-        newPostVC.markPostInfoButtonPressed()
-    }
-    
     @objc func hideProfilePictureSwitchChanged() {
         if hideProfilePictureSwitch.isOn {
             hideProfilePicture()
@@ -425,17 +414,9 @@ class OptionView: UIView {
         let switcher = UISwitch()
         switcher.translatesAutoresizingMaskIntoConstraints = false
         switcher.addTarget(self, action: #selector(hideProfilePictureSwitchChanged), for: .valueChanged)
+        switcher.transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
         
         return switcher
-    }()
-    
-    let hideProfilePictureButton :DesignableButton = {
-        let button = DesignableButton(type: .detailDisclosure)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .imagineColor
-        button.addTarget(self, action: #selector(hideProfilePictureInfoButtonPressed), for: .touchUpInside)
-        
-        return button
     }()
     
     //MARK:- Anonymous

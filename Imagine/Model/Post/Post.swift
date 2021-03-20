@@ -10,6 +10,10 @@ import Foundation
 import Firebase
 import FirebaseFirestore
 
+struct PostDesignOption {
+    var hideProfilePicture = false
+}
+
 class Post {
     
     //MARK:- Variables
@@ -43,6 +47,8 @@ class Post {
     var addOnTitle: String?    // Description in the OptionalInformation Section in the topic area
     var isTopicPost = false // Just postet in a topic, not in the main feed
     var language: Language = .german
+    var designOptions: PostDesignOption?
+    var location: Location?
     
     var notificationRecipients = [String]()
     

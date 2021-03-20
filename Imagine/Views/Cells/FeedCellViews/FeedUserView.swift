@@ -26,6 +26,7 @@ class FeedUserView: UIView, NibLoadable {
     @IBOutlet weak var linkedCommunityButton: UIButton!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var menuButton: DesignableButton!
+    @IBOutlet weak var locationLabel: UILabel!
     
     //Constraints
     @IBOutlet weak var nameLabelLeadingToSuperViewLeadingConstraint: NSLayoutConstraint!
@@ -64,9 +65,16 @@ class FeedUserView: UIView, NibLoadable {
     //MARK:- User
     func setUser(post: Post) {
         
-        //just for testing
-        if post.user.displayName == "Malte Schoppe" {
-            hideProfilePicture()
+        //check options
+        if let options = post.designOptions {
+            if options.hideProfilePicture {
+                hideProfilePicture()
+            }
+        }
+        
+        //check location
+        if let location = post.location {
+            locationLabel.text = "in \(location.title)"
         }
         
         createDateLabel.text = post.createTime
