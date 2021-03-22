@@ -61,6 +61,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var selectedImageHeight: CGFloat = 0.0
     var selectedImageWidth: CGFloat = 0.0
     var imageURL:String?
+    var thumbnailImageURL: String?
     var camPic = false
     
     var reportType :ReportType = .normal
@@ -412,12 +413,18 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     //MARK:- Upload Image
     
+    ///Upload Image to Database and return the urlString of the stored Image
+    /// If index is set to 100 the image will be saved as a thumbnail (with an "-thumbnail" appendix)
     func uploadImage(data: Data, postRef: DocumentReference, index: Int?, imageURL: @escaping (String?) -> Void) {
         
         var imageReference = postRef.documentID
         
         if let index = index {
-            imageReference.append("-\(index)")
+            if index != 100 {   //thumbnail code
+                imageReference.append("-\(index)")
+            } else {
+                imageReference.append("-thumbnail")
+            }
         }
         
         let storageRef = Storage.storage().reference().child("postPictures").child("\(imageReference).png")
@@ -617,6 +624,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     private func preparePicturePost(postRef: DocumentReference, userID: String) {
         if let image = self.selectedImageFromPicker {
             
+            if let thumbnail = image.getThumbnail() {
+                self.uploadThumbnailImage(postRef: postRef, image: thumbnail)   //Upload thumbnail image and store it in an internal file, upload later on. Not yet integrated in the chain of asynchrounious requests
+            }
+            
             if let compressedImage = self.getPictureInCompressedQuality(image: image) {
                 self.uploadImage(data: compressedImage, postRef: postRef, index: nil) { (url) in
                     
@@ -696,7 +707,19 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    // MARK:- Prepare Upload Data
+    //MARK:- Upload Thumbnail Image
+    
+    private func uploadThumbnailImage(postRef: DocumentReference, image: UIImage) {
+        if let compressedImage = getPictureInCompressedQuality(image: image) {  //Wont compress put give me the right Data format
+            self.uploadImage(data: compressedImage, postRef: postRef, index: 100) { (url) in
+                if let imageURL = url {
+                    self.thumbnailImageURL = imageURL
+                }
+            }
+        }
+    }
+    
+    //MARK:- Prepare Upload Data
     
     private func getDefaultUploadData(userID: String) -> [String: Any] {
         
@@ -791,6 +814,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             dataDictionary["imageURL"] = url
             dataDictionary["imageHeight"] = Double(selectedImageHeight)
             dataDictionary["imageWidth"] = Double(selectedImageWidth)
+            
+            if let thumbnailURL = self.thumbnailImageURL {
+                dataDictionary["thumbnailImageURL"] = thumbnailURL
+            }
             
             self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
             print("post picture")

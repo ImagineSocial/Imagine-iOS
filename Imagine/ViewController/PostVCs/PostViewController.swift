@@ -112,6 +112,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         self.view.activityStartAnimating()
         
+        //UI
+        setUpUI()
+        
         //Comment Table View
         commentTableView.initializeCommentTableView(section: .post, notificationRecipients: self.post.notificationRecipients)
         commentTableView.commentDelegate = self
@@ -132,14 +135,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         scrollViewTap.cancelsTouchesInView = false  // Otherwise the tap on the TableViews are not recognized
         scrollView.addGestureRecognizer(scrollViewTap)
         
+        //Show/Load & Show Post
         setupViewController()
         
         //Notifications
         handyHelper.deleteNotifications(type: .comment, id: post.documentID)
         handyHelper.deleteNotifications(type: .upvote, id: post.documentID)
         
-        //UI
-        setUpUI()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -241,6 +243,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     func setUpUI() {
         
         //Buttons are too ugly without the proper ratio when they load so they appear a  bit later
+        setDefaultLikeButtons()
+        
         UIView.animate(withDuration: 0.3) {
             self.thanksButton.alpha = 1
             self.wowButton.alpha = 1
@@ -292,11 +296,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 self.haButton.setTitle(String(post.votes.ha), for: .normal)
                 self.niceButton.setTitle(String(post.votes.nice), for: .normal)
                                 
-            } else {
-                self.setDefaultLikeButtons(buttons: buttons)
             }
-        } else {
-            self.setDefaultLikeButtons(buttons: buttons)
         }
         
         self.view.activityStopAnimating()
@@ -410,7 +410,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         case .repost:
             setUpRepostUI()
             
-            if let repost = post.repost {
+            if let _ = post.repost {
                 showRepost()
             } else {
                 // No Post yet
@@ -686,7 +686,10 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         button.setTitle(title, for: .normal)
     }
     
-    func setDefaultLikeButtons(buttons: [DesignableButton]) {
+    func setDefaultLikeButtons() {
+        
+        let buttons = [thanksButton!, wowButton!, haButton!, niceButton!]
+        
         for button in buttons {
             button.imageView?.contentMode = .scaleAspectFit
             button.layer.borderWidth = 0.5
