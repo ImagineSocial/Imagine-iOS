@@ -28,8 +28,8 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cDl-ox-ebg">
                         <rect key="frame" x="0.0" y="0.0" width="413" height="219"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rechte der Administratoren" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.64999997615814209" translatesAutoresizingMaskIntoConstraints="NO" id="fWa-QG-gV8">
-                                <rect key="frame" x="45" y="8" width="273" height="30"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.64999997615814209" translatesAutoresizingMaskIntoConstraints="NO" id="fWa-QG-gV8">
+                                <rect key="frame" x="33" y="8" width="285" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="19e-Jr-L9H"/>
                                 </constraints>
@@ -62,17 +62,17 @@
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wieviel Prozent dürfen die Administratoren, besonders Malte, nach dem ersten Jahr an Rechten haben?" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="2OC-0D-eTO">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="2OC-0D-eTO">
                                 <rect key="frame" x="10" y="40" width="393" height="137"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="idea" translatesAutoresizingMaskIntoConstraints="NO" id="XzJ-Zb-bYx" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="10" y="10.5" width="25" height="25"/>
+                                <rect key="frame" x="10" y="13" width="18" height="20"/>
                                 <color key="tintColor" systemColor="labelColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="25" id="JN1-rd-wgJ"/>
-                                    <constraint firstAttribute="height" constant="25" id="QcA-YC-MXr"/>
+                                    <constraint firstAttribute="width" constant="18" id="JN1-rd-wgJ"/>
+                                    <constraint firstAttribute="height" constant="20" id="QcA-YC-MXr"/>
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -80,12 +80,12 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="p7c-7G-P2I">
-                                <rect key="frame" x="110" y="187" width="75" height="16"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="p7c-7G-P2I">
+                                <rect key="frame" x="110" y="203" width="75" height="0.0"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="a9b-VA-9Wn">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="a9b-VA-9Wn">
                                 <rect key="frame" x="10" y="185" width="100" height="18"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="HbU-41-Ran"/>
@@ -111,7 +111,7 @@
                             <constraint firstItem="a9b-VA-9Wn" firstAttribute="top" secondItem="2OC-0D-eTO" secondAttribute="bottom" constant="8" id="aaG-VA-hEI"/>
                             <constraint firstAttribute="trailing" secondItem="IYn-8b-p4s" secondAttribute="trailing" constant="10" id="dcH-A7-Wjt"/>
                             <constraint firstAttribute="trailing" secondItem="ryo-Xh-ldq" secondAttribute="trailing" constant="10" id="ksc-DI-8AA"/>
-                            <constraint firstItem="fWa-QG-gV8" firstAttribute="leading" secondItem="XzJ-Zb-bYx" secondAttribute="trailing" constant="10" id="mic-8T-slj"/>
+                            <constraint firstItem="fWa-QG-gV8" firstAttribute="leading" secondItem="XzJ-Zb-bYx" secondAttribute="trailing" constant="5" id="mic-8T-slj"/>
                             <constraint firstItem="IYn-8b-p4s" firstAttribute="leading" secondItem="fWa-QG-gV8" secondAttribute="trailing" constant="5" id="nYd-0H-sJi"/>
                             <constraint firstItem="IYn-8b-p4s" firstAttribute="centerY" secondItem="fWa-QG-gV8" secondAttribute="centerY" id="p1v-2x-D8b"/>
                             <constraint firstItem="XzJ-Zb-bYx" firstAttribute="centerY" secondItem="fWa-QG-gV8" secondAttribute="centerY" id="pQw-2M-hEG"/>

@@ -126,17 +126,17 @@ class TopicCell: UITableViewCell {
             switch index {
             case 0:
                 if let url = URL(string: fact.imageURL) {
-                    topLevelFactImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "FactStamp"), options: [], completed: nil)
+                    topLevelFactImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
                 }
                 topLevelFactLabel.text = fact.title
             case 1:
                 if let url = URL(string: fact.imageURL) {
-                    midLevelFactImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "FactStamp"), options: [], completed: nil)
+                    midLevelFactImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
                 }
                 midLevelFactLabel.text = fact.title
             default:
                 if let url = URL(string: fact.imageURL) {
-                    lowerLevelFactImage.sd_setImage(with: url, placeholderImage: UIImage(named: "FactStamp"), options: [], completed: nil)
+                    lowerLevelFactImage.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
                 }
                 lowerLevelFactLabel.text = fact.title
             }

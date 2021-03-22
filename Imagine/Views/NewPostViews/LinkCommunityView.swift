@@ -46,7 +46,7 @@ class LinkCommunityView: UIView {
         if let url = URL(string: community.imageURL) {
             addedFactImageView.sd_setImage(with: url, completed: nil)
         } else {
-            addedFactImageView.image = UIImage(named: "FactStamp")
+            addedFactImageView.image = UIImage(named: "default-community")
         }
          
         addedFactDescriptionLabel.text = "'\(community.title)'"

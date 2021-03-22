@@ -72,9 +72,9 @@ class FactCell:UICollectionViewCell {
                 }
                 
                 if let url = URL(string: fact.imageURL) {
-                    factCellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "FactStamp"), options: [], completed: nil)
+                    factCellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
                 } else {
-                    factCellImageView.image = UIImage(named: "FactStamp")
+                    factCellImageView.image = UIImage(named: "default-community")
                 }
             }
         }

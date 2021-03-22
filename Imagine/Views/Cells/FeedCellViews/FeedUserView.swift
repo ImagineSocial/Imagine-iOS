@@ -125,7 +125,7 @@ class FeedUserView: UIView, NibLoadable {
             } else {
                 self.linkedCommunityImageView.backgroundColor = .white
             }
-            self.linkedCommunityImageView.image = UIImage(named: "FactStamp")
+            self.linkedCommunityImageView.image = UIImage(named: "default-community")
         }
     }
     

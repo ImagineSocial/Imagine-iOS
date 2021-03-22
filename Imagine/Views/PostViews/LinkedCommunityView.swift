@@ -19,7 +19,7 @@ class LinkedCommunityView: UIView {
                 if let url = URL(string: community.imageURL) {
                     linkedFactImageView.sd_setImage(with: url, completed: nil)
                 } else {
-                    linkedFactImageView.image = UIImage(named: "FactStamp")
+                    linkedFactImageView.image = UIImage(named: "default-community")
                 }
                 
                 layer.borderColor = UIColor.imagineColor.cgColor

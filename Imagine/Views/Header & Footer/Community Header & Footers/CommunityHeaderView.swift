@@ -40,6 +40,8 @@ class CommunityHeaderView: UIView {
                     
                     if let url = URL(string: community.imageURL) {
                         headerImageView.sd_setImage(with: url, completed: nil)
+                    } else {
+                        headerImageView.image = UIImage(named: "default-community")
                     }
                     
                     if community.beingFollowed {
