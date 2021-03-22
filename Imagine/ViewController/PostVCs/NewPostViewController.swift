@@ -410,106 +410,35 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
     }
     
-    //MARK:- Upload Picture
-    func uploadImages(postRef: DocumentReference, userID: String) {
-
-        if multiImageAssets.count >= 2 && multiImageAssets.count <= 3 {
-            
-            getImages(forPreview: false) { (data) in
-                
-                let count = data.count
-                var index = 0
-                                
-                for image in data {
-                    
-                    let storageRef = Storage.storage().reference().child("postPictures").child("\(postRef.documentID)-\(index).png")
-                    
-                    index+=1
-                    print("## storageRef: \(storageRef)")
-                    storageRef.putData(image, metadata: nil, completion: { (metadata, error) in    //save picture
-                        if let error = error {
-                            print("We have an error: \(error)")
-                            return
-                        } else {
-                            storageRef.downloadURL(completion: { (url, err) in  // Hier wird die URL runtergezogen
-                                if let error = err {
-                                    print("We have an error: \(error)")
-                                    return
-                                } else {
-                                    if let url = url {
-                                        self.imageURLs.append(url.absoluteString)
-                                        
-                                        if self.imageURLs.count == count { // Uploaded all x Pictures and stored the urls in self.imageURLs
-                                            self.postMultiplePictures(postRef: postRef, userID: userID)
-                                        }
-                                    }
-                                }
-                            })
-                        }
-                    })
-                }
-            }
-        } else {
-            self.alert(message: NSLocalizedString("error_choosing_multiple_pictures_message", comment: "choose more"), title: NSLocalizedString("error_title", comment: "got error"))
-            self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
-        }
-    }
+    //MARK:- Upload Image
     
-    func savePicture(userID: String, postRef: DocumentReference) {
+    func uploadImage(data: Data, postRef: DocumentReference, index: Int?, imageURL: @escaping (String?) -> Void) {
         
-        if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 1) {
-            let data = NSData(data: image)
-            
-            let imageSize = data.count/1000
-            
-            
-            if imageSize <= 500 {   // When the imageSize is under 500kB it wont be compressed, because you can see the difference
-                // No compression
-                print("No compression")
-                self.storeImage(data: image, postRef: postRef, userID: userID)
-            } else if imageSize <= 1000 {
-                if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.4) {
-                    
-                    self.storeImage(data: image, postRef: postRef, userID: userID)
-                }
-            } else if imageSize <= 2000 {
-                if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.25) {
-                    
-                    self.storeImage(data: image, postRef: postRef, userID: userID)
-                }
-            } else {
-                if let image = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.1) {
-                    
-                    self.storeImage(data: image, postRef: postRef, userID: userID)
-                }
-            }
-            
-        } else {
-            self.alert(message: NSLocalizedString("error_choosing_picture", comment: "got no pic"), title: NSLocalizedString("error_title", comment: "got error"))
-            self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
+        var imageReference = postRef.documentID
+        
+        if let index = index {
+            imageReference.append("-\(index)")
         }
-    }
-    
-    func storeImage(data: Data, postRef: DocumentReference, userID: String) {
         
-        let storageRef = Storage.storage().reference().child("postPictures").child("\(postRef.documentID).png")
+        let storageRef = Storage.storage().reference().child("postPictures").child("\(imageReference).png")
         
         storageRef.putData(data, metadata: nil, completion: { (metadata, error) in    //Store image
             if let error = error {
-                print(error)
-                return
+                print("We have an error: \(error.localizedDescription)")
+                
+                imageURL(nil)
             }
             storageRef.downloadURL(completion: { (url, err) in  // Download url and save it
-                if let err = err {
-                    print(err)
-                    return
+                if let error = err {
+                    print("We have an error downloading the url: \(error.localizedDescription)")
+                    
+                    imageURL(nil)
                 }
                 if let url = url {
-                    self.imageURL = url.absoluteString
-                    
-                    self.postPicture(postRef: postRef, userID: userID)
+                    let stringURL = url.absoluteString
+                    imageURL(stringURL)
+                } else {
+                    imageURL(nil)
                 }
             })
         })
@@ -599,9 +528,9 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     
-    //MARK:- SharePressed
+    //MARK:- ShareTapped
     
-    @IBAction func sharePressed(_ sender: Any) {
+    @IBAction func sharePostTapped(_ sender: Any) {
         
         if let user = Auth.auth().currentUser {
             var userID = ""
@@ -640,57 +569,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 case .thought:
                     self.postThought(postRef: postRef, userID: userID)
                 case .multiPicture:
-                    self.uploadImages(postRef: postRef, userID: userID)
+                    prepareMultiPicturePost(postRef: postRef, userID: userID)
                 case .picture:
-                    self.savePicture(userID: userID, postRef: postRef)
+                    preparePicturePost(postRef: postRef, userID: userID)
                 case .link:
-                    if let text = linkView.linkTextField.text {
-                        if text.contains(".mp4") {
-                            self.postGIF(postRef: postRef, userID: userID)
-                        } else if text.contains("music.apple.com") || text.contains("open.spotify.com/") || text.contains("deezer.page.link") {
-                            self.getSongwhipData(link: text) { (data) in
-                                if let data = data {
-                                    if let link = data["link"] as? String {
-                                        self.getLinkPreview(linkString: link) { (link) in
-                                            if let link = link {
-                                                self.postLink(postRef: postRef, userID: userID, link: link, songwhipData: data)
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    print("No Songwhip data")
-                                }
-                            }
-                        } else if let _ = text.youtubeID {
-                            //check if the youtubeVideo is a music video/song
-                            self.getSongwhipData(link: text) { (data) in
-                                if let data = data {
-                                    //if so get link data and post as link
-                                    if let link = data["link"] as? String {
-                                        self.getLinkPreview(linkString: link) { (link) in
-                                            if let link = link {
-                                                self.postLink(postRef: postRef, userID: userID, link: link, songwhipData: data)
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    //if not post as yt video
-                                    self.postYTVideo(postRef: postRef, userID: userID)
-                                }
-                            }
-                        } else {
-                            //post a normal Link but get the image and the different descriptions first
-                            self.getLinkPreview(linkString: text) { (link) in
-                                if let link = link {
-                                    self.postLink(postRef: postRef, userID: userID, link: link, songwhipData: nil)
-                                } else {
-                                    return
-                                }
-                            }
-                        }
-                    } else {
-                        self.alert(message: NSLocalizedString("missing_info_alert_link", comment: "enter link please"))
-                    }
+                    prepareLinkPost(postRef: postRef, userID: userID)
                 }
             } else {
                 self.alert(message: NSLocalizedString("missing_info_alert_title", comment: "enter title pls"))
@@ -699,7 +582,119 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.notLoggedInAlert()
         }
     }
+    
+    //MARK: Prepare Multi Picture
+    private func prepareMultiPicturePost(postRef: DocumentReference, userID: String) {
+        if multiImageAssets.count >= 2 && multiImageAssets.count <= 3 {
+            
+            getImages(forPreview: false) { (data) in
+                
+                let count = data.count
+                var index = -1
+                                
+                for image in data {
+                    
+                    index+=1
+                    self.uploadImage(data: image, postRef: postRef, index: index) { (url) in
+                        if let url = url {
+                            self.imageURLs.append(url)
+                            
+                            if self.imageURLs.count == count { // Uploaded all x Pictures and stored the urls in self.imageURLs
+                                self.postMultiplePictures(postRef: postRef, userID: userID)
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            self.alert(message: NSLocalizedString("error_choosing_multiple_pictures_message", comment: "choose more"), title: NSLocalizedString("error_title", comment: "got error"))
+            self.view.activityStopAnimating()
+            self.shareButton.isEnabled = true
+        }
+    }
  
+    //MARK: Prepare Picture
+    private func preparePicturePost(postRef: DocumentReference, userID: String) {
+        if let image = self.selectedImageFromPicker {
+            
+            if let compressedImage = self.getPictureInCompressedQuality(image: image) {
+                self.uploadImage(data: compressedImage, postRef: postRef, index: nil) { (url) in
+                    
+                    if let url = url {
+                        self.imageURL = url
+                        
+                        self.postPicture(postRef: postRef, userID: userID)
+                    } else {
+                        DispatchQueue.main.async {
+                            self.alert(message: "We couldnt upload the image. Please try again or get in contact with the devs. Thanks!", title: "We have an error :/")
+                        }
+                    }
+                }
+            }
+        } else {
+            self.alert(message: NSLocalizedString("error_choosing_picture", comment: "got no pic"), title: NSLocalizedString("error_title", comment: "got error"))
+            self.view.activityStopAnimating()
+            self.shareButton.isEnabled = true
+        }
+    }
+    
+    //MARK: Prepare Link
+    private func prepareLinkPost(postRef: DocumentReference, userID: String) {
+        
+        if let text = linkView.linkTextField.text {
+            
+            //Is GIF?
+            if text.contains(".mp4") {
+                self.postGIF(postRef: postRef, userID: userID)
+                
+                //Is Music Post?
+            } else if text.contains("music.apple.com") || text.contains("open.spotify.com/") || text.contains("deezer.page.link") {
+                self.getSongwhipData(link: text) { (data) in
+                    if let data = data {
+                        if let link = data["link"] as? String {
+                            self.getLinkPreview(linkString: link) { (link) in
+                                if let link = link {
+                                    self.postLink(postRef: postRef, userID: userID, link: link, songwhipData: data)
+                                }
+                            }
+                        }
+                    } else {
+                        print("No Songwhip data")
+                    }
+                }
+                
+                //Is YouTube Video?
+            } else if let _ = text.youtubeID {
+                //check if the youtubeVideo is a music video/song
+                self.getSongwhipData(link: text) { (data) in
+                    if let data = data {
+                        //if so get link data and post as link
+                        if let link = data["link"] as? String {
+                            self.getLinkPreview(linkString: link) { (link) in
+                                if let link = link {
+                                    self.postLink(postRef: postRef, userID: userID, link: link, songwhipData: data)
+                                }
+                            }
+                        }
+                    } else {
+                        //if not post as yt video
+                        self.postYTVideo(postRef: postRef, userID: userID)
+                    }
+                }
+            } else {
+                //post a normal Link but get the image and the different descriptions first
+                self.getLinkPreview(linkString: text) { (link) in
+                    if let link = link {
+                        self.postLink(postRef: postRef, userID: userID, link: link, songwhipData: nil)
+                    } else {
+                        return
+                    }
+                }
+            }
+        } else {
+            self.alert(message: NSLocalizedString("missing_info_alert_link", comment: "enter link please"))
+        }
+    }
     
     // MARK:- Prepare Upload Data
     
@@ -1182,6 +1177,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.selectedImagesFromPicker.removeAll()
         self.pictureView.removePictureButton.alpha = 0
         self.pictureView.removePictureButton.isEnabled = false
+        self.selectedImageWidth = 0
+        self.selectedImageHeight = 0
         
         
         self.pictureViewHeight!.constant = self.pictureViewHeightConstant
@@ -1581,34 +1578,13 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             self.decreasePictureUI()
             self.selectedImageFromPicker = nil
             self.selectedImagesFromPicker = []
+            self.selectedImageHeight = 0
+            self.selectedImageWidth = 0
         }
     }
     
     
     //MARK:- Option Actions
-    func markPostSwitchChanged() {
-//        if optionView.markPostSwitch.isOn {
-//            optionView.markPostSegmentControl.isHidden = false
-//            optionView.markPostLabel.isHidden = true
-//
-//            UIView.animate(withDuration: 0.3) {
-//                self.optionView.markPostSegmentControl.alpha = 1
-//            }
-//
-//
-//            reportType = .opinion
-//        } else {
-//
-//            UIView.animate(withDuration: 0.3, animations: {
-//                self.optionView.markPostSegmentControl.alpha = 0
-//            }) { (_) in
-//                self.optionView.markPostSegmentControl.isHidden = true
-//                self.optionView.markPostLabel.isHidden = false
-//            }
-//
-//            reportType = .normal
-//        }
-    }
     
     func optionButtonTapped() {
                 
