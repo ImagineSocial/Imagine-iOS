@@ -27,6 +27,7 @@ class ReportViewController: UIViewController {
     @IBOutlet weak var savePostView: UIView!
     @IBOutlet weak var repostPostView: UIView!
     @IBOutlet weak var translatePostView: UIView!
+    @IBOutlet weak var backgroundView: UIView!
     
     var post: Post?
     var comment: Comment?
@@ -61,6 +62,18 @@ class ReportViewController: UIViewController {
                     }
                 }
             }
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            UIView.animate(withDuration: 0.5) {
+                self.backgroundView.alpha = 0.55
+            }
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        UIView.animate(withDuration: 0.3) {
+            self.backgroundView.alpha = 0
         }
     }
     
@@ -101,7 +114,7 @@ class ReportViewController: UIViewController {
             button.setTitleColor(.black, for: .normal)
             button.backgroundColor = .white
         }
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 16)
+        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 15)
         button.contentHorizontalAlignment = .left
         
         return button
@@ -110,7 +123,7 @@ class ReportViewController: UIViewController {
     func insertDeleteView() {
         
         deleteView.addSubview(trashImage)
-        trashImage.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        trashImage.widthAnchor.constraint(equalToConstant: 20).isActive = true
         trashImage.leadingAnchor.constraint(equalTo: deleteView.leadingAnchor, constant: 8).isActive = true
         trashImage.centerYAnchor.constraint(equalTo: deleteView.centerYAnchor).isActive = true
         
