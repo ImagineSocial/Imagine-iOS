@@ -110,18 +110,15 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for:.default)
-        self.navigationController?.navigationBar.shadowImage = UIImage() //"Doesnt work")
-        
         self.view.activityStartAnimating()
         
+        //Comment Table View
         commentTableView.initializeCommentTableView(section: .post, notificationRecipients: self.post.notificationRecipients)
         commentTableView.commentDelegate = self
         commentTableView.post = self.post   // Absichern, wenn der Post keine Kommentare hat, brauch man auch nicht danach suchen und sich die Kosten sparen
         
-        
+        //Image Collection View
         imageCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
-        
         imageCollectionView.dataSource = self
         imageCollectionView.delegate = self
         
@@ -129,12 +126,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         imageCollectionView.setCollectionViewLayout(layout, animated: true)
         imageCollectionView.bounces = false
         
-        if #available(iOS 13.0, *) {
-            savePostButton.tintColor = .label
-        } else {
-            savePostButton.tintColor = .black
-        }
-        
+        //Scroll View
         scrollView.delegate = self
         let scrollViewTap = UITapGestureRecognizer(target: self, action: #selector(scrollViewTapped))
         scrollViewTap.cancelsTouchesInView = false  // Otherwise the tap on the TableViews are not recognized
@@ -142,13 +134,12 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         setupViewController()
         
+        //Notifications
         handyHelper.deleteNotifications(type: .comment, id: post.documentID)
         handyHelper.deleteNotifications(type: .upvote, id: post.documentID)
-        handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
-            if alreadySaved {
-                self.savePostButton.tintColor = Constants.green
-            }
-        }
+        
+        //UI
+        setUpUI()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -245,6 +236,35 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
 //        }
     }
     
+    //MARK:- Set Up UI
+    
+    func setUpUI() {
+        
+        //Buttons are too ugly without the proper ratio when they load so they appear a  bit later
+        UIView.animate(withDuration: 0.3) {
+            self.thanksButton.alpha = 1
+            self.wowButton.alpha = 1
+            self.niceButton.alpha = 1
+            self.haButton.alpha = 1
+        }
+        
+        //navigationBar
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for:.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage() //"Doesnt work")
+        
+        //Save Post Button
+        if #available(iOS 13.0, *) {
+            savePostButton.tintColor = .label
+        } else {
+            savePostButton.tintColor = .black
+        }
+        
+        handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
+            if alreadySaved {
+                self.savePostButton.tintColor = Constants.green
+            }
+        }
+    }
     
     //MARK:- Show Post
     

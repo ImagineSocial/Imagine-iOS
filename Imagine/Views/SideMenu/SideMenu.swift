@@ -215,7 +215,6 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
             case .cancel:
                 print("Just dismiss Menu")
             default:
-                
                 self.FeedTableView?.sideMenuButtonTapped(whichButton: sideMenuButton, comment: comment)
                 
             }

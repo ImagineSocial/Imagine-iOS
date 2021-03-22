@@ -746,7 +746,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                                             if let text = data["comment"] as? String, let author = data["name"] as? String, let postID = data["postID"] as? String {
                                                 let comment = Comment(commentSection: .post, sectionItemID: postID, commentID: change.document.documentID)
                                                 
-                                                if let isTopicPost = data["isTopicPist"] as? Bool {
+                                                if let isTopicPost = data["isTopicPost"] as? Bool {
                                                     comment.isTopicPost = isTopicPost
                                                 }
                                                 if let language = data["language"] as? String {
