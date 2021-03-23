@@ -35,6 +35,7 @@ class FeedUserView: UIView, NibLoadable {
     
     //MARK:- Variables
     var delegate: FeedUserViewDelegate?
+    private var isProfilePictureHidden = false
     
     //MARK:- Initialization
     required init?(coder aDecoder: NSCoder) {
@@ -58,8 +59,9 @@ class FeedUserView: UIView, NibLoadable {
     
     /// We need to check if the view will enter the foreground again after the user moved it to the background because the unchecked "installed" constraint from the nameLabelLeadingToSuperViewLeadingCOnstraint
     @objc func willEnterForeground() {
-        
-        hideProfilePicture()
+        if isProfilePictureHidden {
+            hideProfilePicture()
+        }
     }
     
     //MARK:- User
@@ -68,6 +70,7 @@ class FeedUserView: UIView, NibLoadable {
         //check options
         if let options = post.designOptions {
             if options.hideProfilePicture {
+                self.isProfilePictureHidden = true
                 hideProfilePicture()
             }
         }
