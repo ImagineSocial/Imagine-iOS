@@ -20,6 +20,7 @@ class Post {
     var title = ""
     var imageURL = ""
     var imageURLs: [String]?
+    var thumbnailImageURL: String?
     var description = ""
     var linkURL = ""
     var link: Link?
@@ -157,4 +158,13 @@ class Post {
             }
         })
     }
+    
+//    //MARK:- Load Thumbnail
+//    func loadThumbnail(thumbnailImageURL: String) {
+//        if let url = URL(string: thumbnailImageURL) {
+//            if let image = url.loadImage() {
+//                self.thumbnailImage = image
+//            }
+//        }
+//    }
 }

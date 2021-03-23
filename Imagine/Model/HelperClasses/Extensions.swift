@@ -209,3 +209,17 @@ extension UIImage {
 
   }
 }
+
+//MARK:- URL
+extension URL {
+    
+    func loadImage() -> UIImage? {
+        
+        guard let imageData = try? Data(contentsOf: self) else {
+            return nil
+        }
+        
+        let image = UIImage(data: imageData)
+        return image
+    }
+}

@@ -148,7 +148,10 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: communityPostCellIdentifier, for: indexPath) as? SearchCollectionViewPostCell {
                 
                 if post.type == .picture {
-                    if let url = URL(string: post.imageURL) {
+                    
+                    if let thumbnailURL = post.thumbnailImageURL, let url = URL(string: thumbnailURL) {
+                        cell.searchCellImageView.sd_setImage(with: url, completed: nil)
+                    } else if let url = URL(string: post.imageURL) {
                         cell.searchCellImageView.sd_setImage(with: url, completed: nil)
                     }
                 } else if post.type == .GIF {

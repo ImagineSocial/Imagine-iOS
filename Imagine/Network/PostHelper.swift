@@ -380,6 +380,9 @@ class PostHelper {
             post.location = location
         }
         
+        if let thumbnailURL = documentData["thumbnailImageURL"] as? String {
+            post.thumbnailImageURL = thumbnailURL
+        }
         
         return post
     }

@@ -224,6 +224,10 @@ class ReportViewController: UIViewController {
             postRef = collectionRef.document(post.documentID)
         }
         
+        if let _ = post.thumbnailImageURL {
+            deleteThumbnail(documentID: post.documentID)
+        }
+        
         if let fact = post.fact {
             self.deleteTopicPost(fact: fact)
         }
@@ -248,7 +252,7 @@ class ReportViewController: UIViewController {
                     index+=1
                     storageRef.delete { (err) in
                         if let err = err {
-                            print("We have an error deleting the old profile Picture: \(err.localizedDescription)")
+                            print("We have an error deleting the old picture in storage: \(err.localizedDescription)")
                         } else {
                             print("Picture Deleted")
                             
@@ -305,6 +309,18 @@ class ReportViewController: UIViewController {
         }
     }
     
+    private func deleteThumbnail(documentID: String) {
+
+        let storageRef = Storage.storage().reference().child("postPictures").child("\(documentID)-thumbnail.png")
+        
+        storageRef.delete { (err) in
+            if let err = err {
+                print("We have an error deleting the old thumbnail Picture: \(err.localizedDescription)")
+            } else {
+                print("Thumbnail Deleted")
+            }
+        }
+    }
     
     
     @objc func showAlertForDeleteOption() {

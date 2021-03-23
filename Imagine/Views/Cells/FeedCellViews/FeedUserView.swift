@@ -135,6 +135,7 @@ class FeedUserView: UIView, NibLoadable {
         //Reset User
         profilePictureImageView.sd_cancelCurrentImageLoad()
         profilePictureImageView.image = nil
+        nameLabel.text = ""
         
         //Reset linked COmmunity
         linkedCommunityImageView.layer.borderColor = UIColor.clear.cgColor

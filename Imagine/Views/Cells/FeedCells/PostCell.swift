@@ -8,6 +8,7 @@
 
 import UIKit
 import SDWebImage
+import Firebase
 
 protocol PostCellDelegate {
     func userTapped(post: Post)
@@ -97,7 +98,8 @@ class PostCell : BaseFeedCell {
             if let url = URL(string: post.imageURL) {
                 if let cellImageView = cellImageView {
                     cellImageView.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
-                    cellImageView.sd_setImage(with: url, placeholderImage: nil, options: [], completed: nil)
+                    cellImageView.sd_imageIndicator?.startAnimatingIndicator()
+                    cellImageView.sd_setImage(with: url, placeholderImage: Constants.defaultImage, options: [], completed: nil)
                 }
             }
             

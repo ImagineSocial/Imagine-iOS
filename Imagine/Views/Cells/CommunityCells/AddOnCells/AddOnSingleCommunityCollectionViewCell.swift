@@ -49,7 +49,7 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
                         addOnTitleLabel.text = title
                     }
                     addOnDescriptionLabel.text = info.description
-                    self.topicPostCountLabel.text = "Beiträge: \(fact.postCount)"
+                    self.topicPostCountLabel.text = "Posts: \(fact.postCount)"
                     self.topicFollowerLabel.text = "Follower: \(fact.followerCount)"
                 }
             }

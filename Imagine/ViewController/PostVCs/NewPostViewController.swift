@@ -709,7 +709,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     //MARK:- Upload Thumbnail Image
     
-    private func uploadThumbnailImage(postRef: DocumentReference, image: UIImage) {
+    func uploadThumbnailImage(postRef: DocumentReference, image: UIImage) {
         if let compressedImage = getPictureInCompressedQuality(image: image) {  //Wont compress put give me the right Data format
             self.uploadImage(data: compressedImage, postRef: postRef, index: 100) { (url) in
                 if let imageURL = url {

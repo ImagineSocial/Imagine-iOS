@@ -83,10 +83,12 @@ class SmallPostCell: UICollectionViewCell {
             if post.type == .picture {
                 smallCellImageView.isHidden = true
                 
-                if let url = URL(string: post.imageURL) {
+                if let thumbnailURL = post.thumbnailImageURL, let url = URL(string: thumbnailURL) {
+                    cellImageView.sd_setImage(with: url, completed: nil)
+                } else if let url = URL(string: post.imageURL) {
                     cellImageView.sd_setImage(with: url, completed: nil)
                 } else {
-                    cellImageView.image = UIImage(named: "default")
+                    cellImageView.image = Constants.defaultImage
                 }
             } else if post.type == .multiPicture {
                 smallCellImageView.isHidden = true

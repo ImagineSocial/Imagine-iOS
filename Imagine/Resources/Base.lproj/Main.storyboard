@@ -305,7 +305,7 @@
                                 </subviews>
                             </stackView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Contra" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZhI-yT-Zox">
-                                <rect key="frame" x="10" y="270" width="49" height="20"/>
+                                <rect key="frame" x="10" y="270" width="50" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="dEJ-pr-cnJ"/>
                                 </constraints>
@@ -313,7 +313,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(0)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pb3-NJ-OcF">
-                                <rect key="frame" x="10" y="290" width="13" height="15"/>
+                                <rect key="frame" x="10" y="290" width="15.5" height="15"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="15" id="DrE-cd-IzZ"/>
                                 </constraints>
@@ -322,7 +322,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pro" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M28-pT-1tV">
-                                <rect key="frame" x="195" y="270" width="25" height="20"/>
+                                <rect key="frame" x="195" y="270" width="25.5" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="09S-gg-rqS"/>
                                 </constraints>
@@ -330,7 +330,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="(0)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2kV-jY-reD">
-                                <rect key="frame" x="195" y="290" width="13" height="15"/>
+                                <rect key="frame" x="195" y="290" width="15.5" height="15"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="15" id="dxg-0F-8pK"/>
                                 </constraints>
@@ -1854,7 +1854,7 @@
             <objects>
                 <tableViewController id="YtM-nJ-Ysh" customClass="SettingTableViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="Bu6-sY-cnT">
-                        <rect key="frame" x="0.0" y="0.0" width="365" height="880"/>
+                        <rect key="frame" x="0.0" y="0.0" width="365" height="900"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                         <inset key="separatorInset" minX="15" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -4890,7 +4890,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="UserVC" hidesBottomBarWhenPushed="YES" id="f0g-lQ-xiT" customClass="UserFeedTableViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="iP6-rd-z8g">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="1kT-Cm-aUp">
@@ -5544,7 +5544,7 @@
             <objects>
                 <viewController storyboardIdentifier="PostVC" hidesBottomBarWhenPushed="YES" id="Ll6-Iq-u30" customClass="PostViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="jyR-p8-cAW">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="591"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="623"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fmn-Dl-jfo">
@@ -5554,7 +5554,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="591"/>
                                         <subviews>
                                             <label userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kge-gu-BhA">
-                                                <rect key="frame" x="55" y="75" width="53.5" height="13"/>
+                                                <rect key="frame" x="55" y="76" width="50.5" height="12"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="10"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -5810,10 +5810,10 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Q5g-tS-Gpr" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                                <rect key="frame" x="10" y="263" width="355" height="45.5"/>
+                                                <rect key="frame" x="10" y="263" width="355" height="44"/>
                                                 <subviews>
                                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="ANp-O4-qgC">
-                                                        <rect key="frame" x="5" y="5" width="345" height="35.5"/>
+                                                        <rect key="frame" x="5" y="5" width="345" height="34"/>
                                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                                         <color key="textColor" systemColor="labelColor"/>
                                                         <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
@@ -8232,7 +8232,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0 Supporter" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="GiD-cG-h8f">
-                                                <rect key="frame" x="10" y="296.5" width="75" height="25"/>
+                                                <rect key="frame" x="10" y="282.5" width="74.5" height="25"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="25" id="vdi-wV-3Oa"/>
                                                 </constraints>
@@ -8241,7 +8241,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="XBh-TY-gP4">
-                                                <rect key="frame" x="10" y="135" width="355" height="136.5"/>
+                                                <rect key="frame" x="10" y="135" width="355" height="122.5"/>
                                                 <string key="text">Wieviel Prozent dürfen die Administratoren, besonders Malte, nach dem ersten Jahr an Rechten haben? Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. </string>
                                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
                                                 <nil key="textColor"/>
@@ -8252,7 +8252,7 @@
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             </tableView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="25.03.2018 09:00" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="5Gx-jA-h2F">
-                                                <rect key="frame" x="10" y="105" width="115.5" height="20"/>
+                                                <rect key="frame" x="10" y="105" width="109" height="20"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="20" id="3Sz-jn-Oz4"/>
                                                 </constraints>
@@ -8261,7 +8261,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0 Vetos" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="J4r-Bb-6uT">
-                                                <rect key="frame" x="105" y="296.5" width="47.5" height="25"/>
+                                                <rect key="frame" x="104.5" y="282.5" width="46.5" height="25"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="25" id="LVK-zK-0ov"/>
                                                 </constraints>
@@ -8270,7 +8270,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="bRX-Nz-oF6">
-                                                <rect key="frame" x="10" y="326.5" width="255" height="30"/>
+                                                <rect key="frame" x="10" y="312.5" width="255" height="30"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VLs-b4-wbY" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="75" height="30"/>
@@ -8782,7 +8782,7 @@
     <inferredMetricsTieBreakers>
         <segue reference="abH-Sm-SDu"/>
         <segue reference="MRt-X8-Vhc"/>
-        <segue reference="iX0-VT-UyP"/>
+        <segue reference="Ee9-0D-liK"/>
         <segue reference="z3o-Gg-hUh"/>
         <segue reference="9QY-S4-xl7"/>
         <segue reference="ilO-fQ-UNL"/>
@@ -8792,8 +8792,8 @@
         <segue reference="HeY-vY-CcT"/>
         <segue reference="2Dh-7B-KeX"/>
         <segue reference="6ey-z4-yGI"/>
-        <segue reference="LeD-VB-z3i"/>
-        <segue reference="WcQ-qJ-vYb"/>
+        <segue reference="8b9-Ea-hET"/>
+        <segue reference="Ejh-ka-Ohy"/>
         <segue reference="65n-8p-jc1"/>
         <segue reference="LDA-ou-ct8"/>
         <segue reference="3WC-eZ-q7s"/>
