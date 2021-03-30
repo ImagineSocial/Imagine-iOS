@@ -25,24 +25,23 @@ class ProposalForOptionalInformation {
 
 class AddOnCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 
-    let db = Firestore.firestore()
-    let horizontalScrollCellIdentifier = "AddOnHorizontalScrollCell"
-    let singleCommunityCellIdentifier = "SingleCommunityCollectionViewCell"
-    let proposalCellIdentifier = "AddOnProposalCell"
-    let footerViewIdentifier = "AddOnCollectionViewFooter"
-    let qAndACellIdentifier = "AddOnQAndACollectionViewCell"
-    let playlistCellIdentifier = "AddOnPlaylistCollectionViewCell"
+    //MARK:- Variables
+    private let db = Firestore.firestore()
+    private let horizontalScrollCellIdentifier = "AddOnHorizontalScrollCell"
+    private let singleCommunityCellIdentifier = "SingleCommunityCollectionViewCell"
+    private let proposalCellIdentifier = "AddOnProposalCell"
+    private let footerViewIdentifier = "AddOnCollectionViewFooter"
+    private  let qAndACellIdentifier = "AddOnQAndACollectionViewCell"
+    private let playlistCellIdentifier = "AddOnPlaylistCollectionViewCell"
     
-    var optionalInformations = [AddOn]()
+    private var optionalInformations = [AddOn]()
     
-    var noOptionalInformation = false
-    var optionalInformationProposals = [ProposalForOptionalInformation(isFirstCell: true, headerText: NSLocalizedString("proposal_header_text", comment: "individualise your community"), detailText: NSLocalizedString("proposal_header_description", comment: "What are addOns")), ProposalForOptionalInformation(isFirstCell: false, headerText: NSLocalizedString("proposal_me_active_header", comment: "What can I do?"), detailText: NSLocalizedString("proposal_me_active_description", comment: "what ca i do to make it better")),  ProposalForOptionalInformation(isFirstCell: false, headerText: "Top-News", detailText: NSLocalizedString("proposal_top_news_description", comment: "top new for visibility")), ProposalForOptionalInformation(isFirstCell: false, headerText: "Beginners Guide", detailText: NSLocalizedString("proposal_beginners_guide_description", comment: "help younglings"))]
-        
-    var addOnHeader: AddOnHeader?
+    private var noOptionalInformation = false
+    private var optionalInformationProposals = [ProposalForOptionalInformation(isFirstCell: true, headerText: NSLocalizedString("proposal_header_text", comment: "individualise your community"), detailText: NSLocalizedString("proposal_header_description", comment: "What are addOns")), ProposalForOptionalInformation(isFirstCell: false, headerText: NSLocalizedString("proposal_me_active_header", comment: "What can I do?"), detailText: NSLocalizedString("proposal_me_active_description", comment: "what ca i do to make it better")),  ProposalForOptionalInformation(isFirstCell: false, headerText: "Top-News", detailText: NSLocalizedString("proposal_top_news_description", comment: "top new for visibility")), ProposalForOptionalInformation(isFirstCell: false, headerText: "Beginners Guide", detailText: NSLocalizedString("proposal_beginners_guide_description", comment: "help younglings"))]
+            
+    weak var pageViewHeaderDelegate: PageViewHeaderDelegate?
     
-    var pageViewHeaderDelegate: PageViewHeaderDelegate?
-    
-    let collectionViewInsetsLeftAndRight: CGFloat = 40
+    private let collectionViewInsetsLeftAndRight: CGFloat = 40
     
     var fact: Community? {
         didSet {
@@ -50,6 +49,11 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
     }
     
+    deinit {
+        print("## Deinit addOnCollection")
+    }
+    
+    //MARK:- View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -186,7 +190,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                             }
                         } else if let type = data["type"] as? String, let OP = data["OP"] as? String {
                             if type == "QandA" {
-                                print("Adde QANDA")
+
                                 let addOn = AddOn(style: .QandA, OP: OP, documentID: document.documentID, fact: fact, description: "")
                                 self.optionalInformations.append(addOn)
                                 index+=1
@@ -214,7 +218,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         self.getData(fact: self.fact!)
     }
     
-    //MARK:- PrepareForSegue
+    //MARK:- Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toAddOnFeedVCSegue" {
@@ -284,7 +288,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
             }
         }
         if segue.identifier == "toFactSegue" {
-            if let vc = segue.destination as? ArgumentPageViewController {
+            if let vc = segue.destination as? CommunityPageViewController {
                 if let fact = sender as? Community {
                     vc.fact = fact
                 }
@@ -292,14 +296,14 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
     }
     
-    //MARK:- ScrollView
+    //MARK:- ScrollView Delegate
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
         let offset = scrollView.contentOffset.y
         self.pageViewHeaderDelegate?.childScrollViewScrolled(offset: offset)
     }
     
-    // MARK:- UICollectionView
+    // MARK:- UICollectionView Data Source
     
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
@@ -370,6 +374,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         return UICollectionViewCell()
     }
     
+    //MARK:- CollectionView Delegate
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let info = optionalInformations[indexPath.item]
         
@@ -386,6 +391,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
     }
     
+    //MARK:- CollectionView Flow Layout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = self.collectionView.frame.width-collectionViewInsetsLeftAndRight
         
@@ -452,7 +458,8 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     }
 }
 
-extension AddOnCollectionViewController: AddOnCellDelegate, AddOnHeaderReusableViewDelegate, AddOnFooterViewDelegate {
+//MARK:- AddOnCell Delegate, AddOnFooterDelegate
+extension AddOnCollectionViewController: AddOnCellDelegate, AddOnFooterViewDelegate {
     
     func goToAddOnStore() {
         if let community = fact {
@@ -558,6 +565,7 @@ extension AddOnCollectionViewController: AddOnCellDelegate, AddOnHeaderReusableV
     }
 }
 
+//MARK:- AddItem Delegate
 extension AddOnCollectionViewController: AddItemDelegate, NewFactDelegate {
     func itemAdded() {
         self.renewCollectionView()

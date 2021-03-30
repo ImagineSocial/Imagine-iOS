@@ -173,7 +173,6 @@ extension MultiPictureCell: UICollectionViewDelegate, UICollectionViewDataSource
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as? MultiImageCollectionCell {
                 
                 cell.imageURL = image
-                cell.layoutIfNeeded()
                 
                 return cell
             }

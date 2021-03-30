@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-protocol AddItemDelegate {
+protocol AddItemDelegate: class {
     func itemAdded()
 }
 
@@ -45,7 +45,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
         }
     }
         
-    var addItemDelegate: AddItemDelegate?
+    weak var addItemDelegate: AddItemDelegate?
     
     var selectedPost: Post? {
         didSet {

@@ -67,11 +67,12 @@ class AddOn {
         
         if style == .singleTopic {
             if let singleTopic = singleTopic {
-                self.singleTopic = singleTopic
                 if singleTopic.documentID != "" {
                     let baseFeedCell = BaseFeedCell()
-                    DispatchQueue.global(qos: .default).async {
-                        baseFeedCell.getCommunity(language: fact.language, community: singleTopic, beingFollowed: false) { (fact) in
+
+                    baseFeedCell.getCommunity(language: fact.language, community: singleTopic, beingFollowed: false) { [weak self] (fact) in
+
+                        if let self = self {
                             self.singleTopic = fact
                         }
                     }

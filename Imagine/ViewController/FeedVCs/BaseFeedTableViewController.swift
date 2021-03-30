@@ -447,17 +447,6 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
     }
     
     
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.layoutIfNeeded()
-    }
-//    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        cell.contentView.layer.masksToBounds = true
-//        
-//        let radius = cell.contentView.layer.cornerRadius
-//        cell.layer.shadowPath = UIBezierPath(roundedRect: cell.bounds, cornerRadius: radius).cgPath
-//    }
-    
-    
     //MARK:- Others
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         

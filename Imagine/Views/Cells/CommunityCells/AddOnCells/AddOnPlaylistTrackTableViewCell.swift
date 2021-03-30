@@ -9,12 +9,13 @@
 import UIKit
 import WebKit
 
-protocol PlaylistTrackDelegate {
+protocol PlaylistTrackDelegate: class {
     func closeWebView()
 }
 
 class AddOnPlaylistTrackTableViewCell: UITableViewCell {
     
+    //MARK:- IBOutlets
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var trackTitleLabel: UILabel!
     @IBOutlet weak var artistNameLabel: UILabel!
@@ -23,11 +24,12 @@ class AddOnPlaylistTrackTableViewCell: UITableViewCell {
     @IBOutlet weak var albumCoverHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var dismissButton: DesignableButton!
     
+    //MARK:- Variables
     let postHelper = FirestoreRequest()
     
     let defaultAlbumCoverHeight:CGFloat = 50
     
-    var delegate: PlaylistTrackDelegate?
+    weak var delegate: PlaylistTrackDelegate?
     
     var track: Post? {
         didSet {
@@ -43,6 +45,7 @@ class AddOnPlaylistTrackTableViewCell: UITableViewCell {
         }
     }
     
+    //MARK:- Cell Lifecycle
     override func awakeFromNib() {
         webView.navigationDelegate = self
         webView.layer.cornerRadius = 8
@@ -50,11 +53,13 @@ class AddOnPlaylistTrackTableViewCell: UITableViewCell {
     }
     
     override func prepareForReuse() {
+        webView.navigationDelegate = nil
         dismissButton.isHidden = true
         webViewHeightConstraint.constant = 0
         self.albumCoverHeightConstraint.constant = defaultAlbumCoverHeight
     }
     
+    //MARK:- Change UI
     func expandWebView() {
         if let track = track {
             dismissButton.isHidden = false
@@ -93,12 +98,14 @@ class AddOnPlaylistTrackTableViewCell: UITableViewCell {
         }
     }
     
+    //MARK:- IBActions
     @IBAction func dismissButtonTapped(_ sender: Any) {
         closeWebView()
         delegate?.closeWebView()
     }
 }
 
+//MARK:- WebView Delegate
 extension AddOnPlaylistTrackTableViewCell: WKNavigationDelegate {
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         

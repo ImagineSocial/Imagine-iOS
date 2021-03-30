@@ -34,16 +34,17 @@ class BaseFeedCell : UITableViewCell {
     @IBOutlet weak var feedUserView: FeedUserView!
     
     //MARK:- Variables
-    let handyHelper = HandyHelper()
+    private let handyHelper = HandyHelper()
     
     var centerX: NSLayoutConstraint?
     var distanceConstraint: NSLayoutConstraint?
     
-    let db = Firestore.firestore()
+    private let db = Firestore.firestore()
+    private let communityHelper = CommunityHelper()
     
     var cellStyle: CellType?
     var ownProfile: Bool = false
-    var delegate: PostCellDelegate?
+    weak var delegate: PostCellDelegate?
     
     /// Set this post in the TableViewDataSource to fill the cell with life
     var post:Post? {
@@ -181,6 +182,7 @@ class BaseFeedCell : UITableViewCell {
     func getCommunity(language: Language, community: Community, beingFollowed: Bool, completion: @escaping (Community) -> Void) {
         
         if community.documentID != "" {
+            
             var collectionRef: CollectionReference!
             if language == .english {
                 collectionRef = db.collection("Data").document("en").collection("topics")
@@ -192,12 +194,14 @@ class BaseFeedCell : UITableViewCell {
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
+//                    if self == nil {
+//                        print("Cant get document \(community.documentID) because self isnt there")
+//                    } // AddOnCollectionVC gets deinitialized though, does that mean "weak self" is not necessar here? For the post Objects it is!
                     if let document = doc {
                         if let data = document.data() {
-                            let communityHelper = CommunityHelper()
                             let user = Auth.auth().currentUser
-                            
-                            if let community = communityHelper.getCommunity(currentUser: user, documentID: document.documentID, data: data) {
+
+                            if let community = self.communityHelper.getCommunity(currentUser: user, documentID: document.documentID, data: data) {
                                 completion(community)
                             } else {
                                 print("Error: COuldnt get a community")

@@ -124,7 +124,7 @@ class SavedPostTableViewController: BaseFeedTableViewController {
         if segue.identifier == "toFactSegue" {
             if let fact = sender as? Community {
                
-                if let factVC = segue.destination as? ArgumentPageViewController {
+                if let factVC = segue.destination as? CommunityPageViewController {
                     
                     factVC.fact = fact
                 }

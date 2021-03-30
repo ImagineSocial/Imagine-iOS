@@ -10,7 +10,7 @@ import UIKit
 import SDWebImage
 import Firebase
 
-protocol PostCellDelegate {
+protocol PostCellDelegate: class {
     func userTapped(post: Post)
     func reportTapped(post: Post)
     func thanksTapped(post: Post)

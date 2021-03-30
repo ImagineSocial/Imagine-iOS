@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import WebKit
 
-protocol MusicPostDelegate {
+protocol MusicPostDelegate: class {
     func expandView()
 }
 
@@ -29,7 +29,7 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
     @IBOutlet weak var songwhipButton: UIButton!
     
     //MARK:- Variables
-    var musicPostDelegate: MusicPostDelegate?
+    weak var musicPostDelegate: MusicPostDelegate?
     
     private var position: CGPoint?
     private var webViewFinished = false
@@ -42,7 +42,7 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         
         titleLabel.adjustsFontSizeToFitWidth = true
                                 
-        webView.navigationDelegate = self
+        webView.navigationDelegate = self   // should deinit it to avoid memory leak
         webView.layer.cornerRadius = 8
         webView.clipsToBounds = true
         
@@ -90,6 +90,7 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         super.prepareForReuse()
         
         webViewHeightConstraint.constant = 250
+        webView.navigationDelegate = nil
         
         expandViewButton.isHidden = false
         expandViewButton.alpha = 1

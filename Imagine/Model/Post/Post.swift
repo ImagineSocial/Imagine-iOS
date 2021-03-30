@@ -55,8 +55,8 @@ class Post {
     
     var survey: Survey?
     
-    let handyHelper = HandyHelper()
-    let db = Firestore.firestore()
+    private let handyHelper = HandyHelper()
+    private let db = Firestore.firestore()
     
     
     //MARK: Get Repost
@@ -79,13 +79,13 @@ class Post {
     
             let postRef = collectionRef.document(repostID)
                         
-            postRef.getDocument(completion: { (document, err) in
+            postRef.getDocument(completion: { [weak self] (document, err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else if let document = document {
                     let postHelper = PostHelper()
                     
-                    if let post = postHelper.addThePost(document: document, isTopicPost: self.repostIsTopicPost, language: self.repostLanguage) {
+                    if let post = postHelper.addThePost(document: document, isTopicPost: self!.repostIsTopicPost, language: self!.repostLanguage) {
                         
                         returnRepost(post)
                     }
@@ -103,12 +103,12 @@ class Post {
         
         let user = User()
         
-        userRef.getDocument(completion: { (document, err) in
+        userRef.getDocument(completion: { [weak self] (document, err) in
             if let error = err {
                 print("We got an error with a user: \(error.localizedDescription)")
             } else {
                 if let document = document {
-                    if let docData = document.data() {
+                    if let docData = document.data(), let self = self {
                         
                         if isAFriend {
                             let fullName = docData["full_name"] as? String ?? ""

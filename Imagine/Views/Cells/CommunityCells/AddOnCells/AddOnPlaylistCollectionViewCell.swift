@@ -16,6 +16,7 @@ enum StreamingService {
 
 class AddOnPlaylistCollectionViewCell: BaseAddOnCollectionViewCell {
     
+    //MARK:- IBOutlets
     @IBOutlet weak var albumImageViewOuterStackView: UIStackView!
     @IBOutlet weak var containerView: UIView!
     
@@ -33,12 +34,12 @@ class AddOnPlaylistCollectionViewCell: BaseAddOnCollectionViewCell {
     @IBOutlet weak var appleMusicPlaylistButton: UIButton!
     @IBOutlet weak var spotifyPlaylistButton: UIButton!
     
+    //MARK:- Variables
     var openTrackIndexPath: IndexPath?
+    weak var delegate: AddOnCellDelegate?
     
-    var delegate: AddOnCellDelegate?
-    
-    let trackTableViewCellIdentifier = "AddOnPlaylistTrackTableViewCell"
-    let db = Firestore.firestore()
+    private let trackTableViewCellIdentifier = "AddOnPlaylistTrackTableViewCell"
+    private let db = Firestore.firestore()
     
     var tracks = [Post]()
     
@@ -60,6 +61,7 @@ class AddOnPlaylistCollectionViewCell: BaseAddOnCollectionViewCell {
         }
     }
     
+    //MARK:- Cell Lifecycle
     override func awakeFromNib() {
         trackTableView.delegate = self
         trackTableView.dataSource = self
@@ -84,6 +86,7 @@ class AddOnPlaylistCollectionViewCell: BaseAddOnCollectionViewCell {
         }
     }
     
+    //MARK:- Get Data
     func getTracks() {
         if let info = info {
             info.items.removeAll()  //When you added a new one and the former were still in
@@ -91,6 +94,7 @@ class AddOnPlaylistCollectionViewCell: BaseAddOnCollectionViewCell {
         }
     }
     
+    //MARK:- Set UI
     func setHeaderAlbumImages() {
         var index = 0
         let maxImages = tracks.count
@@ -117,26 +121,7 @@ class AddOnPlaylistCollectionViewCell: BaseAddOnCollectionViewCell {
         }
     }
     
-    @IBAction func addPostTapped(_ sender: Any) {
-        if let info = info {
-            delegate?.newPostTapped(addOn: info)
-        }
-    }
-    
-    @IBAction func thanksButtonTapped(_ sender: Any) {
-        if let info = info {
-            delegate?.thanksTapped(info: info)
-        }
-    }
-    
-    @IBAction func appleMusicPlaylistButtonTapped(_ sender: Any) {
-        openMusicPlaylist(type: .AppleMusic)
-    }
-    
-    @IBAction func spotifyPlaylistButtonTapped(_ sender: Any) {
-        openMusicPlaylist(type: .Spotify)
-    }
-    
+    //MARK:- Change UI
     func openMusicPlaylist(type: StreamingService) {
         if let info = info {
             var url: URL?
@@ -161,8 +146,29 @@ class AddOnPlaylistCollectionViewCell: BaseAddOnCollectionViewCell {
         }
     }
     
+    //MARK:- IBACtions
+    @IBAction func addPostTapped(_ sender: Any) {
+        if let info = info {
+            delegate?.newPostTapped(addOn: info)
+        }
+    }
+    
+    @IBAction func thanksButtonTapped(_ sender: Any) {
+        if let info = info {
+            delegate?.thanksTapped(info: info)
+        }
+    }
+    
+    @IBAction func appleMusicPlaylistButtonTapped(_ sender: Any) {
+        openMusicPlaylist(type: .AppleMusic)
+    }
+    
+    @IBAction func spotifyPlaylistButtonTapped(_ sender: Any) {
+        openMusicPlaylist(type: .Spotify)
+    }
 }
 
+//MARK:- AddOnDelegate
 extension AddOnPlaylistCollectionViewCell: AddOnDelegate {
     
     func fetchCompleted() {
@@ -185,6 +191,7 @@ extension AddOnPlaylistCollectionViewCell: AddOnDelegate {
     
 }
 
+//MARK:- TableView DataSource / Delegate
 extension AddOnPlaylistCollectionViewCell: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

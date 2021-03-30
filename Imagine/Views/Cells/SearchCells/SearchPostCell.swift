@@ -47,7 +47,9 @@ class SearchPostCell: UITableViewCell {
                     postImageView.image = UIImage(named: "savePostImage")
                     postImageView.contentMode = .scaleAspectFit
                 case .picture:
-                    if let url = URL(string: post.imageURL) {
+                    if let thumbnailURL = post.thumbnailImageURL, let url = URL(string: thumbnailURL) {
+                        postImageView.sd_setImage(with: url, completed: nil)
+                    } else if let url = URL(string: post.imageURL) {
                         postImageView.sd_setImage(with: url, completed: nil)
                     } else {
                         postImageView.image = UIImage(named: "default")

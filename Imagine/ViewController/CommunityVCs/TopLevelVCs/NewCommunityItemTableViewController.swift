@@ -12,7 +12,7 @@ import FirebaseFirestore
 import EasyTipView
 import CropViewController
 
-protocol NewFactDelegate {
+protocol NewFactDelegate: class {
     func finishedCreatingNewInstance(item: Any?)
 }
 
@@ -96,7 +96,7 @@ class NewCommunityItemTableViewController: UITableViewController {
     var indexPathOfImageCell: IndexPath?
     var indexPathOfChooseTopicCell: IndexPath?
     
-    var delegate: NewFactDelegate?
+    weak var delegate: NewFactDelegate?
     
     var cells = [NewCommunityCellType]()
     

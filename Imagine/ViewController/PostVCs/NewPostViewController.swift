@@ -32,7 +32,7 @@ enum EventType {
     case event
 }
 
-protocol JustPostedDelegate {
+protocol JustPostedDelegate: class {
     func posted()
 }
 
@@ -100,7 +100,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     var comingFromPostsOfFact = false
     var comingFromAddOnVC = false   // This will create a difference reference for the post to be stored, to show it just in the topic and not in the main feed - later it will show up for those who follow this topic
-    var addItemDelegate: AddItemDelegate?
+    weak var addItemDelegate: AddItemDelegate?
     var postOnlyInTopic = false
     var addOn: AddOn?
     
@@ -115,8 +115,8 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var pictureViewTopAnchor: NSLayoutConstraint?
     
     /// Link the delegate from the main feed to switch to its view again and reload if somebody posts something
-    var delegate: JustPostedDelegate?
-    var newInstanceDelegate: NewFactDelegate?
+    weak var delegate: JustPostedDelegate?
+    weak var newInstanceDelegate: NewFactDelegate?
     
     //MemeMode
     var memeView: MemeInputView?
@@ -1885,80 +1885,52 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     
-    //MARK: PostAsSomebodyElse-UI
-    
-    let fakeNameSegmentedControl: UISegmentedControl = {
-        let items = ["Me","FM", "MR", "AN", "LV", "LM"]
-       let control = UISegmentedControl(items: items)
-        control.translatesAutoresizingMaskIntoConstraints = false
-        control.addTarget(self, action: #selector(segmentControlChanged(sender:)), for: .valueChanged)
-        control.selectedSegmentIndex = 0
-        
-        return control
-    }()
-    
-    @objc func segmentControlChanged(sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
-            if let user = Auth.auth().currentUser {
-                fakeProfileUserID = user.uid
-                fakeNameInfoLabel.text = "Dein persönliches Profil"
-            }
-        case 1:
-            fakeProfileUserID = Constants.userIDs.FrankMeindlID
-            fakeNameInfoLabel.text = "Frank Meindl"
-        case 2:
-            fakeProfileUserID = Constants.userIDs.MarkusRiesID
-            fakeNameInfoLabel.text = "Markus Ries"
-        case 3:
-            fakeProfileUserID = Constants.userIDs.AnnaNeuhausID
-            fakeNameInfoLabel.text = "Anna Neuhaus"
-        case 4:
-            fakeProfileUserID = Constants.userIDs.LaraVoglerID
-            fakeNameInfoLabel.text = "Lara Vogler"
-        case 5:
-            fakeProfileUserID = Constants.userIDs.LenaMasgarID
-            fakeNameInfoLabel.text = "Lena Masgar"
-        default:
-            fakeProfileUserID = Constants.userIDs.FrankMeindlID
-        }
-    }
-    
-    let fakeNameInfoLabel: UILabel = {
-       let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 13)
-        
-        return label
-    }()
-    
-    // Just for the moment, so the people get a sense of what is possible
-    let blueOwenButton :DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitleColor(.imagineColor, for: .normal)
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 13)
-        button.setTitle("Nur Freunde", for: .normal)
-        button.addTarget(self, action: #selector(blueOwenTapped), for: .touchUpInside)
-        button.cornerRadius = 4
-        button.layer.borderColor = UIColor.imagineColor.cgColor
-        button.layer.borderWidth = 0.5
-        
-        return button
-    }()
-    
-    let blueOwenImageView: UIImageView = {
-       let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "wow")
-        imageView.contentMode = .scaleAspectFill
-                
-        return imageView
-    }()
-    
-    @objc func blueOwenTapped() {
-        performSegue(withIdentifier: "toProposals", sender: nil)
-    }
+//    //MARK: PostAsSomebodyElse-UI
+//    
+//    let fakeNameSegmentedControl: UISegmentedControl = {
+//        let items = ["Me","FM", "MR", "AN", "LV", "LM"]
+//       let control = UISegmentedControl(items: items)
+//        control.translatesAutoresizingMaskIntoConstraints = false
+//        control.addTarget(self, action: #selector(segmentControlChanged(sender:)), for: .valueChanged)
+//        control.selectedSegmentIndex = 0
+//        
+//        return control
+//    }()
+//    
+//    @objc func segmentControlChanged(sender: UISegmentedControl) {
+//        switch sender.selectedSegmentIndex {
+//        case 0:
+//            if let user = Auth.auth().currentUser {
+//                fakeProfileUserID = user.uid
+//                fakeNameInfoLabel.text = "Dein persönliches Profil"
+//            }
+//        case 1:
+//            fakeProfileUserID = Constants.userIDs.FrankMeindlID
+//            fakeNameInfoLabel.text = "Frank Meindl"
+//        case 2:
+//            fakeProfileUserID = Constants.userIDs.MarkusRiesID
+//            fakeNameInfoLabel.text = "Markus Ries"
+//        case 3:
+//            fakeProfileUserID = Constants.userIDs.AnnaNeuhausID
+//            fakeNameInfoLabel.text = "Anna Neuhaus"
+//        case 4:
+//            fakeProfileUserID = Constants.userIDs.LaraVoglerID
+//            fakeNameInfoLabel.text = "Lara Vogler"
+//        case 5:
+//            fakeProfileUserID = Constants.userIDs.LenaMasgarID
+//            fakeNameInfoLabel.text = "Lena Masgar"
+//        default:
+//            fakeProfileUserID = Constants.userIDs.FrankMeindlID
+//        }
+//    }
+//    
+//    let fakeNameInfoLabel: UILabel = {
+//       let label = UILabel()
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.font = UIFont(name: "IBMPlexSans", size: 13)
+//        
+//        return label
+//    }()
     
     //MARK:- Animate UI Changes
     func insertUIForLink() {

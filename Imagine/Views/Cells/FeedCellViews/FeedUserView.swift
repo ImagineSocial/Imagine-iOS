@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol FeedUserViewDelegate {
+protocol FeedUserViewDelegate: class {
     func reportButtonTapped()
     func userButtonTapped()
     func linkedCommunityButtonTapped()
@@ -34,7 +34,7 @@ class FeedUserView: UIView, NibLoadable {
     
     
     //MARK:- Variables
-    var delegate: FeedUserViewDelegate?
+    weak var delegate: FeedUserViewDelegate?
     private var isProfilePictureHidden = false
     
     //MARK:- Initialization

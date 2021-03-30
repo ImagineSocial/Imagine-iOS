@@ -28,7 +28,7 @@ class NewAddOnTableViewController: UITableViewController {
     var tipView: EasyTipView?
     let db = Firestore.firestore()
     
-    var delegate: NewFactDelegate?
+    weak var delegate: NewFactDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()

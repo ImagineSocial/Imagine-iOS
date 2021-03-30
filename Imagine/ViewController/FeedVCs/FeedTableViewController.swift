@@ -228,6 +228,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         
         while index <= 3 {
             let post2 = Post()
+            post2.designOptions = PostDesignOption(hideProfilePicture: true)
             if index == 1 {
                 post2.type = .picture
             } else {
@@ -324,7 +325,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         }
         if segue.identifier == "toFactSegue" {
             if let fact = sender as? Community {
-                if let factVC = segue.destination as? ArgumentPageViewController {
+                if let factVC = segue.destination as? CommunityPageViewController {
                     factVC.fact = fact
                     factVC.headerNeedsAdjustment = true
                 }
@@ -332,7 +333,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         }
         if segue.identifier == "goToPostsOfTopic" {
             if let fact = sender as? Community {
-                if let factVC = segue.destination as? PostsOfFactTableViewController {
+                if let factVC = segue.destination as? CommunityPostTableViewController {
                     
                     factVC.fact = fact
                     self.notifyFactCollectionViewController(fact: fact)
