@@ -40,6 +40,7 @@
 		E92CB98325068FF600D2FA45 /* Localizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92CB98225068FF500D2FA45 /* Localizable.swift */; };
 		E93043B12293F06E00DC66D5 /* DataRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93043B02293F06E00DC66D5 /* DataRequest.swift */; };
 		E932FAB8261349DF00F0F00A /* SearchCollectionViewPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E932FAB7261349DF00F0F00A /* SearchCollectionViewPostCell.swift */; };
+		E932FABB26135E9100F0F00A /* CommunityRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E932FABA26135E9100F0F00A /* CommunityRequest.swift */; };
 		E9332A9B23FE8A63004078FC /* CommentTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9332A9A23FE8A63004078FC /* CommentTableView.swift */; };
 		E933553524705CD00060E331 /* SearchCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E933553424705CD00060E331 /* SearchCollectionViewController.swift */; };
 		E93665822513C810008CC8A9 /* AddOnQAndACollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E93665812513C80F008CC8A9 /* AddOnQAndACollectionViewCell.xib */; };
@@ -308,6 +309,7 @@
 		E92CB98225068FF500D2FA45 /* Localizable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localizable.swift; sourceTree = "<group>"; };
 		E93043B02293F06E00DC66D5 /* DataRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataRequest.swift; sourceTree = "<group>"; };
 		E932FAB7261349DF00F0F00A /* SearchCollectionViewPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCollectionViewPostCell.swift; sourceTree = "<group>"; };
+		E932FABA26135E9100F0F00A /* CommunityRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityRequest.swift; sourceTree = "<group>"; };
 		E9332A9A23FE8A63004078FC /* CommentTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTableView.swift; sourceTree = "<group>"; };
 		E933553424705CD00060E331 /* SearchCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCollectionViewController.swift; sourceTree = "<group>"; };
 		E93665812513C80F008CC8A9 /* AddOnQAndACollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddOnQAndACollectionViewCell.xib; sourceTree = "<group>"; };
@@ -1310,9 +1312,10 @@
 			isa = PBXGroup;
 			children = (
 				E962AC2A2224446100C6D6EF /* FirestoreRequest.swift */,
-				E93043B02293F06E00DC66D5 /* DataRequest.swift */,
 				E9F622F625EA497500AAD2C0 /* PostHelper.swift */,
+				E932FABA26135E9100F0F00A /* CommunityRequest.swift */,
 				E9817B3125EBDD8600E56FC6 /* CommunityHelper.swift */,
+				E93043B02293F06E00DC66D5 /* DataRequest.swift */,
 				E9FE46D425FB5DB500F4C973 /* ImagineDataRequest.swift */,
 				E90E1A4225FCC8BF00855FE1 /* ImagineDataHelper.swift */,
 			);
@@ -1649,6 +1652,7 @@
 				E9F622F725EA497500AAD2C0 /* PostHelper.swift in Sources */,
 				E9B85D582412D8E000960942 /* SmallFactCell.swift in Sources */,
 				E9817B5D25EC043A00E56FC6 /* SettingLocationCell.swift in Sources */,
+				E932FABB26135E9100F0F00A /* CommunityRequest.swift in Sources */,
 				E94EDD9E2564328000B226C8 /* AddOnPlaylistCollectionViewCell.swift in Sources */,
 				E9CF237F233A279200D3B295 /* TopicCell.swift in Sources */,
 				E9EA7C9B22E5F47C0015C0EC /* VoteCell.swift in Sources */,

@@ -345,7 +345,7 @@ class PostHelper {
         
         //Linked Community
         if let communityID = documentData[factJSONString] as? String {
-            post.fact = self.addCommunity(communityID: communityID)
+            post.community = self.addCommunity(communityID: communityID)
         }
         
         // User/Poster

@@ -309,15 +309,15 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         createDateLabel.text = post.createTime
         commentCountLabel.text = String(post.commentCount)
         
-        if let fact = post.fact {   // Isnt attached if you come from search
+        if let fact = post.community {   // Isnt attached if you come from search
             //Need boolean wether already fetched or not
             if fact.fetchComplete {
                 addLinkedCommunityView()
                 setCommunity()
             } else {
-                let baseCell = BaseFeedCell()
-                baseCell.getCommunity(language: post.language, community: fact, beingFollowed: false) { (fact) in
-                    self.post.fact = fact
+                let communityRequest = CommunityRequest()
+                communityRequest.getCommunity(language: post.language, community: fact, beingFollowed: false) { (fact) in
+                    self.post.community = fact
                     self.addLinkedCommunityView()
                     self.setCommunity()
                     if let view = self.floatingCommentView {
@@ -547,7 +547,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     // MARK:- Linked Community View
     
     func setCommunity() {
-        if let community = post.fact {
+        if let community = post.community {
             linkedCommunityView.community = community
         }
     }
@@ -570,8 +570,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     func linkedCommunityTapped() {
         
-        print("linkedComm tapped: ", post.fact?.title)
-        if let fact = post.fact {
+        print("linkedComm tapped: ", post.community?.title)
+        if let fact = post.community {
             performSegue(withIdentifier: "toFactSegue", sender: fact)
         }
     }

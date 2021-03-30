@@ -68,9 +68,9 @@ class AddOn {
         if style == .singleTopic {
             if let singleTopic = singleTopic {
                 if singleTopic.documentID != "" {
-                    let baseFeedCell = BaseFeedCell()
+                    let communityRequest = CommunityRequest()
 
-                    baseFeedCell.getCommunity(language: fact.language, community: singleTopic, beingFollowed: false) { [weak self] (fact) in
+                    communityRequest.getCommunity(language: fact.language, community: singleTopic, beingFollowed: false) { [weak self] (fact) in
 
                         if let self = self {
                             self.singleTopic = fact

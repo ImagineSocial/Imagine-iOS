@@ -62,12 +62,13 @@ class FeedSingleTopicCell: BaseFeedCell {
                 setUser()
             }
             
-            if let fact = post.fact {
-                if fact.title != "" {
-                    self.loadSingleTopic(post: post, community: fact)
+            if let community = post.community {
+                if community.title != "" {
+                    self.loadSingleTopic(post: post, community: community)
                 } else {
-                    self.getCommunity(language: post.language, community: fact, beingFollowed: false) { (fact) in
-                        self.loadSingleTopic(post: post, community: fact)
+                    let communityRequest = CommunityRequest()
+                    communityRequest.getCommunity(language: post.language, community: community, beingFollowed: false) { (community) in
+                        self.loadSingleTopic(post: post, community: community)
                     }
                 }
             }
@@ -86,7 +87,7 @@ class FeedSingleTopicCell: BaseFeedCell {
         let info = AddOn(style: .singleTopic, OP: "", documentID: "", fact: Community(), headerTitle: post.title, description: post.description, singleTopic: community)
         
         self.addOnInfo = info
-        post.fact = community
+        post.community = community
         print("##LoadedSingleTopic")
         self.collectionView.reloadData()
         self.layoutSubviews()

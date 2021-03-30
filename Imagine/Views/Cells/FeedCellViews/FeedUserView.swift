@@ -120,7 +120,7 @@ class FeedUserView: UIView, NibLoadable {
             communityPostImageView.isHidden = false
         }
         
-        if let url = URL(string: post.fact!.imageURL) {
+        if let url = URL(string: post.community!.imageURL) {
             self.linkedCommunityImageView.sd_setImage(with: url, completed: nil)
         } else {
             if #available(iOS 13.0, *) {

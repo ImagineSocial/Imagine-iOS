@@ -185,7 +185,7 @@ class ReportViewController: UIViewController {
     func deletePostInAddOn(addOnID: String) {
         guard let post = post else { return }
         
-        if let fact = post.fact {
+        if let fact = post.community {
             var collectionRef: CollectionReference!
             if fact.language == .english {
                 collectionRef = db.collection("Data").document("en").collection("topics")
@@ -228,7 +228,7 @@ class ReportViewController: UIViewController {
             deleteThumbnail(documentID: post.documentID)
         }
         
-        if let fact = post.fact {
+        if let fact = post.community {
             self.deleteTopicPost(fact: fact)
         }
         if let postRef = postRef {

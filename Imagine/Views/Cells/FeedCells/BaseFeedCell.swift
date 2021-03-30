@@ -40,7 +40,7 @@ class BaseFeedCell : UITableViewCell {
     var distanceConstraint: NSLayoutConstraint?
     
     private let db = Firestore.firestore()
-    private let communityHelper = CommunityHelper()
+    private let communityRequest = CommunityRequest()
     
     var cellStyle: CellType?
     var ownProfile: Bool = false
@@ -177,42 +177,6 @@ class BaseFeedCell : UITableViewCell {
         
     }
     
-    //MARK:- Get Community
-    ///Load the fact and return it asynchroniously
-    func getCommunity(language: Language, community: Community, beingFollowed: Bool, completion: @escaping (Community) -> Void) {
-        
-        if community.documentID != "" {
-            
-            var collectionRef: CollectionReference!
-            if language == .english {
-                collectionRef = db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = db.collection("Facts")
-            }
-            let ref = collectionRef.document(community.documentID)
-            ref.getDocument { (doc, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-//                    if self == nil {
-//                        print("Cant get document \(community.documentID) because self isnt there")
-//                    } // AddOnCollectionVC gets deinitialized though, does that mean "weak self" is not necessar here? For the post Objects it is!
-                    if let document = doc {
-                        if let data = document.data() {
-                            let user = Auth.auth().currentUser
-
-                            if let community = self.communityHelper.getCommunity(currentUser: user, documentID: document.documentID, data: data) {
-                                completion(community)
-                            } else {
-                                print("Error: COuldnt get a community")
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
     //MARK:- User
     var index = 0
     func getUser() {
@@ -236,18 +200,22 @@ class BaseFeedCell : UITableViewCell {
         }
     }
     
-    //MARK:- Community
+    //MARK:- Get Community
+    ///Load the fact and return it asynchroniously
     func getCommunity(beingFollowed: Bool) {
-        if let post = post, let fact = post.fact {
-            self.getCommunity(language: post.language, community: fact, beingFollowed: beingFollowed) {
-                (fact) in
-                post.fact = fact
-                
-                self.setCommunity(post: post)
+        if let post = post, let community = post.community {
+            if community.documentID != "" {
+                communityRequest.getCommunity(language: post.language, community: community, beingFollowed: beingFollowed) { (community) in
+                    
+                    post.community = community
+                    
+                    self.setCommunity(post: post)
+                }
             }
         }
     }
     
+    //MARK:- Set Community
     func setCommunity(post: Post) {
         feedUserView.setCommunity(post: post)
     }
@@ -308,7 +276,7 @@ extension BaseFeedCell: FeedUserViewDelegate {
     }
     
     func linkedCommunityButtonTapped() {
-        if let fact = post?.fact {
+        if let fact = post?.community {
             delegate?.factTapped(fact: fact)
         }
     }

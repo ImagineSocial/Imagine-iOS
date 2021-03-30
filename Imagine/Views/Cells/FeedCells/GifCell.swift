@@ -99,7 +99,7 @@ class GifCell: BaseFeedCell {
             commentCountLabel.text = String(post.commentCount)
             
             
-            if let fact = post.fact {
+            if let fact = post.community {
                                 
                 if fact.title == "" {
                     if fact.beingFollowed {

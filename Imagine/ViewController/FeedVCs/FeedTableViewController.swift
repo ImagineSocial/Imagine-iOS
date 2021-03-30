@@ -252,7 +252,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         if post.type == .topTopicCell {
             tableView.deselectRow(at: indexPath, animated: false)
         } else if post.type == .singleTopic {
-            if let fact = post.fact {
+            if let fact = post.community {
                 performSegue(withIdentifier: "toFactSegue", sender: fact)
             }
         } else {

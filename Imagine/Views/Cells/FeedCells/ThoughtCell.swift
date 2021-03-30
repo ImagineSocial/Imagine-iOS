@@ -70,7 +70,7 @@ class ThoughtCell : BaseFeedCell {
                 setUser()
             }
             
-            if let fact = post.fact {
+            if let fact = post.community {
                                 
                 if fact.title == "" {
                     if fact.beingFollowed {
