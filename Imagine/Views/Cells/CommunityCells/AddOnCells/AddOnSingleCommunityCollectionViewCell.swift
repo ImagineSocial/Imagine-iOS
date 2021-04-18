@@ -33,24 +33,26 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
     var info: AddOn? {
         didSet {
             if let info = info {
-                if let fact = info.singleTopic {
-                    
+                
+                if let title = info.headerTitle {
+                    addOnTitleLabel.text = title
+                }
+                addOnDescriptionLabel.text = info.description
+                
+                if let community = info.singleTopic {
+                    print("URL: \(community.imageURL), \(community.title), \(community.documentID)")
                     if !isFetchingPreviewPosts {
                         self.isFetchingPreviewPosts = true
-                        self.getPreviewPictures(community: fact)
+                        self.getPreviewPictures(community: community)
                     }
-                    self.topicTitleLabel.text = fact.title
-                    self.topicDescriptionLabel.text = fact.description
-                    if let url = URL(string: fact.imageURL) {
+                    self.topicTitleLabel.text = community.title
+                    self.topicDescriptionLabel.text = community.description
+                    if let url = URL(string: community.imageURL) {
                         topicImageView.sd_setImage(with: url, completed: nil)
                     }
                     
-                    if let title = info.headerTitle {
-                        addOnTitleLabel.text = title
-                    }
-                    addOnDescriptionLabel.text = info.description
-                    self.topicPostCountLabel.text = "Beiträge: \(fact.postCount)"
-                    self.topicFollowerLabel.text = "Follower: \(fact.followerCount)"
+                    self.topicPostCountLabel.text = "Posts: \(community.postCount)"
+                    self.topicFollowerLabel.text = "Follower: \(community.followerCount)"
                 }
             }
         }
@@ -59,14 +61,13 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
     func getPreviewPictures(community: Community) {
         if community.documentID != "" {
             if self.previewPosts == nil {
-                DispatchQueue.global(qos: .default).async {
-                    self.postHelper.getPreviewPicturesForCommunity(community: community) { (posts) in
-                        DispatchQueue.main.async {
-                            if let posts = posts, posts.count != 0 {
-                                self.previewPosts = posts
-                                self.topicPreviewCollectionView.reloadData()
-                                self.isFetchingPreviewPosts = false
-                            } 
+                self.postHelper.getPreviewPicturesForCommunity(community: community) { [weak self] (posts) in
+                    DispatchQueue.main.async {
+                        if let posts = posts, posts.count != 0, let self = self {
+                            print("Got posts for SingleAddOn: \(posts)")
+                            self.previewPosts = posts
+                            self.topicPreviewCollectionView.reloadData()
+                            self.isFetchingPreviewPosts = false
                         }
                     }
                 }

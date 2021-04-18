@@ -49,7 +49,7 @@ extension Date {
         if calendar.isDateInToday(self) {
             
             if date.hoursLater(than: self) == 0 {
-                feedString = "Vor ein paar Minuten"
+                feedString = NSLocalizedString("few_moments_ago", comment: "few_moments_ago")
             } else {
                 let hoursAgoString = NSLocalizedString("%d hours ago", comment: "How many hours is the post old")
                 
@@ -149,7 +149,7 @@ extension UIColor {
     static let imagineColor = UIColor(red:0.33, green:0.47, blue:0.65, alpha:1.0)   //#5377A6
     static let ios12secondarySystemBackground = UIColor(red: 242/255, green: 242/255, blue: 247/255, alpha: 1.0) ////Light Mode Secondary System Background Color for older than ios13
     //#f2f2f7ff
-    
+    static let darkRed = UIColor(red: 0.69, green: 0.00, blue: 0.00, alpha: 1.00)
 }
 
     
@@ -183,5 +183,43 @@ extension UIViewController {
         alertController.addAction(deleteAction)
         alertController.addAction(abortAction)
         self.present(alertController, animated: true, completion: nil)
+    }
+    
+    
+    
+}
+
+//MARK:- UIImage
+
+extension UIImage {
+
+  func getThumbnail() -> UIImage? {
+
+    guard let imageData = self.pngData() else { return nil }
+
+    let options = [
+        kCGImageSourceCreateThumbnailWithTransform: true,
+        kCGImageSourceCreateThumbnailFromImageAlways: true,
+        kCGImageSourceThumbnailMaxPixelSize: 300] as CFDictionary
+
+    guard let source = CGImageSourceCreateWithData(imageData as CFData, nil) else { return nil }
+    guard let imageReference = CGImageSourceCreateThumbnailAtIndex(source, 0, options) else { return nil }
+
+    return UIImage(cgImage: imageReference)
+
+  }
+}
+
+//MARK:- URL
+extension URL {
+    
+    func loadImage() -> UIImage? {
+        
+        guard let imageData = try? Data(contentsOf: self) else {
+            return nil
+        }
+        
+        let image = UIImage(data: imageData)
+        return image
     }
 }

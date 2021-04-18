@@ -10,7 +10,6 @@ import Foundation
 import Firebase
 import FirebaseFirestore
 import SDWebImage
-import PromiseKit
 
 
 // This enum differentiates between savedPosts or posts for the "getTheSavedPosts" function
@@ -168,31 +167,34 @@ class FirestoreRequest {
             self.initialFetch = true
         }
         
-        self.getTheUsersFriend { (_) in // First get the friends to choose which name to fetch
+        self.getTheUsersFriend { [weak self] (_) in // First get the friends to choose which name to fetch
             
-            postRef.getDocuments { (snap, error) in
+            if let self = self {
                 
-                if let snap = snap {
-                    self.lastSnap = snap.documents.last    // Last document for the next fetch cycle
-                                        
-                    for document in snap.documents {
-                        if let post = self.postHelper.addThePost(document: document, isTopicPost: false, language: language) {
-                            self.posts.append(post)
+                postRef.getDocuments { (snap, error) in
+                    
+                    if let snap = snap {
+                        self.lastSnap = snap.documents.last    // Last document for the next fetch cycle
+                        
+                        for document in snap.documents {
+                            if let post = self.postHelper.addThePost(document: document, isTopicPost: false, language: language) {
+                                self.posts.append(post)
+                            }
                         }
-                    }
-                                        
-                    if let lastSnap = self.lastSnap {
-                        self.getFollowedTopicPosts(startSnap: self.startBeforeSnap, endSnap: lastSnap) { (posts) in
-                            var combinedPosts: [Post] = posts
-                            combinedPosts.append(contentsOf: self.posts)
-                            let finalPosts = combinedPosts.sorted(by: { $0.createDate ?? Date() > $1.createDate ?? Date() })
-                            returnPosts(finalPosts, self.initialFetch)
+                        
+                        if let lastSnap = self.lastSnap {
+                            self.getFollowedTopicPosts(startSnap: self.startBeforeSnap, endSnap: lastSnap) { (posts) in
+                                var combinedPosts: [Post] = posts
+                                combinedPosts.append(contentsOf: self.posts)
+                                let finalPosts = combinedPosts.sorted(by: { $0.createDate ?? Date() > $1.createDate ?? Date() })
+                                returnPosts(finalPosts, self.initialFetch)
+                            }
+                        } else {
+                            returnPosts(self.posts, self.initialFetch)
                         }
                     } else {
                         returnPosts(self.posts, self.initialFetch)
                     }
-                } else {
-                    returnPosts(self.posts, self.initialFetch)
                 }
             }
         }
@@ -214,10 +216,18 @@ class FirestoreRequest {
             }
         }
         
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        if language == .english {
+            collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
+        } else {
+            collectionRef = self.db.collection("TopicPosts")
+        }
+        
         let data = endSnap.data()
         if let endTimestamp = data["createTime"] as? Timestamp {
             
-            self.getFollowedTopicIDs { (topics) in
+            self.getFollowedTopicIDs { [weak self] (topics) in
                 let topicTotalCount = topics.count
                 var topicCount = 0
                 
@@ -227,13 +237,6 @@ class FirestoreRequest {
                 
                 for topicID in topics {
                     
-                    var collectionRef: CollectionReference!
-                    let language = LanguageSelection().getLanguage()
-                    if language == .english {
-                        collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
-                    } else {
-                        collectionRef = self.db.collection("TopicPosts")
-                    }
                     let ref = collectionRef
                         .whereField("linkedFactID", isEqualTo: topicID)
                         .whereField("createTime", isLessThanOrEqualTo: startTimestamp)
@@ -252,7 +255,7 @@ class FirestoreRequest {
                                 for document in snap.documents {
                                     postCount+=1
                                     
-                                    if let post = self.postHelper.addThePost(document: document, isTopicPost: true, language: language) {
+                                    if let post = self?.postHelper.addThePost(document: document, isTopicPost: true, language: language) {
                                         topicPosts.append(post)
                                     }
                                 }
@@ -299,13 +302,13 @@ class FirestoreRequest {
         if let user = Auth.auth().currentUser {
             let topicRef = db.collection("Users").document(user.uid).collection("topics")
             
-            topicRef.getDocuments { (snap, err) in
+            topicRef.getDocuments { [weak self] (snap, err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
                     if let snap = snap {
                         for document in snap.documents {
-                            self.followedTopics.append(document.documentID)
+                            self?.followedTopics.append(document.documentID)
                         }
                     }
                 }
@@ -350,76 +353,82 @@ class FirestoreRequest {
             }
             
             
-            userPostRef.getDocuments { (querySnapshot, err) in
-                if let error = err {
-                    print("Wir haben einen Error bei den Userposts: \(error.localizedDescription)")
-                } else {
-                    if let snap = querySnapshot {
-                        if snap.documents.count == 0 {    // Hasnt posted or saved anything yet
-                            let post = Post()
-                            post.type = .nothingPostedYet
-                            returnPosts([post], self.initialFetch)
-                        } else {
-                            
-                            let fetchedDocsCount = snap.documents.count
-                            self.alreadyFetchedCount = self.alreadyFetchedCount+fetchedDocsCount
-                            
-                            let fullCollectionRef = self.db.collection("Users").document(userUID).collection(postListReference)
-                            self.checkHowManyDocumentsThereAre(ref: fullCollectionRef)
-                            
-                            self.lastSavedPostsSnap = snap.documents.last // For the next batch
-                            
-                            switch whichPostList {
-                            case .postsFromUser:
-                                for document in snap.documents {
-                                    let documentID = document.documentID
-                                    let data = document.data()
-                                    
-                                    let post = Post()
-                                    post.documentID = documentID
-                                    if let _ = data["isTopicPost"] as? Bool {
-                                        post.isTopicPost = true
-                                    }
-                                    if let language = data["language"] as? String {
-                                        if language == "en" {
-                                            post.language = .english
-                                        }
-                                    }
-                                    documentIDsOfPosts.append(post)
-                                }
+            userPostRef.getDocuments { [weak self] (querySnapshot, err) in
+                
+                if let self = self {
+                    if let error = err {
+                        print("Wir haben einen Error bei den Userposts: \(error.localizedDescription)")
+                    } else {
+                        if let snap = querySnapshot {
+                            if snap.documents.count == 0 {    // Hasnt posted or saved anything yet
+                                let post = Post()
+                                post.type = .nothingPostedYet
+                                returnPosts([post], self.initialFetch)
+                            } else {
                                 
-                                self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in
-                                    // Needs to be sorted because the posts are fetched without the date that they were added
-                                    self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
-                                    returnPosts(self.posts, self.initialFetch)
-                                })
-                            case .savedPosts:
-                                for document in snap.documents {
-                                    let documentID = document.documentID
-                                    let data = document.data()
-                                    
-                                    let post = Post()
-                                    post.documentID = documentID
-                                    if let _ = data["isTopicPost"] as? Bool {
-                                        post.isTopicPost = true
-                                    }
-                                    if let documentID = data["documentID"] as? String {
+                                let fetchedDocsCount = snap.documents.count
+                                self.alreadyFetchedCount = self.alreadyFetchedCount+fetchedDocsCount
+                                
+                                let fullCollectionRef = self.db.collection("Users").document(userUID).collection(postListReference)
+                                self.checkHowManyDocumentsThereAre(ref: fullCollectionRef)
+                                
+                                
+                                self.lastSavedPostsSnap = snap.documents.last // For the next batch
+                                
+                                switch whichPostList {
+                                case .postsFromUser:
+                                    for document in snap.documents {
+                                        let documentID = document.documentID
+                                        let data = document.data()
+                                        
+                                        let post = Post()
                                         post.documentID = documentID
-                                    }
-                                    if let language = data["language"] as? String {
-                                        if language == "en" {
-                                            post.language = .english
+                                        if let _ = data["isTopicPost"] as? Bool {
+                                            post.isTopicPost = true
                                         }
+                                        if let language = data["language"] as? String {
+                                            if language == "en" {
+                                                post.language = .english
+                                            }
+                                        }
+                                        documentIDsOfPosts.append(post)
                                     }
-                                    documentIDsOfPosts.append(post)
+                                    
+                                    self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { [weak self] (_) in
+                                        // Needs to be sorted because the posts are fetched without the date that they were added
+                                        self?.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                                        returnPosts(self?.posts, self?.initialFetch ?? true)
+                                    })
+                                case .savedPosts:
+                                    for document in snap.documents {
+                                        let documentID = document.documentID
+                                        let data = document.data()
+                                        
+                                        let post = Post()
+                                        post.documentID = documentID
+                                        if let _ = data["isTopicPost"] as? Bool {
+                                            post.isTopicPost = true
+                                        }
+                                        if let documentID = data["documentID"] as? String {
+                                            post.documentID = documentID
+                                        }
+                                        if let language = data["language"] as? String {
+                                            if language == "en" {
+                                                post.language = .english
+                                            }
+                                        }
+                                        documentIDsOfPosts.append(post)
+                                    }
+                                    
+                                    
+                                    self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { [weak self] (_) in
+                                        if let self = self {
+                                            // Needs to be sorted because the posts are fetched without the date that they were added
+                                            self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                                            returnPosts(self.posts, self.initialFetch)
+                                        }
+                                    })
                                 }
-                                
-                                
-                                self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in
-                                    // Needs to be sorted because the posts are fetched without the date that they were added
-                                    self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
-                                    returnPosts(self.posts, self.initialFetch)
-                                })
                             }
                         }
                     }
@@ -462,7 +471,7 @@ class FirestoreRequest {
                     self.initialFetch = true
                 }
                 
-                ref.getDocuments { (snap, err) in
+                ref.getDocuments { [weak self] (snap, err) in
                     if let error = err {
                         print("We have an error: \(error.localizedDescription)")
                     } else {
@@ -470,16 +479,16 @@ class FirestoreRequest {
                             if snap.documents.count == 0 {    // Hasnt posted or saved anything yet
                                 let post = Post()
                                 post.type = .nothingPostedYet
-                                returnPosts([post], self.initialFetch)
+                                returnPosts([post], self?.initialFetch ?? true)
                             } else {
                                 //Prepare the next batch
                                 let fetchedDocsCount = snap.documents.count
-                                self.alreadyFetchedCount = self.alreadyFetchedCount+fetchedDocsCount
+                                self?.alreadyFetchedCount = self?.alreadyFetchedCount ?? 0+fetchedDocsCount
                                 
                                 let fullCollectionRef = collectionRef.document(fact.documentID).collection("posts")
-                                self.checkHowManyDocumentsThereAre(ref: fullCollectionRef)
+                                self?.checkHowManyDocumentsThereAre(ref: fullCollectionRef)
                                 
-                                self.lastFeedPostSnap = snap.documents.last // For the next batch
+                                self?.lastFeedPostSnap = snap.documents.last // For the next batch
                                 
                                 // Get right post objects for next fetch
                                 for document in snap.documents {
@@ -497,10 +506,10 @@ class FirestoreRequest {
                                     documentIDsOfPosts.append(post)
                                 }
                                 
-                                self.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { (_) in    // First fetch the normal Posts, then the "JustTopic" Posts
-                                    self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                                self?.getPostsFromDocumentIDs(posts: documentIDsOfPosts, done: { [weak self] (_) in    // First fetch the normal Posts, then the "JustTopic" Posts
+                                    self?.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
                                     
-                                    returnPosts(self.posts, self.initialFetch)
+                                    returnPosts(self?.posts, self?.initialFetch ?? true)
                                 })
                             }
                         }
@@ -528,7 +537,7 @@ class FirestoreRequest {
             
             let ref = collectionRef.whereField("linkedFactID", isEqualTo: community.documentID).whereField("type", isEqualTo: "picture").limit(to: 6)
             
-            ref.getDocuments { (snap, err) in
+            ref.getDocuments { [weak self] (snap, err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
@@ -541,7 +550,7 @@ class FirestoreRequest {
                             
                             for document in snap.documents {
                                 
-                                if let post = self.postHelper.addThePost(document: document, isTopicPost: true, language: community.language) {
+                                if let post = self?.postHelper.addThePost(document: document, isTopicPost: true, language: community.language) {
                                     picturePosts.append(post)
                                 } else {
                                     count-=1

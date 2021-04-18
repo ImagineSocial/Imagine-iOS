@@ -162,7 +162,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toPageVC" {
-            if let pageVC = segue.destination as? ArgumentPageViewController {
+            if let pageVC = segue.destination as? CommunityPageViewController {
                 if let chosenFact = sender as? Community {
                     pageVC.fact = chosenFact
                     pageVC.recentTopicDelegate = self

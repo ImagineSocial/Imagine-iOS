@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import FirebaseAnalytics
 import EasyTipView
 
 private let factCellIdentifier = "FactCell"
@@ -46,7 +47,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     
     var addFactToPost : AddFactToPostType?
     var delegate: LinkFactWithPostDelegate?
-    var addItemDelegate: AddItemDelegate?
+    weak var addItemDelegate: AddItemDelegate?
     
     var addOn: AddOn?
     
@@ -550,7 +551,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     //MARK: -PrepareForSegue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toPageVC" {
-            if let pageVC = segue.destination as? ArgumentPageViewController {
+            if let pageVC = segue.destination as? CommunityPageViewController {
                 if let chosenFact = sender as? Community {
                     pageVC.fact = chosenFact
                     pageVC.recentTopicDelegate = self

@@ -20,9 +20,10 @@ struct Constants {
     static let backgroundColorForTableViews = UIColor(red:0.33, green:0.47, blue:0.65, alpha:0.5)
     
     static let cellCornerRadius: CGFloat = 15
+    static let defaultImage = UIImage(named: "default")
     
     struct strings {
-        static let anonymPosterName = NSLocalizedString("constants_anonymousPosterName", comment: "an anonymous user")
+        static let anonymPosterName = "Somebody"
         static let textOfTheWeek = "Tauscht euch aus, seid nett und lernt neue Menschen kennen!"
     }
     
@@ -30,6 +31,8 @@ struct Constants {
         static let infoButtonSize: CGFloat = 22
         static let labelHeight: CGFloat = 17
         static let defaultOptionViewHeight: CGFloat = 45
+        static let pictureViewHeightConstant: CGFloat = 100
+        static let increasedPictureViewHeightConstraint: CGFloat = 200
     }
     
     struct Numbers {

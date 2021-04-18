@@ -10,12 +10,17 @@ import Foundation
 import Firebase
 import FirebaseFirestore
 
+struct PostDesignOption {
+    var hideProfilePicture = false
+}
+
 class Post {
     
     //MARK:- Variables
     var title = ""
     var imageURL = ""
     var imageURLs: [String]?
+    var thumbnailImageURL: String?
     var description = ""
     var linkURL = ""
     var link: Link?
@@ -39,17 +44,19 @@ class Post {
     var votes = Votes()
     var newUpvotes: Votes?
     var repost: Post?
-    var fact:Community?
+    var community: Community?
     var addOnTitle: String?    // Description in the OptionalInformation Section in the topic area
     var isTopicPost = false // Just postet in a topic, not in the main feed
     var language: Language = .german
+    var designOptions: PostDesignOption?
+    var location: Location?
     
     var notificationRecipients = [String]()
     
     var survey: Survey?
     
-    let handyHelper = HandyHelper()
-    let db = Firestore.firestore()
+    private let handyHelper = HandyHelper()
+    private let db = Firestore.firestore()
     
     
     //MARK: Get Repost
@@ -72,13 +79,13 @@ class Post {
     
             let postRef = collectionRef.document(repostID)
                         
-            postRef.getDocument(completion: { (document, err) in
+            postRef.getDocument(completion: { [weak self] (document, err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else if let document = document {
                     let postHelper = PostHelper()
                     
-                    if let post = postHelper.addThePost(document: document, isTopicPost: self.repostIsTopicPost, language: self.repostLanguage) {
+                    if let post = postHelper.addThePost(document: document, isTopicPost: self!.repostIsTopicPost, language: self!.repostLanguage) {
                         
                         returnRepost(post)
                     }
@@ -88,7 +95,7 @@ class Post {
     }
     
     //MARK:- Get User
-    
+    //TODO: Makes no Sense here, should go into User class
     func getUser(isAFriend: Bool) {
         
         // User Daten raussuchen
@@ -96,12 +103,12 @@ class Post {
         
         let user = User()
         
-        userRef.getDocument(completion: { (document, err) in
+        userRef.getDocument(completion: { [weak self] (document, err) in
             if let error = err {
                 print("We got an error with a user: \(error.localizedDescription)")
             } else {
                 if let document = document {
-                    if let docData = document.data() {
+                    if let docData = document.data(), let self = self {
                         
                         if isAFriend {
                             let fullName = docData["full_name"] as? String ?? ""
@@ -151,4 +158,13 @@ class Post {
             }
         })
     }
+    
+//    //MARK:- Load Thumbnail
+//    func loadThumbnail(thumbnailImageURL: String) {
+//        if let url = URL(string: thumbnailImageURL) {
+//            if let image = url.loadImage() {
+//                self.thumbnailImage = image
+//            }
+//        }
+//    }
 }

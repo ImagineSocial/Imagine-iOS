@@ -78,6 +78,7 @@
 //Date Format
 "%d days ago" = "Vor %d Tagen";
 "%d hours ago" = "Vor %d Stunden";
+"few_moments_ago" = "Vor ein paar Minuten";
 
 //SignUp
 "enter_first_name" = "Schön, dass du hier bist! Wie lautet dein Vorname?";

@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import FirebaseFirestore
 import FirebaseAuth
+import FirebaseAnalytics
 import SDWebImage
 import AVKit
 
@@ -301,7 +302,7 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
                     cell.ownProfile = isOwnProfile
                     cell.post = post
                     cell.delegate = self
-                    cell.webViewDelegate = self
+                    cell.musicPostDelegate = self
                     
                     return cell
                 }
@@ -444,17 +445,6 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
         print("Das ist die size: \(cgSize)")
         return cgSize
     }
-    
-    
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.layoutIfNeeded()
-    }
-//    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//        cell.contentView.layer.masksToBounds = true
-//        
-//        let radius = cell.contentView.layer.cornerRadius
-//        cell.layer.shadowPath = UIBezierPath(roundedRect: cell.bounds, cornerRadius: radius).cgPath
-//    }
     
     
     //MARK:- Others

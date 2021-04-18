@@ -7,14 +7,27 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class OptionView: UIView {
     
     //MARK:- Variables
-    var newPostVC: NewPostViewController?
+    private var newPostVC: NewPostViewController?
     
-    let infoButtonSize = Constants.NewPostConstants.infoButtonSize
-    let defaultOptionViewHeight = Constants.NewPostConstants.defaultOptionViewHeight
+    private let infoButtonSize = Constants.NewPostConstants.infoButtonSize
+    private let defaultOptionViewHeight = Constants.NewPostConstants.defaultOptionViewHeight
+    
+    private let defaultSynonymText = "Enter synonym..."
+    private let anonymousName = Constants.strings.anonymPosterName
+    
+    private var postAnonymous = false
+    private var anonymousSynonym: String?
+    
+    private var username: String?
+    
+    //Constraints
+    private var leadingPreviewNameLabelToImageView: NSLayoutConstraint?
+    private var leadingPreviewNameLabelToSuperview: NSLayoutConstraint?
     
     
     //MARK:- Initialization
@@ -31,12 +44,55 @@ class OptionView: UIView {
         }
         
         setUpOptionViewUI()
+        synonymTextView.delegate = self
+        setUpUser()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK:- View Functions
+    override func layoutSubviews() {
+        previewImageView.layer.cornerRadius = previewImageView.frame.width/2
+        previewView.layer.cornerRadius = 10
+    }
+    
+    //MARK:- Get Settings
+    /// Get the options, that were selected to upload them
+    public func getSettings() -> (postAnonymous: Bool, hideProfile: Bool, synonymString: String?) {
+        
+        return (postAnonymous, hideProfilePictureSwitch.isOn, anonymousSynonym)
+    }
+    
+    //MARK:- Set Up User
+    func setUpUser() {
+        
+        //SetUp Preview Date Label
+        let date = Date()
+        let feedString = date.formatForFeed()
+        previewDateLabel.text = feedString
+        
+        // Set Up User
+        if let user = Auth.auth().currentUser {
+            
+            //Get only first name to accurately show how it will be displayed
+            User().getUsername(userID: user.uid) { (username) in
+                if let name = username {
+                    self.username = name
+                    self.previewNameLabel.text = name
+                }
+            }
+            
+            //Show Profile Picture
+            if let url = user.photoURL {
+                previewImageView.sd_setImage(with: url, completed: nil)
+            }
+        } else {
+            previewNameLabel.text = "Mr. not logged in"
+            previewImageView.image = UIImage(named: "default-user")
+        }
+    }
     
     //MARK:- Set Up Options UI
     func setUpOptionViewUI() {
@@ -50,18 +106,43 @@ class OptionView: UIView {
         optionButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
         optionButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
         
-        addSubview(anonymousImageView)
-        anonymousImageView.leadingAnchor.constraint(equalTo: optionButton.trailingAnchor, constant: 20).isActive = true
-        anonymousImageView.centerYAnchor.constraint(equalTo: optionButton.centerYAnchor).isActive = true
-        anonymousImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        anonymousImageView.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        //Meme Mode Button
+        addSubview(memeModeButton)
+        memeModeButton.centerYAnchor.constraint(equalTo: optionButton.centerYAnchor).isActive = true
+        memeModeButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
+        memeModeButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
-        addSubview(anonymousNameLabel)
-        anonymousNameLabel.leadingAnchor.constraint(equalTo: anonymousImageView.trailingAnchor, constant: 5).isActive = true
-        anonymousNameLabel.centerYAnchor.constraint(equalTo: anonymousImageView.centerYAnchor).isActive = true
-        anonymousNameLabel.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-10).isActive = true
+        //Preview View
+        previewView.addSubview(previewImageView)
+        previewView.addSubview(previewNameLabel)
+        previewView.addSubview(previewDateLabel)
+        addSubview(previewView)
         
-        optionStackView.addArrangedSubview(markPostView)
+        leadingPreviewNameLabelToImageView = previewNameLabel.leadingAnchor.constraint(equalTo: previewImageView.trailingAnchor, constant: 10)
+        leadingPreviewNameLabelToSuperview = previewNameLabel.leadingAnchor.constraint(equalTo: previewView.leadingAnchor, constant: 5)
+        
+        NSLayoutConstraint.activate([
+            previewImageView.leadingAnchor.constraint(equalTo: previewView.leadingAnchor, constant: 5),
+            previewImageView.topAnchor.constraint(equalTo: previewView.topAnchor, constant: 5),
+            previewImageView.bottomAnchor.constraint(equalTo: previewView.bottomAnchor, constant: -5),
+            previewImageView.widthAnchor.constraint(equalTo: previewImageView.heightAnchor, multiplier: 1),
+            
+            previewNameLabel.topAnchor.constraint(equalTo: previewImageView.topAnchor, constant: -1),
+            leadingPreviewNameLabelToImageView!,
+            previewNameLabel.trailingAnchor.constraint(greaterThanOrEqualTo: previewView.trailingAnchor, constant: -15),
+            
+            previewDateLabel.leadingAnchor.constraint(equalTo: previewNameLabel.leadingAnchor),
+            previewDateLabel.bottomAnchor.constraint(equalTo: previewImageView.bottomAnchor),
+            previewDateLabel.trailingAnchor.constraint(greaterThanOrEqualTo: previewView.trailingAnchor, constant: -15),
+            
+            previewView.leadingAnchor.constraint(equalTo: optionButton.trailingAnchor, constant: 15),
+            previewView.centerYAnchor.constraint(equalTo: optionButton.centerYAnchor),
+            previewView.heightAnchor.constraint(equalToConstant: defaultOptionViewHeight-10),
+            previewView.trailingAnchor.constraint(lessThanOrEqualTo: memeModeButton.leadingAnchor, constant: -10)
+        ])
+
+        //OptionStackView
+        optionStackView.addArrangedSubview(hideProfilePictureView)
         optionStackView.addArrangedSubview(postAnonymousView)
         
         addSubview(optionStackView)
@@ -72,83 +153,181 @@ class OptionView: UIView {
         newPostVC.stackViewHeight = optionStackView.heightAnchor.constraint(equalToConstant: 0)
         newPostVC.stackViewHeight!.isActive = true
         
-        //Meme Mode Button
-        addSubview(memeModeButton)
-        memeModeButton.centerYAnchor.constraint(equalTo: optionButton.centerYAnchor).isActive = true
-        memeModeButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
-        memeModeButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        
-        setMarkPostViewUI()
+        setHideProfilePictureViewUI()
         setPostAnonymousViewUI()
     }
     
-    func setMarkPostViewUI() {
-        markPostView.addSubview(markPostSwitch)
-        markPostSwitch.centerYAnchor.constraint(equalTo: markPostView.centerYAnchor).isActive = true
-        markPostSwitch.leadingAnchor.constraint(equalTo: markPostView.leadingAnchor, constant: 5).isActive = true
+    func setHideProfilePictureViewUI() {
+        hideProfilePictureView.addSubview(hideProfilePictureSwitch)
+        hideProfilePictureSwitch.centerYAnchor.constraint(equalTo: hideProfilePictureView.centerYAnchor).isActive = true
+        hideProfilePictureSwitch.leadingAnchor.constraint(equalTo: hideProfilePictureView.leadingAnchor, constant: 10).isActive = true
         
-        markPostView.addSubview(markPostSegmentControl)
-        markPostSegmentControl.topAnchor.constraint(equalTo: markPostView.topAnchor, constant: 8).isActive = true
-        markPostSegmentControl.leadingAnchor.constraint(equalTo: markPostSwitch.trailingAnchor, constant: 3).isActive = true
-        markPostSegmentControl.bottomAnchor.constraint(equalTo: markPostView.bottomAnchor, constant: -8).isActive = true
-        
-        markPostView.addSubview(markPostLabel)
-        markPostLabel.centerXAnchor.constraint(equalTo: markPostView.centerXAnchor).isActive = true
-        markPostLabel.centerYAnchor.constraint(equalTo: markPostView.centerYAnchor).isActive = true
-        
-        markPostView.addSubview(markPostButton)
-        markPostButton.centerYAnchor.constraint(equalTo: markPostView.centerYAnchor).isActive = true
-        markPostButton.trailingAnchor.constraint(equalTo: markPostView.trailingAnchor, constant: -10).isActive = true
-        markPostButton.leadingAnchor.constraint(equalTo: markPostSegmentControl.trailingAnchor, constant: 5).isActive = true
-        markPostButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
-        markPostButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
-        
+        hideProfilePictureView.addSubview(hideProfilePictureLabel)
+        hideProfilePictureLabel.centerXAnchor.constraint(equalTo: hideProfilePictureView.centerXAnchor).isActive = true
+        hideProfilePictureLabel.leadingAnchor.constraint(equalTo: hideProfilePictureView.leadingAnchor, constant: 100).isActive = true
+        hideProfilePictureLabel.centerYAnchor.constraint(equalTo: hideProfilePictureView.centerYAnchor).isActive = true
     }
     
     func setPostAnonymousViewUI() {
-        postAnonymousView.addSubview(postAnonymousSwitch)
-        postAnonymousSwitch.centerYAnchor.constraint(equalTo: postAnonymousView.centerYAnchor).isActive = true
-        postAnonymousSwitch.leadingAnchor.constraint(equalTo: postAnonymousView.leadingAnchor, constant: 5).isActive = true
         
-        postAnonymousView.addSubview(postAnonymousLabel)
-        postAnonymousLabel.centerYAnchor.constraint(equalTo: postAnonymousView.centerYAnchor).isActive = true
-        postAnonymousLabel.centerXAnchor.constraint(equalTo: postAnonymousView.centerXAnchor).isActive = true
+        postAnonymousView.addSubview(anonymousButton)
+        anonymousButton.centerYAnchor.constraint(equalTo: postAnonymousView.centerYAnchor).isActive = true
+        anonymousButton.leadingAnchor.constraint(equalTo: postAnonymousView.leadingAnchor, constant: 18).isActive = true
+        anonymousButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        anonymousButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        
+        postAnonymousView.addSubview(synonymTextView)
+        synonymTextView.leadingAnchor.constraint(equalTo: postAnonymousView.leadingAnchor, constant: 95).isActive = true
+        synonymTextView.topAnchor.constraint(equalTo: postAnonymousView.topAnchor, constant: 5).isActive = true
+        synonymTextView.bottomAnchor.constraint(equalTo: postAnonymousView.bottomAnchor, constant: -5).isActive = true
+        synonymTextView.text = defaultSynonymText
+        
         
         postAnonymousView.addSubview(postAnonymousButton)
         postAnonymousButton.centerYAnchor.constraint(equalTo: postAnonymousView.centerYAnchor).isActive = true
+        postAnonymousButton.leadingAnchor.constraint(equalTo: synonymTextView.trailingAnchor, constant: 10).isActive = true
         postAnonymousButton.trailingAnchor.constraint(equalTo: postAnonymousView.trailingAnchor, constant: -10).isActive = true
         postAnonymousButton.widthAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
         postAnonymousButton.heightAnchor.constraint(equalToConstant: infoButtonSize).isActive = true
         
     }
     
+    //MARK:- Change UI
+    private func changeAnonymousStatus() {
+        if postAnonymous {
+            postAnonymous = false
+            
+            synonymTextView.resignFirstResponder()
+            
+            showProfilePicture()
+            
+            hideProfilePictureSwitch.setOn(false, animated: true)
+            hideProfilePictureSwitch.isEnabled = true
+            
+            //Reset User
+            if let name = self.username {
+                previewNameLabel.text = name
+            }
+            
+            //Highlight selection
+            if #available(iOS 13.0, *) {
+                synonymTextView.textColor = .secondaryLabel
+            } else {
+                synonymTextView.textColor = .lightGray
+            }
+        } else {
+            //Set right text for anonymous post
+            if synonymTextView.text == defaultSynonymText {
+                previewNameLabel.text = self.anonymousName
+            } else {
+                previewNameLabel.text = synonymTextView.text
+            }
+            
+            hideProfilePicture()
+            
+            postAnonymous = true
+            hideProfilePictureSwitch.setOn(true, animated: true)
+            hideProfilePictureSwitch.isEnabled = false
+            
+            
+            //Highlight selection
+            if #available(iOS 13.0, *) {
+                synonymTextView.textColor = .label
+            } else {
+                synonymTextView.textColor = .black
+            }
+        }
+    }
+    
+    private func hideProfilePicture() {
+        guard let leadingImageViewConstraint = leadingPreviewNameLabelToImageView,
+              let leadingSuperviewConstraint = leadingPreviewNameLabelToSuperview else {
+            return
+        }
+        
+        //Set COnstraints
+        leadingImageViewConstraint.isActive = false
+        leadingSuperviewConstraint.isActive = true
+        
+        //Hightlight Selection
+        if #available(iOS 13.0, *) {
+            hideProfilePictureLabel.textColor = .label
+        } else {
+            hideProfilePictureLabel.textColor = .black
+        }
+        previewNameLabel.font = UIFont(name: "IBMPlexSans-Medium", size: 11)
+        
+        //Hide Picture
+        previewImageView.isHidden = true
+
+        //Animate Changes
+        UIView.animate(withDuration: 0.3) {
+            self.layoutIfNeeded()
+        }
+    }
+    
+    private func showProfilePicture() {
+        guard let leadingImageViewConstraint = leadingPreviewNameLabelToImageView,
+              let leadingSuperviewConstraint = leadingPreviewNameLabelToSuperview else {
+            return
+        }
+        
+        //Set COnstraints
+        leadingSuperviewConstraint.isActive = false
+        leadingImageViewConstraint.isActive = true
+        
+        //Highlight Selection
+        if #available(iOS 13.0, *) {
+            hideProfilePictureLabel.textColor = .secondaryLabel
+        } else {
+            hideProfilePictureLabel.textColor = .lightGray
+        }
+        previewNameLabel.font = UIFont(name: "IBMPlexSans", size: 11)
+        
+        //Animate Change
+        UIView.animate(withDuration: 0.3) {
+            self.layoutIfNeeded()
+        } completion: { (_) in
+            self.previewImageView.isHidden = false
+        }
+    }
+    
+    //MARK:- Actions
+    
+    @objc func optionButtonTapped() {
+        guard let newPostVC = newPostVC else { return }
+        newPostVC.optionButtonTapped()
+    }
+    
+    @objc func memeModeTapped() {
+        guard let newPostVC = newPostVC else { return }
+        newPostVC.memeModeTapped()
+    }
+    
+    //MARK: Post Anonymous
+    
+    @objc func anonymousButtonTapped() {
+        changeAnonymousStatus()
+    }
+    
+    @objc func postAnonymousInfoButtonPressed() {
+        guard let newPostVC = newPostVC else {return}
+        newPostVC.postAnonymousButtonPressed()
+    }
+    
+    //MARK: Hide Picture
+    
+    @objc func hideProfilePictureSwitchChanged() {
+        if hideProfilePictureSwitch.isOn {
+            hideProfilePicture()
+        } else {
+            showProfilePicture()
+        }
+    }
+    
     //MARK:- UI Init
     
     //MARK: Options
-    
-    let anonymousImageView: UIImageView = {
-       let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "mask")
-        imageView.contentMode = .scaleAspectFit
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .label
-        } else {
-            imageView.tintColor = .black
-        }
-        imageView.isHidden = true
-        
-        return imageView
-    }()
-    
-    let anonymousNameLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 13)
-        label.minimumScaleFactor = 0.5
-        
-        return label
-    }()
     
     let optionButton: DesignableButton = {  // little Burger Menu
         let button = DesignableButton()
@@ -204,8 +383,8 @@ class OptionView: UIView {
         return button
     }()
     
-    //MARK: Mark Post
-    let markPostView: UIView = {
+    //MARK:- Hide PofilePicture
+    let hideProfilePictureView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         if #available(iOS 13.0, *) {
@@ -217,46 +396,30 @@ class OptionView: UIView {
         return view
     }()
     
-    let markPostLabel: UILabel = {
+    let hideProfilePictureLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = NSLocalizedString("markPostButtonText", comment: "mark your post text")
-        label.textAlignment = .center
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
+        label.text = "Hide profile picture"
+        if #available(iOS 13.0, *) {
+            label.textColor = .secondaryLabel
+        } else {
+            label.textColor = .lightGray
+        }
+        label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
         
         return label
     }()
     
-    let markPostSwitch: UISwitch = {
+    let hideProfilePictureSwitch: UISwitch = {
         let switcher = UISwitch()
         switcher.translatesAutoresizingMaskIntoConstraints = false
-        switcher.addTarget(self, action: #selector(markPostSwitchChanged), for: .valueChanged)
-        
+        switcher.addTarget(self, action: #selector(hideProfilePictureSwitchChanged), for: .valueChanged)
+        switcher.transform = CGAffineTransform(scaleX: 0.85, y: 0.85)
         
         return switcher
     }()
     
-    let markPostSegmentControl :UISegmentedControl = {
-        let items = [NSLocalizedString("opinion", comment: "just opinion"), NSLocalizedString("sansational", comment: "sansational"), NSLocalizedString("edited", comment: "edited")]
-        let control = UISegmentedControl(items: items)
-        control.translatesAutoresizingMaskIntoConstraints = false
-        control.isHidden = true
-        control.alpha = 0
-        control.addTarget(self, action: #selector(markPostSegmentChanged), for: .touchUpInside)
-        
-        return control
-    }()
-    
-    let markPostButton :DesignableButton = {
-        let button = DesignableButton(type: .detailDisclosure)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .imagineColor
-        button.addTarget(self, action: #selector(markPostInfoButtonPressed), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    //MARK: Anonymous
+    //MARK:- Anonymous
     
     let postAnonymousView: UIView = {
         let view = UIView()
@@ -270,71 +433,140 @@ class OptionView: UIView {
         return view
     }()
     
-    let postAnonymousLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = NSLocalizedString("post_anonymous_label", comment: "post anonymous")
-        label.textAlignment = .center
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
+    let anonymousButton: DesignableButton = {
+       let button = DesignableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "mask"), for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.tintColor = .imagineColor
+        button.addTarget(self, action: #selector(anonymousButtonTapped), for: .touchUpInside)
         
-        return label
+        return button
     }()
     
-    let postAnonymousSwitch: UISwitch = {
-       let switcher = UISwitch()
-        switcher.translatesAutoresizingMaskIntoConstraints = false
-        switcher.addTarget(self, action: #selector(postAnonymousSwitchChanged), for: .valueChanged)
+    let synonymTextView: UITextView = {
+       let textField = UITextView()
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
+        if #available(iOS 13.0, *) {
+            textField.textColor = .secondaryLabel
+        } else {
+            textField.textColor = .lightGray
+        }
+        textField.isScrollEnabled = false
+        textField.returnKeyType = .done
+        textField.autocorrectionType = .no
         
-        return switcher
+        return textField
     }()
     
     let postAnonymousButton :DesignableButton = {
         let button = DesignableButton(type: .detailDisclosure)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = .imagineColor
-        button.addTarget(self, action: #selector(postAnonymousButtonPressed), for: .touchUpInside)
+        button.addTarget(self, action: #selector(postAnonymousInfoButtonPressed), for: .touchUpInside)
         
         return button
     }()
     
-    //MARK:- Actions
+    //MARK:- Preview UI
+    let previewView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        return view
+    }()
     
-    @objc func optionButtonTapped() {
-        guard let newPostVC = newPostVC else { return }
-        newPostVC.optionButtonTapped()
+    let previewImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "default-user")
+        imageView.clipsToBounds = true
+        imageView.layer.masksToBounds = true
+        imageView.layoutIfNeeded()
+        
+        return imageView
+    }()
+    
+    let previewDateLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans-Light", size: 8)
+        if #available(iOS 13.0, *) {
+            label.textColor = .secondaryLabel
+        } else {
+            label.textColor = .lightGray
+        }
+        
+        return label
+    }()
+    
+    let previewNameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont(name: "IBMPlexSans", size: 11)
+        label.text = "Malte"
+        
+        return label
+    }()
+    
+}
+
+//MARK:- TextViewDelegate
+extension OptionView: UITextViewDelegate {
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        
+        if !postAnonymous {
+            //Set Anonymous posting UI active
+            changeAnonymousStatus()
+        }
+        
+        //Delete the placeholder when the user enters data
+        if textView.text == self.defaultSynonymText {
+            previewNameLabel.text = anonymousName
+            
+            textView.text = ""
+        }
     }
     
-    @objc func memeModeTapped() {
-        guard let newPostVC = newPostVC else { return }
-        newPostVC.memeModeTapped()
+    func textViewDidChange(_ textView: UITextView) {
+
+        if textView.text == "" {
+            previewNameLabel.text = self.anonymousName
+            anonymousSynonym = nil
+        } else {
+            previewNameLabel.text = textView.text
+            anonymousSynonym = textView.text
+        }
     }
     
-    //MARK: Post Anonymous
-    
-    @objc func postAnonymousSwitchChanged() {
-        guard let newPostVC = newPostVC else {return}
-        newPostVC.postAnonymousSwitchChanged()
+    func textViewDidEndEditing(_ textView: UITextView) {
+        
+        //Set the default text if nothing is entered
+        if textView.text == "" {
+            textView.text = self.defaultSynonymText
+            previewNameLabel.text = anonymousName
+            anonymousSynonym = nil
+            
+            if #available(iOS 13.0, *) {
+                textView.textColor = .secondaryLabel
+            } else {
+                textView.textColor = .lightGray
+            }
+        }
     }
     
-    @objc func postAnonymousButtonPressed() {
-        guard let newPostVC = newPostVC else {return}
-        newPostVC.postAnonymousButtonPressed()
-    }
-    
-    //MARK: Mark Post
-    
-    @objc func markPostSegmentChanged() {
-        guard let newPostVC = newPostVC else {return}
-        newPostVC.markPostSegmentChanged()
-    }
-    
-    @objc func markPostInfoButtonPressed() {
-        guard let newPostVC = newPostVC else {return}
-        newPostVC.markPostInfoButtonPressed()
-    }
-    
-    @objc func markPostSwitchChanged() {
-        guard let newPostVC = newPostVC else {return}
-        newPostVC.markPostSwitchChanged()
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+
+        if textView == synonymTextView {  // No lineBreaks in titleTextView
+            if text.rangeOfCharacter(from: CharacterSet.whitespaces) != nil {
+                return false
+            } else if text.rangeOfCharacter(from: CharacterSet.newlines) != nil {
+                textView.resignFirstResponder()
+            }
+        }
+
+        return textView.text.count + (text.count - range.length) <= 30
     }
 }

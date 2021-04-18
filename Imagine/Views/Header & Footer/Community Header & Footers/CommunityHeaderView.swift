@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-protocol CommunityFeedHeaderDelegate {
+protocol CommunityFeedHeaderDelegate: class {
     func segmentedControlTapped(index: Int, direction: UIPageViewController.NavigationDirection)
     func newPostTapped()
     func notLoggedIn()
@@ -29,7 +29,7 @@ class CommunityHeaderView: UIView {
     var segmentIndicatorCenterXConstraint: NSLayoutConstraint?
     var segmentIndicatorWidthConstraint: NSLayoutConstraint?
     
-    var delegate: CommunityFeedHeaderDelegate?
+    weak var delegate: CommunityFeedHeaderDelegate?
     var lastIndex = 0
     
     let db = Firestore.firestore()
@@ -40,6 +40,8 @@ class CommunityHeaderView: UIView {
                     
                     if let url = URL(string: community.imageURL) {
                         headerImageView.sd_setImage(with: url, completed: nil)
+                    } else {
+                        headerImageView.image = UIImage(named: "default-community")
                     }
                     
                     if community.beingFollowed {

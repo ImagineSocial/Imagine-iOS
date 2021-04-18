@@ -8,8 +8,9 @@
 
 import UIKit
 import Firebase
+import FirebaseAnalytics
 
-protocol PageViewHeaderDelegate {
+protocol PageViewHeaderDelegate: class {
     func childScrollViewScrolled(offset: CGFloat)
 }
 
@@ -19,12 +20,12 @@ protocol PageViewHeaderDelegate {
  
  */
 
-class ArgumentPageViewController: UIPageViewController {
+class CommunityPageViewController: UIPageViewController {
     
     var argumentVCs = [UIViewController]()
     var fact: Community?
     
-    var recentTopicDelegate: RecentTopicDelegate?
+    weak var recentTopicDelegate: RecentTopicDelegate?
     
     var settingButton = DesignableButton()
     var newPostButton = DesignableButton()
@@ -41,6 +42,10 @@ class ArgumentPageViewController: UIPageViewController {
     var presentedVC: Int = 0
     
     let defaults = UserDefaults.standard
+    
+    deinit {
+        print("## Deinit community page")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -269,14 +274,14 @@ class ArgumentPageViewController: UIPageViewController {
             if let factParentVC = storyboard?.instantiateViewController(withIdentifier: "factParentVC") as? CommunityParentContainerViewController {
                 
                 
-                
+                print("Add Community parent#")
                 factParentVC.pageViewHeaderDelegate = self
                 factParentVC.fact = fact
                 argumentVCs.append(factParentVC)
             }
         }
         
-        if let postOfFactVC = storyboard?.instantiateViewController(withIdentifier: "postsOfFactVC") as? PostsOfFactTableViewController {
+        if let postOfFactVC = storyboard?.instantiateViewController(withIdentifier: "postsOfFactVC") as? CommunityPostTableViewController {
             
             postOfFactVC.pageViewHeaderDelegate = self
             postOfFactVC.fact = fact
@@ -315,7 +320,7 @@ class ArgumentPageViewController: UIPageViewController {
                     setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
                 }
             } else {
-                if let secondVC = argumentVCs[1] as? PostsOfFactTableViewController {
+                if let secondVC = argumentVCs[1] as? CommunityPostTableViewController {
                     setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
                 }
             }
@@ -333,7 +338,7 @@ class ArgumentPageViewController: UIPageViewController {
 }
 
 //MARK:- PageVC
-extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+extension CommunityPageViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
         if let nextVC = pendingViewControllers.first
@@ -416,20 +421,20 @@ extension ArgumentPageViewController: UIPageViewControllerDataSource, UIPageView
 }
 
 
-extension ArgumentPageViewController: PageViewHeaderDelegate, CommunityFeedHeaderDelegate, NewFactDelegate {
+extension CommunityPageViewController: PageViewHeaderDelegate, CommunityFeedHeaderDelegate, NewFactDelegate {
     func notLoggedIn() {
         self.notLoggedInAlert()
     }
 
     func finishedCreatingNewInstance(item: Any?) {
         if let _ = item as? Post {
-            self.alert(message: "Kehre zum Hauptfeed zurück und aktualisiere diesen, um deinen Beitrag zu sehen.", title: "Die Community wurde erfolgreich geteilt!")
+            self.alert(message: "Go back to the feed and reload to see your post.", title: "The community has been shared successfully!")
         } else {
-            if let vc = self.argumentVCs[1] as? PostsOfFactTableViewController {
+            if let vc = self.argumentVCs[1] as? CommunityPostTableViewController {
                 vc.posts.removeAll()
                 vc.tableView.reloadData()
                 vc.getPosts(getMore: false)
-            } else if let vc = self.argumentVCs[2] as? PostsOfFactTableViewController {
+            } else if let vc = self.argumentVCs[2] as? CommunityPostTableViewController {
                 vc.posts.removeAll()
                 vc.tableView.reloadData()
                 vc.getPosts(getMore: false)

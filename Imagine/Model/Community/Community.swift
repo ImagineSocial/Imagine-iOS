@@ -37,9 +37,11 @@ class Community {
     // AddOn Description For the linked Fact/Discussion/Topic
     var addOnTitle: String?
     
-    let db = Firestore.firestore()
+    private let db = Firestore.firestore()
     
-    //MARK: Get Requests
+    //MARK:
+    
+    //MARK:- Get Follow Status
     func getFollowStatus(isFollowed: @escaping (Bool) -> Void) {
         if let user = Auth.auth().currentUser , documentID != "" {
             let ref = db.collection("Users").document(user.uid).collection("topics").document(documentID)

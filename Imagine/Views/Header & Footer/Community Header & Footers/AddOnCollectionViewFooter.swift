@@ -8,14 +8,14 @@
 
 import UIKit
 
-protocol AddOnFooterViewDelegate {
+protocol AddOnFooterViewDelegate: class {
     func goToAddOnStore()
 }
 
 class AddOnCollectionViewFooter: UICollectionReusableView {
     
     @IBOutlet weak var addOnStoreButton: DesignableButton!
-    var delegate: AddOnFooterViewDelegate?
+    weak var delegate: AddOnFooterViewDelegate?
     
     override func awakeFromNib() {
         let layer = addOnStoreButton.layer

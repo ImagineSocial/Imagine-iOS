@@ -51,6 +51,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var linkPreviewDescription: UILabel!
     @IBOutlet weak var linkPreviewView: UIView!
     
+    //hide Profile Picture
+    @IBOutlet weak var leadingNameLabelToSuperviewConstraint: NSLayoutConstraint!
+    @IBOutlet weak var leadingNameLabelToProfilePictureConstraint: NSLayoutConstraint!
+    
+    
     
     //MARK:- Variables
     var post = Post()
@@ -97,7 +102,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     //Outsourced UIViews
     lazy var repostView = RepostView(viewController: self)
-    lazy var linkedCommunityView = LinkedCommunityView()
+    lazy var linkedCommunityView = LinkedCommunityView(postViewController: self)
     
     
     //MARK:- View Lifecycle
@@ -105,18 +110,18 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for:.default)
-        self.navigationController?.navigationBar.shadowImage = UIImage() //"Doesnt work")
-        
         self.view.activityStartAnimating()
         
+        //UI
+        setUpUI()
+        
+        //Comment Table View
         commentTableView.initializeCommentTableView(section: .post, notificationRecipients: self.post.notificationRecipients)
         commentTableView.commentDelegate = self
         commentTableView.post = self.post   // Absichern, wenn der Post keine Kommentare hat, brauch man auch nicht danach suchen und sich die Kosten sparen
         
-        
+        //Image Collection View
         imageCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
-        
         imageCollectionView.dataSource = self
         imageCollectionView.delegate = self
         
@@ -124,26 +129,19 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         imageCollectionView.setCollectionViewLayout(layout, animated: true)
         imageCollectionView.bounces = false
         
-        if #available(iOS 13.0, *) {
-            savePostButton.tintColor = .label
-        } else {
-            savePostButton.tintColor = .black
-        }
-        
+        //Scroll View
         scrollView.delegate = self
         let scrollViewTap = UITapGestureRecognizer(target: self, action: #selector(scrollViewTapped))
         scrollViewTap.cancelsTouchesInView = false  // Otherwise the tap on the TableViews are not recognized
         scrollView.addGestureRecognizer(scrollViewTap)
         
+        //Show/Load & Show Post
         setupViewController()
         
+        //Notifications
         handyHelper.deleteNotifications(type: .comment, id: post.documentID)
         handyHelper.deleteNotifications(type: .upvote, id: post.documentID)
-        handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
-            if alreadySaved {
-                self.savePostButton.tintColor = Constants.green
-            }
-        }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -240,6 +238,37 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
 //        }
     }
     
+    //MARK:- Set Up UI
+    
+    func setUpUI() {
+        
+        //Buttons are too ugly without the proper ratio when they load so they appear a  bit later
+        setDefaultLikeButtons()
+        
+        UIView.animate(withDuration: 0.3) {
+            self.thanksButton.alpha = 1
+            self.wowButton.alpha = 1
+            self.niceButton.alpha = 1
+            self.haButton.alpha = 1
+        }
+        
+        //navigationBar
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for:.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage() //"Doesnt work")
+        
+        //Save Post Button
+        if #available(iOS 13.0, *) {
+            savePostButton.tintColor = .label
+        } else {
+            savePostButton.tintColor = .black
+        }
+        
+        handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
+            if alreadySaved {
+                self.savePostButton.tintColor = Constants.green
+            }
+        }
+    }
     
     //MARK:- Show Post
     
@@ -267,11 +296,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 self.haButton.setTitle(String(post.votes.ha), for: .normal)
                 self.niceButton.setTitle(String(post.votes.nice), for: .normal)
                                 
-            } else {
-                self.setDefaultLikeButtons(buttons: buttons)
             }
-        } else {
-            self.setDefaultLikeButtons(buttons: buttons)
         }
         
         self.view.activityStopAnimating()
@@ -284,15 +309,15 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         createDateLabel.text = post.createTime
         commentCountLabel.text = String(post.commentCount)
         
-        if let fact = post.fact {   // Isnt attached if you come from search
+        if let fact = post.community {   // Isnt attached if you come from search
             //Need boolean wether already fetched or not
             if fact.fetchComplete {
                 addLinkedCommunityView()
                 setCommunity()
             } else {
-                let baseCell = BaseFeedCell()
-                baseCell.loadFact(language: post.language, fact: fact, beingFollowed: false) { (fact) in
-                    self.post.fact = fact
+                let communityRequest = CommunityRequest()
+                communityRequest.getCommunity(language: post.language, community: fact, beingFollowed: false) { (fact) in
+                    self.post.community = fact
                     self.addLinkedCommunityView()
                     self.setCommunity()
                     if let view = self.floatingCommentView {
@@ -385,7 +410,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         case .repost:
             setUpRepostUI()
             
-            if let repost = post.repost {
+            if let _ = post.repost {
                 showRepost()
             } else {
                 // No Post yet
@@ -414,10 +439,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     var index = 0
     func loadUser(post: Post) {
         if post.user.displayName != "" {
-            self.nameLabel.text = post.user.displayName
-            if let url = URL(string: post.user.imageURL) {
-                self.profilePictureImageView.sd_setImage(with: url, completed: nil)
-            }
+            setUser()
         } else {
             if index <= 15 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -444,6 +466,15 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             
             if let url = URL(string: post.user.imageURL) {
                 profilePictureImageView.sd_setImage(with: url, completed: nil)
+            }
+        }
+        
+        if let designOptions = self.post.designOptions {
+            if designOptions.hideProfilePicture {
+                leadingNameLabelToProfilePictureConstraint.isActive = false
+                leadingNameLabelToSuperviewConstraint.isActive = true
+                profilePictureImageView.isHidden = true
+                nameLabel.font = UIFont(name: "IBMPlexSans-Medium", size: 13)
             }
         }
     }
@@ -516,7 +547,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     // MARK:- Linked Community View
     
     func setCommunity() {
-        if let community = post.fact {
+        if let community = post.community {
             linkedCommunityView.community = community
         }
     }
@@ -535,24 +566,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         linkedCommunityView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 15).isActive = true
         linkedCommunityView.widthAnchor.constraint(equalToConstant: linkedCommunityViewWidth).isActive = true
         linkedCommunityView.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
-        
-        contentView.addSubview(linkedCommunityButton)
-        linkedCommunityButton.leadingAnchor.constraint(equalTo: linkedCommunityView.leadingAnchor).isActive = true
-        linkedCommunityButton.trailingAnchor.constraint(equalTo: linkedCommunityView.trailingAnchor).isActive = true
-        linkedCommunityButton.heightAnchor.constraint(equalTo: linkedCommunityView.heightAnchor).isActive = true
-        linkedCommunityButton.widthAnchor.constraint(equalTo: linkedCommunityView.widthAnchor).isActive = true
     }
     
-    let linkedCommunityButton: DesignableButton = {
-       let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(linkedCommunityTapped), for: .touchUpInside)
+    func linkedCommunityTapped() {
         
-        return button
-    }()
-    
-    @objc func linkedCommunityTapped() {
-        if let fact = post.fact {
+        if let fact = post.community {
             performSegue(withIdentifier: "toFactSegue", sender: fact)
         }
     }
@@ -667,7 +685,10 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         button.setTitle(title, for: .normal)
     }
     
-    func setDefaultLikeButtons(buttons: [DesignableButton]) {
+    func setDefaultLikeButtons() {
+        
+        let buttons = [thanksButton!, wowButton!, haButton!, niceButton!]
+        
         for button in buttons {
             button.imageView?.contentMode = .scaleAspectFit
             button.layer.borderWidth = 0.5
@@ -953,7 +974,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         if segue.identifier == "toFactSegue" {
             if let fact = sender as? Community {
-                if let factVC = segue.destination as? ArgumentPageViewController {
+                if let factVC = segue.destination as? CommunityPageViewController {
                     factVC.fact = fact
                     if linkedFactPageVCNeedsHeightCorrection {
                         factVC.headerNeedsAdjustment = true
@@ -965,7 +986,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if segue.identifier == "goToPostsOfTopic" {
             if let fact = sender as? Community {
                 if let navCon = segue.destination as? UINavigationController {
-                    if let factVC = navCon.topViewController as? PostsOfFactTableViewController {
+                    if let factVC = navCon.topViewController as? CommunityPostTableViewController {
                         factVC.fact = fact
                         factVC.needNavigationController = true
                     }

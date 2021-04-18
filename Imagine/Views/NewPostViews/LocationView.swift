@@ -59,8 +59,8 @@ class LocationView: UIView {
         chooseLocationButton.leadingAnchor.constraint(equalTo: choosenLocationLabel.trailingAnchor, constant: 20).isActive = true
         chooseLocationButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10).isActive = true
         chooseLocationButton.centerYAnchor.constraint(equalTo: choosenLocationLabel.centerYAnchor).isActive = true
-        chooseLocationButton.heightAnchor.constraint(equalToConstant: infoButtonSize-1).isActive = true
-        chooseLocationButton.widthAnchor.constraint(equalToConstant: infoButtonSize-1).isActive = true
+        chooseLocationButton.heightAnchor.constraint(equalToConstant: infoButtonSize-3).isActive = true
+        chooseLocationButton.widthAnchor.constraint(equalToConstant: infoButtonSize-3).isActive = true
         
     }
     

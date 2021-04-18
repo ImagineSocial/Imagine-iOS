@@ -11,6 +11,7 @@ import Firebase
 
 class AddOnHorizontalScrollCollectionViewCell: BaseAddOnCollectionViewCell {
     
+    //MARK:- IBOutlets
     @IBOutlet weak var headerImageView: DesignableImage!
     @IBOutlet weak var headerImageViewHeight: NSLayoutConstraint!
     @IBOutlet weak var gradientView: UIView!
@@ -24,15 +25,16 @@ class AddOnHorizontalScrollCollectionViewCell: BaseAddOnCollectionViewCell {
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var containerView: UIView!
     
-    let smallPostIdentifier = "SmallPostCell"
-    let smallFactIdentifier = "SmallFactCell"
-    let addTopicIdentifier = "AddTopicCell"
+    //MARK:- Variables
+    private let smallPostIdentifier = "SmallPostCell"
+    private let smallFactIdentifier = "SmallFactCell"
+    private let addTopicIdentifier = "AddTopicCell"
     
-    let itemCellWidth: CGFloat = 245
-    var itemCellsGap: CGFloat = 10
+    private let itemCellWidth: CGFloat = 245
+    private var itemCellsGap: CGFloat = 10
     
     var itemRow: Int?
-    var delegate: AddOnCellDelegate?
+    weak var delegate: AddOnCellDelegate?
     
     var info: AddOn? {
             didSet {
@@ -75,6 +77,7 @@ class AddOnHorizontalScrollCollectionViewCell: BaseAddOnCollectionViewCell {
             }
         }
     
+    //MARK:- Cell Lifecycle
     override func awakeFromNib() {
         
         //CollectionView
@@ -110,6 +113,7 @@ class AddOnHorizontalScrollCollectionViewCell: BaseAddOnCollectionViewCell {
         thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
     }
     
+    //MARK:- IBActions
     @IBAction func thanksButtonTapped(_ sender: Any) {
         if let info = info {
             self.thanksButton.setImage(nil, for: .normal)
@@ -145,6 +149,7 @@ class AddOnHorizontalScrollCollectionViewCell: BaseAddOnCollectionViewCell {
     
 }
 
+//MARK:- UICollectionView DataSource/ Delegate/ FlowLayout
 extension AddOnHorizontalScrollCollectionViewCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -260,28 +265,7 @@ extension AddOnHorizontalScrollCollectionViewCell: UICollectionViewDelegate, UIC
     }
 }
 
-class AddItemCollectionViewCell: UICollectionViewCell {
-    
-    override func layoutSubviews() {
-        
-        addSubview(addPostImageView)
-        
-        addPostImageView.widthAnchor.constraint(equalTo: widthAnchor, constant: -10).isActive = true
-        addPostImageView.heightAnchor.constraint(equalTo: heightAnchor, constant: -10).isActive = true
-        addPostImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5).isActive = true
-        addPostImageView.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
-    }
-    
-    let addPostImageView: UIImageView = {
-       let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "AddPost-1")
-        imageView.tintColor = .imagineColor
-        
-        return imageView
-    }()
-}
-
+//MARK.- AddOnDelegate
 extension AddOnHorizontalScrollCollectionViewCell: AddOnDelegate {
     func itemAdded(successfull: Bool) {
         print("not needed")
@@ -309,3 +293,25 @@ extension AddOnHorizontalScrollCollectionViewCell: AddOnDelegate {
     }
 }
 
+//MARK:- AddItemCollectionViewCell
+class AddItemCollectionViewCell: UICollectionViewCell {
+    
+    override func layoutSubviews() {
+        
+        addSubview(addPostImageView)
+        
+        addPostImageView.widthAnchor.constraint(equalTo: widthAnchor, constant: -10).isActive = true
+        addPostImageView.heightAnchor.constraint(equalTo: heightAnchor, constant: -10).isActive = true
+        addPostImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5).isActive = true
+        addPostImageView.topAnchor.constraint(equalTo: topAnchor, constant: 5).isActive = true
+    }
+    
+    let addPostImageView: UIImageView = {
+       let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "AddPost-1")
+        imageView.tintColor = .imagineColor
+        
+        return imageView
+    }()
+}

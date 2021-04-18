@@ -13,16 +13,14 @@ import YoutubePlayer_in_WKWebView
 
 class YouTubeCell: BaseFeedCell {
     
+    //MARK:- IBOutlets
     @IBOutlet weak var playerView: WKYTPlayerView!
-    
-    var delegate: PostCellDelegate?
-    
+        
+    //MARK:- Cell Lifecycle
     override func awakeFromNib() {
         selectionStyle = .none
         
-        self.addSubview(buttonLabel)
-        
-        self.initiateCell(thanksButton: thanksButton, wowButton: wowButton, haButton: haButton, niceButton: niceButton, factImageView: factImageView, profilePictureImageView: profilePictureImageView)
+        self.initiateCell()
         
         
         titleLabel.adjustsFontSizeToFitWidth = true
@@ -32,54 +30,27 @@ class YouTubeCell: BaseFeedCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        descriptionPreviewLabel.text = nil
-        titleLabel.text = nil
-        
-        profilePictureImageView.sd_cancelCurrentImageLoad()
-        profilePictureImageView.image = nil
         
         playerView.stopVideo()
         
-        factImageView.layer.borderColor = UIColor.clear.cgColor
-        factImageView.image = nil
-        factImageView.backgroundColor = .clear
-        followTopicImageView.isHidden = true
-        
-        thanksButton.isEnabled = true
-        wowButton.isEnabled = true
-        haButton.isEnabled = true
-        niceButton.isEnabled = true
+        resetValues()
     }
     
-    
-    
-    var post: Post? {
-        didSet {
-            
-            setCell()
-        }
-    }
-    
-    func setCell() {
+    //MARK:- Set Cell
+    override func setCell() {
         if let post = post {
+            feedUserView.delegate = self
             
-            if ownProfile {
-                thanksButton.setTitle(String(post.votes.thanks), for: .normal)
-                wowButton.setTitle(String(post.votes.wow), for: .normal)
-                haButton.setTitle(String(post.votes.ha), for: .normal)
-                niceButton.setTitle(String(post.votes.nice), for: .normal)
+            if ownProfile { // Set in the UserFeedTableViewController DataSource
                 
                 if let _ = cellStyle {
                     print("Already Set")
                 } else {
                     cellStyle = .ownCell
-                    setOwnCell()
+                    setOwnCell(post: post)
                 }
             } else {
-                thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
-                wowButton.setImage(UIImage(named: "wowButton"), for: .normal)
-                haButton.setImage(UIImage(named: "haButton"), for: .normal)
-                niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
+                setDefaultButtonImages()
             }
             
             if let youtubeID = post.linkURL.youtubeID {
@@ -87,35 +58,29 @@ class YouTubeCell: BaseFeedCell {
                 playerView.load(withVideoId: youtubeID, playerVars: ["playsinline":1])  // Plays in tableview, no auto fullscreen
             }
             
-            if let url = URL(string: post.user.imageURL) {
-                profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
-            }
-            
             if post.user.displayName == "" {
                 if post.anonym {
                     self.setUser()
                 } else {
-                    self.getName()
+                    self.getUser()
                 }
             } else {
                 setUser()
             }
             
-            if let fact = post.fact {
-                self.factImageView.layer.borderColor = UIColor.lightText.cgColor
+            if let fact = post.community {
                                 
                 if fact.title == "" {
                     if fact.beingFollowed {
-                        self.getFact(beingFollowed: true)
+                        self.getCommunity(beingFollowed: true)
                     } else {
-                        self.getFact(beingFollowed: false)
+                        self.getCommunity(beingFollowed: false)
                     }
                 } else {
-                    self.loadFact()
+                    self.setCommunity(post: post)
                 }
             }
             
-            createDateLabel.text = post.createTime
             titleLabel.text = post.title
             descriptionPreviewLabel.text = post.description
             commentCountLabel.text = String(post.commentCount)
@@ -125,130 +90,29 @@ class YouTubeCell: BaseFeedCell {
         }
     }
     
-    func setUser() {
-        if let post = post {
-            if post.anonym {
-                if let anonymousName = post.anonymousName {
-                    OPNameLabel.text = anonymousName
-                } else {
-                    OPNameLabel.text = Constants.strings.anonymPosterName
-                }
-                profilePictureImageView.image = UIImage(named: "anonym-user")
-            } else {
-                OPNameLabel.text = post.user.displayName
-                // Profile Picture
-                
-                if let url = URL(string: post.user.imageURL) {
-                    profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
-                } else {
-                    profilePictureImageView.image = UIImage(named: "default-user")
-                }
-            }
-        }
-    }
-    
-    var index = 0
-    func getName() {
-        if index < 20 {
-            if let post = self.post {
-                if post.user.displayName == "" {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.getName()
-                        self.index+=1
-                    }
-                } else {
-                    setUser()
-                }
-            }
-        }
-    }
-    
-    func getFact(beingFollowed: Bool) {
-        if let post = post {
-            if let fact = post.fact {
-                self.loadFact(language: post.language, fact: fact, beingFollowed: beingFollowed) {
-                    (fact) in
-                    post.fact = fact
-                    
-                    self.loadFact()
-                }
-            }
-        }
-    }
-    
-    func loadFact() {
-        if post!.isTopicPost {
-            followTopicImageView.isHidden = false
-        }
-        
-        if let url = URL(string: post!.fact!.imageURL) {
-            self.factImageView.sd_setImage(with: url, completed: nil)
-        } else {
-            print("Set default Picture")
-            if #available(iOS 13.0, *) {
-                self.factImageView.backgroundColor = .systemBackground
-            } else {
-                self.factImageView.backgroundColor = .white
-            }
-            self.factImageView.image = UIImage(named: "FactStamp")
-        }
-    }
-    
-    @IBAction func moreButtonTapped(_ sender: Any) {
-        if let post = post {
-            delegate?.reportTapped(post: post)
-        }
-    }
+    //MARK:- IBActions
     
     @IBAction func thanksButtonTapped(_ sender: Any) {
         if let post = post {
-            thanksButton.isEnabled = false
-            delegate?.thanksTapped(post: post)
-            post.votes.thanks = post.votes.thanks+1
-            showButtonText(post: post, button: thanksButton)
+            registerVote(post: post, button: thanksButton)
         }
     }
     
     @IBAction func wowButtonTapped(_ sender: Any) {
         if let post = post {
-            wowButton.isEnabled = false
-            delegate?.wowTapped(post: post)
-            post.votes.wow = post.votes.wow+1
-            showButtonText(post: post, button: wowButton)
+            registerVote(post: post, button: wowButton)
         }
     }
     
     @IBAction func haButtonTapped(_ sender: Any) {
         if let post = post {
-            haButton.isEnabled = false
-            delegate?.haTapped(post: post)
-            post.votes.ha = post.votes.ha+1
-            showButtonText(post: post, button: haButton)
+            registerVote(post: post, button: haButton)
         }
     }
     
     @IBAction func niceButtonTapped(_ sender: Any) {
         if let post = post {
-            niceButton.isEnabled = false
-            delegate?.niceTapped(post: post)
-            post.votes.nice = post.votes.nice+1
-            showButtonText(post: post, button: niceButton)
-        }
-    }
-    
-    @IBAction func userButtonTapped(_ sender: Any) {
-        if let post = post {
-            if !post.anonym {
-                delegate?.userTapped(post: post)
-            }
-        }
-    }
-    
-    @IBAction func linkedFactTapped(_ sender: Any) {
-        if let post = post {
-            if let fact = post.fact {
-                delegate?.factTapped(fact: fact)
-            }
+            registerVote(post: post, button: niceButton)
         }
     }
 }

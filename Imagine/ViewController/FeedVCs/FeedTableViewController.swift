@@ -10,12 +10,13 @@ import UIKit
 import Firebase
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseAnalytics
 import SDWebImage
 import Reachability
 import EasyTipView
 
 
-class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNUserNotificationCenterDelegate {
+class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCenterDelegate {
     
     //MARK:- IBOutlets
     @IBOutlet weak var sortPostsButton: DesignableButton!
@@ -91,7 +92,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
             navBarAppearance.configureWithOpaqueBackground()
             navBarAppearance.backgroundColor = .systemBackground
             navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.imagineColor, .font: UIFont(name: "IBMPlexSans-Medium", size: 25)!]
-            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.imagineColor, .font: UIFont(name: "IBMPlexSans-SemiBold", size: 30)]
+            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.imagineColor, .font: UIFont(name: "IBMPlexSans-SemiBold", size: 30) ?? UIFont.systemFont(ofSize: 30, weight: .semibold)]
             navBarAppearance.shadowImage = UIImage()
             
             self.navigationController?.navigationBar.standardAppearance = navBarAppearance
@@ -227,6 +228,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         
         while index <= 3 {
             let post2 = Post()
+            post2.designOptions = PostDesignOption(hideProfilePicture: true)
             if index == 1 {
                 post2.type = .picture
             } else {
@@ -250,7 +252,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         if post.type == .topTopicCell {
             tableView.deselectRow(at: indexPath, animated: false)
         } else if post.type == .singleTopic {
-            if let fact = post.fact {
+            if let fact = post.community {
                 performSegue(withIdentifier: "toFactSegue", sender: fact)
             }
         } else {
@@ -323,7 +325,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         }
         if segue.identifier == "toFactSegue" {
             if let fact = sender as? Community {
-                if let factVC = segue.destination as? ArgumentPageViewController {
+                if let factVC = segue.destination as? CommunityPageViewController {
                     factVC.fact = fact
                     factVC.headerNeedsAdjustment = true
                 }
@@ -331,7 +333,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         }
         if segue.identifier == "goToPostsOfTopic" {
             if let fact = sender as? Community {
-                if let factVC = segue.destination as? PostsOfFactTableViewController {
+                if let factVC = segue.destination as? CommunityPostTableViewController {
                     
                     factVC.fact = fact
                     self.notifyFactCollectionViewController(fact: fact)
@@ -364,7 +366,21 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         }
         
         let frame = tabBar.frame
+        let frameMinY = frame.minY  //lower end of tabBar
         let offset = hidden ? frame.size.height : -frame.size.height
+        let viewHeight = self.view.frame.height
+        
+        //hidden but moved back up after moving app to background
+        if frameMinY < viewHeight && tabBar.isHidden {
+            tabBar.alpha = 0
+            tabBar.isHidden = false
+
+            UIView.animate(withDuration: 0.5) {
+                tabBar.alpha = 1
+            }
+            return
+        }
+
         let duration:TimeInterval = (animated ? 0.5 : 0.0)
         tabBar.isHidden = false
 
@@ -661,15 +677,6 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     
     //MARK: Side Menu User
     
-    /// Call to load User in SideMenu and set notifications after dismissal of the logInViewController
-    func loadUser() {
-        self.setNotificationListener()
-        self.checkForLoggedInUser()
-        self.setNotifications()
-        sideMenu.showUser()
-    }
-    
-    
     func checkForLoggedInUser() {
         print("check")
         if let _ = Auth.auth().currentUser {
@@ -731,7 +738,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
                                             if let text = data["comment"] as? String, let author = data["name"] as? String, let postID = data["postID"] as? String {
                                                 let comment = Comment(commentSection: .post, sectionItemID: postID, commentID: change.document.documentID)
                                                 
-                                                if let isTopicPost = data["isTopicPist"] as? Bool {
+                                                if let isTopicPost = data["isTopicPost"] as? Bool {
                                                     comment.isTopicPost = isTopicPost
                                                 }
                                                 if let language = data["language"] as? String {
@@ -973,8 +980,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
         preferences.drawing.shadowOpacity = 1
         preferences.drawing.shadowOffset = .zero
         preferences.drawing.shadowRadius = 7
-        preferences.positioning.bubbleHInset = 10
-        preferences.positioning.bubbleVInset = 10
+        preferences.positioning.bubbleInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         preferences.positioning.maxWidth = self.view.frame.width-40
         // Maximum of 800 Words
         
@@ -992,6 +998,20 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
 //            }
 //        }
 //    }
+}
+
+
+//MARK:- DismissDelegate
+
+extension FeedTableViewController: DismissDelegate {
+    
+    /// Call to load User in SideMenu and set notifications after dismissal of the logInViewController
+    func loadUser() {
+        self.setNotificationListener()
+        self.checkForLoggedInUser()
+        self.setNotifications()
+        sideMenu.showUser()
+    }
 }
 
 //MARK:- LogOutDelegate

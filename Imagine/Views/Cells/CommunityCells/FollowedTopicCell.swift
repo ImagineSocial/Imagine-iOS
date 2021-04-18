@@ -21,7 +21,7 @@ class FollowedTopicCell: UICollectionViewCell {
                 if let url = URL(string: fact.imageURL) {
                     topicImageView.sd_setImage(with: url, completed: nil)
                 } else {
-                    topicImageView.image = UIImage(named: "FactStamp")
+                    topicImageView.image = UIImage(named: "default-community")
                 }
             }
         }

@@ -9,8 +9,9 @@
 import UIKit
 import EasyTipView
 import Firebase
+import FirebaseAnalytics
 
-protocol RecentTopicDelegate {
+protocol RecentTopicDelegate: class {
     func topicSelected(fact: Community)
 }
 
@@ -33,16 +34,19 @@ class CommunityParentContainerViewController: UIViewController {
     
     var tipView: EasyTipView?
     
-    var pageViewHeaderDelegate: PageViewHeaderDelegate?
+    weak var pageViewHeaderDelegate: PageViewHeaderDelegate?
+    
     //MARK:-
     
+    deinit {
+        print("## Deinit community parent")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if let topic = fact {
             self.getArguments(topic: topic)
-            self.setUI(topic: topic)
         }
 //        setPostButton()
                 
@@ -72,26 +76,8 @@ class CommunityParentContainerViewController: UIViewController {
     }
 
     
-    @objc func toPostsTapped() {
-        if let fact = self.fact {
-            performSegue(withIdentifier: "toPostsSegue", sender: fact)
-        }
-    }
-    
     @objc func dismissTapped() {
         self.dismiss(animated: true, completion: nil)
-    }
-    
-    func setUI(topic: Community) {
-//        if let user = Auth.auth().currentUser {
-//            for moderator in topic.moderators {
-//                if moderator == user.uid {
-//                    self.moderatorView.isHidden = false
-//                }
-//            }
-//        }
-        
-        
     }
     
     func getArguments(topic: Community) {
@@ -170,7 +156,7 @@ class CommunityParentContainerViewController: UIViewController {
         
         if segue.identifier == "toPostsSegue" {
             if let chosenFact = sender as? Community {
-                if let postVC = segue.destination as? PostsOfFactTableViewController {
+                if let postVC = segue.destination as? CommunityPostTableViewController {
                     postVC.fact = chosenFact
                 }
             }

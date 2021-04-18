@@ -1,0 +1,741 @@
+
+/* Class = "UILabel"; text = "100 Vetos"; ObjectID = "00B-xO-wAh"; */
+"00B-xO-wAh.text" = "100 Vetos";
+
+/* Class = "UIButton"; normalTitle = "Verhaltensregeln"; ObjectID = "06b-Ms-Lhf"; */
+"06b-Ms-Lhf.normalTitle" = "Verhaltensregeln";
+
+/* Class = "UIButton"; normalTitle = "Schritt 1"; ObjectID = "0Q0-eS-e4o"; */
+"0Q0-eS-e4o.normalTitle" = "Schritt 1";
+
+/* Class = "UIButton"; normalTitle = "Einbringung von Helfern"; ObjectID = "0xd-wp-JtB"; */
+"0xd-wp-JtB.normalTitle" = "Einbringung von Helfern";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "17d-aA-RXM"; */
+"17d-aA-RXM.normalTitle" = "Button";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "1Bz-Mf-GJX"; */
+"1Bz-Mf-GJX.normalTitle" = "Button";
+
+/* Class = "UILabel"; text = "Falls du einen Link mit uns teilen möchtest:"; ObjectID = "1NT-En-PpS"; */
+"1NT-En-PpS.text" = "Falls du einen Link mit uns teilen möchtest:";
+
+/* Class = "UIButton"; normalTitle = "Veto"; ObjectID = "1am-OU-DrS"; */
+"1am-OU-DrS.normalTitle" = "Veto";
+
+/* Class = "UIButton"; normalTitle = "Zurück"; ObjectID = "1h1-RP-NoS"; */
+"1h1-RP-NoS.normalTitle" = "Zurück";
+
+/* Class = "UILabel"; text = "13.03.2019"; ObjectID = "2Ru-fA-tlG"; */
+"2Ru-fA-tlG.text" = "13.03.2019";
+
+/* Class = "UILabel"; text = "Downvote"; ObjectID = "2kN-BZ-9ui"; */
+"2kN-BZ-9ui.text" = "Downvote";
+
+/* Class = "UILabel"; text = "(0)"; ObjectID = "2kV-jY-reD"; */
+"2kV-jY-reD.text" = "(0)";
+
+/* Class = "UIButton"; normalTitle = "Mehr Infos >"; ObjectID = "2vE-VH-JpO"; */
+"2vE-VH-JpO.normalTitle" = "Mehr Infos >";
+
+/* Class = "UIButton"; normalTitle = "▲"; ObjectID = "38k-Tw-dtB"; */
+"38k-Tw-dtB.normalTitle" = "▲";
+
+/* Class = "UILabel"; text = "Teile deine Weisheiten mit uns!"; ObjectID = "38v-Ao-hmY"; */
+"38v-Ao-hmY.text" = "Teile deine Weisheiten mit uns!";
+
+/* Class = "UILabel"; text = "Das ist der Titel der Quelle oder des Argumentes"; ObjectID = "3I3-dA-SMz"; */
+"3I3-dA-SMz.text" = "Das ist der Titel der Quelle oder des Argumentes";
+
+/* Class = "UIButton"; normalTitle = "Mehr"; ObjectID = "3Yk-LY-bfj"; */
+"3Yk-LY-bfj.normalTitle" = "Mehr";
+
+/* Class = "UILabel"; text = "Wir brauchen eine Menge Know-How aus allen Bereichen. Wir glauben nicht an Zertifikate sondern an Menschen. Wenn du uns mit deinem Wissen oder deinen Ideen helfen kannst, werde Teil der Bewegung!"; ObjectID = "3aa-qP-jua"; */
+"3aa-qP-jua.text" = "Wir brauchen eine Menge Know-How aus allen Bereichen. Wir glauben nicht an Zertifikate sondern an Menschen. Wenn du uns mit deinem Wissen oder deinen Ideen helfen kannst, werde Teil der Bewegung!";
+
+/* Class = "UITabBarItem"; title = "Community"; ObjectID = "3i8-SB-np6"; */
+"3i8-SB-np6.title" = "Community";
+
+/* Class = "UIButton"; normalTitle = "Wie kann ich helfen?"; ObjectID = "3vZ-YN-MFN"; */
+"3vZ-YN-MFN.normalTitle" = "Wie kann ich helfen?";
+
+/* Class = "UIButton"; normalTitle = "Sign-Up"; ObjectID = "45O-21-ery"; */
+"45O-21-ery.normalTitle" = "Sign-Up";
+
+/* Class = "UIButton"; normalTitle = "▼"; ObjectID = "4Wz-ZK-bQy"; */
+"4Wz-ZK-bQy.normalTitle" = "▼";
+
+/* Class = "UIButton"; normalTitle = "▼"; ObjectID = "4ap-Kj-4Ph"; */
+"4ap-Kj-4Ph.normalTitle" = "▼";
+
+/* Class = "UIButton"; normalTitle = ">"; ObjectID = "4j9-xh-FyF"; */
+"4j9-xh-FyF.normalTitle" = ">";
+
+/* Class = "UILabel"; text = "Downvote"; ObjectID = "4r7-iC-VSd"; */
+"4r7-iC-VSd.text" = "Downvote";
+
+/* Class = "UIButton"; normalTitle = "Datensicherheit"; ObjectID = "4rB-2I-V7N"; */
+"4rB-2I-V7N.normalTitle" = "Datensicherheit";
+
+/* Class = "UILabel"; text = "Diese Quelle oder dieses Argument ist mir nicht vertrauenswürdig genug. Habt ihr nicht von den neuen Erkenntnissen von Dr. Re S. Earch und Med. Wong Wrong gehört? "; ObjectID = "5KI-CF-DG2"; */
+"5KI-CF-DG2.text" = "Diese Quelle oder dieses Argument ist mir nicht vertrauenswürdig genug. Habt ihr nicht von den neuen Erkenntnissen von Dr. Re S. Earch und Med. Wong Wrong gehört? ";
+
+/* Class = "UITextField"; placeholder = "Quelle..."; ObjectID = "5Lb-bg-V6Y"; */
+"5Lb-bg-V6Y.placeholder" = "Quelle...";
+
+/* Class = "UILabel"; text = "Möchtest du noch etwas loswerden?"; ObjectID = "5Q9-Xx-K6y"; */
+"5Q9-Xx-K6y.text" = "Möchtest du noch etwas loswerden?";
+
+/* Class = "UISegmentedControl"; 5cP-UC-G2Q.segmentTitles[0] = "Meinung"; ObjectID = "5cP-UC-G2Q"; */
+"5cP-UC-G2Q.segmentTitles[0]" = "Meinung";
+
+/* Class = "UISegmentedControl"; 5cP-UC-G2Q.segmentTitles[1] = "Sensation"; ObjectID = "5cP-UC-G2Q"; */
+"5cP-UC-G2Q.segmentTitles[1]" = "Sensation";
+
+/* Class = "UISegmentedControl"; 5cP-UC-G2Q.segmentTitles[2] = "Bearbeitet"; ObjectID = "5cP-UC-G2Q"; */
+"5cP-UC-G2Q.segmentTitles[2]" = "Bearbeitet";
+
+/* Class = "UILabel"; text = "Hier steht der Titel"; ObjectID = "6aC-ou-zdQ"; */
+"6aC-ou-zdQ.text" = "Hier steht der Titel";
+
+/* Class = "UIButton"; normalTitle = "Kommentare"; ObjectID = "6dW-Ff-tcz"; */
+"6dW-Ff-tcz.normalTitle" = "Kommentare";
+
+/* Class = "UIButton"; normalTitle = "Teile deine Idee mit Anderen!"; ObjectID = "773-bC-TgK"; */
+"773-bC-TgK.normalTitle" = "Teile deine Idee mit Anderen!";
+
+/* Class = "UIButton"; normalTitle = "Wahlen und Abstimmungen"; ObjectID = "77r-ex-fIp"; */
+"77r-ex-fIp.normalTitle" = "Wahlen und Abstimmungen";
+
+/* Class = "UIButton"; normalTitle = "Monetarisierung"; ObjectID = "7M6-8J-wD8"; */
+"7M6-8J-wD8.normalTitle" = "Monetarisierung";
+
+/* Class = "UIButton"; normalTitle = "Einspruch"; ObjectID = "7Vz-Ay-dRi"; */
+"7Vz-Ay-dRi.normalTitle" = "Einspruch";
+
+/* Class = "UILabel"; text = " "; ObjectID = "7x5-dP-4TH"; */
+"7x5-dP-4TH.text" = " ";
+
+/* Class = "UIButton"; normalTitle = "Schritt 4"; ObjectID = "8Zh-yN-rrG"; */
+"8Zh-yN-rrG.normalTitle" = "Schritt 4";
+
+/* Class = "UILabel"; text = "Quelle:"; ObjectID = "8aN-ma-N0v"; */
+"8aN-ma-N0v.text" = "Quelle:";
+
+/* Class = "UIBarButtonItem"; title = "Zurück"; ObjectID = "8vT-Ga-OYV"; */
+"8vT-Ga-OYV.title" = "Zurück";
+
+/* Class = "UITextField"; placeholder = "Team-Member, Helfer oder erstmal schauen..."; ObjectID = "8yC-WU-LbH"; */
+"8yC-WU-LbH.placeholder" = "Team-Member, Helfer oder erstmal schauen...";
+
+/* Class = "UITextField"; placeholder = "E-Mail Adresse, WhatsApp, Facebook..."; ObjectID = "9gQ-dm-dkM"; */
+"9gQ-dm-dkM.placeholder" = "E-Mail Adresse, WhatsApp, Facebook...";
+
+/* Class = "UIButton"; normalTitle = "Mehr"; ObjectID = "9lx-HY-Wbw"; */
+"9lx-HY-Wbw.normalTitle" = "Mehr";
+
+/* Class = "UIButton"; normalTitle = "Mehr"; ObjectID = "9or-8W-dSC"; */
+"9or-8W-dSC.normalTitle" = "Mehr";
+
+/* Class = "UILabel"; text = "100 Mio."; ObjectID = "A2t-32-jFG"; */
+"A2t-32-jFG.text" = "100 Mio.";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "AMD-LO-lG3"; */
+"AMD-LO-lG3.normalTitle" = "Button";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "AbK-to-aSh"; */
+"AbK-to-aSh.text" = "Label";
+
+/* Class = "UILabel"; text = " "; ObjectID = "Ahs-uo-ev8"; */
+"Ahs-uo-ev8.text" = " ";
+
+/* Class = "UILabel"; text = "Optisch Markieren"; ObjectID = "B5c-yh-4uu"; */
+"B5c-yh-4uu.text" = "Optisch Markieren";
+
+/* Class = "UIButton"; normalTitle = "Genau meins!"; ObjectID = "BFn-gg-UY7"; */
+"BFn-gg-UY7.normalTitle" = "Genau meins!";
+
+/* Class = "UIButton"; normalTitle = "Schritt 5"; ObjectID = "BQH-QT-aaR"; */
+"BQH-QT-aaR.normalTitle" = "Schritt 5";
+
+/* Class = "UILabel"; text = "Wie weit geht deine Motivation?"; ObjectID = "BQg-Nd-t2C"; */
+"BQg-Nd-t2C.text" = "Wie weit geht deine Motivation?";
+
+/* Class = "UILabel"; text = "Titel:"; ObjectID = "BXG-k3-hdy"; */
+"BXG-k3-hdy.text" = "Titel:";
+
+/* Class = "UILabel"; text = "Kategorie:"; ObjectID = "COg-fI-6eF"; */
+"COg-fI-6eF.text" = "Kategorie:";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "CS0-Iw-GA0"; */
+"CS0-Iw-GA0.normalTitle" = "Button";
+
+/* Class = "UILabel"; text = "Schau dich ein wenig um, vieleicht ist ja etwas interessantes für dich dabei!"; ObjectID = "CaU-9I-Lvt"; */
+"CaU-9I-Lvt.text" = "Alle Entscheidungen werden wir als Gemeinschaft treffen. ";
+
+/* Class = "UILabel"; text = "Kampagnen-Titel:"; ObjectID = "CwB-iM-ftk"; */
+"CwB-iM-ftk.text" = "Kampagnen-Titel:";
+
+/* Class = "UISearchBar"; placeholder = "Suche nach Fakten..."; ObjectID = "DIv-h7-3AI"; */
+"DIv-h7-3AI.placeholder" = "Suche nach Fakten...";
+
+/* Class = "UILabel"; text = "Alleine schaffen wir das nicht!"; ObjectID = "DJd-3m-oQZ"; */
+"DJd-3m-oQZ.text" = "Alleine schaffen wir das nicht!";
+
+/* Class = "UIButton"; normalTitle = "Support"; ObjectID = "E0d-Lk-jyq"; */
+"E0d-Lk-jyq.normalTitle" = "Support";
+
+/* Class = "UILabel"; text = "Etwas Genauer!"; ObjectID = "E7w-ap-DEZ"; */
+"E7w-ap-DEZ.text" = "Etwas Genauer!";
+
+/* Class = "UIBarButtonItem"; title = "Nächste"; ObjectID = "EAy-4I-KgE"; */
+"EAy-4I-KgE.title" = "Nächste";
+
+/* Class = "UILabel"; text = "50 Mio."; ObjectID = "EgS-Ae-Gtf"; */
+"EgS-Ae-Gtf.text" = "50 Mio.";
+
+/* Class = "UILabel"; text = "Max Mustermann"; ObjectID = "Egq-3a-bhR"; */
+"Egq-3a-bhR.text" = "Max Mustermann";
+
+/* Class = "UILabel"; text = "Was sind denn deine bisherigen Erfahrungen oder Qualifikationen?"; ObjectID = "Fez-2X-arC"; */
+"Fez-2X-arC.text" = "Was sind denn deine bisherigen Erfahrungen oder Qualifikationen?";
+
+/* Class = "UILabel"; text = "OriginalBeschreibung:"; ObjectID = "G1z-DI-Umy"; */
+"G1z-DI-Umy.text" = "OriginalBeschreibung:";
+
+/* Class = "UILabel"; text = "Vorbeugend Markieren"; ObjectID = "GOM-TJ-RJ1"; */
+"GOM-TJ-RJ1.text" = "Vorbeugend Markieren";
+
+/* Class = "UIButton"; normalTitle = "x"; ObjectID = "GbK-Ya-3Cf"; */
+"GbK-Ya-3Cf.normalTitle" = "x";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "Gzc-EQ-8fo"; */
+"Gzc-EQ-8fo.normalTitle" = "Button";
+
+/* Class = "UIButton"; normalTitle = "Mehr Infos"; ObjectID = "HgR-qd-Wl8"; */
+"HgR-qd-Wl8.normalTitle" = "Mehr Infos";
+
+/* Class = "UITextField"; placeholder = "Beschreibung..."; ObjectID = "Hgn-hw-eIN"; */
+"Hgn-hw-eIN.placeholder" = "Beschreibung...";
+
+/* Class = "UILabel"; text = "Was möchtest du teilen?"; ObjectID = "HvF-Lr-F87"; */
+"HvF-Lr-F87.text" = "Was möchtest du teilen?";
+
+/* Class = "UINavigationItem"; title = "Imagine"; ObjectID = "Hwf-h8-XS3"; */
+"Hwf-h8-XS3.title" = "Imagine";
+
+/* Class = "UILabel"; text = "Der Grund für dein Melden: Whatever."; ObjectID = "ICP-23-EFC"; */
+"ICP-23-EFC.text" = "Der Grund für dein Melden: Whatever.";
+
+/* Class = "UIButton"; normalTitle = "Übersetzen"; ObjectID = "IDL-0y-HBN"; */
+"IDL-0y-HBN.normalTitle" = "Übersetzen";
+
+/* Class = "UILabel"; text = "Quelle"; ObjectID = "IMd-Ga-npE"; */
+"IMd-Ga-npE.text" = "Quelle";
+
+/* Class = "UILabel"; text = "Hier steht die ausführliche Beschreibung "; ObjectID = "IcH-Nt-OKa"; */
+"IcH-Nt-OKa.text" = "Hier steht die ausführliche Beschreibung ";
+
+/* Class = "UILabel"; text = "Meldeoption"; ObjectID = "Im6-aU-66R"; */
+"Im6-aU-66R.text" = "Meldeoption";
+
+/* Class = "UILabel"; text = "0 Interessenten"; ObjectID = "J8D-i2-2jw"; */
+"J8D-i2-2jw.text" = "0 Interessenten";
+
+/* Class = "UILabel"; text = "Downvote"; ObjectID = "JEm-h3-8Oe"; */
+"JEm-h3-8Oe.text" = "Downvote";
+
+/* Class = "UIButton"; normalTitle = "Jetzt kontaktieren"; ObjectID = "JGj-aV-9Kh"; */
+"JGj-aV-9Kh.normalTitle" = "Jetzt kontaktieren";
+
+/* Class = "UILabel"; text = "Offenbarung"; ObjectID = "JRj-b5-6dO"; */
+"JRj-b5-6dO.text" = "Offenbarung";
+
+/* Class = "UILabel"; text = "Post Melden"; ObjectID = "JTr-hU-IYS"; */
+"JTr-hU-IYS.text" = "Post Melden";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "JgE-kH-Vbv"; */
+"JgE-kH-Vbv.normalTitle" = "Button";
+
+/* Class = "UIButton"; normalTitle = "Log-Out"; ObjectID = "Kbj-MB-z1Q"; */
+"Kbj-MB-z1Q.normalTitle" = "Log-Out";
+
+/* Class = "UILabel"; text = "Gegenargumente:"; ObjectID = "KcV-S6-Fm3"; */
+"KcV-S6-Fm3.text" = "Gegenargumente:";
+
+/* Class = "UITextField"; placeholder = "Berlin, Deutschland..."; ObjectID = "KsJ-Zi-OCY"; */
+"KsJ-Zi-OCY.placeholder" = "Berlin, Deutschland...";
+
+/* Class = "UILabel"; text = "Erstes Gegenargument"; ObjectID = "KxX-aB-Bt0"; */
+"KxX-aB-Bt0.text" = "Erstes Gegenargument";
+
+/* Class = "UILabel"; text = "ProContra"; ObjectID = "LDE-vp-ph4"; */
+"LDE-vp-ph4.text" = "ProContra";
+
+/* Class = "UILabel"; text = "Schlechte Absicht"; ObjectID = "LdR-3q-pA4"; */
+"LdR-3q-pA4.text" = "Schlechte Absicht";
+
+/* Class = "UILabel"; text = " "; ObjectID = "LjD-aC-C3z"; */
+"LjD-aC-C3z.text" = " ";
+
+/* Class = "UIButton"; normalTitle = "Originaltext nutzen"; ObjectID = "Ljl-kt-RU6"; */
+"Ljl-kt-RU6.normalTitle" = "Originaltext nutzen";
+
+/* Class = "UILabel"; text = "Deine Idee:"; ObjectID = "Ll6-Rb-0B3"; */
+"Ll6-Rb-0B3.text" = "Deine Idee:";
+
+/* Class = "UILabel"; text = "Quellen:"; ObjectID = "LzG-hc-Gcp"; */
+"LzG-hc-Gcp.text" = "Quellen:";
+
+/* Class = "UILabel"; text = "Pro"; ObjectID = "M28-pT-1tV"; */
+"M28-pT-1tV.text" = "Pro";
+
+/* Class = "UILabel"; text = "Rechte der Administratoren"; ObjectID = "M5V-pY-TCm"; */
+"M5V-pY-TCm.text" = "Rechte der Administratoren";
+
+/* Class = "UITextField"; placeholder = "Autos, Schwimmen..."; ObjectID = "MI2-dp-uru"; */
+"MI2-dp-uru.placeholder" = "Autos, Schwimmen...";
+
+/* Class = "UIButton"; normalTitle = "Teilen"; ObjectID = "MUX-BH-Y4P"; */
+"MUX-BH-Y4P.normalTitle" = "Teilen";
+
+/* Class = "UILabel"; text = "546.023"; ObjectID = "N6S-z3-zms"; */
+"N6S-z3-zms.text" = "546.023";
+
+/* Class = "UILabel"; text = "Wie kann sich Imagine bessern?"; ObjectID = "NV6-hR-eHv"; */
+"NV6-hR-eHv.text" = "Wie kann sich Imagine bessern?";
+
+/* Class = "UIButton"; normalTitle = "Weiter"; ObjectID = "ODS-YZ-Ygw"; */
+"ODS-YZ-Ygw.normalTitle" = "Weiter";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "OeY-Dc-jLW"; */
+"OeY-Dc-jLW.normalTitle" = "Button";
+
+/* Class = "UILabel"; text = " "; ObjectID = "Oof-ZB-4nL"; */
+"Oof-ZB-4nL.text" = " ";
+
+/* Class = "UIButton"; normalTitle = "Zuspruch"; ObjectID = "P1x-qt-x7K"; */
+"P1x-qt-x7K.normalTitle" = "Zuspruch";
+
+/* Class = "UILabel"; text = "▼ 20"; ObjectID = "PWM-3D-Npf"; */
+"PWM-3D-Npf.text" = "▼ 20";
+
+/* Class = "UIButton"; normalTitle = "Post-Algorithmen"; ObjectID = "Pf2-qi-rq8"; */
+"Pf2-qi-rq8.normalTitle" = "Post-Algorithmen";
+
+/* Class = "UILabel"; text = "OriginaTitel:"; ObjectID = "PnB-fQ-ERe"; */
+"PnB-fQ-ERe.text" = "OriginaTitel:";
+
+/* Class = "UIButton"; normalTitle = "▲"; ObjectID = "PxO-WD-BxY"; */
+"PxO-WD-BxY.normalTitle" = "▲";
+
+/* Class = "UILabel"; text = "Upvote"; ObjectID = "PyX-1Q-KMr"; */
+"PyX-1Q-KMr.text" = "Upvote";
+
+/* Class = "UIButton"; normalTitle = "Teilen"; ObjectID = "QEg-xj-IoH"; */
+"QEg-xj-IoH.normalTitle" = "Teilen";
+
+/* Class = "UILabel"; text = "Informatiker"; ObjectID = "QNb-CT-bWB"; */
+"QNb-CT-bWB.text" = "Informatiker";
+
+/* Class = "UIButton"; normalTitle = ">"; ObjectID = "Qga-1T-kpg"; */
+"Qga-1T-kpg.normalTitle" = ">";
+
+/* Class = "UILabel"; text = "Es gibt viel zu tun!"; ObjectID = "Qlk-xU-arn"; */
+"Qlk-xU-arn.text" = "Wir entscheiden gemeinsam!";
+
+/* Class = "UILabel"; text = "Beschreibung:"; ObjectID = "RB3-Db-3DN"; */
+"RB3-Db-3DN.text" = "Beschreibung:";
+
+/* Class = "UIButton"; normalTitle = "▼"; ObjectID = "ROE-fr-NbW"; */
+"ROE-fr-NbW.normalTitle" = "▼";
+
+/* Class = "UIButton"; normalTitle = "Aktuelle Themen der Community"; ObjectID = "RZ5-e8-Nvl"; */
+"RZ5-e8-Nvl.normalTitle" = "Aktuelle Themen der Community";
+
+/* Class = "UILabel"; text = "Power to the People"; ObjectID = "Rc1-bm-QfN"; */
+"Rc1-bm-QfN.text" = "Power to the People";
+
+/* Class = "UITabBarItem"; title = "Fakten"; ObjectID = "RcW-aN-vHn"; */
+"RcW-aN-vHn.title" = "Fakten";
+
+/* Class = "UITextField"; placeholder = "Titel"; ObjectID = "Rg4-e4-qFK"; */
+"Rg4-e4-qFK.placeholder" = "Titel";
+
+/* Class = "UIButton"; normalTitle = "Pro"; ObjectID = "SB7-dp-TlN"; */
+"SB7-dp-TlN.normalTitle" = "Pro";
+
+/* Class = "UILabel"; text = "Aktuelle Abstimmungen und Kampagnen:"; ObjectID = "SCM-XV-zP2"; */
+"SCM-XV-zP2.text" = "Aktuelle Abstimmungen und Kampagnen:";
+
+/* Class = "UIButton"; normalTitle = "Administrationsrechte"; ObjectID = "SCd-T2-HZc"; */
+"SCd-T2-HZc.normalTitle" = "Administrationsrechte";
+
+/* Class = "UILabel"; text = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."; ObjectID = "SHT-Ge-EaK"; */
+"SHT-Ge-EaK.text" = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+
+/* Class = "UIButton"; normalTitle = "Übersetzungen & Reposts"; ObjectID = "SQN-0L-h7h"; */
+"SQN-0L-h7h.normalTitle" = "Übersetzungen & Reposts";
+
+/* Class = "UILabel"; text = "Das ist die ausführliche Beschreibung des Argumentes oder der Quelle"; ObjectID = "Sau-bM-GaP"; */
+"Sau-bM-GaP.text" = "Das ist die ausführliche Beschreibung des Argumentes oder der Quelle";
+
+/* Class = "UILabel"; text = "Peace in Mind"; ObjectID = "SdM-Ew-GeA"; */
+"SdM-Ew-GeA.text" = "Peace in Mind";
+
+/* Class = "UILabel"; text = "One Step Further..."; ObjectID = "SmS-Lk-3s7"; */
+"SmS-Lk-3s7.text" = "One Step Further...";
+
+/* Class = "UILabel"; text = "100 Supporter"; ObjectID = "SqK-hk-Ied"; */
+"SqK-hk-Ied.text" = "100 Supporter";
+
+/* Class = "UITabBarItem"; title = "Fakten"; ObjectID = "Sw2-R1-Pvl"; */
+"Sw2-R1-Pvl.title" = "Fakten";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "TRo-uj-ltc"; */
+"TRo-uj-ltc.normalTitle" = "Button";
+
+/* Class = "UILabel"; text = "Name"; ObjectID = "Tbh-0m-tI1"; */
+"Tbh-0m-tI1.text" = "Name";
+
+/* Class = "UIButton"; normalTitle = "Send"; ObjectID = "Tep-zU-fgS"; */
+"Tep-zU-fgS.normalTitle" = "Send";
+
+/* Class = "UIButton"; normalTitle = "Chat"; ObjectID = "TgV-95-uMC"; */
+"TgV-95-uMC.normalTitle" = "Chat";
+
+/* Class = "UIButton"; normalTitle = "Schritt 3"; ObjectID = "Tzr-cV-BYc"; */
+"Tzr-cV-BYc.normalTitle" = "Schritt 3";
+
+/* Class = "UIButton"; normalTitle = "▼"; ObjectID = "UJL-Wu-Oa3"; */
+"UJL-Wu-Oa3.normalTitle" = "▼";
+
+/* Class = "UILabel"; text = "1. Hinweis"; ObjectID = "UQJ-NJ-rxI"; */
+"UQJ-NJ-rxI.text" = "1. Hinweis";
+
+/* Class = "UILabel"; text = "Wir sind über jede Hilfe dankbar!"; ObjectID = "VeR-au-LQi"; */
+"VeR-au-LQi.text" = "Wir sind über jede Hilfe dankbar!";
+
+/* Class = "UILabel"; text = "Inhalt"; ObjectID = "WFh-7R-5YM"; */
+"WFh-7R-5YM.text" = "Inhalt";
+
+/* Class = "UILabel"; text = "2. Hinweis"; ObjectID = "Wel-h8-AF3"; */
+"Wel-h8-AF3.text" = "2. Hinweis";
+
+/* Class = "UIButton"; normalTitle = "Show Me!"; ObjectID = "XmU-uF-LnK"; */
+"XmU-uF-LnK.normalTitle" = "Show Me!";
+
+/* Class = "UILabel"; text = "Wie können wir dich erreichen?"; ObjectID = "YWt-St-xWO"; */
+"YWt-St-xWO.text" = "Wie können wir dich erreichen?";
+
+/* Class = "UILabel"; text = "54"; ObjectID = "Ylv-Xa-n04"; */
+"Ylv-Xa-n04.text" = "54";
+
+/* Class = "UILabel"; text = "Downvote"; ObjectID = "Yme-L3-hjV"; */
+"Yme-L3-hjV.text" = "Downvote";
+
+/* Class = "UIButton"; normalTitle = "Teilen"; ObjectID = "ZWG-z1-l0K"; */
+"ZWG-z1-l0K.normalTitle" = "Teilen";
+
+/* Class = "UILabel"; text = "Contra"; ObjectID = "ZhI-yT-Zox"; */
+"ZhI-yT-Zox.text" = "Contra";
+
+/* Class = "UILabel"; text = "You may say I'm a dreamer, ..."; ObjectID = "Zn1-xE-CHg"; */
+"Zn1-xE-CHg.text" = "You may say I'm a dreamer, ...";
+
+/* Class = "UIButton"; normalTitle = "▲"; ObjectID = "ZtH-JR-8HW"; */
+"ZtH-JR-8HW.normalTitle" = "▲";
+
+/* Class = "UILabel"; text = "Die Firma von Mr. Wrong wird gesponsert von der Corruption Ltd. Gruppe! Das war ganz groß in der Tageszeitung. Bleibt also die frage wie vertrauenswürdig Mr. Wrong ist. Außerdem ist er Asiate!"; ObjectID = "Zue-tO-Jem"; */
+"Zue-tO-Jem.text" = "Die Firma von Mr. Wrong wird gesponsert von der Corruption Ltd. Gruppe! Das war ganz groß in der Tageszeitung. Bleibt also die frage wie vertrauenswürdig Mr. Wrong ist. Außerdem ist er Asiate!";
+
+/* Class = "UILabel"; text = "Upvote"; ObjectID = "Zxl-Lw-rZm"; */
+"Zxl-Lw-rZm.text" = "Upvote";
+
+/* Class = "UILabel"; text = "Überprüfe deine Angaben!"; ObjectID = "a0b-vF-X9k"; */
+"a0b-vF-X9k.text" = "Überprüfe deine Angaben!";
+
+/* Class = "UILabel"; text = " "; ObjectID = "a0y-63-hEa"; */
+"a0y-63-hEa.text" = " ";
+
+/* Class = "UIButton"; normalTitle = "Trust-Score"; ObjectID = "a2L-b5-x0t"; */
+"a2L-b5-x0t.normalTitle" = "Trust-Score";
+
+/* Class = "UILabel"; text = "Das Gemeinwohl"; ObjectID = "a4P-nX-sBo"; */
+"a4P-nX-sBo.text" = "Das Gemeinwohl";
+
+/* Class = "UILabel"; text = "▲ 20"; ObjectID = "a4Z-11-0LF"; */
+"a4Z-11-0LF.text" = "▲ 20";
+
+/* Class = "UILabel"; text = "Max \"Hurtin\" Them'all"; ObjectID = "aKi-hb-RIE"; */
+"aKi-hb-RIE.text" = "Max \"Hurtin\" Them'all";
+
+/* Class = "UIButton"; normalTitle = ">"; ObjectID = "axO-ea-izC"; */
+"axO-ea-izC.normalTitle" = ">";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "bEj-Or-Bc5"; */
+"bEj-Or-Bc5.normalTitle" = "Button";
+
+/* Class = "UIButton"; normalTitle = "Zurück"; ObjectID = "bGK-77-bSJ"; */
+"bGK-77-bSJ.normalTitle" = "Zurück";
+
+/* Class = "UILabel"; text = "30"; ObjectID = "bVn-bd-4bg"; */
+"bVn-bd-4bg.text" = "30";
+
+/* Class = "UIButton"; normalTitle = "Unsere Erfolge und Ziele"; ObjectID = "c7X-SV-rP2"; */
+"c7X-SV-rP2.normalTitle" = "Unsere Erfolge und Ziele";
+
+/* Class = "UIButton"; normalTitle = "Melden"; ObjectID = "cK4-or-WTb"; */
+"cK4-or-WTb.normalTitle" = "Melden";
+
+/* Class = "UIButton"; normalTitle = "Teilen"; ObjectID = "cXT-s7-9oC"; */
+"cXT-s7-9oC.normalTitle" = "Teilen";
+
+/* Class = "UIButton"; normalTitle = "Abschicken"; ObjectID = "ccM-dc-vwn"; */
+"ccM-dc-vwn.normalTitle" = "Abschicken";
+
+/* Class = "UILabel"; text = "Übersetzung:"; ObjectID = "cjS-Xa-BEe"; */
+"cjS-Xa-BEe.text" = "Übersetzung:";
+
+/* Class = "UILabel"; text = "Wieviel Prozent dürfen die Administratoren, besonders Malte, nach dem ersten Jahr an Rechten haben?"; ObjectID = "d5Z-sk-bFf"; */
+"d5Z-sk-bFf.text" = "Wieviel Prozent dürfen die Administratoren, besonders Malte, nach dem ersten Jahr an Rechten haben?";
+
+/* Class = "UILabel"; text = "Objektiv und Neutral"; ObjectID = "dWi-Pv-A56"; */
+"dWi-Pv-A56.text" = "Objektiv und Neutral";
+
+/* Class = "UINavigationItem"; title = "Imagine"; ObjectID = "dhy-D1-vdv"; */
+"dhy-D1-vdv.title" = "Imagine";
+
+/* Class = "UILabel"; text = "Teile deine Erfahrungen!"; ObjectID = "dq9-fE-MWw"; */
+"dq9-fE-MWw.text" = "Teile deine Erfahrungen!";
+
+/* Class = "UITextField"; placeholder = "Titel..."; ObjectID = "e9r-xO-f4V"; */
+"e9r-xO-f4V.placeholder" = "Titel...";
+
+/* Class = "UIButton"; normalTitle = ">"; ObjectID = "eFY-hR-O2p"; */
+"eFY-hR-O2p.normalTitle" = ">";
+
+/* Class = "UILabel"; text = " "; ObjectID = "eiG-Oz-0iI"; */
+"eiG-Oz-0iI.text" = " ";
+
+/* Class = "UIButton"; normalTitle = "..."; ObjectID = "esU-vQ-kGI"; */
+"esU-vQ-kGI.normalTitle" = "...";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "fLO-2R-PPZ"; */
+"fLO-2R-PPZ.normalTitle" = "Button";
+
+/* Class = "UIButton"; normalTitle = "Contra"; ObjectID = "fPk-yy-H6C"; */
+"fPk-yy-H6C.normalTitle" = "Contra";
+
+/* Class = "UILabel"; text = "Upvote"; ObjectID = "fV1-x0-q1m"; */
+"fV1-x0-q1m.text" = "Upvote";
+
+/* Class = "UILabel"; text = "Die Gemeinschaft"; ObjectID = "fg4-rZ-C8k"; */
+"fg4-rZ-C8k.text" = "Die Gemeinschaft";
+
+/* Class = "UITextField"; placeholder = "Link: https://..."; ObjectID = "fif-oF-TrN"; */
+"fif-oF-TrN.placeholder" = "Link: https://...";
+
+/* Class = "UILabel"; text = "Hier sind viele der Fähigkeiten und des Know-Hows welche wir dringend benötigen. Schau dich doch einmal um, wir können jede Hand gebrauchen. Es wird sich lohnen!"; ObjectID = "fzT-8o-XXg"; */
+"fzT-8o-XXg.text" = "Wir können jede helfende Hand gebrauchen. Es wird sich lohnen!";
+
+/* Class = "UIButton"; normalTitle = "Repost"; ObjectID = "gBD-8N-El9"; */
+"gBD-8N-El9.normalTitle" = "Repost";
+
+/* Class = "UILabel"; text = "Imagine!"; ObjectID = "gBw-Oh-k8W"; */
+"gBw-Oh-k8W.text" = "Imagine!";
+
+/* Class = "UILabel"; text = "13.03.2019 10:00"; ObjectID = "gi8-k5-WQT"; */
+"gi8-k5-WQT.text" = "13.03.2019 10:00";
+
+/* Class = "UIBarButtonItem"; title = "Zurück"; ObjectID = "guC-Fx-mgl"; */
+"guC-Fx-mgl.title" = "Zurück";
+
+/* Class = "UILabel"; text = "Kurze Zusammenfassung:"; ObjectID = "h0s-sQ-2Ir"; */
+"h0s-sQ-2Ir.text" = "Kurze Zusammenfassung:";
+
+/* Class = "UILabel"; text = "Übersetzung:"; ObjectID = "h2p-kd-5zV"; */
+"h2p-kd-5zV.text" = "Übersetzung:";
+
+/* Class = "UIButton"; normalTitle = "Teilen"; ObjectID = "hVm-mg-peJ"; */
+"hVm-mg-peJ.normalTitle" = "Teilen";
+
+/* Class = "UILabel"; text = "Frank Tha Man"; ObjectID = "ht5-Fz-kCm"; */
+"ht5-Fz-kCm.text" = "Frank Tha Man";
+
+/* Class = "UINavigationItem"; title = "Log-In"; ObjectID = "hxy-PL-FLG"; */
+"hxy-PL-FLG.title" = "Log-In";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "iE0-tr-EHI"; */
+"iE0-tr-EHI.text" = "Label";
+
+/* Class = "UILabel"; text = "Wieviel Prozent dürfen die Administratoren, besonders Malte, nach dem ersten Jahr an Rechten haben? Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."; ObjectID = "iP1-Qj-cSU"; */
+"iP1-Qj-cSU.text" = "Wieviel Prozent dürfen die Administratoren, besonders Malte, nach dem ersten Jahr an Rechten haben? Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+
+/* Class = "UIButton"; normalTitle = "Melden und Auswirkungen"; ObjectID = "ivP-hq-fs5"; */
+"ivP-hq-fs5.normalTitle" = "Melden und Auswirkungen";
+
+/* Class = "UILabel"; text = "Upvote"; ObjectID = "kY7-t8-hpK"; */
+"kY7-t8-hpK.text" = "Upvote";
+
+/* Class = "UILabel"; text = "Uns steht ein langer Weg bevor!"; ObjectID = "keH-Ol-gKQ"; */
+"keH-Ol-gKQ.text" = "Uns steht ein langer Weg bevor!";
+
+/* Class = "UIButton"; normalTitle = " Die Vision "; ObjectID = "klF-7p-hWG"; */
+"klF-7p-hWG.normalTitle" = " Die Vision ";
+
+/* Class = "UITabBarItem"; title = "Feed"; ObjectID = "ldt-Ue-50w"; */
+"ldt-Ue-50w.title" = "Feed";
+
+/* Class = "UILabel"; text = "1 Mio."; ObjectID = "lrs-Hr-sq5"; */
+"lrs-Hr-sq5.text" = "1 Mio.";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "lwE-Oa-4EU"; */
+"lwE-Oa-4EU.normalTitle" = "Button";
+
+/* Class = "UILabel"; text = "Plan Cobra"; ObjectID = "m0x-7f-rYT"; */
+"m0x-7f-rYT.text" = "Plan Cobra";
+
+/* Class = "UILabel"; text = "Ulla K. Rock"; ObjectID = "m6R-Uc-Pe2"; */
+"m6R-Uc-Pe2.text" = "Ulla K. Rock";
+
+/* Class = "UIButton"; normalTitle = "▲"; ObjectID = "mz6-Cr-gmM"; */
+"mz6-Cr-gmM.normalTitle" = "▲";
+
+/* Class = "UILabel"; text = "Objektive Diskussionen und Meinungsbildung"; ObjectID = "n4I-Ch-ZHv"; */
+"n4I-Ch-ZHv.text" = "Objektive Diskussionen und Meinungsbildung";
+
+/* Class = "UILabel"; text = "Die Fakten"; ObjectID = "nJV-N3-Bfc"; */
+"nJV-N3-Bfc.text" = "Die Fakten";
+
+/* Class = "UILabel"; text = "So funktioniert unser Netzwerk:"; ObjectID = "nRB-w0-ZbT"; */
+"nRB-w0-ZbT.text" = "So funktioniert unser Netzwerk:";
+
+/* Class = "UIButton"; normalTitle = "Verwendung der Einnahmen"; ObjectID = "nYX-0Q-69X"; */
+"nYX-0Q-69X.normalTitle" = "Verwendung der Einnahmen";
+
+/* Class = "UILabel"; text = "Diese Quelle oder dieses Argument ist mir nicht vertrauenswürdig genug. Habt ihr nicht von den neuen Erkenntnissen von Dr. Re S. Earch und Med. Wong Wrong gehört? "; ObjectID = "nb6-eZ-Rkp"; */
+"nb6-eZ-Rkp.text" = "Diese Quelle oder dieses Argument ist mir nicht vertrauenswürdig genug. Habt ihr nicht von den neuen Erkenntnissen von Dr. Re S. Earch und Med. Wong Wrong gehört? ";
+
+/* Class = "UIButton"; normalTitle = "▲"; ObjectID = "o3O-m4-TuC"; */
+"o3O-m4-TuC.normalTitle" = "▲";
+
+/* Class = "UIButton"; normalTitle = "Melden"; ObjectID = "oLy-3a-qgO"; */
+"oLy-3a-qgO.normalTitle" = "Melden";
+
+/* Class = "UIButton"; normalTitle = "Danke"; ObjectID = "oMg-fg-9On"; */
+"oMg-fg-9On.normalTitle" = "Danke";
+
+/* Class = "UILabel"; text = "Beschreibung:"; ObjectID = "oaC-Zm-RY3"; */
+"oaC-Zm-RY3.text" = "Beschreibung:";
+
+/* Class = "UILabel"; text = " "; ObjectID = "out-rs-tCe"; */
+"out-rs-tCe.text" = " ";
+
+/* Class = "UILabel"; text = "100 Interessenten"; ObjectID = "p0D-rf-oU7"; */
+"p0D-rf-oU7.text" = "100 Interessenten";
+
+/* Class = "UILabel"; text = "Rechte der Administratoren"; ObjectID = "pVO-3L-ACp"; */
+"pVO-3L-ACp.text" = "Rechte der Administratoren";
+
+/* Class = "UILabel"; text = "(0)"; ObjectID = "pb3-NJ-OcF"; */
+"pb3-NJ-OcF.text" = "(0)";
+
+/* Class = "UITabBarItem"; title = "New Post"; ObjectID = "pj6-xI-bWn"; */
+"pj6-xI-bWn.title" = "New Post";
+
+/* Class = "UILabel"; text = "Knowledge is half the battle"; ObjectID = "ptt-vd-jt2"; */
+"ptt-vd-jt2.text" = "Knowledge is half the battle";
+
+/* Class = "UILabel"; text = "Wieviel Prozent dürfen die Administratoren, besonders Malte, nach dem ersten Jahr an Rechten haben?"; ObjectID = "q1h-Sa-bMK"; */
+"q1h-Sa-bMK.text" = "Wieviel Prozent dürfen die Administratoren, besonders Malte, nach dem ersten Jahr an Rechten haben?";
+
+/* Class = "UILabel"; text = "Downvote"; ObjectID = "q56-YG-3xi"; */
+"q56-YG-3xi.text" = "Downvote";
+
+/* Class = "UILabel"; text = "Kommentare:"; ObjectID = "qUW-Me-TI5"; */
+"qUW-Me-TI5.text" = "Kommentare:";
+
+/* Class = "UILabel"; text = "Willkommen bei Imagine!"; ObjectID = "qe2-D3-BMr"; */
+"qe2-D3-BMr.text" = "Willkommen bei Imagine!";
+
+/* Class = "UILabel"; text = "Aktuelle Abstimmungen und Kampagnen:"; ObjectID = "rgT-sJ-qS3"; */
+"rgT-sJ-qS3.text" = "Aktuelle Abstimmungen und Kampagnen:";
+
+/* Class = "UILabel"; text = "Originaltitel:"; ObjectID = "rxL-g0-OwX"; */
+"rxL-g0-OwX.text" = "Originaltitel:";
+
+/* Class = "UILabel"; text = "Lasst uns gemeinsam eine neue Zeit einleiten!"; ObjectID = "sFP-bI-l0h"; */
+"sFP-bI-l0h.text" = "Lasst uns gemeinsam eine neue Zeit einleiten!";
+
+/* Class = "UILabel"; text = "Du möchtest Imagine als Informatiker unterstützen?"; ObjectID = "sf2-KZ-JO6"; */
+"sf2-KZ-JO6.text" = "Du möchtest Imagine als Informatiker unterstützen?";
+
+/* Class = "UILabel"; text = "Imagine!"; ObjectID = "tMD-PQ-Wvk"; */
+"tMD-PQ-Wvk.text" = "Imagine!";
+
+/* Class = "UILabel"; text = "Das stimmt, das habe ich auch gesehen, guter Punkt. Nur an deinem Rassismus musst du noch arbeiten!"; ObjectID = "tW4-ng-YkV"; */
+"tW4-ng-YkV.text" = "Das stimmt, das habe ich auch gesehen, guter Punkt. Nur an deinem Rassismus musst du noch arbeiten!";
+
+/* Class = "UILabel"; text = "Titel"; ObjectID = "tWq-W2-uyI"; */
+"tWq-W2-uyI.text" = "Titel";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "tfj-Zi-fb3"; */
+"tfj-Zi-fb3.normalTitle" = "Button";
+
+/* Class = "UILabel"; text = "Informatiker"; ObjectID = "tm3-We-q0t"; */
+"tm3-We-q0t.text" = "Informatiker";
+
+/* Class = "UILabel"; text = "Quelle 2"; ObjectID = "uYV-Zb-1Q5"; */
+"uYV-Zb-1Q5.text" = "Quelle 2";
+
+/* Class = "UIButton"; normalTitle = "Schritt 2"; ObjectID = "uea-HS-60e"; */
+"uea-HS-60e.normalTitle" = "Schritt 2";
+
+/* Class = "UIButton"; normalTitle = "Log-In"; ObjectID = "ufB-Aq-9Vs"; */
+"ufB-Aq-9Vs.normalTitle" = "Log-In";
+
+/* Class = "UITextField"; placeholder = "meinPortfolio.html"; ObjectID = "v9s-Lo-bdZ"; */
+"v9s-Lo-bdZ.placeholder" = "meinPortfolio.html";
+
+/* Class = "UILabel"; text = "Lüge/Täuschung"; ObjectID = "vFI-M3-br9"; */
+"vFI-M3-br9.text" = "Lüge/Täuschung";
+
+/* Class = "UILabel"; text = "Unsere Algorithmen sind das Rückrad für eine faire und unterhaltsame Verteilung von Wissen und Posts. Höchste Priorität für dieses komplizierte Thema!"; ObjectID = "wDd-ZR-8JD"; */
+"wDd-ZR-8JD.text" = "Unsere Algorithmen sind das Rückrad für eine faire und unterhaltsame Verteilung von Wissen und Posts. Höchste Priorität für dieses komplizierte Thema!";
+
+/* Class = "UILabel"; text = "Wo wohnst du, bzw. wo hälst du dich in nächster Zeit auf?"; ObjectID = "wFj-Va-ct5"; */
+"wFj-Va-ct5.text" = "Wo wohnst du, bzw. wo hälst du dich in nächster Zeit auf?";
+
+/* Class = "UILabel"; text = "Originalbeschreibung:"; ObjectID = "wIt-yV-ewh"; */
+"wIt-yV-ewh.text" = "Originalbeschreibung:";
+
+/* Class = "UIButton"; normalTitle = "Community-Themen"; ObjectID = "wbG-qj-JOy"; */
+"wbG-qj-JOy.normalTitle" = "Community-Themen";
+
+/* Class = "UILabel"; text = "25.03.2018 09:00"; ObjectID = "xF7-Le-kVY"; */
+"xF7-Le-kVY.text" = "25.03.2018 09:00";
+
+/* Class = "UIButton"; normalTitle = "▼"; ObjectID = "xY7-gV-TuL"; */
+"xY7-gV-TuL.normalTitle" = "▼";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "xfX-VX-N4S"; */
+"xfX-VX-N4S.text" = "Label";
+
+/* Class = "UILabel"; text = "Unsere Algorithmen sind das Rückrad für eine faire und unterhaltsame Verteilung von Wissen und Posts. Höchste Priorität für dieses komplizierte Thema!"; ObjectID = "ybu-Wk-JVX"; */
+"ybu-Wk-JVX.text" = "Unsere Algorithmen sind das Rückrad für eine faire und unterhaltsame Verteilung von Wissen und Posts. Höchste Priorität für dieses komplizierte Thema!";
+
+/* Class = "UILabel"; text = "Teile diese Erfahrungen!"; ObjectID = "ylq-zH-KFT"; */
+"ylq-zH-KFT.text" = "Teile diese Erfahrungen!";
+
+/* Class = "UILabel"; text = "Upvote"; ObjectID = "z8B-P8-jJO"; */
+"z8B-P8-jJO.text" = "Upvote";
+
+/* Class = "UITabBarItem"; title = "Vision"; ObjectID = "zEf-8R-Lnk"; */
+"zEf-8R-Lnk.title" = "Vision";
+
+/* Class = "UILabel"; text = "Wieviel Prozent dürfen die Administratoren, besonders Malte, nach dem ersten Jahr an Rechten haben? Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."; ObjectID = "zGA-Ey-kc9"; */
+"zGA-Ey-kc9.text" = "Wieviel Prozent dürfen die Administratoren, besonders Malte, nach dem ersten Jahr an Rechten haben? Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+
+/* Class = "UILabel"; text = "Bla Bla bla"; ObjectID = "zbx-G2-pYy"; */
+"zbx-G2-pYy.text" = "Bla Bla bla";

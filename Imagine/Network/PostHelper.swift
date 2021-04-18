@@ -8,6 +8,7 @@
 
 import Foundation
 import Firebase
+import CoreLocation
 
 class PostHelper {
     
@@ -337,14 +338,17 @@ class PostHelper {
             post.report = report
         }
         
+        //User who receive notifications
         if let notificationRecipients = documentData["notificationRecipients"] as? [String] {
             post.notificationRecipients = notificationRecipients
         }
         
-        if let factID = documentData[factJSONString] as? String {
-            post.fact = self.addCommunity(communityID: factID)
+        //Linked Community
+        if let communityID = documentData[factJSONString] as? String {
+            post.community = self.addCommunity(communityID: communityID)
         }
         
+        // User/Poster
         if originalPoster == "anonym" {
             post.anonym = true
             if let anonymousName = documentData["anonymousName"] as? String {
@@ -354,9 +358,31 @@ class PostHelper {
             post.getUser(isAFriend: isAFriend)
         }
         
+        //Comment Count
         if let commentCount = documentData["commentCount"] as? Int {
             post.commentCount = commentCount
-        } // else { its 0
+        } // else { it stays 0
+        
+        //Design Options
+        if let designOptions = documentData["designOptions"] as? [String: Any] {
+            if let hideProfile = designOptions["hideProfile"] as? Bool {
+                if hideProfile {
+                    let option = PostDesignOption(hideProfilePicture: true)
+                    post.designOptions = option
+                }
+            }
+        }
+        
+        if let locationName = documentData["locationName"] as? String, let locationCoordinates = documentData["locationCoordinate"] as? GeoPoint {
+            let coordinate = CLLocationCoordinate2D(latitude: locationCoordinates.latitude, longitude: locationCoordinates.longitude)
+            let location = Location(title: locationName, coordinate: coordinate)
+            
+            post.location = location
+        }
+        
+        if let thumbnailURL = documentData["thumbnailImageURL"] as? String {
+            post.thumbnailImageURL = thumbnailURL
+        }
         
         return post
     }

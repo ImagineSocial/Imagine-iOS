@@ -352,7 +352,6 @@ class DataRequest {
         }
         
         var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
         if fact.language == .english {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {

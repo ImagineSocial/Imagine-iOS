@@ -53,7 +53,10 @@ class NewBlogPostViewController: UIViewController {
             return
         } else {
             
-            if let _ = user {
+            if let _ = user,
+               let title = titleTextField.text,
+               let category = categoryTextField.text,
+               let description = descriptionTextView.text {
                 
                 var collectionRef: CollectionReference!
                 let language = LanguageSelection().getLanguage()
@@ -65,7 +68,7 @@ class NewBlogPostViewController: UIViewController {
                 
                 let blogRef = collectionRef.document()
                 
-                let dataDictionary: [String: Any] = ["title": titleTextField.text, "subtitle": shortDescriptionTextfield.text, "category" : categoryTextField.text, "description": descriptionTextView.text, "createDate": Timestamp(date: Date()), "poster": "Imagine"]
+                let dataDictionary: [String: Any] = ["title": title, "subtitle": shortDescriptionTextfield.text, "category" : category, "description": description, "createDate": Timestamp(date: Date()), "poster": "Imagine"]
                 
                 
                 blogRef.setData(dataDictionary) { (err) in

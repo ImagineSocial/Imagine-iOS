@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol AddOnCellDelegate {
+protocol AddOnCellDelegate: class {
     func showDescription()
     func settingsTapped(itemRow: Int)
     func thanksTapped(info: AddOn)

@@ -207,9 +207,9 @@ class SmallTopicCell: UICollectionViewCell {
                     cellNameLabel.text = fact.title
                     
                     if let url = URL(string: fact.imageURL) {
-                        cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "FactStamp"), options: [], completed: nil)
+                        cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
                     } else {
-                        cellImageView.image = UIImage(named: "FactStamp")
+                        cellImageView.image = UIImage(named: "default-community")
                     }
                     setGradientView()
                 }

@@ -47,7 +47,7 @@ class SmallFactCell: UICollectionViewCell {
             if let url = URL(string: fact.imageURL) {
                 factImageView.sd_setImage(with: url, completed: nil)
             } else {
-                factImageView.image = UIImage(named: "FactStamp")
+                factImageView.image = UIImage(named: "default-community")
             }
             factHeaderTitle.text = fact.title
             factHeaderDescriptionLabel.text = fact.description
@@ -216,7 +216,7 @@ class SmallFactCell: UICollectionViewCell {
        let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
-        imageView.image = UIImage(named: "FactStamp")
+        imageView.image = UIImage(named: "default-community")
         imageView.clipsToBounds = true
         
         return imageView

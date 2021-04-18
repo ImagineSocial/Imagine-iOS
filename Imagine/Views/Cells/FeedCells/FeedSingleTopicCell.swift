@@ -10,49 +10,45 @@ import UIKit
 
 class FeedSingleTopicCell: BaseFeedCell {
     
+    //MARK:- IBOutlets
     @IBOutlet weak var collectionView: UICollectionView!
     
-    let singleTopicCellIdentifier = "SingleCommunityCollectionViewCell"
-    var delegate: PostCellDelegate?
+    //MARK:- Variables
+    private let singleTopicCellIdentifier = "SingleCommunityCollectionViewCell"
     
-    var post:Post? {
-        didSet {
-            setCell()
-        }
-    }
+    private var addOnInfo: AddOn?
     
-    var addOnInfo: AddOn?
-    
+    //MARK:- Cell Lifecycle
     override func awakeFromNib() {
         collectionView.dataSource = self
         collectionView.delegate = self
         
         collectionView.register(UINib(nibName: "AddOnSingleCommunityCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: singleTopicCellIdentifier)
         
-        self.initiateCell(thanksButton: thanksButton, wowButton: wowButton, haButton: haButton, niceButton: niceButton, factImageView: factImageView, profilePictureImageView: profilePictureImageView)
+        self.initiateCell()
     }
     
-    func setCell() {
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        resetValues()
+    }
+    
+    //MARK:- Set Cell
+    override func setCell() {
         if let post = post {
+            feedUserView.delegate = self
             
             if ownProfile { // Set in the UserFeedTableViewController DataSource
-                thanksButton.setTitle(String(post.votes.thanks), for: .normal)
-                wowButton.setTitle(String(post.votes.wow), for: .normal)
-                haButton.setTitle(String(post.votes.ha), for: .normal)
-                niceButton.setTitle(String(post.votes.nice), for: .normal)
                 
                 if let _ = cellStyle {
                     print("Already Set")
                 } else {
                     cellStyle = .ownCell
-                    setOwnCell()
+                    setOwnCell(post: post)
                 }
-                
             } else {
-                thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
-                wowButton.setImage(UIImage(named: "wowButton"), for: .normal)
-                haButton.setImage(UIImage(named: "haButton"), for: .normal)
-                niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
+                setDefaultButtonImages()
             }
            
             
@@ -60,25 +56,25 @@ class FeedSingleTopicCell: BaseFeedCell {
                 if post.anonym {
                     self.setUser()
                 } else {
-                    self.getName()
+                    self.getUser()
                 }
             } else {
                 setUser()
             }
             
-            if let fact = post.fact {
-                if fact.title != "" {
-                    self.loadSingleTopic(post: post, community: fact)
+            if let community = post.community {
+                if community.title != "" {
+                    self.loadSingleTopic(post: post, community: community)
                 } else {
-                    self.loadFact(language: post.language, fact: fact, beingFollowed: false) { (fact) in
-                        self.loadSingleTopic(post: post, community: fact)
+                    let communityRequest = CommunityRequest()
+                    communityRequest.getCommunity(language: post.language, community: community, beingFollowed: false) { (community) in
+                        self.loadSingleTopic(post: post, community: community)
                     }
                 }
             }
             
             titleLabel.text = post.title
             descriptionPreviewLabel.text = post.description
-            createDateLabel.text = post.createTime
             commentCountLabel.text = String(post.commentCount)
             
             
@@ -86,112 +82,42 @@ class FeedSingleTopicCell: BaseFeedCell {
         }
     }
     
+    //MARK:- Load Single Topic
     func loadSingleTopic(post: Post, community: Community) {
         let info = AddOn(style: .singleTopic, OP: "", documentID: "", fact: Community(), headerTitle: post.title, description: post.description, singleTopic: community)
         
         self.addOnInfo = info
-        post.fact = community
+        post.community = community
         print("##LoadedSingleTopic")
         self.collectionView.reloadData()
         self.layoutSubviews()
     }
     
-    func setUser() {
-        if let post = post {
-            
-            if post.anonym {
-                if let anonymousName = post.anonymousName {
-                    OPNameLabel.text = anonymousName
-                } else {
-                    OPNameLabel.text = Constants.strings.anonymPosterName
-                }
-                profilePictureImageView.image = UIImage(named: "anonym-user")
-            } else {
-                OPNameLabel.text = post.user.displayName
-                
-                // Profile Picture
-                if let url = URL(string: post.user.imageURL) {
-                    profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
-                } else {
-                    profilePictureImageView.image = UIImage(named: "default-user")
-                }
-            }
-        }
-    }
     
-    
-    var index = 0
-    func getName() {
-        if index < 20 {
-            if let post = self.post {
-                if post.user.displayName == "" {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.getName()
-                        self.index+=1
-                    }
-                } else {
-                    setUser()
-                }
-            }
-        }
-    }
-    
-    //MARK:-Buttons
+    //MARK:- IBActions
     @IBAction func thanksButtonTapped(_ sender: Any) {
         if let post = post {
-            thanksButton.isEnabled = false
-            delegate?.thanksTapped(post: post)
-            post.votes.thanks = post.votes.thanks+1
-            showButtonText(post: post, button: thanksButton)
+            registerVote(post: post, button: thanksButton)
         }
     }
     @IBAction func wowButtonTapped(_ sender: Any) {
         if let post = post {
-            wowButton.isEnabled = false
-            delegate?.wowTapped(post: post)
-            post.votes.wow = post.votes.wow+1
-            showButtonText(post: post, button: wowButton)
+            registerVote(post: post, button: wowButton)
         }
     }
     @IBAction func haButtonTapped(_ sender: Any) {
         if let post = post {
-            haButton.isEnabled = false
-            delegate?.haTapped(post: post)
-            post.votes.ha = post.votes.ha+1
-            showButtonText(post: post, button: haButton)
+            registerVote(post: post, button: haButton)
         }
     }
     @IBAction func niceButtonTapped(_ sender: Any) {
         if let post = post {
-            niceButton.isEnabled = false
-            delegate?.niceTapped(post: post)
-            post.votes.nice = post.votes.nice+1
-            self.showButtonText(post: post, button: self.niceButton)
-        }
-    }
-    
-    @IBAction func reportPressed(_ sender: Any) {
-        if let post = post {
-            delegate?.reportTapped(post: post)
-        }
-    }
-    
-    
-    @IBAction func userButtonTapped(_ sender: Any) {
-        if let post = post {
-            if !post.anonym {
-                delegate?.userTapped(post: post)
-            }
-        }
-    }
-    
-    @IBAction func linkedFactTapped(_ sender: Any) {
-        if let fact = post?.fact {
-            delegate?.factTapped(fact: fact)
+            self.registerVote(post: post, button: self.niceButton)
         }
     }
 }
 
+//MARK:- UICollectionView
 extension FeedSingleTopicCell: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

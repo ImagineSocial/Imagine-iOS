@@ -413,10 +413,10 @@
             </objects>
             <point key="canvasLocation" x="-6204" y="1586.3568215892055"/>
         </scene>
-        <!--Posts Of Fact Table View Controller-->
+        <!--Community Post Table View Controller-->
         <scene sceneID="bBy-W6-4Cc">
             <objects>
-                <tableViewController storyboardIdentifier="postsOfFactVC" hidesBottomBarWhenPushed="YES" id="7BU-HE-H8k" customClass="PostsOfFactTableViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="postsOfFactVC" hidesBottomBarWhenPushed="YES" id="7BU-HE-H8k" customClass="CommunityPostTableViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="vVU-U5-2Cj">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2554,7 +2554,7 @@
                         <barButtonItem key="backBarButtonItem" title=" " id="6jG-We-7d3"/>
                         <barButtonItem key="rightBarButtonItem" title="Post It!" id="L1U-3t-xkx">
                             <connections>
-                                <action selector="sharePressed:" destination="IJd-wv-SAI" id="D3F-k7-Sfg"/>
+                                <action selector="sharePostTapped:" destination="IJd-wv-SAI" id="D3F-k7-Sfg"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -4890,7 +4890,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="UserVC" hidesBottomBarWhenPushed="YES" id="f0g-lQ-xiT" customClass="UserFeedTableViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="iP6-rd-z8g">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="1kT-Cm-aUp">
@@ -5273,11 +5273,11 @@
             <objects>
                 <viewController id="3uR-tP-o9i" customClass="LeanWebViewViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="xdF-jq-l5b">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                        <rect key="frame" x="0.0" y="0.0" width="187.5" height="300"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="b8y-qO-U8v">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                                <rect key="frame" x="0.0" y="0.0" width="187.5" height="300"/>
                                 <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <wkWebViewConfiguration key="configuration">
                                     <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
@@ -5640,7 +5640,7 @@
                                             <stackView contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="KFW-rE-sMG">
                                                 <rect key="frame" x="10" y="225" width="355" height="23"/>
                                                 <subviews>
-                                                    <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GKD-7H-JGi" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                                    <button clipsSubviews="YES" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GKD-7H-JGi" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="63" height="23"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
@@ -5657,7 +5657,7 @@
                                                             <action selector="thanksTapped:" destination="Ll6-Iq-u30" eventType="touchUpInside" id="Cpy-H3-kjF"/>
                                                         </connections>
                                                     </button>
-                                                    <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s63-US-vDv" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                                    <button clipsSubviews="YES" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s63-US-vDv" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                                         <rect key="frame" x="73" y="0.0" width="63" height="23"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
@@ -5674,7 +5674,7 @@
                                                             <action selector="wowTapped:" destination="Ll6-Iq-u30" eventType="touchUpInside" id="lCA-VI-WHl"/>
                                                         </connections>
                                                     </button>
-                                                    <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="P5g-gB-b2v" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                                    <button clipsSubviews="YES" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="P5g-gB-b2v" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                                         <rect key="frame" x="146" y="0.0" width="63" height="23"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
@@ -5691,7 +5691,7 @@
                                                             <action selector="haTapped:" destination="Ll6-Iq-u30" eventType="touchUpInside" id="ZUb-eX-e5O"/>
                                                         </connections>
                                                     </button>
-                                                    <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DEl-0O-M8w" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                                    <button clipsSubviews="YES" alpha="0.0" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DEl-0O-M8w" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                                         <rect key="frame" x="219" y="0.0" width="63" height="23"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
@@ -5719,7 +5719,7 @@
                                                                     <constraint firstAttribute="width" constant="15" id="RAb-jN-hKp"/>
                                                                 </constraints>
                                                             </imageView>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="17" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nWS-65-9Sw">
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nWS-65-9Sw">
                                                                 <rect key="frame" x="49" y="5" width="18" height="13"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="18" id="BVh-Xl-R3a"/>
@@ -5756,7 +5756,7 @@
                                                 </collectionViewFlowLayout>
                                                 <cells/>
                                             </collectionView>
-                                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fgj-qh-Nuz">
+                                            <view hidden="YES" alpha="0.65000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fgj-qh-Nuz">
                                                 <rect key="frame" x="0.0" y="135" width="375" height="75"/>
                                                 <subviews>
                                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.85000002384185791" translatesAutoresizingMaskIntoConstraints="NO" id="BxU-ap-6MY">
@@ -5792,7 +5792,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                 </subviews>
-                                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.79700877568493156" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstItem="Svu-Sm-1dK" firstAttribute="leading" secondItem="fgj-qh-Nuz" secondAttribute="leading" constant="10" id="3DN-3t-npc"/>
                                                     <constraint firstAttribute="height" constant="75" id="3cd-j1-9Gs"/>
@@ -5884,6 +5884,7 @@
                                             <constraint firstItem="KFW-rE-sMG" firstAttribute="top" secondItem="OZc-aM-9Aw" secondAttribute="bottom" id="JQw-3V-eaM"/>
                                             <constraint firstItem="x6J-Nz-Mdj" firstAttribute="top" secondItem="qSs-Bd-EY5" secondAttribute="bottom" id="Jq8-EA-NAY"/>
                                             <constraint firstItem="nXu-xj-4GQ" firstAttribute="leading" secondItem="nwF-9b-Sdf" secondAttribute="leading" id="KdI-PC-FUv"/>
+                                            <constraint firstItem="rh2-zi-Qnd" firstAttribute="leading" secondItem="nwF-9b-Sdf" secondAttribute="leading" constant="10" id="Mkq-7X-sRn"/>
                                             <constraint firstAttribute="trailing" secondItem="KFW-rE-sMG" secondAttribute="trailing" constant="10" id="Mw7-1r-2w7"/>
                                             <constraint firstItem="qSs-Bd-EY5" firstAttribute="leading" secondItem="nwF-9b-Sdf" secondAttribute="leading" id="R1T-ld-GBR"/>
                                             <constraint firstItem="TRU-bq-0jb" firstAttribute="top" secondItem="bFX-oy-ix1" secondAttribute="bottom" constant="15" id="SDf-sG-8Zx"/>
@@ -5894,7 +5895,7 @@
                                             <constraint firstItem="rh2-zi-Qnd" firstAttribute="top" secondItem="TRU-bq-0jb" secondAttribute="top" id="Yq7-vp-2J6"/>
                                             <constraint firstItem="KFW-rE-sMG" firstAttribute="top" secondItem="nXu-xj-4GQ" secondAttribute="bottom" constant="15" id="bZL-7b-OlX"/>
                                             <constraint firstItem="yK1-Iq-JXU" firstAttribute="height" secondItem="TRU-bq-0jb" secondAttribute="height" constant="6" id="d8i-KC-YXs"/>
-                                            <constraint firstItem="kge-gu-BhA" firstAttribute="leading" secondItem="TRU-bq-0jb" secondAttribute="trailing" constant="10" id="dd4-cz-9uA"/>
+                                            <constraint firstItem="kge-gu-BhA" firstAttribute="leading" secondItem="rh2-zi-Qnd" secondAttribute="leading" id="dd4-cz-9uA"/>
                                             <constraint firstAttribute="trailing" secondItem="b1k-lP-LGv" secondAttribute="trailing" constant="10" id="gA3-p8-AGT"/>
                                             <constraint firstItem="b1k-lP-LGv" firstAttribute="centerY" secondItem="TRU-bq-0jb" secondAttribute="centerY" id="hQQ-tC-N8Y"/>
                                             <constraint firstItem="OZc-aM-9Aw" firstAttribute="top" secondItem="nXu-xj-4GQ" secondAttribute="bottom" id="hd3-6C-S3R"/>
@@ -5909,6 +5910,11 @@
                                             <constraint firstItem="qSs-Bd-EY5" firstAttribute="top" secondItem="Q5g-tS-Gpr" secondAttribute="bottom" constant="60" id="y0U-sz-l6r"/>
                                             <constraint firstItem="nXu-xj-4GQ" firstAttribute="top" secondItem="Hez-vl-L2L" secondAttribute="bottom" constant="10" id="zgn-2P-EMj"/>
                                         </constraints>
+                                        <variation key="default">
+                                            <mask key="constraints">
+                                                <exclude reference="Mkq-7X-sRn"/>
+                                            </mask>
+                                        </variation>
                                     </view>
                                 </subviews>
                                 <constraints>
@@ -5952,6 +5958,8 @@
                         <outlet property="haButton" destination="P5g-gB-b2v" id="7nw-Cb-Exk"/>
                         <outlet property="imageCollectionView" destination="nXu-xj-4GQ" id="1oJ-gW-KwD"/>
                         <outlet property="imageCollectionViewHeightConstraint" destination="rdB-JU-Mmq" id="mwb-D1-lCg"/>
+                        <outlet property="leadingNameLabelToProfilePictureConstraint" destination="7Tv-FM-dqm" id="ACX-lT-9Lt"/>
+                        <outlet property="leadingNameLabelToSuperviewConstraint" destination="Mkq-7X-sRn" id="e79-OD-NmJ"/>
                         <outlet property="linkPreviewDescription" destination="jsd-zh-aSb" id="l1r-sp-shJ"/>
                         <outlet property="linkPreviewTitle" destination="Svu-Sm-1dK" id="pIr-tj-J15"/>
                         <outlet property="linkPreviewView" destination="fgj-qh-Nuz" id="KFX-hS-Ydr"/>
@@ -6182,9 +6190,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view alpha="0.65000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rDJ-m9-71o" userLabel="GrauerHintergrund">
+                            <view alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rDJ-m9-71o" userLabel="GrauerHintergrund">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="702"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" systemColor="secondaryLabelColor"/>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gCA-7E-pje">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
@@ -6193,18 +6201,18 @@
                                 </connections>
                             </button>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1v2-Tt-mer" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="5" y="270" width="365" height="195"/>
+                                <rect key="frame" x="5" y="275" width="365" height="190"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="65y-Cc-Fsj" userLabel="Oberer StackView">
-                                        <rect key="frame" x="0.0" y="58" width="365" height="137"/>
+                                        <rect key="frame" x="0.0" y="60" width="365" height="130"/>
                                         <subviews>
                                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rbm-aI-Hkc">
-                                                <rect key="frame" x="0.0" y="0.0" width="365" height="45"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="365" height="42.5"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eFY-hR-O2p" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="320" height="45"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="320" height="42.5"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
+                                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
                                                         <state key="normal" title="Optisch Markieren">
                                                             <color key="titleColor" systemColor="labelColor"/>
                                                         </state>
@@ -6219,7 +6227,7 @@
                                                         </connections>
                                                     </button>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="&gt;" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B5c-yh-4uu">
-                                                        <rect key="frame" x="335" y="0.0" width="30" height="45"/>
+                                                        <rect key="frame" x="335" y="0.0" width="30" height="42.5"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="30" id="j63-cI-H2w"/>
@@ -6242,12 +6250,12 @@
                                                 </constraints>
                                             </view>
                                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kvY-eo-fHG">
-                                                <rect key="frame" x="0.0" y="46" width="365" height="45"/>
+                                                <rect key="frame" x="0.0" y="43.5" width="365" height="43"/>
                                                 <subviews>
                                                     <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qga-1T-kpg" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="320" height="45"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
+                                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
                                                         <state key="normal" title="Regelverstoß">
                                                             <color key="titleColor" systemColor="labelColor"/>
                                                         </state>
@@ -6262,7 +6270,7 @@
                                                         </connections>
                                                     </button>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="&gt;" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LdR-3q-pA4">
-                                                        <rect key="frame" x="335" y="0.0" width="30" height="45"/>
+                                                        <rect key="frame" x="335" y="0.0" width="30" height="43"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="30" id="aHG-i8-0OJ"/>
@@ -6284,12 +6292,12 @@
                                                 </constraints>
                                             </view>
                                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ruB-hI-UtU">
-                                                <rect key="frame" x="0.0" y="92" width="365" height="45"/>
+                                                <rect key="frame" x="0.0" y="87.5" width="365" height="42.5"/>
                                                 <subviews>
                                                     <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="axO-ea-izC" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="320" height="45"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="320" height="42.5"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
+                                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
                                                         <state key="normal" title="Inhalt">
                                                             <color key="titleColor" systemColor="labelColor"/>
                                                         </state>
@@ -6304,7 +6312,7 @@
                                                         </connections>
                                                     </button>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="&gt;" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WFh-7R-5YM">
-                                                        <rect key="frame" x="335" y="0.0" width="30" height="45"/>
+                                                        <rect key="frame" x="335" y="0.0" width="30" height="42.5"/>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="30" id="ErM-I9-Ib5"/>
@@ -6328,15 +6336,15 @@
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="137" id="dQz-cS-K2W"/>
+                                            <constraint firstAttribute="height" constant="130" id="dQz-cS-K2W"/>
                                         </constraints>
                                     </stackView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bAV-A5-qjR" userLabel="headerView">
-                                        <rect key="frame" x="0.0" y="0.0" width="365" height="57"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="365" height="59"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Melden" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JTr-hU-IYS">
-                                                <rect key="frame" x="147" y="15" width="71.5" height="27.5"/>
-                                                <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="21"/>
+                                                <rect key="frame" x="148.5" y="16.5" width="68" height="26"/>
+                                                <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="20"/>
                                                 <nil key="highlightedColor"/>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="string" keyPath="xibLocKey" value="report_main_header"/>
@@ -6350,12 +6358,12 @@
                                         </constraints>
                                     </view>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="65y-Cc-Fsj" secondAttribute="bottom" id="2Fg-nB-Ugt"/>
                                     <constraint firstItem="bAV-A5-qjR" firstAttribute="top" secondItem="1v2-Tt-mer" secondAttribute="top" id="45h-TP-Ec6"/>
                                     <constraint firstAttribute="trailing" secondItem="65y-Cc-Fsj" secondAttribute="trailing" id="EEs-4n-vEI"/>
-                                    <constraint firstAttribute="height" constant="195" id="GEg-Na-cPd"/>
+                                    <constraint firstAttribute="height" constant="190" id="GEg-Na-cPd"/>
                                     <constraint firstItem="65y-Cc-Fsj" firstAttribute="leading" secondItem="1v2-Tt-mer" secondAttribute="leading" id="J8b-Ix-zsR"/>
                                     <constraint firstItem="65y-Cc-Fsj" firstAttribute="top" secondItem="bAV-A5-qjR" secondAttribute="bottom" constant="1" id="L1E-Vb-PHM"/>
                                     <constraint firstItem="bAV-A5-qjR" firstAttribute="leading" secondItem="1v2-Tt-mer" secondAttribute="leading" id="VKU-Fj-y94"/>
@@ -6373,7 +6381,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="lUU-KL-HIO"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="20"/>
+                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                 <state key="normal" title="Abbrechen">
                                     <color key="titleColor" systemColor="labelColor"/>
                                 </state>
@@ -6397,12 +6405,12 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="365" height="45"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gBD-8N-El9" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                                        <rect key="frame" x="48" y="0.0" width="317" height="45"/>
+                                                        <rect key="frame" x="43" y="0.0" width="322" height="45"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="45" id="fG9-dd-HeW"/>
                                                         </constraints>
-                                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
+                                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
                                                         <state key="normal" title="Post Sichern">
                                                             <color key="titleColor" systemColor="labelColor"/>
                                                         </state>
@@ -6417,11 +6425,11 @@
                                                         </connections>
                                                     </button>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="save" translatesAutoresizingMaskIntoConstraints="NO" id="gB0-Tm-ja4">
-                                                        <rect key="frame" x="8" y="6.5" width="25" height="32"/>
+                                                        <rect key="frame" x="8" y="6.5" width="20" height="32"/>
                                                         <color key="tintColor" systemColor="labelColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="32" id="Bhv-nD-By8"/>
-                                                            <constraint firstAttribute="width" constant="25" id="hyj-E5-dWO"/>
+                                                            <constraint firstAttribute="width" constant="20" id="hyj-E5-dWO"/>
                                                         </constraints>
                                                     </imageView>
                                                 </subviews>
@@ -6439,12 +6447,12 @@
                                                 <rect key="frame" x="0.0" y="46" width="365" height="45"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oAB-8L-Zwz" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                                        <rect key="frame" x="48" y="0.0" width="317" height="45"/>
+                                                        <rect key="frame" x="43" y="0.0" width="322" height="45"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="45" id="m5W-SC-GF9"/>
                                                         </constraints>
-                                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
+                                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
                                                         <state key="normal" title="Repost">
                                                             <color key="titleColor" systemColor="labelColor"/>
                                                         </state>
@@ -6459,10 +6467,10 @@
                                                         </connections>
                                                     </button>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="repost" translatesAutoresizingMaskIntoConstraints="NO" id="w5s-yp-R7a">
-                                                        <rect key="frame" x="8" y="6.5" width="25" height="32"/>
+                                                        <rect key="frame" x="8" y="6.5" width="20" height="32"/>
                                                         <color key="tintColor" systemColor="labelColor"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="25" id="LTj-hH-ZHP"/>
+                                                            <constraint firstAttribute="width" constant="20" id="LTj-hH-ZHP"/>
                                                             <constraint firstAttribute="height" constant="32" id="SwG-f6-JOk"/>
                                                         </constraints>
                                                     </imageView>
@@ -6482,12 +6490,12 @@
                                                 <rect key="frame" x="0.0" y="92" width="365" height="45"/>
                                                 <subviews>
                                                     <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IDL-0y-HBN" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                                        <rect key="frame" x="48" y="0.0" width="317" height="45"/>
+                                                        <rect key="frame" x="43" y="0.0" width="322" height="45"/>
                                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="45" id="n8G-a5-3Xx"/>
                                                         </constraints>
-                                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
+                                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
                                                         <state key="normal" title="Übersetzen">
                                                             <color key="titleColor" systemColor="labelColor"/>
                                                         </state>
@@ -6502,10 +6510,10 @@
                                                         </connections>
                                                     </button>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="translate" translatesAutoresizingMaskIntoConstraints="NO" id="wXw-V6-RGJ">
-                                                        <rect key="frame" x="8" y="-276.5" width="25" height="598"/>
+                                                        <rect key="frame" x="8" y="-276.5" width="20" height="598"/>
                                                         <color key="tintColor" systemColor="labelColor"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="25" id="QPX-ea-JKY"/>
+                                                            <constraint firstAttribute="width" constant="20" id="QPX-ea-JKY"/>
                                                         </constraints>
                                                     </imageView>
                                                 </subviews>
@@ -6561,7 +6569,7 @@
                                         <viewLayoutGuide key="safeArea" id="n5M-ac-Nxd"/>
                                     </stackView>
                                 </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstItem="xgk-4t-eOM" firstAttribute="top" secondItem="gbZ-UH-RLv" secondAttribute="top" id="1M4-vH-1L9"/>
                                     <constraint firstAttribute="bottom" secondItem="xgk-4t-eOM" secondAttribute="bottom" id="IOy-iN-YVz"/>
@@ -6599,6 +6607,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="kIF-Be-jiy"/>
                     <connections>
+                        <outlet property="backgroundView" destination="rDJ-m9-71o" id="3jd-j9-2Tb"/>
                         <outlet property="lowerStackView" destination="xgk-4t-eOM" id="qQR-GZ-78O"/>
                         <outlet property="repostPostView" destination="eXJ-VA-Ibs" id="75y-YD-F96"/>
                         <outlet property="savePostButtonIcon" destination="gB0-Tm-ja4" id="Key-ij-MJ8"/>
@@ -6634,7 +6643,7 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="35" id="gtF-bQ-egN"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" name="IBMPlexSans-SemiBold" family="IBM Plex Sans" pointSize="20"/>
+                                        <fontDescription key="fontDescription" name="IBMPlexSans-SemiBold" family="IBM Plex Sans" pointSize="18"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                         <userDefinedRuntimeAttributes>
@@ -6647,7 +6656,7 @@
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bGK-77-bSJ" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="167.5" height="40"/>
                                                 <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
-                                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="20"/>
+                                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                                 <state key="normal" title="Zurück">
                                                     <color key="titleColor" systemColor="labelColor"/>
                                                 </state>
@@ -6664,7 +6673,7 @@
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ODS-YZ-Ygw" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                                 <rect key="frame" x="177.5" y="0.0" width="167.5" height="40"/>
                                                 <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
-                                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="20"/>
+                                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                                 <state key="normal" title="Weiter">
                                                     <color key="titleColor" systemColor="labelColor"/>
                                                 </state>
@@ -6734,7 +6743,7 @@
                         <subviews>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3HY-58-oVH">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
-                                <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="barTintColor" systemColor="systemBackgroundColor"/>
                                 <items>
                                     <navigationItem id="bSC-Co-YYY">
                                         <barButtonItem key="leftBarButtonItem" systemItem="done" id="gep-op-OAB">
@@ -6932,7 +6941,7 @@
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Meldeoption" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.59999999999999998" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Im6-aU-66R">
                                             <rect key="frame" x="10" y="10" width="305" height="30"/>
-                                            <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="20"/>
+                                            <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -6978,7 +6987,7 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50" id="Bmj-JU-MMs"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" name="IBMPlexSans-SemiBold" family="IBM Plex Sans" pointSize="20"/>
+                                        <fontDescription key="fontDescription" name="IBMPlexSans-SemiBold" family="IBM Plex Sans" pointSize="18"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                         <userDefinedRuntimeAttributes>
@@ -6990,7 +6999,7 @@
                                         <constraints>
                                             <constraint firstAttribute="height" constant="75" id="gru-Wt-0lT"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="18"/>
+                                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
@@ -7010,7 +7019,7 @@
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="40" id="Uxr-Ml-N78"/>
                                                 </constraints>
-                                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="20"/>
+                                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                                 <state key="normal" title="Zurück">
                                                     <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 </state>
@@ -7027,7 +7036,7 @@
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ccM-dc-vwn" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                                 <rect key="frame" x="177.5" y="0.0" width="167.5" height="40"/>
                                                 <color key="backgroundColor" systemColor="systemGreenColor"/>
-                                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="20"/>
+                                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                                 <state key="normal" title="Abschicken">
                                                     <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 </state>
@@ -7282,19 +7291,19 @@
             <objects>
                 <tableViewController id="UZE-Iy-UFq" customClass="MaltesZentraleTableViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="vIq-M1-5CX">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                        <rect key="frame" x="0.0" y="0.0" width="187.5" height="300"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MaltesZentralenCell" rowHeight="117" id="Zch-A5-SWR" customClass="ZentralCell" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="375" height="117"/>
+                                <rect key="frame" x="0.0" y="28" width="187.5" height="117"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Zch-A5-SWR" id="Y82-kr-M57">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="117"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="187.5" height="117"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Header" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ETV-C8-H0J">
-                                            <rect key="frame" x="26" y="16" width="323" height="25"/>
+                                            <rect key="frame" x="26" y="16" width="135.5" height="25"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="25" id="7dn-Ox-O2t"/>
                                             </constraints>
@@ -7303,7 +7312,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Body" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="brG-dd-a65">
-                                            <rect key="frame" x="26" y="51" width="323" height="45"/>
+                                            <rect key="frame" x="26" y="51" width="135.5" height="45"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -7325,10 +7334,10 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="144" id="e7T-ar-BT5">
-                                <rect key="frame" x="0.0" y="145" width="375" height="144"/>
+                                <rect key="frame" x="0.0" y="145" width="187.5" height="144"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="e7T-ar-BT5" id="vSy-xh-Drh">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="144"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="187.5" height="144"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -8097,7 +8106,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <pageControl clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="Ol8-2A-Tfj">
-                                        <rect key="frame" x="103" y="15" width="122.5" height="27.5"/>
+                                        <rect key="frame" x="103" y="15" width="6" height="27.5"/>
                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                         <color key="pageIndicatorTintColor" systemColor="tertiaryLabelColor"/>
                                         <color key="currentPageIndicatorTintColor" systemColor="systemBackgroundColor"/>
@@ -8136,10 +8145,10 @@
             </objects>
             <point key="canvasLocation" x="-9553" y="1048"/>
         </scene>
-        <!--Argument Page View Controller-->
+        <!--Community Page View Controller-->
         <scene sceneID="x1A-S8-BXq">
             <objects>
-                <pageViewController autoresizesArchivedViewToFullSize="NO" hidesBottomBarWhenPushed="YES" transitionStyle="scroll" pageSpacing="2" navigationOrientation="horizontal" spineLocation="none" id="EeO-4a-quz" customClass="ArgumentPageViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
+                <pageViewController autoresizesArchivedViewToFullSize="NO" hidesBottomBarWhenPushed="YES" transitionStyle="scroll" pageSpacing="2" navigationOrientation="horizontal" spineLocation="none" id="EeO-4a-quz" customClass="CommunityPageViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="8jO-Wu-dfb">
                         <barButtonItem key="backBarButtonItem" title=" " id="7SQ-Sx-WfZ"/>
                     </navigationItem>
@@ -8773,26 +8782,26 @@
     <inferredMetricsTieBreakers>
         <segue reference="abH-Sm-SDu"/>
         <segue reference="MRt-X8-Vhc"/>
-        <segue reference="iX0-VT-UyP"/>
-        <segue reference="841-F7-pRK"/>
+        <segue reference="yMY-Qa-Bnv"/>
+        <segue reference="z3o-Gg-hUh"/>
         <segue reference="9QY-S4-xl7"/>
         <segue reference="ilO-fQ-UNL"/>
         <segue reference="Ry2-Md-ecH"/>
         <segue reference="qj1-wx-hi6"/>
         <segue reference="W1P-Tf-4HL"/>
-        <segue reference="HeY-vY-CcT"/>
-        <segue reference="2Dh-7B-KeX"/>
-        <segue reference="6ey-z4-yGI"/>
-        <segue reference="Nkm-Bu-csR"/>
-        <segue reference="WcQ-qJ-vYb"/>
+        <segue reference="SpZ-08-BhO"/>
+        <segue reference="Fse-Ev-roe"/>
+        <segue reference="lPj-29-RPy"/>
+        <segue reference="RQq-29-OD8"/>
+        <segue reference="wCG-nO-PPC"/>
         <segue reference="65n-8p-jc1"/>
         <segue reference="LDA-ou-ct8"/>
         <segue reference="3WC-eZ-q7s"/>
-        <segue reference="0po-Va-czT"/>
+        <segue reference="JF5-eU-2la"/>
         <segue reference="Cdz-Pl-3MF"/>
         <segue reference="yNA-zh-mO4"/>
         <segue reference="xqD-HU-uOl"/>
-        <segue reference="DuH-Jg-LAd"/>
+        <segue reference="4yf-SZ-2gy"/>
         <segue reference="BSN-fi-jKu"/>
         <segue reference="btL-9z-9Vj"/>
         <segue reference="Rob-xG-Dpx"/>
@@ -8803,7 +8812,7 @@
         <image name="AddPost-1" width="30" height="30"/>
         <image name="Community" width="30" height="30"/>
         <image name="Dismiss" width="136" height="135"/>
-        <image name="DismissTemplate" width="136" height="135"/>
+        <image name="DismissTemplate" width="29.5" height="29.5"/>
         <image name="FactDisplay" width="749" height="473"/>
         <image name="FactStamp" width="2854" height="2442"/>
         <image name="Feed" width="30" height="30"/>
@@ -8817,7 +8826,7 @@
         <image name="arrowtriangle.right" catalog="system" width="128" height="113"/>
         <image name="comments" width="30" height="30"/>
         <image name="default" width="1191" height="670"/>
-        <image name="default-user" width="415" height="415"/>
+        <image name="default-user" width="423" height="423"/>
         <image name="down" width="200" height="200"/>
         <image name="downvote" width="179" height="116"/>
         <image name="folder" width="700" height="589"/>

@@ -10,6 +10,8 @@ import UIKit
 import Firebase
 
 public class User {
+    
+    //MARK:- Variables
     public var displayName = ""
     public var imageURL = ""
     public var userUID = ""
@@ -33,8 +35,29 @@ public class User {
     public var locationName: String?
     public var locationIsPublic = false
     
-    let db = Firestore.firestore()
+    private let db = Firestore.firestore()
     
+    //MARK:- Get User
+    func getUsername(userID: String, username: @escaping (String?) -> Void) {
+        let ref = db.collection("Users").document(userID)
+        ref.getDocument { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap, let data = snap.data() {
+                    if let name = data["name"] as? String {
+                        username(name)
+                    } else {
+                        username(nil)
+                    }
+                } else {
+                    username(nil)
+                }
+            }
+        }
+    }
+    
+    //MARK:- Get Badges
     func getBadges(returnBadges: @escaping ([String]) -> Void) {
         
         if userUID != "" {
