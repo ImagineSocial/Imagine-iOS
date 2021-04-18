@@ -67,26 +67,24 @@ class SettingViewController: UIViewController {
     }
     
     @IBAction func notificationSwitchChanged(_ sender: Any) {
-        if notificationSwitch.isOn {
+        
+        if let user = Auth.auth().currentUser {
+            let application = UIApplication.shared
             
-            let isRegisteredForRemoteNotifications = UIApplication.shared.isRegisteredForRemoteNotifications
-            if !isRegisteredForRemoteNotifications {
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
-            }
-//            Falsch!
-            Installations.installations().installationID { (result, error) in
-                if let error = error {
-                    print("Error fetching remote instance ID: \(error)")
-                } else if let result = result {
-                    self.defaults.set(true, forKey: "allowNotifications")
-                    HandyHelper().saveFCMToken(token: result)
-    
-                    self.alert(message: NSLocalizedString("push_alert_message", comment: "got push notifications"))
+            if notificationSwitch.isOn {
+                
+                Messaging.messaging().token { token, error in
+                    if let error = error {
+                        print("Error fetching FCM registration token: \(error)")
+                    } else if let token = token {
+                        HandyHelper().saveFCMToken(token: token)
+                        application.registerForRemoteNotifications()
+                        self.alert(message: "You can now receive notifications from Imagine.")
+                    }
                 }
-            }
-            
-        } else {
-            if let user = Auth.auth().currentUser {
+                
+            } else {
+        
                 let userRef = db.collection("Users").document(user.uid)
                 
                 userRef.updateData([
@@ -96,12 +94,13 @@ class SettingViewController: UIViewController {
                         print("Error updating document: \(err.localizedDescription)")
                     } else {
                         self.defaults.set(false, forKey: "allowNotifications")
-                        print("Document successfully updated")
+                        application.unregisterForRemoteNotifications()
+                        self.alert(message: "You won't receive any notifications from Imagine anymore.")
                     }
                 }
-            
-//                userRef.setData(["fcmToken":token], mergeFields: ["fcmToken"])
             }
+        } else {
+            self.notLoggedInAlert()
         }
     }
     
