@@ -61,9 +61,7 @@ class MaltesZentraleTableViewController: UITableViewController {
         ref.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
-            } else {
-                
-                print("Bei den Reporsts: \(snap)")
+            } else {                
                 if let snap = snap {
                     if snap.documents.count == 0 {
                         let mitteilung = Mitteilung()

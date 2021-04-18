@@ -84,7 +84,7 @@ class JobSurveyViewController: UIViewController, MFMailComposeViewControllerDele
         }
         let jobRef = collectionRef.document(jobOffer.documentID)
         
-        var dataDictionary: [String: Any] = ["name": userName, "userUID": userUID, "qualifications": qualificationTextField.text, "sharedLink": linkTextField.text, "residence" : residenceTextField.text, "motivation" : inputTextField.text, "contact": contactTextField.text, "applicationCreateTime": Timestamp(date: Date()), "message": messageTextField.text]
+        let dataDictionary: [String: Any] = ["name": userName, "userUID": userUID, "qualifications": qualificationTextField.text ?? "", "sharedLink": linkTextField.text ?? "", "residence" : residenceTextField.text ?? "", "motivation" : inputTextField.text ?? "", "contact": contactTextField.text ?? "", "applicationCreateTime": Timestamp(date: Date()), "message": messageTextField.text ?? ""]
         
         jobRef.collection("supporter").addDocument(data: dataDictionary)
         

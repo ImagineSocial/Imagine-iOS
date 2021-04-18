@@ -73,18 +73,17 @@ class SettingViewController: UIViewController {
             if !isRegisteredForRemoteNotifications {
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [:], completionHandler: nil)
             }
-            
-            InstanceID.instanceID().instanceID { (result, error) in
+//            Falsch!
+            Installations.installations().installationID { (result, error) in
                 if let error = error {
                     print("Error fetching remote instance ID: \(error)")
                 } else if let result = result {
                     self.defaults.set(true, forKey: "allowNotifications")
-                    HandyHelper().saveFCMToken(token: result.token)
+                    HandyHelper().saveFCMToken(token: result)
     
                     self.alert(message: NSLocalizedString("push_alert_message", comment: "got push notifications"))
                 }
             }
-            
             
         } else {
             if let user = Auth.auth().currentUser {

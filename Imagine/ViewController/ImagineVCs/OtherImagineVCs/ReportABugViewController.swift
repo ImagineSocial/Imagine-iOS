@@ -97,51 +97,50 @@ class ReportABugViewController: UIViewController, UITextViewDelegate {
     
     func saveReport() {
         
-        
-        let text = reportDescriptionTextView.text
-        
-        let maltesUID = "CZOcL3VIwMemWwEfutKXGAfdlLy1"
-        
-        var userID = ""
-        if let user = Auth.auth().currentUser {
-            userID = user.uid
-        }
-        
-        let notificationRef = db.collection("Users").document(maltesUID).collection("notifications").document()
-        let notificationData: [String: Any] = ["type": "message", "message": "Ein neuer Bug: \(String(describing: text))", "name": "System", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "UserID": userID]
-        
-        notificationRef.setData(notificationData) { (err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                print("Successfully set notification")
+        if let text = reportDescriptionTextView.text {
+            
+            let maltesUID = "CZOcL3VIwMemWwEfutKXGAfdlLy1"
+            
+            var userID = ""
+            if let user = Auth.auth().currentUser {
+                userID = user.uid
             }
-        }
-        
-        let data: [String: Any] = ["userID": userID, "bugType": getTypeString(), "problem": text]
-        
-        let bugRef = db.collection("Feedback").document("bugs").collection("bugs").document()
-        
-        bugRef.setData(data) { (err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                self.view.activityStopAnimating()
-                
-                let alert = UIAlertController(title: NSLocalizedString("thanks", comment: "thanks"), message: NSLocalizedString("thanks_alert_message", comment: "thanks for sharing"), preferredStyle: .alert)
-                let ok = UIAlertAction(title: "OK", style: .default, handler: { (_) in
-                    self.reportDescriptionTextView.text.removeAll()
+            
+            let notificationRef = db.collection("Users").document(maltesUID).collection("notifications").document()
+            let notificationData: [String: Any] = ["type": "message", "message": "Ein neuer Bug: \(String(describing: text))", "name": "System", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "UserID": userID]
+            
+            notificationRef.setData(notificationData) { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    print("Successfully set notification")
+                }
+            }
+            
+            let data: [String: Any] = ["userID": userID, "bugType": getTypeString(), "problem": text]
+            
+            let bugRef = db.collection("Feedback").document("bugs").collection("bugs").document()
+            
+            bugRef.setData(data) { (err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
+                } else {
+                    self.view.activityStopAnimating()
                     
-                    self.dismiss(animated: true, completion: nil)
-                    alert.dismiss(animated: true, completion: {
+                    let alert = UIAlertController(title: NSLocalizedString("thanks", comment: "thanks"), message: NSLocalizedString("thanks_alert_message", comment: "thanks for sharing"), preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default, handler: { (_) in
+                        self.reportDescriptionTextView.text.removeAll()
                         
+                        self.dismiss(animated: true, completion: nil)
+                        alert.dismiss(animated: true, completion: {
+                            
+                        })
                     })
-                })
-                alert.addAction(ok)
-                self.present(alert, animated: true)
+                    alert.addAction(ok)
+                    self.present(alert, animated: true)
+                }
             }
         }
-        
     }
     
     @IBAction func infoButtonTapped(_ sender: Any) {

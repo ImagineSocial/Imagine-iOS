@@ -95,7 +95,8 @@ class NewCampaignViewController: UIViewController {
     }
     
     @IBAction func shareButtonTapped(_ sender: Any) {
-        if titleTextField.text != nil && shortBodyTextField.text != nil {
+        
+        if let title = titleTextField.text, let summary = shortBodyTextField.text {
             var collectionRef: CollectionReference!
             let language = LanguageSelection().getLanguage()
             if language == .english {
@@ -105,7 +106,7 @@ class NewCampaignViewController: UIViewController {
             }
             let campaignRef = collectionRef.document()
             
-            var dataDictionary: [String: Any] = ["title": titleTextField.text, "summary": shortBodyTextField.text, "type" : "normal", "category" : getCategoryString(), "description": longBodyTextField.text, "createTime": Timestamp(date: Date()), "supporter": 0, "opposition": 0, "voters": [""]]
+            let dataDictionary: [String: Any] = ["title": title, "summary": summary, "type" : "normal", "category" : getCategoryString(), "description": longBodyTextField.text, "createTime": Timestamp(date: Date()), "supporter": 0, "opposition": 0, "voters": [""]]
             
             campaignRef.setData(dataDictionary) { (err) in
                 if let error = err {

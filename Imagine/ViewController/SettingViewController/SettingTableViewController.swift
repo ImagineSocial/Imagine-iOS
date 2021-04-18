@@ -238,7 +238,7 @@ class SettingTableViewController: UITableViewController {
             let setting = TableViewSetting(type: .normal, headerText: NSLocalizedString("setting_community_header_text", comment: "community settings"))
             
             if let topicSetting = topicSetting {
-                let imageCell = TableViewSettingCell(value: topicSetting.imageURL, type: .imageCell, settingChange: .changeTopicPicture)
+                let imageCell = TableViewSettingCell(value: topicSetting.imageURL ?? "", type: .imageCell, settingChange: .changeTopicPicture)
                 let nameCell = TableViewSettingCell(value: topicSetting.title, type: .textCell, settingChange: .changeTopicTitle)
                 nameCell.titleText = NSLocalizedString("title:", comment: "title:")
                 nameCell.characterLimit = Constants.characterLimits.factTitleCharacterLimit
@@ -259,37 +259,37 @@ class SettingTableViewController: UITableViewController {
             let setting = TableViewSetting(type: .normal, headerText: NSLocalizedString("setting_user_header_text", comment: "user settings:"))
 
             if let userSetting = userSetting {
-                let imageCell = TableViewSettingCell(value: userSetting.imageURL, type: .imageCell, settingChange: .changeUserPicture)
+                let imageCell = TableViewSettingCell(value: userSetting.imageURL ?? "", type: .imageCell, settingChange: .changeUserPicture)
                 
-                let statusCell = TableViewSettingCell(value: userSetting.statusText, type: .textCell, settingChange: .changeUserStatusText)
+                let statusCell = TableViewSettingCell(value: userSetting.statusText ?? "", type: .textCell, settingChange: .changeUserStatusText)
                 statusCell.characterLimit = Constants.characterLimits.userStatusTextCharacterLimit
                 statusCell.titleText = NSLocalizedString("setting_user_personal_bio", comment: "write about yourself")
                 
                 let socialMediaSetting = TableViewSetting(type: .normal, headerText: "Social Media Buttons")
                 
-                let instaCell = TableViewSettingCell(value: userSetting.instagramLink, type: .textCell, settingChange: .changeUserInstagramLink)
+                let instaCell = TableViewSettingCell(value: userSetting.instagramLink ?? "", type: .textCell, settingChange: .changeUserInstagramLink)
                 instaCell.titleText = "Instagram:"
-                let instaDescrCell = TableViewSettingCell(value: userSetting.instagramDescription, type: .textCell, settingChange: .changeUserInstagramDescription)
+                let instaDescrCell = TableViewSettingCell(value: userSetting.instagramDescription ?? "", type: .textCell, settingChange: .changeUserInstagramDescription)
                 instaDescrCell.titleText = "Beschreibung:"
                 instaDescrCell.characterLimit = Constants.characterLimits.socialMediaDescriptionCharacterLimit
-                let patreonCell = TableViewSettingCell(value: userSetting.patreonLink, type: .textCell, settingChange: .changeUserPatreonLink)
+                let patreonCell = TableViewSettingCell(value: userSetting.patreonLink ?? "", type: .textCell, settingChange: .changeUserPatreonLink)
                 patreonCell.titleText = "Patreon:"
-                let patreonDescrCell = TableViewSettingCell(value: userSetting.patreonDescription, type: .textCell, settingChange: .changeUserPatreonDescription)
+                let patreonDescrCell = TableViewSettingCell(value: userSetting.patreonDescription ?? "", type: .textCell, settingChange: .changeUserPatreonDescription)
                 patreonDescrCell.titleText = "Beschreibung:"
                 patreonDescrCell.characterLimit = Constants.characterLimits.socialMediaDescriptionCharacterLimit
-                let youTubeCell = TableViewSettingCell(value: userSetting.youTubeLink, type: .textCell, settingChange: .changeUserYouTubeLink)
+                let youTubeCell = TableViewSettingCell(value: userSetting.youTubeLink ?? "", type: .textCell, settingChange: .changeUserYouTubeLink)
                 youTubeCell.titleText = "YouTube:"
-                let youTubeDescrCell = TableViewSettingCell(value: userSetting.youTubeDescription, type: .textCell, settingChange: .changeUserYouTubeDescription)
+                let youTubeDescrCell = TableViewSettingCell(value: userSetting.youTubeDescription ?? "", type: .textCell, settingChange: .changeUserYouTubeDescription)
                 youTubeDescrCell.titleText = "Beschreibung:"
                 youTubeDescrCell.characterLimit = Constants.characterLimits.socialMediaDescriptionCharacterLimit
-                let twitterCell = TableViewSettingCell(value: userSetting.twitterLink, type: .textCell, settingChange: .changeUserTwitterLink)
+                let twitterCell = TableViewSettingCell(value: userSetting.twitterLink ?? "", type: .textCell, settingChange: .changeUserTwitterLink)
                 twitterCell.titleText = "Twitter:"
-                let twitterDescrCell = TableViewSettingCell(value: userSetting.twitterDescription, type: .textCell, settingChange: .changeUserTwitterDescription)
+                let twitterDescrCell = TableViewSettingCell(value: userSetting.twitterDescription ?? "", type: .textCell, settingChange: .changeUserTwitterDescription)
                 twitterDescrCell.titleText = "Beschreibung:"
                 twitterDescrCell.characterLimit = Constants.characterLimits.socialMediaDescriptionCharacterLimit
-                let songwhipCell = TableViewSettingCell(value: userSetting.songwhipLink, type: .textCell, settingChange: .changeUserSongwhipLink)
+                let songwhipCell = TableViewSettingCell(value: userSetting.songwhipLink ?? "", type: .textCell, settingChange: .changeUserSongwhipLink)
                 songwhipCell.titleText = "Songwhip:"
-                let songwhipDescrCell = TableViewSettingCell(value: userSetting.songwhipDescription, type: .textCell, settingChange: .changeUserSongwhipDescription)
+                let songwhipDescrCell = TableViewSettingCell(value: userSetting.songwhipDescription ?? "", type: .textCell, settingChange: .changeUserSongwhipDescription)
                 songwhipDescrCell.titleText = "Beschreibung:"
                 songwhipDescrCell.characterLimit = Constants.characterLimits.socialMediaDescriptionCharacterLimit
                 socialMediaSetting.footerText = NSLocalizedString("setting_social_media_button_description", comment: "what are these about?")
@@ -297,9 +297,9 @@ class SettingTableViewController: UITableViewController {
                 let voluntarySettings = TableViewSetting(type: .normal, headerText: NSLocalizedString("setting_user_personal_info", comment: "personal infos"))
                 voluntarySettings.footerText = NSLocalizedString("setting_user_personal_info_description", comment: "what is it about?")
                 
-                let ageCell = TableViewSettingCell(value: userSetting.birthday, type: .datePickerCell, settingChange: .changeUserAge)
+                let ageCell = TableViewSettingCell(value: userSetting.birthday ?? "", type: .datePickerCell, settingChange: .changeUserAge)
                 ageCell.titleText = NSLocalizedString("setting_user_birthday", comment: "Birthday:")
-                let locationCell = TableViewSettingCell(value: userSetting.location, type: .locationCell, settingChange: .changeUserLocation)
+                let locationCell = TableViewSettingCell(value: userSetting.location ?? "", type: .locationCell, settingChange: .changeUserLocation)
                 locationCell.titleText = "Location:"
                 let locationIsPublicCell = TableViewSettingCell(value: userSetting.locationIsPublic, type: .switchCell, settingChange: .changeUserLocationPublicity)
                 locationIsPublicCell.titleText = NSLocalizedString("setting_user_location_public", comment: "is location public`?")
@@ -316,9 +316,9 @@ class SettingTableViewController: UITableViewController {
             let setting = TableViewSetting(type: .normal, headerText: NSLocalizedString("setting_addOn_header_text", comment: "Topic settings:"))
 
             if let addOnSetting = addOnSetting {
-                let imageCell = TableViewSettingCell(value: addOnSetting.imageURL, type: .imageCell, settingChange: .changeAddOnPicture)
+                let imageCell = TableViewSettingCell(value: addOnSetting.imageURL ?? "", type: .imageCell, settingChange: .changeAddOnPicture)
                 
-                let titleCell = TableViewSettingCell(value: addOnSetting.title, type: .textCell, settingChange: .changeAddOnTitle)
+                let titleCell = TableViewSettingCell(value: addOnSetting.title ?? "", type: .textCell, settingChange: .changeAddOnTitle)
                 titleCell.characterLimit = Constants.characterLimits.addOnTitleCharacterLimit
                 titleCell.titleText = NSLocalizedString("title:", comment: "title:")
                 

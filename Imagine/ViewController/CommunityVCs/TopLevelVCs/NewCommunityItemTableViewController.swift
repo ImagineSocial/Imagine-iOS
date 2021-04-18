@@ -586,7 +586,7 @@ class NewCommunityItemTableViewController: UITableViewController {
                 
                 let op = Auth.auth().currentUser!
                 
-                var data: [String: Any] = ["OP": op.uid, "title": title, "description": description, "popularity": 0, "type": "playlist"]
+                let data: [String: Any] = ["OP": op.uid, "title": title, "description": description, "popularity": 0, "type": "playlist"]
                 
                 ref.setData(data) { (err) in
                     if let error = err {

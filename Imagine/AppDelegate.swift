@@ -35,9 +35,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         IQKeyboardManager.shared.enableAutoToolbar = false
         
         // Change Color of navigationItem and Barbutton
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.imagineColor, NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 18)], for: .normal)
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.imagineColor, NSAttributedString.Key.font : UIFont(name: "IBMPlexSans", size: 18) ?? UIFont.systemFont(ofSize: 18)], for: .normal)
         UINavigationBar.appearance().tintColor = UIColor.imagineColor
-//        UINavigationBar.appearance().isTranslucent = true Too many other views with different options
         
         // Initiate rootviewcontroller here because otherwise the app would crash because a child of TabBarViewController would call Firebase before FirebaseApp.configure would be called here in AppDelegate
         self.window = UIWindow(frame: UIScreen.main.bounds)
@@ -64,43 +63,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
     
     func registerForPushNoticications(application: UIApplication) {
+        
         // Set FirebaseCloudMessaging for Apple Notification Center
-        if #available(iOS 10.0, *) {
-            // For iOS 10 display notification (sent via APNS)
-            UNUserNotificationCenter.current().delegate = self
-            
-            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-            UNUserNotificationCenter.current().requestAuthorization(
-                options: authOptions,
-                completionHandler: {granted, _ in
-                    let defaults = UserDefaults.standard
-                    if granted {
-                        defaults.set(true, forKey: "allowNotifications")
-                    } else {
-                        defaults.set(false, forKey: "allowNotifications")
-                    }
+        UNUserNotificationCenter.current().delegate = self
+        
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(
+            options: authOptions,
+            completionHandler: {granted, _ in
+                let defaults = UserDefaults.standard
+                if granted {
+                    defaults.set(true, forKey: "allowNotifications")
+                } else {
+                    defaults.set(false, forKey: "allowNotifications")
+                }
             })
-        } else {
-            let settings: UIUserNotificationSettings =
-                UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
-            application.registerUserNotificationSettings(settings)
-        }
+        
         application.registerForRemoteNotifications()
     }
     
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("Error, failed to register to remote Notifications: ", error.localizedDescription)
-    }
-
-    func applicationWillResignActive(_ application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
-    }
-
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -114,44 +98,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         }
     }
 
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    }
 
-    func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    func application(_ application: UIApplication,
+                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+      Messaging.messaging().apnsToken = deviceToken
     }
-    
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        
-        InstanceID.instanceID().instanceID { (result, error) in
-            if let error = error {
-                print("Error fetching remote instance ID: \(error)")
-            } else if let result = result {
-                if let currentToken = UserDefaults.standard.value(forKey: "fcmToken") as? String {
-                    if currentToken == result.token {
-                        print("The fcm token hasnt changed")
-                    } else {
-                        //save Token in Database
-                        HandyHelper().saveFCMToken(token: result.token)
-                    }
-                } else {    // Not a token set in userdefaults yet
-                    HandyHelper().saveFCMToken(token: result.token)
-                    print("Set fcm token in userdefaults")
-                }
-                
-            }
-        }
-    }
-
 
 }
 
 extension AppDelegate : MessagingDelegate {
     
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        
-        print("Your Firebase FCM Registration Token: \(fcmToken)")
+
+        // Called on every App start and whenever a new token is generated
+        if let token = fcmToken {
+            if let currentToken = UserDefaults.standard.value(forKey: "fcmToken") as? String {
+                if currentToken != token {
+                    //save Token in Database
+                    HandyHelper().saveFCMToken(token: token)
+                }
+            } else {    // No token set in userdefaults yet
+                HandyHelper().saveFCMToken(token: token)
+            }
+        } else {
+            print("Couldnt get the fcmToken")
+        }
     }
 }
 

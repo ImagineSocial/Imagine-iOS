@@ -16,7 +16,7 @@ import Reachability
 import EasyTipView
 
 
-class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNUserNotificationCenterDelegate {
+class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCenterDelegate {
     
     //MARK:- IBOutlets
     @IBOutlet weak var sortPostsButton: DesignableButton!
@@ -92,7 +92,7 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
             navBarAppearance.configureWithOpaqueBackground()
             navBarAppearance.backgroundColor = .systemBackground
             navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.imagineColor, .font: UIFont(name: "IBMPlexSans-Medium", size: 25)!]
-            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.imagineColor, .font: UIFont(name: "IBMPlexSans-SemiBold", size: 30)]
+            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.imagineColor, .font: UIFont(name: "IBMPlexSans-SemiBold", size: 30) ?? UIFont.systemFont(ofSize: 30, weight: .semibold)]
             navBarAppearance.shadowImage = UIImage()
             
             self.navigationController?.navigationBar.standardAppearance = navBarAppearance
@@ -677,15 +677,6 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
     
     //MARK: Side Menu User
     
-    /// Call to load User in SideMenu and set notifications after dismissal of the logInViewController
-    func loadUser() {
-        self.setNotificationListener()
-        self.checkForLoggedInUser()
-        self.setNotifications()
-        sideMenu.showUser()
-    }
-    
-    
     func checkForLoggedInUser() {
         print("check")
         if let _ = Auth.auth().currentUser {
@@ -1007,6 +998,20 @@ class FeedTableViewController: BaseFeedTableViewController, DismissDelegate, UNU
 //            }
 //        }
 //    }
+}
+
+
+//MARK:- DismissDelegate
+
+extension FeedTableViewController: DismissDelegate {
+    
+    /// Call to load User in SideMenu and set notifications after dismissal of the logInViewController
+    func loadUser() {
+        self.setNotificationListener()
+        self.checkForLoggedInUser()
+        self.setNotifications()
+        sideMenu.showUser()
+    }
 }
 
 //MARK:- LogOutDelegate

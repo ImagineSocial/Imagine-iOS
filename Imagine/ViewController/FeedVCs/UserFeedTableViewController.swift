@@ -1038,14 +1038,13 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     func sendInvitation() {
         self.view.activityStartAnimating()
-        if let user = Auth.auth().currentUser {
-            if let currentProfile = userOfProfile {
+        if let user = Auth.auth().currentUser, let currentProfile = userOfProfile, let name = user.displayName {
                 
                 let friendsRef = db.collection("Users").document(currentProfile.userUID).collection("friends").document(user.uid)
                 let data: [String:Any] = ["accepted": false, "requestedAt" : Timestamp(date: Date())]
                 
                 let notificationsRef = db.collection("Users").document(currentProfile.userUID).collection("notifications").document()
-                var notificationData : [String: Any] = ["type": "friend", "name": user.displayName, "userID": user.uid]
+                var notificationData : [String: Any] = ["type": "friend", "name": name, "userID": user.uid]
                 
                 let language = LanguageSelection().getLanguage()
                 if language == .english {
@@ -1075,7 +1074,6 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                     }
                 }
             }
-        }
     }
     
     func deleteAsFriend() {

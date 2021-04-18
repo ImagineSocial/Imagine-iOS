@@ -570,7 +570,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     func linkedCommunityTapped() {
         
-        print("linkedComm tapped: ", post.community?.title)
         if let fact = post.community {
             performSegue(withIdentifier: "toFactSegue", sender: fact)
         }

@@ -93,8 +93,8 @@ class SearchTableViewController: UITableViewController, UISearchControllerDelega
                 return cell
             }
             
-        } else if let users = userResults {
-            let user = users[indexPath.row]
+        } else if let _ = userResults {
+//            let user = users[indexPath.row]
 //            if let cell = tableView.dequeueReusableCell(withIdentifier: "SearchUserCell", for: indexPath) as? SearchUserCell {
 //                
 //                cell.user = user
@@ -359,13 +359,10 @@ extension SearchTableViewController: UISearchResultsUpdating, UISearchBarDelegat
             if postIsAlreadyFetched {   // Check if we got the user in on of the other queries
                 return
             }
-            let post = Post()
-            if let docData = document.data() {
+            
+            if let post = postHelper.addThePost(document: document, isTopicPost: isTopicPost, language: language) {
                 
-                if let post = postHelper.addThePost(document: document, isTopicPost: isTopicPost, language: language) {
-                    
-                    postResults.append(post)
-                }
+                postResults.append(post)
             }
         }
     }
