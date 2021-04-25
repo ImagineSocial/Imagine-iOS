@@ -69,9 +69,9 @@ class GifCell: BaseFeedCell {
     
     //MARK:- Set Cell
     override func setCell() {
+        super.setCell()
+        
         if let post = post {
-            feedUserView.delegate = self
-            
             if ownProfile { // Set in the UserFeedTableViewController DataSource
                 
                 if let _ = cellStyle {
@@ -95,8 +95,7 @@ class GifCell: BaseFeedCell {
             }
             
             titleLabel.text = post.title
-            descriptionPreviewLabel.text = post.description
-            commentCountLabel.text = String(post.commentCount)
+            feedLikeView.setPost(post: post)
             
             
             if let fact = post.community {
@@ -174,32 +173,6 @@ class GifCell: BaseFeedCell {
     @objc func playerItemDidReachEnd(notification: Notification) {
         if let playerItem = notification.object as? AVPlayerItem {
             playerItem.seek(to: CMTime.zero, completionHandler: nil)
-        }
-    }
-    
-    
-    //MARK:- IBActions
-    @IBAction func thanksButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: thanksButton)
-        }
-    }
-    
-    @IBAction func wowButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: wowButton)
-        }
-    }
-    
-    @IBAction func haButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: haButton)
-        }
-    }
-    
-    @IBAction func niceButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: niceButton)
         }
     }
 }

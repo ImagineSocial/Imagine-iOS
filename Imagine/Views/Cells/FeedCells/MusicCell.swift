@@ -117,9 +117,9 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
     
     //MARK:- Set Cell
     override func setCell() {
+        super.setCell()
+        
         if let post = post {
-            feedUserView.delegate = self
-            
             if let url = URL(string: post.linkURL) {
                 let request = URLRequest(url: url)
                 webView.load(request)
@@ -160,8 +160,7 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
             }
             
             titleLabel.text = post.title
-            descriptionPreviewLabel.text = post.description
-            commentCountLabel.text = String(post.commentCount)
+            feedLikeView.setPost(post: post)
             
             
             if let fact = post.community {
@@ -240,28 +239,5 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         }
     }
     
-    @IBAction func thanksButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: thanksButton)
-        }
-    }
-    
-    @IBAction func wowButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: wowButton)
-        }
-    }
-    
-    @IBAction func haButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: haButton)
-        }
-    }
-    
-    @IBAction func niceButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: niceButton)
-        }
-    }
 }
 

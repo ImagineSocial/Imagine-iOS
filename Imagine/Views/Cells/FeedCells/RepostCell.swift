@@ -49,9 +49,9 @@ class RePostCell : BaseFeedCell {
     
     //MARK:- Set Cell
     override func setCell(){
-        if let post = post {
-            feedUserView.delegate = self
-            
+        super.setCell()
+        
+        if let post = post {            
             if ownProfile { // Set in the UserFeedTableViewController DataSource
                 
                 if let _ = cellStyle {
@@ -77,7 +77,7 @@ class RePostCell : BaseFeedCell {
             // Post Sachen einstellen
             translatedTitleLabel.text = post.title
             
-            commentCountLabel.text = String(post.commentCount)
+            feedLikeView.setPost(post: post)
             
             
             // Repost Sachen einstellen
@@ -127,31 +127,6 @@ class RePostCell : BaseFeedCell {
                     self.setCell()
                 }
             }
-        }
-    }
-    
-    //MARK:- IBActions
-
-    @IBAction func thanksButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: thanksButton)
-        }
-    }
-    @IBAction func wowButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: wowButton)
-        }
-    }
-    
-    @IBAction func haButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: haButton)
-        }
-    }
-    
-    @IBAction func niceButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: niceButton)
         }
     }
 }

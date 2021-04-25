@@ -58,8 +58,9 @@ class PostCell : BaseFeedCell {
     
     //MARK:- Set Cell
     override func setCell() {
+        super.setCell()
+        
         if let post = post {
-            feedUserView.delegate = self
             
             if ownProfile { // Set in the UserFeedTableViewController DataSource
                 
@@ -92,8 +93,7 @@ class PostCell : BaseFeedCell {
             }
             
             titleLabel.text = post.title
-            descriptionPreviewLabel.text = post.description
-            commentCountLabel.text = String(post.commentCount)
+            feedLikeView.setPost(post: post)
             
             if let url = URL(string: post.imageURL) {
                 if let cellImageView = cellImageView {
@@ -133,29 +133,6 @@ class PostCell : BaseFeedCell {
             UIView.animate(withDuration: 0.3, animations: {
                 self.cellImageView.transform = CGAffineTransform.identity
             })
-        }
-    }
-    
-    
-    //MARK:- IBActions
-    @IBAction func thanksButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: thanksButton)
-        }
-    }
-    @IBAction func wowButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: wowButton)
-        }
-    }
-    @IBAction func haButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: haButton)
-        }
-    }
-    @IBAction func niceButtonTapped(_ sender: Any) {
-        if let post = post {
-            self.registerVote(post: post, button: self.niceButton)
         }
     }
 }

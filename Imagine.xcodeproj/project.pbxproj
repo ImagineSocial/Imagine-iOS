@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		02EBEFE22635B40F00373C45 /* FeedLikeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EBEFE12635B40F00373C45 /* FeedLikeView.swift */; };
+		02EBEFE52635B41D00373C45 /* FeedLikeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02EBEFE42635B41D00373C45 /* FeedLikeView.xib */; };
 		6031FF6320510F14AC01ED24 /* Pods_Imagine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B6ABEE519CECD54D4C7F4F /* Pods_Imagine.framework */; };
 		E904BF0224264525003EC8DF /* AddPostTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E904BF0124264525003EC8DF /* AddPostTableViewController.swift */; };
 		E904F268229C274A00383885 /* JobSurveyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E904F267229C274A00383885 /* JobSurveyViewController.swift */; };
@@ -273,6 +275,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		02EBEFE12635B40F00373C45 /* FeedLikeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLikeView.swift; sourceTree = "<group>"; };
+		02EBEFE42635B41D00373C45 /* FeedLikeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedLikeView.xib; sourceTree = "<group>"; };
 		1A16D61AEE6C9FEFE3134E7B /* Pods-Imagine.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.release.xcconfig"; path = "Target Support Files/Pods-Imagine/Pods-Imagine.release.xcconfig"; sourceTree = "<group>"; };
 		2BCC09C8FE5205185DCE68CA /* Pods-Imagine.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.debug.xcconfig"; path = "Target Support Files/Pods-Imagine/Pods-Imagine.debug.xcconfig"; sourceTree = "<group>"; };
 		41B6ABEE519CECD54D4C7F4F /* Pods_Imagine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Imagine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -581,6 +585,8 @@
 			children = (
 				E90E1A4925FF640800855FE1 /* FeedUserView.xib */,
 				E90E1A4C25FF655300855FE1 /* FeedUserView.swift */,
+				02EBEFE42635B41D00373C45 /* FeedLikeView.xib */,
+				02EBEFE12635B40F00373C45 /* FeedLikeView.swift */,
 			);
 			path = FeedCellViews;
 			sourceTree = "<group>";
@@ -1462,6 +1468,7 @@
 				E9F12C0224FE2E8C006BD9C3 /* AddOnProposalCell.xib in Resources */,
 				E94FB65D251D10D300E58707 /* FeedSingleTopicCell.xib in Resources */,
 				E90AC38724FA52C4002A36F0 /* IBMPlexSans-Light.ttf in Resources */,
+				02EBEFE52635B41D00373C45 /* FeedLikeView.xib in Resources */,
 				E9A9934D226C7A8200448932 /* LinkCell.xib in Resources */,
 				E9F31DC523F6C334001D5D25 /* FactCell.xib in Resources */,
 				E97FDFB924695FA40049E1E4 /* AddOnStoreImageTableViewCell.xib in Resources */,
@@ -1588,6 +1595,7 @@
 				E98FAEA823FAD4780064A614 /* CommentAnswerView.swift in Sources */,
 				E9CF17C423CB3F41000E5149 /* Campaign.swift in Sources */,
 				E9600E882235076C003E5A7A /* PostViewController.swift in Sources */,
+				02EBEFE22635B40F00373C45 /* FeedLikeView.swift in Sources */,
 				E962AC172224430400C6D6EF /* AppDelegate.swift in Sources */,
 				E962AC38222DB46400C6D6EF /* ReportOptionViewController.swift in Sources */,
 				E9BA724C232557D100DF3FB3 /* InfoTableViewController.swift in Sources */,

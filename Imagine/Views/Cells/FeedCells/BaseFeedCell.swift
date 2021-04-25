@@ -17,13 +17,8 @@ enum CellType {
 class BaseFeedCell : UITableViewCell {
     
     //MARK:- IBOutlets
-    @IBOutlet weak var thanksButton: DesignableButton!
-    @IBOutlet weak var wowButton: DesignableButton!
-    @IBOutlet weak var haButton: DesignableButton!
-    @IBOutlet weak var niceButton: DesignableButton!
-    @IBOutlet weak var commentCountLabel: UILabel!
+
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var descriptionPreviewLabel: UILabel!
     @IBOutlet weak var containerView: UIView!
     //ReportView
     @IBOutlet weak var reportViewHeightConstraint: NSLayoutConstraint!
@@ -32,6 +27,9 @@ class BaseFeedCell : UITableViewCell {
     @IBOutlet weak var reportViewButtonInTop: DesignableButton!
     //User & linked Community
     @IBOutlet weak var feedUserView: FeedUserView!
+    //Like Buttons
+    
+    @IBOutlet weak var feedLikeView: FeedLikeView!
     
     //MARK:- Variables
     private let handyHelper = HandyHelper()
@@ -57,17 +55,7 @@ class BaseFeedCell : UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         
-        if ownProfile {
-            thanksButton.setImage(nil, for: .normal)
-            wowButton.setImage(nil, for: .normal)
-            haButton.setImage(nil, for: .normal)
-            niceButton.setImage(nil, for: .normal)
-        } else {
-            thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
-            wowButton.setImage(UIImage(named: "wowButton"), for: .normal)
-            haButton.setImage(UIImage(named: "haButton"), for: .normal)
-            niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
-        }
+        feedLikeView.prepareForReuse(ownProfile: ownProfile)
     }
     
     override func layoutSubviews() {
@@ -97,13 +85,9 @@ class BaseFeedCell : UITableViewCell {
         
         //Text
         titleLabel.text = nil
-        descriptionPreviewLabel.text = nil
         
         //buttons
-        thanksButton.isEnabled = true
-        wowButton.isEnabled = true
-        haButton.isEnabled = true
-        niceButton.isEnabled = true
+        feedLikeView.resetValues()
         
         //feedUserView data
         feedUserView.prepareForReuse()
@@ -113,50 +97,17 @@ class BaseFeedCell : UITableViewCell {
     /// Set the default values for the standard buttons
     func initiateCell() {
         
-        let buttons = [thanksButton!, wowButton!, haButton!, niceButton!]
-        
-        for button in buttons {
-            button.setImage(nil, for: .normal)
-            button.imageView?.contentMode = .scaleAspectFit
-            button.layer.borderWidth = 0.5
-            
-            if #available(iOS 13.0, *) {
-                button.layer.borderColor = UIColor.secondaryLabel.cgColor
-            } else {
-                button.layer.borderColor = UIColor.black.cgColor
-            }
-        }
+        //Nichts Ansonsten explicit callen likeView.setConstraints
     }
     
     /// If you look at your own Feed at UserFeedTableView
     func setOwnCell(post: Post) {
         
-        let buttons = [thanksButton!, wowButton!, haButton!, niceButton!]
-        
-        for button in buttons {
-            
-            button.setTitleColor(.white, for: .normal)
-            button.layer.borderWidth = 0
-            
-            if #available(iOS 13.0, *) {
-                button.backgroundColor = .tertiaryLabel
-            } else {
-                button.backgroundColor = .darkGray
-            }
-        }
-        
-        //Set vote count
-        thanksButton.setTitle(String(post.votes.thanks), for: .normal)
-        wowButton.setTitle(String(post.votes.wow), for: .normal)
-        haButton.setTitle(String(post.votes.ha), for: .normal)
-        niceButton.setTitle(String(post.votes.nice), for: .normal)
+        feedLikeView.setOwnCell(post: post)
     }
     
     func setDefaultButtonImages() {
-        thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
-        wowButton.setImage(UIImage(named: "wowButton"), for: .normal)
-        haButton.setImage(UIImage(named: "haButton"), for: .normal)
-        niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
+        feedLikeView.setDefaultButtonImages()
     }
     
     ///Set the view above the post: Zero Height if it is normal, if the post is flagged it will show the report reason
@@ -174,7 +125,8 @@ class BaseFeedCell : UITableViewCell {
     /// Set the desired functions and layout for the cell
     /// Set the FeedUserDelegate here, so the buttons in the user view are connected
     func setCell() {
-        
+        feedUserView.delegate = self
+        feedLikeView.delegate = self
     }
     
     //MARK:- User
@@ -223,26 +175,21 @@ class BaseFeedCell : UITableViewCell {
     //MARK:- Set Vote Button Title
     func registerVote(post: Post, button: DesignableButton) {
         
-        var title = String(post.votes.thanks)
-        
+        var title: String!
         switch button {
-        case thanksButton:
-            title = String(post.votes.thanks)
-            thanksButton.isEnabled = false
+        case feedLikeView.thanksButton:
             delegate?.thanksTapped(post: post)
             post.votes.thanks = post.votes.thanks+1
-        case wowButton:
-            wowButton.isEnabled = false
+            title = String(post.votes.thanks)
+        case feedLikeView.wowButton:
             delegate?.wowTapped(post: post)
             post.votes.wow = post.votes.wow+1
             title = String(post.votes.wow)
-        case haButton:
-            haButton.isEnabled = false
+        case feedLikeView.haButton:
             delegate?.haTapped(post: post)
             post.votes.ha = post.votes.ha+1
             title = String(post.votes.ha)
-        case niceButton:
-            niceButton.isEnabled = false
+        case feedLikeView.niceButton:
             delegate?.niceTapped(post: post)
             post.votes.nice = post.votes.nice+1
             title = String(post.votes.nice)
@@ -250,6 +197,7 @@ class BaseFeedCell : UITableViewCell {
             title = String(post.votes.thanks)
         }
         
+        button.isEnabled = false
         button.setImage(nil, for: .normal)
         button.setTitle(title, for: .normal)
         
@@ -259,6 +207,7 @@ class BaseFeedCell : UITableViewCell {
     
 }
 
+//MARK:- FeedUserView Delegate
 extension BaseFeedCell: FeedUserViewDelegate {
     
     func reportButtonTapped() {
@@ -278,6 +227,16 @@ extension BaseFeedCell: FeedUserViewDelegate {
     func linkedCommunityButtonTapped() {
         if let fact = post?.community {
             delegate?.factTapped(fact: fact)
+        }
+    }
+}
+
+//MARK:- FeedLikeView Delegate
+
+extension BaseFeedCell: FeedLikeViewDelegate {
+    func registerVote(button: DesignableButton) {
+        if let post = post {
+            registerVote(post: post, button: button)
         }
     }
 }

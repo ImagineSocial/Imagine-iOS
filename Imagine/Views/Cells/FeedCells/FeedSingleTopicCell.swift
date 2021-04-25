@@ -36,9 +36,9 @@ class FeedSingleTopicCell: BaseFeedCell {
     
     //MARK:- Set Cell
     override func setCell() {
+        super.setCell()
+        
         if let post = post {
-            feedUserView.delegate = self
-            
             if ownProfile { // Set in the UserFeedTableViewController DataSource
                 
                 if let _ = cellStyle {
@@ -74,8 +74,7 @@ class FeedSingleTopicCell: BaseFeedCell {
             }
             
             titleLabel.text = post.title
-            descriptionPreviewLabel.text = post.description
-            commentCountLabel.text = String(post.commentCount)
+            feedLikeView.setPost(post: post)
             
             
             setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
@@ -91,29 +90,6 @@ class FeedSingleTopicCell: BaseFeedCell {
         print("##LoadedSingleTopic")
         self.collectionView.reloadData()
         self.layoutSubviews()
-    }
-    
-    
-    //MARK:- IBActions
-    @IBAction func thanksButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: thanksButton)
-        }
-    }
-    @IBAction func wowButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: wowButton)
-        }
-    }
-    @IBAction func haButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: haButton)
-        }
-    }
-    @IBAction func niceButtonTapped(_ sender: Any) {
-        if let post = post {
-            self.registerVote(post: post, button: self.niceButton)
-        }
     }
 }
 

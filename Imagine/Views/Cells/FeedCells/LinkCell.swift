@@ -53,9 +53,9 @@ class LinkCell : BaseFeedCell {
     
     //MARK:- Set Cell
     override func setCell() {
-        if let post = post {
-            feedUserView.delegate = self
-            
+        super.setCell()
+        
+        if let post = post {            
             if ownProfile { // Set in the UserFeedTableViewController DataSource
                 
                 if let _ = cellStyle {
@@ -68,8 +68,7 @@ class LinkCell : BaseFeedCell {
                 setDefaultButtonImages()
             }
             
-            descriptionPreviewLabel.text = post.description
-            commentCountLabel.text = String(post.commentCount)
+            feedLikeView.setPost(post: post)
             
             if post.user.displayName == "" {
                 if post.anonym {
@@ -187,26 +186,6 @@ class LinkCell : BaseFeedCell {
     @IBAction func linkTapped(_ sender: Any) {
         if let post = post {
             delegate?.linkTapped(post: post)
-        }
-    }
-    @IBAction func thanksButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: thanksButton)
-        }
-    }
-    @IBAction func wowButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: wowButton)
-        }
-    }
-    @IBAction func haButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: haButton)
-        }
-    }
-    @IBAction func niceButtonTapped(_ sender: Any) {
-        if let post = post {
-            registerVote(post: post, button: niceButton)
         }
     }
 }
