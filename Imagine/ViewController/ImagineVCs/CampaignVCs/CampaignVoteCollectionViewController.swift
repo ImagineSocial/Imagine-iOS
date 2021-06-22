@@ -45,16 +45,6 @@ class CampaignVoteCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let user = Auth.auth().currentUser {
-            if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" {
-                print("Nicht bei Malte loggen")
-            } else {
-                Analytics.logEvent("LookingForCampaigns", parameters: [:])
-            }
-        } else {
-            Analytics.logEvent("LookingForCampaigns", parameters: [:])
-        }
-        
         getCampaigns()
         
         self.view.activityStartAnimating()

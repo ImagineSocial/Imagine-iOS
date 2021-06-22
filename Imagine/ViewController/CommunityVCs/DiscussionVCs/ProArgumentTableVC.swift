@@ -11,7 +11,7 @@ import Firebase
 import FirebaseFirestore
 import FirebaseAuth
 
-class ProFactTableViewController: UITableViewController {
+class ProArgumentTableVC: UITableViewController {
 
     var argumentList = [Argument]()
     var fact: Community?
@@ -94,7 +94,7 @@ class ProFactTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toNewArgumentSegue" {
             if let nav = segue.destination as? UINavigationController {
-                if let vc = nav.topViewController as? NewCommunityItemTableViewController {
+                if let vc = nav.topViewController as? NewCommunityItemTableVC {
                     vc.fact = self.fact
                     vc.new = .argument
                     vc.proOrContra = .pro
@@ -102,7 +102,7 @@ class ProFactTableViewController: UITableViewController {
                 }
             }
         }
-        if let vc = segue.destination as? FactDetailViewController {
+        if let vc = segue.destination as? ArgumentViewController {
             if segue.identifier == "toDetailFactSegue" {
                 if let chosenArgument = sender as? Argument {
                     vc.argument = chosenArgument
@@ -113,7 +113,7 @@ class ProFactTableViewController: UITableViewController {
     }
 }
 
-extension ProFactTableViewController: NewFactDelegate {
+extension ProArgumentTableVC: NewFactDelegate {
     
     func finishedCreatingNewInstance(item: Any?) {
         if let argument = item as? Argument {

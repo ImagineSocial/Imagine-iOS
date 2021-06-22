@@ -974,7 +974,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         if segue.identifier == "toFactSegue" {
             if let fact = sender as? Community {
-                if let factVC = segue.destination as? CommunityPageViewController {
+                if let factVC = segue.destination as? CommunityPageVC {
                     factVC.fact = fact
                     if linkedFactPageVCNeedsHeightCorrection {
                         factVC.headerNeedsAdjustment = true
@@ -986,7 +986,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if segue.identifier == "goToPostsOfTopic" {
             if let fact = sender as? Community {
                 if let navCon = segue.destination as? UINavigationController {
-                    if let factVC = navCon.topViewController as? CommunityPostTableViewController {
+                    if let factVC = navCon.topViewController as? CommunityPostTableVC {
                         factVC.fact = fact
                         factVC.needNavigationController = true
                     }

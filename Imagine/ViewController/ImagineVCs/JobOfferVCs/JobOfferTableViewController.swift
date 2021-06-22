@@ -33,18 +33,6 @@ class JobOfferTableViewController: UITableViewController {
         tableView.register(UINib(nibName: "JobOfferCell", bundle: nil), forCellReuseIdentifier: reuseIdentifier)
         
         self.extendedLayoutIncludesOpaqueBars = true
-//        self.navigationController?.navigationBar.isTranslucent = false
-//        self.navigationController?.view.backgroundColor = .white
-        
-        if let user = Auth.auth().currentUser {
-            if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" {
-                print("Nicht bei Malte loggen")
-            } else {
-                Analytics.logEvent("LookingForJobs", parameters: [:])
-            }
-        } else {
-            Analytics.logEvent("LookingForJobs", parameters: [:])
-        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {

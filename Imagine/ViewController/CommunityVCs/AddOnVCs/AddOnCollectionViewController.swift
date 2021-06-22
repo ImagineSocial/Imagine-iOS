@@ -270,7 +270,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
             }
         }
         if segue.identifier == "toTopicsSegue" {
-            if let vc = segue.destination as? CommunityCollectionViewController {
+            if let vc = segue.destination as? CommunityCollectionVC {
                 if let addOn = sender as? AddOn {
                     vc.addOn = addOn
                     vc.addFactToPost = .optInfo
@@ -288,7 +288,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
             }
         }
         if segue.identifier == "toFactSegue" {
-            if let vc = segue.destination as? CommunityPageViewController {
+            if let vc = segue.destination as? CommunityPageVC {
                 if let fact = sender as? Community {
                     vc.fact = fact
                 }

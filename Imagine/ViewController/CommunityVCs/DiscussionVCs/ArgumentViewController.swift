@@ -1,5 +1,5 @@
 //
-//  FactDetailViewController.swift
+//  ArgumentViewController.swift
 //  Imagine
 //
 //  Created by Malte Schoppe on 23.05.19.
@@ -17,7 +17,7 @@ enum vote {
     case downvote
 }
 
-class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
+class ArgumentViewController: UIViewController, ReachabilityObserverDelegate {
     
 
     @IBOutlet weak var titleLabel: UILabel!
@@ -213,13 +213,13 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toSourceTableView" {
-            if let vc = segue.destination as? SourceTableViewController {
+            if let vc = segue.destination as? ArgumentSourceTableVC {
                 vc.argument = self.argument
                 vc.fact = self.fact
             }
         }
         if segue.identifier == "toArgumentTableView" {
-            if let argumentVC = segue.destination as? ArgumentTableViewController {
+            if let argumentVC = segue.destination as? ArgumentTableVC {
                 argumentVC.argument = self.argument
                 argumentVC.fact = self.fact
             }
@@ -251,7 +251,7 @@ class FactDetailViewController: UIViewController, ReachabilityObserverDelegate {
     }
 }
 
-extension FactDetailViewController: UIScrollViewDelegate {
+extension ArgumentViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == self.scrollView {
             if let view = floatingCommentView {
@@ -264,7 +264,7 @@ extension FactDetailViewController: UIScrollViewDelegate {
     }
 }
 
-extension FactDetailViewController: CommentTableViewDelegate, CommentViewDelegate {
+extension ArgumentViewController: CommentTableViewDelegate, CommentViewDelegate {
     
     func heightChanged() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

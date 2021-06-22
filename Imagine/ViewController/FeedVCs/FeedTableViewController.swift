@@ -325,7 +325,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         }
         if segue.identifier == "toFactSegue" {
             if let fact = sender as? Community {
-                if let factVC = segue.destination as? CommunityPageViewController {
+                if let factVC = segue.destination as? CommunityPageVC {
                     factVC.fact = fact
                     factVC.headerNeedsAdjustment = true
                 }
@@ -333,7 +333,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         }
         if segue.identifier == "goToPostsOfTopic" {
             if let fact = sender as? Community {
-                if let factVC = segue.destination as? CommunityPostTableViewController {
+                if let factVC = segue.destination as? CommunityPostTableVC {
                     
                     factVC.fact = fact
                     self.notifyFactCollectionViewController(fact: fact)
@@ -395,7 +395,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     func notifyFactCollectionViewController(fact: Community) {
         if let viewControllers = self.tabBarController?.viewControllers {
             if let navVC = viewControllers[3] as? UINavigationController {
-                if let factVC = navVC.topViewController as? CommunityCollectionViewController {
+                if let factVC = navVC.topViewController as? CommunityCollectionVC {
                     factVC.registerRecentFact(fact: fact)
                 }
             }

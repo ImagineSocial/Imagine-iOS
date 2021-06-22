@@ -20,7 +20,7 @@ protocol PageViewHeaderDelegate: class {
  
  */
 
-class CommunityPageViewController: UIPageViewController {
+class CommunityPageVC: UIPageViewController {
     
     var argumentVCs = [UIViewController]()
     var fact: Community?
@@ -237,7 +237,7 @@ class CommunityPageViewController: UIPageViewController {
         if segue.identifier == "shareTopicSegue" {
             if let fact = sender as? Community {
                 if let navVC = segue.destination as? UINavigationController {
-                    if let vc = navVC.topViewController as? NewCommunityItemTableViewController {
+                    if let vc = navVC.topViewController as? NewCommunityItemTableVC {
                         vc.fact = fact
                         vc.delegate = self
                         vc.new = .shareTopic
@@ -271,7 +271,7 @@ class CommunityPageViewController: UIPageViewController {
         
         if fact.displayOption == .fact {
         
-            if let factParentVC = storyboard?.instantiateViewController(withIdentifier: "factParentVC") as? CommunityParentContainerViewController {
+            if let factParentVC = storyboard?.instantiateViewController(withIdentifier: "factParentVC") as? DiscussionParentVC {
                 
                 
                 print("Add Community parent#")
@@ -281,7 +281,7 @@ class CommunityPageViewController: UIPageViewController {
             }
         }
         
-        if let postOfFactVC = storyboard?.instantiateViewController(withIdentifier: "postsOfFactVC") as? CommunityPostTableViewController {
+        if let postOfFactVC = storyboard?.instantiateViewController(withIdentifier: "postsOfFactVC") as? CommunityPostTableVC {
             
             postOfFactVC.pageViewHeaderDelegate = self
             postOfFactVC.fact = fact
@@ -313,14 +313,11 @@ class CommunityPageViewController: UIPageViewController {
             self.headerView.segmentedControlChanged(self)
             
             if fact.displayOption == .fact {
-                Analytics.logEvent("DiscussionOpened", parameters: [
-                    AnalyticsParameterTerm: ""
-                ])
-                if let secondVC = argumentVCs[1] as? CommunityParentContainerViewController {
+                if let secondVC = argumentVCs[1] as? DiscussionParentVC {
                     setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
                 }
             } else {
-                if let secondVC = argumentVCs[1] as? CommunityPostTableViewController {
+                if let secondVC = argumentVCs[1] as? CommunityPostTableVC {
                     setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
                 }
             }
@@ -338,7 +335,7 @@ class CommunityPageViewController: UIPageViewController {
 }
 
 //MARK:- PageVC
-extension CommunityPageViewController: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+extension CommunityPageVC: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
         if let nextVC = pendingViewControllers.first
@@ -350,10 +347,6 @@ extension CommunityPageViewController: UIPageViewControllerDataSource, UIPageVie
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        
-        Analytics.logEvent("SwipedThroughCommunity", parameters: [
-            AnalyticsParameterTerm: ""
-        ])
         
         if let currentViewController = pageViewController.viewControllers?.first
             ,let index = argumentVCs.index(of: currentViewController){
@@ -421,7 +414,7 @@ extension CommunityPageViewController: UIPageViewControllerDataSource, UIPageVie
 }
 
 
-extension CommunityPageViewController: PageViewHeaderDelegate, CommunityFeedHeaderDelegate, NewFactDelegate {
+extension CommunityPageVC: PageViewHeaderDelegate, CommunityFeedHeaderDelegate, NewFactDelegate {
     func notLoggedIn() {
         self.notLoggedInAlert()
     }
@@ -430,11 +423,11 @@ extension CommunityPageViewController: PageViewHeaderDelegate, CommunityFeedHead
         if let _ = item as? Post {
             self.alert(message: "Go back to the feed and reload to see your post.", title: "The community has been shared successfully!")
         } else {
-            if let vc = self.argumentVCs[1] as? CommunityPostTableViewController {
+            if let vc = self.argumentVCs[1] as? CommunityPostTableVC {
                 vc.posts.removeAll()
                 vc.tableView.reloadData()
                 vc.getPosts(getMore: false)
-            } else if let vc = self.argumentVCs[2] as? CommunityPostTableViewController {
+            } else if let vc = self.argumentVCs[2] as? CommunityPostTableVC {
                 vc.posts.removeAll()
                 vc.tableView.reloadData()
                 vc.getPosts(getMore: false)

@@ -206,7 +206,7 @@ class AddOn {
         if let fact = item as? Community {
             data["type"] = "fact"
 
-            let newFactVC = NewCommunityItemTableViewController()
+            let newFactVC = NewCommunityItemTableVC()
             let displayOption = newFactVC.getNewFactDisplayString(displayOption: fact.displayOption).displayOption
             data["displayOption"] = displayOption
         } else if let post = item as? Post {

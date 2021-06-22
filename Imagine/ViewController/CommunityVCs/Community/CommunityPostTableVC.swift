@@ -16,7 +16,7 @@ enum TableViewDisplayOptions {
     case normal
 }
 
-class CommunityPostTableViewController: BaseFeedTableViewController {
+class CommunityPostTableVC: BaseFeedTableViewController {
     
     @IBOutlet weak var infoButton: UIBarButtonItem!
     
@@ -25,7 +25,7 @@ class CommunityPostTableViewController: BaseFeedTableViewController {
     var needNavigationController = false
     var displayOption: TableViewDisplayOptions = .normal
     
-    let factParentVC = CommunityParentContainerViewController()
+    let factParentVC = DiscussionParentVC()
     let radius:CGFloat = 6
     
     var tipView: EasyTipView?
@@ -295,7 +295,7 @@ class CommunityPostTableViewController: BaseFeedTableViewController {
         if segue.identifier == "toFactSegue" {
             if let fact = sender as? Community {
                 if let navCon = segue.destination as? UINavigationController {
-                    if let factVC = navCon.topViewController as? CommunityParentContainerViewController {
+                    if let factVC = navCon.topViewController as? DiscussionParentVC {
                         factVC.fact = fact
                         factVC.needNavigationController = true
                     }
@@ -348,7 +348,7 @@ class CommunityPostTableViewController: BaseFeedTableViewController {
     }
 }
 
-extension CommunityPostTableViewController: NewFactDelegate {
+extension CommunityPostTableVC: NewFactDelegate {
     
     func finishedCreatingNewInstance(item: Any?) {
         self.posts.removeAll()

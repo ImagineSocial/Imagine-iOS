@@ -11,7 +11,7 @@ import Firebase
 import FirebaseFirestore
 import FirebaseAuth
 
-class SourceTableViewController: UITableViewController {
+class ArgumentSourceTableVC: UITableViewController {
     
     var argument: Argument?
     var fact :Community?
@@ -102,7 +102,7 @@ class SourceTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toNewArgumentSegue" {
             if let nav = segue.destination as? UINavigationController {
-                if let vc = nav.topViewController as? NewCommunityItemTableViewController {
+                if let vc = nav.topViewController as? NewCommunityItemTableVC {
                     vc.fact = self.fact
                     vc.argument = self.argument
                     vc.new = .source
@@ -112,7 +112,7 @@ class SourceTableViewController: UITableViewController {
         }
         
         if segue.identifier == "toSourceDetail" {
-            if let vc = segue.destination as? ArgumentDetailViewController {
+            if let vc = segue.destination as? ArgumentDetailVC {
                 if let source = sender as? Source {
                     vc.source = source
                 }
@@ -121,7 +121,7 @@ class SourceTableViewController: UITableViewController {
     }
 }
 
-extension SourceTableViewController: NewFactDelegate {
+extension ArgumentSourceTableVC: NewFactDelegate {
     func finishedCreatingNewInstance(item: Any?) {
         if let source = item as? Source {
             let count = self.sources.count

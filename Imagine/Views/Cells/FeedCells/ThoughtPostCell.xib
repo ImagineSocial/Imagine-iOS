@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -29,33 +29,33 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="r8g-de-6MK">
-                        <rect key="frame" x="10" y="10" width="355" height="214"/>
+                        <rect key="frame" x="12" y="12" width="351" height="210"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pe0-He-yrA" customClass="FeedLikeView" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="10" y="185" width="335" height="23"/>
+                                <rect key="frame" x="10" y="181" width="331" height="23"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="23" id="Q0G-Wb-Sj5"/>
                                 </constraints>
                             </view>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="tKN-cc-W6j">
-                                <rect key="frame" x="10" y="79" width="335" height="81"/>
+                                <rect key="frame" x="12" y="79" width="327" height="77"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4bP-aJ-f1X" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="355" height="24"/>
+                                <rect key="frame" x="0.0" y="0.0" width="351" height="24"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N3b-0T-HQo">
-                                        <rect key="frame" x="15" y="0.0" width="308" height="24"/>
+                                        <rect key="frame" x="15" y="0.0" width="304" height="24"/>
                                         <fontDescription key="fontDescription" name="Kalam-Regular" family="Kalam" pointSize="18"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xkC-Q0-r1v" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                        <rect key="frame" x="325" y="2" width="20" height="20"/>
+                                        <rect key="frame" x="321" y="2" width="20" height="20"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="uQP-G9-kxu"/>
@@ -84,13 +84,13 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lag-SI-PTk">
-                                <rect key="frame" x="10" y="163" width="335" height="0.0"/>
+                                <rect key="frame" x="12" y="162" width="327" height="0.0"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans-Thin" family="IBM Plex Sans" pointSize="9"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aPP-Gw-vgS" customClass="FeedUserView" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="5" y="29" width="345" height="45"/>
+                                <rect key="frame" x="5" y="29" width="341" height="45"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="hYs-16-bEV"/>
@@ -99,8 +99,8 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="Lag-SI-PTk" firstAttribute="top" secondItem="tKN-cc-W6j" secondAttribute="bottom" constant="3" id="3ha-wT-6Us"/>
-                            <constraint firstItem="pe0-He-yrA" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Lag-SI-PTk" secondAttribute="bottom" constant="3" id="M3T-nJ-20G"/>
+                            <constraint firstItem="Lag-SI-PTk" firstAttribute="top" secondItem="tKN-cc-W6j" secondAttribute="bottom" constant="6" id="3ha-wT-6Us"/>
+                            <constraint firstItem="pe0-He-yrA" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Lag-SI-PTk" secondAttribute="bottom" constant="6" id="M3T-nJ-20G"/>
                             <constraint firstItem="4bP-aJ-f1X" firstAttribute="leading" secondItem="r8g-de-6MK" secondAttribute="leading" id="RyK-JJ-QO3"/>
                             <constraint firstItem="aPP-Gw-vgS" firstAttribute="top" secondItem="4bP-aJ-f1X" secondAttribute="bottom" constant="5" id="TJY-WF-RsB"/>
                             <constraint firstItem="pe0-He-yrA" firstAttribute="leading" secondItem="r8g-de-6MK" secondAttribute="leading" constant="10" id="U8o-bx-6uV"/>
@@ -108,9 +108,9 @@
                             <constraint firstAttribute="trailing" secondItem="pe0-He-yrA" secondAttribute="trailing" constant="10" id="YfG-l5-Jpi"/>
                             <constraint firstAttribute="trailing" secondItem="4bP-aJ-f1X" secondAttribute="trailing" id="ZsC-JK-Una"/>
                             <constraint firstItem="Lag-SI-PTk" firstAttribute="trailing" secondItem="tKN-cc-W6j" secondAttribute="trailing" id="bvL-BX-sZ8"/>
-                            <constraint firstItem="Lag-SI-PTk" firstAttribute="leading" secondItem="r8g-de-6MK" secondAttribute="leading" constant="10" id="d5r-Ty-UsU"/>
+                            <constraint firstItem="Lag-SI-PTk" firstAttribute="leading" secondItem="r8g-de-6MK" secondAttribute="leading" constant="12" id="d5r-Ty-UsU"/>
                             <constraint firstItem="pe0-He-yrA" firstAttribute="top" secondItem="tKN-cc-W6j" secondAttribute="bottom" constant="25" id="gxn-Rq-7oc"/>
-                            <constraint firstAttribute="trailing" secondItem="Lag-SI-PTk" secondAttribute="trailing" constant="10" id="h58-vX-PEx"/>
+                            <constraint firstAttribute="trailing" secondItem="Lag-SI-PTk" secondAttribute="trailing" constant="12" id="h58-vX-PEx"/>
                             <constraint firstItem="4bP-aJ-f1X" firstAttribute="top" secondItem="r8g-de-6MK" secondAttribute="top" id="h7o-DJ-KO3"/>
                             <constraint firstAttribute="trailing" secondItem="aPP-Gw-vgS" secondAttribute="trailing" constant="5" id="igk-WI-QfA"/>
                             <constraint firstItem="aPP-Gw-vgS" firstAttribute="leading" secondItem="r8g-de-6MK" secondAttribute="leading" constant="5" id="swL-g2-gCr"/>
@@ -121,10 +121,10 @@
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                 <constraints>
-                    <constraint firstItem="r8g-de-6MK" firstAttribute="top" secondItem="qO7-Fk-1O6" secondAttribute="top" constant="10" id="ZuR-3e-dRf"/>
-                    <constraint firstAttribute="trailing" secondItem="r8g-de-6MK" secondAttribute="trailing" constant="10" id="est-kf-xOe"/>
-                    <constraint firstAttribute="bottom" secondItem="r8g-de-6MK" secondAttribute="bottom" constant="10" id="kMK-qY-QpJ"/>
-                    <constraint firstItem="r8g-de-6MK" firstAttribute="leading" secondItem="qO7-Fk-1O6" secondAttribute="leading" constant="10" id="zn7-oM-XlU"/>
+                    <constraint firstItem="r8g-de-6MK" firstAttribute="top" secondItem="qO7-Fk-1O6" secondAttribute="top" constant="12" id="ZuR-3e-dRf"/>
+                    <constraint firstAttribute="trailing" secondItem="r8g-de-6MK" secondAttribute="trailing" constant="12" id="est-kf-xOe"/>
+                    <constraint firstAttribute="bottom" secondItem="r8g-de-6MK" secondAttribute="bottom" constant="12" id="kMK-qY-QpJ"/>
+                    <constraint firstItem="r8g-de-6MK" firstAttribute="leading" secondItem="qO7-Fk-1O6" secondAttribute="leading" constant="12" id="zn7-oM-XlU"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>

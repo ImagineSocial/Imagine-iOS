@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -18,21 +18,21 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="NibPostCell" rowHeight="559" id="ZUo-e7-XZo" customClass="PostCell" customModule="Imagine">
-            <rect key="frame" x="0.0" y="0.0" width="571" height="559"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="NibPostCell" rowHeight="565" id="ZUo-e7-XZo" customClass="PostCell" customModule="Imagine">
+            <rect key="frame" x="0.0" y="0.0" width="571" height="565"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ZUo-e7-XZo" id="S1H-Cn-Se8">
-                <rect key="frame" x="0.0" y="0.0" width="571" height="559"/>
+                <rect key="frame" x="0.0" y="0.0" width="571" height="565"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LIq-QP-kkJ">
-                        <rect key="frame" x="10" y="10" width="551" height="539"/>
+                        <rect key="frame" x="12" y="12" width="547" height="541"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HsQ-Gd-TR2" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="551" height="40"/>
+                                <rect key="frame" x="0.0" y="0.0" width="547" height="40"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fehlinformation" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EAl-BX-fcD">
-                                        <rect key="frame" x="10" y="4" width="509" height="18"/>
+                                        <rect key="frame" x="10" y="4" width="505" height="18"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="18" id="q27-th-y7u"/>
                                         </constraints>
@@ -41,7 +41,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0hF-sC-uY2" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                        <rect key="frame" x="521" y="10" width="20" height="20"/>
+                                        <rect key="frame" x="517" y="10" width="20" height="20"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="20" id="WOr-77-cXy"/>
@@ -53,7 +53,7 @@
                                         </state>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Der dargestellte Inhalt enthält fragwürdige Aussagen!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KLH-Bx-LDZ">
-                                        <rect key="frame" x="10" y="24" width="509" height="14"/>
+                                        <rect key="frame" x="10" y="24" width="505" height="14"/>
                                         <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="9"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
@@ -79,27 +79,27 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="oGD-8x-fw7">
-                                <rect key="frame" x="5" y="117" width="541" height="387"/>
+                                <rect key="frame" x="5" y="119" width="537" height="387"/>
                                 <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="387" id="D8T-cR-6eL"/>
                                 </constraints>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HLn-Vq-Hur" customClass="FeedLikeView" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="10" y="510" width="531" height="23"/>
+                                <rect key="frame" x="10" y="512" width="527" height="23"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="23" id="43e-sH-0na"/>
                                 </constraints>
                             </view>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999998807907104" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Mix-5Q-9Ib">
-                                <rect key="frame" x="10" y="95" width="531" height="12"/>
+                                <rect key="frame" x="12" y="95" width="523" height="12"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lz3-NS-4gl" customClass="FeedUserView" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="5" y="45" width="541" height="45"/>
+                                <rect key="frame" x="5" y="45" width="537" height="45"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="wUD-kb-iuW"/>
@@ -108,16 +108,16 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="Mix-5Q-9Ib" firstAttribute="leading" secondItem="LIq-QP-kkJ" secondAttribute="leading" constant="10" id="3nh-Pd-P0G"/>
+                            <constraint firstItem="Mix-5Q-9Ib" firstAttribute="leading" secondItem="LIq-QP-kkJ" secondAttribute="leading" constant="12" id="3nh-Pd-P0G"/>
                             <constraint firstAttribute="trailing" secondItem="HLn-Vq-Hur" secondAttribute="trailing" constant="10" id="856-g8-nRB"/>
                             <constraint firstItem="HLn-Vq-Hur" firstAttribute="top" secondItem="oGD-8x-fw7" secondAttribute="bottom" constant="6" id="EDY-sF-qcK"/>
-                            <constraint firstAttribute="trailing" secondItem="Mix-5Q-9Ib" secondAttribute="trailing" constant="10" id="GSK-cx-hnT"/>
+                            <constraint firstAttribute="trailing" secondItem="Mix-5Q-9Ib" secondAttribute="trailing" constant="12" id="GSK-cx-hnT"/>
                             <constraint firstItem="lz3-NS-4gl" firstAttribute="top" secondItem="HsQ-Gd-TR2" secondAttribute="bottom" constant="5" id="NDG-zx-e9H"/>
                             <constraint firstItem="HsQ-Gd-TR2" firstAttribute="top" secondItem="LIq-QP-kkJ" secondAttribute="top" id="OdZ-6t-Bvk"/>
                             <constraint firstItem="lz3-NS-4gl" firstAttribute="leading" secondItem="LIq-QP-kkJ" secondAttribute="leading" constant="5" id="Qba-5v-GOm"/>
                             <constraint firstAttribute="trailing" secondItem="lz3-NS-4gl" secondAttribute="trailing" constant="5" id="THq-Cc-dfV"/>
                             <constraint firstItem="HsQ-Gd-TR2" firstAttribute="leading" secondItem="LIq-QP-kkJ" secondAttribute="leading" id="bc6-gA-aR8"/>
-                            <constraint firstItem="oGD-8x-fw7" firstAttribute="top" secondItem="Mix-5Q-9Ib" secondAttribute="bottom" constant="10" id="fnW-7O-BiX"/>
+                            <constraint firstItem="oGD-8x-fw7" firstAttribute="top" secondItem="Mix-5Q-9Ib" secondAttribute="bottom" constant="12" id="fnW-7O-BiX"/>
                             <constraint firstItem="oGD-8x-fw7" firstAttribute="leading" secondItem="LIq-QP-kkJ" secondAttribute="leading" constant="5" id="h9U-uc-df7"/>
                             <constraint firstAttribute="trailing" secondItem="HsQ-Gd-TR2" secondAttribute="trailing" id="kGJ-Ow-SNR"/>
                             <constraint firstAttribute="bottom" secondItem="HLn-Vq-Hur" secondAttribute="bottom" constant="6" id="nUG-hG-yfb"/>
@@ -129,10 +129,10 @@
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                 <constraints>
-                    <constraint firstItem="LIq-QP-kkJ" firstAttribute="top" secondItem="S1H-Cn-Se8" secondAttribute="top" constant="10" id="9Ht-Qp-lhC"/>
-                    <constraint firstItem="LIq-QP-kkJ" firstAttribute="leading" secondItem="S1H-Cn-Se8" secondAttribute="leading" constant="10" id="Xh5-Da-iJn"/>
-                    <constraint firstAttribute="bottom" secondItem="LIq-QP-kkJ" secondAttribute="bottom" constant="10" id="amn-Ui-1Mb"/>
-                    <constraint firstAttribute="trailing" secondItem="LIq-QP-kkJ" secondAttribute="trailing" constant="10" id="vxP-kU-3rg"/>
+                    <constraint firstItem="LIq-QP-kkJ" firstAttribute="top" secondItem="S1H-Cn-Se8" secondAttribute="top" constant="12" id="9Ht-Qp-lhC"/>
+                    <constraint firstItem="LIq-QP-kkJ" firstAttribute="leading" secondItem="S1H-Cn-Se8" secondAttribute="leading" constant="12" id="Xh5-Da-iJn"/>
+                    <constraint firstAttribute="bottom" secondItem="LIq-QP-kkJ" secondAttribute="bottom" constant="12" id="amn-Ui-1Mb"/>
+                    <constraint firstAttribute="trailing" secondItem="LIq-QP-kkJ" secondAttribute="trailing" constant="12" id="vxP-kU-3rg"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
@@ -147,7 +147,7 @@
                 <outlet property="reportViewLabel" destination="EAl-BX-fcD" id="YSm-QM-41s"/>
                 <outlet property="titleLabel" destination="Mix-5Q-9Ib" id="hJq-rN-rcm"/>
             </connections>
-            <point key="canvasLocation" x="13.6" y="-81.409295352323838"/>
+            <point key="canvasLocation" x="13.6" y="-84.107946026986511"/>
         </tableViewCell>
     </objects>
     <resources>

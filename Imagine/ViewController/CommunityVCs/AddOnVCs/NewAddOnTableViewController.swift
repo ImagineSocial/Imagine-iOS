@@ -38,10 +38,6 @@ class NewAddOnTableViewController: UITableViewController {
             navigationController?.popViewController(animated: false)
             return
         }
-        
-        Analytics.logEvent("AddOnStoreOpened", parameters: [
-            AnalyticsParameterTerm: ""
-        ])
 
         tableView.register(UINib(nibName: "AddOnStoreImageTableViewCell", bundle: nil), forCellReuseIdentifier: addOnStoreCellIdentifier)
         tableView.register(UINib(nibName: "AddOnHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: addOnHeaderIdentifier)
@@ -204,7 +200,7 @@ class NewAddOnTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toNewAddOnSegue" {
             if let navVC = segue.destination as? UINavigationController {
-                if let vc = navVC.topViewController as? NewCommunityItemTableViewController {
+                if let vc = navVC.topViewController as? NewCommunityItemTableVC {
                     if let style = sender as? AddOnStyle {
                         if let fact = fact {
                             if style == .singleTopic {

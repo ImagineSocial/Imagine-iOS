@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
+class ArgumentDetailVC: UIViewController, UITextViewDelegate {
 
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
@@ -140,7 +140,7 @@ class ArgumentDetailViewController: UIViewController, UITextViewDelegate {
 
 }
 
-extension ArgumentDetailViewController: CommentViewDelegate, CommentTableViewDelegate {
+extension ArgumentDetailVC: CommentViewDelegate, CommentTableViewDelegate {
     
     func heightChanged() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {

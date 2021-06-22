@@ -24,16 +24,17 @@ class TopicCollectionFooter: UICollectionReusableView {
     
     override func awakeFromNib() {
         for view in [addTopicView, showAllView] {
-            let layer = view!.layer
+            guard let view = view else { return }
             
-            layer.cornerRadius = 4
-            layer.masksToBounds = true
+            let layer = view.layer
             if #available(iOS 13.0, *) {
-                layer.borderColor = UIColor.secondaryLabel.cgColor
+                layer.shadowColor = UIColor.label.cgColor
             } else {
-                layer.borderColor = UIColor.black.cgColor
+                layer.shadowColor = UIColor.black.cgColor
             }
-            layer.borderWidth = 0.5
+            layer.shadowOffset = CGSize(width: 0, height: 3)
+            layer.shadowRadius = 4
+            layer.shadowOpacity = 0.3
         }
     }
     

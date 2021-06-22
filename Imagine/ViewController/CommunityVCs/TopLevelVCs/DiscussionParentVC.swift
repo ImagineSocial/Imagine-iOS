@@ -15,7 +15,7 @@ protocol RecentTopicDelegate: class {
     func topicSelected(fact: Community)
 }
 
-class CommunityParentContainerViewController: UIViewController {
+class DiscussionParentVC: UIViewController {
     
     @IBOutlet weak var contraArgumentCountLabel: UILabel!
     @IBOutlet weak var proArgumentCountLabel: UILabel!
@@ -48,12 +48,10 @@ class CommunityParentContainerViewController: UIViewController {
         if let topic = fact {
             self.getArguments(topic: topic)
         }
-//        setPostButton()
                 
         if needNavigationController {
             setDismissButton()
         }
-        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -125,38 +123,32 @@ class CommunityParentContainerViewController: UIViewController {
     
     func sendData(ProArguments : [Argument], ContraArguments: [Argument]) {     // Send to ContainerViews (TableViews)
         
-        if let ProChildVC = children.last as? ProFactTableViewController {
+        if let ProChildVC = children.last as? ProArgumentTableVC {
             ProChildVC.setArguments(arguments: ProArguments)
         }
 
-        if let ContraChildVC = children.first as? ContraFactTableViewController {
+        if let ContraChildVC = children.first as? ContraArgumentTableVC {
             ContraChildVC.setArguments(arguments: ContraArguments)
         }
     }
     
     //MARK:-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? ProFactTableViewController {
+        if let vc = segue.destination as? ProArgumentTableVC {
             if segue.identifier == "toProSegue" {
                 vc.fact = self.fact
             }
-            Analytics.logEvent("TappedOnArgument", parameters: [
-                AnalyticsParameterTerm: ""
-            ])
         }
         
-        if let contraVC = segue.destination as? ContraFactTableViewController {
+        if let contraVC = segue.destination as? ContraArgumentTableVC {
             if segue.identifier == "toContraSegue" {
                 contraVC.fact = self.fact
             }
-            Analytics.logEvent("TappedOnArgument", parameters: [
-                AnalyticsParameterTerm: ""
-            ])
         }
         
         if segue.identifier == "toPostsSegue" {
             if let chosenFact = sender as? Community {
-                if let postVC = segue.destination as? CommunityPostTableViewController {
+                if let postVC = segue.destination as? CommunityPostTableVC {
                     postVC.fact = chosenFact
                 }
             }

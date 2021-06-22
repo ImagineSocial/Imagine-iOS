@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -20,14 +20,14 @@
             <rect key="frame" x="0.0" y="0.0" width="350" height="85"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
-                <stackView clipsSubviews="YES" contentMode="scaleToFill" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="zYX-ED-dvh">
-                    <rect key="frame" x="20" y="5" width="310" height="54"/>
+                <stackView contentMode="scaleToFill" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="zYX-ED-dvh">
+                    <rect key="frame" x="16" y="5" width="318" height="54"/>
                     <subviews>
-                        <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5fK-wV-3ZF" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                            <rect key="frame" x="0.0" y="0.0" width="145" height="54"/>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5fK-wV-3ZF" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="149" height="54"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="306-oc-hVD" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                    <rect key="frame" x="113" y="26" width="22" height="2"/>
+                                    <rect key="frame" x="117" y="26" width="22" height="2"/>
                                     <color key="backgroundColor" red="0.31537210939999999" green="0.46283984179999998" blue="0.65801352260000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="22" id="MRy-fs-2DS"/>
@@ -40,7 +40,7 @@
                                     </userDefinedRuntimeAttributes>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gJk-dV-PQl" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                    <rect key="frame" x="123" y="16" width="2" height="22"/>
+                                    <rect key="frame" x="127" y="16" width="2" height="22"/>
                                     <color key="backgroundColor" red="0.31537210939999999" green="0.46283984179999998" blue="0.65801352260000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="2" id="ePI-EQ-Rnz"/>
@@ -53,7 +53,7 @@
                                     </userDefinedRuntimeAttributes>
                                 </view>
                                 <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hinzufügen" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vVQ-jt-fJl">
-                                    <rect key="frame" x="10" y="18" width="103" height="18.5"/>
+                                    <rect key="frame" x="10" y="18" width="107" height="18.5"/>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="14"/>
                                     <nil key="textColor"/>
@@ -63,7 +63,7 @@
                                     </userDefinedRuntimeAttributes>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PIS-PC-z2c">
-                                    <rect key="frame" x="0.0" y="0.0" width="145" height="54"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="149" height="54"/>
                                     <connections>
                                         <action selector="addTopicTapped:" destination="8lu-Ja-pWg" eventType="touchUpInside" id="l8z-7r-gIu"/>
                                     </connections>
@@ -85,15 +85,15 @@
                             </constraints>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                    <real key="value" value="4"/>
+                                    <real key="value" value="8"/>
                                 </userDefinedRuntimeAttribute>
                             </userDefinedRuntimeAttributes>
                         </view>
-                        <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hpw-oL-phP" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                            <rect key="frame" x="165" y="0.0" width="145" height="54"/>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hpw-oL-phP" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
+                            <rect key="frame" x="169" y="0.0" width="149" height="54"/>
                             <subviews>
                                 <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Alle anzeigen" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cac-Zm-WdT">
-                                    <rect key="frame" x="29.5" y="18" width="86" height="18.5"/>
+                                    <rect key="frame" x="31.5" y="18" width="86" height="18.5"/>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="14"/>
                                     <nil key="textColor"/>
@@ -103,7 +103,7 @@
                                     </userDefinedRuntimeAttributes>
                                 </label>
                                 <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bl2-nH-0sZ">
-                                    <rect key="frame" x="0.0" y="0.0" width="145" height="54"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="149" height="54"/>
                                     <connections>
                                         <action selector="showAllTapped:" destination="8lu-Ja-pWg" eventType="touchUpInside" id="ryf-RW-kAL"/>
                                     </connections>
@@ -120,7 +120,7 @@
                             </constraints>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                    <real key="value" value="4"/>
+                                    <real key="value" value="8"/>
                                 </userDefinedRuntimeAttribute>
                             </userDefinedRuntimeAttributes>
                         </view>
@@ -139,10 +139,10 @@
                 <constraint firstItem="zYX-ED-dvh" firstAttribute="top" secondItem="8lu-Ja-pWg" secondAttribute="top" constant="5" id="3Uc-qE-jd6"/>
                 <constraint firstItem="ei3-nG-IZ2" firstAttribute="leading" secondItem="8lu-Ja-pWg" secondAttribute="leading" constant="20" id="7Yj-gF-D7l"/>
                 <constraint firstAttribute="trailing" secondItem="ei3-nG-IZ2" secondAttribute="trailing" constant="20" id="BeO-nd-Scs"/>
-                <constraint firstItem="oPy-Dx-kab" firstAttribute="trailing" secondItem="zYX-ED-dvh" secondAttribute="trailing" constant="20" id="PAr-kp-liJ"/>
+                <constraint firstItem="oPy-Dx-kab" firstAttribute="trailing" secondItem="zYX-ED-dvh" secondAttribute="trailing" constant="16" id="PAr-kp-liJ"/>
                 <constraint firstAttribute="bottom" secondItem="ei3-nG-IZ2" secondAttribute="bottom" constant="5" id="WPD-jo-Ggm"/>
                 <constraint firstItem="ei3-nG-IZ2" firstAttribute="top" secondItem="zYX-ED-dvh" secondAttribute="bottom" constant="20" id="laL-Gx-SaB"/>
-                <constraint firstItem="zYX-ED-dvh" firstAttribute="leading" secondItem="oPy-Dx-kab" secondAttribute="leading" constant="20" id="sLs-Qo-WEX"/>
+                <constraint firstItem="zYX-ED-dvh" firstAttribute="leading" secondItem="oPy-Dx-kab" secondAttribute="leading" constant="16" id="sLs-Qo-WEX"/>
             </constraints>
             <connections>
                 <outlet property="addTopicView" destination="5fK-wV-3ZF" id="x6I-on-teH"/>

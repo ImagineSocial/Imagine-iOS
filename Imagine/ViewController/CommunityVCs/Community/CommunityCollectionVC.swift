@@ -32,7 +32,7 @@ enum AddFactToPostType {
     case newPost
 }
 
-class CommunityCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RecentTopicDelegate {
+class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, RecentTopicDelegate {
     
     @IBOutlet weak var infoButton: UIBarButtonItem!
     
@@ -53,7 +53,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     
     var tipView: EasyTipView?
     
-    let collectionViewSpacing:CGFloat = 30
+    let collectionViewSpacing:CGFloat = 24
     
     let recentTopicsCellIdentifier = "RecentTopicsCollectionCell"
     let discussionCellIdentifier = "DiscussionCell"
@@ -313,8 +313,6 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
             }
         } else if  indexPath.section == 2 {
             fact = discussionFacts[indexPath.row]
-            
-            
         } else {
             fact = followedFacts[indexPath.row]
         }
@@ -353,28 +351,27 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         
-        if indexPath.section == 0 {
+        if indexPath.section == 0 { // Last Selected Communities
             let newSize = CGSize(width: (collectionView.frame.size.width)-(collectionViewSpacing+10), height: (collectionView.frame.size.width/4))
             
             return newSize
-        } else if  indexPath.section == 1 {    // normal Communities
+        } else if indexPath.section == 1 {    // normal Communities
             
-                let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: (collectionView.frame.size.width/2)-collectionViewSpacing)
-                
-                return newSize
+            let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: (collectionView.frame.size.width/2)-collectionViewSpacing)
             
-        } else if  indexPath.section == 2 { // Discussions
+            return newSize
             
-                let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: (collectionView.frame.size.width/2))//-(collectionViewSpacing/2)
-                
-                return newSize
+        } else if indexPath.section == 2 { // Discussions
             
-        } else {
+            let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: collectionView.frame.size.width/2)
+            
+            return newSize
+            
+        } else {    // Followed Communities
             let newSize = CGSize(width: (collectionView.frame.size.width), height: 40)
             
             return newSize
         }
-            
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -499,23 +496,6 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
         }
     }
     
-    
-    func logUser(fact: Community) {
-        if let user = Auth.auth().currentUser {
-            if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" {
-                print("Nicht bei Malte loggen")
-            } else {
-                Analytics.logEvent("FactDetailOpened", parameters: [
-                    AnalyticsParameterTerm: fact.title
-                ])
-            }
-        } else {
-            Analytics.logEvent("FactDetailOpened", parameters: [
-                AnalyticsParameterTerm: fact.title
-            ])
-        }
-    }
-    
     //MARK: -Recent Topics
     
     func topicSelected(fact: Community) {
@@ -551,19 +531,17 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     //MARK: -PrepareForSegue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toPageVC" {
-            if let pageVC = segue.destination as? CommunityPageViewController {
+            if let pageVC = segue.destination as? CommunityPageVC {
                 if let chosenFact = sender as? Community {
                     pageVC.fact = chosenFact
                     pageVC.recentTopicDelegate = self
-                    
-                    self.logUser(fact: chosenFact)
                 }
             }
         }
         
         if segue.identifier == "toNewArgumentSegue" {
             if let navCon = segue.destination as? UINavigationController {
-                if let newFactVC = navCon.topViewController as? NewCommunityItemTableViewController {
+                if let newFactVC = navCon.topViewController as? NewCommunityItemTableVC {
                     if let type = sender as? DisplayOption {
                         
                         newFactVC.pickedDisplayOption = type
@@ -575,7 +553,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
             }
         }
         if segue.identifier == "showAllTopicsSegue" {
-            if let showAllVC = segue.destination as? ShowAllFactsCollectionViewController {
+            if let showAllVC = segue.destination as? AllCommunitiesCollectionVC {
                 if let type = sender as? DisplayOption {
                     showAllVC.type = type
                 }
@@ -612,7 +590,7 @@ class CommunityCollectionViewController: UICollectionViewController, UICollectio
     }
 }
 
-extension CommunityCollectionViewController: AddOnDelegate {
+extension CommunityCollectionVC: AddOnDelegate {
     func fetchCompleted() {
         print("not needed")
     }
@@ -633,7 +611,7 @@ extension CommunityCollectionViewController: AddOnDelegate {
     }
 }
 
-extension CommunityCollectionViewController: TopOfCollectionViewDelegate, NewFactDelegate, TopicCollectionFooterDelegate, RecentTopicCellDelegate {
+extension CommunityCollectionVC: TopOfCollectionViewDelegate, NewFactDelegate, TopicCollectionFooterDelegate, RecentTopicCellDelegate {
     
     //Topic in the recentTopic collectionView is tapped
     func topicTapped(fact: Community) {

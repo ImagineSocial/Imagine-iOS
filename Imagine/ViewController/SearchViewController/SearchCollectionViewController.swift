@@ -232,10 +232,6 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
         if let posts = communityPosts {
             let post = posts[indexPath.item]
             performSegue(withIdentifier: "toPostSegue", sender: post)
-            
-            Analytics.logEvent("PostTappedInSearchVC", parameters: [
-                AnalyticsParameterTerm: post.title
-            ])
         } else if let posts = postResults {
             let post = posts[indexPath.item]
             performSegue(withIdentifier: "toPostSegue", sender: post)
@@ -259,7 +255,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
             }
         }
         if segue.identifier == "toTopicSegue" {
-            if let pageVC = segue.destination as? CommunityPageViewController {
+            if let pageVC = segue.destination as? CommunityPageVC {
                 if let chosenFact = sender as? Community {
                     pageVC.fact = chosenFact
                 }

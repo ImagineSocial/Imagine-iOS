@@ -42,15 +42,6 @@ class SwipeCollectionViewController: UICollectionViewController, UICollectionVie
             UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
             UIView.setAnimationsEnabled(true)
 
-            if let user = Auth.auth().currentUser {
-                if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" {
-                    print("Nicht bei Malte loggen")
-                } else {
-                    Analytics.logEvent("PitchOpened", parameters: [:])
-                }
-            } else {
-                Analytics.logEvent("PitchOpened", parameters: [:])
-            }
         case .intro:
             let introPics = [UIImage(named: "Intro1")!, UIImage(named: "Intro2")!, UIImage(named: "Intro3")!, UIImage(named: "Intro4")!, UIImage(named: "Intro5")!, UIImage(named: "Intro6")!]
             

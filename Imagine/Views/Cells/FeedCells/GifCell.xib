@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -26,19 +26,19 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="naF-ts-12n">
-                        <rect key="frame" x="10" y="10" width="402" height="303"/>
+                        <rect key="frame" x="12" y="10" width="398" height="303"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pcc-bY-ai6" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="402" height="24"/>
+                                <rect key="frame" x="0.0" y="0.0" width="398" height="24"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4XZ-8u-fcu">
-                                        <rect key="frame" x="15" y="0.0" width="355" height="24"/>
+                                        <rect key="frame" x="15" y="0.0" width="351" height="24"/>
                                         <fontDescription key="fontDescription" name="Kalam-Regular" family="Kalam" pointSize="18"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jAX-zt-dht" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                        <rect key="frame" x="372" y="2" width="20" height="20"/>
+                                        <rect key="frame" x="368" y="2" width="20" height="20"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="bvI-ll-vkJ"/>
@@ -67,16 +67,16 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999998807907104" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3si-bm-DnA">
-                                <rect key="frame" x="10" y="79" width="382" height="0.0"/>
+                                <rect key="frame" x="12" y="79" width="374" height="0.0"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" horizontalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="386-Uc-o5s">
-                                <rect key="frame" x="5" y="89" width="392" height="175"/>
+                                <rect key="frame" x="5" y="91" width="388" height="175"/>
                                 <subviews>
                                     <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="V2M-wY-QrG">
-                                        <rect key="frame" x="186" y="77.5" width="20" height="20"/>
+                                        <rect key="frame" x="184" y="77.5" width="20" height="20"/>
                                     </activityIndicatorView>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -87,14 +87,14 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nel-wO-jlj" customClass="FeedLikeView" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="10" y="274" width="382" height="23"/>
+                                <rect key="frame" x="10" y="276" width="378" height="23"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="23" id="nTS-nH-kK6"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1De-Cy-KVV" customClass="FeedUserView" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="5" y="29" width="392" height="45"/>
+                                <rect key="frame" x="5" y="29" width="388" height="45"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="VB6-GY-KdJ"/>
@@ -105,13 +105,13 @@
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="1De-Cy-KVV" secondAttribute="trailing" constant="5" id="0Rd-IG-ml4"/>
                             <constraint firstItem="1De-Cy-KVV" firstAttribute="top" secondItem="Pcc-bY-ai6" secondAttribute="bottom" constant="5" id="0nA-V6-Li5"/>
-                            <constraint firstItem="386-Uc-o5s" firstAttribute="top" secondItem="3si-bm-DnA" secondAttribute="bottom" constant="10" id="5Pf-Wd-DkD"/>
+                            <constraint firstItem="386-Uc-o5s" firstAttribute="top" secondItem="3si-bm-DnA" secondAttribute="bottom" constant="12" id="5Pf-Wd-DkD"/>
                             <constraint firstAttribute="trailing" secondItem="386-Uc-o5s" secondAttribute="trailing" constant="5" id="NDx-v4-40O"/>
                             <constraint firstAttribute="trailing" secondItem="Pcc-bY-ai6" secondAttribute="trailing" id="Nul-3H-VSi"/>
                             <constraint firstItem="Pcc-bY-ai6" firstAttribute="top" secondItem="naF-ts-12n" secondAttribute="top" id="OFB-Kc-ncM"/>
                             <constraint firstItem="Nel-wO-jlj" firstAttribute="leading" secondItem="naF-ts-12n" secondAttribute="leading" constant="10" id="T1K-UW-3uN"/>
-                            <constraint firstAttribute="trailing" secondItem="3si-bm-DnA" secondAttribute="trailing" constant="10" id="TyK-F6-EzE"/>
-                            <constraint firstItem="3si-bm-DnA" firstAttribute="leading" secondItem="naF-ts-12n" secondAttribute="leading" constant="10" id="VYc-8x-u3U"/>
+                            <constraint firstAttribute="trailing" secondItem="3si-bm-DnA" secondAttribute="trailing" constant="12" id="TyK-F6-EzE"/>
+                            <constraint firstItem="3si-bm-DnA" firstAttribute="leading" secondItem="naF-ts-12n" secondAttribute="leading" constant="12" id="VYc-8x-u3U"/>
                             <constraint firstItem="Nel-wO-jlj" firstAttribute="top" secondItem="386-Uc-o5s" secondAttribute="bottom" constant="10" id="bTb-yx-I8R"/>
                             <constraint firstItem="386-Uc-o5s" firstAttribute="leading" secondItem="naF-ts-12n" secondAttribute="leading" constant="5" id="fsD-2f-MIn"/>
                             <constraint firstAttribute="bottom" secondItem="Nel-wO-jlj" secondAttribute="bottom" constant="6" id="i2D-uu-6b4"/>
@@ -124,10 +124,10 @@
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                 <constraints>
-                    <constraint firstItem="naF-ts-12n" firstAttribute="top" secondItem="fWs-0O-PKh" secondAttribute="top" constant="10" id="QXa-Wn-lBS"/>
-                    <constraint firstAttribute="bottom" secondItem="naF-ts-12n" secondAttribute="bottom" constant="10" id="ZKG-cC-B3f"/>
-                    <constraint firstAttribute="trailing" secondItem="naF-ts-12n" secondAttribute="trailing" constant="10" id="lOt-2S-yiF"/>
-                    <constraint firstItem="naF-ts-12n" firstAttribute="leading" secondItem="fWs-0O-PKh" secondAttribute="leading" constant="10" id="yvO-L3-EgQ"/>
+                    <constraint firstItem="naF-ts-12n" firstAttribute="top" secondItem="fWs-0O-PKh" secondAttribute="top" constant="12" id="QXa-Wn-lBS"/>
+                    <constraint firstAttribute="bottom" secondItem="naF-ts-12n" secondAttribute="bottom" constant="12" id="ZKG-cC-B3f"/>
+                    <constraint firstAttribute="trailing" secondItem="naF-ts-12n" secondAttribute="trailing" constant="12" id="lOt-2S-yiF"/>
+                    <constraint firstItem="naF-ts-12n" firstAttribute="leading" secondItem="fWs-0O-PKh" secondAttribute="leading" constant="12" id="yvO-L3-EgQ"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>

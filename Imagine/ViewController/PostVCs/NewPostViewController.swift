@@ -284,7 +284,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "searchFactsSegue" {
             if let navCon = segue.destination as? UINavigationController {
-                if let factVC = navCon.topViewController as? CommunityCollectionViewController {
+                if let factVC = navCon.topViewController as? CommunityCollectionVC {
                     factVC.addFactToPost = .newPost
                     factVC.delegate = self
                 }
@@ -852,10 +852,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
             if text.contains(".mp4") {
                 link = text
             } else {
-                
-                Analytics.logEvent("FailedToPostGIF", parameters: [
-                    AnalyticsParameterTerm: ""
-                ])
                 self.alert(message: NSLocalizedString("error_gif_wrong_ending", comment: "just .mp4"), title: NSLocalizedString("error_title", comment: "got error"))
                 return
             }

@@ -64,7 +64,7 @@ enum NewCommunityCellType {
     case setLink
 }
 
-class NewCommunityItemTableViewController: UITableViewController {
+class NewCommunityItemTableVC: UITableViewController {
     
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var headerInfoButton: DesignableButton!
@@ -828,7 +828,7 @@ class NewCommunityItemTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "selectFactSegue" {
             if let navCon = segue.destination as? UINavigationController {
-                if let factVC = navCon.topViewController as? CommunityCollectionViewController {
+                if let factVC = navCon.topViewController as? CommunityCollectionVC {
                     factVC.addFactToPost = .newPost
                     factVC.delegate = self
                 }
@@ -837,7 +837,7 @@ class NewCommunityItemTableViewController: UITableViewController {
     }
 }
 
-extension NewCommunityItemTableViewController: NewCommunityItemDelegate, LinkFactWithPostDelegate {
+extension NewCommunityItemTableVC: NewCommunityItemDelegate, LinkFactWithPostDelegate {
     
     func chooseImage(indexPath: IndexPath) {
         self.indexPathOfImageCell = indexPath
@@ -901,7 +901,7 @@ extension NewCommunityItemTableViewController: NewCommunityItemDelegate, LinkFac
     }
 }
 
-extension NewCommunityItemTableViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate, CropViewControllerDelegate {
+extension NewCommunityItemTableVC: UIImagePickerControllerDelegate, UINavigationControllerDelegate, CropViewControllerDelegate {
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         

@@ -34,7 +34,7 @@ class TopicCell: UITableViewCell {
     
     //MARK:- Variables
     private let db = Firestore.firestore()
-    private let cornerRadius: CGFloat = 6
+    private let cornerRadius: CGFloat = 8
     
     var delegate: TopTopicCellDelegate?
     private var facts = [Community]()
@@ -63,15 +63,17 @@ class TopicCell: UITableViewCell {
         
         //DesignStuff
         for view in [weeklyTopicView, stackBackgroundView] {
-            let layer = view!.layer
+            guard let view = view else { return }
+            
+            let layer = view.layer
             if #available(iOS 13.0, *) {
                 layer.shadowColor = UIColor.label.cgColor
             } else {
                 layer.shadowColor = UIColor.black.cgColor
             }
-            layer.shadowOffset = CGSize(width: 0, height: 0)
-            layer.shadowRadius = 3
-            layer.shadowOpacity = 0.4
+            layer.shadowOffset = CGSize(width: 0, height: 2)
+            layer.shadowRadius = 4
+            layer.shadowOpacity = 0.3
         }
     }
     

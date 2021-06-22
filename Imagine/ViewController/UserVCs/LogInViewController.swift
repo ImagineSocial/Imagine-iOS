@@ -465,10 +465,6 @@ class LogInViewController: UIViewController {
             } else {
                 print("User wurde erfolgreich erstellt.")
                 
-                Analytics.logEvent(AnalyticsEventSignUp, parameters: [
-                    AnalyticsParameterMethod: "email"
-                ])
-                
                 if let user = Auth.auth().currentUser {
                     let changeRequest = user.createProfileChangeRequest()
                     let fullName = "\(self.name) \(self.surname)"
@@ -581,10 +577,6 @@ class LogInViewController: UIViewController {
                         self.present(alertVC, animated: true, completion: nil)
                     } else {
                         print("User wurde erfolgreich eingeloggt.")
-                        
-                        Analytics.logEvent(AnalyticsEventLogin, parameters: [
-                        AnalyticsParameterMethod: "email"
-                        ])
                     
                         self.delegate?.loadUser()
                         self.dismiss(animated: true, completion: nil)
@@ -976,10 +968,6 @@ class LogInViewController: UIViewController {
             let alertController = UIAlertController(title: NSLocalizedString("cancel_signup_title", comment: ""), message: NSLocalizedString("cancel_signup_message", comment: "all data will be lost.."), preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "Anmeldung abbrechen", style: .destructive, handler: { (_) in
                 self.dismiss(animated: true, completion: nil)
-                
-                Analytics.logEvent("RegistrationAborted", parameters: [
-                    AnalyticsParameterTerm: ""
-                ])
                 
             })
             let stayAction = UIAlertAction(title: NSLocalizedString("cancel_stay_here", comment: ""), style: .cancel) { (_) in

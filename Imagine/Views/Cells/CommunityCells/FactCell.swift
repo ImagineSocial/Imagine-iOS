@@ -19,7 +19,7 @@ class FactCell:UICollectionViewCell {
     @IBOutlet weak var containerView: UIView!
     
     let db = Firestore.firestore()
-    let cornerRadius: CGFloat = 6
+    let cornerRadius: CGFloat = 8
     
     override var isHighlighted: Bool {
         didSet {
@@ -55,9 +55,9 @@ class FactCell:UICollectionViewCell {
         } else {
             layer.shadowColor = UIColor.black.cgColor
         }
-        layer.shadowOffset = CGSize(width: 0, height: 0)
-        layer.shadowRadius = 2
-        layer.shadowOpacity = 0.4
+        layer.shadowOffset = CGSize(width: 0, height: 3)
+        layer.shadowRadius = 4
+        layer.shadowOpacity = 0.3
         layer.shadowPath = UIBezierPath(roundedRect: contentView.frame, cornerRadius: cornerRadius).cgPath
     }
     

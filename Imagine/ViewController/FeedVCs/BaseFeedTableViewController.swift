@@ -788,21 +788,6 @@ extension BaseFeedTableViewController: PostCellDelegate {
     
     func factTapped(fact: Community) {
         if isFactSegueEnabled {
-            if let user = Auth.auth().currentUser {
-                if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" {
-                    print("Nicht bei Malte loggen")
-                } else {
-                    Analytics.logEvent("FactTappedInFeed", parameters: [
-                        AnalyticsParameterTerm: fact.title
-                    ])
-                }
-            } else {
-                Analytics.logEvent("FactTappedInFeed", parameters: [
-                    AnalyticsParameterTerm: fact.title
-                ])
-            }
-            
-            
             performSegue(withIdentifier: "toFactSegue", sender: fact)
         }
     }

@@ -71,11 +71,11 @@ class BaseFeedCell : UITableViewCell {
         } else {
             layer.shadowColor = UIColor.black.cgColor
         }
-        layer.shadowOffset = CGSize.zero
+        layer.shadowOffset = CGSize(width: 0, height: 2)
         layer.shadowRadius = shadowRadius
-        layer.shadowOpacity = 0.5
+        layer.shadowOpacity = 0.3
         
-        let rect = CGRect(x: 0, y: 0, width: contentView.frame.width-20, height: contentView.frame.height-20)
+        let rect = CGRect(x: 0, y: 0, width: contentView.frame.width-24, height: contentView.frame.height-24)
         layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: radius).cgPath
         
     }

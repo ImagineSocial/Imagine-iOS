@@ -109,10 +109,6 @@ class SettingTableViewController: UITableViewController {
             }
             let ref = collectionRef.document(topic.documentID)
             
-            Analytics.logEvent("SettingOpened", parameters: [
-                AnalyticsParameterTerm: "topic"
-            ])
-            
             ref.getDocument { (snap, err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
@@ -139,10 +135,6 @@ class SettingTableViewController: UITableViewController {
             }
         } else if let user = user {
             let userSetting = UserSetting(name: user.displayName, OP: user.userUID)
-            
-            Analytics.logEvent("SettingOpened", parameters: [
-                AnalyticsParameterTerm: "user"
-            ])
             
             let ref = db.collection("Users").document(user.userUID)
             ref.getDocument { (snap, err) in
@@ -212,19 +204,12 @@ class SettingTableViewController: UITableViewController {
         } else if let addOn = addOn {
             let addOnSetting = AddOnSetting(style: addOn.style, fact: addOn.fact, addOnDocumentID: addOn.documentID, description: addOn.description, items: addOn.items)
             
-            Analytics.logEvent("SettingOpened", parameters: [
-                AnalyticsParameterTerm: "addOn"
-            ])
-            
             addOnSetting.title = addOn.headerTitle
             addOnSetting.imageURL = addOn.imageURL
             addOnSetting.itemOrder = addOn.itemOrder
             
             self.addOnSetting = addOnSetting
             self.setUpViewController()
-            
-//            neuen indexPath row in datenbank speichern
-//            fetchen nach row und nicht createTime
         }
     }
     

@@ -10,14 +10,14 @@ import UIKit
 import Firebase
 import FirebaseFirestore
 
-class ShowAllFactsCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, RecentTopicDelegate {
+class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, RecentTopicDelegate {
     
     
     let factCellIdentifier = "FactCell"
     let discussionCellIdentifier = "DiscussionCell"
     let topicHeaderIdentifier = "TopicCollectionHeader"
     
-    let collectionViewSpacing:CGFloat = 30
+    let collectionViewSpacing:CGFloat = 24
     
     let db = Firestore.firestore()
     let dataHelper = DataRequest()
@@ -162,7 +162,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toPageVC" {
-            if let pageVC = segue.destination as? CommunityPageViewController {
+            if let pageVC = segue.destination as? CommunityPageVC {
                 if let chosenFact = sender as? Community {
                     pageVC.fact = chosenFact
                     pageVC.recentTopicDelegate = self
@@ -172,7 +172,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
     }
     
     func topicSelected(fact: Community) {
-        let factVC = CommunityCollectionViewController()
+        let factVC = CommunityCollectionVC()
         factVC.registerRecentFact(fact: fact)
     }
     
@@ -228,7 +228,7 @@ class ShowAllFactsCollectionViewController: UICollectionViewController, UICollec
             return newSize
             
         } else if let _ = discussionFacts {
-            let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: (collectionView.frame.size.width/2)-(collectionViewSpacing/2))
+            let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: collectionView.frame.size.width/2)
             
             return newSize
         } else {

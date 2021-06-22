@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -27,16 +27,16 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="t1L-aB-2r7">
-                        <rect key="frame" x="10" y="10" width="355" height="455"/>
+                        <rect key="frame" x="12" y="12" width="351" height="451"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bhM-6R-png" userLabel="OGPostView" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="5" y="135.5" width="345" height="282.5"/>
+                                <rect key="frame" x="5" y="131.5" width="341" height="282.5"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="BlM-Pf-T79">
-                                        <rect key="frame" x="5" y="5" width="335" height="220.5"/>
+                                        <rect key="frame" x="5" y="5" width="331" height="220.5"/>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.64999997615814209" translatesAutoresizingMaskIntoConstraints="NO" id="rIf-bu-qbx">
-                                        <rect key="frame" x="5" y="227.5" width="200" height="50"/>
+                                        <rect key="frame" x="5" y="227.5" width="196" height="50"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="50" id="TVq-2C-74S"/>
                                         </constraints>
@@ -45,14 +45,14 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="default-user" translatesAutoresizingMaskIntoConstraints="NO" id="9dy-yM-4cH">
-                                        <rect key="frame" x="305" y="242.5" width="30" height="30"/>
+                                        <rect key="frame" x="301" y="242.5" width="30" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="30" id="KYb-6C-ccC"/>
                                             <constraint firstAttribute="height" constant="30" id="imt-w2-uri"/>
                                         </constraints>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name Name" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.80000001192092896" translatesAutoresizingMaskIntoConstraints="NO" id="tZz-tu-HOI">
-                                        <rect key="frame" x="215" y="242.5" width="80" height="17"/>
+                                        <rect key="frame" x="211" y="242.5" width="80" height="17"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="80" id="O4W-yL-iPW"/>
                                         </constraints>
@@ -61,7 +61,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BFw-hc-paJ">
-                                        <rect key="frame" x="246.5" y="260.5" width="48.5" height="12"/>
+                                        <rect key="frame" x="242.5" y="260.5" width="48.5" height="12"/>
                                         <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="9"/>
                                         <color key="textColor" systemColor="secondaryLabelColor"/>
                                         <nil key="highlightedColor"/>
@@ -91,23 +91,23 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mwi-kF-AiC" customClass="FeedLikeView" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="10" y="426" width="335" height="23"/>
+                                <rect key="frame" x="10" y="422" width="331" height="23"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="23" id="hM5-ai-M6l"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wtY-HP-jyx" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="355" height="24"/>
+                                <rect key="frame" x="0.0" y="0.0" width="351" height="24"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ray-NU-7xw">
-                                        <rect key="frame" x="15" y="0.0" width="308" height="24"/>
+                                        <rect key="frame" x="15" y="0.0" width="304" height="24"/>
                                         <fontDescription key="fontDescription" name="Kalam-Regular" family="Kalam" pointSize="18"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s4t-wl-6qM" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                        <rect key="frame" x="325" y="2" width="20" height="20"/>
+                                        <rect key="frame" x="321" y="2" width="20" height="20"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="iIo-5U-tnv"/>
@@ -137,13 +137,13 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.64999997615814209" translatesAutoresizingMaskIntoConstraints="NO" id="MgL-CG-Yyh">
-                                <rect key="frame" x="10" y="79" width="335" height="51.5"/>
+                                <rect key="frame" x="10" y="79" width="331" height="47.5"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="As1-m7-T4Y" customClass="FeedUserView" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="5" y="29" width="345" height="45"/>
+                                <rect key="frame" x="5" y="29" width="341" height="45"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="lF3-NY-sHn"/>
@@ -173,10 +173,10 @@
                 </subviews>
                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                 <constraints>
-                    <constraint firstItem="t1L-aB-2r7" firstAttribute="top" secondItem="uRR-6c-6J1" secondAttribute="top" constant="10" id="JVP-2q-oas"/>
-                    <constraint firstAttribute="trailing" secondItem="t1L-aB-2r7" secondAttribute="trailing" constant="10" id="MqT-Fj-ItA"/>
-                    <constraint firstItem="t1L-aB-2r7" firstAttribute="leading" secondItem="uRR-6c-6J1" secondAttribute="leading" constant="10" id="Xyu-qK-a4Y"/>
-                    <constraint firstAttribute="bottom" secondItem="t1L-aB-2r7" secondAttribute="bottom" constant="10" id="jK6-DB-Lhf"/>
+                    <constraint firstItem="t1L-aB-2r7" firstAttribute="top" secondItem="uRR-6c-6J1" secondAttribute="top" constant="12" id="JVP-2q-oas"/>
+                    <constraint firstAttribute="trailing" secondItem="t1L-aB-2r7" secondAttribute="trailing" constant="12" id="MqT-Fj-ItA"/>
+                    <constraint firstItem="t1L-aB-2r7" firstAttribute="leading" secondItem="uRR-6c-6J1" secondAttribute="leading" constant="12" id="Xyu-qK-a4Y"/>
+                    <constraint firstAttribute="bottom" secondItem="t1L-aB-2r7" secondAttribute="bottom" constant="12" id="jK6-DB-Lhf"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
