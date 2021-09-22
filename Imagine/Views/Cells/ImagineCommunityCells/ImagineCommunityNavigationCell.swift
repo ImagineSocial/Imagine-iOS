@@ -36,26 +36,13 @@ class ImagineCommunityNavigationCell: UICollectionViewCell {
     //MARK:- Variables
     var delegate: CommunityCollectionCellDelegate?
     
-    //MARK:- Cell Lifecycle
+    //MARK: - Cell Lifecycle
     override func awakeFromNib() {
         
         // Set contentMode for imageView of buttons
         let buttons: [DesignableButton] = [websiteButton!, proposalButton!, helpButton!, settingButton!, infoButton!]
         for button in buttons {
             button.imageView?.contentMode = .scaleAspectFit
-            
-            
-//            let layer = button.layer
-//            
-//            if #available(iOS 13.0, *) {
-//                layer.shadowColor = UIColor.label.cgColor
-//            } else {
-//                layer.shadowColor = UIColor.black.cgColor
-//            }
-//            layer.shadowOffset = CGSize.zero
-//            layer.shadowRadius = 3
-//            layer.shadowOpacity = 0.4
-            
         }
     }
     

@@ -42,12 +42,7 @@ class JobOfferCell: UITableViewCell {
     }
     
     override func prepareForReuse() {
-        if #available(iOS 13.0, *) {
-            contentView.backgroundColor = .systemBackground
-        } else {
-            contentView.backgroundColor = .white
-        }
-        
+        contentView.backgroundColor = .systemBackground
         contentView.layer.borderWidth = 0
     }
     
@@ -56,11 +51,8 @@ class JobOfferCell: UITableViewCell {
         
         if needInsets {
             
-            if #available(iOS 13.0, *) {
-                self.contentView.backgroundColor = .secondarySystemBackground
-            } else {
-                self.contentView.backgroundColor = .ios12secondarySystemBackground
-            }
+            self.contentView.backgroundColor = .secondarySystemBackground
+            
             //set the values for top,left,bottom,right margins
             let margins = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
             contentView.frame = contentView.frame.inset(by: margins)

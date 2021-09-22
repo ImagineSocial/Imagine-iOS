@@ -37,11 +37,7 @@ class OptionView: UIView {
         self.newPostVC = newPostVC
         
         translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            backgroundColor = .systemBackground
-        } else {
-            backgroundColor = .white
-        }
+        backgroundColor = .systemBackground
         
         setUpOptionViewUI()
         synonymTextView.delegate = self
@@ -210,11 +206,7 @@ class OptionView: UIView {
             }
             
             //Highlight selection
-            if #available(iOS 13.0, *) {
-                synonymTextView.textColor = .secondaryLabel
-            } else {
-                synonymTextView.textColor = .lightGray
-            }
+            synonymTextView.textColor = .secondaryLabel
         } else {
             //Set right text for anonymous post
             if synonymTextView.text == defaultSynonymText {
@@ -231,11 +223,7 @@ class OptionView: UIView {
             
             
             //Highlight selection
-            if #available(iOS 13.0, *) {
-                synonymTextView.textColor = .label
-            } else {
-                synonymTextView.textColor = .black
-            }
+            synonymTextView.textColor = .label
         }
     }
     
@@ -250,11 +238,7 @@ class OptionView: UIView {
         leadingSuperviewConstraint.isActive = true
         
         //Hightlight Selection
-        if #available(iOS 13.0, *) {
-            hideProfilePictureLabel.textColor = .label
-        } else {
-            hideProfilePictureLabel.textColor = .black
-        }
+        hideProfilePictureLabel.textColor = .label
         previewNameLabel.font = UIFont(name: "IBMPlexSans-Medium", size: 11)
         
         //Hide Picture
@@ -277,11 +261,7 @@ class OptionView: UIView {
         leadingImageViewConstraint.isActive = true
         
         //Highlight Selection
-        if #available(iOS 13.0, *) {
-            hideProfilePictureLabel.textColor = .secondaryLabel
-        } else {
-            hideProfilePictureLabel.textColor = .lightGray
-        }
+        hideProfilePictureLabel.textColor = .secondaryLabel
         previewNameLabel.font = UIFont(name: "IBMPlexSans", size: 11)
         
         //Animate Change
@@ -332,12 +312,7 @@ class OptionView: UIView {
     let optionButton: DesignableButton = {  // little Burger Menu
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            button.setTitleColor(.label, for: .normal)
-            
-        } else {
-            button.setTitleColor(.black, for: .normal)
-        }
+        button.setTitleColor(.label, for: .normal)
         button.tintColor = .imagineColor
         button.setImage(UIImage(named: "menu"), for: .normal)
         button.addTarget(self, action: #selector(optionButtonTapped), for: .touchUpInside)
@@ -363,15 +338,8 @@ class OptionView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         let tronColor = UIColor(red: 0.05, green: 0.97, blue: 0.97, alpha: 1.00)
         
-        var color: UIColor!
-        if #available(iOS 13.0, *) {
-            color = .label
-        } else {
-            color = .black
-        }
-        
         let text = NSMutableAttributedString()
-        text.append(NSAttributedString(string: "M", attributes: [NSAttributedString.Key.foregroundColor: color]))
+        text.append(NSAttributedString(string: "M", attributes: [NSAttributedString.Key.foregroundColor: UIColor.label]))
         text.append(NSAttributedString(string: "M", attributes: [NSAttributedString.Key.foregroundColor: tronColor]))
         
         button.setTitleColor(tronColor, for: .normal)
@@ -387,11 +355,7 @@ class OptionView: UIView {
     let hideProfilePictureView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
+        view.backgroundColor = .systemBackground
         
         return view
     }()
@@ -400,11 +364,7 @@ class OptionView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Hide profile picture"
-        if #available(iOS 13.0, *) {
-            label.textColor = .secondaryLabel
-        } else {
-            label.textColor = .lightGray
-        }
+        label.textColor = .secondaryLabel
         label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
         
         return label
@@ -424,11 +384,7 @@ class OptionView: UIView {
     let postAnonymousView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
+        view.backgroundColor = .systemBackground
         
         return view
     }()
@@ -448,11 +404,7 @@ class OptionView: UIView {
        let textField = UITextView()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
-        if #available(iOS 13.0, *) {
-            textField.textColor = .secondaryLabel
-        } else {
-            textField.textColor = .lightGray
-        }
+        textField.textColor = .secondaryLabel
         textField.isScrollEnabled = false
         textField.returnKeyType = .done
         textField.autocorrectionType = .no
@@ -492,11 +444,7 @@ class OptionView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans-Light", size: 8)
-        if #available(iOS 13.0, *) {
-            label.textColor = .secondaryLabel
-        } else {
-            label.textColor = .lightGray
-        }
+        label.textColor = .secondaryLabel
         
         return label
     }()
@@ -549,11 +497,7 @@ extension OptionView: UITextViewDelegate {
             previewNameLabel.text = anonymousName
             anonymousSynonym = nil
             
-            if #available(iOS 13.0, *) {
-                textView.textColor = .secondaryLabel
-            } else {
-                textView.textColor = .lightGray
-            }
+            textView.textColor = .secondaryLabel
         }
     }
     

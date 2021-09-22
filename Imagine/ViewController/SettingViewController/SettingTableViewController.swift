@@ -226,11 +226,11 @@ class SettingTableViewController: UITableViewController {
                 let imageCell = TableViewSettingCell(value: topicSetting.imageURL ?? "", type: .imageCell, settingChange: .changeTopicPicture)
                 let nameCell = TableViewSettingCell(value: topicSetting.title, type: .textCell, settingChange: .changeTopicTitle)
                 nameCell.titleText = NSLocalizedString("title:", comment: "title:")
-                nameCell.characterLimit = Constants.characterLimits.factTitleCharacterLimit
+                nameCell.characterLimit = Constants.characterLimits.communityTitleCharacterLimit
                 
                 let descriptionCell = TableViewSettingCell(value: topicSetting.description, type: .textCell, settingChange: .changeTopicDescription)
                 descriptionCell.titleText = NSLocalizedString("description:", comment: "description:")
-                descriptionCell.characterLimit = Constants.characterLimits.factDescriptionCharacterLimit
+                descriptionCell.characterLimit = Constants.characterLimits.communityDescriptionCharacterLimit
                 
                 let addOnAsFirstViewCell = TableViewSettingCell(value: topicSetting.isAddOnFirstView, type: .switchCell, settingChange: .changeTopicAddOnsAsFirstView)
                 addOnAsFirstViewCell.titleText = NSLocalizedString("setting_community_addOn_as_start", comment: "as startview?")

@@ -257,11 +257,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         self.navigationController?.navigationBar.shadowImage = UIImage() //"Doesnt work")
         
         //Save Post Button
-        if #available(iOS 13.0, *) {
-            savePostButton.tintColor = .label
-        } else {
-            savePostButton.tintColor = .black
-        }
+        savePostButton.tintColor = .label
         
         handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
             if alreadySaved {
@@ -283,12 +279,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                     button.setImage(nil, for: .normal)
                     button.layer.borderWidth = 0
                     button.setTitleColor(.white, for: .normal)
-                    
-                    if #available(iOS 13.0, *) {
-                        button.backgroundColor = .tertiaryLabel
-                    } else {
-                        button.backgroundColor = .darkGray
-                    }
+                    button.backgroundColor = .tertiaryLabel
                 }
                 
                 self.thanksButton.setTitle(String(post.votes.thanks), for: .normal)
@@ -385,12 +376,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 self.urlLabel.text = link.shortURL
                 self.linkPreviewTitle.text = link.linkTitle
                 self.linkPreviewDescription.text = link.linkDescription
-                
-                if #available(iOS 13.0, *) {
-                    self.imageCollectionView.backgroundColor = .secondarySystemBackground
-                } else {
-                    self.imageCollectionView.backgroundColor = .ios12secondarySystemBackground
-                }
+                self.imageCollectionView.backgroundColor = .secondarySystemBackground
                 
                 if let imageURL = link.imageURL {
                     self.imageURLs.append(imageURL)
@@ -693,15 +679,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             button.imageView?.contentMode = .scaleAspectFit
             button.layer.borderWidth = 0.5
             button.layer.cornerRadius = 4
-            if #available(iOS 13.0, *) {
-                button.setTitleColor(.label, for: .normal)
-                button.tintColor = .label
-                button.layer.borderColor = UIColor.secondaryLabel.cgColor
-            } else {
-                button.setTitleColor(.black, for: .normal)
-                button.tintColor = .black
-                button.layer.borderColor = UIColor.black.cgColor
-            }
+            button.setTitleColor(.label, for: .normal)
+            button.tintColor = .label
+            button.layer.borderColor = UIColor.secondaryLabel.cgColor
         }
     }
     
@@ -811,11 +791,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
 
         self.contentView.addSubview(buttonLabel)
         buttonLabel.alpha = 1
-        if #available(iOS 13.0, *) {
-            button.setTitleColor(.label, for: .normal)
-        } else {
-            button.setTitleColor(.black, for: .normal)
-        }
+        button.setTitleColor(.label, for: .normal)
         
         if let _ = centerX {
             centerX!.isActive = false
@@ -948,14 +924,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         button.setImage(UIImage(named: "translate"), for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
         button.imageEdgeInsets = UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1)
-        
-        if #available(iOS 13.0, *) {
-            button.setTitleColor(.label, for: .normal)
-            button.tintColor = .label
-        } else {
-            button.setTitleColor(.black, for: .normal)
-            button.tintColor = .black
-        }
+        button.setTitleColor(.label, for: .normal)
+        button.tintColor = .label
         
         return button
     }()
@@ -973,9 +943,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "toFactSegue" {
-            if let fact = sender as? Community {
+            if let community = sender as? Community {
                 if let factVC = segue.destination as? CommunityPageVC {
-                    factVC.fact = fact
+                    factVC.community = community
                     if linkedFactPageVCNeedsHeightCorrection {
                         factVC.headerNeedsAdjustment = true
                     }
@@ -984,10 +954,10 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
         
         if segue.identifier == "goToPostsOfTopic" {
-            if let fact = sender as? Community {
+            if let community = sender as? Community {
                 if let navCon = segue.destination as? UINavigationController {
                     if let factVC = navCon.topViewController as? CommunityPostTableVC {
-                        factVC.fact = fact
+                        factVC.community = community
                         factVC.needNavigationController = true
                     }
                 }

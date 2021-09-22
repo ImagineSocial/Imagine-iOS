@@ -87,36 +87,24 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         
         self.navigationController?.hidesBarsOnSwipe = true
         
-        if #available(iOS 13.0, *) {
-            let navBarAppearance = UINavigationBarAppearance()
-            navBarAppearance.configureWithOpaqueBackground()
-            navBarAppearance.backgroundColor = .systemBackground
-            navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.imagineColor, .font: UIFont(name: "IBMPlexSans-Medium", size: 25)!]
-            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.imagineColor, .font: UIFont(name: "IBMPlexSans-SemiBold", size: 30) ?? UIFont.systemFont(ofSize: 30, weight: .semibold)]
-            navBarAppearance.shadowImage = UIImage()
-            
-            self.navigationController?.navigationBar.standardAppearance = navBarAppearance
-            self.navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
-            
-        } else {
-            self.navigationController?.navigationBar.isTranslucent = false
-            self.navigationController?.navigationBar.backgroundColor = .white
-            self.navigationController?.navigationBar.barTintColor = .white
-        }
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.configureWithOpaqueBackground()
+        navBarAppearance.backgroundColor = .systemBackground
+        navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.imagineColor, .font: UIFont(name: "IBMPlexSans-Medium", size: 25)!]
+        navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.imagineColor, .font: UIFont(name: "IBMPlexSans-SemiBold", size: 30) ?? UIFont.systemFont(ofSize: 30, weight: .semibold)]
+        navBarAppearance.shadowImage = UIImage()
+        
+        self.navigationController?.navigationBar.standardAppearance = navBarAppearance
+        self.navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
         
         
         // Add View for statusBar background
-        if let window = UIApplication.shared.keyWindow {
+        if let window = UIApplication.shared.windows.first {
             let view = UIView()
             
             var height:CGFloat = 40
-            if #available(iOS 13.0, *) {
-                height = window.windowScene?.statusBarManager?.statusBarFrame.height ?? 40
-                view.backgroundColor = .systemBackground
-            } else {
-                height = UIApplication.shared.statusBarFrame.height
-                view.backgroundColor = .white
-            }
+            height = window.windowScene?.statusBarManager?.statusBarFrame.height ?? 40
+            view.backgroundColor = .systemBackground
             view.frame = CGRect(x: 0, y: 0, width: window.frame.width, height: height)
             statusBarView = view
             window.addSubview(statusBarView!)
@@ -190,21 +178,12 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                         
                         DispatchQueue.main.async {
                             
-                            if #available(iOS 11.0, *) {
-                                self.tableView.performBatchUpdates({
-                                    self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                                    self.tableView.insertRows(at: indexes, with: .bottom)
-                                }, completion: { (_) in
-                                    self.fetchesPosts = false
-                                })
-                            } else {
-                                self.tableView.beginUpdates()
+                            self.tableView.performBatchUpdates({
                                 self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                                self.tableView.insertRows(at: indexes, with: .right)
-                                self.tableView.endUpdates()
-                                
+                                self.tableView.insertRows(at: indexes, with: .bottom)
+                            }, completion: { (_) in
                                 self.fetchesPosts = false
-                            }
+                            })
                             
                             self.view.activityStopAnimating()
                             print("Jetzt haben wir \(self.posts.count)")
@@ -324,19 +303,19 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             }
         }
         if segue.identifier == "toFactSegue" {
-            if let fact = sender as? Community {
+            if let community = sender as? Community {
                 if let factVC = segue.destination as? CommunityPageVC {
-                    factVC.fact = fact
+                    factVC.community = community
                     factVC.headerNeedsAdjustment = true
                 }
             }
         }
         if segue.identifier == "goToPostsOfTopic" {
-            if let fact = sender as? Community {
+            if let community = sender as? Community {
                 if let factVC = segue.destination as? CommunityPostTableVC {
                     
-                    factVC.fact = fact
-                    self.notifyFactCollectionViewController(fact: fact)
+                    factVC.community = community
+                    self.notifyFactCollectionViewController(community: community)
                     
                 }
             }
@@ -392,11 +371,11 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     }
     
     //MARK:- Register Recent Community
-    func notifyFactCollectionViewController(fact: Community) {
+    func notifyFactCollectionViewController(community: Community) {
         if let viewControllers = self.tabBarController?.viewControllers {
             if let navVC = viewControllers[3] as? UINavigationController {
                 if let factVC = navVC.topViewController as? CommunityCollectionVC {
-                    factVC.registerRecentFact(fact: fact)
+                    factVC.registerRecentFact(fact: community)
                 }
             }
         }

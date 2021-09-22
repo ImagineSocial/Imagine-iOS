@@ -289,8 +289,8 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
         if segue.identifier == "toFactSegue" {
             if let vc = segue.destination as? CommunityPageVC {
-                if let fact = sender as? Community {
-                    vc.fact = fact
+                if let community = sender as? Community {
+                    vc.community = community
                 }
             }
         }

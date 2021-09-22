@@ -110,11 +110,7 @@ class FeedUserView: UIView, NibLoadable {
     //MARK:- LinkedCommunity
     func setCommunity(post: Post) {
         
-        if #available(iOS 13.0, *) {
-            self.linkedCommunityImageView.layer.borderColor = UIColor.secondaryLabel.cgColor
-        } else {
-            self.linkedCommunityImageView.layer.borderColor = UIColor.darkGray.cgColor
-        }
+        self.linkedCommunityImageView.layer.borderColor = UIColor.secondaryLabel.cgColor
         
         if post.isTopicPost {
             communityPostImageView.isHidden = false
@@ -123,11 +119,7 @@ class FeedUserView: UIView, NibLoadable {
         if let url = URL(string: post.community!.imageURL) {
             self.linkedCommunityImageView.sd_setImage(with: url, completed: nil)
         } else {
-            if #available(iOS 13.0, *) {
-                self.linkedCommunityImageView.backgroundColor = .systemBackground
-            } else {
-                self.linkedCommunityImageView.backgroundColor = .white
-            }
+            self.linkedCommunityImageView.backgroundColor = .systemBackground
             self.linkedCommunityImageView.image = UIImage(named: "default-community")
         }
     }

@@ -50,12 +50,7 @@ class FeedLikeView: UIView, NibLoadable {
             button.imageView?.contentMode = .scaleAspectFit
             button.layer.borderWidth = 0.5
             button.layer.cornerRadius = 7
-            
-            if #available(iOS 13.0, *) {
-                button.layer.borderColor = UIColor.secondaryLabel.cgColor
-            } else {
-                button.layer.borderColor = UIColor.black.cgColor
-            }
+            button.layer.borderColor = UIColor.secondaryLabel.cgColor
         }
     }
     
@@ -93,12 +88,7 @@ class FeedLikeView: UIView, NibLoadable {
             
             button.setTitleColor(.white, for: .normal)
             button.layer.borderWidth = 0
-            
-            if #available(iOS 13.0, *) {
-                button.backgroundColor = .tertiaryLabel
-            } else {
-                button.backgroundColor = .darkGray
-            }
+            button.backgroundColor = .tertiaryLabel
         }
         
         //Set vote count

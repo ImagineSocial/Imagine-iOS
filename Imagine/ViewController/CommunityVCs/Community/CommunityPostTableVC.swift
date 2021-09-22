@@ -20,7 +20,7 @@ class CommunityPostTableVC: BaseFeedTableViewController {
     
     @IBOutlet weak var infoButton: UIBarButtonItem!
     
-    var fact: Community?
+    var community: Community?
     
     var needNavigationController = false
     var displayOption: TableViewDisplayOptions = .normal
@@ -39,10 +39,6 @@ class CommunityPostTableVC: BaseFeedTableViewController {
     
     var postCount = 0
     var followerCount = 0
-    
-    deinit {
-        print("## Deinit postsofFact")
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,13 +74,13 @@ class CommunityPostTableVC: BaseFeedTableViewController {
     }
     
     override func getPosts(getMore: Bool) {
-        if let fact = fact {
+        if let community = community {
             if isConnected() {
                 
                 self.view.activityStartAnimating()
                 
                 DispatchQueue.global(qos: .default).async {
-                    self.firestoreRequest.getPostsForCommunity(getMore: getMore, fact: fact) { (posts, initialFetch) in
+                    self.firestoreRequest.getPostsForCommunity(getMore: getMore, community: community) { (posts, initialFetch) in
                         if let posts = posts {
                             if initialFetch {   // Get the first batch of posts
                                 
@@ -113,21 +109,12 @@ class CommunityPostTableVC: BaseFeedTableViewController {
                                 
                                 DispatchQueue.main.async {
                                     
-                                    if #available(iOS 11.0, *) {
-                                        self.tableView.performBatchUpdates({
-                                            self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                                            self.tableView.insertRows(at: indexes, with: .bottom)
-                                        }, completion: { (_) in
-                                            self.fetchesPosts = false
-                                        })
-                                    } else {
-                                        self.tableView.beginUpdates()
+                                    self.tableView.performBatchUpdates({
                                         self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                                        self.tableView.insertRows(at: indexes, with: .right)
-                                        self.tableView.endUpdates()
-                                        
+                                        self.tableView.insertRows(at: indexes, with: .bottom)
+                                    }, completion: { (_) in
                                         self.fetchesPosts = false
-                                    }
+                                    })
                                     
                                     self.view.activityStopAnimating()
                                 }
@@ -265,8 +252,8 @@ class CommunityPostTableVC: BaseFeedTableViewController {
     }
     
     @IBAction func newPostTapped(_ sender: Any) {
-        if let fact = fact {
-            performSegue(withIdentifier: "goToNewPost", sender: fact)
+        if let community = community {
+            performSegue(withIdentifier: "goToNewPost", sender: community)
         }
     }
     

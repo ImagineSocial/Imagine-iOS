@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		022981C326FB49D400B07BC8 /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022981C226FB49D400B07BC8 /* FirestoreManager.swift */; };
+		0289957326FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */; };
 		02EBEFE22635B40F00373C45 /* FeedLikeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EBEFE12635B40F00373C45 /* FeedLikeView.swift */; };
 		02EBEFE52635B41D00373C45 /* FeedLikeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02EBEFE42635B41D00373C45 /* FeedLikeView.xib */; };
 		6031FF6320510F14AC01ED24 /* Pods_Imagine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B6ABEE519CECD54D4C7F4F /* Pods_Imagine.framework */; };
@@ -275,6 +277,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		022981C226FB49D400B07BC8 /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
+		0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommunityCollectionVC+CollectionView.swift"; sourceTree = "<group>"; };
 		02EBEFE12635B40F00373C45 /* FeedLikeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLikeView.swift; sourceTree = "<group>"; };
 		02EBEFE42635B41D00373C45 /* FeedLikeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedLikeView.xib; sourceTree = "<group>"; };
 		1A16D61AEE6C9FEFE3134E7B /* Pods-Imagine.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.release.xcconfig"; path = "Target Support Files/Pods-Imagine/Pods-Imagine.release.xcconfig"; sourceTree = "<group>"; };
@@ -563,6 +567,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		022981C126FB49C000B07BC8 /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				022981C226FB49D400B07BC8 /* FirestoreManager.swift */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
+		0289957026FB4E86007CAFB7 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		0289957126FB4EB0007CAFB7 /* Main Community VC */ = {
+			isa = PBXGroup;
+			children = (
+				E96CE88C22940A9F00BACD3B /* CommunityCollectionVC.swift */,
+				0289957026FB4E86007CAFB7 /* Extensions */,
+			);
+			path = "Main Community VC";
+			sourceTree = "<group>";
+		};
 		66199979602FCB98C67C9712 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -701,6 +730,7 @@
 				E962AC162224430400C6D6EF /* AppDelegate.swift */,
 				E971190925EBA03C0078B2D3 /* Constants */,
 				E9F622F525EA492800AAD2C0 /* Network */,
+				022981C126FB49C000B07BC8 /* Manager */,
 				E9F622F425EA48AF00AAD2C0 /* Model */,
 				E9F622DA25E94FE200AAD2C0 /* Views */,
 				E971190B25EBB9450078B2D3 /* ViewController */,
@@ -871,7 +901,7 @@
 		E971195125EBD03C0078B2D3 /* Community */ = {
 			isa = PBXGroup;
 			children = (
-				E96CE88C22940A9F00BACD3B /* CommunityCollectionVC.swift */,
+				0289957126FB4EB0007CAFB7 /* Main Community VC */,
 				E9F6030E235DE5DF00A58D08 /* CommunityPostTableVC.swift */,
 			);
 			path = Community;
@@ -1603,6 +1633,7 @@
 				E962AC34222DA04E00C6D6EF /* ReportViewController.swift in Sources */,
 				E9817B2F25EBDCE500E56FC6 /* JobOffer.swift in Sources */,
 				E9817B3A25EBE23C00E56FC6 /* UserSetting.swift in Sources */,
+				022981C326FB49D400B07BC8 /* FirestoreManager.swift in Sources */,
 				E95B6B8724EECD2F0089BB19 /* SearchTableViewController.swift in Sources */,
 				E9817B6125EC05AD00E56FC6 /* TitleView.swift in Sources */,
 				E9817B3D25EBE25100E56FC6 /* AddOnSetting.swift in Sources */,
@@ -1632,6 +1663,7 @@
 				E911EEF022DB157500EDD056 /* SettingsLauncher.swift in Sources */,
 				E96CE8982295A13B00BACD3B /* ArgumentCell.swift in Sources */,
 				E97C834823D0883000CE3D3C /* MaltesZentraleTableViewController.swift in Sources */,
+				0289957326FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift in Sources */,
 				E95B6B8B24EFD2550089BB19 /* LocationSearchTableViewController.swift in Sources */,
 				E9B85D66241626DA00960942 /* ImagineCommunityCollectionViewController.swift in Sources */,
 				E98B22EE22CA396B000F965F /* ChatsTableViewController.swift in Sources */,
@@ -1861,7 +1893,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1918,7 +1950,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1939,7 +1971,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 5ZW84D49GY;
 				INFOPLIST_FILE = Imagine/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1962,7 +1994,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 5ZW84D49GY;
 				INFOPLIST_FILE = Imagine/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

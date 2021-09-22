@@ -30,12 +30,7 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if #available(iOS 13.0, *) {
-            collectionView.backgroundColor = .systemBackground
-        } else {
-            collectionView.backgroundColor = .white
-        }
-
+        collectionView.backgroundColor = .systemBackground
         collectionView.register(UINib(nibName: "FactCell", bundle: nil), forCellWithReuseIdentifier: factCellIdentifier)
         collectionView.register(UINib(nibName: "DiscussionCell", bundle: nil), forCellWithReuseIdentifier: discussionCellIdentifier)
         collectionView.register(UINib(nibName: "TopicCollectionHeader", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: topicHeaderIdentifier)
@@ -143,7 +138,7 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
     
     func showTopics(type: DisplayOption, topics: [Community]) {
         switch type {
-        case .fact:
+        case .discussion:
             self.discussionFacts = topics
         case .topic:
             self.topicFacts = topics
@@ -163,8 +158,8 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toPageVC" {
             if let pageVC = segue.destination as? CommunityPageVC {
-                if let chosenFact = sender as? Community {
-                    pageVC.fact = chosenFact
+                if let chosenCommunity = sender as? Community {
+                    pageVC.community = chosenCommunity
                     pageVC.recentTopicDelegate = self
                 }
             }

@@ -69,11 +69,8 @@ class CommentCell: UITableViewCell {
     
     override func awakeFromNib() {
         let layer = niceButton.layer
-        if #available(iOS 13.0, *) {
-            layer.borderColor = UIColor.label.cgColor
-        } else {
-            layer.borderColor = UIColor.black.cgColor
-        }
+        
+        layer.borderColor = UIColor.label.cgColor
         layer.borderWidth = 0.5
     }
     

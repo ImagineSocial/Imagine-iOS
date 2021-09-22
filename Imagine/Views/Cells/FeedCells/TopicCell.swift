@@ -53,11 +53,7 @@ class TopicCell: UITableViewCell {
         
         for imageView in imageViews {
             imageView.layer.borderWidth = 1
-            if #available(iOS 13.0, *) {
-                imageView.layer.borderColor = UIColor.quaternarySystemFill.cgColor
-            } else {
-                imageView.layer.borderColor = UIColor(red: 116.0, green: 116.0, blue: 128.0, alpha: 0.08).cgColor
-            }
+            imageView.layer.borderColor = UIColor.quaternarySystemFill.cgColor
             imageView.layer.cornerRadius = 3
         }
         
@@ -66,11 +62,7 @@ class TopicCell: UITableViewCell {
             guard let view = view else { return }
             
             let layer = view.layer
-            if #available(iOS 13.0, *) {
-                layer.shadowColor = UIColor.label.cgColor
-            } else {
-                layer.shadowColor = UIColor.black.cgColor
-            }
+            layer.shadowColor = UIColor.label.cgColor
             layer.shadowOffset = CGSize(width: 0, height: 2)
             layer.shadowRadius = 4
             layer.shadowOpacity = 0.3
@@ -172,7 +164,7 @@ class TopicCell: UITableViewCell {
                                 if displayString == "topic" {
                                     fact.displayOption = .topic
                                 } else {
-                                    fact.displayOption = .fact
+                                    fact.displayOption = .discussion
                                 }
                             }
                             fact.title = name

@@ -442,20 +442,20 @@ class FirestoreRequest {
     
     //MARK:- Communities
     
-    func getPostsForCommunity(getMore: Bool, fact: Community, returnPosts: @escaping ([Post]?, _ InitialFetch:Bool) -> Void) {
+    func getPostsForCommunity(getMore: Bool, community: Community, returnPosts: @escaping ([Post]?, _ InitialFetch:Bool) -> Void) {
         
-        if fact.documentID != "" {
+        if community.documentID != "" {
             if morePostsToFetch {
                 self.posts.removeAll()
                 
                 var collectionRef: CollectionReference!
-                if fact.language == .english {
+                if community.language == .english {
                     collectionRef = self.db.collection("Data").document("en").collection("topics")
                 } else {
                     collectionRef = self.db.collection("Facts")
                 }
                 
-                var ref = collectionRef.document(fact.documentID).collection("posts").order(by: "createTime", descending: true).limit(to: 20)
+                var ref = collectionRef.document(community.documentID).collection("posts").order(by: "createTime", descending: true).limit(to: 20)
                 var documentIDsOfPosts = [Post]()
                 
                 // Check if the Feed has been refreshed or the next batch is ordered
@@ -485,7 +485,7 @@ class FirestoreRequest {
                                 let fetchedDocsCount = snap.documents.count
                                 self?.alreadyFetchedCount = self?.alreadyFetchedCount ?? 0+fetchedDocsCount
                                 
-                                let fullCollectionRef = collectionRef.document(fact.documentID).collection("posts")
+                                let fullCollectionRef = collectionRef.document(community.documentID).collection("posts")
                                 self?.checkHowManyDocumentsThereAre(ref: fullCollectionRef)
                                 
                                 self?.lastFeedPostSnap = snap.documents.last // For the next batch
@@ -497,7 +497,7 @@ class FirestoreRequest {
                                     
                                     let post = Post()
                                     post.documentID = documentID
-                                    post.language = fact.language
+                                    post.language = community.language
                                     
                                     if let _ = data["type"] as? String {    // Sort between normal and "JustTopic" Posts
                                         post.isTopicPost = true

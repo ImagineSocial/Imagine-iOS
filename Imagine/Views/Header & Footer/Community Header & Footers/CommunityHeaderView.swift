@@ -69,13 +69,8 @@ class CommunityHeaderView: UIView {
         headerSegmentedControl.setBackgroundImage(bg, for: .normal, barMetrics: .default)
         headerSegmentedControl.setDividerImage(bg, forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
         
-        if #available(iOS 13.0, *) {
-            headerSegmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 15)!, NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel], for: .normal)
-            headerSegmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 16)!, NSAttributedString.Key.foregroundColor: UIColor.label], for: .selected)
-        } else {
-            headerSegmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 15)!, NSAttributedString.Key.foregroundColor: UIColor.lightGray], for: .normal)
-            headerSegmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 16)!, NSAttributedString.Key.foregroundColor: UIColor.black], for: .selected)
-        }
+        headerSegmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 15)!, NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel], for: .normal)
+        headerSegmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 16)!, NSAttributedString.Key.foregroundColor: UIColor.label], for: .selected)
         
         self.addSubview(segmentIndicator)
         segmentIndicator.bottomAnchor.constraint(equalTo: self.headerSegmentedControl.bottomAnchor, constant: 3).isActive = true
@@ -212,11 +207,8 @@ class CommunityHeaderView: UIView {
     let segmentIndicator: UIView = {
         let v = UIView()
         v.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            v.backgroundColor = UIColor.label
-        } else {
-            v.backgroundColor = UIColor.black
-        }
+        v.backgroundColor = UIColor.label
+        
         return v
     }()
     

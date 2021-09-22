@@ -52,11 +52,7 @@ class CollectionViewInTableViewCell: UITableViewCell, AddOnDelegate {
     override func awakeFromNib() {
         
         backgroundBorderView.layer.borderWidth = 0.5
-        if #available(iOS 13.0, *) {
-            backgroundBorderView.layer.borderColor = UIColor.separator.cgColor
-        } else {
-            backgroundBorderView.layer.borderColor = UIColor.lightGray.cgColor
-        }
+        backgroundBorderView.layer.borderColor = UIColor.separator.cgColor
         
         collectionView.dataSource = self
         collectionView.delegate = self

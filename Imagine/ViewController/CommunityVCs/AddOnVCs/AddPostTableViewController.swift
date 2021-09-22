@@ -172,13 +172,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
         searchController.delegate = self
         searchController.searchBar.delegate = self
         
-        if #available(iOS 11.0, *) {
-            // For iOS 11 and later, place the search bar in the navigation bar.
-            self.navigationItem.searchController = searchController
-        } else {
-            // For iOS 10 and earlier, place the search controller's search bar in the table view's header.
-            tableView.tableHeaderView = searchController.searchBar
-        }
+        self.navigationItem.searchController = searchController
         self.navigationItem.hidesSearchBarWhenScrolling = true
         self.searchController.isActive = false
         definesPresentationContext = true
@@ -465,11 +459,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     let headerPostView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .secondarySystemBackground
-        } else {
-            view.backgroundColor = .lightGray
-        }
+        view.backgroundColor = .secondarySystemBackground
         view.layer.cornerRadius = 6
         view.clipsToBounds = true
         
@@ -482,11 +472,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 5
         imageView.clipsToBounds = true
-        if #available(iOS 13.0, *) {
-            imageView.backgroundColor = .systemBackground
-        } else {
-            imageView.backgroundColor = .white
-        }
+        imageView.backgroundColor = .systemBackground
         
         return imageView
     }()
@@ -507,11 +493,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
         textField.placeholder = NSLocalizedString("optional_explanation_placeholder", comment: "")
         textField.font = UIFont(name: "IBMPlexSans", size: 15)
         textField.borderStyle = .roundedRect
-        if #available(iOS 13.0, *) {
-            textField.backgroundColor = .secondarySystemBackground
-        } else {
-            textField.backgroundColor = .lightGray
-        }
+        textField.backgroundColor = .secondarySystemBackground
         
         return textField
     }()

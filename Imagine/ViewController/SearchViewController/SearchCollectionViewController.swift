@@ -256,8 +256,8 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
         }
         if segue.identifier == "toTopicSegue" {
             if let pageVC = segue.destination as? CommunityPageVC {
-                if let chosenFact = sender as? Community {
-                    pageVC.fact = chosenFact
+                if let chosenCommunity = sender as? Community {
+                    pageVC.community = chosenCommunity
                 }
             }
         }
@@ -557,7 +557,7 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
                     if displayOption == "topic" {
                         fact.displayOption = .topic
                     } else {
-                        fact.displayOption = .fact
+                        fact.displayOption = .discussion
                     }
                 }
                 

@@ -21,11 +21,7 @@ class LinkView: UIView {
         self.newPostVC = newPostVC
         
         translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            backgroundColor = .systemBackground
-        } else {
-            backgroundColor = .white
-        }
+        backgroundColor = .systemBackground
         
         setLinkViewUI()
     }
@@ -61,11 +57,7 @@ class LinkView: UIView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = UIImage(named: "YouTubeButtonIcon")
         imageView.contentMode = .scaleAspectFit
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .secondaryLabel
-        } else {
-            imageView.tintColor = .black
-        }
+        imageView.tintColor = .secondaryLabel
         imageView.alpha = 0.4
         
         return imageView
@@ -76,11 +68,7 @@ class LinkView: UIView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = UIImage(named: "GIFIcon")
         imageView.contentMode = .scaleAspectFit
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .secondaryLabel
-        } else {
-            imageView.tintColor = .black
-        }
+        imageView.tintColor = .secondaryLabel
         imageView.alpha = 0.4
         
         return imageView
@@ -91,11 +79,7 @@ class LinkView: UIView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = UIImage(named: "MusicIcon")
         imageView.contentMode = .scaleAspectFit
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .secondaryLabel
-        } else {
-            imageView.tintColor = .black
-        }
+        imageView.tintColor = .secondaryLabel
         imageView.alpha = 0.4
         
         return imageView
@@ -106,11 +90,7 @@ class LinkView: UIView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = UIImage(named: "translate")
         imageView.contentMode = .scaleAspectFill
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .secondaryLabel
-        } else {
-            imageView.tintColor = .black
-        }
+        imageView.tintColor = .secondaryLabel
         imageView.alpha = 0.4
         
         return imageView

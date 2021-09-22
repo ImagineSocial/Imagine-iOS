@@ -53,11 +53,7 @@ class FinishedWorkCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         let layer = contentView.layer
         layer.borderWidth = 0.5
-        if #available(iOS 13.0, *) {
-            layer.borderColor = UIColor.label.cgColor
-        } else {
-            layer.borderColor = UIColor.black.cgColor
-        }
+        layer.borderColor = UIColor.label.cgColor
         layer.cornerRadius = 15
     }
     

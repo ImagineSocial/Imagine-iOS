@@ -147,9 +147,9 @@ class DiscussionParentVC: UIViewController {
         }
         
         if segue.identifier == "toPostsSegue" {
-            if let chosenFact = sender as? Community {
+            if let chosenCommunity = sender as? Community {
                 if let postVC = segue.destination as? CommunityPostTableVC {
-                    postVC.fact = chosenFact
+                    postVC.community = chosenCommunity
                 }
             }
         }

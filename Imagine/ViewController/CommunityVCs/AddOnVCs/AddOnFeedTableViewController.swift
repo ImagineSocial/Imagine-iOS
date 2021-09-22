@@ -55,7 +55,6 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
     override func viewWillDisappear(_ animated: Bool) {
         self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         self.navigationController?.navigationBar.shadowImage = nil
-        self.navigationController?.navigationBar.isTranslucent = false
     }
     
     func setAddOn() {
@@ -122,11 +121,7 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
         dismiss(animated: true, completion: nil)
     }
     @IBAction func thanksButtonTapped(_ sender: Any) {
-        if #available(iOS 13.0, *) {
-            thanksButton.titleLabel?.tintColor = .systemBackground
-        } else {
-            thanksButton.titleLabel?.tintColor = .white
-        }
+        thanksButton.titleLabel?.tintColor = .systemBackground
         thanksButton.isEnabled = false
     }
     
@@ -185,11 +180,7 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
             dismissHeight = 300
             
             if let button = dismissBarButton {
-                if #available(iOS 13.0, *) {
-                    button.customView?.tintColor = .label
-                } else {
-                    button.customView?.tintColor = .black
-                }
+                button.customView?.tintColor = .label
             }
         }
         
@@ -230,11 +221,7 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
                 if isTransparent {
                     self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default) //showBar
                     if let button = dismissBarButton {
-                        if #available(iOS 13.0, *) {
-                            button.customView?.tintColor = .label
-                        } else {
-                            button.customView?.tintColor = .black
-                        }
+                        button.customView?.tintColor = .label
                     }
                     isTransparent = false
                     if let title = addOn.headerTitle {

@@ -55,11 +55,7 @@ class ReportViewController: UIViewController {
                 if alreadySaved {
                     self.savePostButtonIcon.tintColor = Constants.green
                 } else {
-                    if #available(iOS 13.0, *) {
-                        self.savePostButtonIcon.tintColor = .label
-                    } else {
-                        self.savePostButtonIcon.tintColor = .black
-                    }
+                    self.savePostButtonIcon.tintColor = .label
                 }
             }
         }
@@ -80,11 +76,7 @@ class ReportViewController: UIViewController {
     let deleteView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
+        view.backgroundColor = .systemBackground
         
         return view
     }()
@@ -93,11 +85,7 @@ class ReportViewController: UIViewController {
         let imageView = UIImageView(image: UIImage(named: "trash"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .label
-        } else {
-            imageView.tintColor = .black
-        }
+        imageView.tintColor = .label
         
         return imageView
     }()
@@ -107,13 +95,8 @@ class ReportViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(showAlertForDeleteOption), for: .touchUpInside)
         button.setTitle(NSLocalizedString("delete_post_label", comment: "delete post"), for: .normal)
-        if #available(iOS 13.0, *) {
-            button.setTitleColor(.label, for: .normal)
-            button.backgroundColor = .systemBackground
-        } else {
-            button.setTitleColor(.black, for: .normal)
-            button.backgroundColor = .white
-        }
+        button.setTitleColor(.label, for: .normal)
+        button.backgroundColor = .systemBackground
         button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 15)
         button.contentHorizontalAlignment = .left
         

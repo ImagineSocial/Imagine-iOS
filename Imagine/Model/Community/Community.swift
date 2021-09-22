@@ -25,7 +25,7 @@ class Community {
     var description = ""
     var arguments: [Argument] = []
     var fetchComplete = false
-    var displayOption: DisplayOption = .fact
+    var displayOption: DisplayOption = .discussion
     var factDisplayNames: FactDisplayName?
     var beingFollowed = false
     var moderators = [String]()     //Later there will be more moderators, so it is an array

@@ -51,11 +51,7 @@ class RepostView: UIView {
         layoutIfNeeded()
         translatesAutoresizingMaskIntoConstraints = false
         
-        if #available(iOS 13.0, *) {
-            backgroundColor = .secondarySystemBackground
-        } else {
-            backgroundColor = UIColor(red:0.93, green:0.93, blue:0.93, alpha:1.0)
-        }
+        backgroundColor = .secondarySystemBackground
         layer.cornerRadius = 5
         layer.borderColor = UIColor.black.cgColor
         layer.borderWidth = 1

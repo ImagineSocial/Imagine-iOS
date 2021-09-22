@@ -21,6 +21,8 @@ class FactCell:UICollectionViewCell {
     let db = Firestore.firestore()
     let cornerRadius: CGFloat = 8
     
+    static let identifier = "FactCell"
+    
     override var isHighlighted: Bool {
         didSet {
             toggleIsHighlighted()
@@ -50,11 +52,7 @@ class FactCell:UICollectionViewCell {
     }
     
     override func layoutSubviews() {
-        if #available(iOS 13.0, *) {
-            layer.shadowColor = UIColor.label.cgColor
-        } else {
-            layer.shadowColor = UIColor.black.cgColor
-        }
+        layer.shadowColor = UIColor.label.cgColor
         layer.shadowOffset = CGSize(width: 0, height: 3)
         layer.shadowRadius = 4
         layer.shadowOpacity = 0.3

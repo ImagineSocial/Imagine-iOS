@@ -36,11 +36,7 @@ class SearchPostCell: UITableViewCell {
                             postImageView.sd_setImage(with: url, completed: nil)
                         }
                     } else {
-                        if #available(iOS 13.0, *) {
-                            postImageView.tintColor = .label
-                        } else {
-                            postImageView.tintColor = .black
-                        }
+                        postImageView.tintColor = .label
                         postImageView.image = UIImage(named: "translate")
                     }
                 case .thought:
@@ -149,11 +145,7 @@ class SearchPostCell: UITableViewCell {
     private let titleLabel : UILabel = {
         let lbl = UILabel()
         
-        if #available(iOS 13.0, *) {
-            lbl.textColor = .label
-        } else {
-            lbl.textColor = .black
-        }
+        lbl.textColor = .label
         lbl.font = UIFont(name: "IBMPlexSans-Medium", size: 16)
         lbl.textAlignment = .left
         lbl.translatesAutoresizingMaskIntoConstraints = false
@@ -174,11 +166,7 @@ class SearchPostCell: UITableViewCell {
     private let nameLabel: UILabel = {
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            label.textColor = .secondaryLabel
-        } else {
-            label.textColor = .lightGray
-        }
+        label.textColor = .secondaryLabel
         label.font = UIFont(name: "IBMPlexSans", size: 8)
         
         return label

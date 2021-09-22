@@ -56,13 +56,7 @@ class SearchTableViewController: UITableViewController, UISearchControllerDelega
         searchController.searchBar.scopeButtonTitles = ["Posts", "User"]
         searchController.searchBar.delegate = self
         
-        if #available(iOS 11.0, *) {
-            // For iOS 11 and later, place the search bar in the navigation bar.
-            self.navigationItem.searchController = searchController
-        } else {
-            // For iOS 10 and earlier, place the search controller's search bar in the table view's header.
-            tableView.tableHeaderView = searchController.searchBar
-        }
+        self.navigationItem.searchController = searchController
         self.navigationItem.hidesSearchBarWhenScrolling = true
         self.searchController.isActive = true
         

@@ -296,11 +296,7 @@ class AddOnStoreImageTableViewCell: UITableViewCell {
         //Cell UI
         contentView.layer.cornerRadius = 6
         contentView.layer.borderWidth = 2
-        if #available(iOS 13.0, *) {
-            contentView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
-        } else {
-            contentView.layer.borderColor = UIColor.ios12secondarySystemBackground.cgColor
-        }
+        contentView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
     
         contentView.clipsToBounds = true
         backgroundColor =  .clear

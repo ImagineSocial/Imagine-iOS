@@ -26,11 +26,7 @@ class BlogCell : UICollectionViewCell {
     }
     
     override func prepareForReuse() {
-        if #available(iOS 13.0, *) {
-            contentView.backgroundColor = .systemBackground
-        } else {
-            contentView.backgroundColor = .white
-        }
+        contentView.backgroundColor = .systemBackground
     }
     
     override func layoutSubviews() {
@@ -39,11 +35,7 @@ class BlogCell : UICollectionViewCell {
         let layer = contentView.layer
         layer.cornerRadius = cornerRadius
         containerView.layer.cornerRadius = cornerRadius
-        if #available(iOS 13.0, *) {
-            layer.shadowColor = UIColor.label.cgColor
-        } else {
-            layer.shadowColor = UIColor.black.cgColor
-        }
+        layer.shadowColor = UIColor.label.cgColor
         layer.shadowOffset = CGSize(width: 0, height: 0)
         layer.shadowRadius = 3
         layer.shadowOpacity = 0.5

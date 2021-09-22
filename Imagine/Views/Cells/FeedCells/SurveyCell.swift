@@ -112,11 +112,7 @@ class SurveyCell: UITableViewCell {
         
         let layer = containerView.layer
         layer.cornerRadius = radius
-        if #available(iOS 13.0, *) {
-            layer.shadowColor = UIColor.label.cgColor
-        } else {
-            layer.shadowColor = UIColor.black.cgColor
-        }
+        layer.shadowColor = UIColor.label.cgColor
         layer.shadowOffset = CGSize.zero
         layer.shadowRadius = shadowRadius
         layer.shadowOpacity = 0.5

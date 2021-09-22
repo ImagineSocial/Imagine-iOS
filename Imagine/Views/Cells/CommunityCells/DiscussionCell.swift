@@ -59,11 +59,7 @@ class DiscussionCell: UICollectionViewCell {
     override func layoutSubviews() {
         contentView.layer.cornerRadius = cornerRadius
         layer.cornerRadius = cornerRadius
-        if #available(iOS 13.0, *) {
-            layer.shadowColor = UIColor.label.cgColor
-        } else {
-            layer.shadowColor = UIColor.black.cgColor
-        }
+        layer.shadowColor = UIColor.label.cgColor
         layer.shadowOffset = CGSize(width: 0, height: 0)
         layer.shadowRadius = 3
         layer.shadowOpacity = 0.4

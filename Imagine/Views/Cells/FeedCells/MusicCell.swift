@@ -63,13 +63,8 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         layer.cornerRadius = radius
         musicLayer.cornerRadius = radius
         
-        if #available(iOS 13.0, *) {
-            layer.shadowColor = UIColor.label.cgColor
-            musicLayer.shadowColor = UIColor.label.cgColor
-        } else {
-            layer.shadowColor = UIColor.black.cgColor
-            musicLayer.shadowColor = UIColor.black.cgColor
-        }
+        layer.shadowColor = UIColor.label.cgColor
+        musicLayer.shadowColor = UIColor.label.cgColor
         layer.shadowOffset = CGSize.zero
         layer.shadowRadius = shadowRadius
         layer.shadowOpacity = 0.5

@@ -175,11 +175,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         //Settings when this view is called from inside the community
         if comingFromPostsOfFact || comingFromAddOnVC {
-            if #available(iOS 13.0, *) {
-                //no need for a dismiss button
-            } else {
-                setDismissButton()
-            }
             
             linkCommunityView.cancelLinkedFactButton.isEnabled = false
             linkCommunityView.cancelLinkedFactButton.alpha = 0.5
@@ -224,11 +219,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     let contentView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .secondarySystemBackground
-        } else {
-            view.backgroundColor = .lightGray
-        }
+        view.backgroundColor = .secondarySystemBackground
         
         return view
     }()
@@ -1238,12 +1229,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         label.font = UIFont(name: "IBMPlexSans", size: 15)
         label.alpha = 0
         label.adjustsFontSizeToFitWidth = true
-        
-        if #available(iOS 13.0, *) {
-            label.textColor = .label
-        } else {
-            label.textColor = .black
-        }
+        label.textColor = .label
         
         infoView!.addSubview(label)
         
@@ -1850,11 +1836,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         }
         
         let endView = UIView()
-        if #available(iOS 13.0, *) {
-            endView.backgroundColor = .systemBackground
-        } else {
-            endView.backgroundColor = .white
-        }
+        endView.backgroundColor = .systemBackground
         endView.translatesAutoresizingMaskIntoConstraints = false
         
         //When you want to post as somebody else

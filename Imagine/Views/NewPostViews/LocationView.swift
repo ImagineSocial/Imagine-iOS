@@ -22,11 +22,7 @@ class LocationView: UIView {
         self.newPostVC = newPostVC
         
         translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            backgroundColor = .systemBackground
-        } else {
-            backgroundColor = .white
-        }
+        backgroundColor = .systemBackground
         
         setUpLocationViewUI()
     }
@@ -100,11 +96,7 @@ class LocationView: UIView {
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit
         imageView.image = UIImage(named: "locationCircle")
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .secondaryLabel
-        } else {
-            imageView.tintColor = .lightGray
-        }
+        imageView.tintColor = .secondaryLabel
         
         return imageView
     }()

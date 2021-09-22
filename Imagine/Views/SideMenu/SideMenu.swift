@@ -45,13 +45,9 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     let sideMenuView: UIView = {
         let vc = UIView()
         
-        if #available(iOS 13.0, *) {
-            vc.backgroundColor = .systemBackground
-        } else {
-            vc.backgroundColor = .white
-        }
-        
+        vc.backgroundColor = .systemBackground
         vc.layer.cornerRadius = 4
+        
         return vc
     }()
     
@@ -379,11 +375,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         tableView.layer.masksToBounds = true
         tableView.separatorStyle = .none
         
-        if #available(iOS 13.0, *) {
-            tableView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
-        } else {
-            tableView.layer.borderColor = UIColor.lightGray.cgColor
-        }
+        tableView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
         tableView.layer.borderWidth = 1
         
         return tableView
@@ -394,11 +386,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans", size: 14)
         label.text = NSLocalizedString("sideMenu_notifications_label", comment: "notifications:")
-        if #available(iOS 13.0, *) {
-            label.tintColor = .label
-        } else {
-            label.tintColor = .black
-        }
+        label.tintColor = .label
         
         return label
     }()
@@ -411,11 +399,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 11)
         button.alpha = 0
         button.cornerRadius = 8
-        if #available(iOS 13.0, *) {
-            button.backgroundColor = .systemBackground
-        } else {
-            button.backgroundColor = .white
-        }
+        button.backgroundColor = .systemBackground
         
         return button
     }()
@@ -464,11 +448,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.contentMode = .scaleAspectFit
         imgView.image = nil
-        if #available(iOS 13.0, *) {
-            imgView.tintColor = .label
-        } else {
-            imgView.tintColor = .black
-        }
+        imgView.tintColor = .label
         
         return imgView
     }()
@@ -478,11 +458,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.contentMode = .scaleAspectFit
         imgView.image = nil
-        if #available(iOS 13.0, *) {
-            imgView.tintColor = .label
-        } else {
-            imgView.tintColor = .black
-        }
+        imgView.tintColor = .label
         
         return imgView
     }()
@@ -493,12 +469,8 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.setTitle(NSLocalizedString("sideMenu_chats_label", comment: "chats"), for: .normal)
         btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-        //        if #available(iOS 13.0, *) {
-        //            btn.setTitleColor(.label, for: .normal)
-        //        } else {
-        //            btn.setTitleColor(.black, for: .normal)
-        //        }
         btn.setTitleColor(.imagineColor, for: .normal)
+        
         return btn
     }()
     
@@ -515,11 +487,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         iconImageView.translatesAutoresizingMaskIntoConstraints = false
         iconImageView.image = UIImage(named: "Chats")
         iconImageView.contentMode = .scaleAspectFit
-        if #available(iOS 13.0, *) {
-            iconImageView.tintColor = .label
-        } else {
-            iconImageView.tintColor = .black
-        }
+        iconImageView.tintColor = .label
         iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
         
         stackView.addArrangedSubview(iconImageView)
@@ -543,12 +511,8 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.setTitle(NSLocalizedString("sideMenu_friends_label", comment: "friends"), for: .normal)
         btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-        //        if #available(iOS 13.0, *) {
-        //            btn.setTitleColor(.label, for: .normal)
-        //        } else {
-        //            btn.setTitleColor(.black, for: .normal)
-        //        }
         btn.setTitleColor(.imagineColor, for: .normal)
+        
         return btn
     }()
     
@@ -565,11 +529,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         iconImageView.translatesAutoresizingMaskIntoConstraints = false
         iconImageView.image = UIImage(named: "people")
         iconImageView.contentMode = .scaleAspectFit
-        if #available(iOS 13.0, *) {
-            iconImageView.tintColor = .label
-        } else {
-            iconImageView.tintColor = .black
-        }
+        iconImageView.tintColor = .label
         iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
         
         stackView.addArrangedSubview(iconImageView)
@@ -621,11 +581,6 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.setTitle(NSLocalizedString("sideMenu_saved_label", comment: "saved"), for: .normal)
         btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-        //        if #available(iOS 13.0, *) {
-        //            btn.setTitleColor(.label, for: .normal)
-        //        } else {
-        //            btn.setTitleColor(.black, for: .normal)
-        //        }
         btn.setTitleColor(.imagineColor, for: .normal)
         return btn
     }()
@@ -641,11 +596,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         let iconImageView = UIImageView()
         iconImageView.translatesAutoresizingMaskIntoConstraints = false
         iconImageView.image = UIImage(named: "save")
-        if #available(iOS 13.0, *) {
-            iconImageView.tintColor = .label
-        } else {
-            iconImageView.tintColor = .black
-        }
+        iconImageView.tintColor = .label
         iconImageView.contentMode = .scaleAspectFit
         iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
         
@@ -678,11 +629,6 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         let button = DesignableButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("sideMenu_setting_label", comment: "settings"), for: .normal)
-        //        if #available(iOS 13.0, *) {
-        //            button.setTitleColor(.label, for: .normal)
-        //        } else {
-        //            button.setTitleColor(.black, for: .normal)
-        //        }
         button.setTitleColor(.imagineColor, for: .normal)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 16)
         button.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
@@ -695,11 +641,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         logo.translatesAutoresizingMaskIntoConstraints = false
         logo.image = UIImage(named: "settings")
         logo.contentMode = .center
-        if #available(iOS 13.0, *) {
-            logo.tintColor = .label
-        } else {
-            logo.tintColor = .black
-        }
+        logo.tintColor = .label
         
         return logo
     }()

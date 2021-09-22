@@ -815,11 +815,7 @@ class SortButton: DesignableButton {
         self.contentHorizontalAlignment = .left
         self.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0);
         
-        if #available(iOS 13.0, *) {
-            self.setTitleColor(.label, for: .normal)
-        } else {
-            self.setTitleColor(.black, for: .normal)
-        }
+        self.setTitleColor(.label, for: .normal)
         
         
     }

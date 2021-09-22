@@ -50,7 +50,7 @@ enum FactDisplayName {
 }
 
 enum DisplayOption {
-    case fact
+    case discussion
     case topic
 }
 
@@ -104,7 +104,7 @@ class NewCommunityItemTableVC: UITableViewController {
     var selectedTopicIDForSingleTopicAddOn: String?
     var selectedImageFromPicker: UIImage?
     var pickedFactDisplayNames: FactDisplayName = .proContra
-    var pickedDisplayOption: DisplayOption = .fact
+    var pickedDisplayOption: DisplayOption = .discussion
     var proOrContra: ArgumentType = .pro
     var sourceLink: String?
     var titleText: String?
@@ -200,7 +200,7 @@ class NewCommunityItemTableVC: UITableViewController {
                 if let new = new {
                     switch new {
                     case .community:
-                        cell.characterLimit = Constants.characterLimits.factTitleCharacterLimit
+                        cell.characterLimit = Constants.characterLimits.communityTitleCharacterLimit
                     case .argument:
                         cell.characterLimit = Constants.characterLimits.argumentTitleCharacterLimit
                     case .deepArgument:
@@ -232,7 +232,7 @@ class NewCommunityItemTableVC: UITableViewController {
                 if let new = new {
                     switch new {
                     case .community:
-                        cell.characterLimit = Constants.characterLimits.factDescriptionCharacterLimit
+                        cell.characterLimit = Constants.characterLimits.communityDescriptionCharacterLimit
                     case .addOn:
                         cell.characterLimit = Constants.characterLimits.addOnDescriptionCharacterLimit
                     case .addOnPlaylist:
@@ -809,7 +809,7 @@ class NewCommunityItemTableVC: UITableViewController {
     
     func getNewFactDisplayString(displayOption: DisplayOption) -> (displayOption: String, factDisplayNames: String?) {
         switch displayOption {
-            case .fact:
+            case .discussion:
                 switch self.pickedFactDisplayNames {
                 case .proContra:
                     return (displayOption: "fact", factDisplayNames: "proContra")
@@ -1060,7 +1060,7 @@ class NewCommunityPresentationCell: UITableViewCell, UIPickerViewDelegate, UIPic
     var pickedDisplayOption: DisplayOption? {
         didSet {
             if let option = pickedDisplayOption {
-                if option == .fact {
+                if option == .discussion {
                     setFactUI()
                     displaySegmentedControl.selectedSegmentIndex = 0
                 } else {
@@ -1081,7 +1081,7 @@ class NewCommunityPresentationCell: UITableViewCell, UIPickerViewDelegate, UIPic
         switch displaySegmentedControl.selectedSegmentIndex {
         case 0:
             // Fact
-            self.pickedDisplayOption = .fact
+            self.pickedDisplayOption = .discussion
             setFactUI()
         case 1:
             // Topic

@@ -30,11 +30,7 @@ class CurrentProjectsCollectionCell: UICollectionViewCell {
         
         for view in views {
             view.layer.cornerRadius = 10
-            if #available(iOS 13.0, *) {
-                view.layer.borderColor = UIColor.quaternarySystemFill.cgColor
-            } else {
-                view.layer.borderColor = UIColor(red: 116.0, green: 116.0, blue: 128.0, alpha: 0.08).cgColor
-            }
+            view.layer.borderColor = UIColor.quaternarySystemFill.cgColor
             view.layer.borderWidth = 1
         }
         

@@ -118,7 +118,7 @@ class CommunityHelper {
         case "topic":
             return .topic
         default:
-            return .fact
+            return .discussion
         }
     }
     

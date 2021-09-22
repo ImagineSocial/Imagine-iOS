@@ -23,7 +23,7 @@ protocol PageViewHeaderDelegate: class {
 class CommunityPageVC: UIPageViewController {
     
     var argumentVCs = [UIViewController]()
-    var fact: Community?
+    var community: Community?
     
     weak var recentTopicDelegate: RecentTopicDelegate?
     
@@ -53,11 +53,8 @@ class CommunityPageVC: UIPageViewController {
         dataSource = self
         delegate = self
         
-        if #available(iOS 13.0, *) {
-            self.view.backgroundColor = .systemBackground
-        } else {
-            self.view.backgroundColor = .white
-        }
+        self.view.backgroundColor = .systemBackground
+        
         setUpHeader()
         addViewController()
         setBarButton()
@@ -110,8 +107,8 @@ class CommunityPageVC: UIPageViewController {
         let height = Constants.Numbers.communityHeaderHeight
         view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: height)
         
-        if let fact = self.fact {
-            view.community = fact
+        if let community = self.community {
+            view.community = community
         } else {
             print("Error: ArgumentPageViewController")
             self.navigationController?.popViewController(animated: true)
@@ -130,16 +127,10 @@ class CommunityPageVC: UIPageViewController {
         newPostButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
         newPostButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
         newPostButton.isHidden = true
+        newPostButton.tintColor = UIColor.label
+        newPostButton.setImage(UIImage(systemName: "square.and.pencil"), for: .normal)
         
-        if #available(iOS 13.0, *) {
-            newPostButton.tintColor = UIColor.label
-            newPostButton.setImage(UIImage(systemName: "square.and.pencil"), for: .normal)
-        } else {
-            newPostButton.tintColor = UIColor.black
-            newPostButton.setImage(UIImage(named: "newPostIcon"), for: .normal)
-        }
-        
-        guard let fact = fact else {
+        guard let community = community else {
             return
         }
         
@@ -149,7 +140,7 @@ class CommunityPageVC: UIPageViewController {
         let shareBarButton = UIBarButtonItem(customView: shareButton)
         
         if let user = Auth.auth().currentUser {
-            for mod in fact.moderators {
+            for mod in community.moderators {
                 if mod == user.uid {
                     self.settingButton = getSettingButton()
                     let settingBarButton = UIBarButtonItem(customView: self.settingButton)
@@ -172,12 +163,7 @@ class CommunityPageVC: UIPageViewController {
         shareTopicButton.widthAnchor.constraint(equalToConstant: 20).isActive = true
         shareTopicButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
         shareTopicButton.setImage(UIImage(named: "openLinkButton"), for: .normal)
-        
-        if #available(iOS 13.0, *) {
-            shareTopicButton.tintColor = UIColor.label
-        } else {
-            shareTopicButton.tintColor = UIColor.black
-        }
+        shareTopicButton.tintColor = UIColor.label
         
         return shareTopicButton
     }
@@ -191,30 +177,25 @@ class CommunityPageVC: UIPageViewController {
         settingButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
         settingButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
         settingButton.setImage(UIImage(named: "settings"), for: .normal)
-        
-        if #available(iOS 13.0, *) {
-            settingButton.tintColor = UIColor.label
-        } else {
-            settingButton.tintColor = UIColor.black
-        }
+        settingButton.tintColor = UIColor.label
         
         return settingButton
     }
     
     @objc func shareTopicButtonTapped() {
-        if let community = fact {
+        if let community = community {
             performSegue(withIdentifier: "shareTopicSegue", sender: community)
         }
     }
     
     @objc func newPostButtonTapped() {
-        if let community = self.fact {
+        if let community = self.community {
             performSegue(withIdentifier: "goToNewPost", sender: community)
         }
     }
     
     @objc func settingButtonTapped() {
-        if let community = self.fact {
+        if let community = self.community {
             performSegue(withIdentifier: "toSettingSegue", sender: community)
         }
     }
@@ -257,7 +238,7 @@ class CommunityPageVC: UIPageViewController {
     }
     
     func addViewController() {
-        guard let fact = fact else {
+        guard let community = community else {
             return
         }
         
@@ -265,18 +246,18 @@ class CommunityPageVC: UIPageViewController {
         if let addOnCollectionVC = storyboard?.instantiateViewController(withIdentifier: "addOnCollectionVC") as? AddOnCollectionViewController {
             
             addOnCollectionVC.pageViewHeaderDelegate = self
-            addOnCollectionVC.fact = fact
+            addOnCollectionVC.fact = community
             argumentVCs.append(addOnCollectionVC)
         }
         
-        if fact.displayOption == .fact {
+        if community.displayOption == .discussion {
         
             if let factParentVC = storyboard?.instantiateViewController(withIdentifier: "factParentVC") as? DiscussionParentVC {
                 
                 
                 print("Add Community parent#")
                 factParentVC.pageViewHeaderDelegate = self
-                factParentVC.fact = fact
+                factParentVC.fact = community
                 argumentVCs.append(factParentVC)
             }
         }
@@ -284,12 +265,12 @@ class CommunityPageVC: UIPageViewController {
         if let postOfFactVC = storyboard?.instantiateViewController(withIdentifier: "postsOfFactVC") as? CommunityPostTableVC {
             
             postOfFactVC.pageViewHeaderDelegate = self
-            postOfFactVC.fact = fact
+            postOfFactVC.community = community
             argumentVCs.append(postOfFactVC)
             
         }
         
-        if fact.displayOption == .fact {
+        if community.displayOption == .discussion {
             self.headerView.headerSegmentedControl.setTitle(NSLocalizedString("topics", comment: "topics"), forSegmentAt: 0)
             self.headerView.headerSegmentedControl.insertSegment(withTitle: NSLocalizedString("discussion", comment: "discussion"), at: 1, animated: false)
             self.headerView.headerSegmentedControl.setTitle("Feed", forSegmentAt: 2)
@@ -300,7 +281,7 @@ class CommunityPageVC: UIPageViewController {
         
         // Set the VCs and declare the firstVC
         
-        if fact.isAddOnFirstView {
+        if community.isAddOnFirstView {
             self.presentedVC = 0
             self.headerView.segmentedControlChanged(self)
             
@@ -312,7 +293,7 @@ class CommunityPageVC: UIPageViewController {
             self.headerView.headerSegmentedControl.selectedSegmentIndex = 1
             self.headerView.segmentedControlChanged(self)
             
-            if fact.displayOption == .fact {
+            if community.displayOption == .discussion {
                 if let secondVC = argumentVCs[1] as? DiscussionParentVC {
                     setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
                 }
@@ -436,7 +417,7 @@ extension CommunityPageVC: PageViewHeaderDelegate, CommunityFeedHeaderDelegate, 
     }
     
     func newPostTapped() {
-        if let community = self.fact {
+        if let community = self.community {
             performSegue(withIdentifier: "goToNewPost", sender: community)
         }
     }
@@ -452,7 +433,7 @@ extension CommunityPageVC: PageViewHeaderDelegate, CommunityFeedHeaderDelegate, 
     func presentNavigationTitle(rectOriginY: CGFloat) {
 
         if rectOriginY <= -250 {
-            if let community = fact {
+            if let community = community {
                 self.navigationItem.title = community.title
                 self.newPostButton.isHidden = false
             }
@@ -463,26 +444,16 @@ extension CommunityPageVC: PageViewHeaderDelegate, CommunityFeedHeaderDelegate, 
     }
     
     func childScrollViewScrolled(offset: CGFloat) {
-        //Called from the different childvc's of this PageViewController
-//        print("#")
-//        print("#")
-//        print("#")
-//        print("#ChildViewScrolled First Offset: \(offset)")
+        //Called from the different childvc's of this PageViewControlle
         let per:CGFloat = 100 //percentage of required view to move on while moving collection view
         let deductValue = CGFloat(per / 100 * headerView.frame.size.height)
         let offset = (-(per/100)) * (offset)    //turn minus into plus
         var value = offset - deductValue
         let rect = headerView.frame
-//        print("#let deductValue: \(deductValue)")
-//        print("#let offset: \(offset)")
-//        print("#let value: \(value)")
-//        print("#let rect.size.height: \(rect.size.height)")
-//
-//        let screenSize: CGRect = UIScreen.main.bounds
-//        print("#ScreenSize: \(screenSize)")
+
         
-        if let fact = fact {
-            if headerNeedsAdjustment && !fact.isAddOnFirstView {
+        if let community = community {
+            if headerNeedsAdjustment && !community.isAddOnFirstView {
                 let addedHeight: CGFloat!
                 let bounds = UIScreen.main.bounds
                 //FML I just dont get it

@@ -91,11 +91,7 @@ class SmallFactCell: UICollectionViewCell {
             factImageView.topAnchor.constraint(equalTo: factHeaderTitle.bottomAnchor, constant: 5).isActive = true
             
             factImageView.layer.borderWidth = 1
-            if #available(iOS 13.0, *) {
-                factImageView.layer.borderColor = UIColor.secondaryLabel.cgColor
-            } else {
-                factImageView.layer.borderColor = UIColor.lightGray.cgColor
-            }
+            factImageView.layer.borderColor = UIColor.secondaryLabel.cgColor
             
             
             topicView.addSubview(factFollowerCountLabel)
@@ -113,11 +109,7 @@ class SmallFactCell: UICollectionViewCell {
             let view = UIView()
             view.translatesAutoresizingMaskIntoConstraints = false
             view.layer.cornerRadius = 4
-            if #available(iOS 13.0, *) {
-                view.backgroundColor = .secondarySystemBackground
-            } else {
-                view.backgroundColor = .ios12secondarySystemBackground
-            }
+            view.backgroundColor = .secondarySystemBackground
             
             view.addSubview(factHeaderDescriptionLabel)
             factHeaderDescriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5).isActive = true
@@ -133,7 +125,7 @@ class SmallFactCell: UICollectionViewCell {
             view.bottomAnchor.constraint(equalTo: topicView.bottomAnchor, constant: -5).isActive = true
             
             
-        case .fact:
+        case .discussion:
             topicView.addSubview(factImageView)
             factImageView.leadingAnchor.constraint(equalTo: topicView.leadingAnchor, constant: 2).isActive = true
             factImageView.topAnchor.constraint(equalTo: topicView.topAnchor, constant: 2).isActive = true
@@ -236,11 +228,7 @@ class SmallFactCell: UICollectionViewCell {
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans", size: 12)
-        if #available(iOS 13.0, *) {
-            label.textColor = .secondaryLabel
-        } else {
-            label.textColor = .lightGray
-        }
+        label.textColor = .secondaryLabel
         label.numberOfLines = 0
         label.minimumScaleFactor = 0.75
         
@@ -251,11 +239,7 @@ class SmallFactCell: UICollectionViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans", size: 11)
-        if #available(iOS 13.0, *) {
-            label.textColor = .secondaryLabel
-        } else {
-            label.textColor = .lightGray
-        }
+        label.textColor = .secondaryLabel
         
         return label
     }()
@@ -264,21 +248,14 @@ class SmallFactCell: UICollectionViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans", size: 11)
-        if #available(iOS 13.0, *) {
-            label.textColor = .secondaryLabel
-        } else {
-            label.textColor = .lightGray
-        }
+        label.textColor = .secondaryLabel
         
         return label
     }()
     
     override func awakeFromNib() {
-        if #available(iOS 13.0, *) {
-            contentView.backgroundColor = .secondarySystemBackground
-        } else {
-            contentView.backgroundColor = .ios12secondarySystemBackground
-        }
+        
+        contentView.backgroundColor = .secondarySystemBackground
         
         layoutIfNeeded()
         

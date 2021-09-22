@@ -30,15 +30,10 @@ class CreativeSpaceIntroViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if #available(iOS 13.0, *) {
-            let navBarAppearance = UINavigationBarAppearance()
-            navBarAppearance.backgroundColor = .black
-            
-            self.navigationController?.navigationBar.standardAppearance = navBarAppearance
-        } else {
-            self.navigationController?.navigationBar.shadowImage = UIImage()
-            self.navigationController?.navigationBar.barTintColor = .black
-        }
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.backgroundColor = .black
+        
+        self.navigationController?.navigationBar.standardAppearance = navBarAppearance
         
         let buttons = [artistButton!, ITArtistsButton!, revolutionistButton!]
         

@@ -16,11 +16,7 @@ class DescriptionView: UIView {
         super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         
         translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            backgroundColor = .systemBackground
-        } else {
-            backgroundColor = .white
-        }
+        backgroundColor = .systemBackground
         
         setDescriptionViewUI()
     }

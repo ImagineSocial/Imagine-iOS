@@ -43,11 +43,7 @@ class BaseAddOnCollectionViewCell: UICollectionViewCell {
         
         if isAddOnCell {
             let layer = contentView.layer
-            if #available(iOS 13.0, *) {
-                layer.shadowColor = UIColor.label.cgColor
-            } else {
-                layer.shadowColor = UIColor.black.cgColor
-            }
+            layer.shadowColor = UIColor.label.cgColor
             layer.shadowOffset = CGSize(width: 0, height: 0)
             layer.shadowRadius = 4
             layer.shadowOpacity = 0.6

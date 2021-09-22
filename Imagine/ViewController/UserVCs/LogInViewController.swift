@@ -753,11 +753,8 @@ class LogInViewController: UIViewController {
         
         let underline = UIView()
         underline.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            underline.backgroundColor = .secondaryLabel
-        } else {
-            underline.backgroundColor = .lightGray
-        }
+        underline.backgroundColor = .secondaryLabel
+        
         textField.addSubview(underline)
         underline.leadingAnchor.constraint(equalTo: textField.leadingAnchor).isActive = true
         underline.trailingAnchor.constraint(equalTo: textField.trailingAnchor).isActive = true
@@ -778,11 +775,8 @@ class LogInViewController: UIViewController {
         
         let underline = UIView()
         underline.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            underline.backgroundColor = .secondaryLabel
-        } else {
-            underline.backgroundColor = .lightGray
-        }
+        underline.backgroundColor = .secondaryLabel
+        
         textField.addSubview(underline)
         underline.leadingAnchor.constraint(equalTo: textField.leadingAnchor).isActive = true
         underline.trailingAnchor.constraint(equalTo: textField.trailingAnchor).isActive = true
@@ -796,11 +790,7 @@ class LogInViewController: UIViewController {
        let label = UILabel()
         label.textAlignment = .center
         label.font = UIFont(name: "IBMPlexSans", size:11)
-        if #available(iOS 13.0, *) {
-            label.textColor = UIColor.secondaryLabel
-        } else {
-            label.textColor = .lightGray
-        }
+        label.textColor = UIColor.secondaryLabel
         label.alpha = 1
         label.text = ""
         label.numberOfLines = 0
@@ -816,11 +806,7 @@ class LogInViewController: UIViewController {
         button.layer.cornerRadius = 10
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.imagineColor.cgColor
-        if #available(iOS 13.0, *) {
-            button.setTitleColor(.label, for: .normal)
-        } else {
-            button.setTitleColor(.black, for: .normal)
-        }
+        button.setTitleColor(.label, for: .normal)
         button.tag = 0
         button.setTitle(NSLocalizedString("next", comment: ""), for: .normal)
         button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 18)

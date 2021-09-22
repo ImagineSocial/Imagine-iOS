@@ -20,11 +20,7 @@ class AddOnCollectionViewFooter: UICollectionReusableView {
     override func awakeFromNib() {
         let layer = addOnStoreButton.layer
         layer.cornerRadius = 4
-        if #available(iOS 13.0, *) {
-            layer.borderColor = UIColor.label.cgColor
-        } else {
-            layer.borderColor = UIColor.black.cgColor
-        }
+        layer.borderColor = UIColor.label.cgColor
         layer.borderWidth = 0.5
         
     }

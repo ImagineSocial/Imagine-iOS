@@ -21,7 +21,6 @@ class SavedPostTableViewController: BaseFeedTableViewController {
         
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.isTranslucent = false
         
         self.noPostsType = .savedPicture
         // navigationItem.rightBarButtonItem = editButtonItem
@@ -58,21 +57,12 @@ class SavedPostTableViewController: BaseFeedTableViewController {
                             self.posts.append(result)
                         }
                         
-                        if #available(iOS 11.0, *) {
-                            self.tableView.performBatchUpdates({
-                                self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                                self.tableView.insertRows(at: indexes, with: .bottom)
-                            }, completion: { (_) in
-                                self.fetchesPosts = false
-                            })
-                        } else {
-                            // Fallback on earlier versions
-                            self.tableView.beginUpdates()
+                        self.tableView.performBatchUpdates({
                             self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                            self.tableView.insertRows(at: indexes, with: .right)
-                            self.tableView.endUpdates()
+                            self.tableView.insertRows(at: indexes, with: .bottom)
+                        }, completion: { (_) in
                             self.fetchesPosts = false
-                        }
+                        })
                     }
                     print("Jetzt haben wir \(self.posts.count)")
                     
@@ -122,11 +112,11 @@ class SavedPostTableViewController: BaseFeedTableViewController {
             }
         }
         if segue.identifier == "toFactSegue" {
-            if let fact = sender as? Community {
+            if let community = sender as? Community {
                
                 if let factVC = segue.destination as? CommunityPageVC {
                     
-                    factVC.fact = fact
+                    factVC.community = community
                 }
                 
             }

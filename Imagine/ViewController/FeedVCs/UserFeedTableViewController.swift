@@ -103,19 +103,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         layer.masksToBounds = true
         layer.cornerRadius = 8
         layer.borderWidth = 1
-        if #available(iOS 13.0, *) {
-            layer.borderColor = UIColor.secondarySystemBackground.cgColor
-        } else {
-            layer.borderColor = UIColor.lightGray.cgColor
-        }
+        layer.borderColor = UIColor.secondarySystemBackground.cgColor
         
-        if #available(iOS 13.0, *) {
-            chatWithUserButton.layer.borderColor = UIColor.tertiaryLabel.cgColor
-            addAsFriendButton.layer.borderColor = UIColor.tertiaryLabel.cgColor
-        } else {
-            chatWithUserButton.layer.borderColor = UIColor.lightGray.cgColor
-            addAsFriendButton.layer.borderColor = UIColor.lightGray.cgColor
-        }
+        chatWithUserButton.layer.borderColor = UIColor.tertiaryLabel.cgColor
+        addAsFriendButton.layer.borderColor = UIColor.tertiaryLabel.cgColor
         chatWithUserButton.layer.borderWidth = 0.75
         addAsFriendButton.layer.borderWidth = 0.75
         
@@ -276,21 +267,12 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                                 self.posts.append(result)
                             }
                             
-                            if #available(iOS 11.0, *) {
-                                self.tableView.performBatchUpdates({
-                                    self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                                    self.tableView.insertRows(at: indexes, with: .bottom)
-                                }, completion: { (_) in
-                                    self.fetchesPosts = false
-                                })
-                            } else {
-                                // Fallback on earlier versions
-                                self.tableView.beginUpdates()
+                            self.tableView.performBatchUpdates({
                                 self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                                self.tableView.insertRows(at: indexes, with: .right)
-                                self.tableView.endUpdates()
+                                self.tableView.insertRows(at: indexes, with: .bottom)
+                            }, completion: { (_) in
                                 self.fetchesPosts = false
-                            }
+                            })
                         }
                         
                         // remove ActivityIndicator incl. backgroundView
@@ -501,13 +483,8 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     func setUpSocialMediaButton(media: SocialMediaObject) {
         
         let button = DesignableButton(frame: CGRect(x: 0, y: 0, width: socialMediaStackViewHeight, height: socialMediaStackViewHeight))
-        if #available(iOS 13.0, *) {
-            button.backgroundColor = .systemBackground
-            button.tintColor = .label
-        } else {
-            button.backgroundColor = .white
-            button.tintColor = .black
-        }
+        button.backgroundColor = .systemBackground
+        button.tintColor = .label
         button.isOpaque = true
         button.imageEdgeInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
         button.cornerRadius = 6
@@ -1222,9 +1199,9 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             }
         }
         if segue.identifier == "toFactSegue" {
-            if let fact = sender as? Community {
+            if let community = sender as? Community {
                 if let factVC = segue.destination as? CommunityPageVC {
-                    factVC.fact = fact
+                    factVC.community = community
                 }
             }
         }

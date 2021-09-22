@@ -21,11 +21,7 @@ class PictureView: UIView {
         self.newPostVC = newPostVC
         
         translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            backgroundColor = .systemBackground
-        } else {
-            backgroundColor = .white
-        }
+        backgroundColor = .systemBackground
         
         setPictureViewUI()
     }
@@ -92,13 +88,7 @@ class PictureView: UIView {
         cameraButton.widthAnchor.constraint(equalToConstant: 34).isActive = true
         cameraButton.heightAnchor.constraint(equalToConstant: 34).isActive = true
         cameraButton.layer.cornerRadius = 17
-        if #available(iOS 13.0, *) {
-            cameraButton.backgroundColor = .secondarySystemBackground
-            folderButton.backgroundColor = .secondarySystemBackground
-        } else {
-            cameraButton.backgroundColor = .ios12secondarySystemBackground
-            folderButton.backgroundColor = .ios12secondarySystemBackground
-        }
+        cameraButton.backgroundColor = .secondarySystemBackground
         
         addSubview(folderButton)
         folderButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
@@ -106,6 +96,7 @@ class PictureView: UIView {
         folderButton.widthAnchor.constraint(equalToConstant: 34).isActive = true
         folderButton.heightAnchor.constraint(equalToConstant: 34).isActive = true
         folderButton.layer.cornerRadius = 17
+        folderButton.backgroundColor = .secondarySystemBackground
         
         addSubview(previewCollectionView)
         previewCollectionView.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
@@ -143,11 +134,7 @@ class PictureView: UIView {
         button.addTarget(self, action: #selector(camTapped), for: .touchUpInside)
         button.imageEdgeInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
         button.alpha = 0
-        if #available(iOS 13.0, *) {
-            button.tintColor = .label
-        } else {
-            button.tintColor = .black
-        }
+        button.tintColor = .label
         button.tintColor = .imagineColor
         
         return button
@@ -160,11 +147,7 @@ class PictureView: UIView {
         button.addTarget(self, action: #selector(camRollTapped), for: .touchUpInside)
         button.imageEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
         button.alpha = 0
-        if #available(iOS 13.0, *) {
-            button.tintColor = .label
-        } else {
-            button.tintColor = .black
-        }
+        button.tintColor = .label
         button.tintColor = .imagineColor
         
         return button
@@ -177,11 +160,7 @@ class PictureView: UIView {
         button.alpha = 0
         button.tintColor = .darkRed
         button.imageEdgeInsets = UIEdgeInsets(top: 2,left: 2,bottom: 2,right: 2)
-        if #available(iOS 13.0, *) {
-            button.backgroundColor = .systemBackground
-        } else {
-            button.backgroundColor = .white
-        }
+        button.backgroundColor = .systemBackground
         button.addTarget(self, action: #selector(removePictureTapped), for: .touchUpInside)
         
         return button
@@ -195,11 +174,7 @@ class PictureView: UIView {
         collectView.allowsSelection = true  //Pictures clickable
         collectView.layer.cornerRadius = 8
         collectView.isPagingEnabled = true
-        if #available(iOS 13.0, *) {
-            collectView.backgroundColor = .systemBackground
-        } else {
-            collectView.backgroundColor = .white
-        }
+        collectView.backgroundColor = .systemBackground
         
         return collectView
     }()

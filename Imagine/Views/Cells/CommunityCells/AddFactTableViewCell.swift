@@ -25,11 +25,7 @@ class AddFactCell: UITableViewCell {
         backgroundColor =  .clear
         
         // add Border
-        if #available(iOS 13.0, *) {
-            TextLabel.layer.borderColor = UIColor.label.cgColor
-        } else {
-            TextLabel.layer.borderColor = UIColor.black.cgColor
-        }
+        TextLabel.layer.borderColor = UIColor.label.cgColor
         TextLabel.layer.borderWidth = 0.75
         TextLabel.layer.cornerRadius = 6
     }
@@ -44,11 +40,7 @@ class AddFactCell: UITableViewCell {
         label.numberOfLines = 1
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
-        if #available(iOS 13.0, *) {
-            label.textColor = .label
-        } else {
-            label.textColor = .black
-        }
+        label.textColor = .label
         label.minimumScaleFactor = 0.5
         label.lineBreakMode = .byWordWrapping
         label.textAlignment = .center

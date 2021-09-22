@@ -47,8 +47,8 @@ struct Constants {
     struct characterLimits {
         static let postTitleCharacterLimit = 200
         
-        static let factTitleCharacterLimit = 30
-        static let factDescriptionCharacterLimit = 120
+        static let communityTitleCharacterLimit = 30
+        static let communityDescriptionCharacterLimit = 120
         
         static let argumentTitleCharacterLimit = 85
         

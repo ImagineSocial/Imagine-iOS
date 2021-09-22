@@ -21,11 +21,7 @@ class LinkCommunityView: UIView {
         self.newPostVC = newPostVC
         
         translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            backgroundColor = .systemBackground
-        } else {
-            backgroundColor = .white
-        }
+        backgroundColor = .systemBackground
         
         setUpLinkedCommunityViewUI()
     }
@@ -167,11 +163,7 @@ class LinkCommunityView: UIView {
         label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
         label.textAlignment = .left
         label.text = NSLocalizedString("distribution_label_text", comment: "destination:")
-        if #available(iOS 13.0, *) {
-            label.textColor = .label
-        } else {
-            label.textColor = .black
-        }
+        label.textColor = .label
         
         return label
     }()
@@ -182,11 +174,7 @@ class LinkCommunityView: UIView {
         label.font = UIFont(name: "IBMPlexSans-Medium", size: 14)
         label.textAlignment = .left
         label.text = "Feed"
-        if #available(iOS 13.0, *) {
-            label.textColor = .secondaryLabel
-        } else {
-            label.textColor = .lightGray
-        }
+        label.textColor = .secondaryLabel
         
         return label
     }()
@@ -197,11 +185,7 @@ class LinkCommunityView: UIView {
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFit
         imageView.image = UIImage(named: "Feed")    //topicIcon
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .secondaryLabel
-        } else {
-            imageView.tintColor = .lightGray
-        }
+        imageView.tintColor = .secondaryLabel
         
         return imageView
     }()
@@ -210,11 +194,7 @@ class LinkCommunityView: UIView {
        let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
+        view.backgroundColor = .systemBackground
         
         return view
     }()
@@ -234,11 +214,7 @@ class LinkCommunityView: UIView {
         button.setImage(UIImage(named: "DismissTemplate"), for: .normal)
         button.addTarget(self, action: #selector(cancelLinkedFactTapped), for: .touchUpInside)
         button.tintColor = .darkRed
-        if #available(iOS 13.0, *) {
-            button.backgroundColor = .systemBackground
-        } else {
-            button.backgroundColor = .white
-        }
+        button.backgroundColor = .systemBackground
         button.imageEdgeInsets = UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1)
         button.isHidden = true
         button.clipsToBounds = true

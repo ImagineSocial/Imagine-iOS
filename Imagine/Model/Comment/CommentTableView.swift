@@ -791,11 +791,7 @@ class CommentTableViewHeader: UIView {
     let separator: UIView = {
         let separator = UIView()
         separator.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            separator.backgroundColor = .separator
-        } else {
-            separator.backgroundColor = .lightGray
-        }
+        separator.backgroundColor = .separator
         
         return separator
     }()
@@ -816,11 +812,7 @@ class CommentTableViewHeader: UIView {
        let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans", size: 14)
-        if #available(iOS 13.0, *) {
-            label.textColor = .secondaryLabel
-        } else {
-            label.textColor = .darkGray
-        }
+        label.textColor = .secondaryLabel
         label.textAlignment = .left
         label.text = NSLocalizedString("comment_notifications_label", comment: "notifications:")
         label.alpha = 0

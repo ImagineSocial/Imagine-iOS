@@ -25,11 +25,7 @@ class SearchUserCell: UICollectionViewCell {
     
     private let nameLabel : UILabel = {
         let lbl = UILabel()
-        if #available(iOS 13.0, *) {
-            lbl.textColor = .label
-        } else {
-            lbl.textColor = .black
-        }
+        lbl.textColor = .label
         lbl.font = UIFont(name: "IBMPlexSans-Medium", size: 16)
         lbl.textAlignment = .left
         lbl.translatesAutoresizingMaskIntoConstraints = false

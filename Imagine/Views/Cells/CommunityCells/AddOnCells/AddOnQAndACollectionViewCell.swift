@@ -194,11 +194,8 @@ extension AddOnQAndACollectionViewCell: UITableViewDataSource, UITableViewDelega
                     guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell") else {
                         
                         let cell = UITableViewCell(style: .default, reuseIdentifier: "cell")
-                        if #available(iOS 13.0, *) {
-                            cell.backgroundColor = .secondarySystemBackground
-                        } else {
-                            cell.backgroundColor = .lightGray
-                        }
+                        cell.backgroundColor = .secondarySystemBackground
+                        
                         return cell
                         
                     }
@@ -214,11 +211,8 @@ extension AddOnQAndACollectionViewCell: UITableViewDataSource, UITableViewDelega
             } else {
                 if let cell = tableView.dequeueReusableCell(withIdentifier: answerTextfieldCellIdentifier, for: indexPath) as? AddOnQAndATextfieldCell {
                     
-                    if #available(iOS 13.0, *) {
-                        cell.backgroundColor = .secondarySystemBackground
-                    } else {
-                        cell.backgroundColor = .ios12secondarySystemBackground
-                    }
+                    cell.backgroundColor = .secondarySystemBackground
+                    
                     let textField = cell.answerTextField!
                     self.activeTextFields.append(textField)
                     

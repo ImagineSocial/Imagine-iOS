@@ -49,22 +49,7 @@ class ArgumentCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
-        // add corner radius on `contentView`
-//        contentView.layer.cornerRadius = 6
-//        contentView.layer.borderWidth = 2
-//        if #available(iOS 13.0, *) {
-//            contentView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
-//        } else {
-//            contentView.layer.borderColor = UIColor.ios12secondarySystemBackground.cgColor
-//        }
-//
-//        contentView.clipsToBounds = true
-//        backgroundColor =  .clear
-        
-//        layer.cornerRadius = cornerRadius
-//        contentView.layer.cornerRadius = cornerRadius
-//        
+ 
         contentView.clipsToBounds = false
     }
     
@@ -78,11 +63,7 @@ class ArgumentCell: UITableViewCell {
         contentView.layer.cornerRadius = cornerRadius
         
         let layer = contentView.layer
-        if #available(iOS 13.0, *) {
-            layer.shadowColor = UIColor.label.cgColor
-        } else {
-            layer.shadowColor = UIColor.black.cgColor
-        }
+        layer.shadowColor = UIColor.label.cgColor
         layer.shadowOffset = CGSize(width: 0, height: 0)
         layer.shadowRadius = 2
         layer.shadowOpacity = 0.4

@@ -18,11 +18,7 @@ extension UIView {
         let layer = self.layer
         layer.cornerRadius = cornerRadius
         
-        if #available(iOS 13.0, *) {
-            layer.shadowColor = UIColor.label.cgColor
-        } else {
-            layer.shadowColor = UIColor.black.cgColor
-        }
+        layer.shadowColor = UIColor.label.cgColor
         layer.shadowOffset = CGSize(width: 0, height: 0)
         layer.shadowRadius = 3
         layer.shadowOpacity = 0.5
@@ -58,7 +54,7 @@ extension UIView {
         activityIndicator.center = CGPoint(x: loadingView.frame.size.width / 2,
                                            y: loadingView.frame.size.height / 2)
         activityIndicator.hidesWhenStopped = true
-        activityIndicator.style = .whiteLarge
+        activityIndicator.style = .large
         activityIndicator.color = .white
         activityIndicator.startAnimating()
         self.isUserInteractionEnabled = false

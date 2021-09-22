@@ -227,12 +227,8 @@ class SmallPostCell: UICollectionViewCell {
     
     
     override func awakeFromNib() {
-        if #available(iOS 13.0, *) {
-            contentView.backgroundColor = .secondarySystemBackground
-        } else {
-            contentView.backgroundColor = .ios12secondarySystemBackground
-        }
         
+        contentView.backgroundColor = .secondarySystemBackground
         contentView.layer.cornerRadius = 6
         cellImageView.layer.cornerRadius = 4
         backgroundColor = .clear

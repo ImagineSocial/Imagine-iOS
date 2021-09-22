@@ -32,12 +32,7 @@ class ImagineCommunityProposalHeader: UICollectionReusableView {
         for button in buttons {
             button.cornerRadius = 15
             button.layer.borderWidth = 1
-            
-            if #available(iOS 13.0, *) {
-                button.layer.borderColor = UIColor.secondaryLabel.cgColor
-            } else {
-                button.layer.borderColor = UIColor.lightGray.cgColor
-            }
+            button.layer.borderColor = UIColor.secondaryLabel.cgColor
         }
         
         buttonSelected(button: selectionAllButton)
@@ -50,20 +45,11 @@ class ImagineCommunityProposalHeader: UICollectionReusableView {
         
         for button in buttons {
             button.isSelected = false
-            
-            if #available(iOS 13.0, *) {
-                button.layer.borderColor = UIColor.secondaryLabel.cgColor
-            } else {
-                button.layer.borderColor = UIColor.lightGray.cgColor
-            }
+            button.layer.borderColor = UIColor.secondaryLabel.cgColor
         }
         
         button.isSelected = true
-        if #available(iOS 13.0, *) {
-            button.layer.borderColor = UIColor.label.cgColor
-        } else {
-            button.layer.borderColor = UIColor.black.cgColor
-        }
+        button.layer.borderColor = UIColor.label.cgColor
     }
         
     //MARK:- IBActions

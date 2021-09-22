@@ -41,11 +41,8 @@ class CommentAnswerView: UIView {
         super.init(frame: frame)
         
         translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            self.backgroundColor = .secondarySystemBackground
-        } else {
-            self.backgroundColor = .ios12secondarySystemBackground
-        }
+        self.backgroundColor = .secondarySystemBackground
+        
         answerTextField.delegate = self
         answerTextField.text = answerPlaceholderText
                 
@@ -125,11 +122,8 @@ class CommentAnswerView: UIView {
         self.addSubview(recipientBackgroundView)
         let separatorView = HairlineView()
         separatorView.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            separatorView.backgroundColor = .separator
-        } else {
-            separatorView.backgroundColor = .black
-        }
+        separatorView.backgroundColor = .separator
+        
         recipientBackgroundView.addSubview(separatorView)
         recipientBackgroundView.addSubview(recipientLabel)
         recipientBackgroundView.addSubview(cancelRecipientButton)
@@ -280,13 +274,8 @@ class CommentAnswerView: UIView {
         field.font = UIFont(name: "IBMPlexSans", size: 14)
         field.isScrollEnabled = false
 
-        if #available(iOS 13.0, *) {
-            field.backgroundColor = .systemBackground
-            field.textColor = .secondaryLabel
-        } else {
-            field.backgroundColor = .white
-            field.textColor = .lightGray
-        }
+        field.backgroundColor = .systemBackground
+        field.textColor = .secondaryLabel
         
         return field
     }()
@@ -305,11 +294,7 @@ class CommentAnswerView: UIView {
     let recipientBackgroundView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
+        view.backgroundColor = .systemBackground
         view.alpha = 0
         
         return view
@@ -360,22 +345,13 @@ extension CommentAnswerView: UITextViewDelegate {
             answerTextField.text = ""
         }
         
-        if #available(iOS 13.0, *) {
-            textView.textColor = .label
-        } else {
-            textView.textColor = .black
-        }
+        textView.textColor = .label
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text == "" {
             textView.text = answerPlaceholderText
-            
-            if #available(iOS 13.0, *) {
-                textView.textColor = .secondaryLabel
-            } else {
-                textView.textColor = .lightGray
-            }
+            textView.textColor = .secondaryLabel
         }
     }
     

@@ -98,13 +98,8 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
         let layer = thanksButton.layer
         layer.cornerRadius = 4
         layer.borderWidth = 0.5
-        if #available(iOS 13.0, *) {
-            layer.borderColor = UIColor.label.cgColor
-            thanksButton.backgroundColor = .systemBackground
-        } else {
-            layer.borderColor = UIColor.black.cgColor
-            thanksButton.backgroundColor = .white
-        }
+        layer.borderColor = UIColor.label.cgColor
+        thanksButton.backgroundColor = .systemBackground
     }
     
     override func prepareForReuse() {

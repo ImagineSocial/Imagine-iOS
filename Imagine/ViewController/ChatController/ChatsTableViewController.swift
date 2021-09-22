@@ -27,11 +27,7 @@ class ChatsTableViewController: UITableViewController {
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.isTranslucent = false
-        if #available(iOS 13.0, *) {
-            self.navigationController?.view.backgroundColor = .systemBackground
-        } else {
-            self.navigationController?.view.backgroundColor = .white
-        }
+        self.navigationController?.view.backgroundColor = .systemBackground
         
         tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: "NibBlankCell")
         
