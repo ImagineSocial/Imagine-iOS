@@ -19,7 +19,7 @@ import FirebaseFirestore
 class PostViewController: UIViewController, UIScrollViewDelegate {
     
     
-    //MARK:- IBOutlets
+    //MARK: - IBOutlets
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var contentView: UIView!
     
@@ -57,7 +57,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     
     
-    //MARK:- Variables
+    //MARK: - Variables
     var post = Post()
     
     let db = Firestore.firestore()
@@ -105,7 +105,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     lazy var linkedCommunityView = LinkedCommunityView(postViewController: self)
     
     
-    //MARK:- View Lifecycle
+    //MARK: - View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -238,7 +238,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
 //        }
     }
     
-    //MARK:- Set Up UI
+    //MARK: - Set Up UI
     
     func setUpUI() {
         
@@ -266,7 +266,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    //MARK:- Show Post
+    //MARK: - Show Post
     
     func showPost() {
         let buttons = [thanksButton!, wowButton!, haButton!, niceButton!]
@@ -420,7 +420,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         imageCollectionView.reloadData()    // To load the image, when the data has to be fetched in "setUpViewController"
     }
     
-    //MARK:- Show User
+    //MARK: - Show User
     
     var index = 0
     func loadUser(post: Post) {
@@ -476,7 +476,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     
-    //MARK:- Set Up View Controller
+    //MARK: - Set Up View Controller
     func setupViewController() {
         
         if post.user.displayName == "" && !post.anonym {
@@ -530,7 +530,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    // MARK:- Linked Community View
+    // MARK: - Linked Community View
     
     func setCommunity() {
         if let community = post.community {
@@ -561,7 +561,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    //MARK:- RepostView
+    //MARK: - RepostView
     
     func setUpRepostUI() {
         contentView.addSubview(repostView)
@@ -610,7 +610,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    //MARK:- Link Post
+    //MARK: - Link Post
     
     func setUpLinkButton() {
         contentView.addSubview(linkButton)
@@ -632,7 +632,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         performSegue(withIdentifier: "goToLink", sender: post)
     }
     
-    //MARK:- YouTube Post
+    //MARK: - YouTube Post
     
     func setUpYouTubeVideoUI() {
         imageCollectionViewHeightConstraint.constant = 200
@@ -651,7 +651,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         return ytv
     }()
     
-    //MARK:- Like Buttons
+    //MARK: - Like Buttons
     
     func setLikeButtonTitle(post: Post, button: DesignableButton) {
         var title = String(post.votes.thanks)
@@ -785,7 +785,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    //MARK:- Like Button Animation
+    //MARK: - Like Button Animation
     
     func showButtonText(button: DesignableButton) {
 
@@ -915,7 +915,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         performSegue(withIdentifier: "reportSegue", sender: post)
     }
     
-    //MARK:- Translate Post
+    //MARK: - Translate Post
     
     let translatePostButton : DesignableButton = {
         let button = DesignableButton()
@@ -938,7 +938,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    //MARK:- Navigation
+    //MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
@@ -1000,7 +1000,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         }
     }
     
-    //MARK:- CommentAnswerView
+    //MARK: - CommentAnswerView
     func createFloatingCommentView() {
         let viewHeight = self.view.frame.height
         let screenHeight = UIScreen.main.bounds.height
@@ -1045,7 +1045,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     
-    //MARK:- ScrollViewDelegate
+    //MARK: - ScrollViewDelegate
     
     @objc func scrollViewTapped() {
         if let view = floatingCommentView {
@@ -1071,135 +1071,5 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 collectionViewPageControl.currentPage = indexPath.row
             }
         }
-    }
-}
-
-//MARK:- Comment extensions
-extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
-    
-    func notLoggedIn() {
-        self.notLoggedInAlert()
-    }
-    
-    func doneSaving() {
-        if let view = self.floatingCommentView {
-            view.doneSaving()
-        }
-    }
-    
-    func sendButtonTapped(text: String, isAnonymous: Bool, answerToComment: Comment?) {
-        
-        commentTableView.saveCommentInDatabase(bodyString: text, isAnonymous: isAnonymous, answerToComment: answerToComment)
-    }
-    
-    func recipientChanged(isActive: Bool, userUID: String) {
-        if isActive {
-            self.post.notificationRecipients.append(userUID)
-        } else {
-            let newList = self.post.notificationRecipients.filter { $0 != userUID }
-            self.post.notificationRecipients = newList
-        }
-    }
-    
-    func notAllowedToComment() {
-        if let view = floatingCommentView {
-            view.answerTextField.text = ""
-        }
-    }
-    
-    func commentTypingBegins() {
-        
-    }
-    
-    func commentGotReported(comment: Comment) {
-        
-        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let reportViewController = storyBoard.instantiateViewController(withIdentifier: "reportVC") as! ReportViewController
-        reportViewController.reportComment = true
-        reportViewController.modalTransitionStyle = .coverVertical
-        reportViewController.modalPresentationStyle = .overFullScreen
-        self.present(reportViewController, animated: true, completion: nil)
-    }
-    
-    func commentGotDeleteRequest(comment: Comment, answerToComment: Comment?) {
-        self.deleteAlert(title: NSLocalizedString("delete_comment_alert_title", comment: "title"), message: NSLocalizedString("delete_comment_alert_message", comment: "cant be redeemed"), delete:  { (delete) in
-            if delete {
-                HandyHelper().deleteCommentInFirebase(comment: comment, answerToComment: answerToComment)
-                self.commentTableView.deleteCommentFromTableView(comment: comment, answerToComment: answerToComment)
-            }
-        })
-    }
-    
-    func toUserTapped(user: User) {
-        performSegue(withIdentifier: "toUserSegue", sender: user)
-    }
-    
-    func answerCommentTapped(comment: Comment) {
-        if let answerView = self.floatingCommentView {
-            answerView.addRecipientField(comment: comment)
-        }
-    }
-    
-}
-
-//MARK: - MultiPictureCollectionView
-extension PostViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    
-    // MARK: MultiPictureCollectionViewDataSource
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
-        return imageURLs.count
-        
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        let image = imageURLs[indexPath.item]
-        
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as? MultiImageCollectionCell {
-            
-            if image == defaultLinkString {
-                cell.image = UIImage(named: "default-link")
-            } else {
-                cell.imageURL = image
-                cell.layoutIfNeeded()
-            }
-            return cell
-        }
-        
-        return UICollectionViewCell()
-    }
-    
-    // MARK: MultiPictureCollectionViewDelegate
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        if post.type == .panorama {
-            var height = post.mediaHeight
-            if height > panoramaHeightMaximum {
-                height = panoramaHeightMaximum
-            }
-            let width = post.mediaWidth
-            
-            let ratio = width/post.mediaHeight
-            let newWidth = ratio*height
-            
-            let panoSize = CGSize(width: newWidth, height: height)
-            return panoSize
-        }
-        let size = CGSize(width: imageCollectionView.frame.width, height: imageCollectionView.frame.height)
-        return size
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let image = imageURLs[indexPath.item]
-        
-        let pinchVC = PinchToZoomViewController()
-        pinchVC.imageURL = image
-        pinchVC.hidesBottomBarWhenPushed = true
-        self.navigationController?.pushViewController(pinchVC, animated: true)
     }
 }

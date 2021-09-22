@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		022981C326FB49D400B07BC8 /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022981C226FB49D400B07BC8 /* FirestoreManager.swift */; };
 		0289957326FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */; };
+		0289957726FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957626FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift */; };
+		0289957B26FB601D007CAFB7 /* PostVC+MultiPicCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957A26FB601C007CAFB7 /* PostVC+MultiPicCollectionView.swift */; };
+		0289957D26FB6085007CAFB7 /* PostVC+Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957C26FB6085007CAFB7 /* PostVC+Comment.swift */; };
+		0289958126FB616D007CAFB7 /* NewPostVC+Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289958026FB616D007CAFB7 /* NewPostVC+Upload.swift */; };
+		0289958326FB653D007CAFB7 /* NewPostVC+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289958226FB653D007CAFB7 /* NewPostVC+Images.swift */; };
+		0289958526FB6618007CAFB7 /* NewPostVC+PreviewCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289958426FB6618007CAFB7 /* NewPostVC+PreviewCollectionView.swift */; };
 		02EBEFE22635B40F00373C45 /* FeedLikeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EBEFE12635B40F00373C45 /* FeedLikeView.swift */; };
 		02EBEFE52635B41D00373C45 /* FeedLikeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02EBEFE42635B41D00373C45 /* FeedLikeView.xib */; };
 		6031FF6320510F14AC01ED24 /* Pods_Imagine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B6ABEE519CECD54D4C7F4F /* Pods_Imagine.framework */; };
@@ -279,6 +285,12 @@
 /* Begin PBXFileReference section */
 		022981C226FB49D400B07BC8 /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommunityCollectionVC+CollectionView.swift"; sourceTree = "<group>"; };
+		0289957626FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseFeedTableVC+TableView.swift"; sourceTree = "<group>"; };
+		0289957A26FB601C007CAFB7 /* PostVC+MultiPicCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostVC+MultiPicCollectionView.swift"; sourceTree = "<group>"; };
+		0289957C26FB6085007CAFB7 /* PostVC+Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostVC+Comment.swift"; sourceTree = "<group>"; };
+		0289958026FB616D007CAFB7 /* NewPostVC+Upload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewPostVC+Upload.swift"; sourceTree = "<group>"; };
+		0289958226FB653D007CAFB7 /* NewPostVC+Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewPostVC+Images.swift"; sourceTree = "<group>"; };
+		0289958426FB6618007CAFB7 /* NewPostVC+PreviewCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewPostVC+PreviewCollectionView.swift"; sourceTree = "<group>"; };
 		02EBEFE12635B40F00373C45 /* FeedLikeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLikeView.swift; sourceTree = "<group>"; };
 		02EBEFE42635B41D00373C45 /* FeedLikeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedLikeView.xib; sourceTree = "<group>"; };
 		1A16D61AEE6C9FEFE3134E7B /* Pods-Imagine.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.release.xcconfig"; path = "Target Support Files/Pods-Imagine/Pods-Imagine.release.xcconfig"; sourceTree = "<group>"; };
@@ -590,6 +602,60 @@
 				0289957026FB4E86007CAFB7 /* Extensions */,
 			);
 			path = "Main Community VC";
+			sourceTree = "<group>";
+		};
+		0289957426FB5E1A007CAFB7 /* BaseFeedTableVC */ = {
+			isa = PBXGroup;
+			children = (
+				E9EA7C9222E1DA210015C0EC /* BaseFeedTableViewController.swift */,
+				0289957526FB5E2B007CAFB7 /* Extensions */,
+			);
+			path = BaseFeedTableVC;
+			sourceTree = "<group>";
+		};
+		0289957526FB5E2B007CAFB7 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				0289957626FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		0289957826FB5FBB007CAFB7 /* PostVC */ = {
+			isa = PBXGroup;
+			children = (
+				E9600E872235076B003E5A7A /* PostViewController.swift */,
+				0289957926FB5FDC007CAFB7 /* Extensions */,
+			);
+			path = PostVC;
+			sourceTree = "<group>";
+		};
+		0289957926FB5FDC007CAFB7 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				0289957A26FB601C007CAFB7 /* PostVC+MultiPicCollectionView.swift */,
+				0289957C26FB6085007CAFB7 /* PostVC+Comment.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		0289957E26FB6146007CAFB7 /* NewPostVC */ = {
+			isa = PBXGroup;
+			children = (
+				E9B1872E222ECC4E00923037 /* NewPostViewController.swift */,
+				0289957F26FB614E007CAFB7 /* Extensions */,
+			);
+			path = NewPostVC;
+			sourceTree = "<group>";
+		};
+		0289957F26FB614E007CAFB7 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				0289958026FB616D007CAFB7 /* NewPostVC+Upload.swift */,
+				0289958226FB653D007CAFB7 /* NewPostVC+Images.swift */,
+				0289958426FB6618007CAFB7 /* NewPostVC+PreviewCollectionView.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		66199979602FCB98C67C9712 /* Pods */ = {
@@ -1005,8 +1071,8 @@
 		E988284E23105241005ECB40 /* PostVCs */ = {
 			isa = PBXGroup;
 			children = (
-				E9600E872235076B003E5A7A /* PostViewController.swift */,
-				E9B1872E222ECC4E00923037 /* NewPostViewController.swift */,
+				0289957826FB5FBB007CAFB7 /* PostVC */,
+				0289957E26FB6146007CAFB7 /* NewPostVC */,
 				E9B79CE6224F88CD00166EED /* RepostViewController.swift */,
 				E9530C4D22DCBF20007D6A00 /* PinchToZoomViewController.swift */,
 				E919EFE624A6787400ED7D4F /* LeanWebViewViewController.swift */,
@@ -1193,7 +1259,7 @@
 		E9E531FA229E9191004D0654 /* FeedVCs */ = {
 			isa = PBXGroup;
 			children = (
-				E9EA7C9222E1DA210015C0EC /* BaseFeedTableViewController.swift */,
+				0289957426FB5E1A007CAFB7 /* BaseFeedTableVC */,
 				E962AC282224442000C6D6EF /* FeedTableViewController.swift */,
 				E9B9445E225800EE000145E2 /* UserFeedTableViewController.swift */,
 				E9530C5222DDE94D007D6A00 /* SavedPostTableViewController.swift */,
@@ -1654,6 +1720,7 @@
 				E9E6BD0625F566E40012A870 /* ImagineCommunityNavigationCell.swift in Sources */,
 				E9B85D4C24124BB500960942 /* CollectionViewInTableViewCell.swift in Sources */,
 				E9B79CE3224EC72000166EED /* JobOfferCell.swift in Sources */,
+				0289957726FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift in Sources */,
 				E929516A23328D4B006C37E3 /* Constants.swift in Sources */,
 				E932FAB8261349DF00F0F00A /* SearchCollectionViewPostCell.swift in Sources */,
 				E94FB660251D121F00E58707 /* FeedSingleTopicCell.swift in Sources */,
@@ -1677,13 +1744,16 @@
 				E9FE46CC25FA9C8A00F4C973 /* DataReportCollectionViewCell.swift in Sources */,
 				E911EEF222DB173E00EDD056 /* SelectionCell.swift in Sources */,
 				E904F268229C274A00383885 /* JobSurveyViewController.swift in Sources */,
+				0289957D26FB6085007CAFB7 /* PostVC+Comment.swift in Sources */,
 				E94EDDA12564350500B226C8 /* AddOnPlaylistTrackTableViewCell.swift in Sources */,
 				E98B22F622CB5F26000F965F /* FriendsTableViewController.swift in Sources */,
 				E904BF0224264525003EC8DF /* AddPostTableViewController.swift in Sources */,
+				0289958126FB616D007CAFB7 /* NewPostVC+Upload.swift in Sources */,
 				E9526C07250F993A0088004F /* AnimatedWaveView.swift in Sources */,
 				E9FE65D622A2A42800FA4E68 /* HandyHelper.swift in Sources */,
 				E9F9B68D223D6C9500100F51 /* CampaignVoteCollectionViewController.swift in Sources */,
 				E9A46755231F1C84009AC8DA /* BaseFeedCell.swift in Sources */,
+				0289958326FB653D007CAFB7 /* NewPostVC+Images.swift in Sources */,
 				E96CE88D22940A9F00BACD3B /* CommunityCollectionVC.swift in Sources */,
 				E97FDFC2246BEB4D0049E1E4 /* DiscussionCell.swift in Sources */,
 				E9817B4725EBE2F300E56FC6 /* SettingChangeType.swift in Sources */,
@@ -1695,6 +1765,7 @@
 				E932FABB26135E9100F0F00A /* CommunityRequest.swift in Sources */,
 				E94EDD9E2564328000B226C8 /* AddOnPlaylistCollectionViewCell.swift in Sources */,
 				E9CF237F233A279200D3B295 /* TopicCell.swift in Sources */,
+				0289957B26FB601D007CAFB7 /* PostVC+MultiPicCollectionView.swift in Sources */,
 				E9EA7C9B22E5F47C0015C0EC /* VoteCell.swift in Sources */,
 				E95E908225EAB63200E7B9DB /* ReportType.swift in Sources */,
 				E93F6F1125322F1F0044EAA4 /* ImagineFundViewController.swift in Sources */,
@@ -1747,6 +1818,7 @@
 				E9C42EEF2364393400FC50BA /* SearchPostCell.swift in Sources */,
 				E9A9FAE122A50ED90088BD37 /* CobraViewController.swift in Sources */,
 				E9817B5725EC03BE00E56FC6 /* SettingSwitchCell.swift in Sources */,
+				0289958526FB6618007CAFB7 /* NewPostVC+PreviewCollectionView.swift in Sources */,
 				E95A6FC8232E80E8008B32CC /* Reachability.swift in Sources */,
 				E9B79CDF224EC68500166EED /* PostCell.swift in Sources */,
 				E9879A2324BDB57A004B497F /* MusicCell.swift in Sources */,
