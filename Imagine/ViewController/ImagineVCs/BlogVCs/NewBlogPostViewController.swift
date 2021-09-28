@@ -38,7 +38,11 @@ class NewBlogPostViewController: UIViewController {
     
     func getUser() {
         if let user = Auth.auth().currentUser {
-            self.user = HandyHelper().getUserForNewBlogpostOnly(userUID: user.uid)
+            User(userID: user.uid).getUser(isAFriend: false) { user in
+                if let user = user {
+                    self.user = user
+                }
+            }
         }
     }
     

@@ -1,16 +1,15 @@
 //
-//  PostHelper.swift
+//  FirestoreManager+Post.swift
 //  Imagine
 //
-//  Created by Malte Schoppe on 25.02.19.
-//  Copyright © 2019 Malte Schoppe. All rights reserved.
+//  Created by Don Malte on 25.09.21.
+//  Copyright © 2021 Malte Schoppe. All rights reserved.
 //
 
 import Foundation
 import Firebase
 import FirebaseFirestore
 import SDWebImage
-
 
 // This enum differentiates between savedPosts or posts for the "getTheSavedPosts" function
 enum PostList {

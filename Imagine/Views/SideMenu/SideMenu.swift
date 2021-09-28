@@ -344,8 +344,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
             profilePictureImageView.layer.cornerRadius = profilePictureImageView.frame.height/2
             profilePictureImageView.layoutIfNeeded()
        
-            let userObject = User()
-            userObject.userUID = user.uid
+            let userObject = User(userID: user.uid)
             userObject.getBadges { (badges) in
                 for badge in badges {
                     if badge == "first500" {

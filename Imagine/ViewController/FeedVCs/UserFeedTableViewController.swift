@@ -239,7 +239,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                     
                     self.view.activityStartAnimating()
                     
-                    firestoreRequest.getPostList(getMore: getMore, whichPostList: .postsFromUser, userUID: user.userUID) { (posts, initialFetch)  in
+                    firestoreRequest.getPostList(getMore: getMore, whichPostList: .postsFromUser, userUID: user.userID) { (posts, initialFetch)  in
                         
                         guard let posts = posts else {
                             print("No more Posts")
@@ -320,8 +320,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         profilePictureButton.isEnabled = true
         
         if let user = Auth.auth().currentUser {
-            let currentUser = User()
-            currentUser.userUID = user.uid
+            let currentUser = User(userID: user.uid)
             
             let ref = db.collection("Users").document(user.uid)
             ref.getDocument { (doc, err) in
@@ -711,15 +710,15 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     func checkIfAlreadyFriends() {
         if let user = Auth.auth().currentUser {
             if let currentProfile = userOfProfile {
-                if currentProfile.userUID == "" {
+                if currentProfile.userID == "" {
                     
-                    if user.uid == currentProfile.userUID {    // Your profile but you view it as a stranger, the people want to see a difference, like: "Well this is how other people see my profile..."
+                    if user.uid == currentProfile.userID {    // Your profile but you view it as a stranger, the people want to see a difference, like: "Well this is how other people see my profile..."
                         self.addAsFriendButton.isHidden = true
                         self.chatWithUserButton.isHidden = true
                         
                         self.currentState = .ownProfile
                     } else { // Check if you are already friends or you have requested it
-                        let friendsRef = db.collection("Users").document(user.uid).collection("friends").document(currentProfile.userUID)
+                        let friendsRef = db.collection("Users").document(user.uid).collection("friends").document(currentProfile.userID)
                         
                         friendsRef.getDocument { (document, err) in
                             if let err = err {
@@ -795,7 +794,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                     if let user = Auth.auth().currentUser {
                         let blockRef = self.db.collection("Users").document(user.uid)
                         blockRef.updateData([
-                            "blocked": FieldValue.arrayUnion([currentUser.userUID]) // Add the person as blocked
+                            "blocked": FieldValue.arrayUnion([currentUser.userID]) // Add the person as blocked
                             ])
                         
                         self.deleteAsFriend()
@@ -1017,10 +1016,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         self.view.activityStartAnimating()
         if let user = Auth.auth().currentUser, let currentProfile = userOfProfile, let name = user.displayName {
                 
-                let friendsRef = db.collection("Users").document(currentProfile.userUID).collection("friends").document(user.uid)
+                let friendsRef = db.collection("Users").document(currentProfile.userID).collection("friends").document(user.uid)
                 let data: [String:Any] = ["accepted": false, "requestedAt" : Timestamp(date: Date())]
                 
-                let notificationsRef = db.collection("Users").document(currentProfile.userUID).collection("notifications").document()
+                let notificationsRef = db.collection("Users").document(currentProfile.userID).collection("notifications").document()
                 var notificationData : [String: Any] = ["type": "friend", "name": name, "userID": user.uid]
                 
                 let language = LanguageSelection().getLanguage()
@@ -1057,10 +1056,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         if let user = Auth.auth().currentUser {
             if let currentProfile = userOfProfile {
                 
-                let friendsRefOfCurrentProfile = db.collection("Users").document(currentProfile.userUID).collection("friends").document(user.uid)
+                let friendsRefOfCurrentProfile = db.collection("Users").document(currentProfile.userID).collection("friends").document(user.uid)
                 friendsRefOfCurrentProfile.delete()
                 
-                let friendsRefOfLoggedInUser = db.collection("Users").document(user.uid).collection("friends").document(currentProfile.userUID)
+                let friendsRefOfLoggedInUser = db.collection("Users").document(user.uid).collection("friends").document(currentProfile.userID)
                 friendsRefOfLoggedInUser.delete()
                 
                 
@@ -1102,7 +1101,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             if let currentUser = Auth.auth().currentUser {
                 
                 // Check if there is already a chat
-                let chatRef = db.collection("Users").document(currentUser.uid).collection("chats").whereField("participant", isEqualTo: profileUser.userUID).limit(to: 1)
+                let chatRef = db.collection("Users").document(currentUser.uid).collection("chats").whereField("participant", isEqualTo: profileUser.userID).limit(to: 1)
                 
                 chatRef.getDocuments { (querySnapshot, error) in
                     if let error = error {
@@ -1133,14 +1132,14 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 chat.participant = profileUser
                 chat.documentID = newDocumentID
                 
-                newChatRef.setData(["participants": [profileUser.userUID, loggedInUser.uid]]) { (err) in
+                newChatRef.setData(["participants": [profileUser.userID, loggedInUser.uid]]) { (err) in
                     if let error = err {
                         print("We have an error: ", error.localizedDescription)
                     }
                 }
                 
                 // Create Chat Reference for the current User
-                let dataForCurrentUsersDatabase = ["participant": chat.participant.userUID]
+                let dataForCurrentUsersDatabase = ["participant": profileUser.userID]
                 let currentUsersDatabaseRef = self.db.collection("Users").document(loggedInUser.uid).collection("chats").document(newDocumentID)
                 
                 currentUsersDatabaseRef.setData(dataForCurrentUsersDatabase) { (err) in
@@ -1151,7 +1150,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 
                 // Create Chat Reference for the User of the profile
                 let dataForProfileUsersDatabase = ["participant": loggedInUser.uid]
-                let profileUsersDatabaseRef = self.db.collection("Users").document(profileUser.userUID).collection("chats").document(newDocumentID)
+                let profileUsersDatabaseRef = self.db.collection("Users").document(profileUser.userID).collection("chats").document(newDocumentID)
                 
                 profileUsersDatabaseRef.setData(dataForProfileUsersDatabase) { (err) in
                     if let error = err {

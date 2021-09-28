@@ -11,19 +11,23 @@ import UIKit
 /// The Repost view inside the PostViewController
 class RepostView: UIView {
     
-    //MARK:- Variables
+    //MARK: - Variables
     var repost: Post? {
         didSet {
             if let repost = repost {
                 repostTitleLabel.text = repost.title
                 repostCreateDateLabel.text = repost.createTime
-                repostNameLabel.text = repost.user.displayName
                 
                 if let imageURL = URL(string: repost.imageURL) {
                     repostImageView.sd_setImage(with: imageURL, completed: nil)
                 }
-                if let url = URL(string: repost.user.imageURL) {
-                    repostProfilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                
+                if let repostUser = repost.user {
+                    repostNameLabel.text = repostUser.displayName
+                    
+                    if let url = URL(string: repostUser.imageURL) {
+                        repostProfilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                    }
                 }
             }
         }
@@ -45,7 +49,7 @@ class RepostView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    //MARK:- Set Up the View
+    //MARK: - Set Up the View
     
     private func setUpLayout() {
         layoutIfNeeded()

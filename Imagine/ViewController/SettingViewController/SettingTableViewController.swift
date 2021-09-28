@@ -134,9 +134,9 @@ class SettingTableViewController: UITableViewController {
                 }
             }
         } else if let user = user {
-            let userSetting = UserSetting(name: user.displayName, OP: user.userUID)
+            let userSetting = UserSetting(name: user.displayName, OP: user.userID)
             
-            let ref = db.collection("Users").document(user.userUID)
+            let ref = db.collection("Users").document(user.userID)
             ref.getDocument { (snap, err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
@@ -795,7 +795,7 @@ extension SettingTableViewController: UIImagePickerControllerDelegate, CropViewC
             
             savePictureInStorage(storageReference: storageRef, imageData: imageData)
         } else if let user = user {
-            let imageName = "\(user.userUID).profilePicture.png"
+            let imageName = "\(user.userID).profilePicture.png"
             let storageRef = storDB.child("profilePictures").child(imageName)
             
             savePictureInStorage(storageReference: storageRef, imageData: imageData)
@@ -827,7 +827,7 @@ extension SettingTableViewController: UIImagePickerControllerDelegate, CropViewC
             self.deletePictureInStorage(storageReference: storageRef)
         
         } else if let user = user {
-            let imageName = "\(user.userUID).profilePicture.png"
+            let imageName = "\(user.userID).profilePicture.png"
             let storageRef = storDB.child("profilePictures").child(imageName)
             
             self.deletePictureInStorage(storageReference: storageRef)
@@ -1132,7 +1132,7 @@ extension SettingTableViewController: SettingCellDelegate, UINavigationControlle
                 }
             }
         } else if let user = user {
-            let ref = db.collection("Users").document(user.userUID)
+            let ref = db.collection("Users").document(user.userID)
             ref.updateData(data) { (err) in
                 if let error = err {
                     print("We could not update the data: \(error.localizedDescription)")

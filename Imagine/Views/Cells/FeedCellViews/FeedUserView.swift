@@ -33,11 +33,11 @@ class FeedUserView: UIView, NibLoadable {
     @IBOutlet weak var nameLabelLeadingToProfilePictureTrailingConstraint: NSLayoutConstraint!
     
     
-    //MARK:- Variables
+    //MARK: - Variables
     weak var delegate: FeedUserViewDelegate?
     private var isProfilePictureHidden = false
     
-    //MARK:- Initialization
+    //MARK: - Initialization
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setupFromNib()
@@ -46,7 +46,7 @@ class FeedUserView: UIView, NibLoadable {
         NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
     
-    //MARK:- SetUp UI
+    //MARK: - SetUp UI
     func setUpUI() {
         // Profile Picture
         let layer = profilePictureImageView.layer
@@ -64,7 +64,7 @@ class FeedUserView: UIView, NibLoadable {
         }
     }
     
-    //MARK:- User
+    //MARK: - User
     func setUser(post: Post) {
         
         //check options
@@ -88,11 +88,11 @@ class FeedUserView: UIView, NibLoadable {
                 nameLabel.text = Constants.strings.anonymPosterName
             }
             profilePictureImageView.image = UIImage(named: "anonym-user")
-        } else {
-            nameLabel.text = post.user.displayName
+        } else if let user = post.user {
+            nameLabel.text = user.displayName
             
             // Profile Picture
-            if let url = URL(string: post.user.imageURL) {
+            if let url = URL(string: user.imageURL) {
                 profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
             } else {
                 profilePictureImageView.image = UIImage(named: "default-user")
@@ -125,7 +125,7 @@ class FeedUserView: UIView, NibLoadable {
     }
     
     
-    //MARK:- Reuse
+    //MARK: - Reuse
     func prepareForReuse() {
         //Reset User
         profilePictureImageView.sd_cancelCurrentImageLoad()
@@ -145,7 +145,9 @@ class FeedUserView: UIView, NibLoadable {
         nameLabel.font = UIFont(name: "IBMPlexSans", size: 12)
     }
     
-    //MARK:- IBActions
+    
+    
+    //MARK: - IBActions
     
     @IBAction func reportPressed(_ sender: Any) {
         delegate?.reportButtonTapped()

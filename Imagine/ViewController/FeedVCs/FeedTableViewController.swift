@@ -632,8 +632,9 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                 post.newUpvotes = comment.upvotes
 
                 if let user = Auth.auth().currentUser {     //Only works if you get notifications for your own posts
-                    post.originalPosterUID = user.uid
+                    post.user = User(userID: user.uid)
                 }
+                
                 performSegue(withIdentifier: "showPost", sender: post)
             }
         case .toComment:
@@ -644,8 +645,9 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                 post.toComments = true
                 post.language = comment.sectionItemLanguage
                 if let user = Auth.auth().currentUser {
-                    post.originalPosterUID = user.uid
+                    post.user = User(userID: user.uid)
                 }
+                
                 performSegue(withIdentifier: "showPost", sender: post)
             }
         default:

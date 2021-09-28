@@ -59,11 +59,11 @@ class ThoughtCell : BaseFeedCell {
             titleLabel.text = post.title
             feedLikeView.setPost(post: post)
             
-            if post.user.displayName == "" {
+            if post.user == nil {
                 if post.anonym {
                     self.setUser()
                 } else {
-                    self.getUser()
+                    self.checkForUser()
                 }
             } else {
                 setUser()

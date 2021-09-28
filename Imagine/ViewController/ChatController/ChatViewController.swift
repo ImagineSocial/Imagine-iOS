@@ -250,8 +250,8 @@ class ChatViewController: MSGMessengerViewController {
     }
     
     func setNotification(chat: Chat, bodyString: String, messageID: String) {
-        if let currentUser = currentUser {
-            let notificationRef = db.collection("Users").document(chat.participant.userUID).collection("notifications").document()
+        if let currentUser = currentUser, let participant = chat.participant {
+            let notificationRef = db.collection("Users").document(participant.userID).collection("notifications").document()
             let notificationData: [String: Any] = ["type": "message", "message": bodyString, "name": currentUser.displayName, "chatID": chat.documentID, "sentAt": Timestamp(date: Date()), "messageID": messageID]
             
             if let chat = self.chat {

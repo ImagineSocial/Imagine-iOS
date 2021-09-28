@@ -245,16 +245,16 @@ class CommentTableView: UITableView {
     }
     
     func checkIfTheCurrentUserIsBlocked(post: Post) {
-        if post.user.userUID != "" {
-            if let user = Auth.auth().currentUser {
-                db.collection("Users").document(post.user.userUID).getDocument { (document, err) in
+        if let user = post.user {
+            if let currentUser = Auth.auth().currentUser {
+                db.collection("Users").document(user.userID).getDocument { (document, err) in
                     if let error = err {
                         print("We have an error: \(error.localizedDescription)")
                     } else {
                         if let docData = document!.data() {
                             if let blocked = docData["blocked"] as? [String] {
-                                for id in blocked {
-                                    if user.uid == id {
+                                blocked.forEach { id in
+                                    if currentUser.uid == id {
                                         self.allowedToComment = false
                                     }
                                 }
@@ -268,33 +268,10 @@ class CommentTableView: UITableView {
     
     func setCurrentUser() {
         if let user = Auth.auth().currentUser {
-            self.getUser(userUID: user.uid) { (currentUser) in
-                self.currentUser = currentUser
-            }
-        }
-    }
-    
-    func getUser(userUID: String, returnUser: @escaping (User?) -> Void) {
-        let ref = db.collection("Users").document(userUID)
-        
-        if userUID == "anonym" {
-            returnUser(nil)
-        } else {
-            ref.getDocument { (snap, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    if let document = snap {
-                        if let data = document.data() {
-                            
-                            let user = User()
-                            user.displayName = data["name"] as? String ?? ""
-                            user.imageURL = data["profilePictureURL"] as? String ?? ""
-                            user.userUID = userUID
-                            
-                            returnUser(user)
-                        }
-                    }
+            let user = User(userID: user.uid)
+            user.getUser(isAFriend: false) { user in
+                if let user = user {
+                    self.currentUser = user
                 }
             }
         }
@@ -335,7 +312,7 @@ class CommentTableView: UITableView {
                             ref = db.collection("Comments").document(post.documentID).collection("threads").document()
                         }
                         
-                        if post.originalPosterUID != "" {
+                        if post.user != nil {
                             self.getNotificationRecipients(post: post, bodyString: bodyString, displayName: displayName, commenterUID: userID)
                         }
                         sectionItemID = post.documentID
@@ -486,7 +463,7 @@ class CommentTableView: UITableView {
                                 if recipient == commenterUID {
                                     continue // No notification for your own comment
                                 } else {
-                                    if recipient == post.originalPosterUID {
+                                    if let user = post.user, recipient == user.userID {
                                         self.setNotification(post: post, userID: recipient, bodyString: bodyString, displayName: displayName, forOP: true)
                                     } else {
                                         self.setNotification(post: post, userID: recipient, bodyString: bodyString, displayName: displayName, forOP: false)
@@ -642,7 +619,7 @@ extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
         
         if let user = Auth.auth().currentUser {
             if let commentAuthor = comment.user {
-                if user.uid == commentAuthor.userUID {
+                if user.uid == commentAuthor.userID {
                     let deleteAction = UITableViewRowAction(style: .destructive, title: NSLocalizedString("delete", comment: "delete")) { (rowAction, indexPath) in
                         
                         if comment.isIndented {

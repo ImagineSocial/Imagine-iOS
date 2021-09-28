@@ -227,20 +227,20 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
         headerButton.leadingAnchor.constraint(equalTo: headerPostView.leadingAnchor).isActive = true
         headerButton.trailingAnchor.constraint(equalTo: headerPostView.trailingAnchor).isActive = true
         
-        if post.user.displayName != "" {
+        if let user = post.user {
             headerImageView.addSubview(profileView)
             profileView.bottomAnchor.constraint(equalTo: headerImageView.bottomAnchor, constant: -5).isActive = true
             profileView.leadingAnchor.constraint(equalTo: headerImageView.leadingAnchor, constant: 5).isActive = true
             profileView.trailingAnchor.constraint(equalTo: profileNameLabel.trailingAnchor, constant: 5).isActive = true
             profileView.heightAnchor.constraint(equalToConstant: 26).isActive = true
                         
-            if let url = URL(string: post.user.imageURL) {
+            if let url = URL(string: user.imageURL) {
                 profileImageView.sd_setImage(with: url, completed: nil)
             } else {
                 profileImageView.image = UIImage(named: "default-user")
             }
             
-            profileNameLabel.text = post.user.displayName
+            profileNameLabel.text = user.displayName
         } else {
             profileNameLabel.text = ""
             profileImageView.image = nil

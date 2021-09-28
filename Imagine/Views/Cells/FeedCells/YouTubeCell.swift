@@ -58,11 +58,11 @@ class YouTubeCell: BaseFeedCell {
                 playerView.load(withVideoId: youtubeID, playerVars: ["playsinline":1])  // Plays in tableview, no auto fullscreen
             }
             
-            if post.user.displayName == "" {
+            if post.user == nil {
                 if post.anonym {
                     self.setUser()
                 } else {
-                    self.getUser()
+                    self.checkForUser()
                 }
             } else {
                 setUser()

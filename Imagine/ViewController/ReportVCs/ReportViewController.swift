@@ -122,14 +122,15 @@ class ReportViewController: UIViewController {
     }
     
     func checkIfItsYourPost() {
-        if let user = Auth.auth().currentUser {
-            if let post = post {
-                if user.uid == Constants.userIDs.uidMalte || user.uid == Constants.userIDs.uidSophie || user.uid == Constants.userIDs.uidYvonne {
-                    if post.originalPosterUID == Constants.userIDs.FrankMeindlID || post.originalPosterUID == Constants.userIDs.MarkusRiesID || post.originalPosterUID == Constants.userIDs.AnnaNeuhausID || post.originalPosterUID == Constants.userIDs.LaraVoglerID || post.originalPosterUID == Constants.userIDs.LenaMasgarID  {
+        if let currentUser = Auth.auth().currentUser {
+            if let post = post, let user = post.user {
+                if currentUser.uid == Constants.userIDs.uidMalte {
+                    if user.userID == Constants.userIDs.FrankMeindlID || user.userID == Constants.userIDs.MarkusRiesID || user.userID == Constants.userIDs.AnnaNeuhausID || user.userID == Constants.userIDs.LaraVoglerID || user.userID == Constants.userIDs.LenaMasgarID  {
                         insertDeleteView()
                     }
                 }
-                if post.originalPosterUID == user.uid {
+                
+                if user.userID == currentUser.uid {
                     insertDeleteView()
                 }
             }
@@ -187,7 +188,7 @@ class ReportViewController: UIViewController {
     }
     
     func deletePost() {
-        guard let post = post else { return }
+        guard let post = post, let user = post.user else { return }
         
         let postRef: DocumentReference?
         var collectionRef: CollectionReference!
@@ -239,7 +240,7 @@ class ReportViewController: UIViewController {
                         } else {
                             print("Picture Deleted")
                             
-                            let userPostRef = self.db.collection("Users").document(post.originalPosterUID).collection("posts").document(post.documentID)
+                            let userPostRef = self.db.collection("Users").document(user.userID).collection("posts").document(post.documentID)
                             
                             userPostRef.delete { (err) in
                                 if let error = err {
@@ -265,7 +266,7 @@ class ReportViewController: UIViewController {
                 } else {
                     print("Picture Deleted")
                     
-                    let userPostRef = self.db.collection("Users").document(post.originalPosterUID).collection("posts").document(post.documentID)
+                    let userPostRef = self.db.collection("Users").document(user.userID).collection("posts").document(post.documentID)
                     
                     userPostRef.delete { (err) in
                         if let error = err {
@@ -278,7 +279,7 @@ class ReportViewController: UIViewController {
                 }
             }
         default:
-            let userPostRef = db.collection("Users").document(post.originalPosterUID).collection("posts").document(post.documentID)
+            let userPostRef = db.collection("Users").document(user.userID).collection("posts").document(post.documentID)
             
             userPostRef.delete { (err) in
                 if let error = err {

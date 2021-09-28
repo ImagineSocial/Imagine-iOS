@@ -1,8 +1,8 @@
 //
-//  PostHelper.swift
+//  FirestoreManager+Post.swift
 //  Imagine
 //
-//  Created by Malte Schoppe on 27.02.21.
+//  Created by Don Malte on 25.09.21.
 //  Copyright © 2021 Malte Schoppe. All rights reserved.
 //
 
@@ -282,7 +282,7 @@ class PostHelper {
     }
     
     
-    //MARK:- Get Default Post
+    //MARK: - Get Default Post
     /// This function returns a Post Object with its basic variables without the type
     ///
     ///
@@ -326,7 +326,6 @@ class PostHelper {
         post.description = description
         post.documentID = document.documentID
         post.createTime = stringDate
-        post.originalPosterUID = originalPoster
         post.votes.thanks = thanksCount
         post.votes.wow = wowCount
         post.votes.ha = haCount
@@ -355,7 +354,10 @@ class PostHelper {
                 post.anonymousName = anonymousName
             }
         } else {
-            post.getUser(isAFriend: isAFriend)
+            let user = User(userID: originalPoster)
+            user.getUser(isAFriend: isAFriend) { user in
+                post.user = user
+            }
         }
         
         //Comment Count
@@ -404,3 +406,4 @@ class PostHelper {
         }
     }
 }
+

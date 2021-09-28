@@ -82,13 +82,13 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
         
     }
     
-    //MARK:- GetName
+    //MARK: - GetName
     
     var index = 0
     func getName(row: Int) {
         if index < 20 {
             if posts.count != 0 {
-                if self.posts[row].user.displayName == "" {
+                if self.posts[row].user == nil {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         self.getName(row: row)
                         self.index+=1

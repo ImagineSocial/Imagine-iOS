@@ -117,7 +117,7 @@ class BaseFeedCell : UITableViewCell {
         reportView.backgroundColor = reportViewOptions.backgroundColor
     }
     
-    //MARK:- SetCell
+    //MARK: - SetCell
     /// Set the desired functions and layout for the cell
     /// Set the FeedUserDelegate here, so the buttons in the user view are connected
     func setCell() {
@@ -125,14 +125,15 @@ class BaseFeedCell : UITableViewCell {
         feedLikeView.delegate = self
     }
     
-    //MARK:- User
+    
+    //MARK: - User
     var index = 0
-    func getUser() {
+    func checkForUser() {
         if index < 20 {
             if let post = self.post {
-                if post.user.displayName == "" {
+                if post.user == nil {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.getUser()
+                        self.checkForUser()
                         self.index+=1
                     }
                 } else {
@@ -148,7 +149,8 @@ class BaseFeedCell : UITableViewCell {
         }
     }
     
-    //MARK:- Get Community
+    
+    //MARK: - Get Community
     ///Load the fact and return it asynchroniously
     func getCommunity(beingFollowed: Bool) {
         if let post = post, let community = post.community {

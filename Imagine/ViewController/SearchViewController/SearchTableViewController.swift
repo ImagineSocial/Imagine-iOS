@@ -319,29 +319,14 @@ extension SearchTableViewController: UISearchResultsUpdating, UISearchBarDelegat
         
         func addUser(document: DocumentSnapshot) {
             
-            let userIsAlreadyFetched = userResults.contains { $0.userUID == document.documentID }
+            let userIsAlreadyFetched = userResults.contains { $0.userID == document.documentID }
             if userIsAlreadyFetched {   // Check if we got the user in on of the other queries
                 return
             }
             
-            let user = User()
-            if let docData = document.data() {
-                
-                if let name = docData["name"] as? String {
-                    
-                    //When you search for names, you can search for their real names and it will answer, but the names will not show up...?!
-                    
-                    let name = name
-                    user.displayName = name
-                    user.userUID = document.documentID
-                    if let imageURL = docData["profilePictureURL"] as? String {
-                        user.imageURL = imageURL
-                    }
-                    if let status = docData["statusText"] as? String {
-                        user.statusQuote = status
-                    }
-                    user.blocked = docData["blocked"] as? [String] ?? nil
-                    
+            let user = User(userID: document.documentID)
+            user.generateUser(isAFriend: false, document: document) { user in
+                if let user = user {
                     userResults.append(user)
                 }
             }

@@ -84,11 +84,11 @@ class GifCell: BaseFeedCell {
                 setDefaultButtonImages()
             }
             
-            if post.user.displayName == "" {
+            if post.user == nil {
                 if post.anonym {
                     self.setUser()
                 } else {
-                    self.getUser()
+                    self.checkForUser()
                 }
             } else {
                 setUser()

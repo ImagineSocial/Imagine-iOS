@@ -38,7 +38,7 @@ class CommentCell: UITableViewCell {
                         profilePictureImageView.sd_setImage(with: url, completed: nil)
                     }
                     if let currentUser = auth.currentUser {
-                        if currentUser.uid == user.userUID {
+                        if currentUser.uid == user.userID {
                             niceButton.setImage(nil, for: .normal)
                             niceButton.setTitle(String(comment.likes), for: .normal)
                         }

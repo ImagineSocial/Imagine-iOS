@@ -272,7 +272,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         let buttons = [thanksButton!, wowButton!, haButton!, niceButton!]
         
         if let user = Auth.auth().currentUser {
-            if user.uid == post.originalPosterUID { // Your own Post -> Different UI for a different Feeling. Shows like counts
+            if let OP = post.user, user.uid == OP.userID { // Your own Post -> Different UI for a different Feeling. Shows like counts
                 self.ownPost = true
                 
                 for button in buttons {
@@ -424,7 +424,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     var index = 0
     func loadUser(post: Post) {
-        if post.user.displayName != "" {
+        if post.user != nil {
             setUser()
         } else {
             if index <= 15 {
@@ -448,10 +448,12 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 nameLabel.text = Constants.strings.anonymPosterName
             }
         } else {
-            nameLabel.text = post.user.displayName
-            
-            if let url = URL(string: post.user.imageURL) {
-                profilePictureImageView.sd_setImage(with: url, completed: nil)
+            if let user = post.user {
+                nameLabel.text = user.displayName
+                
+                if let url = URL(string: user.imageURL) {
+                    profilePictureImageView.sd_setImage(with: url, completed: nil)
+                }
             }
         }
         
@@ -466,9 +468,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     @IBAction func userButtonTapped(_ sender: Any) {
-        if post.originalPosterUID != "" {
+        if let user = post.user {
             if !post.anonym {
-                performSegue(withIdentifier: "toUserSegue", sender: post.user)
+                performSegue(withIdentifier: "toUserSegue", sender: user)
             }
         } else {
             print("Kein User zu finden!")
@@ -479,7 +481,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     //MARK: - Set Up View Controller
     func setupViewController() {
         
-        if post.user.displayName == "" && !post.anonym {
+        if post.user == nil && !post.anonym {
 
             //No post data yet
             let toComments = post.toComments
@@ -493,7 +495,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                         self.post.toComments = toComments
                         self.post.newUpvotes = votes
                         self.loadPost()
-                        if post.user.displayName == "" && !post.anonym {
+                        if post.user == nil && !post.anonym {
                             self.loadUser(post: post)
                         }
                     } else {
@@ -600,9 +602,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     func repostUserTapped() {
         if let repost = post.repost {
-            if repost.originalPosterUID != "" {
+            if let repostUser = repost.user {
                 if !repost.anonym {
-                    self.toUserTapped(user: repost.user)
+                    self.toUserTapped(user: repostUser)
                 }
             } else {
                 print("no user to find")

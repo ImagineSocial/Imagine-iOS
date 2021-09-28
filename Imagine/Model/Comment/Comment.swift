@@ -118,7 +118,8 @@ class Comment {
                 return
         }
         
-        self.getUser(userUID: userUID) { (user) in
+        let user = User(userID: userUID)
+        user.getUser(isAFriend: false) { user in
             let comment = Comment(commentSection: self.section, sectionItemID: sectionItemID, commentID: commentID)
             if let likes = data["likes"] as? [String] {
                 comment.likes = likes.count
@@ -130,32 +131,6 @@ class Comment {
             comment.sectionItemID = sectionItemID
             
             done(comment)
-        }
-    }
-    
-    func getUser(userUID: String, returnUser: @escaping (User?) -> Void) {
-        let ref = db.collection("Users").document(userUID)
-        
-        if userUID == "anonym" {
-            returnUser(nil)
-        } else {
-            ref.getDocument { (snap, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    if let document = snap {
-                        if let data = document.data() {
-                            
-                            let user = User()
-                            user.displayName = data["name"] as? String ?? ""
-                            user.imageURL = data["profilePictureURL"] as? String ?? ""
-                            user.userUID = userUID
-                            
-                            returnUser(user)
-                        }
-                    }
-                }
-            }
         }
     }
 }

@@ -34,13 +34,12 @@ class Post {
     var repostDocumentID: String?
     var repostIsTopicPost = false
     var repostLanguage: Language = .german
-    var originalPosterUID = ""      // kann eigentlich weg weil in User Objekt
     var commentCount = 0
     var createDate: Date?
     var toComments = false // If you want to skip to comments (For now)
     var anonym = false
     var anonymousName: String?
-    var user = User()
+    var user: User?
     var votes = Votes()
     var newUpvotes: Votes?
     var repost: Post?
@@ -93,78 +92,4 @@ class Post {
             })
         }
     }
-    
-    //MARK:- Get User
-    //TODO: Makes no Sense here, should go into User class
-    func getUser(isAFriend: Bool) {
-        
-        // User Daten raussuchen
-        let userRef = db.collection("Users").document(originalPosterUID)
-        
-        let user = User()
-        
-        userRef.getDocument(completion: { [weak self] (document, err) in
-            if let error = err {
-                print("We got an error with a user: \(error.localizedDescription)")
-            } else {
-                if let document = document {
-                    if let docData = document.data(), let self = self {
-                        
-                        if isAFriend {
-                            let fullName = docData["full_name"] as? String ?? ""
-                            user.displayName = fullName
-                        } else {
-                            let userName = docData["name"] as? String ?? "Username"
-                            user.displayName = userName
-                        }
-                        
-                        if let instagramLink = docData["instagramLink"] as? String {
-                            user.instagramLink = instagramLink
-                            user.instagramDescription = docData["instagramDescription"] as? String
-                        }
-                        
-                        if let patreonLink = docData["patreonLink"] as? String {
-                            user.patreonLink = patreonLink
-                            user.patreonDescription = docData["patreonDescription"] as? String
-                        }
-                        if let youTubeLink = docData["youTubeLink"] as? String {
-                            user.youTubeLink = youTubeLink
-                            user.youTubeDescription = docData["youTubeDescription"] as? String
-                        }
-                        if let twitterLink = docData["twitterLink"] as? String {
-                            user.twitterLink = twitterLink
-                            user.twitterDescription = docData["twitterDescription"] as? String
-                        }
-                        if let songwhipLink = docData["songwhipLink"] as? String {
-                            user.songwhipLink = songwhipLink
-                            user.songwhipDescription = docData["songwhipDescription"] as? String
-                        }
-                        
-                        if let locationName = docData["locationName"] as? String {
-                            user.locationName = locationName
-                        }
-                        if let locationIsPublic = docData["locationIsPublic"] as? Bool {
-                            user.locationIsPublic = locationIsPublic
-                        }
-                        
-                        user.imageURL = docData["profilePictureURL"] as? String ?? ""
-                        user.userUID = self.originalPosterUID
-                        user.statusQuote = docData["statusText"] as? String ?? ""
-                        user.blocked = docData["blocked"] as? [String] ?? nil
-                        
-                        self.user = user
-                    }
-                }
-            }
-        })
-    }
-    
-//    //MARK:- Load Thumbnail
-//    func loadThumbnail(thumbnailImageURL: String) {
-//        if let url = URL(string: thumbnailImageURL) {
-//            if let image = url.loadImage() {
-//                self.thumbnailImage = image
-//            }
-//        }
-//    }
 }

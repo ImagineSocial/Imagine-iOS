@@ -64,11 +64,11 @@ class RePostCell : BaseFeedCell {
                 setDefaultButtonImages()
             }
             
-            if post.user.displayName == "" {
+            if post.user == nil {
                 if post.anonym {
                     self.setUser()
                 } else {
-                    self.getUser()
+                    self.checkForUser()
                 }
             } else {
                 setUser()
@@ -88,12 +88,17 @@ class RePostCell : BaseFeedCell {
                 if repost.anonym {
                     ogProfilePictureImageView.image = UIImage(named: "anonym-user")
                 } else {
-                    ogPosterNameLabel.text = repost.user.displayName
+                    
                     titleLabel.text = post.title
-
-                    // Profile Picture
-                    if let url = URL(string: repost.user.imageURL) {
-                        ogProfilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                    
+                    if let repostUser = repost.user {
+                        ogPosterNameLabel.text = repostUser.displayName
+                        
+                        
+                        // Profile Picture
+                        if let url = URL(string: repostUser.imageURL) {
+                            ogProfilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
+                        }
                     }
                 }
                 

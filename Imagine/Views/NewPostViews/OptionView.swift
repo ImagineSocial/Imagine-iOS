@@ -73,7 +73,7 @@ class OptionView: UIView {
         if let user = Auth.auth().currentUser {
             
             //Get only first name to accurately show how it will be displayed
-            User().getUsername(userID: user.uid) { (username) in
+            User(userID: user.uid).getUsername() { (username) in
                 if let name = username {
                     self.username = name
                     self.previewNameLabel.text = name
