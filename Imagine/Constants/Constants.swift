@@ -37,7 +37,7 @@ struct Constants {
     
     struct Numbers {
         static let feedCornerRadius: CGFloat = 12
-        static let communityHeaderHeight: CGFloat = 260
+        static let communityHeaderHeight: CGFloat = 300
         static let feedShadowRadius: CGFloat = 5
         
         //multiPictureCell

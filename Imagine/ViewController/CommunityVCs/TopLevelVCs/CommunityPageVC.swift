@@ -107,8 +107,14 @@ class CommunityPageVC: UIPageViewController {
         let height = Constants.Numbers.communityHeaderHeight
         view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: height)
         
-        if let community = self.community {
+        
+        
+        if let community = self.community, let url = URL(string: community.imageURL) {
             view.community = community
+            UIImageView().sd_setImage(with: url) { image, error, _, _ in
+                self.navigationController?.navigationBar.setBackgroundImage(image, for: .topAttached, barMetrics: .default)
+                return
+            }
         } else {
             print("Error: ArgumentPageViewController")
             self.navigationController?.popViewController(animated: true)
@@ -451,7 +457,14 @@ extension CommunityPageVC: PageViewHeaderDelegate, CommunityFeedHeaderDelegate, 
         var value = offset - deductValue
         let rect = headerView.frame
 
-        
+//        let alpha = self.navigationController?.navigationBar.alpha
+//
+//        if offset < 180 && alpha == 0 || offset > 180 && alpha == 1 {
+//            UIView.animate(withDuration: 0.1) {
+//                self.navigationController?.navigationBar.alpha = offset < 180 ? 1 : 0
+//                print("Animate")
+//            }
+//        }
         if let community = community {
             if headerNeedsAdjustment && !community.isAddOnFirstView {
                 let addedHeight: CGFloat!

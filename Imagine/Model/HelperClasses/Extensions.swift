@@ -95,8 +95,10 @@ extension NSLayoutConstraint {
     */
     func setMultiplier(multiplier:CGFloat) -> NSLayoutConstraint {
 
+        guard let firstItem = firstItem else { return self }
+        
         NSLayoutConstraint.deactivate([self])
-
+        
         let newConstraint = NSLayoutConstraint(
             item: firstItem,
             attribute: firstAttribute,
@@ -186,7 +188,13 @@ extension UIViewController {
     }
     
     
-    
+    /**
+     *  Height of status bar + navigation bar (if navigation bar exist)
+     */
+    var topbarHeight: CGFloat {
+        (view.window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0.0) +
+        (self.navigationController?.navigationBar.frame.height ?? 0.0)
+    }
 }
 
 //MARK:- UIImage
