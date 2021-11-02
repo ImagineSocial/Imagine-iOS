@@ -155,5 +155,16 @@ extension UIView {
             }
         }
     }
-
+    
+    
+    //MARK: - Constraints
+    
+    func constrain(width: CGFloat, height: CGFloat) {
+        self.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            self.widthAnchor.constraint(equalToConstant: width),
+            self.heightAnchor.constraint(equalToConstant: height)
+        ])
+    }
 }

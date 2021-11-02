@@ -391,21 +391,15 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     }()
     
     let deleteAllNotificationsButton: DesignableButton = {
-       let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(NSLocalizedString("sideMenu_notifications_delete_label", comment: "delete all"), for: .normal)
-        button.setTitleColor(.systemRed, for: .normal)
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 11)
+       let button = DesignableButton(title: NSLocalizedString("sideMenu_notifications_delete_label", comment: "delete all"), font: UIFont(name: "IBMPlexSans", size: 11), cornerRadius: 8, tintColor: .systemRed, backgroundColor: .systemBackground)
         button.alpha = 0
-        button.cornerRadius = 8
-        button.backgroundColor = .systemBackground
         
         return button
     }()
     
     let profileButton: DesignableButton = {
         let btn = DesignableButton()
-        btn.translatesAutoresizingMaskIntoConstraints = false
+
         return btn
     }()
     
@@ -464,11 +458,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     
     //MARK:- Chat, Friend, Saved UI
     let chatButton: DesignableButton = {
-        let btn = DesignableButton()
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.setTitle(NSLocalizedString("sideMenu_chats_label", comment: "chats"), for: .normal)
-        btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-        btn.setTitleColor(.imagineColor, for: .normal)
+        let btn = DesignableButton(title: NSLocalizedString("sideMenu_chats_label", comment: "chats"), font: UIFont(name: "IBMPlexSans-Medium", size: 18), tintColor: .imagineColor)
         
         return btn
     }()
@@ -506,11 +496,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     }()
     
     let friendsButton: DesignableButton = {
-        let btn = DesignableButton()
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.setTitle(NSLocalizedString("sideMenu_friends_label", comment: "friends"), for: .normal)
-        btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-        btn.setTitleColor(.imagineColor, for: .normal)
+        let btn = DesignableButton(title: NSLocalizedString("sideMenu_friends_label", comment: "friends"), font: UIFont(name: "IBMPlexSans-Medium", size: 18), tintColor: .imagineColor)
         
         return btn
     }()
@@ -547,40 +533,9 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         return label
     }()
     
-    //    let voteButton: DesignableButton = {
-    //        let btn = DesignableButton()
-    //        btn.translatesAutoresizingMaskIntoConstraints = false
-    //        btn.setTitle("Abstimmungen", for: .normal)
-    //        btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-    //        btn.setTitleColor(.lightGray, for: .normal)
-    //        return btn
-    //    }()
-    //
-    //    let votingStackView: UIStackView = {
-    //        let stackView = UIStackView()
-    //        stackView.translatesAutoresizingMaskIntoConstraints = false
-    //        stackView.axis  = .horizontal
-    //        stackView.spacing   = 5
-    //        stackView.sizeToFit()
-    //
-    //        let iconImageView = UIImageView()
-    //        iconImageView.translatesAutoresizingMaskIntoConstraints = false
-    //        iconImageView.image = UIImage(named: "handshake")
-    //        iconImageView.contentMode = .scaleAspectFit
-    //        iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
-    //        iconImageView.alpha = 0.5
-    //
-    //        stackView.addArrangedSubview(iconImageView)
-    //
-    //        return stackView
-    //    }()
-    
     let savedButton: DesignableButton = {
-        let btn = DesignableButton()
-        btn.translatesAutoresizingMaskIntoConstraints = false
-        btn.setTitle(NSLocalizedString("sideMenu_saved_label", comment: "saved"), for: .normal)
-        btn.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-        btn.setTitleColor(.imagineColor, for: .normal)
+        let btn = DesignableButton(title: NSLocalizedString("sideMenu_saved_label", comment: "saved"), font: UIFont(name: "IBMPlexSans-Medium", size: 18), tintColor: .imagineColor)
+        
         return btn
     }()
     
@@ -625,11 +580,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     }()
     
     let eulaButton:DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(NSLocalizedString("sideMenu_setting_label", comment: "settings"), for: .normal)
-        button.setTitleColor(.imagineColor, for: .normal)
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 16)
+        let button = DesignableButton(title: NSLocalizedString("sideMenu_setting_label", comment: "settings"), font: UIFont(name: "IBMPlexSans", size: 16), tintColor: .imagineColor)
         button.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
         
         return button

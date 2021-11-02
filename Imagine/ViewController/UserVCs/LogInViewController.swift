@@ -703,26 +703,16 @@ class LogInViewController: UIViewController {
     }
     
     let eulaButton: DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.cornerRadius = 6
-        button.backgroundColor = .imagineColor
-        button.setTitle(NSLocalizedString("go_to_gdpr", comment: ""), for: .normal)
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 14)
-        button.setTitleColor(.white, for: .normal)
+        let button = DesignableButton(title: NSLocalizedString("go_to_gdpr", comment: ""), font: UIFont(name: "IBMPlexSans", size: 14), cornerRadius: 6, tintColor: .white, backgroundColor: .imagineColor)
+        
         button.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
         
         return button
     }()
     
     let resetPasswordButton: DesignableButton = {
-       let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.cornerRadius = 4
-        button.clipsToBounds = true
-        button.setTitle(NSLocalizedString("forgot_password", comment: ""), for: .normal)
-        button.setTitleColor(.imagineColor, for: .normal)
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans-Medium", size: 10)
+        let button = DesignableButton(title: NSLocalizedString("forgot_password", comment: ""), font: UIFont(name: "IBMPlexSans-Medium", size: 10), cornerRadius: 4, tintColor: .imagineColor)
+        
         button.addTarget(self, action: #selector(resetPasswordTapped), for: .touchUpInside)
         
         return button
@@ -801,15 +791,11 @@ class LogInViewController: UIViewController {
     }()
     
     let nextButton: DesignableButton = {
-       let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
+       let button = DesignableButton(title: NSLocalizedString("next", comment: ""), font: UIFont(name: "IBMPlexSans", size: 18))
         button.layer.cornerRadius = 10
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.imagineColor.cgColor
-        button.setTitleColor(.label, for: .normal)
         button.tag = 0
-        button.setTitle(NSLocalizedString("next", comment: ""), for: .normal)
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 18)
         button.alpha = 0
         button.addTarget(self, action: #selector(nextButtonPushed), for: .touchUpInside)
         return button

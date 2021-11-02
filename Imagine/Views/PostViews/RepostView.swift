@@ -135,7 +135,6 @@ class RepostView: UIView {
     
     let repostUserButton : DesignableButton = {
         let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(repostUserTapped), for: .touchUpInside)
         
         return button
@@ -143,7 +142,6 @@ class RepostView: UIView {
     
     let repostViewButton : DesignableButton = {
         let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(repostViewTapped), for: .touchUpInside)
     
         return button
@@ -151,7 +149,6 @@ class RepostView: UIView {
     
     let repostNameLabel : UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans", size: 16)
         
         return label
@@ -159,7 +156,6 @@ class RepostView: UIView {
     
     let repostCreateDateLabel : UILabel = {
         let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans", size: 10)
         
         return label

@@ -199,10 +199,9 @@ class LinkCommunityView: UIView {
         return view
     }()
     
-    let linkedFactInfoButton :DesignableButton = {
-        let button = DesignableButton(type: .detailDisclosure)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .imagineColor
+    let linkedFactInfoButton: DesignableButton = {
+        let button = DesignableButton(image: UIImage(named: "infoIcon"))
+        
         button.addTarget(self, action: #selector(linkedFactInfoButtonTapped), for: .touchUpInside)
         
         return button

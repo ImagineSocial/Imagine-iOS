@@ -294,13 +294,11 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         
         switch state {
         case .ownProfileWithEditing:
-            let LogOutButton = DesignableButton(type: .custom)
-            LogOutButton.setTitle("Log-Out", for: .normal)
-            LogOutButton.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 18)
+            
+            let LogOutButton = DesignableButton(title: "Log-Out", font: UIFont(name: "IBMPlexSans", size: 18))
             LogOutButton.setTitleColor(UIColor(red:0.33, green:0.47, blue:0.65, alpha:1.0), for: .normal)
             LogOutButton.addTarget(self, action: #selector(self.logOutTapped), for: .touchUpInside)
-            LogOutButton.widthAnchor.constraint(equalToConstant: 70).isActive = true
-            LogOutButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+            LogOutButton.constrain(width: 70, height: 30)
             
             let rightBarButton = UIBarButtonItem(customView: LogOutButton)
             self.navigationItem.rightBarButtonItem = rightBarButton
@@ -481,13 +479,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     func setUpSocialMediaButton(media: SocialMediaObject) {
         
-        let button = DesignableButton(frame: CGRect(x: 0, y: 0, width: socialMediaStackViewHeight, height: socialMediaStackViewHeight))
-        button.backgroundColor = .systemBackground
-        button.tintColor = .label
+        let button = DesignableButton(cornerRadius: 6, backgroundColor: .systemBackground)
+        button.frame = CGRect(x: 0, y: 0, width: socialMediaStackViewHeight, height: socialMediaStackViewHeight)
         button.isOpaque = true
         button.imageEdgeInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
-        button.cornerRadius = 6
-        button.imageView?.contentMode = .scaleAspectFit
         
         switch media.type {
         case .instagram:

@@ -125,16 +125,11 @@ class CommunityPageVC: UIPageViewController {
     }
     
     func setBarButton() {
-        let newPostButton = DesignableButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
-        newPostButton.clipsToBounds = true
-        newPostButton.imageView?.contentMode = .scaleAspectFit
+        let newPostButton = DesignableButton(image: UIImage(systemName: "square.and.pencil"))
         newPostButton.addTarget(self, action: #selector(self.newPostButtonTapped), for: .touchUpInside)
-        newPostButton.translatesAutoresizingMaskIntoConstraints = false
-        newPostButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        newPostButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
         newPostButton.isHidden = true
         newPostButton.tintColor = UIColor.label
-        newPostButton.setImage(UIImage(systemName: "square.and.pencil"), for: .normal)
+        newPostButton.constrain(width: 30, height: 30)
         
         guard let community = community else {
             return
@@ -161,29 +156,16 @@ class CommunityPageVC: UIPageViewController {
     }
     
     func getShareTopicButton() -> DesignableButton {
-        let shareTopicButton = DesignableButton(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-        shareTopicButton.clipsToBounds = true
-        shareTopicButton.imageView?.contentMode = .scaleAspectFit
+        let shareTopicButton = DesignableButton(image: UIImage(named: "openLinkButton"))
         shareTopicButton.addTarget(self, action: #selector(self.shareTopicButtonTapped), for: .touchUpInside)
-        shareTopicButton.translatesAutoresizingMaskIntoConstraints = false
-        shareTopicButton.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        shareTopicButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        shareTopicButton.setImage(UIImage(named: "openLinkButton"), for: .normal)
-        shareTopicButton.tintColor = UIColor.label
-        
+        shareTopicButton.constrain(width: 20, height: 20)
         return shareTopicButton
     }
     
     func getSettingButton() -> DesignableButton {
-        let settingButton = DesignableButton(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
-        settingButton.clipsToBounds = true
-        settingButton.imageView?.contentMode = .scaleAspectFit
+        let settingButton = DesignableButton(image: UIImage(named: "settings"))
         settingButton.addTarget(self, action: #selector(self.settingButtonTapped), for: .touchUpInside)
-        settingButton.translatesAutoresizingMaskIntoConstraints = false
-        settingButton.widthAnchor.constraint(equalToConstant: 25).isActive = true
-        settingButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        settingButton.setImage(UIImage(named: "settings"), for: .normal)
-        settingButton.tintColor = UIColor.label
+        settingButton.constrain(width: 25, height: 25)
         
         return settingButton
     }

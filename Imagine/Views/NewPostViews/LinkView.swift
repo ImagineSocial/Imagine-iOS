@@ -109,9 +109,8 @@ class LinkView: UIView {
     }()
     
     let linkInfoButton: DesignableButton = {
-        let button = DesignableButton(type: .detailDisclosure)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .imagineColor
+        let button = DesignableButton(image: UIImage(named: "infoIcon"))
+
         button.addTarget(self, action: #selector(linkInfoButtonTapped), for: .touchUpInside)
         button.alpha = 0
         

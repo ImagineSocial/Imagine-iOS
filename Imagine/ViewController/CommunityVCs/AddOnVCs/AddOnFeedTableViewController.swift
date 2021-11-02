@@ -129,29 +129,18 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
         //create new Button for the profilePictureButton
         guard let addOn = addOn else { return }
         
-        let dismissButton = DesignableButton(frame: CGRect(x: 0, y: 0, width: 23, height: 23))
-        dismissButton.clipsToBounds = true
-        dismissButton.imageView?.contentMode = .scaleAspectFit
-        dismissButton.setImage(UIImage(named: "DismissTemplate"), for: .normal)
-        dismissButton.tintColor = .white
+        let dismissButton = DesignableButton(image: UIImage(named: "DismissTemplate"), tintColor: .white)
         dismissButton.addTarget(self, action: #selector(dismissTapped), for: .touchUpInside)
-        dismissButton.translatesAutoresizingMaskIntoConstraints = false
-        dismissButton.widthAnchor.constraint(equalToConstant: 23).isActive = true
-        dismissButton.heightAnchor.constraint(equalToConstant: 23).isActive = true
+        dismissButton.constrain(width: 23, height: 23)
         
         let dismissBarButton = UIBarButtonItem(customView: dismissButton)
         self.dismissBarButton = dismissBarButton
         
         if let user = Auth.auth().currentUser {
             if user.uid == addOn.OP {
-                let settingButton = DesignableButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
-                settingButton.clipsToBounds = true
-                settingButton.imageView?.contentMode = .scaleAspectFit
-                settingButton.setImage(UIImage(named: "settings"), for: .normal)
+                let settingButton = DesignableButton(image: UIImage(named: "settings"))
                 settingButton.addTarget(self, action: #selector(self.settingButtonTapped), for: .touchUpInside)
-                settingButton.translatesAutoresizingMaskIntoConstraints = false
-                settingButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
-                settingButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+                settingButton.constrain(width: 30, height: 30)
                 
                 let settingBarButton = UIBarButtonItem(customView: settingButton)
                 self.navigationItem.rightBarButtonItems = [dismissBarButton, settingBarButton]

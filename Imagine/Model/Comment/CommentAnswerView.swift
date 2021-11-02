@@ -78,9 +78,8 @@ class CommentAnswerView: UIView {
         sendButton.widthAnchor.constraint(equalToConstant: 35).isActive = true
         
         anonymousButton.centerYAnchor.constraint(equalTo: answerTextField.centerYAnchor).isActive = true
-        anonymousButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        anonymousButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
         anonymousButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10).isActive = true
+        anonymousButton.constrain(width: 30, height: 20)
         
         answerTextField.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20).isActive = true
         answerTextField.heightAnchor.constraint(lessThanOrEqualToConstant: 80).isActive = true
@@ -256,10 +255,7 @@ class CommentAnswerView: UIView {
     //MARK:- UI Initialization
     
     let anonymousButton: DesignableButton = {
-       let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: "mask"), for: .normal)
-        button.tintColor = .imagineColor
+        let button = DesignableButton(image: UIImage(named: "mask"))
         button.addTarget(self, action: #selector(anonymousTapped), for: .touchUpInside)
         button.imageEdgeInsets = UIEdgeInsets(top: 3, left: 5, bottom: 5, right: 5)
         
@@ -281,11 +277,8 @@ class CommentAnswerView: UIView {
     }()
     
     let sendButton: DesignableButton = {
-       let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: "sendButton"), for: .normal)
+        let button = DesignableButton(image: UIImage(named: "sendButton"), tintColor: .imagineColor)
         button.imageEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        button.tintColor = .imagineColor
         button.addTarget(self, action: #selector(sendTapped), for: .touchUpInside)
         
         return button

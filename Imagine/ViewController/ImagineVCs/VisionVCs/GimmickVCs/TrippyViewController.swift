@@ -30,11 +30,8 @@ class TrippyViewController: UIViewController {
     }
     
     func setButtons() {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .white
+        let button = DesignableButton(image: UIImage(named: "Dismiss"), tintColor: .white)
         button.addTarget(self, action: #selector(dismissTapped), for: .touchUpInside)
-        button.setImage(UIImage(named: "Dismiss"), for: .normal)
         
         self.view.addSubview(button)
         button.heightAnchor.constraint(equalToConstant: 23).isActive = true
@@ -42,11 +39,8 @@ class TrippyViewController: UIViewController {
         button.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 10).isActive = true
         button.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 10).isActive = true
         
-        let owen = DesignableButton()
-        owen.translatesAutoresizingMaskIntoConstraints = false
+        let owen = DesignableButton(image: UIImage(named: "wow"))
         owen.addTarget(self, action: #selector(owenTapped), for: .touchUpInside)
-        owen.setImage(UIImage(named: "wow"), for: .normal)
-        owen.imageView?.contentMode = .scaleAspectFit
         
         self.view.addSubview(owen)
         owen.heightAnchor.constraint(equalToConstant: 55).isActive = true

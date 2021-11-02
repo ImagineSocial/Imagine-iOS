@@ -148,27 +148,27 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
         stack.spacing = 3
         stack.alpha = 0
         
-        let dateDecreasingButton = SortButton()
+        let dateDecreasingButton = DesignableButton(sort: true)
         dateDecreasingButton.setTitle(NSLocalizedString("date_descending", comment: "date with downwards arrow"), for: .normal)
         dateDecreasingButton.addTarget(self, action: #selector(sortDateDec), for: .touchUpInside)
         
-        let dateIncreasingButton = SortButton()
+        let dateIncreasingButton = DesignableButton(sort: true)
         dateIncreasingButton.setTitle(NSLocalizedString("date_ascending", comment: "date with upwards arrow"), for: .normal)
         dateIncreasingButton.addTarget(self, action: #selector(sortDateAsc), for: .touchUpInside)
         
-        let thanksCountButton = SortButton()
+        let thanksCountButton = DesignableButton(sort: true)
         thanksCountButton.setTitle(NSLocalizedString("thanks_descending", comment: "thanks with downwards arrow"), for: .normal)
         thanksCountButton.addTarget(self, action: #selector(sortThanks), for: .touchUpInside)
         
-        let wowCountButton = SortButton()
+        let wowCountButton = DesignableButton(sort: true)
         wowCountButton.setTitle("Wow ↓", for: .normal)
         wowCountButton.addTarget(self, action: #selector(sortWow), for: .touchUpInside)
         
-        let haCountButton = SortButton()
+        let haCountButton = DesignableButton(sort: true)
         haCountButton.setTitle("Ha ↓", for: .normal)
         haCountButton.addTarget(self, action: #selector(sortHa), for: .touchUpInside)
         
-        let niceCountButton = SortButton()
+        let niceCountButton = DesignableButton(sort: true)
         niceCountButton.setTitle("Nice ↓", for: .normal)
         niceCountButton.addTarget(self, action: #selector(sortNice), for: .touchUpInside)
         
@@ -464,28 +464,6 @@ extension BaseFeedTableViewController: MusicPostDelegate {
         tableView.endUpdates()
         print("TableViewUpdate")
     }
-}
-
-class SortButton: DesignableButton {
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        self.translatesAutoresizingMaskIntoConstraints = false
-        self.backgroundColor = .clear
-        self.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 13)
-        self.contentHorizontalAlignment = .left
-        self.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0);
-        
-        self.setTitleColor(.label, for: .normal)
-        
-        
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
 }
 
 extension BaseFeedTableViewController {

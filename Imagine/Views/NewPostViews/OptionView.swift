@@ -412,10 +412,9 @@ class OptionView: UIView {
         return textField
     }()
     
-    let postAnonymousButton :DesignableButton = {
-        let button = DesignableButton(type: .detailDisclosure)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .imagineColor
+    let postAnonymousButton: DesignableButton = {
+        let button = DesignableButton(image: UIImage(named: "infoIcon"))
+        
         button.addTarget(self, action: #selector(postAnonymousInfoButtonPressed), for: .touchUpInside)
         
         return button

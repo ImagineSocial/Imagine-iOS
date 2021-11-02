@@ -417,23 +417,20 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         // View so there can be a small number for Invitations
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.heightAnchor.constraint(equalToConstant: 35).isActive = true
-        view.widthAnchor.constraint(equalToConstant: 35).isActive = true
+        view.constrain(width: 35, height: 35)
         
         //create new Button for the profilePictureButton
-        let button = DesignableButton(type: .custom)
+        //TODO: Nachschauen ob das klappt
+        let button = DesignableButton()
         button.frame = CGRect(x: 0, y: 0, width: 35, height: 35)    // Apparently needed for the rounded corners
-        button.layer.masksToBounds = true
-        button.translatesAutoresizingMaskIntoConstraints = false
-        
+        button.layer.masksToBounds = true        
         
         
         // If somebody is logged in add a profilePicture button to open the sidemenu
         if let user = Auth.auth().currentUser {
             self.loggedIn = true
             
-            button.widthAnchor.constraint(equalToConstant: 35).isActive = true
-            button.heightAnchor.constraint(equalToConstant: 35).isActive = true
+            button.constrain(width: 35, height: 35)
             button.imageView?.contentMode = .scaleAspectFill
             button.layer.cornerRadius = button.frame.width/2
             button.addTarget(self, action: #selector(self.BarButtonItemTapped), for: .touchUpInside)

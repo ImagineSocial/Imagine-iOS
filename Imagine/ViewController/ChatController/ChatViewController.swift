@@ -100,7 +100,6 @@ class ChatViewController: MSGMessengerViewController {
             button.frame = CGRect(x: 0, y: 0, width: 35, height: 35)
             button.addTarget(self, action: #selector(self.toUserTapped), for: .touchUpInside)
             button.layer.masksToBounds = true
-            button.translatesAutoresizingMaskIntoConstraints = false
             button.imageView?.contentMode = .scaleAspectFill
             
             if let url = URL(string: participant.imageURL) {
@@ -111,8 +110,7 @@ class ChatViewController: MSGMessengerViewController {
                         
                         //set image for button
                         button.setImage(image, for: .normal)
-                        button.widthAnchor.constraint(equalToConstant: 35).isActive = true
-                        button.heightAnchor.constraint(equalToConstant: 35).isActive = true
+                        button.constrain(width: 35, height: 35)
                         button.layer.cornerRadius = button.frame.width/2
                     }
                 } catch {
