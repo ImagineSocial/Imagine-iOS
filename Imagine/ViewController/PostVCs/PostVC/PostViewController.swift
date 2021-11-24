@@ -80,7 +80,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     //ImageCollectionView
     let defaultLinkString = "link-default"
     var imageURLs = [String]()
-    let layout:UICollectionViewFlowLayout = UICollectionViewFlowLayout.init()
     let identifier = "MultiPictureCell"
     let panoramaHeightMaximum: CGFloat = 500
     
@@ -125,7 +124,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         imageCollectionView.dataSource = self
         imageCollectionView.delegate = self
         
-        layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
         imageCollectionView.setCollectionViewLayout(layout, animated: true)
         imageCollectionView.bounces = false
         

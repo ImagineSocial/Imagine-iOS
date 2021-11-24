@@ -17,7 +17,7 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
     let discussionCellIdentifier = "DiscussionCell"
     let topicHeaderIdentifier = "TopicCollectionHeader"
     
-    let collectionViewSpacing:CGFloat = 24
+    let collectionViewSpacing: CGFloat = 24
     
     let db = Firestore.firestore()
     let dataHelper = DataRequest()

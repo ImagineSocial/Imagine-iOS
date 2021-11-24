@@ -12,8 +12,7 @@ import UIKit
 
 extension UIView {
     
-    func setDefaultShadow() {
-        let cornerRadius: CGFloat = Constants.cellCornerRadius
+    func setDefaultShadow(cornerRadius: CGFloat = Constants.cellCornerRadius) {
         
         let layer = self.layer
         layer.cornerRadius = cornerRadius
@@ -166,5 +165,36 @@ extension UIView {
             self.widthAnchor.constraint(equalToConstant: width),
             self.heightAnchor.constraint(equalToConstant: height)
         ])
+    }
+    
+    func fillSuperview(paddingTop: CGFloat = 0,
+                       paddingLeading: CGFloat = 0,
+                       paddingBottom: CGFloat = 0,
+                       paddingTrailing: CGFloat = 0) {
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        if let superviewTopAnchor = superview?.topAnchor {
+            let top = topAnchor.constraint(equalTo: superviewTopAnchor, constant: paddingTop)
+            top.priority = UILayoutPriority(rawValue: 750)
+            top.isActive = true
+        }
+        
+        if let superviewLeadingAnchor = superview?.leadingAnchor {
+            let leading = leadingAnchor.constraint(equalTo: superviewLeadingAnchor, constant: paddingLeading)
+            leading.priority = UILayoutPriority(rawValue: 999)
+            leading.isActive = true
+        }
+        
+        if let superviewBottomAnchor = superview?.bottomAnchor {
+            let bottom = bottomAnchor.constraint(equalTo: superviewBottomAnchor, constant: paddingBottom)
+            bottom.priority = UILayoutPriority(rawValue: 750)
+            bottom.isActive = true
+        }
+        
+        if let superviewTrailingAnchor = superview?.trailingAnchor {
+            let trailing = trailingAnchor.constraint(equalTo: superviewTrailingAnchor, constant: paddingTrailing)
+            trailing.priority = UILayoutPriority(rawValue: 999)
+            trailing.isActive = true
+        }
     }
 }

@@ -889,17 +889,11 @@
 
 "settingVC_contact_text" = "Under \"Community\" -> \"Help\" you will find our current issues. Otherwise you can reach us under:
 
-   
+malte.schoppe@gmail.com
 
 Malte Schoppe
-
 Spitalhofstraße 56
-
-94032 Passau
-
-   
-
-Imagine@passau.enactus.de";
+94032 Passau";
 
 //SearchCollectionVIewController
 "searchCollectionVC_header_label" = "Community posts: ";

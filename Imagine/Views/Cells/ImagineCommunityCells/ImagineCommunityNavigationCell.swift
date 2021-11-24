@@ -8,71 +8,128 @@
 
 import UIKit
 
-enum CommunityCellButtonType {
-    case feedback
-    case imagineFund
-    case moreInfo
-    case proposals
-    case help
-    case settings
-    case website
+enum CommunityNavigationItem: CaseIterable {
+    case proposals, website, feedback, moreInfo, settings
+    
+    var image: UIImage? {
+        switch self {
+        case .feedback:
+            return UIImage(systemName: "hand.thumbsup.fill")
+        case .moreInfo:
+            return UIImage(named: "about")
+        case .proposals:
+            return UIImage(named: "idea")
+        case .settings:
+            return UIImage(named: "settings")
+        case .website:
+            return UIImage(named: "web")
+        }
+    }
 }
 
-protocol CommunityCollectionCellDelegate {
-    func buttonTapped(button: CommunityCellButtonType)
+protocol CommunityNavigationItemDelegate {
+    func itemTapped(item: CommunityNavigationItem)
 }
 
 class ImagineCommunityNavigationCell: UICollectionViewCell {
-    
-    //MARK:- IBOutlets
-    @IBOutlet weak var imagineFundButton: UIButton!
-    @IBOutlet weak var websiteButton: DesignableButton!
-    @IBOutlet weak var proposalButton: DesignableButton!
-    @IBOutlet weak var helpButton: DesignableButton!
-    @IBOutlet weak var settingButton: DesignableButton!
-    @IBOutlet weak var infoButton: DesignableButton!
-    @IBOutlet weak var feedbackButton: UIButton!
-    
-    //MARK:- Variables
-    var delegate: CommunityCollectionCellDelegate?
-    
-    //MARK: - Cell Lifecycle
-    override func awakeFromNib() {
         
-        // Set contentMode for imageView of buttons
-        let buttons: [DesignableButton] = [websiteButton!, proposalButton!, helpButton!, settingButton!, infoButton!]
-        for button in buttons {
-            button.imageView?.contentMode = .scaleAspectFit
-        }
+    // MARK: - Variables
+    
+    static let identifier = "ImagineCommunityNavigationCell"
+    
+    var delegate: CommunityNavigationItemDelegate?
+    
+    let layout = UICollectionViewFlowLayout()
+    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+    
+    override init(frame: CGRect) {
+        super.init(frame: .zero)
+        
+        setupCollectionView()
     }
     
-    
-    //MARK:- IBActions
-    @IBAction func imagineFundButtonTapped(_ sender: Any) {
-        delegate?.buttonTapped(button: .imagineFund)
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
     }
     
-    @IBAction func websiteButtonTapped(_ sender: Any) {
-        delegate?.buttonTapped(button: .website)
+    private func setupCollectionView() {
+        addSubview(collectionView)
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(SimpleCell.self, forCellWithReuseIdentifier: SimpleCell.identifier)
+        
+        layout.minimumLineSpacing = 20
+        layout.scrollDirection = .horizontal
+        collectionView.bounces = false
+        
+        collectionView.fillSuperview()
+    }
+}
+
+
+extension ImagineCommunityNavigationCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        CommunityNavigationItem.allCases.count
     }
     
-    @IBAction func proposalButtonTapped(_ sender: Any) {
-        delegate?.buttonTapped(button: .proposals)
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SimpleCell.identifier, for: indexPath) as? SimpleCell else { return UICollectionViewCell() }
+        
+        let item = CommunityNavigationItem.allCases[indexPath.item]
+        cell.imageView.image = item.image
+        
+        return cell
     }
     
-    @IBAction func helpButtonTapped(_ sender: Any) {
-        delegate?.buttonTapped(button: .help)
+    // MARK: MultiPictureCollectionViewDelegate
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        CGSize(width: collectionView.frame.width / 4.2, height: collectionView.frame.width / 4.2)
     }
     
-    @IBAction func settingButtonTapped(_ sender: Any) {
-        delegate?.buttonTapped(button: .settings)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let item = CommunityNavigationItem.allCases[indexPath.item]
+        delegate?.itemTapped(item: item)
+    }
+}
+
+
+class SimpleCell: UICollectionViewCell {
+    
+    static let identifier = "SimpleCellIdentifier"
+    
+    let imageView = UIImageView()
+    let containerView = UIView()
+    
+    override init(frame: CGRect) {
+        super.init(frame: .zero)
+                
+        setupLayout()
     }
     
-    @IBAction func infoButtonTapped(_ sender: Any) {
-        delegate?.buttonTapped(button: .moreInfo)
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
     }
     
-    @IBAction func feedbackButtonTapped(_ sender: Any) {
-        delegate?.buttonTapped(button: .feedback)
+    func setupLayout() {
+        addSubview(containerView)
+        containerView.fillSuperview()
+        
+        containerView.addSubview(imageView)
+        containerView.setDefaultShadow(cornerRadius: Constants.cellCornerRadius)
+        containerView.layer.cornerRadius = Constants.cellCornerRadius
+        containerView.layer.borderWidth = 1
+        containerView.layer.borderColor = UIColor.accentColor.cgColor
+        
+        imageView.clipsToBounds = true
+        
+        contentView.clipsToBounds = false
+                
+        imageView.tintColor = .accentColor
+        imageView.fillSuperview(paddingTop: 30, paddingLeading: 30, paddingBottom: -30, paddingTrailing: -30)
+        imageView.contentMode = .scaleAspectFit
     }
 }

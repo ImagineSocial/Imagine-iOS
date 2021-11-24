@@ -440,7 +440,7 @@
 "settingVC_gdprButton_label" = "Unsere Datenschutzbedingungen";
 "settingVC_eulaButton_label" = "Die Nutzungsbedingungen (EULA)";
 "settingVC_contact:" = "Kontakt:";
-"settingVC_contact_text" = "Unter \"Community\" -> \"Hilfe\" findest du unsere aktuellen Anliegen. Ansonsten erreichst du uns unter:  Malte Schoppe Spitalhofstraße 56 94032 Passau  Imagine@passau.enactus.de";
+"settingVC_contact_text" = "Unter \"Community\" -> \"Hilfe\" findest du unsere aktuellen Anliegen. Ansonsten erreichst du uns unter:\n\nmalte.schoppe@gmail.com  Malte Schoppe Spitalhofstraße 56 94032 Passau";
 
 //SearchCollectionVIewController
 "searchCollectionVC_header_label" = "Community-Beiträge: ";

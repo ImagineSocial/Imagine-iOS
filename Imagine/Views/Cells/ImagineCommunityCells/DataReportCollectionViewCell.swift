@@ -30,7 +30,7 @@ class DataReportCollectionViewCell: UICollectionViewCell {
                 earningsLabel.text = "$\(data.earnings)"
                 expensesLabel.text = "$\(data.expenses)"
                 donationsLabel.text = "$\(data.donations)"
-                contentView.clipsToBounds = false
+                
             }
         }
     }
@@ -38,6 +38,7 @@ class DataReportCollectionViewCell: UICollectionViewCell {
     //MARK:- Cell Lifecycle
     override func awakeFromNib() {
         getData()
+        contentView.clipsToBounds = false
     }
     
     override func layoutSubviews() {

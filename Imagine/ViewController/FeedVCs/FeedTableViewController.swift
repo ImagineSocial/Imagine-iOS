@@ -133,7 +133,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             
             self.view.activityStartAnimating()
             
-            DispatchQueue.global(qos: .default).async {
+            DispatchQueue.global(qos: .background).async {
                 
                 self.firestoreRequest.getPostsForMainFeed(getMore: getMore, sort: self.sortBy) { (posts,initialFetch)  in
                     

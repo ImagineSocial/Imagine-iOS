@@ -18,22 +18,12 @@ class LanguageSelection {
     let pre = Locale.preferredLanguages[0]
     
     func getLanguage() -> Language {
-        if let language = defaults.string(forKey: "languageSelection"){
-
-            if language == "de" {
-                return .german
-            } else if language == "en" {
-                return .english
-            }
-        } else if pre != "de" {
-            //return english because pre isnt de
-            return .english
-        } else {
-            //return de bacause it is pre
-            return .german
+        if let language = defaults.string(forKey: "languageSelection") {
+            
+            return language == "de" ? .german : .english
         }
+        
         // Return english as default
         return .english
     }
-    
 }

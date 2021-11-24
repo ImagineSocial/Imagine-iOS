@@ -298,6 +298,7 @@ class CommentAnswerView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "IBMPlexSans", size: 13)
         label.text = NSLocalizedString("comment_indented_answer_label", comment: "answer to:")
+        label.textColor = .accentColor
         
         return label
     }()
