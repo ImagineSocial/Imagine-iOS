@@ -27,7 +27,7 @@
 		029F7B4A273053E30029254A /* UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029F7B49273053E30029254A /* UIKit.swift */; };
 		02EBEFE22635B40F00373C45 /* FeedLikeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EBEFE12635B40F00373C45 /* FeedLikeView.swift */; };
 		02EBEFE52635B41D00373C45 /* FeedLikeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02EBEFE42635B41D00373C45 /* FeedLikeView.xib */; };
-		6031FF6320510F14AC01ED24 /* Pods_Imagine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41B6ABEE519CECD54D4C7F4F /* Pods_Imagine.framework */; };
+		8EC6A46890A7812B468B78A4 /* Pods_Imagine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7D11DEBE0845E7F26299444 /* Pods_Imagine.framework */; };
 		E904BF0224264525003EC8DF /* AddPostTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E904BF0124264525003EC8DF /* AddPostTableViewController.swift */; };
 		E904F268229C274A00383885 /* JobSurveyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E904F267229C274A00383885 /* JobSurveyViewController.swift */; };
 		E90AC38324FA52C4002A36F0 /* IBMPlexSans-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E90AC37C24FA52AB002A36F0 /* IBMPlexSans-Thin.ttf */; };
@@ -308,9 +308,9 @@
 		029F7B49273053E30029254A /* UIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKit.swift; sourceTree = "<group>"; };
 		02EBEFE12635B40F00373C45 /* FeedLikeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLikeView.swift; sourceTree = "<group>"; };
 		02EBEFE42635B41D00373C45 /* FeedLikeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedLikeView.xib; sourceTree = "<group>"; };
-		1A16D61AEE6C9FEFE3134E7B /* Pods-Imagine.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.release.xcconfig"; path = "Target Support Files/Pods-Imagine/Pods-Imagine.release.xcconfig"; sourceTree = "<group>"; };
-		2BCC09C8FE5205185DCE68CA /* Pods-Imagine.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.debug.xcconfig"; path = "Target Support Files/Pods-Imagine/Pods-Imagine.debug.xcconfig"; sourceTree = "<group>"; };
-		41B6ABEE519CECD54D4C7F4F /* Pods_Imagine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Imagine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B66C39B2D0CB985ED0A8DB2 /* Pods-Imagine.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.debug.xcconfig"; path = "Target Support Files/Pods-Imagine/Pods-Imagine.debug.xcconfig"; sourceTree = "<group>"; };
+		97E204A7873D05E9176529E5 /* Pods-Imagine.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Imagine.release.xcconfig"; path = "Target Support Files/Pods-Imagine/Pods-Imagine.release.xcconfig"; sourceTree = "<group>"; };
+		D7D11DEBE0845E7F26299444 /* Pods_Imagine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Imagine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E904BF0124264525003EC8DF /* AddPostTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPostTableViewController.swift; sourceTree = "<group>"; };
 		E904F267229C274A00383885 /* JobSurveyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSurveyViewController.swift; sourceTree = "<group>"; };
 		E90AC37C24FA52AB002A36F0 /* IBMPlexSans-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexSans-Thin.ttf"; sourceTree = "<group>"; };
@@ -582,7 +582,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6031FF6320510F14AC01ED24 /* Pods_Imagine.framework in Frameworks */,
+				8EC6A46890A7812B468B78A4 /* Pods_Imagine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -706,16 +706,16 @@
 		66199979602FCB98C67C9712 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				2BCC09C8FE5205185DCE68CA /* Pods-Imagine.debug.xcconfig */,
-				1A16D61AEE6C9FEFE3134E7B /* Pods-Imagine.release.xcconfig */,
+				4B66C39B2D0CB985ED0A8DB2 /* Pods-Imagine.debug.xcconfig */,
+				97E204A7873D05E9176529E5 /* Pods-Imagine.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		B810C08B97593C4F22408595 /* Frameworks */ = {
+		DB5FF6285F89776278121BF6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				41B6ABEE519CECD54D4C7F4F /* Pods_Imagine.framework */,
+				D7D11DEBE0845E7F26299444 /* Pods_Imagine.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -823,7 +823,7 @@
 				E962AC152224430400C6D6EF /* Imagine */,
 				E962AC142224430400C6D6EF /* Products */,
 				66199979602FCB98C67C9712 /* Pods */,
-				B810C08B97593C4F22408595 /* Frameworks */,
+				DB5FF6285F89776278121BF6 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1502,12 +1502,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E962AC252224430600C6D6EF /* Build configuration list for PBXNativeTarget "Imagine" */;
 			buildPhases = (
-				FC9F2D51D30A4DF29E444A0A /* [CP] Check Pods Manifest.lock */,
+				960DCAC06450C3980DC220ED /* [CP] Check Pods Manifest.lock */,
 				E962AC0F2224430400C6D6EF /* Sources */,
 				E962AC102224430400C6D6EF /* Frameworks */,
 				E962AC112224430400C6D6EF /* Resources */,
 				E9C42EED23620C0B00FC50BA /* ShellScript */,
-				8DCC0A4AA17A23E643137A1E /* [CP] Embed Pods Frameworks */,
+				56B6D1365B77DF629C2961D9 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1643,7 +1643,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		8DCC0A4AA17A23E643137A1E /* [CP] Embed Pods Frameworks */ = {
+		56B6D1365B77DF629C2961D9 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1660,24 +1660,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Imagine/Pods-Imagine-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E9C42EED23620C0B00FC50BA /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n#\"${PODS_ROOT}/Fabric/run\"\n\n";
-		};
-		FC9F2D51D30A4DF29E444A0A /* [CP] Check Pods Manifest.lock */ = {
+		960DCAC06450C3980DC220ED /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1698,6 +1681,23 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		E9C42EED23620C0B00FC50BA /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n#\"${PODS_ROOT}/Fabric/run\"\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2078,7 +2078,7 @@
 		};
 		E962AC262224430600C6D6EF /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2BCC09C8FE5205185DCE68CA /* Pods-Imagine.debug.xcconfig */;
+			baseConfigurationReference = 4B66C39B2D0CB985ED0A8DB2 /* Pods-Imagine.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Imagine/Imagine.entitlements;
@@ -2102,7 +2102,7 @@
 		};
 		E962AC272224430600C6D6EF /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1A16D61AEE6C9FEFE3134E7B /* Pods-Imagine.release.xcconfig */;
+			baseConfigurationReference = 97E204A7873D05E9176529E5 /* Pods-Imagine.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Imagine/Imagine.entitlements;
