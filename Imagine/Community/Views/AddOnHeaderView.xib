@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -27,7 +28,7 @@
                     <subviews>
                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="farmstead" translatesAutoresizingMaskIntoConstraints="NO" id="prw-5I-YcC" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="360" height="100"/>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="100" id="6oJ-Ww-cBI"/>
                             </constraints>
@@ -39,9 +40,9 @@
                         </imageView>
                         <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FYJ-aG-aCB">
                             <rect key="frame" x="5" y="155" width="322.5" height="38"/>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="13"/>
-                            <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                            <color key="textColor" systemColor="secondaryLabelColor"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <button hidden="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uqH-Ne-coA" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
@@ -50,7 +51,7 @@
                                 <constraint firstAttribute="height" constant="25" id="eZb-ha-QNB"/>
                                 <constraint firstAttribute="width" constant="25" id="lhB-vC-gjv"/>
                             </constraints>
-                            <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="tintColor" systemColor="labelColor"/>
                             <inset key="imageEdgeInsets" minX="1" minY="1" maxX="1" maxY="1"/>
                             <state key="normal" image="settings"/>
                             <connections>
@@ -59,22 +60,22 @@
                         </button>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tCN-lQ-iwb">
                             <rect key="frame" x="0.0" y="75" width="360" height="25"/>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="25" id="T9B-fT-XqE"/>
                             </constraints>
                         </view>
                         <button hidden="YES" clipsSubviews="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zrt-NR-jqX" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                             <rect key="frame" x="322.5" y="168" width="25" height="25"/>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="25" id="3bz-hb-gap"/>
                                 <constraint firstAttribute="width" constant="25" id="s8m-W4-1aS"/>
                             </constraints>
                             <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
-                            <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="tintColor" systemColor="labelColor"/>
                             <state key="normal" image="down">
-                                <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="titleColor" systemColor="labelColor"/>
                             </state>
                             <connections>
                                 <action selector="showAllTapped:" destination="nTE-2L-dgO" eventType="touchUpInside" id="1TE-xP-0Lh"/>
@@ -88,23 +89,23 @@
                         </label>
                         <button clipsSubviews="YES" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Oe-Vq-z7H" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                             <rect key="frame" x="320" y="105" width="30" height="30"/>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="30" id="nX0-tP-uIe"/>
                                 <constraint firstAttribute="width" constant="30" id="zty-x7-9kn"/>
                             </constraints>
                             <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
-                            <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="tintColor" systemColor="labelColor"/>
                             <inset key="imageEdgeInsets" minX="2" minY="2" maxX="2" maxY="2"/>
                             <state key="normal" image="thanksButton">
-                                <color key="titleColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="titleColor" systemColor="labelColor"/>
                             </state>
                             <connections>
                                 <action selector="thanksButtonTapped:" destination="nTE-2L-dgO" eventType="touchUpInside" id="l5o-44-Pxx"/>
                             </connections>
                         </button>
                     </subviews>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <constraints>
                         <constraint firstItem="FYJ-aG-aCB" firstAttribute="leading" secondItem="nYR-GN-6Az" secondAttribute="leading" constant="5" id="2PN-ue-aPX"/>
                         <constraint firstItem="Zrt-NR-jqX" firstAttribute="centerX" secondItem="0Oe-Vq-z7H" secondAttribute="centerX" id="BNR-qX-Lft"/>
@@ -135,13 +136,14 @@
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WVK-1U-sgK">
                     <rect key="frame" x="9" y="197" width="352" height="8"/>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="8" id="qAW-zP-YO0"/>
                     </constraints>
                 </view>
             </subviews>
-            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <viewLayoutGuide key="safeArea" id="0Au-p0-ZmM"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
                 <constraint firstItem="WVK-1U-sgK" firstAttribute="bottom" secondItem="0Au-p0-ZmM" secondAttribute="bottom" id="9vg-M0-255"/>
                 <constraint firstItem="nYR-GN-6Az" firstAttribute="top" secondItem="nTE-2L-dgO" secondAttribute="top" constant="5" id="O9P-UW-nyq"/>
@@ -152,7 +154,6 @@
                 <constraint firstAttribute="trailing" secondItem="nYR-GN-6Az" secondAttribute="trailing" constant="5" id="wwi-0L-r2p"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <viewLayoutGuide key="safeArea" id="0Au-p0-ZmM"/>
             <connections>
                 <outlet property="backgroundBorderView" destination="nYR-GN-6Az" id="nDt-uw-maA"/>
                 <outlet property="expandDescriptionButton" destination="Zrt-NR-jqX" id="Ptj-ch-ZWi"/>
@@ -167,10 +168,24 @@
             <point key="canvasLocation" x="-176.81159420289856" y="-84.709821428571431"/>
         </view>
     </objects>
+    <designables>
+        <designable name="prw-5I-YcC">
+            <size key="intrinsicContentSize" width="1204" height="1034"/>
+        </designable>
+    </designables>
     <resources>
         <image name="down" width="200" height="200"/>
         <image name="farmstead" width="1204" height="1034"/>
         <image name="settings" width="30" height="30"/>
         <image name="thanksButton" width="100" height="100"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="secondaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>
