@@ -22,6 +22,10 @@ struct Constants {
     static let cellCornerRadius: CGFloat = 15
     static let defaultImage = UIImage(named: "default")
     
+    struct Padding {
+        static let standard: CGFloat = 18
+    }
+    
     struct strings {
         static let anonymPosterName = "Somebody"
         static let textOfTheWeek = "Tauscht euch aus, seid nett und lernt neue Menschen kennen!"

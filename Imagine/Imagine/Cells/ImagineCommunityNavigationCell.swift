@@ -116,20 +116,19 @@ class SimpleCell: UICollectionViewCell {
     
     func setupLayout() {
         addSubview(containerView)
-        containerView.fillSuperview()
-        
-        containerView.addSubview(imageView)
-        containerView.setDefaultShadow(cornerRadius: Constants.cellCornerRadius)
-        containerView.layer.cornerRadius = Constants.cellCornerRadius
-        containerView.layer.borderWidth = 1
-        containerView.layer.borderColor = UIColor.accentColor.cgColor
-        
-        imageView.clipsToBounds = true
+        containerView.fillSuperview(paddingTop: 5, paddingLeading: 5, paddingBottom: -5, paddingTrailing: -5)
+        containerView.backgroundColor = .systemBackground
         
         contentView.clipsToBounds = false
-                
+        
+        containerView.addSubview(imageView)
+        imageView.clipsToBounds = true
         imageView.tintColor = .accentColor
         imageView.fillSuperview(paddingTop: 30, paddingLeading: 30, paddingBottom: -30, paddingTrailing: -30)
         imageView.contentMode = .scaleAspectFit
+    }
+    
+    override func layoutSubviews() {
+        containerView.setDefaultShadow(cornerRadius: containerView.frame.width / 2)
     }
 }

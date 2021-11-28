@@ -29,7 +29,7 @@ extension UIView {
     func fadeTransition(_ duration:CFTimeInterval) {
         let animation = CATransition()
         animation.timingFunction = CAMediaTimingFunction(name:
-            CAMediaTimingFunctionName.easeInEaseOut)
+                                                            CAMediaTimingFunctionName.easeInEaseOut)
         animation.type = CATransitionType.fade
         animation.duration = duration
         layer.add(animation, forKey: CATransitionType.fade.rawValue)
@@ -195,6 +195,117 @@ extension UIView {
             let trailing = trailingAnchor.constraint(equalTo: superviewTrailingAnchor, constant: paddingTrailing)
             trailing.priority = UILayoutPriority(rawValue: 999)
             trailing.isActive = true
+        }
+    }
+    
+    
+    func constrain(top: NSLayoutYAxisAnchor? = nil,
+                   leading: NSLayoutXAxisAnchor? = nil,
+                   bottom: NSLayoutYAxisAnchor? = nil,
+                   trailing: NSLayoutXAxisAnchor? = nil,
+                   paddingTop: CGFloat = 0,
+                   paddingLeading: CGFloat = 0,
+                   paddingBottom: CGFloat = 0,
+                   paddingTrailing: CGFloat = 0,
+                   width: CGFloat = 0,
+                   height: CGFloat = 0) {
+        
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        if let top = top {
+            let top = topAnchor.constraint(equalTo: top, constant: paddingTop)
+            top.priority = UILayoutPriority(rawValue: 750)
+            top.isActive = true
+        }
+        
+        if let leading = leading {
+            let leading = leadingAnchor.constraint(equalTo: leading, constant: paddingLeading)
+            leading.priority = UILayoutPriority(rawValue: 999)
+            leading.isActive = true
+        }
+        
+        if let bottom = bottom {
+            let bottom = bottomAnchor.constraint(equalTo: bottom, constant: paddingBottom)
+            bottom.priority = UILayoutPriority(rawValue: 750)
+            bottom.isActive = true
+        }
+        
+        if let trailing = trailing {
+            let trailing = trailingAnchor.constraint(equalTo: trailing, constant: paddingTrailing)
+            trailing.priority = UILayoutPriority(rawValue: 999)
+            trailing.isActive = true
+        }
+        
+        if width != 0 {
+            let width = widthAnchor.constraint(equalToConstant: width)
+            width.isActive = true
+        }
+        
+        if height != 0 {
+            let height = heightAnchor.constraint(equalToConstant: height)
+            height.isActive = true
+        }
+    }
+    
+    func constrain(centerX: NSLayoutXAxisAnchor? = nil,
+                   centerY: NSLayoutYAxisAnchor? = nil,
+                   top: NSLayoutYAxisAnchor? = nil,
+                   leading: NSLayoutXAxisAnchor? = nil,
+                   bottom: NSLayoutYAxisAnchor? = nil,
+                   trailing: NSLayoutXAxisAnchor? = nil,
+                   paddingTop: CGFloat = 0,
+                   paddingLeading: CGFloat = 0,
+                   paddingBottom: CGFloat = 0,
+                   paddingTrailing: CGFloat = 0,
+                   width: CGFloat = 0,
+                   height: CGFloat = 0) {
+        
+        translatesAutoresizingMaskIntoConstraints = false
+        
+        if let centerX = centerX {
+            let xAnchor = centerXAnchor.constraint(equalTo: centerX)
+            xAnchor.priority = UILayoutPriority(rawValue: 750)
+            xAnchor.isActive = true
+        }
+        
+        if let centerY = centerY {
+            let yAnchor = centerYAnchor.constraint(equalTo: centerY)
+            yAnchor.priority = UILayoutPriority(rawValue: 750)
+            yAnchor.isActive = true
+        }
+        
+        if let top = top {
+            let top = topAnchor.constraint(equalTo: top, constant: paddingTop)
+            top.priority = UILayoutPriority(rawValue: 750)
+            top.isActive = true
+        }
+        
+        if let leading = leading {
+            let leading = leadingAnchor.constraint(equalTo: leading, constant: paddingLeading)
+            leading.priority = UILayoutPriority(rawValue: 999)
+            leading.isActive = true
+        }
+        
+        if let bottom = bottom {
+            let bottom = bottomAnchor.constraint(equalTo: bottom, constant: paddingBottom)
+            bottom.priority = UILayoutPriority(rawValue: 750)
+            bottom.isActive = true
+        }
+        
+        if let trailing = trailing {
+            let trailing = trailingAnchor.constraint(equalTo: trailing, constant: paddingTrailing)
+            trailing.priority = UILayoutPriority(rawValue: 999)
+            trailing.isActive = true
+        }
+        
+        if width != 0 {
+            let width = widthAnchor.constraint(equalToConstant: width)
+            width.isActive = true
+        }
+        
+        if height != 0 {
+            let height = heightAnchor.constraint(equalToConstant: height)
+            height.isActive = true
         }
     }
 }

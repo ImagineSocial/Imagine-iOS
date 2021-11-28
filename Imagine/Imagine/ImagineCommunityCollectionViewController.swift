@@ -304,11 +304,8 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         let section = NavigationSection.allCases[section]
-        if section == .finished {
-            return 10
-        }
         
-        return 20
+        return section == .finished ? 10 : 20
     }
     
     
@@ -413,7 +410,10 @@ extension ImagineCommunityCollectionViewController: CommunityNavigationItemDeleg
         case .moreInfo:
             performSegue(withIdentifier: "toMoreInfoSegue", sender: nil)
         case .proposals:
-            performSegue(withIdentifier: "toProposalsSegue", sender: nil)
+            let vc = CampaignVoteCollectionViewController()
+            vc.hidesBottomBarWhenPushed = true
+            
+            navigationController?.pushViewController(vc, animated: true)
         case .feedback:
             performSegue(withIdentifier: "toFeedbackSegue", sender: nil)
         case .settings:
