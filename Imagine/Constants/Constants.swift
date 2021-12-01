@@ -24,6 +24,7 @@ struct Constants {
     
     struct Padding {
         static let standard: CGFloat = 18
+        static let innerCell: CGFloat = 10
     }
     
     struct strings {

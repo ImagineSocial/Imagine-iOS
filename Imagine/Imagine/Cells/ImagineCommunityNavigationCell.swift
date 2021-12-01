@@ -124,7 +124,7 @@ class SimpleCell: UICollectionViewCell {
         containerView.addSubview(imageView)
         imageView.clipsToBounds = true
         imageView.tintColor = .accentColor
-        imageView.fillSuperview(paddingTop: 30, paddingLeading: 30, paddingBottom: -30, paddingTrailing: -30)
+        imageView.fillSuperview(paddingTop: 27, paddingLeading: 27, paddingBottom: -27, paddingTrailing: -27)
         imageView.contentMode = .scaleAspectFit
     }
     

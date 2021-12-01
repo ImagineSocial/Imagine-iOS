@@ -14,7 +14,8 @@ import EasyTipView
 
 class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
-    //MARK:- IBOutlets
+    //MARK: - IBOutlets
+    
     @IBOutlet weak var shortBodyLabel: UILabel!
     @IBOutlet weak var longBodyLabel: UILabel!
     @IBOutlet weak var createDateLabel: UILabel!
@@ -27,7 +28,8 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var contentView: UIView!
     
-    //MARK:- Variables
+    //MARK: - Variables
+    
     private let db = Firestore.firestore()
     
     private var floatingCommentView: CommentAnswerView?
@@ -68,7 +70,9 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         commentTableView.initializeCommentTableView(section: .proposal, notificationRecipients: nil)
         commentTableView.commentDelegate = self
         
-        createFloatingCommentView()
+        DispatchQueue.main.async {
+            self.createFloatingCommentView()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -154,13 +158,10 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
             return
         }
         
-        var collectionRef: CollectionReference!
         let language = LanguageSelection().getLanguage()
-        if language == .english {
-            collectionRef = db.collection("Data").document("en").collection("campaigns")
-        } else {
-            collectionRef = db.collection("Campaigns")
-        }
+        
+        let collectionRef = (language == .english) ? db.collection("Data").document("en").collection("campaigns") : db.collection("Campaigns")
+        
         let postRef = collectionRef.document(campaign.documentID)
         
         if let user = Auth.auth().currentUser {

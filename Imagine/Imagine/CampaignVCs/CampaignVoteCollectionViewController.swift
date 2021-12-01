@@ -42,7 +42,7 @@ class CampaignVoteCollectionViewController: UIViewController {
     var doneCampaigns = [Campaign]()
     var mode: SuggestionMode = .campaign
     let imagineDataRequest = ImagineDataRequest()
-    let insetsTimesTwo: CGFloat = 20
+    let insetsTimesTwo: CGFloat = 30
         
     //MARK: - View Lifecycle
     
@@ -59,7 +59,7 @@ class CampaignVoteCollectionViewController: UIViewController {
     }
     
     private func setupCollectionView() {
-        collectionView.register(UINib(nibName: "CampaignCell", bundle: nil), forCellWithReuseIdentifier: CampaignCell.identifier)
+        collectionView.register(CampaignCell.self, forCellWithReuseIdentifier: CampaignCell.identifier)
         collectionView.register(CampaignCollectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CampaignCollectionHeaderView.identifier)
         
         view.addSubview(collectionView)

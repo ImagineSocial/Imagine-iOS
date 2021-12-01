@@ -51,9 +51,7 @@ class TrippyViewController: UIViewController {
     
     @objc func owenTapped() {
         let alert = UIAlertController(title: "Hint 2/3", message: "3 seconds...", preferredStyle: .alert)
-        let action = UIAlertAction(title: "OK", style: .default) { (_) in
-//            self.performSegue(withIdentifier: "showProposalSegue", sender: nil)
-        }
+        let action = UIAlertAction(title: "OK", style: .default) { (_) in }
         alert.addAction(action)
         self.present(alert, animated: true, completion: nil)
     }

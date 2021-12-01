@@ -9,59 +9,32 @@
 //General
 
 "I agree" = "I agree";
-
 "cancel" = "Cancel";
-
 "error_title" = "An error has occurred";
-
 "title:" = "Title:";
-
 "description:" = "Description:";
-
 "yes" = "Yes";
-
 "no" = "No";
-
 "rather_not" = "I’d rather not!";
-
 "next" = "Next";
-
 "back" = "Back";
-
 "thanks" = "Thanks!";
-
 "send" = "send";
-
 "easy" = "Easy";
-
 "medium" = "Medium";
-
 "strong" = "Strong";
-
 "i_am_sure" = "I’m sure!";
-
 "thanks_for_support" = "Thank you for your support!";
-
 "done" = "Done!";
-
 "not_sure" = "I’m not sure";
-
 "thanks" = "Thanks!";
-
 "delete" = "Delete";
-
 "community" = "Community";
-
 "communities" = "Communities";
-
 "topic" = "Topic";
-
 "topics" = "Topics";
-
 "discussion" = "Discussion";
-
 "discussions" = "Discussions";
-
 "yesterday" = "Yesterday";
 
  
@@ -73,67 +46,37 @@
 //MeldeViewController
 
 "Opinion, not a fact" = "Personal Opinion";
-
 "Sensationalism" = "Sensationalism";
-
 "Pretentious" = "Pretentious";
-
 "Ignorant Thinking" = "Ignorant Thinking";
-
 "Edited Content" = "Edited Content";
-
 "Not listed" = "Not listed";
-
 "Disrespectful" = "Disrespectful";
-
 "Offensive" = "Offensive";
-
 "Harassment" = "Harassment";
 
  
- 
-
 "reportOption_insult" = "Insult";
-
 "reportOption_racism" = "Racism";
-
 "reportOption_homophobia" = "Homophobia";
-
 "reportOption_violanceGlorification" = "Glorification of violence";
-
 "reportOption_suicideTrivialization" = "Trivialization of suicide";
-
 "reportOption_religiousFreedom" = "Freedom of religion attacked";
-
 "reportOption_hateSpeech" = "Hate Speech";
-
- 
  
 
 "Violance Supporting" = "Violance Supporting";
-
 "Belittlement of suicide" = "Belittlement of suicide";
-
 "Disrespectful against religions" = "Disrespectful of religions";
-
 "Denying of facts" = "Denying of facts";
-
 "Conspiracy theory" = "Conspiracy theory";
-
 "Pornography" = "Pornography";
-
 "Pedophilia" = "Pedophilia";
-
 "Presentation of violance" = "Presentation of violance";
-
 "crime" = "Crime";
-
 "animal_cruelty" = "Animal cruelty";
-
 "misinformation" = "Misinformation";
-
 "misleading" = "Misleading content";
-
 "delete_post_label" = "Delete post";
 
  
@@ -161,49 +104,28 @@
 //SignUp
 
 "enter_first_name" = "Nice to meet you! What is your first name?";
-
 "enter_second_name" = "Glad to meet you %@. What is the name of your family?";
-
 "enter_email" = "What's your email adress?";
-
 "enter password" = "Please choose a password.";
-
 "password must be safe" = "Your password has to be a minimum of 6 characters and should not be easy to guess!";
-
 "approve apple rules" = "Do you accept the Apple Application End User Agreement and won't upload any harmful or dangerous content?";
-
 "approve GDPR rules" = "By submitting your registration you agree to our data privacy statement, including the storage and processing of entered data according to the DSGVO guidelines. Do you accept?";
 "approve_eula_rules" = "By signing up, you agree to our End User License Agreement (EULA), which states that you will not upload inappropriate content and will treat your fellow human beings with respect";
 "ready to go" = "You are now ready to go! Go and look around and don't forget to confirm your email adress 🙏 (maybe in the spam folder)";
-
 "welcome to imagine" = "Welcome to Imagine. We have two underlying principles: To have a respectful and positive vibe on the network and respect of the views and opinions of others.";
-
 "need your help" = "To guarantee there principles, we need your help. The users can report any violations and they will be reviewed ASAP!";
-
 "invalid email" = "The email adress seems to be wrong. Please try again:";
-
 "email already in use" = "The email adress is already in use. Please use a another:";
-
 "signup_error" = "Sorry, something doesn’t seem to be working right. Please come back and try again later!";
-
 "signup_error_repeat_password" = "Your passwords are not identical. Please try again:";
-
 "signup_error_weak_password" = "Your password must contain at least 6 characters and should not be easy to guess!";
 
  
- 
-
 "cancel_signup_title" = "Cancel registration process?";
-
 "cancel_signup_message" = "Are you sure you want to cancel your sign-up process? All data entered will be lost.";
-
 "cancel_stay_here" = "Stay here";
 
- 
- 
-
 "go_to_gdpr" = "See agreement";
-
 "go_to_imagine" = "Go to Imagine";
 
  
@@ -212,17 +134,11 @@
 //SignUp Placeholder
 
 "name_placeholder" = "Your first name will be visible in your profile, in posts for friends as well as everyone else on Imagine.";
-
 "surname_placeholder" = "Your surname will only be visible for your friends on Imagine" ;
-
 "name_example_placeholder" = "John"; //John
-
 "surname_example_placeholder" = "Doe";//Doe
-
 "email_example_placeholder" = "JohnDoe@gmail.com";
-
 "password_placeholder" = "Password";
-
 "repeat_password_placeholder" = "Repeat password";
 
  
@@ -231,55 +147,41 @@
 //Login
 
 "login_password" = "Now just enter your password and we’re ready to go!";
-
 "login_error_email" = "The email address you entered doesn’t seem to be correct";
-
 "login_error_password" = "Wrong password, please try again:";
-
 "login_forgot_password" = "Please enter your email address, so we can send you the instructions to reset your password";
 
  
  
 
 "forgot_password" = "Forgot password";
-
 "reset_password_title" = "Email sent!";
-
 "reset_password_message" = "Check your inbox, change your password and try again. See you soon!";
 
  
  
 
 "login_verify_email" = "Your email address has not yet been verified. Do you want us to send you another confirmation email to %@?";
-
 "verify_email_send_again" = "The link was sent.";
  
 
 //Vote
 
 "consent: %d" = "Consent: %d";
-
 "doubt: %d" = "Doubt: %d";
  
 
 "back up" = "back up";
-
 "BSImagePicker.Done" = "Done";
 
 //Feed VC
 
 "tap_blue_owen_title" = "Have a look at what we could do with the network...";
-
 "tap_blue_owen_message" = "Have you clicked on the blue Owen ↑ yet?";
-
 "accept_cookies_title" = "We have ‘cookies’ at Imagine.";
-
- "accept_cookies_message" = "In accordance with our privacy policy, we want to find out how users use our app and which features are popular. Anonymized of course! You can change this setting at any time.";
-
+"accept_cookies_message" = "In accordance with our privacy policy, we want to find out how users use our app and which features are popular. Anonymized of course! You can change this setting at any time.";
 "to_gdpr" = "About the Privacy Policy";
-
 "accept_cookies" = "I accept the cookies";
-
 "no_cookies" = "No cookies";
 
  
@@ -288,77 +190,41 @@
 //NewPost
 
 "newPost_title_label_text" = "Title:";
-
 "decriptionLabelText" = "Description:";
-
 "newPost_camera_error_text" = "It looks like your privacy settings are preventing us from accessing your camera. You can fix this by doing the following:\n\n1. Close this app.\n\n2. Open the Settings app.\n\n3. Scroll to the bottom and select this app in the list.\n\n4. Turn the Camera on.\n\n5. Open this app and try again.";
-
 "postLinkTipViewText" = "Share links in different forms on Imagine:\n\nNormal websites are shown with a preview and the title of your post. Videos from YouTube are presented in the standard YouTube format.\nLinks tat end with \".mp4\" are displayed directly in your feed.\nLinks from Songwhip.com let users choose their preferred streaming service, making them more easily accessible.\n\nIf you have any other ideas for special link formats like Netflix or IMDB, share them on the Imagine Tab!";
-
 "pictureLabelText" = "Picture:";
-
 "markPostButtonText" = "Mark post";
-
 "opinion" = "Opinion";
-
 "sansational" = "Sensationalist";
-
 "edited" = "edited";
-
 "post_anonymous_label" = "Post anonymously";
-
 "link_fact_first_open_tip_view_text" = "On Imagine, you can link your posts with your favorite community. They will then be shown in the main feed as well as in the community the posts are linked with.\n\nYou can also choose to show your post exclusively to your selected community.";
-
 "how_many_pics_alert_header" = "How many pictures would you like to post?";
-
 "how_many_pics_alert_message" = "Please select whether you want to upload a single photo or a row of uo to 3 photos";
-
 "how_many_just_one" = "One photo";
-
 "how_many_three" = "Several photos";
-
 "linked_fact_tip_view_text" = "The default posting space is the Imagine feed (the main feed you see after opening the app). \nHere, you can post everything you want to share with the world.\n\nIf you select a community, you can decide whether you want to show your post only to the community, or on the main feed as well. Members of the community will see your post in their individual Imagine feed.\nFeel free to post everything to your communities that is part of a specific topic or is not meant for the whole world.";
-
 "anonymous_name_alert_title" = "Anonymous name";
-
 "anonymous_name_alert_message" = "Choose a name that will be shown along with this post. Names of real persons are not permitted.";
-
 "anonymous_name_placeholder" = "John Doe";
-
 "missing_info_alert_link" = "Please enter a link.";
-
 "missing_info_alert_title" = "Please enter a title.";
-
 "error_uploading_multiple_pictures_message" = "An error occurred while selecting the images. It is possible that one or more images are stored in the cloud. In this case, select the image in the Photos app and zoom in a little. A small loading circle will appear in the lower right corner. Draw attention to this error by submitting a bug report in the Imagine section under \"Help\", then we know that someone has encountered this problem";
-
 "error_choosing_multiple_pictures_message" = "Please select more images or choose the option \"Only one image\"";
-
 "error_choosing_picture" = "You have not uploaded a picture. If you don't want to upload a picture, please choose another post option";
-
 "error_link_not_valid" = "Our program tells us that the URL is not correct. Please check the link";
-
 "error_no_link" = "You have not provided a link. If you don't want to post a link, please choose another post option";
-
 "error_no_picture" = "You have not uploaded a picture. If you don't want to upload a picture, please choose another post option";
-
 "error_gif_wrong_ending" = "At the moment only links with the ending '.mp4' are possible. The ending .GIF is obsolete, is no longer used for memory reasons. But please let us know how you would like to distribute your GIFs";
-
 "message_after_done_posting" = "Thanks for your wisdom.";
-
 "just_name_info_message" = "When posting, only your first name will be visible in the feed!";
-
 "link_fact_destination_alert_header" = "Where do you want to post?";
-
 "link_fact_destination_alert_message" = "Do you want to share the post with everyone in the main feed or just post it in the community?";
-
 "link_fact_destination_everybody" = "Share with everyone";
-
 "link_fact_destination_community" = "Share with the community";
-
 "location_label_text" = "Location:";
-
 "distribution_label_text" = "Destination:";
-
 "distribution_button_text" = "Link Community";
 
  
@@ -443,15 +309,10 @@
 //VoteViewController
 
 "time_till_completion_in_month" = "%d months";
-
 "already_voted_message" = "Each user has only one vote per vote!";
-
 "already_voted_title" = "You already voted";
-
 "sure_to_vote_title" = "Ready to vote?";
-
 "sure_to_vote_message" = "You can only take part in a vote once and cannot change your mind afterwards!";
-
 "vote_successfull_alert_message" = "Your vote has been accepted.";
 
  
@@ -460,17 +321,11 @@
 //NewCampaignViewController
 
 "campaign_category_feature" = "Feature";
-
 "campaign_category_proposal" = "Proposal";
-
 "campaign_category_complaint" = "Complaint";
-
 "campaign_category_call" = "Call";
-
 "campaign_category_change" = "Change";
-
 "campaign_category_addOn" = "Community AddOn";
-
 "submit_successfull_alert_message" = "Thanks for helping to make this site a better one!";
 
  
@@ -479,9 +334,7 @@
 //CampaignViewController
 
 "thanks_for_vote_message" = "Your vote has been accepted.";
-
 "sure_to_vote_title" = "Ready to vote?";
-
 "sure_to_vote_message" = "You can only take part in a vote once and cannot change your mind afterwards!";
 
  
@@ -492,20 +345,19 @@
 //Comment Delegates
 
 "delete_comment_alert_title" = "Delete the comment?";
-
 "delete_comment_alert_message" = "Do you really want to delete the comment? This operation cannot be undone.";
 
  
  
 
-//voteCampaignTableViewController
+// Mark: - VoteCampaignCollectionViewController
 
 "proposal_header" = "Proposals";
 "recent_campaign_header" = "Recent Campaigns:";
 "votes_header" = "Votes";
 "recent_votes_header" = "Recent Votes:";
-
- 
+"proposalIntroDescription" = "Take an active part in the development:\n\nIf you have an idea on how to improve the network or achieve our goals, share it with us here.\n\nAlso check out the suggestions from other users and vote on what should be implemented.";
+"proposalButtonText" = "Share your idea";
  
 
 //Ordner CommunityViewController bis VisionVCs geskipped
@@ -545,7 +397,6 @@
 //AddPostTableViewController
 
 "search_placeholder" = "Search Imagine";
-
 "optional_explanation_placeholder" = "Add an optional description...";
 
  
@@ -557,29 +408,17 @@
 //SettingTableViewController
 
 "setting_community_header_text" = "Community settings";
-
 "setting_community_addOn_as_start" = "Topic view as start screen";
-
 "setting_community_addOn_as_start_description" = "If your community is better represented by subtopics than by posts, select this option.";
-
-"setting_user_header_text" = "Profil-Einstellungen"; "Profile Settings";
-
+"setting_user_header_text" = "Profil-Einstellungen";
 "setting_user_personal_bio" = "Status-Text:";
-
 "setting_social_media_button_description" = "Enter a link to the respective profiles to get a button in your profile. This way you can direct visitors to your other social media profiles or promote your personal favorites.";
-
 "setting_user_personal_info" = "Personal information";
-
 "setting_user_personal_info_description" = "By specifying your age you support Imagine.We may use this information to better understand our users and to optimize our future advertising efforts. Your age will not be displayed publicly.\nThe location provides a better selection of communities and more appropriate advertising (later). It can also be displayed in your profile to show others where the users come from.\nAll data is handled with care and will not be given to third parties.";
-
 "setting_user_birthday" = "Year of birth:";
-
 "setting_user_location_public" = "Show location in profile?";
-
 "setting_addOn_header_text" = "Topic settings:";
-
 "setting_addOn_change_order" = "Arrange the posts:";
-
 "setting_location_cell_text" = "Select a location";
 
  
@@ -595,7 +434,6 @@
 //NewCommunityItemTableViewController
 
 "new_community_discussion_description" = "The topic is displayed in two columns. The comparison allows to deal with the topic thoroughly. \nYou can select the headings of the columns here:";
-
 "new_community_topic_description" = "The topic is presented as a collection of all linked posts on this topic.";
 
  
@@ -609,27 +447,16 @@
 //AddOnCollectionViewController
 
 "proposal_header_text" = "Extend the Community";
-
 "proposal_header_description" = "Here you can find different extensions to better represent a community and to present additional information clearly.";
-
 "proposal_me_active_header" = "What can I do?";
-
 "proposal_me_active_description" = "How can everyone fight or improve the problem of the community?";
-
 "proposal_top_news_description" = "Find the latest news about the community in one place.";
-
 "proposal_beginners_guide_description" = "First steps for newcomers who are interested and want to dive deeper into this topic.";
-
 "addOn_creation_successfull" = "The AddOn was created. Thanks for your contribution!";
-
 "addOn_newItem_alert_title" = "Add an item";
-
 "addOn_newItem_alert_message" = "Do you want to add a post or a community to this topic?";
-
 "addOn_newItem_alert_oldPost" = "Existing post";
-
 "addOn_newItem_alert_newPost" = "New post (Community)";
-
 "addOn_newItem_alert_topic" = "Community/Discussion";
 
  
@@ -638,25 +465,15 @@
 //NewCommunityItemTableViewController
 
 "new_community_header" = "Create a new community";
-
 "new_argument_header" = "Create a new argument";
-
 "new_source_header" = "Create a new source";
-
 "new_addOn_header" = "Create a new AddOn";
-
 "new_argument_source_footer_text" = "Choose your argument afterwards to add a source. This serves the credibility of your argument.";
-
 "new_community_item_error_title" = "Input is missing";
-
 "new_community_item_error_message" = "A title and a description are required for this item.";
-
 "new_addOnTopic_missing_community" = "We have not registered a community to link to!";
-
 "new_community_item_not_valid_link" = "Please enter a valid link.";
-
 "new_community_weird_error" = "An error has occurred. Please try again later!";
-
 "new_community_successfull_added" = "Your entry was successfully added!";
 
  
@@ -665,21 +482,13 @@
 //Discussion
 
 "discussion_pro/contra" = "Contra/Pro";
-
 "discussion_doubt/proof" = "Doubt/Confirmation";
-
 "discussion_advantage/disadvantage" = "Disadvantages/Advantages";
-
 "discussion_pro" = "Pro";
-
 "discussion_contra" = "Contra";
-
 "discussion_advantage" = "Advantages";
-
 "discussion_disadvantage" = "Disadvantages";
-
 "discussion_doubt" = "Doubt";
-
 "discussion_proof" = "Proof";
 
  

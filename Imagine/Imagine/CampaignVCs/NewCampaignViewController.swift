@@ -40,9 +40,7 @@ class NewCampaignViewController: UIViewController {
         super.viewDidLoad()
         
         categoryPickerView.delegate = self
-        categoryPickerView.dataSource = self
-        categoryPickerView.showsSelectionIndicator = false
-        
+        categoryPickerView.dataSource = self        
     }
     
     

@@ -104,7 +104,8 @@ class CreativeExampleViewController: UIViewController {
     }
 
     @IBAction func toVoteButtonTapped(_ sender: Any) {
-        performSegue(withIdentifier: "toVoteSegue", sender: nil)
+        let vc = CampaignVoteCollectionViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
     @IBAction func owenButtonTapped(_ sender: Any) {
         let alert = UIAlertController(title: "Hint 1/3", message: "Tap for..", preferredStyle: .alert)

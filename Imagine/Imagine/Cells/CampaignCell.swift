@@ -10,29 +10,39 @@ import UIKit
 
 class CampaignCell: UICollectionViewCell {
     
-    //MARK:- IBOutlets
-    @IBOutlet weak var containerView: UIView!
-    @IBOutlet weak var CellHeaderLabel: UILabel!
-    @IBOutlet weak var cellBodyLabel: UILabel!
-    @IBOutlet weak var cellCreateCampaignLabel: UILabel!
-    @IBOutlet weak var progressView: UIProgressView!
-    @IBOutlet weak var supporterLabel: UILabel!
-    @IBOutlet weak var vetoLabel: UILabel!
-    @IBOutlet weak var categoryLabel: UILabel!
+    let containerView = BaseView()
+    let headerLabel = BaseLabel(font: UIFont.getStandardFont(with: .medium, size: 16))
+    let descriptionLabel = BaseTextLabel(font: UIFont.getStandardFont(with: .regular, size: 14))
+    let campaignDateLabel = BaseLabel(font: UIFont.getStandardFont(with: .medium, size: 14))
+    let categoryLabel = BaseLabel(font: UIFont.getStandardFont(with: .medium, size: 14))
+    let iconImageView = BaseImageView(image: UIImage(named: "idea"), alignmentInsets: UIEdgeInsets(top: -1, left: -1, bottom: -1, right: -1))
     
-    //MARK:- Variables
+    var progressView: UIProgressView = {
+        let progressView = UIProgressView()
+        progressView.translatesAutoresizingMaskIntoConstraints = false
+        progressView.layer.cornerRadius = 2
+        progressView.clipsToBounds = true
+        
+        return progressView
+    }()
+    
+    lazy var bottomStackView = BaseStackView(subviews: [iconImageView, categoryLabel, UIView(), campaignDateLabel], axis: .horizontal, distribution: .fill)
+    
+    
+    //MARK: - Variables
+    
+    static let identifier = "campaignCell"
+    
     var campaign:Campaign? {
         didSet {
             if let campaign = campaign {
                 
-                CellHeaderLabel.text = campaign.title
-                cellBodyLabel.text = campaign.cellText
-                cellCreateCampaignLabel.text = campaign.createDate
+                headerLabel.text = campaign.title
+                descriptionLabel.text = campaign.cellText
+                campaignDateLabel.text = campaign.createDate
                 
                 let progress: Float = Float(campaign.supporter) / (Float(campaign.opposition) + Float(campaign.supporter))
                 progressView.setProgress(progress, animated: true)
-                supporterLabel.text = "\(campaign.supporter) Supporter"
-                vetoLabel.text = "\(campaign.opposition) Vetos"
                 
                 if let category = campaign.category {
                     categoryLabel.text = category.title
@@ -41,20 +51,37 @@ class CampaignCell: UICollectionViewCell {
         }
     }
     
-    //MARK:- Cell Lifecycle
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    //MARK: - Cell Lifecycle
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
-        progressView.layer.cornerRadius = 2
-        progressView.clipsToBounds = true
+        setupConstraints()
+        backgroundColor = .systemBackground
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    func setupConstraints() {
+        addSubview(containerView)
+        containerView.addSubview(headerLabel)
+        containerView.addSubview(descriptionLabel)
+        containerView.addSubview(bottomStackView)
+        headerLabel.adjustsFontSizeToFitWidth = true
+        
+        containerView.fillSuperview()
+        headerLabel.constrain(top: containerView.topAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, paddingTop: Constants.Padding.innerCell, paddingLeading: Constants.Padding.innerCell, paddingTrailing: -Constants.Padding.innerCell, height: 30)
+        descriptionLabel.constrain(top: headerLabel.bottomAnchor, leading: headerLabel.leadingAnchor, trailing: headerLabel.trailingAnchor, paddingTop: Constants.Padding.standard / 2)
+        bottomStackView.constrain(top: descriptionLabel.bottomAnchor, leading: containerView.leadingAnchor, bottom: containerView.bottomAnchor, trailing: descriptionLabel.trailingAnchor, paddingTop: Constants.Padding.standard / 2, paddingBottom: -Constants.Padding.innerCell, height: 22)
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        let cornerRadius = Constants.cellCornerRadius
-        containerView.layer.cornerRadius = cornerRadius
-        contentView.setDefaultShadow()
+        containerView.layer.cornerRadius = Constants.cellCornerRadius
+        containerView.setDefaultShadow()
     }
     
 }

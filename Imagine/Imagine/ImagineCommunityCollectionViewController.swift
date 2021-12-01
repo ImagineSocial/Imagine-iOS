@@ -30,11 +30,10 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     var campaigns = [Campaign]()
     var sortedCampaigns: [Campaign]?
     
-    let insetTimesTwo:CGFloat = 20
+    let insetTimesTwo:CGFloat = 30
     
     private let proposalHeaderIdentifier = "ImagineCommunityProposalHeader"
     private let dataReportCellIdentifier = "DataReportCollectionViewCell"
-    private let campaignCellIdentifier = "campaignCell"
     private let finishedWordCellIdentifier = "FinishedWorkCollectionViewCell"
     
     //FinishWorkCell Boolean
@@ -61,7 +60,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         // Register cell classes
         collectionView.register(ImagineCommunityNavigationCell.self, forCellWithReuseIdentifier: ImagineCommunityNavigationCell.identifier)
         collectionView.register(UINib(nibName: "DataReportCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: dataReportCellIdentifier)
-        collectionView.register(UINib(nibName: "CampaignCell", bundle: nil), forCellWithReuseIdentifier: campaignCellIdentifier)
+        collectionView.register(CampaignCell.self, forCellWithReuseIdentifier: CampaignCell.identifier)
         collectionView.register(UINib(nibName: "FinishedWorkCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: finishedWordCellIdentifier)
         
         // Register header classes
@@ -175,7 +174,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 campaign = campaigns[indexPath.item]
             }
             
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: campaignCellIdentifier, for: indexPath) as? CampaignCell {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CampaignCell.identifier, for: indexPath) as? CampaignCell {
                 
                 cell.campaign = campaign
                 

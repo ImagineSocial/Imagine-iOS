@@ -249,11 +249,14 @@
 "delete_comment_alert_title" = "Kommentar löschen?";
 "delete_comment_alert_message" = "Möchtest du das Kommentar wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.";
 
-//voteCampaignTableViewController
+// Mark: - VoteCampaignCollectionViewController
+
 "proposal_header" = "Vorschläge";
 "recent_campaign_header" = "Aktuelle Kampagnen:";
 "votes_header" = "Votes";
 "recent_votes_header" = "Aktuelle Abstimmungen:";
+"proposalIntroDescription" = "Nehme aktiv an der Gestaltung teil:\n\nHast du eine Idee wie man das Netzwerk verbessern oder unsere Ziele erreichen kann, teile sie uns hier mit.\n\nSieh dir zudem die Vorschläge von Anderen an und stimme ab, was umgesetzt werden soll.";
+"proposalButtonText" = "Teile deine Idee";
 
 //Ordner CommunityViewController bis VisionVCs geskipped
 
@@ -577,9 +580,10 @@
 "bug_report_header" = "Danke für deine Unterstützung, wo hakt's?";
 "bug_report_description" = "Erkläre uns bitte mit deinen Worten kurz, wo es ein Problem gibt. Wir versuchen uns so schnell es geht darum zu kümmern.   Danke für deine Zeit!";
 
-//CampaignVCs
+
+// MARK: - CampaignVCs
+
 "campaignVC_title" = "Vorschläge";
-"campaignVC_description" = "Treffen wir die Entscheidungen gemeinsam! Stelle deine Ideen vor und entscheide über die Vorschläge von anderen.";
 "campaignVC_shareButton" = "Teile deine Idee";
 "campaignVC_segment_proposal" = "Vorschläge";
 "campaignVC_segment_open_proposal" = "Offen";
