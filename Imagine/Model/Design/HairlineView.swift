@@ -9,8 +9,20 @@
 import UIKit
 
 class HairlineView: UIView {
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    
+    init(backgroundColor: UIColor = .systemBackground) {
+        super.init(frame: .zero)
+        
+        self.backgroundColor = backgroundColor
+        setupConstraints()
+    }
+        
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    
+    func setupConstraints() {
 
         for constraint in self.constraints {
             if let _ = constraint.firstItem as? HairlineView,
@@ -22,6 +34,12 @@ class HairlineView: UIView {
                 return
             }
         }
+    }
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        setupConstraints()
     }
 }
 

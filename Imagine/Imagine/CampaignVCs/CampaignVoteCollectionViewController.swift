@@ -203,11 +203,10 @@ extension CampaignVoteCollectionViewController: UICollectionViewDelegate, UIColl
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let campaign = (mode == .campaign) ? campaigns[indexPath.item] : doneCampaigns[indexPath.item]
                 
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        if let vc = storyboard.instantiateViewController(withIdentifier: "campaignVC") as? CampaignViewController {
-            vc.campaign = campaign
-            navigationController?.pushViewController(vc, animated: true)
-        }
+        let vc = CampaignViewController()
+        vc.campaign = campaign
+        
+        navigationController?.pushViewController(vc, animated: true)
         
         collectionView.deselectItem(at: indexPath, animated: true)
     }

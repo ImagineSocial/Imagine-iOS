@@ -10,7 +10,7 @@ import UIKit
 
 class BaseButtonWithImage: DesignableButton {
     
-    init(image: UIImage?, tintColor: UIColor = .imagineColor, cornerRadius: CGFloat = 0, borderColor: CGColor?) {
+    init(image: UIImage?, tintColor: UIColor = .imagineColor, cornerRadius: CGFloat = 0, borderColor: CGColor? = nil) {
         super.init()
         
         self.translatesAutoresizingMaskIntoConstraints = false

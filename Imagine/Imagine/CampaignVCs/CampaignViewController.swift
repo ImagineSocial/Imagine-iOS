@@ -14,19 +14,29 @@ import EasyTipView
 
 class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
-    //MARK: - IBOutlets
+    //MARK: - Elements
     
-    @IBOutlet weak var shortBodyLabel: UILabel!
-    @IBOutlet weak var longBodyLabel: UILabel!
-    @IBOutlet weak var createDateLabel: UILabel!
-    @IBOutlet weak var supporterLabel: UILabel!
-    @IBOutlet weak var oppositionLabel: UILabel!
-    @IBOutlet weak var supportButton: DesignableButton!
-    @IBOutlet weak var oppositionButton: DesignableButton!
-    @IBOutlet weak var infoButton: UIBarButtonItem!
-    @IBOutlet weak var commentTableView: CommentTableView!
-    @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var contentView: UIView!
+    let containerView = BaseView()
+    let spaceView = BaseView()
+    let separatorView = HairlineView(backgroundColor: .secondaryLabel)
+    
+    let titleLabel = BaseTextLabel(font: UIFont.getStandardFont(with: .semibold, size: 20))
+    let summaryLabel = BaseTextLabel(font: UIFont.getStandardFont(with: .medium, size: 16))
+    let descriptionLabel = BaseTextLabel(font: UIFont.getStandardFont(with: .regular, size: 14))
+    let campaignDateLabel = BaseLabel(font: UIFont.getStandardFont(with: .medium, size: 12), textAlignment: .right)
+    let campaignTypeLabel = BaseLabel(font: UIFont.getStandardFont(with: .medium, size: 12))
+    let supporterLabel = BaseLabel()
+    let oppositionLabel = BaseLabel()
+    let supportButton = BaseButtonWithText(text: "Support", titleColor: Constants.green, font: UIFont.getStandardFont(with: .medium, size: 14), cornerRadius: Constants.cellCornerRadius, borderColor: Constants.green.cgColor)
+    let oppositionButton = BaseButtonWithText(text: "Veto", titleColor: Constants.red, font: UIFont.getStandardFont(with: .medium, size: 14), cornerRadius: Constants.cellCornerRadius, borderColor: Constants.red.cgColor)
+    let commentTableView = CommentTableView(frame: .zero)
+    
+    lazy var infoStackView = BaseStackView(subviews: [campaignTypeLabel, UIView(), campaignDateLabel], axis: .horizontal)
+    lazy var buttonStackView = BaseStackView(subviews: [supportButton, oppositionButton, UIView()], spacing: 10, axis: .horizontal)
+    
+    let scrollView = BaseScrollView()
+    
+    let infoButton = BaseButtonWithImage(image: UIImage(named: "idea"))
     
     //MARK: - Variables
     
@@ -55,12 +65,16 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         }
     }
     
-    //MARK:- View Lifecycle
+    //MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        setupConstraints()
         showCampaign()
         
+        navigationController?.navigationBar.backgroundColor = .systemBackground
+        navigationController?.navigationBar.prefersLargeTitles = false
+                
         let scrollViewTap = UITapGestureRecognizer(target: self, action: #selector(scrollViewTapped))
         scrollViewTap.cancelsTouchesInView = false  // Otherwise the tap on the TableViews are not recognized
         scrollView.addGestureRecognizer(scrollViewTap)
@@ -73,6 +87,38 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         DispatchQueue.main.async {
             self.createFloatingCommentView()
         }
+    }
+    
+    func setupConstraints() {
+        view.addSubview(scrollView)
+        scrollView.addSubview(containerView)
+        
+        containerView.addSubview(titleLabel)
+        containerView.addSubview(infoStackView)
+        containerView.addSubview(separatorView)
+        containerView.addSubview(summaryLabel)
+        containerView.addSubview(descriptionLabel)
+        containerView.addSubview(buttonStackView)
+        containerView.addSubview(commentTableView)
+        containerView.addSubview(spaceView)
+        
+        scrollView.fillSuperview()
+        containerView.fillSuperview()
+        scrollView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+        containerView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
+        containerView.heightAnchor.constraint(equalTo: scrollView.heightAnchor).isActive = true
+        
+        
+        titleLabel.constrain(top: containerView.topAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, paddingTop: Constants.Padding.standard, paddingLeading: Constants.Padding.standard, paddingTrailing: -Constants.Padding.standard)
+        infoStackView.constrain(top: titleLabel.bottomAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, paddingTop: Constants.Padding.standard, paddingLeading: Constants.Padding.standard, paddingTrailing: -Constants.Padding.standard)
+        separatorView.constrain(top: infoStackView.bottomAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, paddingTop: Constants.Padding.standard, height: 1)
+        summaryLabel.constrain(top: separatorView.bottomAnchor, leading: titleLabel.leadingAnchor, trailing: titleLabel.trailingAnchor, paddingTop: Constants.Padding.large)
+        descriptionLabel.constrain(top: summaryLabel.bottomAnchor, leading: titleLabel.leadingAnchor, trailing: titleLabel.trailingAnchor, paddingTop: Constants.Padding.small)
+        buttonStackView.constrain(top: descriptionLabel.bottomAnchor, leading: titleLabel.leadingAnchor, trailing: titleLabel.trailingAnchor, paddingTop: Constants.Padding.large)
+        commentTableView.constrain(top: buttonStackView.bottomAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, paddingTop: Constants.Padding.standard)
+        spaceView.constrain(top: commentTableView.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: containerView.bottomAnchor, trailing: titleLabel.trailingAnchor, paddingTop: Constants.Padding.small, paddingBottom: -Constants.Numbers.commentViewHeight * 2)
+        
+        spaceView.setContentHuggingPriority(UILayoutPriority.defaultLow, for: .vertical)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -89,6 +135,8 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         if let commentView = floatingCommentView {
             commentView.removeKeyboardObserver()
         }
+        
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -104,39 +152,38 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     func createFloatingCommentView() {
-        let viewHeight = self.view.frame.height
+        let viewHeight = self.view.safeAreaLayoutGuide.layoutFrame.height
         
         if floatingCommentView == nil {
-            let commentViewHeight: CGFloat = 60
-            floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: viewHeight-commentViewHeight, width: self.view.frame.width, height: commentViewHeight))
+            floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: viewHeight-Constants.Numbers.commentViewHeight, width: self.view.frame.width, height: Constants.Numbers.commentViewHeight))
             
             
             floatingCommentView!.delegate = self
-            self.contentView.addSubview(floatingCommentView!)
+            self.containerView.addSubview(floatingCommentView!)
             
-            floatingCommentView!.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
-            floatingCommentView!.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
-            let bottomConstraint = floatingCommentView!.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor)
+            floatingCommentView!.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor).isActive = true
+            floatingCommentView!.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor).isActive = true
+            let bottomConstraint = floatingCommentView!.bottomAnchor.constraint(equalTo: self.containerView.bottomAnchor)
                 bottomConstraint.isActive = true
             floatingCommentView!.bottomConstraint = bottomConstraint
             floatingCommentView!.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
             floatingCommentView!.addKeyboardObserver()
             
-            self.contentView.bringSubviewToFront(floatingCommentView!)
+            self.containerView.bringSubviewToFront(floatingCommentView!)
         }
     }
     
     
     func showCampaign() {
-        guard let campaign = campaign else {
-            return
-        }
-        shortBodyLabel.text = campaign.cellText
-        longBodyLabel.text = campaign.descriptionText
-        createDateLabel.text = campaign.createDate
+        guard let campaign = campaign else { return }
+        
+        titleLabel.text = campaign.title
+        summaryLabel.text = campaign.cellText
+        descriptionLabel.text = campaign.descriptionText
+        campaignDateLabel.text = campaign.createDate
+        campaignTypeLabel.text = campaign.category?.title
         supporterLabel.text = "\(campaign.supporter) Supporter"
         oppositionLabel.text = "\(campaign.opposition) Vetos"
-        navigationItem.title = campaign.title
         
         commentTableView.proposal = campaign
     }
@@ -293,17 +340,12 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         }
     }
     
-    @IBAction func reportPressed(_ sender: Any) {
-    }
-    
-    
-    
-    @IBAction func infoButtonTapped(_ sender: Any) {
+    @objc func infoButtonTapped(_ sender: Any) {
         if let tipView = tipView {
             tipView.dismiss()
         } else {
             tipView = EasyTipView(text: Constants.texts.campaignDetailText)
-            tipView!.show(forItem: infoButton)
+            // tipView!.show(forItem: infoButton)
         }
     }
     

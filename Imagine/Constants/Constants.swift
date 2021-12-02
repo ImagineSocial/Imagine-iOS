@@ -23,7 +23,9 @@ struct Constants {
     static let defaultImage = UIImage(named: "default")
     
     struct Padding {
+        static let large: CGFloat = 30
         static let standard: CGFloat = 18
+        static let small: CGFloat = 10
         static let innerCell: CGFloat = 10
     }
     
@@ -47,6 +49,9 @@ struct Constants {
         
         //multiPictureCell
         static let panoramaCollectionViewHeight: CGFloat = 400
+        
+        // CommentView
+        static let commentViewHeight: CGFloat = 60
     }
     
     struct characterLimits {

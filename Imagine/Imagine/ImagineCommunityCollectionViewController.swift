@@ -57,6 +57,17 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         gesture.minimumPressDuration = 3
         self.view.addGestureRecognizer(gesture)
         
+        setupCollectionView()
+        getData()
+    }
+    
+    func reloadViewForLayoutReason() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.collectionView.reloadData()
+        }
+    }
+    
+    private func setupCollectionView() {
         // Register cell classes
         collectionView.register(ImagineCommunityNavigationCell.self, forCellWithReuseIdentifier: ImagineCommunityNavigationCell.identifier)
         collectionView.register(UINib(nibName: "DataReportCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: dataReportCellIdentifier)
@@ -70,14 +81,6 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         layout.headerReferenceSize = CGSize(width: self.collectionView.frame.size.width, height: 85)
         layout.minimumLineSpacing = 20
         collectionView.collectionViewLayout = layout
-        
-        getData()
-    }
-    
-    func reloadViewForLayoutReason() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.collectionView.reloadData()
-        }
     }
     
     //MARK: - Get Data
@@ -270,7 +273,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         
         switch section {
         case .campaign:
-            var campaign: Campaign!
+            var campaign: Campaign
             
             if let sortedCampaigns = sortedCampaigns {
                 campaign = sortedCampaigns[indexPath.item]
@@ -278,7 +281,10 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 campaign = campaigns[indexPath.item]
             }
             
-            performSegue(withIdentifier: "toCampaignSegue", sender: campaign)
+            let vc = CampaignViewController()
+            vc.hidesBottomBarWhenPushed = true
+            vc.campaign = campaign
+            navigationController?.pushViewController(vc, animated: true)
         case .finished:
             let item = finishedWorkItems[indexPath.item]
             
@@ -334,16 +340,6 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
             if let visionVC = segue.destination as? SwipeCollectionViewController {
                 visionVC.diashow = .vision
                 visionVC.communityVC = self
-            }
-        }
-        
-        if segue.identifier == "toCampaignSegue" {
-            if let campaignVC = segue.destination as? CampaignViewController {
-                if let campaign = sender as? Campaign {
-                    campaignVC.campaign = campaign
-                } else if let campaignID = sender as? String {
-                    campaignVC.campaignID = campaignID
-                }
             }
         }
         
@@ -487,6 +483,8 @@ extension ImagineCommunityCollectionViewController: ImagineCommunityHeaderDelega
 extension ImagineCommunityCollectionViewController: FinishedWorkCellDelegate {
     
     func showCampaignTapped(campaignID: String) {
-        performSegue(withIdentifier: "toCampaignSegue", sender: campaignID)
+        let vc = CampaignViewController()
+        vc.campaignID = campaignID
+        navigationController?.pushViewController(vc, animated: true)
     }
 }

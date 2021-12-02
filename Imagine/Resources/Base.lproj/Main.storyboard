@@ -7717,10 +7717,10 @@
             </objects>
             <point key="canvasLocation" x="-5158" y="1586"/>
         </scene>
-        <!--Campaign View Controller-->
+        <!--View Controller-->
         <scene sceneID="mqR-6M-I67">
             <objects>
-                <viewController storyboardIdentifier="campaignVC" hidesBottomBarWhenPushed="YES" id="xsq-BU-Pto" customClass="CampaignViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="campaignVC" hidesBottomBarWhenPushed="YES" id="xsq-BU-Pto" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="MZZ-OS-v9Y">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -8339,7 +8339,7 @@
         <image name="folder" width="700" height="589"/>
         <image name="gallery" width="30" height="30"/>
         <image name="haButton" width="100" height="100"/>
-        <image name="idea" width="30" height="30"/>
+        <image name="idea" width="42.666667938232422" height="42.666667938232422"/>
         <image name="imagineFundImage" width="850" height="3837"/>
         <image name="layers" width="30" height="30"/>
         <image name="location" catalog="system" width="128" height="118"/>
