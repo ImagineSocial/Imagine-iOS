@@ -40,16 +40,16 @@ extension CommunityCollectionVC {
             if isLoading {
                 return 8
             } else {
-                if topicFacts.count <= 8 {
-                    return topicFacts.count
+                if topicCommunities.count <= 8 {
+                    return topicCommunities.count
                 } else {
                     return 8
                 }
             }
         } else if section == 2 {
-            return discussionFacts.count
+            return discussionCommunities.count
         } else {
-            return followedFacts.count
+            return followedCommunities.count
         }
     }
 
@@ -72,12 +72,12 @@ extension CommunityCollectionVC {
                     return cell
                 }
             } else {
-                fact = topicFacts[indexPath.row]
+                fact = topicCommunities[indexPath.row]
             }
         } else if  indexPath.section == 2 {
-            fact = discussionFacts[indexPath.row]
+            fact = discussionCommunities[indexPath.row]
         } else {
-            fact = followedFacts[indexPath.row]
+            fact = followedCommunities[indexPath.row]
         }
         
         if let fact = fact {
@@ -144,11 +144,11 @@ extension CommunityCollectionVC {
         if indexPath.section == 0 {
             
         } else if indexPath.section == 1 {
-            fact = topicFacts[indexPath.row]
+            fact = topicCommunities[indexPath.row]
         } else if indexPath.section == 2 {
-            fact = discussionFacts[indexPath.row]
+            fact = discussionCommunities[indexPath.row]
         } else {
-            fact = followedFacts[indexPath.row]
+            fact = followedCommunities[indexPath.row]
         }
         
         if let fact = fact {

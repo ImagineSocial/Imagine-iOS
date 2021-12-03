@@ -122,16 +122,15 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     }
     
     func showInfoView() {
-        let upperHeight = UIApplication.shared.statusBarFrame.height +
-              self.navigationController!.navigationBar.frame.height
-        let height = upperHeight+40
+        let height = topbarHeight + 40
         
         let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
         let popUpView = PopUpInfoView(frame: frame)
         popUpView.alpha = 0
         popUpView.type = .userFeed
         
-        if let window = UIApplication.shared.keyWindow {
+        
+        if let window = UIApplication.keyWindow() {
             window.addSubview(popUpView)
         }
         

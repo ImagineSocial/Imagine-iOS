@@ -18,11 +18,11 @@ import EasyTipView
 
 class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCenterDelegate {
     
-    //MARK:- IBOutlets
+    //MARK: - IBOutlets
     @IBOutlet weak var sortPostsButton: DesignableButton!
     @IBOutlet weak var viewAboveTableView: UIView!
         
-    //MARK:- Variables
+    //MARK: - Variables
     var screenEdgeRecognizer: UIScreenEdgePanGestureRecognizer!
     var statusBarView: UIView?
     
@@ -38,11 +38,11 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     
     let defaults = UserDefaults.standard
     
-    //MARK:- View Lifecycle
+    //MARK: - View Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //Set up the preferences for the info views used in the whole project
         setUpEasyTipViewPreferences()
         
         // Initiliaze ScreenEdgePanRecognizer to open sideMenu
@@ -54,9 +54,8 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         // Initialize the logIn or profilePicture Button
         loadBarButtonItem()
         
-        // If logged in get notifications and listen for new ones
         setNotificationListener()
-        // Show empty cells while fetching the posts
+        
         setPlaceholderAndGetPosts()
         
         // Show intro slides for different features in the app
@@ -65,12 +64,8 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         }
 
         // Link the delegate to switch to this view again and reload if somebody posts something
-        if let viewControllers = self.tabBarController?.viewControllers {
-            if let navVC = viewControllers[2] as? UINavigationController {
-                if let newVC = navVC.topViewController as? NewPostViewController {
-                    newVC.delegate = self
-                }
-            }
+        if let viewControllers = self.tabBarController?.viewControllers, let navVC = viewControllers[2] as? UINavigationController, let newVC = navVC.topViewController as? NewPostViewController {
+            newVC.delegate = self
         }
     }
     
@@ -85,6 +80,20 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     
     override func viewWillAppear(_ animated: Bool) {
         
+        setupNavigationbar()
+        
+        DispatchQueue.main.async {
+            self.checkForLoggedInUser()
+        }
+    }
+    
+    override func didReceiveMemoryWarning() {
+        print("Memory Pressure triggered")
+        SDImageCache.shared.clearMemory()
+        
+    }
+    
+    private func setupNavigationbar() {
         self.navigationController?.hidesBarsOnSwipe = true
         
         let navBarAppearance = UINavigationBarAppearance()
@@ -109,19 +118,9 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             statusBarView = view
             window.addSubview(statusBarView!)
         }
-        DispatchQueue.main.async {
-            self.checkForLoggedInUser()
-        }
     }
     
-    
-    override func didReceiveMemoryWarning() {
-        print("Memory Pressure triggered")
-        SDImageCache.shared.clearMemory()
-        
-    }
-    
-    //MARK:- Get Data
+    //MARK: - Get Data
     
     @objc override func getPosts(getMore:Bool) {
         /*
@@ -197,8 +196,9 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     }
     
     //MARK: Present Data
+    
+    /// Show empty cells while fetching the posts
     func setPlaceholderAndGetPosts() {
-        // Show empty cells while fetching the posts
         var index = 0
         
         let post = Post()
@@ -683,10 +683,11 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         }
     }
     
+    /// If logged in get notifications and listen for new ones
     func setNotificationListener() {
-        // If logged in get notifications and listen for new ones
         if let _ = notificationListener {
             print("Listener already Set")
+            return
         } else {
             print("Set listener")
             if let user = Auth.auth().currentUser {
@@ -867,16 +868,14 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     
     func showInfoView() {
         //Show Info View that shows what the like buttons mean and stuff like this
-        let upperHeight = UIApplication.shared.statusBarFrame.height +
-              self.navigationController!.navigationBar.frame.height
-        let height = upperHeight+40
+        let height = topbarHeight + 40
         
         let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
         let popUpView = PopUpInfoView(frame: frame)
         popUpView.alpha = 0
         popUpView.type = .likes
         
-        if let window = UIApplication.shared.keyWindow {
+        if let window = UIApplication.keyWindow() {
             window.addSubview(popUpView)
         }
         
@@ -946,6 +945,8 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     }
     
     // MARK: EasyTipViewPreferences
+    
+    /// Set up the preferences for the info views used in the whole project
     func setUpEasyTipViewPreferences() {
         var preferences = EasyTipView.Preferences()
         preferences.drawing.font = UIFont(name: "IBMPlexSans", size: 18)!

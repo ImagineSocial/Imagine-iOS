@@ -34,12 +34,10 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
     
     @IBOutlet weak var infoButton: UIBarButtonItem!
     
-    var topicFacts = [Community]()
-    var discussionFacts = [Community]()
-    var followedFacts = [Community]()
-    
-//    var displayOption: FactCollectionDisplayOption = .all
-    
+    var topicCommunities = [Community]()
+    var discussionCommunities = [Community]()
+    var followedCommunities = [Community]()
+        
     let db = Firestore.firestore()
     let dataHelper = DataRequest()
     
@@ -51,7 +49,7 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
     
     var tipView: EasyTipView?
     
-    let collectionViewSpacing:CGFloat = 24
+    let collectionViewSpacing: CGFloat = 24
     
     let recentTopicsCellIdentifier = "RecentTopicsCollectionCell"
     let discussionCellIdentifier = "DiscussionCell"
@@ -67,8 +65,6 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        getFacts()
-        
         if addFactToPost == .newPost {
             self.setDismissButton()
         }
@@ -78,11 +74,12 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
         self.navigationController?.navigationBar.shadowImage = UIImage()
         
         self.view.activityStartAnimating()
+        
+        fetchCommunities()
     }
     
     
     override func viewWillAppear(_ animated: Bool) {
-        //FML
         if let _ = addFactToPost {  // TO show the search bar when you want to select a topic
             navigationItem.hidesSearchBarWhenScrolling = false
         }
@@ -128,12 +125,22 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
     }
 
    
-    func getFacts() {
-        dataHelper.getData(get: .communities) { (facts) in    // gets the first 8 topic communities by popularity
-
-            if let facts = facts as? [Community] {
-                self.topicFacts = facts
-                self.collectionView.reloadData()    //The user thinks it is loaded
+    func fetchCommunities() {
+        DispatchQueue.global(qos: .background).async {
+            self.dataHelper.getData(get: .communities) { communities in    // gets the first 8 topic communities by popularity
+                
+                guard let communities = communities as? [Community] else {
+                    
+                    self.view.activityStopAnimating()
+                    print("Something went wrong")
+                    return
+                }
+                
+                
+                DispatchQueue.main.async {
+                    self.topicCommunities = communities
+                    self.collectionView.reloadData()    //The user thinks it is loaded
+                }
                 
                 var collectionRef: CollectionReference!
                 let language = LanguageSelection().getLanguage()
@@ -152,7 +159,7 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
                     } else {
                         if let snap = snap {
                             var discussionCount = snap.documents.count
-
+                            
                             if snap.documents.count == 0 {
                                 self.loadingFinished()
                             }
@@ -160,13 +167,13 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
                             for document in snap.documents {
                                 let data = document.data()
                                 
-                                if let fact = CommunityHelper().getCommunity(currentUser: user, documentID: document.documentID, data: data) {
-                                    self.discussionFacts.append(fact)
+                                if let community = CommunityHelper().getCommunity(currentUser: user, documentID: document.documentID, data: data) {
+                                    self.discussionCommunities.append(community)
                                 } else {
                                     discussionCount-=1
                                 }
                                 
-                                if self.discussionFacts.count == discussionCount {
+                                if self.discussionCommunities.count == discussionCount {
                                     
                                     self.loadingFinished()
                                 }
@@ -176,19 +183,17 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
                         }
                     }
                 }
-                
-            } else {
-                self.view.activityStopAnimating()
-                print("Something went wrong")
-            } 
+            }
         }
     }
     
     func loadingFinished() {
-        self.collectionView.reloadData()
-        self.getFollowedCommunities()
-        self.isLoading = false
-        self.view.activityStopAnimating()
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+            self.getFollowedCommunities()
+            self.isLoading = false
+            self.view.activityStopAnimating()
+        }
     }
     
     func getFollowedCommunities() {
@@ -199,14 +204,14 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
                     self.addFact(user: user, document: document) { (fact) in
                         if let fact = fact {
                             fact.beingFollowed = true
-                            self.followedFacts.append(fact)
-                            self.followedFacts.sort {
+                            self.followedCommunities.append(fact)
+                            self.followedCommunities.sort {
                                 $0.title.localizedCompare($1.title) == .orderedAscending //Not case sensitive
                             }
                         } else {
                             topicCount-=1
                         }
-                        if self.followedFacts.count == topicCount {
+                        if self.followedCommunities.count == topicCount {
                             self.collectionView.reloadData()
                         }
                     }

@@ -53,10 +53,16 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         print("## Deinit addOnCollection")
     }
     
-    //MARK:- View Lifecycle
+    //MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
+       setupCollectionView()
+    }
+    
+    //MARK: - Get Data
+    
+    private func setupCollectionView() {
         // Register cell classes
         self.collectionView!.register(UINib(nibName: "AddOnHorizontalScrollCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: horizontalScrollCellIdentifier)
         self.collectionView.register(UINib(nibName: "AddOnSingleCommunityCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: singleCommunityCellIdentifier)
@@ -76,7 +82,6 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
     }
     
-    //MARK:- Get Data
     func getData(fact: Community) {
         
         var collectionRef: CollectionReference!
@@ -218,7 +223,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         self.getData(fact: self.fact!)
     }
     
-    //MARK:- Navigation
+    //MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toAddOnFeedVCSegue" {

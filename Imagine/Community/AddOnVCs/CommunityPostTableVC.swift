@@ -79,7 +79,7 @@ class CommunityPostTableVC: BaseFeedTableViewController {
                 
                 self.view.activityStartAnimating()
                 
-                DispatchQueue.global(qos: .default).async {
+                DispatchQueue.global(qos: .background).async {
                     self.firestoreRequest.getPostsForCommunity(getMore: getMore, community: community) { (posts, initialFetch) in
                         if let posts = posts {
                             if initialFetch {   // Get the first batch of posts
@@ -283,7 +283,7 @@ class CommunityPostTableVC: BaseFeedTableViewController {
             if let fact = sender as? Community {
                 if let navCon = segue.destination as? UINavigationController {
                     if let factVC = navCon.topViewController as? DiscussionParentVC {
-                        factVC.fact = fact
+                        factVC.community = fact
                         factVC.needNavigationController = true
                     }
                 }

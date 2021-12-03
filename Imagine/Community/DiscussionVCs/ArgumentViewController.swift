@@ -37,7 +37,7 @@ class ArgumentViewController: UIViewController, ReachabilityObserverDelegate {
     var floatingCommentView: CommentAnswerView?
     
     var argument: Argument?
-    var fact: Community?
+    var community: Community?
     
     let db = Firestore.firestore()
     var tipView: EasyTipView?
@@ -108,20 +108,18 @@ class ArgumentViewController: UIViewController, ReachabilityObserverDelegate {
     }
     
     func setDataUp() {
-        guard let argument = argument,
-        let fact = fact
-            else { return }
+        guard let argument = argument, let community = community else { return }
         
         upvoteCountLabel.text = String(argument.upvotes)
         downvoteCountLabel.text = String(argument.downvotes)
         titleLabel.text = argument.title
         descriptionLabel.text = argument.description
         
-        if let url = URL(string: fact.imageURL) {
+        if let url = URL(string: community.imageURL) {
             headerImageView.sd_setImage(with: url, completed: nil)
         }
-        headerTopicLabel.text = fact.title
-        if let names = fact.factDisplayNames {
+        headerTopicLabel.text = community.title
+        if let names = community.factDisplayNames {
             self.headerProContraLabel.text = getDisplayString(displayNames: names, proOrContra: argument.proOrContra)
         }
     }
@@ -165,14 +163,14 @@ class ArgumentViewController: UIViewController, ReachabilityObserverDelegate {
     
     func voted(kindOfVote: vote) {
         if isConnected() {
-            if let argument = argument, let fact = fact {
+            if let argument = argument, let community = community {
                 var collectionRef: CollectionReference!
-                if fact.language == .english {
+                if community.language == .english {
                     collectionRef = db.collection("Data").document("en").collection("topics")
                 } else {
                     collectionRef = db.collection("Facts")
                 }
-                let ref = collectionRef.document(fact.documentID).collection("arguments").document(argument.documentID)
+                let ref = collectionRef.document(community.documentID).collection("arguments").document(argument.documentID)
                 
                 var voteString = ""
                 var voteCount = 0
@@ -215,13 +213,13 @@ class ArgumentViewController: UIViewController, ReachabilityObserverDelegate {
         if segue.identifier == "toSourceTableView" {
             if let vc = segue.destination as? ArgumentSourceTableVC {
                 vc.argument = self.argument
-                vc.fact = self.fact
+                vc.fact = self.community
             }
         }
         if segue.identifier == "toArgumentTableView" {
             if let argumentVC = segue.destination as? ArgumentTableVC {
                 argumentVC.argument = self.argument
-                argumentVC.fact = self.fact
+                argumentVC.fact = self.community
             }
         }
         if segue.identifier == "toUserSegue" {

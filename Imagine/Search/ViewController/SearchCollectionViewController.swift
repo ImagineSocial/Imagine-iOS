@@ -62,8 +62,6 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
         
         // I think it is unnecessary to set the searchResultsUpdater and searchcontroller Delegate here, but I couldnt work out an alone standing SearchViewController
         
-        //       searchTableVC.customDelegate = self
-        
         // Setup the Search Controller
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
@@ -83,7 +81,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
     
     
     func getCommunityPosts() {
-        DispatchQueue.global(qos: .default).async {
+        DispatchQueue.global(qos: .background).async {
             
             var collectionRef: CollectionReference!
             let language = LanguageSelection().getLanguage()

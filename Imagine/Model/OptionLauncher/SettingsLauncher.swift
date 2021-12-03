@@ -87,7 +87,7 @@ class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDe
         //show menu
         self.friend = friend
         
-        if let window = UIApplication.shared.keyWindow {
+        if let window = UIApplication.keyWindow() {
             
             blackView.backgroundColor = UIColor(white: 0, alpha: 0.5)
             
@@ -122,7 +122,7 @@ class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDe
         UIView.animate(withDuration: 0.5, animations: {
             self.blackView.alpha = 0
             
-            if let window = UIApplication.shared.keyWindow {
+            if let window = UIApplication.keyWindow() {
                 self.collectionView.frame = CGRect(x: 10, y: window.frame.height, width: self.collectionView.frame.width, height: self.collectionView.frame.height)
             }
         }, completion: { (_) in

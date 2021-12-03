@@ -121,7 +121,7 @@ extension UIView {
         dismissButton.topAnchor.constraint(equalTo: infoView.topAnchor, constant: 5).isActive = true
         
         
-        if let window = UIApplication.shared.keyWindow {
+        if let window = UIApplication.keyWindow() {
             window.addSubview(infoView)
             infoView.leadingAnchor.constraint(equalTo: window.leadingAnchor, constant: 10).isActive = true
             infoView.trailingAnchor.constraint(equalTo: window.trailingAnchor, constant: -10).isActive = true
@@ -143,7 +143,7 @@ extension UIView {
     
     @objc func removeNoConncectionView() {
         
-        if let window = UIApplication.shared.keyWindow {
+        if let window = UIApplication.keyWindow() {
             if let infoView = window.viewWithTag(2580){
                 UIView.animate(withDuration: 0.5, animations: {
                     infoView.alpha = 0

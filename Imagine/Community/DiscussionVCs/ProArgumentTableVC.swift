@@ -14,7 +14,7 @@ import FirebaseAuth
 class ProArgumentTableVC: UITableViewController {
 
     var argumentList = [Argument]()
-    var fact: Community?
+    var community: Community?
     var downVotes = 80
     var upvotes = 150
     
@@ -81,7 +81,7 @@ class ProArgumentTableVC: UITableViewController {
         
         if argument.addMoreData {
             if let _ = Auth.auth().currentUser {
-                performSegue(withIdentifier: "toNewArgumentSegue", sender: fact)
+                performSegue(withIdentifier: "toNewArgumentSegue", sender: community)
             } else {
                 self.notLoggedInAlert()
             }
@@ -95,7 +95,7 @@ class ProArgumentTableVC: UITableViewController {
         if segue.identifier == "toNewArgumentSegue" {
             if let nav = segue.destination as? UINavigationController {
                 if let vc = nav.topViewController as? NewCommunityItemTableVC {
-                    vc.fact = self.fact
+                    vc.fact = self.community
                     vc.new = .argument
                     vc.proOrContra = .pro
                     vc.delegate = self
@@ -106,7 +106,7 @@ class ProArgumentTableVC: UITableViewController {
             if segue.identifier == "toDetailFactSegue" {
                 if let chosenArgument = sender as? Argument {
                     vc.argument = chosenArgument
-                    vc.fact = self.fact
+                    vc.community = self.community
                 }
             }
         }

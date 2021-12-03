@@ -60,35 +60,39 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
     func setAddOn() {
         guard let info = addOn else { return }
         
-        for item in info.items {
-            if let post = item.item as? Post {
-                post.language = info.fact.language
-                self.addOnPosts.append(post)
+        DispatchQueue.global(qos: .background).async {
+            for item in info.items {
+                if let post = item.item as? Post {
+                    post.language = info.fact.language
+                    self.addOnPosts.append(post)
+                }
             }
-        }
-        
-        firestoreRequest.getPostsFromDocumentIDs(posts: self.addOnPosts) { (posts) in
-            if let posts = posts {
-                if let orderList = info.itemOrder { // If an itemOrder exists (set in addOn-settings), order according to it
-                    
-                    DispatchQueue.global(qos: .default).async {
-                        let sorted = posts.compactMap { obj in
-                            orderList.index(of: obj.documentID).map { idx in (obj, idx) }
-                        }.sorted(by: { $0.1 < $1.1 } ).map { $0.0 }
+            
+            self.firestoreRequest.getPostsFromDocumentIDs(posts: self.addOnPosts) { posts in
+                if let posts = posts {
+                    if let orderList = info.itemOrder { // If an itemOrder exists (set in addOn-settings), order according to it
                         
-                        self.posts = sorted
+                        DispatchQueue.global(qos: .default).async {
+                            let sorted = posts.compactMap { object in
+                                orderList.index(of: object.documentID).map { index in (object, index) }
+                            }.sorted(by: { $0.1 < $1.1 } ).map { $0.0 }
+                            
+                            self.posts = sorted
+                            
+                            DispatchQueue.main.async {
+                                self.tableView.reloadData()
+                            }
+                        }
+                    } else {
+                        
+                        let sortedPosts = posts.sorted(by: { $0.createDate ?? Date() > $1.createDate ?? Date() })
+                        self.posts = sortedPosts
                         
                         DispatchQueue.main.async {
                             self.tableView.reloadData()
                         }
                     }
-                } else {
-                    
-                    let sortedPosts = posts.sorted(by: { $0.createDate ?? Date() > $1.createDate ?? Date() })
-                    self.posts = sortedPosts
-                    self.tableView.reloadData()
                 }
-                //BaseFeedTableViewController cellForRow wird nicht gecalled
             }
         }
     }

@@ -25,7 +25,7 @@ class DiscussionParentVC: UIViewController {
     
     @IBOutlet weak var infoButton: UIButton!
     
-    var fact:Community?
+    var community: Community?
     var proArgumentList = [Argument]()
     var contraArgumentList = [Argument]()
     var needNavigationController = false
@@ -45,8 +45,8 @@ class DiscussionParentVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let topic = fact {
-            self.getArguments(topic: topic)
+        if let community = community {
+            self.getArguments(for: community)
         }
                 
         if needNavigationController {
@@ -78,9 +78,9 @@ class DiscussionParentVC: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
-    func getArguments(topic: Community) {
+    func getArguments(for community: Community) {
         
-        DataRequest().getDeepData(fact: topic) { (deepData) in // Fetch all Arguments for this fact
+        DataRequest().getDeepData(fact: community) { (deepData) in // Fetch all Arguments for this fact
             if let arguments = deepData as? [Argument] {
                 for argument in arguments {
                     if argument.proOrContra == "pro" {      // Sort the Arguments
@@ -101,22 +101,20 @@ class DiscussionParentVC: UIViewController {
         let nmbOfPro = proArgumentList.count-1
         let nmbOfCon = contraArgumentList.count-1
         
-        if let fact = fact {
-            if let names = fact.factDisplayNames {
-                switch names{
-                case .proContra:
-                    proArgumentLabel.text = NSLocalizedString("discussion_pro", comment: "pro")
-                    contraArgumentLabel.text = NSLocalizedString("discussion_contra", comment: "contra")
-                case .confirmDoubt:
-                    proArgumentLabel.text = NSLocalizedString("discussion_proof", comment: "proof")
-                    contraArgumentLabel.text = NSLocalizedString("discussion_doubt", comment: "doubt")
-                case .advantageDisadvantage:
-                    proArgumentLabel.text = NSLocalizedString("discussion_advantage", comment: "advantage")
-                    contraArgumentLabel.text = NSLocalizedString("discussion_disadvantage", comment: "disadvantage")
-                }
+        if let community = community, let names = community.factDisplayNames {
+            switch names{
+            case .proContra:
+                proArgumentLabel.text = NSLocalizedString("discussion_pro", comment: "pro")
+                contraArgumentLabel.text = NSLocalizedString("discussion_contra", comment: "contra")
+            case .confirmDoubt:
+                proArgumentLabel.text = NSLocalizedString("discussion_proof", comment: "proof")
+                contraArgumentLabel.text = NSLocalizedString("discussion_doubt", comment: "doubt")
+            case .advantageDisadvantage:
+                proArgumentLabel.text = NSLocalizedString("discussion_advantage", comment: "advantage")
+                contraArgumentLabel.text = NSLocalizedString("discussion_disadvantage", comment: "disadvantage")
             }
         }
-    
+        
         proArgumentCountLabel.text = "(\(nmbOfPro))"
         contraArgumentCountLabel.text = "(\(nmbOfCon))"
     }
@@ -136,13 +134,13 @@ class DiscussionParentVC: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? ProArgumentTableVC {
             if segue.identifier == "toProSegue" {
-                vc.fact = self.fact
+                vc.community = self.community
             }
         }
         
         if let contraVC = segue.destination as? ContraArgumentTableVC {
             if segue.identifier == "toContraSegue" {
-                contraVC.fact = self.fact
+                contraVC.community = self.community
             }
         }
         
@@ -180,8 +178,8 @@ class DiscussionParentVC: UIViewController {
     }
     
     @IBAction func toSettingsTapped(_ sender: Any) {
-        if let fact = fact {
-            performSegue(withIdentifier: "toSettingSegue", sender: fact)
+        if let community = community {
+            performSegue(withIdentifier: "toSettingSegue", sender: community)
         }
     }
 }

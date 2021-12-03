@@ -120,7 +120,7 @@ class PinchToZoomViewController: UIViewController, UIScrollViewDelegate {
         // Maybe different animation when you swipe to different directions
         
         UIView.animate(withDuration: 0.3, animations: {
-            if let theWindow = UIApplication.shared.keyWindow {
+            if let theWindow = UIApplication.keyWindow() {
                 gesture.view?.frame = CGRect(x:theWindow.frame.width - 15 , y: theWindow.frame.height - 15, width: 10 , height: 10)
             }
         }) { (completed) in

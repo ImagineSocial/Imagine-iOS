@@ -43,10 +43,6 @@ class CommunityPageVC: UIPageViewController {
     
     let defaults = UserDefaults.standard
     
-    deinit {
-        print("## Deinit community page")
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -58,6 +54,11 @@ class CommunityPageVC: UIPageViewController {
         setUpHeader()
         addViewController()
         setBarButton()
+        
+        setupHeaderView()
+    }
+    
+    private func setupHeaderView() {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.headerNeedsAdjustment = false
@@ -85,9 +86,7 @@ class CommunityPageVC: UIPageViewController {
     }
     
     func showInfoView() {
-        let upperHeight = UIApplication.shared.statusBarFrame.height +
-              self.navigationController!.navigationBar.frame.height
-        let height = upperHeight+40
+        let height = topbarHeight + 40
         
         let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
         let popUpView = PopUpInfoView(frame: frame)
@@ -245,7 +244,7 @@ class CommunityPageVC: UIPageViewController {
                 
                 print("Add Community parent#")
                 factParentVC.pageViewHeaderDelegate = self
-                factParentVC.fact = community
+                factParentVC.community = community
                 argumentVCs.append(factParentVC)
             }
         }

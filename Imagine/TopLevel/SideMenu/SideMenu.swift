@@ -60,7 +60,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         notificationTableView.delegate = self
         notificationTableView.dataSource = self
         
-        if let window = UIApplication.shared.keyWindow {
+        if let window = UIApplication.keyWindow() {
             
             window.addSubview(blackView)
             blackView.frame = window.frame
@@ -202,7 +202,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         UIView.animate(withDuration: 0.5, animations: {
             self.blackView.alpha = 0
             
-            if let window = UIApplication.shared.keyWindow {
+            if let window = UIApplication.keyWindow() {
                 self.sideMenuView.frame = CGRect(x: -window.frame.width, y: 0, width: self.sideMenuView.frame.width, height: self.sideMenuView.frame.height)
             }
         }, completion: { (_) in

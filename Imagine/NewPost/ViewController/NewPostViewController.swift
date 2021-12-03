@@ -360,7 +360,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         
         infoView!.addSubview(label)
         
-        if let window = UIApplication.shared.keyWindow {
+        if let window = UIApplication.keyWindow() {
             window.addSubview(infoView!)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -427,16 +427,14 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     //MARK: - Info Views
     
     func showNewPostInfoView() {
-        let upperHeight = UIApplication.shared.statusBarFrame.height +
-              self.navigationController!.navigationBar.frame.height
-        let height = upperHeight+40
+        let height = topbarHeight + 40
         
         let frame = CGRect(x: 20, y: 20, width: self.view.frame.width-40, height: self.view.frame.height-height)
         let popUpView = PopUpInfoView(frame: frame)
         popUpView.alpha = 0
         popUpView.type = .newPost
         
-        if let window = UIApplication.shared.keyWindow {
+        if let window = UIApplication.keyWindow() {
             window.addSubview(popUpView)
         }
         
@@ -501,7 +499,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     
     func showMemeMode() {
-        if let window = UIApplication.shared.keyWindow {
+        if let window = UIApplication.keyWindow() {
             let memeView: MemeInputView = MemeInputView.fromNib()
             memeView.delegate = self
             
