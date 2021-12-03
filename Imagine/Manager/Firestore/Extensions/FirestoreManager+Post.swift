@@ -365,12 +365,9 @@ class FirestoreRequest {
                                 returnPosts([post], self.initialFetch)
                             } else {
                                 
-                                let fetchedDocsCount = snap.documents.count
-                                self.alreadyFetchedCount = self.alreadyFetchedCount+fetchedDocsCount
-                                
                                 let fullCollectionRef = self.db.collection("Users").document(userUID).collection(postListReference)
-                                self.checkHowManyDocumentsThereAre(ref: fullCollectionRef)
                                 
+                                self.checkHowManyDocumentsThereAre(ref: fullCollectionRef, freshlyFetched: snap.documents.count)
                                 
                                 self.lastSavedPostsSnap = snap.documents.last // For the next batch
                                 
@@ -439,11 +436,11 @@ class FirestoreRequest {
         }
     }
     
-    //MARK:- Communities
+    //MARK: - Communities
     
     func getPostsForCommunity(getMore: Bool, community: Community, returnPosts: @escaping ([Post]?, _ InitialFetch:Bool) -> Void) {
         
-        if community.documentID != "" {
+        if !community.documentID.isEmpty {
             if morePostsToFetch {
                 self.posts.removeAll()
                 
@@ -459,6 +456,7 @@ class FirestoreRequest {
                 
                 // Check if the Feed has been refreshed or the next batch is ordered
                 if getMore {
+                    
                     // For the next loading batch of 20, that will start after this snapshot if it is there
                     if let lastSnap = lastFeedPostSnap {
                         
@@ -480,12 +478,11 @@ class FirestoreRequest {
                                 post.type = .nothingPostedYet
                                 returnPosts([post], self?.initialFetch ?? true)
                             } else {
-                                //Prepare the next batch
-                                let fetchedDocsCount = snap.documents.count
-                                self?.alreadyFetchedCount = self?.alreadyFetchedCount ?? 0+fetchedDocsCount
                                 
                                 let fullCollectionRef = collectionRef.document(community.documentID).collection("posts")
-                                self?.checkHowManyDocumentsThereAre(ref: fullCollectionRef)
+                                
+                                //Prepare the next batch
+                                self?.checkHowManyDocumentsThereAre(ref: fullCollectionRef, freshlyFetched: snap.documents.count)
                                 
                                 self?.lastFeedPostSnap = snap.documents.last // For the next batch
                                 
@@ -567,24 +564,28 @@ class FirestoreRequest {
     }
     
     func getTotalCount() -> Int {
-        return self.totalCountOfPosts
+        self.totalCountOfPosts
     }
     
     
-    func checkHowManyDocumentsThereAre(ref: CollectionReference) {
+    func checkHowManyDocumentsThereAre(ref: CollectionReference, freshlyFetched: Int) {
+        
+        self.alreadyFetchedCount += freshlyFetched
         
         //ToDo: Return number of Posts to display in the Profile
         ref.getDocuments { (querySnap, error) in
-            if let error = error {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                let wholeCollectionDocumentCount = querySnap!.documents.count
-                
-                self.totalCountOfPosts = wholeCollectionDocumentCount
-                
-                if wholeCollectionDocumentCount <= self.alreadyFetchedCount {
-                    self.morePostsToFetch = false
-                }
+            
+            guard let querySnap = querySnap else {
+                print("We have an error: \(error?.localizedDescription ?? "")")
+                return
+            }
+            
+            let wholeCollectionDocumentCount = querySnap.documents.count
+            
+            self.totalCountOfPosts = wholeCollectionDocumentCount
+            
+            if wholeCollectionDocumentCount <= self.alreadyFetchedCount {
+                self.morePostsToFetch = false
             }
         }
     }

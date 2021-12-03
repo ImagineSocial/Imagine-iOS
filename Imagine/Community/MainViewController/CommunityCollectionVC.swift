@@ -386,6 +386,21 @@ extension CommunityCollectionVC: AddOnDelegate {
             self.present(alert, animated: true)
         }
     }
+    
+    func showAddItemAlert(for community: Community) {
+        let factString = community.title.quoted
+        
+        let string = NSLocalizedString("add_item_alert_message", comment: "you sure to add this?")
+        
+        let alert = UIAlertController(title: NSLocalizedString("add_item_alert_title", comment: "you sure?"), message: String.localizedStringWithFormat(string, factString), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: "yes"), style: .default, handler: { (_) in
+            self.setFactForOptInfo(fact: community)
+        }))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .cancel, handler: { (_) in
+            alert.dismiss(animated: true, completion: nil)
+        }))
+        self.present(alert, animated: true)
+    }
 }
 
 extension CommunityCollectionVC: TopOfCollectionViewDelegate, NewFactDelegate, TopicCollectionFooterDelegate, RecentTopicCellDelegate {

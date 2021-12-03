@@ -139,42 +139,32 @@ extension CommunityCollectionVC {
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        var fact: Community?
+        var community: Community?
         
         if indexPath.section == 0 {
             
         } else if indexPath.section == 1 {
-            fact = topicCommunities[indexPath.row]
+            community = topicCommunities[indexPath.row]
         } else if indexPath.section == 2 {
-            fact = discussionCommunities[indexPath.row]
+            community = discussionCommunities[indexPath.row]
         } else {
-            fact = followedCommunities[indexPath.row]
+            community = followedCommunities[indexPath.row]
         }
         
-        if let fact = fact {
+        guard let community = community else {
+            return
+        }
+        
+        if let addFactToPost = addFactToPost{
             
-            if let addFactToPost = addFactToPost{
-                
-                if addFactToPost == .newPost {
-                    self.setFactForPost(fact: fact)
-                } else {
-                    let factString = fact.title.quoted
-                    
-                    let string = NSLocalizedString("add_item_alert_message", comment: "you sure to add this?")
-                    
-                    let alert = UIAlertController(title: NSLocalizedString("add_item_alert_title", comment: "you sure?"), message: String.localizedStringWithFormat(string, factString), preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: "yes"), style: .default, handler: { (_) in
-                        self.setFactForOptInfo(fact: fact)
-                    }))
-                    alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .cancel, handler: { (_) in
-                        alert.dismiss(animated: true, completion: nil)
-                    }))
-                    self.present(alert, animated: true)
-                }
+            if addFactToPost == .newPost {
+                self.setFactForPost(fact: community)
             } else {
-                performSegue(withIdentifier: "toPageVC", sender: fact)
-                self.topicSelected(fact: fact)
+                showAddItemAlert(for: community)
             }
+        } else {
+            performSegue(withIdentifier: "toPageVC", sender: community)
+            self.topicSelected(fact: community)
         }
     }
     
@@ -183,7 +173,7 @@ extension CommunityCollectionVC {
         if kind == UICollectionView.elementKindSectionHeader {  // View above CollectionView
             if indexPath.section == 0 {
                 if let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "factCollectionFirstHeader", for: indexPath) as? FirstCollectionHeader {
-                
+                    
                     if addFactToPost == .optInfo {
                         view.headerLabel.font = UIFont(name: "IBMPlexSans", size: 16)
                         view.headerLabel.numberOfLines = 0

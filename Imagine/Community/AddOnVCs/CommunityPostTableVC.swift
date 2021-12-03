@@ -60,74 +60,76 @@ class CommunityPostTableVC: BaseFeedTableViewController {
         
         while index <= 2 {
             let post = Post()
-            if index == 1 {
-                post.type = .picture
-            } else {
-                post.type = .thought
-            }
+            
+            post.type = (index == 1) ? .picture : .thought
+            
             self.posts.append(post)
             index+=1
         }
         
         self.tableView.reloadData()
+        
         getPosts(getMore: true)
     }
     
     override func getPosts(getMore: Bool) {
-        if let community = community {
-            if isConnected() {
+        
+        guard let community = community else { return }
+        
+        guard isConnected() else {
+            fetchRequested = true
+            return
+        }
+        
+        self.view.activityStartAnimating()
+        
+        DispatchQueue.global(qos: .background).async {
+            self.firestoreRequest.getPostsForCommunity(getMore: getMore, community: community) { (posts, initialFetch) in
                 
-                self.view.activityStartAnimating()
+                guard let posts = posts else {
+                    DispatchQueue.main.async {
+                        self.view.activityStopAnimating()
+                    }
+                    return
+                }
                 
-                DispatchQueue.global(qos: .background).async {
-                    self.firestoreRequest.getPostsForCommunity(getMore: getMore, community: community) { (posts, initialFetch) in
-                        if let posts = posts {
-                            if initialFetch {   // Get the first batch of posts
-                                
-                                self.posts.removeAll()  //to get the placeholder out
-                                self.posts = posts
-                                
-                                DispatchQueue.main.async {
-                                    self.tableView.reloadData()
-                                    
-                                    self.fetchesPosts = false
-                                    
-                                    // remove ActivityIndicator incl. backgroundView
-                                    self.view.activityStopAnimating()
-                                    
-                                    self.refreshControl?.endRefreshing()
-                                }
-                            } else {    // Append the next batch to the existing
-                                var indexes : [IndexPath] = [IndexPath]()
-                                
-                                for result in posts {
-                                    let row = self.posts.count
-                                    
-                                    indexes.append(IndexPath(row: row, section: 0))
-                                    self.posts.append(result)
-                                }
-                                
-                                DispatchQueue.main.async {
-                                    
-                                    self.tableView.performBatchUpdates({
-                                        self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                                        self.tableView.insertRows(at: indexes, with: .bottom)
-                                    }, completion: { (_) in
-                                        self.fetchesPosts = false
-                                    })
-                                    
-                                    self.view.activityStopAnimating()
-                                }
-                            }
-                        } else {
-                            DispatchQueue.main.async {
-                                self.view.activityStopAnimating()
-                            }
-                        }
+                if initialFetch {   // Get the first batch of posts
+                    
+                    self.posts.removeAll()  //to get the placeholder out
+                    self.posts = posts
+                    
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                        
+                        self.fetchesPosts = false
+                        
+                        // remove ActivityIndicator incl. backgroundView
+                        self.view.activityStopAnimating()
+                        
+                        self.refreshControl?.endRefreshing()
+                    }
+                } else {    // Append the next batch to the existing
+                    var indexes : [IndexPath] = [IndexPath]()
+                    
+                    for result in posts {
+                        let row = self.posts.count
+                        
+                        indexes.append(IndexPath(row: row, section: 0))
+                        self.posts.append(result)
+                    }
+                    
+                    DispatchQueue.main.async {
+                        
+                        self.tableView.performBatchUpdates({
+                            self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                            self.tableView.insertRows(at: indexes, with: .bottom)
+                        }, completion: { (_) in
+                            self.fetchesPosts = false
+                        })
+                        
+                        self.view.activityStopAnimating()
                     }
                 }
-            } else {
-                fetchRequested = true
             }
         }
     }
@@ -168,7 +170,7 @@ class CommunityPostTableVC: BaseFeedTableViewController {
         }
     }
     
-    //MARK:- ScrollViewDidScroll
+    //MARK: - ScrollViewDidScroll
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let offset = scrollView.contentOffset.y
         self.pageViewHeaderDelegate?.childScrollViewScrolled(offset: offset)
@@ -185,7 +187,7 @@ class CommunityPostTableVC: BaseFeedTableViewController {
         }
     }
     
-    //MARK:- TableView
+    //MARK: - TableView
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let post = posts[indexPath.row]
@@ -194,14 +196,7 @@ class CommunityPostTableVC: BaseFeedTableViewController {
             tipView.dismiss()
             followTopicTipView = nil
         } else {
-            switch post.type {
-            case .nothingPostedYet:
-                print("Nothing will happen")
-                tableView.deselectRow(at: indexPath, animated: true)
-            default:
-//                changePostLocationForAddOnPosts(post: post)
-                performSegue(withIdentifier: "showPost", sender: post)
-            }
+            post.type == .nothingPostedYet ? tableView.deselectRow(at: indexPath, animated: true) : performSegue(withIdentifier: "showPost", sender: post)
         }
     }
     

@@ -86,16 +86,14 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
     
     var index = 0
     func getName(row: Int) {
-        if index < 20 {
-            if posts.count != 0 {
-                if self.posts[row].user == nil {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        self.getName(row: row)
-                        self.index+=1
-                    }
-                } else {
-                    self.tableView.reloadData()
+        if index < 20, posts.count != 0 {
+            if self.posts[row].user == nil {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.getName(row: row)
+                    self.index+=1
                 }
+            } else {
+                self.tableView.reloadData()
             }
         }
     }
@@ -104,7 +102,7 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
         guard let track = AVURLAsset(url: url).tracks(withMediaType: AVMediaType.video).first else { return nil }
         let size = track.naturalSize.applying(track.preferredTransform)
         let cgSize = CGSize(width: abs(size.width), height: abs(size.height))
-        print("Das ist die size: \(cgSize)")
+
         return cgSize
     }
     
