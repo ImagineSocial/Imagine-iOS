@@ -44,8 +44,8 @@ class CampaignCollectionHeaderView: UICollectionReusableView {
         shareButton.addTarget(self, action: #selector(shareIdeaTapped), for: .touchUpInside)
         segmentedControl.addTarget(self, action: #selector(segmentControlChanged), for: .valueChanged)
         
-        descriptionLabel.constrain(top: topAnchor, leading: leadingAnchor, trailing: trailingAnchor, paddingTop: Constants.Padding.standard, paddingLeading: Constants.Padding.standard, paddingTrailing: -Constants.Padding.standard)
-        shareButton.constrain(top: descriptionLabel.bottomAnchor, leading: descriptionLabel.leadingAnchor, bottom: bottomAnchor, paddingTop: Constants.Padding.standard, paddingBottom: -30, width: 130, height: 35)
+        descriptionLabel.constrain(top: topAnchor, leading: leadingAnchor, trailing: trailingAnchor, paddingTop: Constants.padding.standard, paddingLeading: Constants.padding.standard, paddingTrailing: -Constants.padding.standard)
+        shareButton.constrain(top: descriptionLabel.bottomAnchor, leading: descriptionLabel.leadingAnchor, bottom: bottomAnchor, paddingTop: Constants.padding.standard, paddingBottom: -30, width: 130, height: 35)
         segmentedControl.constrain(centerY: shareButton.centerYAnchor, trailing: descriptionLabel.trailingAnchor, width: 160, height: 30)
     }
     

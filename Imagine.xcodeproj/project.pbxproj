@@ -52,7 +52,7 @@
 		E90E1A3425FB973E00855FE1 /* CampaignCollectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A3325FB973E00855FE1 /* CampaignCollectionHeaderView.swift */; };
 		E90E1A3725FBA0AA00855FE1 /* FinishedWorkCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E90E1A3625FBA0AA00855FE1 /* FinishedWorkCollectionViewCell.xib */; };
 		E90E1A3A25FBA17C00855FE1 /* FinishedWorkCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A3925FBA17C00855FE1 /* FinishedWorkCollectionViewCell.swift */; };
-		E90E1A3D25FBC7F700855FE1 /* CommunityHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A3C25FBC7F700855FE1 /* CommunityHeader.swift */; };
+		E90E1A3D25FBC7F700855FE1 /* ImagineCommunityHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A3C25FBC7F700855FE1 /* ImagineCommunityHeader.swift */; };
 		E90E1A4025FBCB3C00855FE1 /* FinishedWorkItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A3F25FBCB3C00855FE1 /* FinishedWorkItem.swift */; };
 		E90E1A4325FCC8BF00855FE1 /* ImagineDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90E1A4225FCC8BF00855FE1 /* ImagineDataHelper.swift */; };
 		E90E1A4A25FF640800855FE1 /* FeedUserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E90E1A4925FF640800855FE1 /* FeedUserView.xib */; };
@@ -246,7 +246,7 @@
 		E9CF17C423CB3F41000E5149 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CF17C323CB3F41000E5149 /* Campaign.swift */; };
 		E9CF237F233A279200D3B295 /* TopicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CF237E233A279200D3B295 /* TopicCell.swift */; };
 		E9CF2381233A27A500D3B295 /* TopicCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9CF2380233A27A500D3B295 /* TopicCell.xib */; };
-		E9D212DC25F7FACF00C68984 /* DataReportCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9D212DB25F7FACF00C68984 /* DataReportCollectionViewCell.xib */; };
+		E9D212DC25F7FACF00C68984 /* DataReportCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9D212DB25F7FACF00C68984 /* DataReportCell.xib */; };
 		E9D9561824F82791007E5D18 /* AddOnCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D9561724F82791007E5D18 /* AddOnCollectionViewController.swift */; };
 		E9E21C5025AF703C002D5699 /* MemeInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E21C4F25AF703C002D5699 /* MemeInputView.swift */; };
 		E9E21C5525AF7470002D5699 /* MemeInputView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9E21C5425AF7470002D5699 /* MemeInputView.xib */; };
@@ -289,7 +289,7 @@
 		E9F622E125E96DD500AAD2C0 /* LinkedCommunityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F622E025E96DD500AAD2C0 /* LinkedCommunityView.swift */; };
 		E9F9B68B223D584600100F51 /* PageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F9B68A223D584600100F51 /* PageViewController.swift */; };
 		E9F9B68D223D6C9500100F51 /* CampaignVoteCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F9B68C223D6C9500100F51 /* CampaignVoteCollectionViewController.swift */; };
-		E9FE46CC25FA9C8A00F4C973 /* DataReportCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FE46CB25FA9C8A00F4C973 /* DataReportCollectionViewCell.swift */; };
+		E9FE46CC25FA9C8A00F4C973 /* DataReportCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FE46CB25FA9C8A00F4C973 /* DataReportCell.swift */; };
 		E9FE46CF25FB5AE500F4C973 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FE46CE25FB5AE500F4C973 /* UIView.swift */; };
 		E9FE46D225FB5C4D00F4C973 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FE46D125FB5C4D00F4C973 /* String.swift */; };
 		E9FE46D525FB5DB500F4C973 /* ImagineDataRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9FE46D425FB5DB500F4C973 /* ImagineDataRequest.swift */; };
@@ -345,7 +345,7 @@
 		E90E1A3325FB973E00855FE1 /* CampaignCollectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignCollectionHeaderView.swift; sourceTree = "<group>"; };
 		E90E1A3625FBA0AA00855FE1 /* FinishedWorkCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FinishedWorkCollectionViewCell.xib; sourceTree = "<group>"; };
 		E90E1A3925FBA17C00855FE1 /* FinishedWorkCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishedWorkCollectionViewCell.swift; sourceTree = "<group>"; };
-		E90E1A3C25FBC7F700855FE1 /* CommunityHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityHeader.swift; sourceTree = "<group>"; };
+		E90E1A3C25FBC7F700855FE1 /* ImagineCommunityHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagineCommunityHeader.swift; sourceTree = "<group>"; };
 		E90E1A3F25FBCB3C00855FE1 /* FinishedWorkItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishedWorkItem.swift; sourceTree = "<group>"; };
 		E90E1A4225FCC8BF00855FE1 /* ImagineDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagineDataHelper.swift; sourceTree = "<group>"; };
 		E90E1A4925FF640800855FE1 /* FeedUserView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedUserView.xib; sourceTree = "<group>"; };
@@ -546,7 +546,7 @@
 		E9CF17C323CB3F41000E5149 /* Campaign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Campaign.swift; sourceTree = "<group>"; };
 		E9CF237E233A279200D3B295 /* TopicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicCell.swift; sourceTree = "<group>"; };
 		E9CF2380233A27A500D3B295 /* TopicCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TopicCell.xib; sourceTree = "<group>"; };
-		E9D212DB25F7FACF00C68984 /* DataReportCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DataReportCollectionViewCell.xib; sourceTree = "<group>"; };
+		E9D212DB25F7FACF00C68984 /* DataReportCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DataReportCell.xib; sourceTree = "<group>"; };
 		E9D9561724F82791007E5D18 /* AddOnCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOnCollectionViewController.swift; sourceTree = "<group>"; };
 		E9E21C4F25AF703C002D5699 /* MemeInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemeInputView.swift; sourceTree = "<group>"; };
 		E9E21C5425AF7470002D5699 /* MemeInputView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MemeInputView.xib; sourceTree = "<group>"; };
@@ -589,7 +589,7 @@
 		E9F622E025E96DD500AAD2C0 /* LinkedCommunityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedCommunityView.swift; sourceTree = "<group>"; };
 		E9F9B68A223D584600100F51 /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
 		E9F9B68C223D6C9500100F51 /* CampaignVoteCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignVoteCollectionViewController.swift; sourceTree = "<group>"; };
-		E9FE46CB25FA9C8A00F4C973 /* DataReportCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataReportCollectionViewCell.swift; sourceTree = "<group>"; };
+		E9FE46CB25FA9C8A00F4C973 /* DataReportCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataReportCell.swift; sourceTree = "<group>"; };
 		E9FE46CE25FB5AE500F4C973 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		E9FE46D125FB5C4D00F4C973 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		E9FE46D425FB5DB500F4C973 /* ImagineDataRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagineDataRequest.swift; sourceTree = "<group>"; };
@@ -950,8 +950,8 @@
 				E97D714924223A930018E27C /* JobOfferCell.xib */,
 				E9B79CE2224EC72000166EED /* JobOfferCell.swift */,
 				E9E6BD0525F566E40012A870 /* ImagineCommunityNavigationCell.swift */,
-				E9D212DB25F7FACF00C68984 /* DataReportCollectionViewCell.xib */,
-				E9FE46CB25FA9C8A00F4C973 /* DataReportCollectionViewCell.swift */,
+				E9D212DB25F7FACF00C68984 /* DataReportCell.xib */,
+				E9FE46CB25FA9C8A00F4C973 /* DataReportCell.swift */,
 				E90E1A3625FBA0AA00855FE1 /* FinishedWorkCollectionViewCell.xib */,
 				E90E1A3925FBA17C00855FE1 /* FinishedWorkCollectionViewCell.swift */,
 			);
@@ -1584,7 +1584,7 @@
 				E9E6BD0A25F77FC00012A870 /* ImagineCommunityProposalHeader.xib */,
 				E9E6BD0D25F7842C0012A870 /* ImagineCommunityProposalHeader.swift */,
 				E90E1A3325FB973E00855FE1 /* CampaignCollectionHeaderView.swift */,
-				E90E1A3C25FBC7F700855FE1 /* CommunityHeader.swift */,
+				E90E1A3C25FBC7F700855FE1 /* ImagineCommunityHeader.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1714,7 +1714,7 @@
 				E962AC1E2224430600C6D6EF /* Assets.xcassets in Resources */,
 				E962AC1C2224430400C6D6EF /* Main.storyboard in Resources */,
 				E9B85D5C2413C1BF00960942 /* TableViewInCollectionViewCell.xib in Resources */,
-				E9D212DC25F7FACF00C68984 /* DataReportCollectionViewCell.xib in Resources */,
+				E9D212DC25F7FACF00C68984 /* DataReportCell.xib in Resources */,
 				E9EA7C9722E20DEB0015C0EC /* BlogPostCell.xib in Resources */,
 				E97FDFC0246BE9BC0049E1E4 /* DiscussionCell.xib in Resources */,
 				E9B85D522412D29A00960942 /* SmallPostCell.xib in Resources */,
@@ -1810,7 +1810,7 @@
 				E938105022E708510086F199 /* YouTubeCell.swift in Sources */,
 				E9F12BFA24FA6556006BD9C3 /* AddOnSingleCommunityCollectionViewCell.swift in Sources */,
 				E92CB98325068FF600D2FA45 /* Localizable.swift in Sources */,
-				E90E1A3D25FBC7F700855FE1 /* CommunityHeader.swift in Sources */,
+				E90E1A3D25FBC7F700855FE1 /* ImagineCommunityHeader.swift in Sources */,
 				021256162756912000991E70 /* BaseView.swift in Sources */,
 				E981B25E2483AFCC00F6C724 /* SurveyCell.swift in Sources */,
 				E9FE46D225FB5C4D00F4C973 /* String.swift in Sources */,
@@ -1875,7 +1875,7 @@
 				E9817B2C25EBDCCC00E56FC6 /* Vote.swift in Sources */,
 				E9817B5A25EC03E900E56FC6 /* SettingPickOrderCell.swift in Sources */,
 				E9FE46CF25FB5AE500F4C973 /* UIView.swift in Sources */,
-				E9FE46CC25FA9C8A00F4C973 /* DataReportCollectionViewCell.swift in Sources */,
+				E9FE46CC25FA9C8A00F4C973 /* DataReportCell.swift in Sources */,
 				029F7B3C273053490029254A /* Date.swift in Sources */,
 				E911EEF222DB173E00EDD056 /* SelectionCell.swift in Sources */,
 				E904F268229C274A00383885 /* JobSurveyViewController.swift in Sources */,

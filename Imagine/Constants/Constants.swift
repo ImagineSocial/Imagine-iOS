@@ -22,11 +22,22 @@ struct Constants {
     static let cellCornerRadius: CGFloat = 15
     static let defaultImage = UIImage(named: "default")
     
-    struct Padding {
+    struct padding {
+        /// 30
         static let large: CGFloat = 30
+        
+        /// 18
         static let standard: CGFloat = 18
+        
+        /// 10
         static let small: CGFloat = 10
+        
+        /// 10
         static let innerCell: CGFloat = 10
+    }
+    
+    struct size {
+        static let button: CGFloat = 30
     }
     
     struct strings {

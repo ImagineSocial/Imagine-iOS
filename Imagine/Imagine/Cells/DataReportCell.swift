@@ -8,9 +8,10 @@
 
 import UIKit
 
-class DataReportCollectionViewCell: UICollectionViewCell {
+class DataReportCell: UICollectionViewCell {
     
-    //MARK:- IBOutlets
+    //MARK: - IBOutlets
+    
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var userCountDataLabel: UILabel!
     @IBOutlet weak var earningsLabel: UILabel!
@@ -18,7 +19,10 @@ class DataReportCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var donationsLabel: UILabel!
     
     
-    //MARK:- Variables
+    //MARK: - Variables
+    
+    static let identifier = "DataReportCell"
+    
     private let cornerRadius = Constants.cellCornerRadius
     private let imagineDataRequest = ImagineDataRequest()
 
@@ -35,7 +39,8 @@ class DataReportCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    //MARK:- Cell Lifecycle
+    //MARK: - Cell Lifecycle
+    
     override func awakeFromNib() {
         getData()
         contentView.clipsToBounds = false
@@ -47,7 +52,8 @@ class DataReportCollectionViewCell: UICollectionViewCell {
         contentView.setDefaultShadow()
     }
     
-    //MARK:- Get Data
+    //MARK: - Get Data
+    
     func getData() {
         imagineDataRequest.getReportData { (data) in
             if let data = data {
