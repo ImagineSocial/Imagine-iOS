@@ -83,11 +83,11 @@ extension ImagineCommunityNavigationCell: UICollectionViewDelegate, UICollection
         return cell
     }
     
-    // MARK: MultiPictureCollectionViewDelegate
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let cellWidth = collectionView.frame.width / 4.2
         
-        CGSize(width: collectionView.frame.width / 4.2, height: collectionView.frame.width / 4.2)
+        return CGSize(width: cellWidth, height: cellWidth)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -101,13 +101,25 @@ class SimpleCell: UICollectionViewCell {
     
     static let identifier = "SimpleCellIdentifier"
     
-    let imageView = UIImageView()
+    let imageView = BaseImageView(image: nil)
     let containerView = UIView()
+    
+    var size: CGFloat? {
+        didSet {
+            guard let size = size else { return }
+            
+            NSLayoutConstraint.activate([
+                imageView.widthAnchor.constraint(equalToConstant: size),
+                imageView.heightAnchor.constraint(equalToConstant: size)
+            ])
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: .zero)
                 
         setupLayout()
+        layoutIfNeeded()
     }
     
     required init?(coder: NSCoder) {
@@ -122,9 +134,18 @@ class SimpleCell: UICollectionViewCell {
         contentView.clipsToBounds = false
         
         containerView.addSubview(imageView)
+        
+        NSLayoutConstraint.activate([
+            imageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            imageView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            imageView.widthAnchor.constraint(equalToConstant: 28),
+            imageView.heightAnchor.constraint(equalToConstant: 28)
+        ])
+        
+        imageView.constrain(centerX: containerView.centerXAnchor, centerY: containerView.centerYAnchor, width: 28, height: 28)
+        
         imageView.clipsToBounds = true
         imageView.tintColor = .accentColor
-        imageView.fillSuperview(paddingTop: 27, paddingLeading: 27, paddingBottom: -27, paddingTrailing: -27)
         imageView.contentMode = .scaleAspectFit
     }
     

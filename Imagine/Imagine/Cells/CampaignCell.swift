@@ -11,11 +11,11 @@ import UIKit
 class CampaignCell: UICollectionViewCell {
     
     let containerView = BaseView()
-    let headerLabel = BaseLabel(font: UIFont.getStandardFont(with: .medium, size: 16))
-    let descriptionLabel = BaseTextLabel(font: UIFont.getStandardFont(with: .regular, size: 14))
-    let campaignDateLabel = BaseLabel(font: UIFont.getStandardFont(with: .medium, size: 14))
-    let categoryLabel = BaseLabel(font: UIFont.getStandardFont(with: .medium, size: 14))
-    let iconImageView = BaseImageView(image: UIImage(named: "idea"), alignmentInsets: UIEdgeInsets(top: -1, left: -1, bottom: -1, right: -1))
+    let headerLabel = BaseLabel(font: UIFont.getStandardFont(with: .semibold, size: 16))
+    let descriptionLabel = BaseTextLabel(font: UIFont.getStandardFont(with: .medium, size: 14))
+    let campaignDateLabel = BaseLabel(font: UIFont.getStandardFont(with: .regular, size: 12))
+    let categoryLabel = BaseLabel(font: UIFont.getStandardFont(with: .medium, size: 12))
+    let separatorView = HairlineView()
     
     var progressView: UIProgressView = {
         let progressView = UIProgressView()
@@ -26,7 +26,7 @@ class CampaignCell: UICollectionViewCell {
         return progressView
     }()
     
-    lazy var bottomStackView = BaseStackView(subviews: [iconImageView, categoryLabel, UIView(), campaignDateLabel], axis: .horizontal, distribution: .fill)
+    lazy var bottomStackView = BaseStackView(subviews: [categoryLabel, campaignDateLabel, UIView()], spacing: 10, axis: .horizontal)
     
     
     //MARK: - Variables
@@ -68,13 +68,17 @@ class CampaignCell: UICollectionViewCell {
         addSubview(containerView)
         containerView.addSubview(headerLabel)
         containerView.addSubview(descriptionLabel)
+        containerView.addSubview(separatorView)
         containerView.addSubview(bottomStackView)
         headerLabel.adjustsFontSizeToFitWidth = true
         
         containerView.fillSuperview()
-        headerLabel.constrain(top: containerView.topAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, paddingTop: Constants.Padding.innerCell, paddingLeading: Constants.Padding.innerCell, paddingTrailing: -Constants.Padding.innerCell, height: 30)
-        descriptionLabel.constrain(top: headerLabel.bottomAnchor, leading: headerLabel.leadingAnchor, trailing: headerLabel.trailingAnchor, paddingTop: Constants.Padding.standard / 2)
-        bottomStackView.constrain(top: descriptionLabel.bottomAnchor, leading: containerView.leadingAnchor, bottom: containerView.bottomAnchor, trailing: descriptionLabel.trailingAnchor, paddingTop: Constants.Padding.standard / 2, paddingBottom: -Constants.Padding.innerCell, height: 22)
+        headerLabel.constrain(top: containerView.topAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, paddingTop: Constants.padding.innerCell, paddingLeading: Constants.padding.innerCell, paddingTrailing: -Constants.padding.innerCell, height: 30)
+        descriptionLabel.constrain(top: headerLabel.bottomAnchor, leading: headerLabel.leadingAnchor, trailing: headerLabel.trailingAnchor, paddingTop: Constants.padding.standard / 2)
+        separatorView.constrain(top: descriptionLabel.bottomAnchor, leading: descriptionLabel.leadingAnchor, trailing: descriptionLabel.trailingAnchor, paddingTop: Constants.padding.standard / 2, height: 1)
+        bottomStackView.constrain(top: separatorView.bottomAnchor, leading: descriptionLabel.leadingAnchor, bottom: containerView.bottomAnchor, trailing: descriptionLabel.trailingAnchor, paddingBottom: -Constants.padding.innerCell, height: 22)
+        
+        bottomStackView.alignment = .bottom
     }
     
     override func layoutSubviews() {

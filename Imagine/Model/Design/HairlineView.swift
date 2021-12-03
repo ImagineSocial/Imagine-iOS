@@ -10,9 +10,10 @@ import UIKit
 
 class HairlineView: UIView {
     
-    init(backgroundColor: UIColor = .systemBackground) {
+    init(backgroundColor: UIColor = .separator) {
         super.init(frame: .zero)
         
+        translatesAutoresizingMaskIntoConstraints = false
         self.backgroundColor = backgroundColor
         setupConstraints()
     }
@@ -23,7 +24,7 @@ class HairlineView: UIView {
     
     
     func setupConstraints() {
-
+        // Doesnt work apparently whatever tf
         for constraint in self.constraints {
             if let _ = constraint.firstItem as? HairlineView,
                constraint.firstAttribute == .height,

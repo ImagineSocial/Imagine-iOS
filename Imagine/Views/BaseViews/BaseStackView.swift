@@ -10,7 +10,7 @@ import UIKit
 
 class BaseStackView: UIStackView {
     
-    init(subviews: [UIView], spacing: CGFloat = 0, axis: NSLayoutConstraint.Axis, distribution: Distribution = .fillEqually) {
+    init(subviews: [UIView], spacing: CGFloat = 0, axis: NSLayoutConstraint.Axis, distribution: Distribution = .fill) {
         super.init(frame: .zero)
         
         translatesAutoresizingMaskIntoConstraints = false

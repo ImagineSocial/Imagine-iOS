@@ -666,7 +666,6 @@ extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
         }
         height+=30 //tableViewHeader
         
-        print("return height: \(height)")
         return CGSize(width: -1, height: height)
     }
 }
@@ -716,23 +715,26 @@ class CommentTableViewHeader: UIView {
     
     func setLayouts() {
         addSubview(label)
-        label.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -2).isActive = true
-        label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15).isActive = true
-
         addSubview(separator)
-        separator.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 1).isActive = true
-        separator.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 15).isActive = true
-        separator.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -15).isActive = true
-        separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        
         addSubview(notificationSwitch)
-        notificationSwitch.widthAnchor.constraint(equalToConstant: 25).isActive = true
-        notificationSwitch.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -30).isActive = true
-        notificationSwitch.bottomAnchor.constraint(equalTo: separator.topAnchor, constant: 3).isActive = true
-        
         addSubview(notificationLabel)
-        notificationLabel.trailingAnchor.constraint(equalTo: notificationSwitch.leadingAnchor, constant: -5).isActive = true
-        notificationLabel.bottomAnchor.constraint(equalTo: separator.topAnchor, constant: 0).isActive = true
+        
+        NSLayoutConstraint.activate([
+            label.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -2),
+            label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.padding.standard),
+
+            separator.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 1),
+            separator.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.padding.standard),
+            separator.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -Constants.padding.standard),
+            separator.heightAnchor.constraint(equalToConstant: 1),
+            
+            notificationSwitch.widthAnchor.constraint(equalToConstant: 25),
+            notificationSwitch.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -30),
+            notificationSwitch.bottomAnchor.constraint(equalTo: separator.topAnchor, constant: 3),
+            
+            notificationLabel.trailingAnchor.constraint(equalTo: notificationSwitch.leadingAnchor, constant: -5),
+            notificationLabel.bottomAnchor.constraint(equalTo: separator.topAnchor, constant: 0)
+        ])
     }
     
     required init?(coder: NSCoder) {

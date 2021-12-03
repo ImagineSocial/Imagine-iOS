@@ -53,6 +53,8 @@ class CampaignVoteCollectionViewController: UIViewController {
         
         self.view.activityStartAnimating()
         
+        navigationItem.largeTitleDisplayMode = .always
+        
         setupCollectionView()
         setupUI(mode: mode)
         setupNavigationBar()
@@ -142,7 +144,7 @@ extension CampaignVoteCollectionViewController: UICollectionViewDelegate, UIColl
         
         let width = collectionView.frame.width
         
-        return CGSize(width: width, height: 250)
+        return CGSize(width: width, height: collectionView.frame.height / 3.1)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -205,6 +207,7 @@ extension CampaignVoteCollectionViewController: UICollectionViewDelegate, UIColl
                 
         let vc = CampaignViewController()
         vc.campaign = campaign
+        vc.navigationItem.largeTitleDisplayMode = .never
         
         navigationController?.pushViewController(vc, animated: true)
         

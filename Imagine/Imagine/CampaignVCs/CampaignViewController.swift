@@ -18,21 +18,21 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
     let containerView = BaseView()
     let spaceView = BaseView()
-    let separatorView = HairlineView(backgroundColor: .secondaryLabel)
+    let separatorView = HairlineView(backgroundColor: .separator)
     
     let titleLabel = BaseTextLabel(font: UIFont.getStandardFont(with: .semibold, size: 20))
     let summaryLabel = BaseTextLabel(font: UIFont.getStandardFont(with: .medium, size: 16))
     let descriptionLabel = BaseTextLabel(font: UIFont.getStandardFont(with: .regular, size: 14))
-    let campaignDateLabel = BaseLabel(font: UIFont.getStandardFont(with: .medium, size: 12), textAlignment: .right)
-    let campaignTypeLabel = BaseLabel(font: UIFont.getStandardFont(with: .medium, size: 12))
+    let campaignDateLabel = BaseLabel(font: UIFont.getStandardFont(with: .medium, size: 12))
+    let campaignTypeLabel = BaseLabel(font: UIFont.getStandardFont(with: .medium, size: 14))
     let supporterLabel = BaseLabel()
     let oppositionLabel = BaseLabel()
-    let supportButton = BaseButtonWithText(text: "Support", titleColor: Constants.green, font: UIFont.getStandardFont(with: .medium, size: 14), cornerRadius: Constants.cellCornerRadius, borderColor: Constants.green.cgColor)
-    let oppositionButton = BaseButtonWithText(text: "Veto", titleColor: Constants.red, font: UIFont.getStandardFont(with: .medium, size: 14), cornerRadius: Constants.cellCornerRadius, borderColor: Constants.red.cgColor)
+    let supportButton = BaseButtonWithText(text: "Support", font: UIFont.getStandardFont(with: .medium, size: 14), cornerRadius: Constants.cellCornerRadius, borderColor: Constants.green.cgColor)
+    let oppositionButton = BaseButtonWithText(text: "Veto", font: UIFont.getStandardFont(with: .medium, size: 14), cornerRadius: Constants.cellCornerRadius, borderColor: Constants.red.cgColor)
     let commentTableView = CommentTableView(frame: .zero)
     
-    lazy var infoStackView = BaseStackView(subviews: [campaignTypeLabel, UIView(), campaignDateLabel], axis: .horizontal)
-    lazy var buttonStackView = BaseStackView(subviews: [supportButton, oppositionButton, UIView()], spacing: 10, axis: .horizontal)
+    lazy var infoStackView = BaseStackView(subviews: [campaignTypeLabel, campaignDateLabel, UIView()], spacing: 10, axis: .horizontal)
+    lazy var buttonStackView = BaseStackView(subviews: [supportButton, oppositionButton, UIView()], spacing: 15, axis: .horizontal, distribution: .fillEqually)
     
     let scrollView = BaseScrollView()
     
@@ -72,8 +72,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         setupConstraints()
         showCampaign()
         
-        navigationController?.navigationBar.backgroundColor = .systemBackground
-        navigationController?.navigationBar.prefersLargeTitles = false
+        view.backgroundColor = .systemBackground
                 
         let scrollViewTap = UITapGestureRecognizer(target: self, action: #selector(scrollViewTapped))
         scrollViewTap.cancelsTouchesInView = false  // Otherwise the tap on the TableViews are not recognized
@@ -109,14 +108,14 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         containerView.heightAnchor.constraint(equalTo: scrollView.heightAnchor).isActive = true
         
         
-        titleLabel.constrain(top: containerView.topAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, paddingTop: Constants.Padding.standard, paddingLeading: Constants.Padding.standard, paddingTrailing: -Constants.Padding.standard)
-        infoStackView.constrain(top: titleLabel.bottomAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, paddingTop: Constants.Padding.standard, paddingLeading: Constants.Padding.standard, paddingTrailing: -Constants.Padding.standard)
-        separatorView.constrain(top: infoStackView.bottomAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, paddingTop: Constants.Padding.standard, height: 1)
-        summaryLabel.constrain(top: separatorView.bottomAnchor, leading: titleLabel.leadingAnchor, trailing: titleLabel.trailingAnchor, paddingTop: Constants.Padding.large)
-        descriptionLabel.constrain(top: summaryLabel.bottomAnchor, leading: titleLabel.leadingAnchor, trailing: titleLabel.trailingAnchor, paddingTop: Constants.Padding.small)
-        buttonStackView.constrain(top: descriptionLabel.bottomAnchor, leading: titleLabel.leadingAnchor, trailing: titleLabel.trailingAnchor, paddingTop: Constants.Padding.large)
-        commentTableView.constrain(top: buttonStackView.bottomAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, paddingTop: Constants.Padding.standard)
-        spaceView.constrain(top: commentTableView.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: containerView.bottomAnchor, trailing: titleLabel.trailingAnchor, paddingTop: Constants.Padding.small, paddingBottom: -Constants.Numbers.commentViewHeight * 2)
+        titleLabel.constrain(top: containerView.topAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, paddingTop: Constants.padding.standard, paddingLeading: Constants.padding.standard, paddingTrailing: -Constants.padding.standard)
+        infoStackView.constrain(top: titleLabel.bottomAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, paddingTop: Constants.padding.standard, paddingLeading: Constants.padding.standard, paddingTrailing: -Constants.padding.standard)
+        separatorView.constrain(top: infoStackView.bottomAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, paddingTop: Constants.padding.small / 2, paddingLeading: Constants.padding.standard / 2, paddingTrailing: -Constants.padding.standard / 2, height: 1)
+        summaryLabel.constrain(top: separatorView.bottomAnchor, leading: titleLabel.leadingAnchor, trailing: titleLabel.trailingAnchor, paddingTop: Constants.padding.large)
+        descriptionLabel.constrain(top: summaryLabel.bottomAnchor, leading: titleLabel.leadingAnchor, trailing: titleLabel.trailingAnchor, paddingTop: Constants.padding.small)
+        buttonStackView.constrain(top: descriptionLabel.bottomAnchor, leading: titleLabel.leadingAnchor, trailing: titleLabel.trailingAnchor, paddingTop: Constants.padding.large)
+        commentTableView.constrain(top: buttonStackView.bottomAnchor, leading: containerView.leadingAnchor, trailing: containerView.trailingAnchor, paddingTop: Constants.padding.standard)
+        spaceView.constrain(top: commentTableView.bottomAnchor, leading: titleLabel.leadingAnchor, bottom: containerView.bottomAnchor, trailing: titleLabel.trailingAnchor, paddingTop: Constants.padding.small, paddingBottom: -Constants.Numbers.commentViewHeight * 2)
         
         spaceView.setContentHuggingPriority(UILayoutPriority.defaultLow, for: .vertical)
     }

@@ -30,10 +30,9 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     var campaigns = [Campaign]()
     var sortedCampaigns: [Campaign]?
     
-    let insetTimesTwo:CGFloat = 30
+    let insetTimesTwo: CGFloat = Constants.padding.standard
     
     private let proposalHeaderIdentifier = "ImagineCommunityProposalHeader"
-    private let dataReportCellIdentifier = "DataReportCollectionViewCell"
     private let finishedWordCellIdentifier = "FinishedWorkCollectionViewCell"
     
     //FinishWorkCell Boolean
@@ -50,7 +49,6 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         
         self.extendedLayoutIncludesOpaqueBars = true
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationController?.navigationBar.tintColor = .accentColor
         
         let gesture = UILongPressGestureRecognizer(target: self, action: #selector(showSecretButton))
         gesture.allowableMovement = 500
@@ -70,12 +68,13 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     private func setupCollectionView() {
         // Register cell classes
         collectionView.register(ImagineCommunityNavigationCell.self, forCellWithReuseIdentifier: ImagineCommunityNavigationCell.identifier)
-        collectionView.register(UINib(nibName: "DataReportCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: dataReportCellIdentifier)
+        collectionView.register(UINib(nibName: "DataReportCell", bundle: nil), forCellWithReuseIdentifier: DataReportCell.identifier)
         collectionView.register(CampaignCell.self, forCellWithReuseIdentifier: CampaignCell.identifier)
         collectionView.register(UINib(nibName: "FinishedWorkCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: finishedWordCellIdentifier)
         
         // Register header classes
         collectionView.register(UINib(nibName: "ImagineCommunityProposalHeader", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: proposalHeaderIdentifier)
+        collectionView.register(ImagineCommunityHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ImagineCommunityHeader.identifier)
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.headerReferenceSize = CGSize(width: self.collectionView.frame.size.width, height: 85)
@@ -154,7 +153,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 return cell
             }
         case .dataReport:
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: dataReportCellIdentifier, for: indexPath) as? DataReportCollectionViewCell {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DataReportCell.identifier, for: indexPath) as? DataReportCell {
                 
                 return cell
             }
@@ -245,16 +244,22 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 return headerView
             }
         } else {
-            if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "communityHeader", for: indexPath) as? CommunityHeader {
-                
-                headerView.headerLabel.textColor = .accentColor
-                
+            if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ImagineCommunityHeader.identifier, for: indexPath) as? ImagineCommunityHeader {
+                                
                 if section == .dataReport {
                     headerView.headerLabel.text = "\(getMonthString()) Report"
                 } else if section == .finished {
-                    headerView.headerLabel.text = "Just finished"
+                    headerView.headerLabel.text = Strings.justFinishedHeader
                     headerView.expandButton.isHidden = false
-                    headerView.delegate = self
+                    headerView.expandView = {
+                        if self.isOpen {
+                            self.isOpen = false
+                        } else {
+                            self.isOpen = true
+                        }
+                        
+                        collectionView.reloadData()
+                    }
                     headerView.isOpen = self.isOpen
                 }
                 
@@ -283,7 +288,9 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
             
             let vc = CampaignViewController()
             vc.hidesBottomBarWhenPushed = true
+            vc.navigationItem.largeTitleDisplayMode = .never
             vc.campaign = campaign
+            
             navigationController?.pushViewController(vc, animated: true)
         case .finished:
             let item = finishedWorkItems[indexPath.item]
@@ -461,21 +468,6 @@ extension ImagineCommunityCollectionViewController: ImagineCommunityProposalHead
             self.sortedCampaigns = newSortCampaigns
             self.collectionView.reloadData()
         }
-    }
-}
-
-//MARK: - CommunityHeaderDelegate
-extension ImagineCommunityCollectionViewController: ImagineCommunityHeaderDelegate {
-    
-    func expandButtonTapped() {
-        
-        if isOpen {
-            isOpen = false
-        } else {
-            isOpen = true
-        }
-        
-        collectionView.reloadData()
     }
 }
 

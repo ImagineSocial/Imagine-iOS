@@ -17,7 +17,9 @@ extension UIColor {
     
     
     
-    static let accentColor = blend(color1: .green, color2: .purple)
+    static let accentColor: UIColor = .imagineColor
+    
+    // blend(color1: .green, color2: .purple)
     
     static func blend(color1: UIColor, intensity1: CGFloat = 0.5, color2: UIColor, intensity2: CGFloat = 0.5) -> UIColor {
         let total = intensity1 + intensity2

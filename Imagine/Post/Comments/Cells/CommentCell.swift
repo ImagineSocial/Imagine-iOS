@@ -55,6 +55,8 @@ class CommentCell: UITableViewCell {
                     inlineSeparatorLeadingConstraint.constant = 60
                 }
                 
+                
+                
                 bodyLabel.text = comment.text
                 layoutIfNeeded()
             }

@@ -10,6 +10,10 @@ import Foundation
 
 struct Strings {
     
+    // ImagineCommunityVC
+    
+    static let justFinishedHeader = "Just finished"
+    
     // MARK: - VoteProposalVC
     
     static let proposal = NSLocalizedString("campaignVC_title", comment: "Proposal")

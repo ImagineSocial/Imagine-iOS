@@ -3508,48 +3508,11 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="20" minimumInteritemSpacing="20" id="6hh-cZ-Vtr">
                             <size key="itemSize" width="373" height="293"/>
-                            <size key="headerReferenceSize" width="50" height="80"/>
+                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                             <inset key="sectionInset" minX="20" minY="20" maxX="20" maxY="20"/>
                         </collectionViewFlowLayout>
                         <cells/>
-                        <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="communityHeader" id="gQm-pS-GCK" customClass="CommunityHeader" customModule="Imagine" customModuleProvider="target">
-                            <rect key="frame" x="0.0" y="0.0" width="375" height="80"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Imagine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pq2-fy-EPP">
-                                    <rect key="frame" x="15" y="40" width="291" height="30"/>
-                                    <fontDescription key="fontDescription" name="IBMPlexSans-Bold" family="IBM Plex Sans" pointSize="26"/>
-                                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    <nil key="highlightedColor"/>
-                                </label>
-                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zxa-xN-bdk" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                    <rect key="frame" x="321" y="38" width="34" height="34"/>
-                                    <constraints>
-                                        <constraint firstAttribute="height" constant="34" id="TjY-uh-a9s"/>
-                                        <constraint firstAttribute="width" constant="34" id="rF9-Ly-a1f"/>
-                                    </constraints>
-                                    <color key="tintColor" systemColor="secondaryLabelColor"/>
-                                    <inset key="imageEdgeInsets" minX="5" minY="5" maxX="5" maxY="5"/>
-                                    <state key="normal" image="down"/>
-                                    <connections>
-                                        <action selector="expandButtonTapped:" destination="gQm-pS-GCK" eventType="touchUpInside" id="RTV-09-pEC"/>
-                                    </connections>
-                                </button>
-                            </subviews>
-                            <constraints>
-                                <constraint firstItem="zxa-xN-bdk" firstAttribute="centerY" secondItem="pq2-fy-EPP" secondAttribute="centerY" id="5ju-Zl-gOR"/>
-                                <constraint firstAttribute="bottom" secondItem="pq2-fy-EPP" secondAttribute="bottom" constant="10" id="Kqk-cJ-clF"/>
-                                <constraint firstAttribute="trailing" secondItem="zxa-xN-bdk" secondAttribute="trailing" constant="20" id="m4x-fd-I8K"/>
-                                <constraint firstItem="zxa-xN-bdk" firstAttribute="leading" secondItem="pq2-fy-EPP" secondAttribute="trailing" constant="15" id="oYf-Np-UOo"/>
-                                <constraint firstItem="pq2-fy-EPP" firstAttribute="top" secondItem="gQm-pS-GCK" secondAttribute="top" constant="40" id="omW-tg-2vP"/>
-                                <constraint firstItem="pq2-fy-EPP" firstAttribute="leading" secondItem="gQm-pS-GCK" secondAttribute="leading" constant="15" id="sQJ-AW-UcR"/>
-                            </constraints>
-                            <connections>
-                                <outlet property="expandButton" destination="zxa-xN-bdk" id="amd-gf-xsx"/>
-                                <outlet property="headerLabel" destination="pq2-fy-EPP" id="nGe-5w-f5l"/>
-                            </connections>
-                        </collectionReusableView>
                         <connections>
                             <outlet property="dataSource" destination="hlb-oB-kxS" id="Dxn-vz-T11"/>
                             <outlet property="delegate" destination="hlb-oB-kxS" id="O55-Po-KqP"/>
@@ -4325,11 +4288,11 @@
             <objects>
                 <viewController id="D6t-ao-oDv" customClass="ReportABugViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qoH-tA-wq8">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Danke für deine Unterstützung, wo hakt's?" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wFQ-hk-dta">
-                                <rect key="frame" x="10" y="86" width="355" height="57.5"/>
+                                <rect key="frame" x="10" y="74" width="355" height="57.5"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="22"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -4338,13 +4301,13 @@
                                 </userDefinedRuntimeAttributes>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Problem" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BAC-lz-nUE">
-                                <rect key="frame" x="10" y="168.5" width="76" height="26"/>
+                                <rect key="frame" x="10" y="156.5" width="76" height="26"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="20"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PT5-FG-Usg">
-                                <rect key="frame" x="0.0" y="199.5" width="375" height="200"/>
+                                <rect key="frame" x="0.0" y="187.5" width="375" height="200"/>
                                 <subviews>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cNw-bo-R47">
                                         <rect key="frame" x="10" y="10" width="355" height="180"/>
@@ -4363,7 +4326,7 @@
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pQ3-ZH-j8j">
-                                <rect key="frame" x="345" y="66" width="20" height="20"/>
+                                <rect key="frame" x="345" y="54" width="20" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="20" id="REa-gc-lKG"/>
                                     <constraint firstAttribute="height" constant="20" id="ROQ-ax-F8K"/>
@@ -4374,7 +4337,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p2E-xL-syA">
-                                <rect key="frame" x="10" y="399.5" width="355" height="82"/>
+                                <rect key="frame" x="10" y="387.5" width="355" height="82"/>
                                 <string key="text">Erkläre uns bitte mit deinen Worten kurz, wo es ein Problem gibt. Wir versuchen uns so schnell es geht darum zu kümmern.   Danke für deine Zeit!</string>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
                                 <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -7415,7 +7378,7 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="lUk-sN-9Ax"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="jY0-1E-Zcw">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -8294,7 +8257,7 @@
         <segue reference="abH-Sm-SDu"/>
         <segue reference="Tuz-Pi-iGq"/>
         <segue reference="30t-Si-6VB"/>
-        <segue reference="5HF-ul-5iD"/>
+        <segue reference="9QY-S4-xl7"/>
         <segue reference="ilO-fQ-UNL"/>
         <segue reference="Ri5-tq-suX"/>
         <segue reference="qj1-wx-hi6"/>
@@ -8306,7 +8269,7 @@
         <segue reference="Li3-Sa-Yuw"/>
         <segue reference="65n-8p-jc1"/>
         <segue reference="0po-Va-czT"/>
-        <segue reference="OH6-CE-32x"/>
+        <segue reference="Cdz-Pl-3MF"/>
         <segue reference="yNA-zh-mO4"/>
         <segue reference="xqD-HU-uOl"/>
         <segue reference="iQK-Z0-Mrv"/>
@@ -8334,7 +8297,6 @@
         <image name="comments" width="30" height="30"/>
         <image name="default" width="1191" height="670"/>
         <image name="default-user" width="423" height="423"/>
-        <image name="down" width="200" height="200"/>
         <image name="downvote" width="179" height="116"/>
         <image name="folder" width="700" height="589"/>
         <image name="gallery" width="30" height="30"/>
