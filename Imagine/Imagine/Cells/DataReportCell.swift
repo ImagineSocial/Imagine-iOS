@@ -1,5 +1,5 @@
 //
-//  DataReportCollectionViewCell.swift
+//  DataReportCell.swift
 //  Imagine
 //
 //  Created by Malte Schoppe on 11.03.21.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DataReportCell: UICollectionViewCell {
+class DataReportCell: BaseCollectionViewCell {
     
     //MARK: - IBOutlets
     
@@ -23,7 +23,6 @@ class DataReportCell: UICollectionViewCell {
     
     static let identifier = "DataReportCell"
     
-    private let cornerRadius = Constants.cellCornerRadius
     private let imagineDataRequest = ImagineDataRequest()
 
     
@@ -47,9 +46,9 @@ class DataReportCell: UICollectionViewCell {
     }
     
     override func layoutSubviews() {
+        super.layoutSubviews()
         
-        containerView.layer.cornerRadius = cornerRadius
-        contentView.setDefaultShadow()
+        containerView.layer.cornerRadius = Constants.cellCornerRadius
     }
     
     //MARK: - Get Data

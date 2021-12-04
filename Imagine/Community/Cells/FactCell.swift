@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class FactCell:UICollectionViewCell {
+class FactCell: BaseCollectionViewCell {
     
     @IBOutlet weak var factCellLabel: UILabel!
     @IBOutlet weak var factCellImageView: UIImageView!
@@ -19,7 +19,6 @@ class FactCell:UICollectionViewCell {
     @IBOutlet weak var containerView: UIView!
     
     let db = Firestore.firestore()
-    let cornerRadius: CGFloat = 8
     
     static let identifier = "FactCell"
     
@@ -39,11 +38,9 @@ class FactCell:UICollectionViewCell {
     }
     
     override func awakeFromNib() {
-        
-        layer.cornerRadius = cornerRadius
-        containerView.layer.cornerRadius = cornerRadius
-        
+                
         contentView.clipsToBounds = false
+        cornerRadius = 8
     }
     
     override func prepareForReuse() {
@@ -52,11 +49,9 @@ class FactCell:UICollectionViewCell {
     }
     
     override func layoutSubviews() {
-        layer.shadowColor = UIColor.label.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 3)
-        layer.shadowRadius = 4
-        layer.shadowOpacity = 0.3
-        layer.shadowPath = UIBezierPath(roundedRect: contentView.frame, cornerRadius: cornerRadius).cgPath
+        super.layoutSubviews()
+        
+        containerView.layer.cornerRadius = cornerRadius ?? Constants.cellCornerRadius
     }
     
     var fact: Community? {

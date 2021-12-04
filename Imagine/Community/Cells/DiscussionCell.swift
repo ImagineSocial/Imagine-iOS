@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class DiscussionCell: UICollectionViewCell {
+class DiscussionCell: BaseCollectionViewCell {
     
     @IBOutlet weak var topicImageView: DesignableImage!
     @IBOutlet weak var topicNameLabel: UILabel!
@@ -21,12 +21,15 @@ class DiscussionCell: UICollectionViewCell {
     @IBOutlet weak var contraArgumentCountLabel: UILabel!
     
     let db = Firestore.firestore()
-    let cornerRadius: CGFloat = 6
     
     override var isHighlighted: Bool {
         didSet {
             toggleIsHighlighted()
         }
+    }
+    
+    override func awakeFromNib() {
+        cornerRadius = 8
     }
 
     func toggleIsHighlighted() {
@@ -57,13 +60,9 @@ class DiscussionCell: UICollectionViewCell {
     }
     
     override func layoutSubviews() {
-        contentView.layer.cornerRadius = cornerRadius
-        layer.cornerRadius = cornerRadius
-        layer.shadowColor = UIColor.label.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 0)
-        layer.shadowRadius = 3
-        layer.shadowOpacity = 0.4
-        layer.shadowPath = UIBezierPath(roundedRect: contentView.frame, cornerRadius: cornerRadius).cgPath
+        super.layoutSubviews()
+        
+        contentView.layer.cornerRadius = cornerRadius ?? Constants.cellCornerRadius
     }
     
     func getArguments(fact: Community) {

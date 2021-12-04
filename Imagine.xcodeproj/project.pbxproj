@@ -20,6 +20,7 @@
 		024F64F12757F983002DFC06 /* BaseImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F64F02757F983002DFC06 /* BaseImageView.swift */; };
 		024F64F327580416002DFC06 /* BaseScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F64F227580415002DFC06 /* BaseScrollView.swift */; };
 		024F64F8275AD237002DFC06 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F64F7275AD236002DFC06 /* UIApplication.swift */; };
+		024F64FA275AE4F2002DFC06 /* BaseCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F64F9275AE4F2002DFC06 /* BaseCollectionViewCell.swift */; };
 		0289957326FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */; };
 		0289957726FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957626FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift */; };
 		0289957B26FB601D007CAFB7 /* PostVC+MultiPicCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957A26FB601C007CAFB7 /* PostVC+MultiPicCollectionView.swift */; };
@@ -312,6 +313,7 @@
 		024F64F02757F983002DFC06 /* BaseImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseImageView.swift; sourceTree = "<group>"; };
 		024F64F227580415002DFC06 /* BaseScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseScrollView.swift; sourceTree = "<group>"; };
 		024F64F7275AD236002DFC06 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
+		024F64F9275AE4F2002DFC06 /* BaseCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionViewCell.swift; sourceTree = "<group>"; };
 		0271F8F38DDF160F881C3D55 /* Pods_Imagine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Imagine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommunityCollectionVC+CollectionView.swift"; sourceTree = "<group>"; };
 		0289957626FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseFeedTableVC+TableView.swift"; sourceTree = "<group>"; };
@@ -631,6 +633,7 @@
 				0212561727569F4000991E70 /* BaseStackView.swift */,
 				024F64F02757F983002DFC06 /* BaseImageView.swift */,
 				024F64F227580415002DFC06 /* BaseScrollView.swift */,
+				024F64F9275AE4F2002DFC06 /* BaseCollectionViewCell.swift */,
 			);
 			path = BaseViews;
 			sourceTree = "<group>";
@@ -1879,6 +1882,7 @@
 				E9817B2C25EBDCCC00E56FC6 /* Vote.swift in Sources */,
 				E9817B5A25EC03E900E56FC6 /* SettingPickOrderCell.swift in Sources */,
 				E9FE46CF25FB5AE500F4C973 /* UIView.swift in Sources */,
+				024F64FA275AE4F2002DFC06 /* BaseCollectionViewCell.swift in Sources */,
 				E9FE46CC25FA9C8A00F4C973 /* DataReportCell.swift in Sources */,
 				029F7B3C273053490029254A /* Date.swift in Sources */,
 				E911EEF222DB173E00EDD056 /* SelectionCell.swift in Sources */,
