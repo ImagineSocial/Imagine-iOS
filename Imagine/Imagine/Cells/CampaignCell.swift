@@ -57,7 +57,6 @@ class CampaignCell: UICollectionViewCell {
         super.init(frame: frame)
         
         setupConstraints()
-        backgroundColor = .systemBackground
     }
     
     required init?(coder: NSCoder) {
@@ -84,8 +83,8 @@ class CampaignCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        containerView.layer.cornerRadius = Constants.cellCornerRadius
-        containerView.setDefaultShadow()
+        containerView.layer.createStandardShadow(with: containerView.bounds.size)
+        layer.cornerRadius = Constants.cellCornerRadius
     }
     
 }

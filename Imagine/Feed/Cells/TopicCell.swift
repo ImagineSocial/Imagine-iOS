@@ -16,7 +16,8 @@ protocol TopTopicCellDelegate {
 
 class TopicCell: UITableViewCell {
     
-    //MARK:- IBOutlets
+    //MARK: - IBOutlets
+    
     @IBOutlet weak var weeklyTopicView: UIView!
     @IBOutlet weak var topLevelFactImageView: UIImageView!
     @IBOutlet weak var topLevelFactLabel: UILabel!
@@ -32,7 +33,8 @@ class TopicCell: UITableViewCell {
     @IBOutlet weak var stackBackgroundView: UIView!
     @IBOutlet weak var textOfTheWeekLabel: UILabel!
     
-    //MARK:- Variables
+    //MARK: - Variables
+    
     private let db = Firestore.firestore()
     private let cornerRadius: CGFloat = 8
     
@@ -40,40 +42,32 @@ class TopicCell: UITableViewCell {
     private var facts = [Community]()
     private var textOfTheWeek: String?
         
-    //MARK:- Cell Lifecycle
+    //MARK: - Cell Lifecycle
+    
     override func awakeFromNib() {
         selectionStyle = .none
         
         getData()
-        
-        weeklyTopicView.layer.cornerRadius = cornerRadius
-        stackBackgroundView.layer.cornerRadius = cornerRadius
-        
-        let imageViews = [topLevelFactImageView!, midLevelFactImageView!, lowerLevelFactImage!]
-        
-        for imageView in imageViews {
+                        
+        for imageView in [topLevelFactImageView!, midLevelFactImageView!, lowerLevelFactImage!] {
             imageView.layer.borderWidth = 1
             imageView.layer.borderColor = UIColor.quaternarySystemFill.cgColor
             imageView.layer.cornerRadius = 3
         }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        let margins = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
+        contentView.frame = contentView.frame.inset(by: margins)
         
         //DesignStuff
         for view in [weeklyTopicView, stackBackgroundView] {
             guard let view = view else { return }
             
-            let layer = view.layer
-            layer.shadowColor = UIColor.label.cgColor
-            layer.shadowOffset = CGSize(width: 0, height: 2)
-            layer.shadowRadius = 4
-            layer.shadowOpacity = 0.3
+            view.layer.createStandardShadow(with: view.bounds.size, cornerRadius: cornerRadius)
         }
-    }
-    
-    override func layoutSubviews() {
-            super.layoutSubviews()
-            
-            let margins = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
-            contentView.frame = contentView.frame.inset(by: margins)
     }
     
     //MARK:- Get Data

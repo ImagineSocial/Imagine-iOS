@@ -12,7 +12,6 @@ class NotificationCell: UITableViewCell {
     
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var mainTextLabel: UILabel!
-    @IBOutlet weak var messageLabel: UILabel!
     
     override func awakeFromNib() {
         // add corner radius on `contentView`
@@ -20,10 +19,6 @@ class NotificationCell: UITableViewCell {
         contentView.layer.cornerRadius = 8
         contentView.layer.borderWidth = 1
         contentView.layer.borderColor = UIColor.imagineColor.cgColor
-        
-        messageLabel.backgroundColor = .red
-        messageLabel.layer.cornerRadius = messageLabel.frame.height/2
-        messageLabel.layer.masksToBounds = true
         
         layer.masksToBounds = true
     }
@@ -33,10 +28,6 @@ class NotificationCell: UITableViewCell {
         //set the values for top,left,bottom,right margins
         let margins = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
         contentView.frame = contentView.frame.inset(by: margins)
-    }
-    
-    override func prepareForReuse() {
-        messageLabel.backgroundColor = .red
     }
     
     var comment:Comment? {

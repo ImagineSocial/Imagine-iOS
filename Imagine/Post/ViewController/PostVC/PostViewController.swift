@@ -114,20 +114,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         //UI
         setUpUI()
         
-        //Comment Table View
-        commentTableView.initializeCommentTableView(section: .post, notificationRecipients: self.post.notificationRecipients)
-        commentTableView.commentDelegate = self
-        commentTableView.post = self.post   // Absichern, wenn der Post keine Kommentare hat, brauch man auch nicht danach suchen und sich die Kosten sparen
-        
-        //Image Collection View
-        imageCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
-        imageCollectionView.dataSource = self
-        imageCollectionView.delegate = self
-        
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        imageCollectionView.setCollectionViewLayout(layout, animated: true)
-        imageCollectionView.bounces = false
+        setupCollectionViews()
         
         //Scroll View
         scrollView.delegate = self
@@ -229,16 +216,26 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 self.scrollViewDidScroll(scrollView)
             }
         }
-        
-//        if contentView.frame.height != 0 {  //ScrollView got set
-//            if scrollView.frame.height > contentView.frame.height {
-//                //To get the contentView up to the bottom, so the keyboard works even when small pictures or just a link without comments is displayed
-//                contentView.heightAnchor.constraint(equalToConstant: scrollView.frame.height).isActive = true
-//            }
-//        }
     }
     
     //MARK: - Set Up UI
+    
+    private func setupCollectionViews() {
+        //Comment Table View
+        commentTableView.initializeCommentTableView(section: .post, notificationRecipients: self.post.notificationRecipients)
+        commentTableView.commentDelegate = self
+        commentTableView.post = self.post   // Absichern, wenn der Post keine Kommentare hat, brauch man auch nicht danach suchen und sich die Kosten sparen
+        
+        //Image Collection View
+        imageCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
+        imageCollectionView.dataSource = self
+        imageCollectionView.delegate = self
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        imageCollectionView.setCollectionViewLayout(layout, animated: true)
+        imageCollectionView.bounces = false
+    }
     
     func setUpUI() {
         
@@ -277,16 +274,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 
                 for button in buttons {
                     button.setImage(nil, for: .normal)
-                    button.layer.borderWidth = 0
-                    button.setTitleColor(.white, for: .normal)
-                    button.backgroundColor = .tertiaryLabel
+                    button.setTitleColor(.label, for: .normal)
                 }
                 
                 self.thanksButton.setTitle(String(post.votes.thanks), for: .normal)
                 self.wowButton.setTitle(String(post.votes.wow), for: .normal)
                 self.haButton.setTitle(String(post.votes.ha), for: .normal)
                 self.niceButton.setTitle(String(post.votes.nice), for: .normal)
-                                
             }
         }
         

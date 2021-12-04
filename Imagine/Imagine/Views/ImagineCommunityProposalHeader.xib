@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -24,13 +24,13 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="What's next" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IRc-1U-yTx">
-                    <rect key="frame" x="15" y="40" width="650" height="35"/>
+                    <rect key="frame" x="18" y="40" width="644" height="35"/>
                     <fontDescription key="fontDescription" name="IBMPlexSans-Bold" family="IBM Plex Sans" pointSize="26"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="siG-C7-aXb">
-                    <rect key="frame" x="15" y="95" width="650" height="75"/>
+                    <rect key="frame" x="18" y="95" width="650" height="75"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="Rcs-sh-620">
                             <rect key="frame" x="0.0" y="0.0" width="650" height="30"/>
@@ -109,11 +109,11 @@
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="siG-C7-aXb" secondAttribute="bottom" constant="30" id="BQQ-qb-Cmo"/>
                 <constraint firstItem="siG-C7-aXb" firstAttribute="top" secondItem="IRc-1U-yTx" secondAttribute="bottom" constant="20" id="HJ8-4g-ASr"/>
-                <constraint firstItem="Oam-XM-zXA" firstAttribute="trailing" secondItem="siG-C7-aXb" secondAttribute="trailing" constant="15" id="KU2-3h-eDt"/>
-                <constraint firstItem="siG-C7-aXb" firstAttribute="leading" secondItem="Oam-XM-zXA" secondAttribute="leading" constant="15" id="LFa-vq-OcN"/>
-                <constraint firstItem="IRc-1U-yTx" firstAttribute="leading" secondItem="Oam-XM-zXA" secondAttribute="leading" constant="15" id="Mbm-Yc-4uT"/>
+                <constraint firstItem="IRc-1U-yTx" firstAttribute="leading" secondItem="Oam-XM-zXA" secondAttribute="leading" constant="18" id="Mbm-Yc-4uT"/>
                 <constraint firstItem="IRc-1U-yTx" firstAttribute="top" secondItem="pG6-ae-j97" secondAttribute="top" constant="40" id="PbK-az-KII"/>
-                <constraint firstItem="Oam-XM-zXA" firstAttribute="trailing" secondItem="IRc-1U-yTx" secondAttribute="trailing" constant="15" id="oog-0L-3cb"/>
+                <constraint firstItem="Oam-XM-zXA" firstAttribute="trailing" secondItem="siG-C7-aXb" secondAttribute="trailing" constant="18" id="f2q-aE-HGZ"/>
+                <constraint firstItem="Oam-XM-zXA" firstAttribute="trailing" secondItem="IRc-1U-yTx" secondAttribute="trailing" constant="18" id="oog-0L-3cb"/>
+                <constraint firstItem="siG-C7-aXb" firstAttribute="leading" secondItem="Oam-XM-zXA" secondAttribute="leading" constant="18" id="vOQ-pO-yge"/>
             </constraints>
             <connections>
                 <outlet property="selectionAllButton" destination="e3V-Gs-vfm" id="pbz-lq-3M9"/>

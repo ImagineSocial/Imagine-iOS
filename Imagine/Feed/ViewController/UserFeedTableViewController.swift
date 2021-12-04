@@ -110,6 +110,9 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         chatWithUserButton.layer.borderWidth = 0.75
         addAsFriendButton.layer.borderWidth = 0.75
         
+        firstBadgeImageView.isHidden = true
+        secondBadgeImageView.isHidden = true
+        
         setCurrentState()   // check if blocked or own profile
         setBarButtonItem()
         

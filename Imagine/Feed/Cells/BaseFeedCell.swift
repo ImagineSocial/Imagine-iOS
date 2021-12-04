@@ -56,24 +56,18 @@ class BaseFeedCell : UITableViewCell {
         super.prepareForReuse()
         
         feedLikeView.prepareForReuse(ownProfile: ownProfile)
+        contentView.clipsToBounds = false
+        clipsToBounds = false
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        let shadowRadius = Constants.Numbers.feedShadowRadius
-        let radius = Constants.Numbers.feedCornerRadius
+                
+        contentView.clipsToBounds = false
+        clipsToBounds = false
         
         let layer = containerView.layer
-        layer.cornerRadius = radius
-        layer.shadowColor = UIColor.label.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 2)
-        layer.shadowRadius = shadowRadius
-        layer.shadowOpacity = 0.3
-        
-        let rect = CGRect(x: 0, y: 0, width: contentView.frame.width-24, height: contentView.frame.height-24)
-        layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: radius).cgPath
-        
+        layer.createStandardShadow(with: CGSize(width: contentView.frame.width - 24, height: contentView.frame.height - 24), cornerRadius: Constants.Numbers.feedCornerRadius)
     }
     
     //MARK:- Reset Values

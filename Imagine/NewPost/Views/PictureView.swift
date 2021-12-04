@@ -158,7 +158,7 @@ class PictureView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "DismissTemplate"), for: .normal)
         button.alpha = 0
-        button.tintColor = .darkRed
+        button.tintColor = .secondaryLabel
         button.imageEdgeInsets = UIEdgeInsets(top: 2,left: 2,bottom: 2,right: 2)
         button.backgroundColor = .systemBackground
         button.addTarget(self, action: #selector(removePictureTapped), for: .touchUpInside)

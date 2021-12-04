@@ -531,6 +531,11 @@ class TopicCollectionHeader: UICollectionReusableView {
     
     @IBOutlet weak var headerLabel: UILabel!
     
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        backgroundColor = .clear
+    }
     
 }
 

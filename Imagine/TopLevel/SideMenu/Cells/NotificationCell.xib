@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -37,21 +38,9 @@
                         <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="13"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jkk-eX-eKj">
-                        <rect key="frame" x="399" y="3" width="12" height="12"/>
-                        <color key="backgroundColor" systemColor="systemRedColor" red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="12" id="Mlr-ID-VDR"/>
-                            <constraint firstAttribute="width" constant="12" id="RdU-aW-UGU"/>
-                        </constraints>
-                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="9"/>
-                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <nil key="highlightedColor"/>
-                    </label>
                 </subviews>
-                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                 <constraints>
-                    <constraint firstAttribute="trailing" secondItem="Jkk-eX-eKj" secondAttribute="trailing" constant="3" id="0qO-4F-e6g"/>
                     <constraint firstAttribute="bottom" secondItem="yQV-Yv-85i" secondAttribute="bottom" constant="5" id="Ch4-E6-4WN"/>
                     <constraint firstItem="yQV-Yv-85i" firstAttribute="top" secondItem="nBZ-yg-xnp" secondAttribute="bottom" id="IKb-Tg-aaj"/>
                     <constraint firstAttribute="trailing" secondItem="yQV-Yv-85i" secondAttribute="trailing" constant="10" id="MLU-HH-u1x"/>
@@ -59,15 +48,18 @@
                     <constraint firstItem="nBZ-yg-xnp" firstAttribute="leading" secondItem="WuE-qK-2Xx" secondAttribute="leading" constant="8" id="YIz-c1-zAh"/>
                     <constraint firstAttribute="trailing" secondItem="nBZ-yg-xnp" secondAttribute="trailing" constant="10" id="azF-yZ-SXQ"/>
                     <constraint firstItem="nBZ-yg-xnp" firstAttribute="top" secondItem="WuE-qK-2Xx" secondAttribute="top" constant="5" id="bTE-4P-7P4"/>
-                    <constraint firstItem="Jkk-eX-eKj" firstAttribute="top" secondItem="WuE-qK-2Xx" secondAttribute="top" constant="3" id="jE9-Wg-1El"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
                 <outlet property="headerLabel" destination="nBZ-yg-xnp" id="Zpi-tN-Iq7"/>
                 <outlet property="mainTextLabel" destination="yQV-Yv-85i" id="Lnw-uM-kjT"/>
-                <outlet property="messageLabel" destination="Jkk-eX-eKj" id="Q9h-RJ-UFO"/>
             </connections>
             <point key="canvasLocation" x="-4.3478260869565224" y="44.53125"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>

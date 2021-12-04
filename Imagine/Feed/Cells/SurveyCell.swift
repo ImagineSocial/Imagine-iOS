@@ -107,18 +107,11 @@ class SurveyCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        let shadowRadius = Constants.Numbers.feedShadowRadius
-        let radius = Constants.Numbers.feedCornerRadius
+        contentView.clipsToBounds = false
+        clipsToBounds = false
         
         let layer = containerView.layer
-        layer.cornerRadius = radius
-        layer.shadowColor = UIColor.label.cgColor
-        layer.shadowOffset = CGSize.zero
-        layer.shadowRadius = shadowRadius
-        layer.shadowOpacity = 0.5
-        
-        let rect = CGRect(x: 0, y: 0, width: contentView.frame.width-20, height: contentView.frame.height-20)
-        layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: radius).cgPath
+        layer.createStandardShadow(with: CGSize(width: contentView.frame.width - 24, height: contentView.frame.height - 24), cornerRadius: Constants.Numbers.feedCornerRadius)
     }
     
     func buttonTapped(button: Int) {

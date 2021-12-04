@@ -36,7 +36,9 @@ extension BaseFeedTableViewController {
         return posts.count
     }
     
-    
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cell.layer.zPosition = CGFloat(tableView.numberOfRows(inSection: 0) - indexPath.row)    // So the shadow isnt clipped
+    }
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

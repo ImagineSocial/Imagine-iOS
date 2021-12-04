@@ -63,6 +63,8 @@ class ImagineCommunityNavigationCell: UICollectionViewCell {
         collectionView.bounces = false
         
         collectionView.fillSuperview()
+        collectionView.clipsToBounds = false
+        clipsToBounds = false
     }
 }
 
@@ -150,6 +152,8 @@ class SimpleCell: UICollectionViewCell {
     }
     
     override func layoutSubviews() {
-        containerView.setDefaultShadow(cornerRadius: containerView.frame.width / 2)
+        clipsToBounds = false
+        
+        containerView.layer.createStandardShadow(with: containerView.bounds.size, cornerRadius: containerView.frame.width / 2)
     }
 }

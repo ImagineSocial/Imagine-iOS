@@ -12,20 +12,6 @@ import UIKit
 
 extension UIView {
     
-    func setDefaultShadow(cornerRadius: CGFloat = Constants.cellCornerRadius) {
-        
-        let layer = self.layer
-        layer.cornerRadius = cornerRadius
-        
-        layer.shadowColor = UIColor.label.cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 0)
-        layer.shadowRadius = 3
-        layer.shadowOpacity = 0.5
-        
-        let rect = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height)
-        layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius).cgPath
-    }
-    
     func fadeTransition(_ duration:CFTimeInterval) {
         let animation = CATransition()
         animation.timingFunction = CAMediaTimingFunction(name:

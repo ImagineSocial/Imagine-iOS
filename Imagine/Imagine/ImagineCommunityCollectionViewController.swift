@@ -30,7 +30,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     var campaigns = [Campaign]()
     var sortedCampaigns: [Campaign]?
     
-    let insetTimesTwo: CGFloat = Constants.padding.standard
+    let insetTimesTwo: CGFloat = Constants.padding.standard * 2
     
     private let proposalHeaderIdentifier = "ImagineCommunityProposalHeader"
     private let finishedWordCellIdentifier = "FinishedWorkCollectionViewCell"
@@ -191,7 +191,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     //MARK: - UICollectionViewFlowLayoutDelegate
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        let width = collectionView.frame.width-insetTimesTwo
+        let width = collectionView.frame.width - insetTimesTwo
         
         let section = NavigationSection.allCases[indexPath.section]
         
@@ -477,6 +477,9 @@ extension ImagineCommunityCollectionViewController: FinishedWorkCellDelegate {
     func showCampaignTapped(campaignID: String) {
         let vc = CampaignViewController()
         vc.campaignID = campaignID
+        vc.hidesBottomBarWhenPushed = true
+        vc.navigationItem.largeTitleDisplayMode = .never
+        
         navigationController?.pushViewController(vc, animated: true)
     }
 }

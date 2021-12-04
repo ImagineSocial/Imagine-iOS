@@ -42,14 +42,8 @@ class BaseAddOnCollectionViewCell: UICollectionViewCell {
         super.layoutSubviews()
         
         if isAddOnCell {
-            let layer = contentView.layer
-            layer.shadowColor = UIColor.label.cgColor
-            layer.shadowOffset = CGSize(width: 0, height: 0)
-            layer.shadowRadius = 4
-            layer.shadowOpacity = 0.6
             
-            let rect = CGRect(x: 0, y: 0, width: contentView.frame.width, height: contentView.frame.height)
-            layer.shadowPath = UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius).cgPath
+            contentView.layer.createStandardShadow(with: contentView.bounds.size, cornerRadius: cornerRadius)
         }
     }
 }

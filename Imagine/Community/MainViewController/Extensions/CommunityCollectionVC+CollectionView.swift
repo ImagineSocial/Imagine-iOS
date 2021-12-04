@@ -184,12 +184,15 @@ extension CommunityCollectionVC {
             } else {
                 if let view = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: topicHeaderIdentifier, for: indexPath) as? TopicCollectionHeader {
                     
-                    if indexPath.section == 1 {
+                    switch indexPath.section {
+                    case 1:
                         view.headerLabel.text = NSLocalizedString("popular", comment: "popular")
-                    } else if indexPath.section == 2 {
+                    case 2:
                         view.headerLabel.text = NSLocalizedString("current_discussions", comment: "current discussions")
-                    } else if indexPath.section == 3 {
+                    case 3:
                         view.headerLabel.text = NSLocalizedString("followed_communities", comment: "followed communities")
+                    default:
+                        break
                     }
                     
                     return view

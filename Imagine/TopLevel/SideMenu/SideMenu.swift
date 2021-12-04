@@ -76,7 +76,6 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
             sideMenuView.addSubview(disclaimerView)
             sideMenuView.addSubview(notificationTableView)
             sideMenuView.addSubview(notificationLabel)
-            sideMenuView.addSubview(badgeStackView)
             sideMenuView.addSubview(deleteAllNotificationsButton)
             
             addConstraints()
@@ -238,14 +237,6 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         nameLabel.topAnchor.constraint(equalTo: profilePictureImageView.bottomAnchor, constant: 15).isActive = true
         nameLabel.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor).isActive = true
         nameLabel.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        
-        badgeStackView.addArrangedSubview(firstBadgeImageView)
-        badgeStackView.addArrangedSubview(secondBadgeImageView)
-        
-        badgeStackView.leadingAnchor.constraint(equalTo: profilePictureImageView.leadingAnchor).isActive = true
-        badgeStackView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor).isActive = true
-        badgeStackView.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        badgeStackView.widthAnchor.constraint(equalToConstant: 50).isActive = true
         
         
         addDisclaimer()

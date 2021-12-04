@@ -82,15 +82,6 @@ class FeedLikeView: UIView, NibLoadable {
     /// If you look at your own Feed at UserFeedTableView
     func setOwnCell(post: Post) {
         
-        let buttons = [thanksButton!, wowButton!, haButton!, niceButton!]
-        
-        for button in buttons {
-            
-            button.setTitleColor(.white, for: .normal)
-            button.layer.borderWidth = 0
-            button.backgroundColor = .tertiaryLabel
-        }
-        
         //Set vote count
         thanksButton.setTitle(String(post.votes.thanks), for: .normal)
         wowButton.setTitle(String(post.votes.wow), for: .normal)

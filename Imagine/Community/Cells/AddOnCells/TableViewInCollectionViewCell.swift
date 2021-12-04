@@ -26,9 +26,7 @@ class TableViewInCollectionViewCell: UICollectionViewCell {
     var isEverySecondCell = false       // Change Design on every second Cell
     
     var delegate: TableViewInCollectionViewCellDelegate?
-    
-    let cornerRadius: CGFloat = Constants.cellCornerRadius
-    
+        
     override func awakeFromNib() {
         
         
@@ -50,9 +48,7 @@ class TableViewInCollectionViewCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        containerView.layer.cornerRadius = cornerRadius
-        
-        contentView.setDefaultShadow()
+        containerView.layer.createStandardShadow(with: containerView.bounds.size, cornerRadius: Constants.cellCornerRadius)
     }
     
 }
