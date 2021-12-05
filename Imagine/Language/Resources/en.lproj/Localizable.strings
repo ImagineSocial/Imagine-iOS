@@ -288,11 +288,9 @@
 
 "one_moment_placeholder" = "One moment";
 
-"date_descending" = "Date ↓";
+"date_descending" = "Date";
 
-"date_ascending" = "Date ↑";
-
-"thanks_descending" = "Thanks ↓";
+"thanks_descending" = "Thanks";
 
  
  

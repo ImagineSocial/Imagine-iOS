@@ -66,7 +66,7 @@ class CommunityPageVC: UIPageViewController {
         
         if headerNeedsAdjustment {
             showNavigationTitle = false
-            let addedHeight: CGFloat!
+            let addedHeight: CGFloat
             let bounds = UIScreen.main.bounds
             //FML I just dont get it
             if bounds == CGRect(x: 0, y: 0, width: 375, height: 667) {  //iPhone 7
@@ -74,13 +74,12 @@ class CommunityPageVC: UIPageViewController {
             } else {
                 addedHeight = 92
             }
-            firstViewOffset = 260+addedHeight   //Hard coded doesnt work when coming from feed
-            secondViewOffset = 260+addedHeight
-            thirdViewOffset = 260+addedHeight
+            firstViewOffset = 260 + addedHeight   //Hard coded doesnt work when coming from feed
+            secondViewOffset = 260 + addedHeight
+            thirdViewOffset = 260 + addedHeight
         }
         
-        let commHeaderShown = defaults.bool(forKey: "communityHeaderInfo")
-        if !commHeaderShown {
+        if !defaults.bool(forKey: "communityHeaderInfo") {
             showInfoView()
         }
     }
@@ -106,14 +105,8 @@ class CommunityPageVC: UIPageViewController {
         let height = Constants.Numbers.communityHeaderHeight
         view.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: height)
         
-        
-        
         if let community = self.community, let url = URL(string: community.imageURL) {
             view.community = community
-            UIImageView().sd_setImage(with: url) { image, error, _, _ in
-                self.navigationController?.navigationBar.setBackgroundImage(image, for: .topAttached, barMetrics: .default)
-                return
-            }
         } else {
             print("Error: ArgumentPageViewController")
             self.navigationController?.popViewController(animated: true)
@@ -302,7 +295,8 @@ class CommunityPageVC: UIPageViewController {
 //    }
 }
 
-//MARK:- PageVC
+//MARK: - PageVC
+
 extension CommunityPageVC: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     
     func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
@@ -316,15 +310,12 @@ extension CommunityPageVC: UIPageViewControllerDataSource, UIPageViewControllerD
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         
-        if let currentViewController = pageViewController.viewControllers?.first
-            ,let index = argumentVCs.index(of: currentViewController){
+        if let currentViewController = pageViewController.viewControllers?.first ,let index = argumentVCs.index(of: currentViewController){
 
-            
             self.presentedVC = index
             
             switch index {
             case 0:
-                
                 self.animateToRightSizeOfHeader(offset: firstViewOffset)
             case 1:
                 self.animateToRightSizeOfHeader(offset: secondViewOffset)
@@ -334,6 +325,10 @@ extension CommunityPageVC: UIPageViewControllerDataSource, UIPageViewControllerD
                 print("Wrong index")
             }
         }
+    }
+    
+    func uploadQuestion() {
+        let string = "Was für emotionen wollt ihr in den Reactions sehen? Vorschläge in die Community schickken! *  "
     }
     
     func animateToRightSizeOfHeader(offset: CGFloat) {

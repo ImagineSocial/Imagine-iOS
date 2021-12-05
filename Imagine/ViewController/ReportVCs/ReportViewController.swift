@@ -93,6 +93,7 @@ class ReportViewController: UIViewController {
     let trashButton:DesignableButton = {
         let button = DesignableButton(title: NSLocalizedString("delete_post_label", comment: "delete post"), font: UIFont(name: "IBMPlexSans", size: 15))
 
+        button.titleLabel?.textAlignment = .left
         button.addTarget(self, action: #selector(showAlertForDeleteOption), for: .touchUpInside)
         
         return button

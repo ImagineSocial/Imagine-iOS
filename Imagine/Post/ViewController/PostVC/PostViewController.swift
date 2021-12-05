@@ -28,11 +28,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     @IBOutlet weak var imageCollectionViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var commentTableView: CommentTableView!
-    @IBOutlet weak var thanksButton: DesignableButton!
-    @IBOutlet weak var wowButton: DesignableButton!
-    @IBOutlet weak var haButton: DesignableButton!
-    @IBOutlet weak var niceButton: DesignableButton!
-    @IBOutlet weak var commentCountLabel: UILabel!
+    @IBOutlet weak var feedLikeView: FeedLikeView!
     @IBOutlet weak var profilePictureImageView: UIImageView!
     @IBOutlet weak var createDateLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
@@ -110,6 +106,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         super.viewDidLoad()
         
         self.view.activityStartAnimating()
+        feedLikeView.delegate = self
         
         //UI
         setUpUI()
@@ -239,15 +236,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     func setUpUI() {
         
-        //Buttons are too ugly without the proper ratio when they load so they appear a  bit later
-        setDefaultLikeButtons()
-        
-        UIView.animate(withDuration: 0.3) {
-            self.thanksButton.alpha = 1
-            self.wowButton.alpha = 1
-            self.niceButton.alpha = 1
-            self.haButton.alpha = 1
-        }
+        feedLikeView.setDefaultButtonImages()
         
         //navigationBar
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for:.default)
@@ -266,22 +255,10 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     //MARK: - Show Post
     
     func showPost() {
-        let buttons = [thanksButton!, wowButton!, haButton!, niceButton!]
         
-        if let user = Auth.auth().currentUser {
-            if let OP = post.user, user.uid == OP.userID { // Your own Post -> Different UI for a different Feeling. Shows like counts
-                self.ownPost = true
-                
-                for button in buttons {
-                    button.setImage(nil, for: .normal)
-                    button.setTitleColor(.label, for: .normal)
-                }
-                
-                self.thanksButton.setTitle(String(post.votes.thanks), for: .normal)
-                self.wowButton.setTitle(String(post.votes.wow), for: .normal)
-                self.haButton.setTitle(String(post.votes.ha), for: .normal)
-                self.niceButton.setTitle(String(post.votes.nice), for: .normal)
-            }
+        if let user = Auth.auth().currentUser, let OP = post.user, user.uid == OP.userID { // Your own Post -> Different UI for a different Feeling. Shows like counts
+            self.ownPost = true
+            self.feedLikeView.setOwnCell(post: post)
         }
         
         self.view.activityStopAnimating()
@@ -292,7 +269,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         titleLabel.text = post.title
         createDateLabel.text = post.createTime
-        commentCountLabel.text = String(post.commentCount)
+        feedLikeView.commentCountLabel.text = String(post.commentCount)
         
         if let fact = post.community {   // Isnt attached if you come from search
             //Need boolean wether already fetched or not
@@ -649,82 +626,31 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     //MARK: - Like Buttons
     
-    func setLikeButtonTitle(post: Post, button: DesignableButton) {
-        var title = String(post.votes.thanks)
-        
-        switch button {
-        case wowButton:
-            title = String(post.votes.wow)
-        case haButton:
-            title = String(post.votes.ha)
-        case niceButton:
-            title = String(post.votes.nice)
-        default:
-            title = String(post.votes.thanks)
-        }
-        
-        button.setImage(nil, for: .normal)
-        button.setTitle(title, for: .normal)
-    }
-    
-    func setDefaultLikeButtons() {
-        
-        let buttons = [thanksButton!, wowButton!, haButton!, niceButton!]
-        
-        for button in buttons {
-            button.imageView?.contentMode = .scaleAspectFit
-            button.layer.borderWidth = 0.5
-            button.layer.cornerRadius = 4
-            button.setTitleColor(.label, for: .normal)
-            button.tintColor = .label
-            button.layer.borderColor = UIColor.secondaryLabel.cgColor
-        }
-    }
-    
-    @IBAction func thanksTapped(_ sender: Any) {
-        thanksButton.isEnabled = false
-        updateLikeCount(button: .thanks)
-    }
-    
-    @IBAction func wowTapped(_ sender: Any) {
-        wowButton.isEnabled = false
-        updateLikeCount(button: .wow)
-    }
-    
-    @IBAction func haTapped(_ sender: Any) {
-        haButton.isEnabled = false
-        updateLikeCount(button: .ha)
-    }
-    
-    @IBAction func niceTapped(_ sender: Any) {
-        niceButton.isEnabled = false
-        updateLikeCount(button: .nice)
-    }
-    
-    func updateLikeCount(button: VoteButton) {
+    func updateLikeCount(button: DesignableButton) {
         if let _ = Auth.auth().currentUser {
-            
-            var desButton = DesignableButton()
+            var voteButton: VoteButton
             switch button {
-            case .thanks:
-                self.post.votes.thanks+=1
-                desButton = self.thanksButton
-            case .wow:
-                self.post.votes.wow+=1
-                desButton = self.wowButton
-            case .ha:
-                desButton = self.haButton
-                self.post.votes.ha+=1
-            case .nice:
-                desButton = self.niceButton
-                self.post.votes.nice+=1
+            case feedLikeView.thanksButton:
+                post.votes.thanks += 1
+                voteButton = .thanks
+            case feedLikeView.wowButton:
+                post.votes.wow += 1
+                voteButton = .wow
+            case feedLikeView.haButton:
+                post.votes.ha += 1
+                voteButton = .ha
+            case feedLikeView.niceButton:
+                post.votes.nice += 1
+                voteButton = .nice
+            default:
+                voteButton = .thanks
+                break
             }
             
-            handyHelper.updatePost(button: button, post: self.post)
-            showButtonText(button: desButton)
-            setLikeButtonTitle(post: self.post, button: desButton)
+            feedLikeView.showLikeCount(for: voteButton, post: post)
+            handyHelper.updatePost(button: voteButton, post: post)
         } else {
-            self.notLoggedInAlert()
+            notLoggedInAlert()
         }
     }
     
@@ -736,7 +662,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if upvotes.thanks != 0 {
             var index = 0
             while index <= upvotes.thanks {
-                upvoteArray.append(self.thanksButton)
+                upvoteArray.append(self.feedLikeView.thanksButton)
                 index+=1
             }
         }
@@ -744,7 +670,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if upvotes.wow != 0 {
             var index = 0
             while index <= upvotes.wow {
-                upvoteArray.append(self.wowButton)
+                upvoteArray.append(self.feedLikeView.wowButton)
                 index+=1
             }
         }
@@ -752,7 +678,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if upvotes.ha != 0 {
             var index = 0
             while index <= upvotes.ha {
-                upvoteArray.append(self.haButton)
+                upvoteArray.append(self.feedLikeView.haButton)
                 index+=1
             }
         }
@@ -760,7 +686,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if upvotes.nice != 0 {
             var index = 0
             while index <= upvotes.nice {
-                upvoteArray.append(self.niceButton)
+                upvoteArray.append(self.feedLikeView.niceButton)
                 index+=1
             }
         }
@@ -804,13 +730,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         self.view.layoutIfNeeded()
                 
         switch button {
-        case thanksButton:
+        case feedLikeView.thanksButton:
             buttonLabel.text = NSLocalizedString("buttonLabel_thanks", comment: "thanks and stuff")
-        case wowButton:
+        case feedLikeView.wowButton:
             buttonLabel.text = NSLocalizedString("buttonLabel_wow", comment: "wow and stuff")
-        case haButton:
+        case feedLikeView.haButton:
             buttonLabel.text = NSLocalizedString("buttonLabel_ha", comment: "ha and stuff")
-        case niceButton:
+        case feedLikeView.niceButton:
             buttonLabel.text = NSLocalizedString("buttonLabel_nice", comment: "nice and stuff")
         default:
             buttonLabel.text = "so nicht"
@@ -1067,5 +993,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 collectionViewPageControl.currentPage = indexPath.row
             }
         }
+    }
+}
+
+extension PostViewController: FeedLikeViewDelegate {
+    func registerVote(button: DesignableButton) {
+        self.updateLikeCount(button: button)
     }
 }

@@ -46,7 +46,7 @@ struct Constants {
     }
     
     struct NewPostConstants {
-        static let infoButtonSize: CGFloat = 22
+        static let infoButtonSize: CGFloat = 20
         static let labelHeight: CGFloat = 17
         static let defaultOptionViewHeight: CGFloat = 45
         static let pictureViewHeightConstant: CGFloat = 100

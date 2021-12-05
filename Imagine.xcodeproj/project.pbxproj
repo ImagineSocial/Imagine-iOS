@@ -18,6 +18,7 @@
 		022D94292753B4FD00562058 /* BaseButtonWithImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022D94282753B4FD00562058 /* BaseButtonWithImage.swift */; };
 		022D942C2753D83000562058 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022D942B2753D83000562058 /* Strings.swift */; };
 		023C54E5275BFC7800A9E461 /* CALayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023C54E4275BFC7800A9E461 /* CALayer.swift */; };
+		023C54E7275C391700A9E461 /* FeedTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023C54E6275C391700A9E461 /* FeedTitleLabel.swift */; };
 		024F64F12757F983002DFC06 /* BaseImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F64F02757F983002DFC06 /* BaseImageView.swift */; };
 		024F64F327580416002DFC06 /* BaseScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F64F227580415002DFC06 /* BaseScrollView.swift */; };
 		024F64F8275AD237002DFC06 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F64F7275AD236002DFC06 /* UIApplication.swift */; };
@@ -312,6 +313,7 @@
 		022D94282753B4FD00562058 /* BaseButtonWithImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseButtonWithImage.swift; sourceTree = "<group>"; };
 		022D942B2753D83000562058 /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
 		023C54E4275BFC7800A9E461 /* CALayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayer.swift; sourceTree = "<group>"; };
+		023C54E6275C391700A9E461 /* FeedTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedTitleLabel.swift; sourceTree = "<group>"; };
 		024F64F02757F983002DFC06 /* BaseImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseImageView.swift; sourceTree = "<group>"; };
 		024F64F227580415002DFC06 /* BaseScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseScrollView.swift; sourceTree = "<group>"; };
 		024F64F7275AD236002DFC06 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
@@ -710,6 +712,7 @@
 				E90E1A4C25FF655300855FE1 /* FeedUserView.swift */,
 				02EBEFE42635B41D00373C45 /* FeedLikeView.xib */,
 				02EBEFE12635B40F00373C45 /* FeedLikeView.swift */,
+				023C54E6275C391700A9E461 /* FeedTitleLabel.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1941,6 +1944,7 @@
 				029F7B44273053A80029254A /* UIColor.swift in Sources */,
 				022D94252752C25900562058 /* BaseTextLabel.swift in Sources */,
 				E90E1A4025FBCB3C00855FE1 /* FinishedWorkItem.swift in Sources */,
+				023C54E7275C391700A9E461 /* FeedTitleLabel.swift in Sources */,
 				E962AC3A222DB5DB00C6D6EF /* ReportTableViewController.swift in Sources */,
 				E9817B6525EC098300E56FC6 /* DescriptionView.swift in Sources */,
 				E991CCD82270972F00940834 /* WebViewController.swift in Sources */,

@@ -29,10 +29,10 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="FTS-vc-yco" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="59" y="10" width="345" height="73"/>
+                        <rect key="frame" x="65" y="12" width="339" height="71"/>
                         <subviews>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="253" text="Text" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q22-uC-mgD">
-                                <rect key="frame" x="10" y="27" width="325" height="41"/>
+                                <rect key="frame" x="10" y="27" width="319" height="39"/>
                                 <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
                                 <nil key="textColor"/>
@@ -77,7 +77,7 @@
                         </userDefinedRuntimeAttributes>
                     </view>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="default-user" translatesAutoresizingMaskIntoConstraints="NO" id="xtk-iA-AdD" customClass="DesignableImage" customModule="Imagine" customModuleProvider="target">
-                        <rect key="frame" x="10" y="10" width="34" height="34"/>
+                        <rect key="frame" x="16" y="12" width="34" height="34"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="34" id="Uhd-LU-6qX"/>
                             <constraint firstAttribute="height" constant="34" id="fZM-xV-CtG"/>
@@ -89,7 +89,7 @@
                         </userDefinedRuntimeAttributes>
                     </imageView>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FaG-Zv-mHD">
-                        <rect key="frame" x="10" y="10" width="34" height="34"/>
+                        <rect key="frame" x="16" y="12" width="34" height="34"/>
                         <connections>
                             <action selector="toUserTapped:" destination="aj4-eF-TBR" eventType="touchUpInside" id="MgS-ZR-WqN"/>
                         </connections>
@@ -127,8 +127,8 @@
                         <color key="tintColor" systemColor="labelColor"/>
                         <inset key="contentEdgeInsets" minX="1" minY="1" maxX="1" maxY="1"/>
                         <inset key="titleEdgeInsets" minX="1" minY="1" maxX="1" maxY="1"/>
-                        <inset key="imageEdgeInsets" minX="1" minY="1" maxX="1" maxY="1"/>
-                        <state key="normal" title="2" image="niceButton">
+                        <inset key="imageEdgeInsets" minX="4" minY="4" maxX="4" maxY="4"/>
+                        <state key="normal" image="niceButton">
                             <color key="titleColor" systemColor="labelColor"/>
                         </state>
                         <userDefinedRuntimeAttributes>
@@ -148,12 +148,12 @@
                     <constraint firstItem="fPQ-BU-yi6" firstAttribute="bottom" secondItem="xzT-im-IUE" secondAttribute="bottom" id="Q6U-WF-7OV"/>
                     <constraint firstItem="FaG-Zv-mHD" firstAttribute="width" secondItem="xtk-iA-AdD" secondAttribute="width" id="RbH-ca-1ec"/>
                     <constraint firstItem="FaG-Zv-mHD" firstAttribute="top" secondItem="xtk-iA-AdD" secondAttribute="top" id="Wgx-0d-Gss"/>
-                    <constraint firstItem="xtk-iA-AdD" firstAttribute="top" secondItem="0Vg-xH-S4S" secondAttribute="top" constant="10" id="Wx8-UX-mAf"/>
+                    <constraint firstItem="xtk-iA-AdD" firstAttribute="top" secondItem="0Vg-xH-S4S" secondAttribute="top" constant="12" id="Wx8-UX-mAf"/>
                     <constraint firstItem="FaG-Zv-mHD" firstAttribute="leading" secondItem="xtk-iA-AdD" secondAttribute="leading" id="Zs9-HE-sb5"/>
                     <constraint firstItem="tPf-AQ-EYz" firstAttribute="leading" secondItem="0Vg-xH-S4S" secondAttribute="leading" constant="1" id="chV-Ek-H1f"/>
                     <constraint firstItem="tPf-AQ-EYz" firstAttribute="top" secondItem="0Vg-xH-S4S" secondAttribute="top" id="dn9-jH-1VP"/>
                     <constraint firstItem="xzT-im-IUE" firstAttribute="bottom" secondItem="FTS-vc-yco" secondAttribute="bottom" constant="22" id="dvc-em-xnB"/>
-                    <constraint firstItem="xtk-iA-AdD" firstAttribute="leading" secondItem="tPf-AQ-EYz" secondAttribute="trailing" constant="8" id="i88-DX-wSQ"/>
+                    <constraint firstItem="xtk-iA-AdD" firstAttribute="leading" secondItem="tPf-AQ-EYz" secondAttribute="trailing" constant="14" id="i88-DX-wSQ"/>
                     <constraint firstAttribute="bottom" secondItem="tPf-AQ-EYz" secondAttribute="bottom" id="iJu-2o-yHJ"/>
                     <constraint firstAttribute="trailing" secondItem="FTS-vc-yco" secondAttribute="trailing" constant="20" id="iXu-by-2Py"/>
                     <constraint firstItem="FaG-Zv-mHD" firstAttribute="height" secondItem="xtk-iA-AdD" secondAttribute="height" id="rpg-jD-lS8"/>
@@ -181,7 +181,7 @@
     </designables>
     <resources>
         <image name="default-user" width="423" height="423"/>
-        <image name="niceButton" width="100" height="100"/>
+        <image name="niceButton" width="80" height="80"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

@@ -119,11 +119,6 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
         }
     }
     
-    // Not in the extension because i could not override it and dont want performSegue in Usertableview
-    func userTapped(post: Post) {
-        //        performSegue(withIdentifier: "toUserSegue", sender: post.user)
-    }
-    
     func reachabilityChanged(_ isReachable: Bool) {
         print("changed! Connection reachable: ", isReachable, "fetch requested: ", fetchRequested)
         
@@ -139,46 +134,13 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
     //MARK: - TOP Sorting View
     
     let sortingStackView: UIStackView = {
-    let stack = UIStackView()
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.axis = .vertical
-        stack.distribution = .fillEqually
-        stack.spacing = 3
-        stack.alpha = 0
-        
-        let dateDecreasingButton = DesignableButton(sort: true)
-        dateDecreasingButton.setTitle(NSLocalizedString("date_descending", comment: "date with downwards arrow"), for: .normal)
-        dateDecreasingButton.addTarget(self, action: #selector(sortDateDec), for: .touchUpInside)
-        
-        let dateIncreasingButton = DesignableButton(sort: true)
-        dateIncreasingButton.setTitle(NSLocalizedString("date_ascending", comment: "date with upwards arrow"), for: .normal)
-        dateIncreasingButton.addTarget(self, action: #selector(sortDateAsc), for: .touchUpInside)
-        
-        let thanksCountButton = DesignableButton(sort: true)
-        thanksCountButton.setTitle(NSLocalizedString("thanks_descending", comment: "thanks with downwards arrow"), for: .normal)
-        thanksCountButton.addTarget(self, action: #selector(sortThanks), for: .touchUpInside)
-        
-        let wowCountButton = DesignableButton(sort: true)
-        wowCountButton.setTitle("Wow ↓", for: .normal)
-        wowCountButton.addTarget(self, action: #selector(sortWow), for: .touchUpInside)
-        
-        let haCountButton = DesignableButton(sort: true)
-        haCountButton.setTitle("Ha ↓", for: .normal)
-        haCountButton.addTarget(self, action: #selector(sortHa), for: .touchUpInside)
-        
-        let niceCountButton = DesignableButton(sort: true)
-        niceCountButton.setTitle("Nice ↓", for: .normal)
-        niceCountButton.addTarget(self, action: #selector(sortNice), for: .touchUpInside)
-        
-        stack.addArrangedSubview(dateDecreasingButton)
-        stack.addArrangedSubview(dateIncreasingButton)
-        stack.addArrangedSubview(thanksCountButton)
-        stack.addArrangedSubview(wowCountButton)
-        stack.addArrangedSubview(haCountButton)
-        stack.addArrangedSubview(niceCountButton)
-    
-        return stack
+
+        return UIStackView() // FML
     }()
+    
+    // Not in the extension because i could not override it and dont want performSegue in Usertableview
+    func userTapped(post: Post) {
+    }
     
     let dismissSortButton: UIButton = {
         let button = UIButton()
@@ -254,7 +216,7 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
           return
         }
         
-        let size = CGSize(width: self.view.frame.width, height: 30)
+        let size = CGSize(width: self.view.frame.width, height: 50)
         
         UIView.animate(withDuration: 0.3, animations: {
             self.sortingStackView.alpha = 0
@@ -279,8 +241,6 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
           return
         }
         
-        let size = CGSize(width: self.view.frame.width, height: 150)
-        
         headerView.addSubview(sortingStackView)
         sortingStackView.topAnchor.constraint(equalTo: headerView.topAnchor, constant: 10).isActive = true
         sortingStackView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 10).isActive = true
@@ -293,6 +253,8 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
         dismissSortButton.topAnchor.constraint(equalTo: headerView.topAnchor).isActive = true
         dismissSortButton.bottomAnchor.constraint(equalTo: headerView.bottomAnchor).isActive = true
         dismissSortButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor).isActive = true
+        
+        let size = CGSize(width: self.view.frame.width, height: 150)
         
         if headerView.frame.size.height != size.height {
             headerView.frame.size.height = size.height

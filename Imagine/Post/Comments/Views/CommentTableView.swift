@@ -92,7 +92,7 @@ class CommentTableView: UITableView {
         if let user = Auth.auth().currentUser, let recipients = notificationRecipients {
             for recipient in recipients {
                 if user.uid == recipient {
-                    self.headerView!.showNotificationButton()
+                    // self.headerView!.showNotificationButton()    -> Maybe later when the ui isnt as intrusive
                 }
             }
         }

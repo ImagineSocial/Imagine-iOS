@@ -297,7 +297,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         switch state {
         case .ownProfileWithEditing:
             
-            let LogOutButton = DesignableButton(title: "Log-Out", font: UIFont(name: "IBMPlexSans", size: 18))
+            let LogOutButton = DesignableButton(title: "Log-Out", font: UIFont(name: "IBMPlexSans-Medium", size: 16))
             LogOutButton.setTitleColor(UIColor(red:0.33, green:0.47, blue:0.65, alpha:1.0), for: .normal)
             LogOutButton.addTarget(self, action: #selector(self.logOutTapped), for: .touchUpInside)
             LogOutButton.constrain(width: 70, height: 30)

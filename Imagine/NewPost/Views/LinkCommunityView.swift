@@ -201,7 +201,7 @@ class LinkCommunityView: UIView {
     
     let linkedFactInfoButton: DesignableButton = {
         let button = DesignableButton(image: UIImage(named: "infoIcon"))
-        
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(linkedFactInfoButtonTapped), for: .touchUpInside)
         
         return button

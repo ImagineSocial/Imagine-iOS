@@ -41,7 +41,7 @@ class DesignableButton: UIButton {
         
         self.translatesAutoresizingMaskIntoConstraints = false
         self.backgroundColor = .clear
-        self.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 13)
+        self.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 14)
         self.contentHorizontalAlignment = .left
         self.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0);
         

@@ -112,10 +112,6 @@ class FeedUserView: UIView, NibLoadable {
         
         self.linkedCommunityImageView.layer.borderColor = UIColor.secondaryLabel.cgColor
         
-        if post.isTopicPost {
-            communityPostImageView.isHidden = false
-        }
-        
         if let url = URL(string: post.community!.imageURL) {
             self.linkedCommunityImageView.sd_setImage(with: url, completed: nil)
         } else {

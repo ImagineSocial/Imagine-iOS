@@ -213,9 +213,8 @@
 
 //BaseFeedTableViewController
 "one_moment_placeholder" = "Moment";
-"date_descending" = "Datum ↓";
-"date_ascending" = "Datum ↑";
-"thanks_descending" = "Danke ↓";
+"date_descending" = "Datum";
+"thanks_descending" = "Danke";
 
 //ReportABugViewController
 "more_information_alert" = "Ein bisschen genauer bitte";

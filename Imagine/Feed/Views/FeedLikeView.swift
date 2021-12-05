@@ -20,7 +20,6 @@ class FeedLikeView: UIView, NibLoadable {
     @IBOutlet weak var haButton: DesignableButton!
     @IBOutlet weak var niceButton: DesignableButton!
     @IBOutlet weak var commentCountLabel: UILabel!
-    @IBOutlet weak var descriptionPreviewLabel: UILabel!
     
     //MARK:- Variables
     weak var delegate: FeedLikeViewDelegate?
@@ -38,7 +37,6 @@ class FeedLikeView: UIView, NibLoadable {
     }
     
     func setPost(post: Post) {
-        descriptionPreviewLabel.text = post.description
         commentCountLabel.text = String(post.commentCount)
     }
     
@@ -46,11 +44,7 @@ class FeedLikeView: UIView, NibLoadable {
         let buttons = [thanksButton!, wowButton!, haButton!, niceButton!]
         
         for button in buttons {
-            button.setImage(nil, for: .normal)
             button.imageView?.contentMode = .scaleAspectFit
-            button.layer.borderWidth = 0.5
-            button.layer.cornerRadius = 7
-            button.layer.borderColor = UIColor.secondaryLabel.cgColor
         }
     }
     
@@ -69,8 +63,6 @@ class FeedLikeView: UIView, NibLoadable {
     }
     
     func resetValues() {
-        descriptionPreviewLabel.text = nil
-        
         thanksButton.isEnabled = true
         wowButton.isEnabled = true
         haButton.isEnabled = true
@@ -96,6 +88,23 @@ class FeedLikeView: UIView, NibLoadable {
         niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
     }
     
+    func showLikeCount(for button: VoteButton, post: Post) {
+        
+        switch button {
+        case .thanks:
+            thanksButton.setImage(nil, for: .normal)
+            thanksButton.setTitle(String(post.votes.thanks), for: .normal)
+        case .wow:
+            wowButton.setImage(nil, for: .normal)
+            wowButton.setTitle(String(post.votes.wow), for: .normal)
+        case .ha:
+            haButton.setImage(nil, for: .normal)
+            haButton.setTitle(String(post.votes.ha), for: .normal)
+        case .nice:
+            niceButton.setImage(nil, for: .normal)
+            niceButton.setTitle(String(post.votes.nice), for: .normal)
+        }
+    }
     
     //MARK:- IBActions
     

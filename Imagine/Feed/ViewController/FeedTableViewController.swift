@@ -18,13 +18,9 @@ import EasyTipView
 
 class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCenterDelegate {
     
-    //MARK: - IBOutlets
-    @IBOutlet weak var sortPostsButton: DesignableButton!
-    @IBOutlet weak var viewAboveTableView: UIView!
         
     //MARK: - Variables
     var screenEdgeRecognizer: UIScreenEdgePanGestureRecognizer!
-    var statusBarView: UIView?
     
     var loggedIn = false    // For the barButtonItem
     
@@ -72,10 +68,6 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     override func viewWillDisappear(_ animated: Bool) {
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
         self.navigationController?.hidesBarsOnSwipe = false
-        
-        if let view = statusBarView {
-            view.removeFromSuperview()
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -95,29 +87,16 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     
     private func setupNavigationbar() {
         self.navigationController?.hidesBarsOnSwipe = true
+        navigationItem.largeTitleDisplayMode = .never
         
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
         navBarAppearance.backgroundColor = .systemBackground
-        navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.imagineColor, .font: UIFont(name: "IBMPlexSans-Medium", size: 25)!]
-        navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.imagineColor, .font: UIFont(name: "IBMPlexSans-SemiBold", size: 30) ?? UIFont.systemFont(ofSize: 30, weight: .semibold)]
-        navBarAppearance.shadowImage = UIImage()
+        navBarAppearance.titleTextAttributes = [.font: UIFont(name: "IBMPlexSans-Medium", size: 25) ?? .systemFont(ofSize: 25)]
+        navBarAppearance.largeTitleTextAttributes = [.font: UIFont(name: "IBMPlexSans-SemiBold", size: 35) ?? UIFont.systemFont(ofSize: 35, weight: .semibold)]
         
         self.navigationController?.navigationBar.standardAppearance = navBarAppearance
         self.navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
-        
-        
-        // Add View for statusBar background
-        if let window = UIApplication.shared.windows.first {
-            let view = UIView()
-            
-            var height:CGFloat = 40
-            height = window.windowScene?.statusBarManager?.statusBarFrame.height ?? 40
-            view.backgroundColor = .systemBackground
-            view.frame = CGRect(x: 0, y: 0, width: window.frame.width, height: height)
-            statusBarView = view
-            window.addSubview(statusBarView!)
-        }
     }
     
     //MARK: - Get Data
@@ -151,9 +130,6 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                         }
                         self.posts.removeAll()  //to get the placeholder out
                         self.posts = posts
-                        let post = Post()
-                        post.type = .topTopicCell
-                        self.posts.insert(post, at: 0)
                         
                         DispatchQueue.main.async {
                             self.tableView.reloadData()
@@ -200,10 +176,6 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     /// Show empty cells while fetching the posts
     func setPlaceholderAndGetPosts() {
         var index = 0
-        
-        let post = Post()
-        post.type = .topTopicCell
-        self.posts.insert(post, at: 0)
         
         while index <= 3 {
             let post2 = Post()
@@ -414,23 +386,28 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     
     
     func createBarButton() {
+        
+        let user = Auth.auth().currentUser
+        let loggedIn = user != nil
+        
         // View so there can be a small number for Invitations
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.constrain(width: 35, height: 35)
+        view.constrain(width: loggedIn ? 35 : 30, height: loggedIn ? 35 : 30)
         
         //create new Button for the profilePictureButton
-        //TODO: Nachschauen ob das klappt
         let button = DesignableButton()
-        button.frame = CGRect(x: 0, y: 0, width: 35, height: 35)    // Apparently needed for the rounded corners
-        button.layer.masksToBounds = true        
+        button.layer.masksToBounds = true
         
+        view.addSubview(button)
+        
+        button.constrain(width: loggedIn ? 35 : 30, height: loggedIn ? 35 : 30)
+        button.layer.cornerRadius = (loggedIn ? 35 : 30) / 2
         
         // If somebody is logged in add a profilePicture button to open the sidemenu
-        if let user = Auth.auth().currentUser {
+        if let user = user {
             self.loggedIn = true
             
-            button.constrain(width: 35, height: 35)
             button.imageView?.contentMode = .scaleAspectFill
             button.layer.cornerRadius = button.frame.width/2
             button.addTarget(self, action: #selector(self.BarButtonItemTapped), for: .touchUpInside)
@@ -456,24 +433,18 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                 button.setImage(UIImage(named: "default-user"), for: .normal)
             }
             
-            view.addSubview(button)
-            view.addSubview(self.smallNumberForNewChats)
-            view.addSubview(self.smallNumberForNotifications)
+            view.addSubview(smallNumberForNotifications)
+            smallNumberForNotifications.constrain(top: view.topAnchor, trailing: view.trailingAnchor, paddingTop: -4, paddingTrailing: 4, width: 14, height: 14)
             
         } else {    // If nobody is logged in just show the logIn Button
             self.loggedIn = false
             
             self.smallNumberForNotifications.isHidden = true
-            self.smallNumberForNewChats.isHidden = true
 
-            button.layer.cornerRadius = 4
+            button.imageView?.contentMode = .scaleAspectFit
             button.addTarget(self, action: #selector(self.logInButtonTapped), for: .touchUpInside)
-            button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 15)
-            button.setTitle("Log-In", for: .normal)
-            button.setTitleColor(UIColor.imagineColor, for: .normal)
-
-            
-            view.addSubview(button)
+            button.setImage(UIImage(named: "login"), for: .normal)
+            button.tintColor = .imagineColor
         }
         
         let barButton = UIBarButtonItem(customView: view)
@@ -484,26 +455,14 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     
     
     let smallNumberForNotifications: UILabel = {
-        let label = UILabel.init(frame: CGRect.init(x: 27, y: 0, width: 14, height: 14))
-        label.backgroundColor = .red
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.backgroundColor = .label
         label.clipsToBounds = true
         label.layer.cornerRadius = 7
-        label.textColor = UIColor.white
+        label.textColor = .imagineColor
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 10)
-        label.isHidden = true
-        
-        return label
-    }()
-    
-    let smallNumberForNewChats: UILabel = {
-        let label = UILabel.init(frame: CGRect.init(x: 16, y: 0, width: 14, height: 14))
-        label.backgroundColor = UIColor(red: 23/255, green: 145/255, blue: 255/255, alpha: 1)
-        label.clipsToBounds = true
-        label.layer.cornerRadius = 7
-        label.textColor = UIColor.white
-        label.textAlignment = .center
-        label.font = .systemFont(ofSize: 10)
+        label.font = UIFont.getStandardFont(with: .regular, size: 10)
         label.isHidden = true
         
         return label
@@ -555,48 +514,6 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             self.view.showNoInternetConnectionView()
             // Tell User no Connection
         }
-    }
-    
-    //MARK: - TopView
-    
-    @IBAction func sortPostsTapped(_ sender: Any) {
-                
-        UIView.animate(withDuration: 0.2, animations: {
-            self.sortPostsButton.alpha = 0
-        }) { (_) in
-            self.increaseTopView()
-        }
-    }
-    
-    override func decreaseTopView() {
-        
-        guard let headerView = tableView.tableHeaderView else {
-          return
-        }
-        
-        let size = CGSize(width: self.view.frame.width, height: 30)
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.sortingStackView.alpha = 0
-        }) { (_) in
-            self.sortingStackView.isHidden = true
-        }
-        
-        if headerView.frame.size.height != size.height {
-            headerView.frame.size.height = size.height
-        }
-        
-        self.tableView.tableHeaderView = headerView
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.view.layoutIfNeeded()
-        }) { (_) in
-            UIView.animate(withDuration: 0.1) {
-                self.sortPostsButton.alpha = 1
-            }
-        }
-        
-        
     }
     
     // MARK: - Side Menu
@@ -830,18 +747,18 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     
     func setBarButtonProfileBadge(notifications: Int, newChats: Int) {
         
-        if notifications >= 1 {
-            self.smallNumberForNotifications.text = String(notifications)
+        if newChats >= 1 {
+            self.smallNumberForNotifications.text = String(newChats)
             self.smallNumberForNotifications.isHidden = false
         } else {
             self.smallNumberForNotifications.isHidden = true
         }
         
-        if newChats >= 1 {
-            self.smallNumberForNewChats.text = String(newChats)
-            self.smallNumberForNewChats.isHidden = false
-        } else {
-            self.smallNumberForNewChats.isHidden = true
+        if notifications >= 1 {
+            self.smallNumberForNotifications.text = String(notifications)
+            self.smallNumberForNotifications.isHidden = false
+        } else if newChats == 0 {
+            self.smallNumberForNotifications.isHidden = true
         }
     }
     
