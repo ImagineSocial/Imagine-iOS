@@ -115,7 +115,7 @@ extension CommunityCollectionVC {
         
         
         if indexPath.section == 0 { // Last Selected Communities
-            let newSize = CGSize(width: (collectionView.frame.size.width)-(collectionViewSpacing+10), height: (collectionView.frame.size.width/4))
+            let newSize = CGSize(width: (collectionView.frame.size.width)-(collectionViewSpacing+10), height: (collectionView.frame.size.width / 5))
             
             return newSize
         } else if indexPath.section == 1 {    // normal Communities

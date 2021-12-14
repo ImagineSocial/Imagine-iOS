@@ -159,60 +159,47 @@ extension RecentTopicsCollectionCell: UICollectionViewDataSource, UICollectionVi
 class SmallTopicCell: UICollectionViewCell {
     
     @IBOutlet weak var cellImageView: UIImageView!
-    @IBOutlet weak var cellNameLabel: UILabel!
-    @IBOutlet weak var gradientView: UIView!
     
     override var isHighlighted: Bool {
-           didSet {
-               toggleIsHighlighted()
-           }
-       }
-
-       func toggleIsHighlighted() {
-           UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseOut], animations: {
-               self.alpha = self.isHighlighted ? 0.9 : 1.0
-               self.transform = self.isHighlighted ?
-                   CGAffineTransform.identity.scaledBy(x: 0.97, y: 0.97) :
-                   CGAffineTransform.identity
-           })
-       }
+        didSet {
+            toggleIsHighlighted()
+        }
+    }
+    
+    func toggleIsHighlighted() {
+        UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseOut], animations: {
+            self.alpha = self.isHighlighted ? 0.9 : 1.0
+            self.transform = self.isHighlighted ?
+            CGAffineTransform.identity.scaledBy(x: 0.97, y: 0.97) :
+            CGAffineTransform.identity
+        })
+    }
     
     override func awakeFromNib() {
-            cellImageView.contentMode = .scaleAspectFill
-            
-            layer.cornerRadius = 4
-            layer.masksToBounds = true
-        }
+        cellImageView.contentMode = .scaleAspectFill
         
-        override func prepareForReuse() {
-            cellImageView.image = nil
-        }
-    
-    func setGradientView() {
-        //Gradient
-        let gradient = CAGradientLayer()
-        gradient.startPoint = CGPoint(x: 0.5, y: 0.0)
-        gradient.endPoint = CGPoint(x: 0.5, y: 0.6)
-        let whiteColor = UIColor.white
-        gradient.colors = [whiteColor.withAlphaComponent(0.0).cgColor, whiteColor.withAlphaComponent(0.5).cgColor, whiteColor.withAlphaComponent(0.7).cgColor]
-        gradient.locations = [0.0, 0.7, 1]
-        gradient.frame = gradientView.bounds
-        
-        gradientView.layer.mask = gradient
+        layer.masksToBounds = true
     }
-        
-        var fact: Community? {
-            didSet {
-                if let fact = fact {
-                    cellNameLabel.text = fact.title
-                    
-                    if let url = URL(string: fact.imageURL) {
-                        cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
-                    } else {
-                        cellImageView.image = UIImage(named: "default-community")
-                    }
-                    setGradientView()
+    
+    override func prepareForReuse() {
+        cellImageView.image = nil
+    }
+    
+    var fact: Community? {
+        didSet {
+            if let fact = fact {
+                if let url = URL(string: fact.imageURL) {
+                    cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
+                } else {
+                    cellImageView.image = UIImage(named: "default-community")
                 }
             }
         }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        cellImageView.layer.cornerRadius = cellImageView.frame.width / 2
+    }
 }

@@ -17,6 +17,7 @@ struct Constants {
     static let niceColor = UIColor(red:0.98, green:0.71, blue:0.58, alpha:1)
     static let green = UIColor(red:0.36, green:0.70, blue:0.37, alpha:1.0)      //#5DB25E
     static let red = UIColor(red:1.00, green:0.54, blue:0.52, alpha:1.0)
+    static let blue = UIColor(red: 23/255, green: 145/255, blue: 255/255, alpha: 1)
     static let backgroundColorForTableViews = UIColor(red:0.33, green:0.47, blue:0.65, alpha:0.5)
     
     static let cellCornerRadius: CGFloat = 15

@@ -245,8 +245,6 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         verticalStackView.addArrangedSubview(chatStackView)
         friendsStackView.addArrangedSubview(friendsButton)
         verticalStackView.addArrangedSubview(friendsStackView)
-        //        votingStackView.addArrangedSubview(voteButton)
-        //        verticalStackView.addArrangedSubview(votingStackView)
         savedPostsStackView.addArrangedSubview(savedButton)
         verticalStackView.addArrangedSubview(savedPostsStackView)
         sideMenuView.addSubview(verticalStackView)
@@ -478,7 +476,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     let smallChatNumberLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.backgroundColor = UIColor(red: 23/255, green: 145/255, blue: 255/255, alpha: 1)
+        label.backgroundColor = Constants.blue
         label.textAlignment = .center
         label.textColor = .white
         label.font = UIFont(name: "IBMPlexSans", size: 12)

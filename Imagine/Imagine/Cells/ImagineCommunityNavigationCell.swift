@@ -147,7 +147,7 @@ class SimpleCell: UICollectionViewCell {
         imageView.constrain(centerX: containerView.centerXAnchor, centerY: containerView.centerYAnchor, width: 28, height: 28)
         
         imageView.clipsToBounds = true
-        imageView.tintColor = .accentColor
+        imageView.tintColor = .label
         imageView.contentMode = .scaleAspectFit
     }
     

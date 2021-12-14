@@ -117,9 +117,6 @@ extension AddOnSingleCommunityCollectionViewCell: UICollectionViewDelegateFlowLa
             
             if let cell = topicPreviewCollectionView.dequeueReusableCell(withReuseIdentifier: previewCellIdentifier, for: indexPath) as? SmallTopicCell {
                 
-                cell.cellNameLabel.isHidden = true
-                cell.gradientView.isHidden = true
-                
                 if let url = URL(string: post.imageURL) {
                     cell.cellImageView.sd_setImage(with: url, completed: nil)
                     

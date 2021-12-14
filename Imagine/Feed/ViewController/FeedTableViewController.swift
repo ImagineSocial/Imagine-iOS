@@ -457,10 +457,10 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     let smallNumberForNotifications: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.backgroundColor = .label
+        label.backgroundColor = .imagineColor
         label.clipsToBounds = true
         label.layer.cornerRadius = 7
-        label.textColor = .imagineColor
+        label.textColor = .white
         label.textAlignment = .center
         label.font = UIFont.getStandardFont(with: .regular, size: 10)
         label.isHidden = true

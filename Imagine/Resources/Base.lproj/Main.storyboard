@@ -4411,7 +4411,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Bwe-CM-ewG">
-                                            <rect key="frame" x="15" y="14" width="326.5" height="22.5"/>
+                                            <rect key="frame" x="15" y="15" width="326.5" height="20"/>
                                             <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="17"/>
                                             <nil key="highlightedColor"/>
                                         </label>
