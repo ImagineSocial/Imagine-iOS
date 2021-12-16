@@ -4411,7 +4411,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Bwe-CM-ewG">
-                                            <rect key="frame" x="15" y="15" width="326.5" height="20"/>
+                                            <rect key="frame" x="15" y="14" width="326.5" height="22.5"/>
                                             <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="17"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -4589,7 +4589,7 @@
                                     </constraints>
                                 </view>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.64999997615814209" translatesAutoresizingMaskIntoConstraints="NO" id="Tbh-0m-tI1">
-                                    <rect key="frame" x="140" y="44" width="225" height="27.5"/>
+                                    <rect key="frame" x="140" y="45.5" width="225" height="24.5"/>
                                     <fontDescription key="fontDescription" name="IBMPlexSans-SemiBold" family="IBM Plex Sans" pointSize="21"/>
                                     <nil key="highlightedColor"/>
                                 </label>
@@ -4667,7 +4667,7 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0 " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a5Z-MT-1ay">
-                                    <rect key="frame" x="140" y="118" width="15" height="16"/>
+                                    <rect key="frame" x="140" y="119" width="15" height="14"/>
                                     <constraints>
                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="15" id="fSD-ae-slS"/>
                                     </constraints>
@@ -4676,7 +4676,7 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Beiträge" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jNS-pZ-nzY">
-                                    <rect key="frame" x="160" y="119" width="44.5" height="14"/>
+                                    <rect key="frame" x="160" y="119" width="45" height="14"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="14" id="edP-Yo-rJL"/>
                                     </constraints>
@@ -4809,7 +4809,7 @@
                                             <color key="tintColor" systemColor="secondaryLabelColor"/>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wow guckt euch meinen Youtube Channel an!" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.90000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="dwa-KP-CAh">
-                                            <rect key="frame" x="5" y="5" width="315" height="17"/>
+                                            <rect key="frame" x="5" y="5" width="315" height="15.5"/>
                                             <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="13"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -5228,7 +5228,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="591"/>
                                         <subviews>
                                             <label userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="13.03.2019" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kge-gu-BhA">
-                                                <rect key="frame" x="55" y="75" width="53.5" height="13"/>
+                                                <rect key="frame" x="55" y="76" width="50.5" height="12"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="10"/>
                                                 <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -5386,10 +5386,10 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Q5g-tS-Gpr" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                                <rect key="frame" x="15" y="277" width="345" height="45.5"/>
+                                                <rect key="frame" x="15" y="277" width="345" height="44"/>
                                                 <subviews>
                                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="ANp-O4-qgC">
-                                                        <rect key="frame" x="5" y="5" width="335" height="35.5"/>
+                                                        <rect key="frame" x="5" y="5" width="335" height="34"/>
                                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                                         <color key="textColor" systemColor="labelColor"/>
                                                         <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
@@ -5914,7 +5914,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="365" height="59"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Melden" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JTr-hU-IYS">
-                                                <rect key="frame" x="148.5" y="16.5" width="68" height="26"/>
+                                                <rect key="frame" x="149.5" y="18" width="66.5" height="23.5"/>
                                                 <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="20"/>
                                                 <nil key="highlightedColor"/>
                                                 <userDefinedRuntimeAttributes>
@@ -8174,9 +8174,9 @@
         <image name="more" width="100" height="100"/>
         <image name="openLinkButton" width="31" height="31"/>
         <image name="repost" width="102" height="102"/>
-        <image name="save" width="64" height="64"/>
+        <image name="save" width="20" height="20"/>
         <image name="search" width="30" height="30"/>
-        <image name="settings" width="30" height="30"/>
+        <image name="settings" width="21.333333969116211" height="21.333333969116211"/>
         <image name="share" width="512" height="512"/>
         <image name="thanksButton" width="79" height="80"/>
         <image name="topicIcon" width="78" height="67"/>

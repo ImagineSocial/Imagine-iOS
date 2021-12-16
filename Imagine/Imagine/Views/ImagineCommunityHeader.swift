@@ -17,7 +17,7 @@ class ImagineCommunityHeader: UICollectionReusableView {
     
     //MARK: - Elements
     
-    let headerLabel = BaseLabel(font: UIFont.getStandardFont(with: .bold, size: 26))
+    let headerLabel = BaseLabel(font: UIFont.standard(with: .bold, size: 26))
     let expandButton = BaseButtonWithImage(image: UIImage(named: "down"), tintColor: .imagineColor)
     
     static let identifier = "ImagineCommunityHeader"

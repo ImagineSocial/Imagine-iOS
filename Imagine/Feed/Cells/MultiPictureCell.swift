@@ -10,14 +10,14 @@ import UIKit
 
 class MultiPictureCell: BaseFeedCell {
     
-    //MARK:- IBOutlets
+    //MARK: - IBOutlets
+    
     @IBOutlet weak var collectionView: UICollectionView!
-    @IBOutlet weak var pageControl: UIPageControl!
     @IBOutlet weak var pictureCountLabel: UILabel!
     @IBOutlet weak var multiPictureCollectionViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var pageControlHeight: NSLayoutConstraint!
     
-    //MARK:- Variables
+    //MARK: - Variables
+    
     private let identifier = "MultiPictureCell"
     private var images: [String]?
     
@@ -32,7 +32,6 @@ class MultiPictureCell: BaseFeedCell {
                     if let images = post.imageURLs {
                         
                         self.images = images
-                        self.pageControl.numberOfPages = images.count
                         self.pictureCountLabel.text = "1/\(images.count)"
                         
                         collectionView.isPagingEnabled = true
@@ -42,8 +41,6 @@ class MultiPictureCell: BaseFeedCell {
                     self.images = [post.imageURL]
                     self.pictureCountLabel.text = "< - >"
                     
-                    pageControlHeight.constant = 6
-                    pageControl.isHidden = true
                     collectionView.isPagingEnabled = false
                     collectionView.reloadData()
                 }
@@ -51,7 +48,9 @@ class MultiPictureCell: BaseFeedCell {
         }
     }
     
-    //MARK:- Cell Lifecycle
+    
+    //MARK: - Cell Lifecycle
+    
     override func awakeFromNib() {
         
         self.initiateCell()
@@ -71,16 +70,13 @@ class MultiPictureCell: BaseFeedCell {
     override func prepareForReuse() {
         super.prepareForReuse()
                 
-        pageControlHeight.constant = pageControlHeightValue
-        pageControl.isHidden = false
-        pageControl.currentPage = 0
-        
         collectionView.setContentOffset(CGPoint.zero, animated: false)  //Set collectionView to the beginning
         
         resetValues()
     }
     
-    //MARK:- Set Cell
+    //MARK: - Set Cell
+    
     override func setCell() {
         super.setCell()
         
@@ -128,7 +124,8 @@ class MultiPictureCell: BaseFeedCell {
     }
 }
 
-//MARK:- UICollectionView DataSource/ Delegate/ FlowLayout
+//MARK: - UICollectionView DataSource/ Delegate/ FlowLayout
+
 extension MultiPictureCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -179,16 +176,12 @@ extension MultiPictureCell: UICollectionViewDelegate, UICollectionViewDataSource
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        if let post = post, post.type == .panorama {
+        guard let post = post, post.type != .panorama, let indexPath = collectionView.indexPathsForVisibleItems.first, let images = post.imageURLs else {
             //no need for the display in a panorama picture
             return
         }
         
-        if let indexPath = collectionView.indexPathsForVisibleItems.first {
-            pageControl.currentPage = indexPath.row
-            
-            self.pictureCountLabel.text = "\(pageControl.currentPage+1)/\(pageControl.numberOfPages)"
-        }
+        self.pictureCountLabel.text = "\(indexPath.row + 1)/\(images.count)"
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -199,7 +192,9 @@ extension MultiPictureCell: UICollectionViewDelegate, UICollectionViewDataSource
 }
 
 
-//MARK:- MultiImageCollectionCell
+
+//MARK: - MultiImageCollectionCell
+
 class MultiImageCollectionCell: UICollectionViewCell {
     
     @IBOutlet weak var collectionImageView: UIImageView!
@@ -221,6 +216,4 @@ class MultiImageCollectionCell: UICollectionViewCell {
             }
         }
     }
-
-    
 }

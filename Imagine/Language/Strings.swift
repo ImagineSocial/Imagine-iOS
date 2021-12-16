@@ -25,4 +25,12 @@ struct Strings {
     
     static let proposalOpen = NSLocalizedString("campaignVC_segment_open_proposal", comment: "Open")
     static let proposalFinished = NSLocalizedString("campaignVC_segment_done_proposal", comment: "Finished")
+    
+    // MARK: - Side Menu
+    
+    static let sideMenuNotification = NSLocalizedString("sideMenu_notifications_label", comment: "notifications:")
+    static let sideMenuChats = NSLocalizedString("sideMenu_chats_label", comment: "chats")
+    static let sideMenuDeleteAll = NSLocalizedString("sideMenu_notifications_delete_label", comment: "delete all")
+    static let sideMenuFriends = NSLocalizedString("sideMenu_friends_label", comment: "friends")
+    static let sideMenuSaved = NSLocalizedString("sideMenu_saved_label", comment: "saved")
 }

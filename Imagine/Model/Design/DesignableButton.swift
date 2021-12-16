@@ -26,10 +26,10 @@ class DesignableButton: UIButton {
     init(title: String, font: UIFont? = UIFont(name: "IBMPlexSans", size: 16), cornerRadius: CGFloat = 0, tintColor: UIColor = .label, backgroundColor: UIColor = .clear, clipsToBounds: Bool = true) {
         super.init(frame: .zero)
         
+        self.translatesAutoresizingMaskIntoConstraints = false
         self.setTitle(title, for: .normal)
         self.setTitleColor(tintColor, for: .normal)
         self.titleLabel?.font = font
-        self.translatesAutoresizingMaskIntoConstraints = false
         self.layer.cornerRadius = cornerRadius
         self.tintColor = tintColor
         self.backgroundColor = backgroundColor

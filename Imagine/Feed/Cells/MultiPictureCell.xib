@@ -29,7 +29,7 @@
                         <rect key="frame" x="12" y="10" width="492" height="383"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d1A-v5-7Vd" customClass="FeedLikeView" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="10" y="356" width="472" height="40"/>
+                                <rect key="frame" x="10" y="347" width="472" height="40"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="wCm-BA-eHT"/>
@@ -115,14 +115,6 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="YDM-1V-5Tr">
-                                <rect key="frame" x="168.5" y="341" width="155.5" height="15"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="15" id="xB1-6K-47M"/>
-                                </constraints>
-                                <color key="pageIndicatorTintColor" systemColor="tertiaryLabelColor"/>
-                                <color key="currentPageIndicatorTintColor" systemColor="labelColor"/>
-                            </pageControl>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OZi-Ui-25m" customClass="FeedUserView" customModule="Imagine" customModuleProvider="target">
                                 <rect key="frame" x="5" y="29" width="482" height="45"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -134,8 +126,7 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="U0d-21-SXR" firstAttribute="trailing" secondItem="t4x-ao-7Mr" secondAttribute="trailing" constant="-10" id="04r-cY-58w"/>
-                            <constraint firstItem="YDM-1V-5Tr" firstAttribute="top" secondItem="t4x-ao-7Mr" secondAttribute="bottom" id="2O8-8h-7gZ"/>
-                            <constraint firstItem="YDM-1V-5Tr" firstAttribute="centerX" secondItem="2Nr-9E-z4D" secondAttribute="centerX" id="4tn-HS-xfs"/>
+                            <constraint firstItem="d1A-v5-7Vd" firstAttribute="top" secondItem="t4x-ao-7Mr" secondAttribute="bottom" constant="6" id="6Ly-ZC-dCd"/>
                             <constraint firstItem="zXD-2l-pnC" firstAttribute="top" secondItem="OZi-Ui-25m" secondAttribute="bottom" constant="5" id="7bH-RN-3r7"/>
                             <constraint firstItem="OZi-Ui-25m" firstAttribute="leading" secondItem="2Nr-9E-z4D" secondAttribute="leading" constant="5" id="IbC-SM-hf8"/>
                             <constraint firstAttribute="trailing" secondItem="IFc-hq-zRW" secondAttribute="trailing" id="P34-R0-2Cu"/>
@@ -146,7 +137,6 @@
                             <constraint firstAttribute="bottom" secondItem="d1A-v5-7Vd" secondAttribute="bottom" constant="6" id="ilq-BS-RyE"/>
                             <constraint firstItem="U0d-21-SXR" firstAttribute="top" secondItem="t4x-ao-7Mr" secondAttribute="top" constant="10" id="kxz-sC-zoU"/>
                             <constraint firstItem="t4x-ao-7Mr" firstAttribute="leading" secondItem="2Nr-9E-z4D" secondAttribute="leading" constant="5" id="mID-hh-DBd"/>
-                            <constraint firstItem="d1A-v5-7Vd" firstAttribute="top" secondItem="YDM-1V-5Tr" secondAttribute="bottom" id="n4g-Cy-d1R"/>
                             <constraint firstAttribute="trailing" secondItem="d1A-v5-7Vd" secondAttribute="trailing" constant="10" id="ob7-69-pQY"/>
                             <constraint firstItem="d1A-v5-7Vd" firstAttribute="leading" secondItem="2Nr-9E-z4D" secondAttribute="leading" constant="10" id="rv6-Cn-IwH"/>
                             <constraint firstItem="OZi-Ui-25m" firstAttribute="top" secondItem="IFc-hq-zRW" secondAttribute="bottom" constant="5" id="sCj-8k-BWL"/>
@@ -170,8 +160,6 @@
                 <outlet property="feedLikeView" destination="d1A-v5-7Vd" id="mvz-E4-g9m"/>
                 <outlet property="feedUserView" destination="OZi-Ui-25m" id="Xbw-4a-kEI"/>
                 <outlet property="multiPictureCollectionViewHeightConstraint" destination="SeL-PO-SOM" id="ivN-Qx-7Zt"/>
-                <outlet property="pageControl" destination="YDM-1V-5Tr" id="57L-jC-84f"/>
-                <outlet property="pageControlHeight" destination="xB1-6K-47M" id="K3R-zU-Ifc"/>
                 <outlet property="pictureCountLabel" destination="Gkk-4e-fzE" id="e1Q-lM-C7d"/>
                 <outlet property="reportView" destination="IFc-hq-zRW" id="VOt-k6-mqR"/>
                 <outlet property="reportViewButtonInTop" destination="3Dy-4B-Jor" id="f4t-ZF-SBG"/>
@@ -183,9 +171,6 @@
         </tableViewCell>
     </objects>
     <resources>
-        <systemColor name="labelColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

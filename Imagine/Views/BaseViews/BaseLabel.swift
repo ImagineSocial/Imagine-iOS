@@ -10,7 +10,7 @@ import UIKit
 
 class BaseLabel: UILabel {
     
-    init(text: String = "", textColor: UIColor = .label, font: UIFont? = UIFont.getStandardFont(), textAlignment: NSTextAlignment = .left) {
+    init(text: String = "", textColor: UIColor = .label, font: UIFont? = UIFont.standard(), textAlignment: NSTextAlignment = .left) {
         super.init(frame: .zero)
         
         self.translatesAutoresizingMaskIntoConstraints = false

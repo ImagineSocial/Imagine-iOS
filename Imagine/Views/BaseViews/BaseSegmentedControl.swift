@@ -10,7 +10,7 @@ import UIKit
 
 class BaseSegmentedControl: UISegmentedControl {
     
-    init(items: [Any], tintColor: UIColor = .imagineColor, font: UIFont? = UIFont.getStandardFont(), selectedItem: Int = 0) {
+    init(items: [Any], tintColor: UIColor = .imagineColor, font: UIFont? = UIFont.standard(), selectedItem: Int = 0) {
         super.init(items: items)
         self.translatesAutoresizingMaskIntoConstraints = false
         

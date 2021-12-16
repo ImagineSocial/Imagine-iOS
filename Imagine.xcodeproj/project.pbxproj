@@ -23,6 +23,7 @@
 		024F64F327580416002DFC06 /* BaseScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F64F227580415002DFC06 /* BaseScrollView.swift */; };
 		024F64F8275AD237002DFC06 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F64F7275AD236002DFC06 /* UIApplication.swift */; };
 		024F64FA275AE4F2002DFC06 /* BaseCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F64F9275AE4F2002DFC06 /* BaseCollectionViewCell.swift */; };
+		026F467A27690A3600C279D2 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026F467927690A3600C279D2 /* Icons.swift */; };
 		0289957326FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */; };
 		0289957726FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957626FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift */; };
 		0289957B26FB601D007CAFB7 /* PostVC+MultiPicCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957A26FB601C007CAFB7 /* PostVC+MultiPicCollectionView.swift */; };
@@ -318,6 +319,7 @@
 		024F64F227580415002DFC06 /* BaseScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseScrollView.swift; sourceTree = "<group>"; };
 		024F64F7275AD236002DFC06 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		024F64F9275AE4F2002DFC06 /* BaseCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionViewCell.swift; sourceTree = "<group>"; };
+		026F467927690A3600C279D2 /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
 		0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommunityCollectionVC+CollectionView.swift"; sourceTree = "<group>"; };
 		0289957626FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseFeedTableVC+TableView.swift"; sourceTree = "<group>"; };
 		0289957A26FB601C007CAFB7 /* PostVC+MultiPicCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostVC+MultiPicCollectionView.swift"; sourceTree = "<group>"; };
@@ -1245,6 +1247,7 @@
 			children = (
 				E9600E95223C0781003E5A7A /* Fonts */,
 				E929516923328D4B006C37E3 /* Constants.swift */,
+				026F467927690A3600C279D2 /* Icons.swift */,
 			);
 			path = Constants;
 			sourceTree = "<group>";
@@ -1850,6 +1853,7 @@
 				E9817B6125EC05AD00E56FC6 /* TitleView.swift in Sources */,
 				E9817B3D25EBE25100E56FC6 /* AddOnSetting.swift in Sources */,
 				E93F6F14253237FE0044EAA4 /* PopUpInfoView.swift in Sources */,
+				026F467A27690A3600C279D2 /* Icons.swift in Sources */,
 				E9FE46D525FB5DB500F4C973 /* ImagineDataRequest.swift in Sources */,
 				E9530C4E22DCBF20007D6A00 /* PinchToZoomViewController.swift in Sources */,
 				E9526C0B250F99550088004F /* RadialGradientLayer.swift in Sources */,

@@ -142,7 +142,7 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
         
         if let user = Auth.auth().currentUser {
             if user.uid == addOn.OP {
-                let settingButton = DesignableButton(image: UIImage(named: "settings"))
+                let settingButton = DesignableButton(image: Icons.settings)
                 settingButton.addTarget(self, action: #selector(self.settingButtonTapped), for: .touchUpInside)
                 settingButton.constrain(width: 30, height: 30)
                 

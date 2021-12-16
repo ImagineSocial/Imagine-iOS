@@ -10,7 +10,7 @@ import UIKit
 
 class BaseButtonWithText: DesignableButton {
     
-    init(text: String = "", titleColor: UIColor = .label, font: UIFont? = UIFont.getStandardFont(), cornerRadius: CGFloat = 0, borderColor: CGColor?) {
+    init(text: String = "", titleColor: UIColor = .label, font: UIFont? = UIFont.standard(), cornerRadius: CGFloat = 0, borderColor: CGColor?) {
         super.init()
         
         self.translatesAutoresizingMaskIntoConstraints = false

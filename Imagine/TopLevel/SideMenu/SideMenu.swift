@@ -22,10 +22,11 @@ enum SideMenuButton {
     case cancel
 }
 
-//Maybe create the currentUser here and pass it to the userfeedProfile
+// Maybe create the currentUser here and pass it to the userfeedProfile
 class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     
-    var FeedTableView:FeedTableViewController?
+    // MARK: - Elements
+    var FeedTableView: FeedTableViewController?
     
     let blackView: UIView = {
         let view = UIView()
@@ -35,6 +36,99 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         
         return view
     }()
+    
+    let notificationTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.layer.cornerRadius = 8
+        tableView.layer.masksToBounds = true
+        tableView.separatorStyle = .none
+        
+        tableView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
+        tableView.layer.borderWidth = 1
+        
+        return tableView
+    }()
+    
+    let notificationLabel = BaseLabel(text: Strings.sideMenuNotification, font: UIFont.standard(size: 14))
+    
+    let deleteAllNotificationsButton: DesignableButton = {
+        let button = DesignableButton(title: Strings.sideMenuDeleteAll, font: UIFont.standard(size: 11), cornerRadius: 8, tintColor: .systemRed, backgroundColor: .systemBackground)
+        button.alpha = 0
+        
+        return button
+    }()
+    
+    let profileButton = DesignableButton()
+    
+    let profilePictureImageView: UIImageView = {
+        let imgView = BaseImageView(image: Icons.defaultUser, contentMode: .scaleAspectFill)
+        imgView.layer.cornerRadius = imgView.frame.height/2
+        imgView.layoutIfNeeded()
+        imgView.clipsToBounds = true
+        
+        return imgView
+    }()
+    
+    let nameLabel = BaseLabel(font: UIFont.standard(with: .medium, size: 18), textAlignment: .center)
+    
+    // MARK: Chat, Friend, Saved UI
+    
+    let chatButton = DesignableButton(title: Strings.sideMenuChats, font: UIFont.standard(with: .medium, size: 18), tintColor: .imagineColor)
+    
+    let chatIconImageView: BaseImageView = {
+        let iconImageView = BaseImageView(image: Icons.chat)
+        iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+                
+        return iconImageView
+    }()
+    
+    lazy var chatStackView = BaseStackView(subviews: [chatIconImageView, chatButton], spacing: 15, axis: .horizontal, distribution: .fill)
+    
+    let chatCountLabel: UILabel = {
+        let label = BaseLabel(textColor: .white, font: UIFont.standard(size: 10), textAlignment: .center)
+        
+        label.backgroundColor = Constants.blue
+        label.clipsToBounds = true
+        return label
+    }()
+    
+    let friendsButton = DesignableButton(title: Strings.sideMenuFriends, font: UIFont.standard(with: .medium, size: 18), tintColor: .imagineColor)
+    
+    let friendsIconImageView: BaseImageView = {
+        let iconImageView = BaseImageView(image: Icons.friends)
+        iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+                        
+        return iconImageView
+    }()
+    
+    lazy var friendsStackView = BaseStackView(subviews: [friendsIconImageView, friendsButton], spacing: 15, axis: .horizontal, distribution: .fill)
+    
+    let invitationCountLabel: UILabel = {
+        let label = BaseLabel(textColor: .white, font: UIFont.standard(size: 12), textAlignment: .center)
+        label.backgroundColor = .red
+        label.clipsToBounds = true
+        
+        return label
+    }()
+    
+    let savedButton = DesignableButton(title: Strings.sideMenuSaved, font: UIFont.standard(with: .medium, size: 18), tintColor: .imagineColor)
+    
+    let savedIconImageView: BaseImageView = {
+        let iconImageView = BaseImageView(image: Icons.save, alignmentInsets: UIEdgeInsets(top: -2, left: -2, bottom: -2, right: -2))
+        iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+                        
+        return iconImageView
+    }()
+    
+    lazy var savedPostsStackView = BaseStackView(subviews: [savedIconImageView, savedButton], spacing: 15, axis: .horizontal, distribution: .fill)
+
+    lazy var verticalStackView = BaseStackView(subviews: [chatStackView, friendsStackView, savedPostsStackView], spacing: 15, axis: .vertical, distribution: .fillEqually)
+    
+    let settingButton = BaseButtonWithImage(image: Icons.settings, tintColor: .imagineColor)
+    
+    
+    // MARK: - Variables
     
     var notifications = [Comment]()
     
@@ -51,6 +145,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         return vc
     }()
     
+    // MARK: - Init
     
     override init() {
         super.init()
@@ -66,17 +161,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
             blackView.frame = window.frame
             blackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(sideMenuDismissed)))
             
-            
             window.addSubview(sideMenuView)
-            sideMenuView.addSubview(profileButton)
-            sideMenuView.addSubview(profilePictureImageView)
-            sideMenuView.addSubview(nameLabel)
-            sideMenuView.addSubview(smallNumberLabel)
-            sideMenuView.addSubview(smallChatNumberLabel)
-            sideMenuView.addSubview(disclaimerView)
-            sideMenuView.addSubview(notificationTableView)
-            sideMenuView.addSubview(notificationLabel)
-            sideMenuView.addSubview(deleteAllNotificationsButton)
             
             addConstraints()
             
@@ -88,12 +173,11 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
             slideLeft.direction = .left
             window.addGestureRecognizer(slideLeft)
             
-            
             sideMenuView.layoutIfNeeded()
         }
     }
     
-    ///Show the SideMenu: Move the sideMenu over the FeedTableVC
+    /// Show the SideMenu: Move the sideMenu over the FeedTableVC
     func showMenu() {
         
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
@@ -101,11 +185,9 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
             self.blackView.alpha = 1
             self.sideMenuView.frame = CGRect(x:0, y: 0, width: self.sideMenuView.frame.width, height: self.sideMenuView.frame.height)
             
-        }, completion: { (_) in
-            
+        }, completion: { _ in
             self.sideMenuView.layoutSubviews()
         })
-        //        }
     }
     
     @objc func toUserProfileTapped() {
@@ -174,17 +256,17 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     
     func checkNotifications(invitations: Int, notifications: [Comment], newChats: Int) {
         if invitations != 0 {
-            smallNumberLabel.text = String(invitations)
-            smallNumberLabel.isHidden = false
+            invitationCountLabel.text = String(invitations)
+            invitationCountLabel.isHidden = false
         } else {
-            smallNumberLabel.isHidden = true
+            invitationCountLabel.isHidden = true
         }
         
         if newChats != 0 {
-            smallChatNumberLabel.text = String(newChats)
-            smallChatNumberLabel.isHidden = false
+            chatCountLabel.text = String(newChats)
+            chatCountLabel.isHidden = false
         } else {
-            smallChatNumberLabel.isHidden = true
+            chatCountLabel.isHidden = true
         }
         
         self.notifications.removeAll()
@@ -218,107 +300,64 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     
     
     
-    // MARK:- Constraints
+    // MARK: - Constraints
     func addConstraints() {
-        addTargetsForButtons()
+        verticalStackView.alignment = .leading
+        verticalStackView.sizeToFit()
         
-        profilePictureImageView.centerXAnchor.constraint(equalTo: sideMenuView.centerXAnchor).isActive = true
-        profilePictureImageView.topAnchor.constraint(equalTo: sideMenuView.topAnchor, constant: 50).isActive = true
-        profilePictureImageView.widthAnchor.constraint(equalToConstant: 110).isActive = true
-        profilePictureImageView.heightAnchor.constraint(equalToConstant: 110).isActive = true
+        sideMenuView.addSubview(verticalStackView)
+        sideMenuView.addSubview(profileButton)
+        sideMenuView.addSubview(profilePictureImageView)
+        sideMenuView.addSubview(nameLabel)
+        sideMenuView.addSubview(invitationCountLabel)
+        sideMenuView.addSubview(chatCountLabel)
+        sideMenuView.addSubview(notificationTableView)
+        sideMenuView.addSubview(notificationLabel)
+        sideMenuView.addSubview(deleteAllNotificationsButton)
+        sideMenuView.addSubview(settingButton)
+                
+        profilePictureImageView.constrain(centerX: sideMenuView.centerXAnchor, top: sideMenuView.topAnchor, paddingTop: 60, width: 100, height: 100)
         profilePictureImageView.layer.cornerRadius = profilePictureImageView.frame.height/2
         profilePictureImageView.layoutIfNeeded()
         
-        profileButton.leadingAnchor.constraint(equalTo: profilePictureImageView.leadingAnchor).isActive = true
-        profileButton.topAnchor.constraint(equalTo: profilePictureImageView.topAnchor).isActive = true
-        profileButton.trailingAnchor.constraint(equalTo: profilePictureImageView.trailingAnchor).isActive = true
-        profileButton.bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor).isActive = true
+        profileButton.constrain(top: profilePictureImageView.topAnchor, leading: profilePictureImageView.leadingAnchor, bottom: nameLabel.bottomAnchor, trailing: profilePictureImageView.trailingAnchor)
         
-        nameLabel.topAnchor.constraint(equalTo: profilePictureImageView.bottomAnchor, constant: 15).isActive = true
-        nameLabel.centerXAnchor.constraint(equalTo: profilePictureImageView.centerXAnchor).isActive = true
-        nameLabel.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        
-        
-        addDisclaimer()
-        
-        chatStackView.addArrangedSubview(chatButton)
-        verticalStackView.addArrangedSubview(chatStackView)
-        friendsStackView.addArrangedSubview(friendsButton)
-        verticalStackView.addArrangedSubview(friendsStackView)
-        savedPostsStackView.addArrangedSubview(savedButton)
-        verticalStackView.addArrangedSubview(savedPostsStackView)
-        sideMenuView.addSubview(verticalStackView)
+        nameLabel.constrain(centerX: profilePictureImageView.centerXAnchor, top: profilePictureImageView.bottomAnchor, paddingTop: 10, height: 25)
         
         let heightWidthOfSmallNumber:CGFloat = 16
         
-        smallChatNumberLabel.trailingAnchor.constraint(equalTo: chatStackView.trailingAnchor).isActive = true
-        smallChatNumberLabel.centerYAnchor.constraint(equalTo: chatStackView.centerYAnchor).isActive = true
-        smallChatNumberLabel.heightAnchor.constraint(equalToConstant: heightWidthOfSmallNumber).isActive = true
-        smallChatNumberLabel.widthAnchor.constraint(equalToConstant: heightWidthOfSmallNumber).isActive = true
-        smallChatNumberLabel.layer.cornerRadius = heightWidthOfSmallNumber/2
-        smallChatNumberLabel.layoutIfNeeded()
+        chatCountLabel.constrain(top: chatIconImageView.topAnchor, trailing: chatIconImageView.trailingAnchor, paddingTop: -4, paddingTrailing: 4, width: heightWidthOfSmallNumber, height: heightWidthOfSmallNumber)
+        chatCountLabel.layer.cornerRadius = heightWidthOfSmallNumber/2
+        chatCountLabel.layoutIfNeeded()
         
-        smallNumberLabel.trailingAnchor.constraint(equalTo: friendsStackView.trailingAnchor).isActive = true
-        smallNumberLabel.centerYAnchor.constraint(equalTo: friendsStackView.centerYAnchor).isActive = true
-        smallNumberLabel.heightAnchor.constraint(equalToConstant: heightWidthOfSmallNumber).isActive = true
-        smallNumberLabel.widthAnchor.constraint(equalToConstant: heightWidthOfSmallNumber).isActive = true
-        smallNumberLabel.layer.cornerRadius = heightWidthOfSmallNumber/2
-        smallNumberLabel.layoutIfNeeded()
+        invitationCountLabel.constrain(top: friendsIconImageView.topAnchor, trailing: friendsIconImageView.trailingAnchor, paddingTop: -4, paddingTrailing: 4, width: heightWidthOfSmallNumber, height: heightWidthOfSmallNumber)
+        invitationCountLabel.layer.cornerRadius = heightWidthOfSmallNumber/2
+        invitationCountLabel.layoutIfNeeded()
         
-        verticalStackView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor, constant: 10).isActive = true
-        verticalStackView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 50).isActive = true
-        verticalStackView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor, constant: -10).isActive = true
-        verticalStackView.heightAnchor.constraint(equalToConstant: 115).isActive = true
+        verticalStackView.constrain(top: nameLabel.bottomAnchor, leading: sideMenuView.leadingAnchor, trailing: sideMenuView.trailingAnchor, paddingTop: 50, paddingLeading: 10, paddingTrailing: -10, height: 110)
         
-        notificationTableView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor, constant: 5).isActive = true
-        notificationTableView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor, constant: -5).isActive = true
-        //        notificationTableView.bottomAnchor.constraint(equalTo: disclaimerView.topAnchor, constant: 30).isActive = true
-//        notificationTableView.heightAnchor.constraint(equalToConstant: 175).isActive = true
-        notificationTableView.topAnchor.constraint(equalTo: verticalStackView.bottomAnchor, constant: 40).isActive = true
-        notificationTableView.bottomAnchor.constraint(equalTo: disclaimerView.topAnchor, constant: -30).isActive = true
+        notificationTableView.constrain(top: verticalStackView.bottomAnchor, leading: sideMenuView.leadingAnchor, trailing: sideMenuView.trailingAnchor, paddingTop: 40, paddingLeading: 10, paddingTrailing: -10)
         
-        deleteAllNotificationsButton.trailingAnchor.constraint(equalTo: notificationTableView.trailingAnchor, constant: -2).isActive = true
-        deleteAllNotificationsButton.bottomAnchor.constraint(equalTo: notificationTableView.bottomAnchor, constant: -2).isActive = true
-        deleteAllNotificationsButton.widthAnchor.constraint(equalToConstant: 75).isActive = true
-        deleteAllNotificationsButton.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        notificationLabel.constrain(leading: notificationTableView.leadingAnchor, bottom: notificationTableView.topAnchor, paddingBottom: -5)
         
-        notificationLabel.leadingAnchor.constraint(equalTo: notificationTableView.leadingAnchor).isActive = true
-        notificationLabel.bottomAnchor.constraint(equalTo: notificationTableView.topAnchor, constant: -5).isActive = true
+        deleteAllNotificationsButton.constrain(bottom: notificationTableView.bottomAnchor, trailing: notificationTableView.trailingAnchor, paddingBottom: -2, paddingTrailing: -2)
+                
+        settingButton.constrain(top: notificationTableView.bottomAnchor, bottom: sideMenuView.bottomAnchor, trailing: sideMenuView.trailingAnchor, paddingTop: 15, paddingBottom: -30, paddingTrailing: -10)
         
-        disclaimerView.leadingAnchor.constraint(equalTo: sideMenuView.leadingAnchor, constant: 20).isActive = true
-        disclaimerView.trailingAnchor.constraint(equalTo: sideMenuView.trailingAnchor, constant: -50).isActive = true
-        disclaimerView.bottomAnchor.constraint(equalTo: sideMenuView.bottomAnchor, constant: -25).isActive = true
-        disclaimerView.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        
-        self.sideMenuView.layoutSubviews()
-        self.sideMenuView.layoutIfNeeded()
+        sideMenuView.layoutSubviews()
+        sideMenuView.layoutIfNeeded()
         
         self.showUser()
+        addTargetsForButtons()
     }
     
-    func addDisclaimer() {
-        
-        disclaimerView.addSubview(logo)
-        logo.leadingAnchor.constraint(equalTo: disclaimerView.leadingAnchor, constant: 10).isActive = true
-        logo.centerYAnchor.constraint(equalTo: disclaimerView.centerYAnchor).isActive = true
-        logo.widthAnchor.constraint(equalToConstant: 15).isActive = true
-        logo.heightAnchor.constraint(equalToConstant: 15).isActive = true
-        
-        disclaimerView.addSubview(eulaButton)
-        eulaButton.leadingAnchor.constraint(equalTo: logo.trailingAnchor).isActive = true
-        eulaButton.topAnchor.constraint(equalTo: disclaimerView.topAnchor).isActive = true
-        eulaButton.trailingAnchor.constraint(equalTo: disclaimerView.trailingAnchor).isActive = true
-        eulaButton.heightAnchor.constraint(equalTo: disclaimerView.heightAnchor).isActive = true
-    }
-    
-    func addTargetsForButtons() {   // Doesnt work when I add the target on creation of the buttons
+    func addTargetsForButtons() { 
         chatButton.addTarget(self, action: #selector(toChatsTapped), for: .touchUpInside)
         profileButton.addTarget(self, action: #selector(toUserProfileTapped), for: .touchUpInside)
         friendsButton.addTarget(self, action: #selector(toFriendsTapped), for: .touchUpInside)
-        //        voteButton.addTarget(self, action: #selector(toVotingTapped), for: .touchUpInside)
         savedButton.addTarget(self, action: #selector(toSavedPostsTapped), for: .touchUpInside)
-        eulaButton.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
         deleteAllNotificationsButton.addTarget(self, action: #selector(deleteAllTapped), for: .touchUpInside)
+        settingButton.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
     }
     
     /// Get the user data and display it 
@@ -332,17 +371,6 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
             nameLabel.text = user.displayName
             profilePictureImageView.layer.cornerRadius = profilePictureImageView.frame.height/2
             profilePictureImageView.layoutIfNeeded()
-       
-            let userObject = User(userID: user.uid)
-            userObject.getBadges { (badges) in
-                for badge in badges {
-                    if badge == "first500" {
-                        self.firstBadgeImageView.image = UIImage(named: "First500Badge")
-                    } else if badge == "mod" {
-                        self.secondBadgeImageView.image = UIImage(named: "ModBadge")
-                    }
-                }
-            }
         }
     }
     
@@ -354,242 +382,10 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         notificationTableView.reloadData()
     }
     
-    // MARK:- Instantiate UI
-    
-    let notificationTableView: UITableView = {
-        let tableView = UITableView()
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.layer.cornerRadius = 8
-        tableView.layer.masksToBounds = true
-        tableView.separatorStyle = .none
-        
-        tableView.layer.borderColor = UIColor.secondarySystemBackground.cgColor
-        tableView.layer.borderWidth = 1
-        
-        return tableView
-    }()
-    
-    let notificationLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans", size: 14)
-        label.text = NSLocalizedString("sideMenu_notifications_label", comment: "notifications:")
-        label.tintColor = .label
-        
-        return label
-    }()
-    
-    let deleteAllNotificationsButton: DesignableButton = {
-       let button = DesignableButton(title: NSLocalizedString("sideMenu_notifications_delete_label", comment: "delete all"), font: UIFont(name: "IBMPlexSans", size: 11), cornerRadius: 8, tintColor: .systemRed, backgroundColor: .systemBackground)
-        button.alpha = 0
-        
-        return button
-    }()
-    
-    let profileButton: DesignableButton = {
-        let btn = DesignableButton()
-
-        return btn
-    }()
-    
-    let profilePictureImageView: UIImageView = {
-        let imgView = UIImageView()
-        imgView.translatesAutoresizingMaskIntoConstraints = false
-        imgView.contentMode = .scaleAspectFill
-        imgView.layer.cornerRadius = imgView.frame.height/2
-        imgView.layoutIfNeeded()
-        imgView.clipsToBounds = true
-        imgView.image = UIImage(named: "default-user")
-        
-        return imgView
-    }()
-    
-    let nameLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 18)
-        label.textColor = .imagineColor
-        
-        return label
-    }()
-    
-    //MARK:- BadgeUI
-    let badgeStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.axis = .horizontal
-        stack.alignment = .fill
-        stack.distribution = .fillEqually
-        stack.spacing = 3
-        
-        return stack
-    }()
-    
-    let firstBadgeImageView: UIImageView = {
-        let imgView = UIImageView()
-        imgView.translatesAutoresizingMaskIntoConstraints = false
-        imgView.contentMode = .scaleAspectFit
-        imgView.image = nil
-        imgView.tintColor = .label
-        
-        return imgView
-    }()
-    
-    let secondBadgeImageView: UIImageView = {
-        let imgView = UIImageView()
-        imgView.translatesAutoresizingMaskIntoConstraints = false
-        imgView.contentMode = .scaleAspectFit
-        imgView.image = nil
-        imgView.tintColor = .label
-        
-        return imgView
-    }()
-    
-    //MARK:- Chat, Friend, Saved UI
-    let chatButton: DesignableButton = {
-        let btn = DesignableButton(title: NSLocalizedString("sideMenu_chats_label", comment: "chats"), font: UIFont(name: "IBMPlexSans-Medium", size: 18), tintColor: .imagineColor)
-        
-        return btn
-    }()
-    
-    let chatStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis  = .horizontal
-        stackView.distribution = .fill
-        stackView.spacing   = 5
-        stackView.sizeToFit()
-        
-        
-        let iconImageView = UIImageView()
-        iconImageView.translatesAutoresizingMaskIntoConstraints = false
-        iconImageView.image = UIImage(named: "Chats")
-        iconImageView.contentMode = .scaleAspectFit
-        iconImageView.tintColor = .label
-        iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        
-        stackView.addArrangedSubview(iconImageView)
-        
-        return stackView
-    }()
-    
-    let smallChatNumberLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.backgroundColor = Constants.blue
-        label.textAlignment = .center
-        label.textColor = .white
-        label.font = UIFont(name: "IBMPlexSans", size: 12)
-        label.clipsToBounds = true
-        return label
-    }()
-    
-    let friendsButton: DesignableButton = {
-        let btn = DesignableButton(title: NSLocalizedString("sideMenu_friends_label", comment: "friends"), font: UIFont(name: "IBMPlexSans-Medium", size: 18), tintColor: .imagineColor)
-        
-        return btn
-    }()
-    
-    let friendsStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis  = .horizontal
-        stackView.distribution = .fill
-        stackView.spacing   = 5
-        stackView.sizeToFit()
-        
-        
-        let iconImageView = UIImageView()
-        iconImageView.translatesAutoresizingMaskIntoConstraints = false
-        iconImageView.image = UIImage(named: "people")
-        iconImageView.contentMode = .scaleAspectFit
-        iconImageView.tintColor = .label
-        iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        
-        stackView.addArrangedSubview(iconImageView)
-        
-        return stackView
-    }()
-    
-    let smallNumberLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.backgroundColor = .red
-        label.textAlignment = .center
-        label.textColor = .white
-        label.font = UIFont(name: "IBMPlexSans", size: 12)
-        label.clipsToBounds = true
-        return label
-    }()
-    
-    let savedButton: DesignableButton = {
-        let btn = DesignableButton(title: NSLocalizedString("sideMenu_saved_label", comment: "saved"), font: UIFont(name: "IBMPlexSans-Medium", size: 18), tintColor: .imagineColor)
-        
-        return btn
-    }()
-    
-    let savedPostsStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis  = .horizontal
-        stackView.distribution = .fill
-        stackView.spacing   = 5
-        stackView.sizeToFit()
-        
-        let iconImageView = UIImageView()
-        iconImageView.translatesAutoresizingMaskIntoConstraints = false
-        iconImageView.image = UIImage(named: "save")
-        iconImageView.tintColor = .label
-        iconImageView.contentMode = .scaleAspectFit
-        iconImageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
-        
-        stackView.addArrangedSubview(iconImageView)
-        
-        return stackView
-    }()
-    
-    
-    let verticalStackView : UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis  = NSLayoutConstraint.Axis.vertical
-        stackView.distribution  = UIStackView.Distribution.fillEqually
-        stackView.alignment = UIStackView.Alignment.fill
-        stackView.spacing   = 5
-        stackView.sizeToFit()
-        
-        return stackView
-    }()
-    
-    let disclaimerView : UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
-    }()
-    
-    let eulaButton:DesignableButton = {
-        let button = DesignableButton(title: NSLocalizedString("sideMenu_setting_label", comment: "settings"), font: UIFont(name: "IBMPlexSans", size: 16), tintColor: .imagineColor)
-        button.addTarget(self, action: #selector(toEulaTapped), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    let logo: UIImageView = {
-        let logo = UIImageView()
-        logo.translatesAutoresizingMaskIntoConstraints = false
-        logo.image = UIImage(named: "settings")
-        logo.contentMode = .center
-        logo.tintColor = .label
-        
-        return logo
-    }()
-    
-    
-    // - MARK: TableView
+    // - MARK: Notification TableView
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return notifications.count
+        notifications.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -606,8 +402,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        
-        return 60
+        60
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -621,9 +416,4 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
             self.handleDismiss(sideMenuButton: .toComment, comment: comment)
         }
     }
-    
-    
-    
 }
-
-

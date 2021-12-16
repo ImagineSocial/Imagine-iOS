@@ -20,7 +20,7 @@ enum CommunityNavigationItem: CaseIterable {
         case .proposals:
             return UIImage(named: "idea")
         case .settings:
-            return UIImage(named: "settings")
+            return Icons.settings
         case .website:
             return UIImage(named: "web")
         }

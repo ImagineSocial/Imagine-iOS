@@ -11,10 +11,10 @@ import UIKit
 class CampaignCell: UICollectionViewCell {
     
     let containerView = BaseView()
-    let headerLabel = BaseLabel(font: UIFont.getStandardFont(with: .semibold, size: 16))
-    let descriptionLabel = BaseTextLabel(font: UIFont.getStandardFont(with: .medium, size: 14))
-    let campaignDateLabel = BaseLabel(font: UIFont.getStandardFont(with: .regular, size: 12))
-    let categoryLabel = BaseLabel(font: UIFont.getStandardFont(with: .medium, size: 12))
+    let headerLabel = BaseLabel(font: UIFont.standard(with: .semibold, size: 16))
+    let descriptionLabel = BaseTextLabel(font: UIFont.standard(with: .medium, size: 14))
+    let campaignDateLabel = BaseLabel(font: UIFont.standard(with: .regular, size: 12))
+    let categoryLabel = BaseLabel(font: UIFont.standard(with: .medium, size: 12))
     let separatorView = HairlineView()
     
     var progressView: UIProgressView = {

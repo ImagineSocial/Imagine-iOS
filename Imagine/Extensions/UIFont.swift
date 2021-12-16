@@ -10,7 +10,7 @@ import UIKit
 
 extension UIFont {
     
-    static func getStandardFont(with weight: UIFont.Weight = .regular, size: CGFloat = 15) -> UIFont? {
+    static func standard(with weight: UIFont.Weight = .regular, size: CGFloat = 15) -> UIFont? {
         switch weight {
         case .semibold:
             return UIFont(name: "IBMPlexSans-SemiBold", size: size)
