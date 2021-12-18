@@ -9,6 +9,7 @@
 import UIKit
 import Firebase
 import FirebaseAuth
+import DateToolsSwift
 
 enum SideMenuButton {
     case toFriends
@@ -40,7 +41,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     let notificationTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.layer.cornerRadius = 8
+        tableView.layer.cornerRadius = Constants.cellCornerRadius
         tableView.layer.masksToBounds = true
         tableView.separatorStyle = .none
         
@@ -74,7 +75,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     
     // MARK: Chat, Friend, Saved UI
     
-    let chatButton = DesignableButton(title: Strings.sideMenuChats, font: UIFont.standard(with: .medium, size: 18), tintColor: .imagineColor)
+    let chatButton = DesignableButton(title: Strings.sideMenuChats, font: UIFont.standard(with: .medium, size: 16))
     
     let chatIconImageView: BaseImageView = {
         let iconImageView = BaseImageView(image: Icons.chat)
@@ -93,7 +94,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         return label
     }()
     
-    let friendsButton = DesignableButton(title: Strings.sideMenuFriends, font: UIFont.standard(with: .medium, size: 18), tintColor: .imagineColor)
+    let friendsButton = DesignableButton(title: Strings.sideMenuFriends, font: UIFont.standard(with: .medium, size: 16))
     
     let friendsIconImageView: BaseImageView = {
         let iconImageView = BaseImageView(image: Icons.friends)
@@ -112,7 +113,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         return label
     }()
     
-    let savedButton = DesignableButton(title: Strings.sideMenuSaved, font: UIFont.standard(with: .medium, size: 18), tintColor: .imagineColor)
+    let savedButton = DesignableButton(title: Strings.sideMenuSaved, font: UIFont.standard(with: .medium, size: 16))
     
     let savedIconImageView: BaseImageView = {
         let iconImageView = BaseImageView(image: Icons.save, alignmentInsets: UIEdgeInsets(top: -2, left: -2, bottom: -2, right: -2))
@@ -322,7 +323,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         
         profileButton.constrain(top: profilePictureImageView.topAnchor, leading: profilePictureImageView.leadingAnchor, bottom: nameLabel.bottomAnchor, trailing: profilePictureImageView.trailingAnchor)
         
-        nameLabel.constrain(centerX: profilePictureImageView.centerXAnchor, top: profilePictureImageView.bottomAnchor, paddingTop: 10, height: 25)
+        nameLabel.constrain(centerX: profilePictureImageView.centerXAnchor, top: profilePictureImageView.bottomAnchor, paddingTop: 10)
         
         let heightWidthOfSmallNumber:CGFloat = 16
         
@@ -334,11 +335,11 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         invitationCountLabel.layer.cornerRadius = heightWidthOfSmallNumber/2
         invitationCountLabel.layoutIfNeeded()
         
-        verticalStackView.constrain(top: nameLabel.bottomAnchor, leading: sideMenuView.leadingAnchor, trailing: sideMenuView.trailingAnchor, paddingTop: 50, paddingLeading: 10, paddingTrailing: -10, height: 110)
+        verticalStackView.constrain(top: nameLabel.bottomAnchor, leading: sideMenuView.leadingAnchor, trailing: sideMenuView.trailingAnchor, paddingTop: 35, paddingLeading: 10, paddingTrailing: -10, height: 110)
         
-        notificationTableView.constrain(top: verticalStackView.bottomAnchor, leading: sideMenuView.leadingAnchor, trailing: sideMenuView.trailingAnchor, paddingTop: 40, paddingLeading: 10, paddingTrailing: -10)
+        notificationLabel.constrain(top: verticalStackView.bottomAnchor, leading: sideMenuView.leadingAnchor, paddingTop: 35, paddingLeading: 10)
         
-        notificationLabel.constrain(leading: notificationTableView.leadingAnchor, bottom: notificationTableView.topAnchor, paddingBottom: -5)
+        notificationTableView.constrain(top: notificationLabel.bottomAnchor, leading: sideMenuView.leadingAnchor, trailing: sideMenuView.trailingAnchor, paddingTop: 5, paddingLeading: 10, paddingTrailing: -10)
         
         deleteAllNotificationsButton.constrain(bottom: notificationTableView.bottomAnchor, trailing: notificationTableView.trailingAnchor, paddingBottom: -2, paddingTrailing: -2)
                 
@@ -351,7 +352,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
         addTargetsForButtons()
     }
     
-    func addTargetsForButtons() { 
+    func addTargetsForButtons() {
         chatButton.addTarget(self, action: #selector(toChatsTapped), for: .touchUpInside)
         profileButton.addTarget(self, action: #selector(toUserProfileTapped), for: .touchUpInside)
         friendsButton.addTarget(self, action: #selector(toFriendsTapped), for: .touchUpInside)

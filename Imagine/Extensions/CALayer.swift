@@ -9,9 +9,19 @@
 import UIKit
 
 extension CALayer {
-    func createStandardShadow(with size: CGSize, cornerRadius: CGFloat = Constants.cellCornerRadius) {
-        let shadowRadius = UITraitCollection.current.userInterfaceStyle == .light ? Constants.Numbers.feedShadowRadius : 5
-        let shadowOffset: CGFloat = UITraitCollection.current.userInterfaceStyle == .light ? 5 : 0
+    func createStandardShadow(with size: CGSize, cornerRadius: CGFloat = Constants.cellCornerRadius, small: Bool = false) {
+        
+        let smallItem = UITraitCollection.current.userInterfaceStyle == .light || small
+        let shadowRadius = smallItem ? Constants.Numbers.feedShadowRadius : Constants.Numbers.feedShadowRadius / 2
+        
+        let shadowOffset: CGFloat
+        
+        if UITraitCollection.current.userInterfaceStyle == .light {
+            shadowOffset = small ? 2.5 : 5
+        } else {
+            shadowOffset = 0            
+        }
+         
         
         self.cornerRadius = cornerRadius
         self.shadowColor = UIColor.label.cgColor

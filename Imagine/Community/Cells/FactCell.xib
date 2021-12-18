@@ -35,7 +35,7 @@
                                 </constraints>
                             </imageView>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="oLR-zF-4gi">
-                                <rect key="frame" x="6" y="90" width="164" height="35"/>
+                                <rect key="frame" x="6" y="90" width="185" height="35"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="35" id="5m7-rf-LVP"/>
@@ -50,38 +50,24 @@
                                 <color key="textColor" systemColor="secondaryLabelColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button clipsSubviews="YES" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oGm-Xn-SGZ" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="172" y="97.5" width="20" height="20"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="20" id="A2C-Ib-D9Q"/>
-                                    <constraint firstAttribute="width" constant="20" id="khZ-W3-o4f"/>
-                                </constraints>
-                                <color key="tintColor" red="0.31537210939999999" green="0.46283984179999998" blue="0.65801352260000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" image="AddPost"/>
-                                <connections>
-                                    <action selector="followButtonTapped:" destination="MZ7-QN-O6v" eventType="touchUpInside" id="AIo-F9-fkm"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="Jez-8Y-1HQ" firstAttribute="leading" secondItem="sZQ-xb-zs6" secondAttribute="leading" constant="6" id="5ed-No-nuv"/>
                             <constraint firstAttribute="trailing" secondItem="KLn-Hg-xHa" secondAttribute="trailing" id="8dl-Cx-5fw"/>
                             <constraint firstItem="oLR-zF-4gi" firstAttribute="top" secondItem="KLn-Hg-xHa" secondAttribute="bottom" id="Czd-1T-qi8"/>
-                            <constraint firstItem="oGm-Xn-SGZ" firstAttribute="centerY" secondItem="oLR-zF-4gi" secondAttribute="centerY" id="Jj5-BW-035"/>
                             <constraint firstAttribute="trailing" secondItem="Jez-8Y-1HQ" secondAttribute="trailing" constant="6" id="M4O-j3-Thp"/>
-                            <constraint firstAttribute="trailing" secondItem="oGm-Xn-SGZ" secondAttribute="trailing" constant="5" id="WZT-cF-s8M"/>
                             <constraint firstAttribute="bottom" secondItem="Jez-8Y-1HQ" secondAttribute="bottom" constant="6" id="Wj0-ia-tiF"/>
                             <constraint firstItem="oLR-zF-4gi" firstAttribute="leading" secondItem="sZQ-xb-zs6" secondAttribute="leading" constant="6" id="bOx-pV-a4e"/>
                             <constraint firstItem="KLn-Hg-xHa" firstAttribute="top" secondItem="sZQ-xb-zs6" secondAttribute="top" id="gNy-J6-NZV"/>
                             <constraint firstItem="Jez-8Y-1HQ" firstAttribute="top" secondItem="oLR-zF-4gi" secondAttribute="bottom" id="gWJ-Gx-sbR"/>
-                            <constraint firstItem="oGm-Xn-SGZ" firstAttribute="leading" secondItem="oLR-zF-4gi" secondAttribute="trailing" constant="2" id="p75-z8-ZT8"/>
+                            <constraint firstAttribute="trailing" secondItem="oLR-zF-4gi" secondAttribute="trailing" constant="6" id="u1x-tV-l2Y"/>
                             <constraint firstItem="KLn-Hg-xHa" firstAttribute="leading" secondItem="sZQ-xb-zs6" secondAttribute="leading" id="vVH-DS-WZi"/>
                         </constraints>
                     </view>
                 </subviews>
             </view>
-            <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="sZQ-xb-zs6" secondAttribute="trailing" id="Hex-u1-kgd"/>
                 <constraint firstItem="sZQ-xb-zs6" firstAttribute="top" secondItem="MZ7-QN-O6v" secondAttribute="top" id="gZC-u7-2sw"/>
@@ -94,20 +80,15 @@
                 <outlet property="factCellImageView" destination="KLn-Hg-xHa" id="Db9-n9-vhn"/>
                 <outlet property="factCellLabel" destination="oLR-zF-4gi" id="mjG-P3-fJo"/>
                 <outlet property="factDescriptionLabel" destination="Jez-8Y-1HQ" id="HBT-Wr-wQa"/>
-                <outlet property="followButton" destination="oGm-Xn-SGZ" id="aSH-pB-ClM"/>
                 <outlet property="imageViewHeightConstraint" destination="Dh3-AH-oBA" id="KYJ-57-RwA"/>
             </connections>
             <point key="canvasLocation" x="119.56521739130436" y="98.4375"/>
         </collectionViewCell>
     </objects>
     <resources>
-        <image name="AddPost" width="85" height="85"/>
         <image name="default-community" width="250" height="216"/>
         <systemColor name="secondaryLabelColor">
             <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="secondarySystemBackgroundColor">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

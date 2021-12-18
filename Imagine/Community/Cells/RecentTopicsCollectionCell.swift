@@ -178,6 +178,7 @@ class SmallTopicCell: UICollectionViewCell {
     override func awakeFromNib() {
         cellImageView.contentMode = .scaleAspectFill
         
+        clipsToBounds = false
         layer.masksToBounds = true
     }
     

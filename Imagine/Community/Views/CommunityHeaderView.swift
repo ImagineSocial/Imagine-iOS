@@ -60,6 +60,8 @@ class CommunityHeaderView: UIView {
         }
     
     override func awakeFromNib() {
+        followButton.layer.borderColor = UIColor.label.cgColor
+        followButton.layer.borderWidth = 1
         
         setSegmentedIndicatorView()
     }

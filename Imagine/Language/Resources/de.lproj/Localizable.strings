@@ -454,7 +454,7 @@
 "factCollectionVC_recent_label" = "Zuletzt angesehen";
 
 //TopicCollectionFooter
-"topicCollectionFooter_add" = "Hinzufügen";
+"topicCollectionFooter_add" = "Erstellen";
 "topicCollectionFooter_showAll" = "Alle anzeigen";
 
 //NewPostVC //Segment geht noch nicht!

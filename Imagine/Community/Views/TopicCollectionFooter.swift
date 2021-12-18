@@ -15,22 +15,22 @@ protocol TopicCollectionFooterDelegate {
 
 class TopicCollectionFooter: UICollectionReusableView {
     
-    @IBOutlet weak var addTopicView: DesignablePopUp!
-    @IBOutlet weak var showAllView: DesignablePopUp!
+    @IBOutlet weak var createButton: DesignableButton!
+    @IBOutlet weak var showAllButton: DesignableButton!
+    
     
     var delegate: TopicCollectionFooterDelegate?
     
     var type: DisplayOption?
     
-    override func awakeFromNib() {
-        for view in [addTopicView, showAllView] {
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        for view in [createButton, showAllButton] {
             guard let view = view else { return }
-            
-            let layer = view.layer
-            layer.shadowColor = UIColor.label.cgColor
-            layer.shadowOffset = CGSize(width: 0, height: 3)
-            layer.shadowRadius = 4
-            layer.shadowOpacity = 0.3
+         
+            view.layer.cornerRadius = Constants.communityCornerRadius
+            view.layer.createStandardShadow(with: view.bounds.size, cornerRadius: Constants.communityCornerRadius, small: true)
         }
     }
     

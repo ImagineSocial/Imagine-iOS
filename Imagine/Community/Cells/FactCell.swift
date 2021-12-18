@@ -15,7 +15,6 @@ class FactCell: BaseCollectionViewCell {
     @IBOutlet weak var factCellImageView: UIImageView!
     @IBOutlet weak var imageViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var factDescriptionLabel: UILabel!
-    @IBOutlet weak var followButton: DesignableButton!
     @IBOutlet weak var containerView: UIView!
     
     let db = Firestore.firestore()
@@ -40,18 +39,16 @@ class FactCell: BaseCollectionViewCell {
     override func awakeFromNib() {
                 
         contentView.clipsToBounds = false
-        cornerRadius = 8
     }
     
     override func prepareForReuse() {
         factCellImageView.image = nil
-        followButton.setImage(UIImage(named: "AddPost"), for: .normal)
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        containerView.layer.cornerRadius = cornerRadius ?? Constants.cellCornerRadius
+        containerView.layer.cornerRadius = Constants.communityCornerRadius
     }
     
     var fact: Community? {
@@ -59,10 +56,6 @@ class FactCell: BaseCollectionViewCell {
             if let fact = fact {
                 factCellLabel.text = fact.title
                 factDescriptionLabel.text = fact.description
-                
-                if fact.beingFollowed {
-                    followButton.setImage(UIImage(named: "greenTik"), for: .normal)
-                }
                 
                 if let url = URL(string: fact.imageURL) {
                     factCellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
@@ -99,19 +92,6 @@ class FactCell: BaseCollectionViewCell {
                             }
                         }
                     }
-                }
-            }
-        }
-    }
-    
-    @IBAction func followButtonTapped(_ sender: Any) {
-        if let _ = Auth.auth().currentUser {
-            if let fact = fact {
-                if !fact.beingFollowed {
-                    let header = CommunityHeaderView()
-                    header.followTopic(community: fact)
-                    
-                    followButton.setImage(UIImage(named: "greenTik"), for: .normal)
                 }
             }
         }

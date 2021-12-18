@@ -154,6 +154,6 @@ class SimpleCell: UICollectionViewCell {
     override func layoutSubviews() {
         clipsToBounds = false
         
-        containerView.layer.createStandardShadow(with: containerView.bounds.size, cornerRadius: containerView.frame.width / 2)
+        containerView.layer.createStandardShadow(with: containerView.bounds.size, cornerRadius: containerView.frame.width / 2, small: true)
     }
 }

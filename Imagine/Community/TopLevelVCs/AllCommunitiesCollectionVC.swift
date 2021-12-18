@@ -196,7 +196,6 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
             
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: factCellIdentifier, for: indexPath) as? FactCell {
                 cell.fact = fact
-                cell.followButton.isHidden = true
                 
                 return cell
             }

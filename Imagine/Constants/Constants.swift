@@ -21,6 +21,8 @@ struct Constants {
     static let backgroundColorForTableViews = UIColor(red:0.33, green:0.47, blue:0.65, alpha:0.5)
     
     static let cellCornerRadius: CGFloat = 15
+    static let communityCornerRadius: CGFloat = 8
+    
     static let defaultImage = UIImage(named: "default")
     
     struct padding {

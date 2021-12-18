@@ -164,13 +164,13 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
                                 self.loadingFinished()
                             }
                             
-                            for document in snap.documents {
+                            snap.documents.forEach { document in
                                 let data = document.data()
                                 
                                 if let community = CommunityHelper().getCommunity(currentUser: user, documentID: document.documentID, data: data) {
                                     self.discussionCommunities.append(community)
                                 } else {
-                                    discussionCount-=1
+                                    discussionCount -= 1
                                 }
                                 
                                 if self.discussionCommunities.count == discussionCount {
@@ -475,6 +475,7 @@ class AddTopicCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        
         
         if let _ = isAddOnView {
             let eigth: CGFloat = self.contentView.frame.width/8

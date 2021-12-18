@@ -25,8 +25,7 @@ extension CommunityCollectionVC {
     // MARK: UICollectionViewDataSource
     
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        
-        return 4
+        4
     }
     
   
@@ -55,7 +54,7 @@ extension CommunityCollectionVC {
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        var fact: Community?
+        var community: Community?
         
         if indexPath.section == 0 { // First wide cell for recentTopics
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: recentTopicsCellIdentifier, for: indexPath) as? RecentTopicsCollectionCell {
@@ -72,15 +71,15 @@ extension CommunityCollectionVC {
                     return cell
                 }
             } else {
-                fact = topicCommunities[indexPath.row]
+                community = topicCommunities[indexPath.row]
             }
         } else if  indexPath.section == 2 {
-            fact = discussionCommunities[indexPath.row]
+            community = discussionCommunities[indexPath.row]
         } else {
-            fact = followedCommunities[indexPath.row]
+            community = followedCommunities[indexPath.row]
         }
         
-        if let fact = fact {
+        if let fact = community {
             
             if indexPath.section == 1 {
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FactCell.identifier, for: indexPath) as? FactCell {
@@ -115,7 +114,7 @@ extension CommunityCollectionVC {
         
         
         if indexPath.section == 0 { // Last Selected Communities
-            let newSize = CGSize(width: (collectionView.frame.size.width)-(collectionViewSpacing+10), height: (collectionView.frame.size.width / 5))
+            let newSize = CGSize(width: (collectionView.frame.size.width)-(collectionViewSpacing+10), height: (collectionView.frame.size.width / 4.5))
             
             return newSize
         } else if indexPath.section == 1 {    // normal Communities
@@ -218,18 +217,23 @@ extension CommunityCollectionVC {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        if section == 0 {
+        switch section {
+        case 0:
             return CGSize(width: collectionView.frame.width, height: 70)
-        } else {
+        case 1:
+            return CGSize(width: collectionView.frame.width, height: 35)
+        default:
             return CGSize(width: collectionView.frame.width, height: 50)
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        if section != 0 && section != 3 {
-            return CGSize(width: collectionView.frame.width, height: 85)
-        } else {
+        
+        switch section {
+        case 0, 3:
             return CGSize(width: collectionView.frame.width, height: 0)
+        default:
+            return CGSize(width: collectionView.frame.width, height: 85)
         }
     }
 }
