@@ -35,10 +35,6 @@ class DiscussionParentVC: UIViewController {
     var tipView: EasyTipView?
     
     weak var pageViewHeaderDelegate: PageViewHeaderDelegate?
-        
-    deinit {
-        print("## Deinit community parent")
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

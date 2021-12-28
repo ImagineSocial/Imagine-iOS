@@ -144,7 +144,6 @@ class CommunityHeaderView: UIView {
         segmentIndicator.heightAnchor.constraint(equalToConstant: 2).isActive = true
         
         guard let title = segmentedControl.titleForSegment(at: 0) else {
-            print("## Return because")
             return }
         
         let width: CGFloat = CGFloat(15 + title.count * 8)

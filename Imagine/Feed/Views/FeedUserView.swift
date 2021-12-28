@@ -46,10 +46,6 @@ class FeedUserView: UIView, NibLoadable {
         NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
     
-    override func layoutSubviews() {
-        print("## Height: \(nameLabel.frame.height)")
-    }
-    
     //MARK: - SetUp UI
     func setUpUI() {
         // Profile Picture

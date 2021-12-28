@@ -51,10 +51,6 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
     }
     
-    deinit {
-        print("## Deinit addOnCollection")
-    }
-    
     //MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()

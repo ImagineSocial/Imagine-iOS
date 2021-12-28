@@ -170,19 +170,16 @@ class CommentTableView: UITableView {
                     rightComment.children = children
                 }
                 self.reloadData()
-                print("ReloadData##")
             } else {
                // item could not be found
                 self.comments.append(comment)
                 self.comments.sort(by: { $0.createTime.compare($1.createTime) == .orderedAscending })
                 self.reloadData()
-                print("ReloadData##")
             }
         } else {
             self.comments.append(comment)
             self.comments.sort(by: { $0.createTime.compare($1.createTime) == .orderedAscending })
             self.reloadData()
-            print("ReloadData##")
         }
     }
     

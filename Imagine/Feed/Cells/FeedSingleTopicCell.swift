@@ -87,7 +87,7 @@ class FeedSingleTopicCell: BaseFeedCell {
         
         self.addOnInfo = info
         post.community = community
-        print("##LoadedSingleTopic")
+
         self.collectionView.reloadData()
         self.layoutSubviews()
     }
@@ -121,9 +121,7 @@ extension FeedSingleTopicCell: UICollectionViewDelegate, UICollectionViewDelegat
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        print("##Return size SingleTopic: \(collectionView.contentSize)")
-
-        return CGSize(width: collectionView.contentSize.width, height: 400)
+        CGSize(width: collectionView.contentSize.width, height: 400)
     }
     
 }
