@@ -253,7 +253,7 @@ class CommunityPostTableVC: BaseFeedTableViewController {
     }
     
     
-    //MARK:- Prepare For Segue
+    //MARK: - Prepare For Segue
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showPost" {
@@ -337,6 +337,4 @@ extension CommunityPostTableVC: NewFactDelegate {
         self.tableView.reloadData()
         self.getPosts(getMore: false)
     }
-    
 }
-

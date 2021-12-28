@@ -590,7 +590,7 @@ class FirestoreRequest {
         }
     }
     
-    // MARK:- Get Posts from DocumentIDs
+    // MARK: - Get Posts from DocumentIDs
     func getPostsFromDocumentIDs(posts: [Post], done: @escaping ([Post]?) -> Void) {
 
         var endIndex = posts.count
@@ -626,7 +626,6 @@ class FirestoreRequest {
                     } else {
                         if let document = document {
                             
-                            
                             self.getTheUsersFriend { (_) in // First get the friends to check which name to fetch
                                 if let post = self.postHelper.addThePost(document: document, isTopicPost: post.isTopicPost, language: post.language) {
                                     self.posts.append(post)
@@ -635,7 +634,7 @@ class FirestoreRequest {
                                 } else {
                                     endIndex-=1
                                 }
-                                print("start ", startIndex, " end: ", endIndex)
+
                                 if startIndex == endIndex {
                                     done(self.posts)
                                 }

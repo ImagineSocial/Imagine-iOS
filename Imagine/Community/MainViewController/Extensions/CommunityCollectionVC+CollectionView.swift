@@ -27,9 +27,6 @@ extension CommunityCollectionVC {
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         4
     }
-    
-  
-
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
@@ -53,17 +50,16 @@ extension CommunityCollectionVC {
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        var community: Community?
-        
-        if indexPath.section == 0 { // First wide cell for recentTopics
+                
+        switch indexPath.section {
+        case 0:
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: recentTopicsCellIdentifier, for: indexPath) as? RecentTopicsCollectionCell {
                 
                 cell.delegate = self
                 
                 return cell
             }
-        } else if  indexPath.section == 1 {    //Other cells
+        case 1:
             if isLoading {
                 // Blank Cell
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: placeHolderIdentifier, for: indexPath) as? PlaceHolderCell {
@@ -71,37 +67,26 @@ extension CommunityCollectionVC {
                     return cell
                 }
             } else {
-                community = topicCommunities[indexPath.row]
-            }
-        } else if  indexPath.section == 2 {
-            community = discussionCommunities[indexPath.row]
-        } else {
-            community = followedCommunities[indexPath.row]
-        }
-        
-        if let fact = community {
-            
-            if indexPath.section == 1 {
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FactCell.identifier, for: indexPath) as? FactCell {
                     
-                    cell.fact = fact
+                    cell.community = topicCommunities[indexPath.row]
                     
                     return cell
                 }
-            } else if indexPath.section == 2 {
-                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: discussionCellIdentifier, for: indexPath) as? DiscussionCell {
-                    
-                    cell.fact = fact
-                    
-                    return cell
-                }
-            } else if indexPath.section == 3 {
-                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: followedTopicCellIdentifier, for: indexPath) as? FollowedTopicCell {
-                    
-                    cell.fact = fact
-                    
-                    return cell
-                }
+            }
+        case 2:
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: discussionCellIdentifier, for: indexPath) as? DiscussionCell {
+                
+                cell.community = discussionCommunities[indexPath.row]
+                
+                return cell
+            }
+        default:
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: followedTopicCellIdentifier, for: indexPath) as? FollowedTopicCell {
+                
+                cell.community = followedCommunities[indexPath.row]
+                
+                return cell
             }
         }
         
@@ -112,58 +97,55 @@ extension CommunityCollectionVC {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        
-        if indexPath.section == 0 { // Last Selected Communities
-            let newSize = CGSize(width: (collectionView.frame.size.width)-(collectionViewSpacing+10), height: (collectionView.frame.size.width / 4.5))
-            
-            return newSize
-        } else if indexPath.section == 1 {    // normal Communities
-            
-            let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: (collectionView.frame.size.width/2)-collectionViewSpacing)
-            
-            return newSize
-            
-        } else if indexPath.section == 2 { // Discussions
-            
-            let newSize = CGSize(width: (collectionView.frame.size.width/2)-collectionViewSpacing, height: collectionView.frame.size.width/2)
-            
-            return newSize
-            
-        } else {    // Followed Communities
-            let newSize = CGSize(width: (collectionView.frame.size.width), height: 40)
-            
-            return newSize
+        switch indexPath.section {
+        case 0:
+            // Last Selected Communities
+            return CGSize(width: (collectionView.frame.size.width)-(collectionViewSpacing + 10), height: (collectionView.frame.size.width / 5))
+        case 1:
+            // normal Communities
+            return CGSize(width: (collectionView.frame.size.width / 2)-collectionViewSpacing, height: (collectionView.frame.size.width / 2) - collectionViewSpacing)
+        case 2:
+            // Discussions
+            return CGSize(width: (collectionView.frame.size.width / 2)-collectionViewSpacing, height: collectionView.frame.size.width / 2)
+        default:
+            // Followed Communities
+            return CGSize(width: (collectionView.frame.size.width), height: 40)
         }
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        var community: Community?
+        var community: Community
         
-        if indexPath.section == 0 {
-            
-        } else if indexPath.section == 1 {
+        switch indexPath.section {
+        case 1:
             community = topicCommunities[indexPath.row]
-        } else if indexPath.section == 2 {
+        case 2:
             community = discussionCommunities[indexPath.row]
-        } else {
+        case 3:
             community = followedCommunities[indexPath.row]
-        }
-        
-        guard let community = community else {
+        default:
             return
         }
         
         if let addFactToPost = addFactToPost{
             
             if addFactToPost == .newPost {
-                self.setFactForPost(fact: community)
+                self.setCommunityForPost(community: community)
             } else {
                 showAddItemAlert(for: community)
             }
         } else {
-            performSegue(withIdentifier: "toPageVC", sender: community)
-            self.topicSelected(fact: community)
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            if let vc = storyboard.instantiateViewController(withIdentifier: "communityPageVC") as? CommunityPageVC {
+                vc.recentTopicDelegate = self
+                vc.community = community
+                
+                let navVC = UINavigationController(rootViewController: vc)
+                present(navVC, animated: true)
+            }
+            
+            topicSelected(community: community)
         }
     }
     
@@ -219,7 +201,7 @@ extension CommunityCollectionVC {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         switch section {
         case 0:
-            return CGSize(width: collectionView.frame.width, height: 70)
+            return CGSize(width: collectionView.frame.width, height: 30)
         case 1:
             return CGSize(width: collectionView.frame.width, height: 35)
         default:

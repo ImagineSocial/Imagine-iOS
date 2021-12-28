@@ -12,7 +12,7 @@ import Firebase
 import FirebaseAnalytics
 
 protocol RecentTopicDelegate: class {
-    func topicSelected(fact: Community)
+    func topicSelected(community: Community)
 }
 
 class DiscussionParentVC: UIViewController {
@@ -35,9 +35,7 @@ class DiscussionParentVC: UIViewController {
     var tipView: EasyTipView?
     
     weak var pageViewHeaderDelegate: PageViewHeaderDelegate?
-    
-    //MARK:-
-    
+        
     deinit {
         print("## Deinit community parent")
     }

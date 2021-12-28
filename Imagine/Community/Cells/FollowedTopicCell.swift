@@ -13,12 +13,12 @@ class FollowedTopicCell: UICollectionViewCell {
     @IBOutlet weak var topicImageView: DesignableImage!
     @IBOutlet weak var topicNameLabel: UILabel!
     
-    var fact: Community? {
+    var community: Community? {
         didSet {
-            if let fact = fact {
-                topicNameLabel.text = fact.title
+            if let community = community {
+                topicNameLabel.text = community.title
                 
-                if let url = URL(string: fact.imageURL) {
+                if let url = URL(string: community.imageURL) {
                     topicImageView.sd_setImage(with: url, completed: nil)
                 } else {
                     topicImageView.image = UIImage(named: "default-community")

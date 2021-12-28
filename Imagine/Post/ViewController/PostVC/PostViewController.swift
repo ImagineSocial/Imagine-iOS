@@ -65,9 +65,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     var centerX: NSLayoutConstraint?
     var distanceConstraint: NSLayoutConstraint?
-    
-    var linkedFactPageVCNeedsHeightCorrection = false   //If it comes from mainFeed it needs to adjust height of communityHeader
-    
+        
     fileprivate var backUpViewHeight : NSLayoutConstraint?
     fileprivate var backUpButtonHeight : NSLayoutConstraint?
     fileprivate var imageHeightConstraint : NSLayoutConstraint?
@@ -129,6 +127,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        navigationController?.setNavigationBarHidden(false, animated: false)
+        
         //Add Observer again when the view was temporarly left for a user or a community profile
         if let commentView = floatingCommentView {
             commentView.addKeyboardObserver()
@@ -237,12 +237,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     func setUpUI() {
         
         feedLikeView.setDefaultButtonImages()
-        
-        //navigationBar
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for:.default)
-        self.navigationController?.navigationBar.shadowImage = UIImage() //"Doesnt work")
-        
-        //Save Post Button
+                
         savePostButton.tintColor = .label
         
         handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
@@ -864,61 +859,37 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-        if segue.identifier == "toFactSegue" {
-            if let community = sender as? Community {
-                if let factVC = segue.destination as? CommunityPageVC {
-                    factVC.community = community
-                    if linkedFactPageVCNeedsHeightCorrection {
-                        factVC.headerNeedsAdjustment = true
-                    }
-                }
+        switch segue.identifier {
+        case "toFactSegue":
+            if let community = sender as? Community, let communityVC = segue.destination as? CommunityPageVC {
+                communityVC.community = community
             }
-        }
-        
-        if segue.identifier == "goToPostsOfTopic" {
-            if let community = sender as? Community {
-                if let navCon = segue.destination as? UINavigationController {
-                    if let factVC = navCon.topViewController as? CommunityPostTableVC {
-                        factVC.community = community
-                        factVC.needNavigationController = true
-                    }
-                }
+        case "goToPostsOfTopic":
+            if let community = sender as? Community, let navCon = segue.destination as? UINavigationController, let factVC = navCon.topViewController as? CommunityPostTableVC {
+                factVC.community = community
+                factVC.needNavigationController = true
             }
-        }
-        
-        if segue.identifier == "toUserSegue" {
-            if let chosenUser = sender as? User {
-                if let userVC = segue.destination as? UserFeedTableViewController {
-                    userVC.userOfProfile = chosenUser
-                    userVC.currentState = .otherUser
-                    
-                }
+        case "toUserSegue":
+            if let chosenUser = sender as? User, let userVC = segue.destination as? UserFeedTableViewController {
+                userVC.userOfProfile = chosenUser
+                userVC.currentState = .otherUser
+                
             }
-        }
-        if segue.identifier == "goToLink" {
-            if let post = sender as? Post {
-                if let webVC = segue.destination as? WebViewController {
-                    webVC.post = post
-                }
+        case "goToLink":
+            if let post = sender as? Post, let webVC = segue.destination as? WebViewController {
+                webVC.post = post
             }
-        }
-        if segue.identifier == "reportSegue" {
-            if let chosenPost = sender as? Post {
-                if let reportVC = segue.destination as? ReportViewController {
-                    reportVC.post = chosenPost
-                    
-                }
+        case "reportSegue":
+            if let chosenPost = sender as? Post, let reportVC = segue.destination as? ReportViewController {
+                reportVC.post = chosenPost
             }
-        }
-        if segue.identifier == "toTranslateSegue" {
-            if let navVC = segue.destination as? UINavigationController {
-                if let repostVC = navVC.topViewController as? RepostViewController {
-                    if let chosenPost = sender as? Post {
-                        repostVC.post = chosenPost
-                        repostVC.repost = .translation
-                    }
-                }
+        case "toTranslateSegue":
+            if let navVC = segue.destination as? UINavigationController, let repostVC = navVC.topViewController as? RepostViewController, let chosenPost = sender as? Post {
+                repostVC.post = chosenPost
+                repostVC.repost = .translation
             }
+        default:
+            break
         }
     }
     

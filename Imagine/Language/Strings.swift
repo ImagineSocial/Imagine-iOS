@@ -10,7 +10,13 @@ import Foundation
 
 struct Strings {
     
-    // ImagineCommunityVC
+    // MARK: - Community
+    
+    static let discussion = NSLocalizedString("discussion", comment: "discussion")
+    static let feed = "Feed"
+    static let topics = NSLocalizedString("topics", comment: "topics")
+    
+    // MARK: - ImagineCommunityVC
     
     static let justFinishedHeader = "Just finished"
     

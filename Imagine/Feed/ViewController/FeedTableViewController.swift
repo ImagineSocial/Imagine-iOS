@@ -42,8 +42,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         setUpEasyTipViewPreferences()
         
         // Initiliaze ScreenEdgePanRecognizer to open sideMenu
-        screenEdgeRecognizer = UIScreenEdgePanGestureRecognizer(target: self,
-                                                                action: #selector(BarButtonItemTapped))
+        screenEdgeRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(BarButtonItemTapped))
         screenEdgeRecognizer.edges = .left
         view.addGestureRecognizer(screenEdgeRecognizer)
         
@@ -102,10 +101,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     //MARK: - Get Data
     
     @objc override func getPosts(getMore:Bool) {
-        /*
-         If "getMore" is true, you want to get more Posts, or the initial batch of 20 Posts, if not you want to refresh the current feed
-         */
-        print("Get Posts")
+        // If "getMore" is true, you want to get more Posts, or the initial batch of 20 Posts, if not you want to refresh the current feed
         
         if isConnected() {
             
@@ -217,30 +213,21 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     // MARK:- Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showPost" {
-            if let chosenPost = sender as? Post {
-                if let postVC = segue.destination as? PostViewController {
-                    postVC.post = chosenPost
-                    postVC.linkedFactPageVCNeedsHeightCorrection = true
-                }
-            }
-        }
         
-        if segue.identifier == "toIntroView" {
+        switch segue.identifier {
+        case "showPost":
+            if let chosenPost = sender as? Post, let postVC = segue.destination as? PostViewController {
+                postVC.post = chosenPost
+            }
+        case "toIntroView":
             if let introVC = segue.destination as? SwipeCollectionViewController {
                 introVC.diashow = .intro
             }
-        }
-        
-        if segue.identifier == "meldenSegue" {
-            if let chosenPost = sender as? Post {
-                if let reportVC = segue.destination as? ReportViewController {
-                    reportVC.post = chosenPost
-                    
-                }
+        case "meldenSegue":
+            if let chosenPost = sender as? Post, let reportVC = segue.destination as? ReportViewController {
+                reportVC.post = chosenPost
             }
-        }
-        if segue.identifier == "goToLink" {
+        case "goToLink":
             if let webVC = segue.destination as? WebViewController {
                 if let chosenPost = sender as? Post {
                     
@@ -250,8 +237,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                     webVC.link = chosenLink
                 }
             }
-        }
-        if segue.identifier == "toUserSegue" {
+        case "toUserSegue":
             if let userVC = segue.destination as? UserFeedTableViewController {
                 if let chosenUser = sender as? User {   // Another User
                     userVC.userOfProfile = chosenUser
@@ -261,36 +247,25 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                     userVC.currentState = .ownProfileWithEditing
                 }
             }
-        }
-        if segue.identifier == "toBlogPost" {
-            if let chosenPost = sender as? BlogPost {
-                if let blogVC = segue.destination as? BlogPostViewController {
-                    blogVC.blogPost = chosenPost
-                }
+        case "toBlogPost":
+            if let chosenPost = sender as? BlogPost, let blogVC = segue.destination as? BlogPostViewController {
+                blogVC.blogPost = chosenPost
             }
-        }
-        if segue.identifier == "toLogInSegue" {
+        case "toLogInSegue":
             if let vc = segue.destination as? LogInViewController {
                 vc.delegate = self
             }
-        }
-        if segue.identifier == "toFactSegue" {
-            if let community = sender as? Community {
-                if let factVC = segue.destination as? CommunityPageVC {
-                    factVC.community = community
-                    factVC.headerNeedsAdjustment = true
-                }
+        case "toFactSegue":
+            if let community = sender as? Community, let factVC = segue.destination as? CommunityPageVC {
+                factVC.community = community
             }
-        }
-        if segue.identifier == "goToPostsOfTopic" {
-            if let community = sender as? Community {
-                if let factVC = segue.destination as? CommunityPostTableVC {
-                    
-                    factVC.community = community
-                    self.notifyFactCollectionViewController(community: community)
-                    
-                }
+        case "goToPostsOfTopic":
+            if let community = sender as? Community, let factVC = segue.destination as? CommunityPostTableVC {
+                factVC.community = community
+                self.notifyFactCollectionViewController(community: community)
             }
+        default:
+            break
         }
     }
     

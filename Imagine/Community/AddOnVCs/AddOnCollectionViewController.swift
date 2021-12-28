@@ -41,11 +41,13 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
             
     weak var pageViewHeaderDelegate: PageViewHeaderDelegate?
     
-    private let collectionViewInsetsLeftAndRight: CGFloat = 40
+    private let collectionViewInsetsLeftAndRight: CGFloat = Constants.padding.standard * 2
     
-    var fact: Community? {
+    var community: Community? {
         didSet {
-            getData(fact: fact!)
+            guard let community = community else { return }
+
+            getData(community: community)
         }
     }
     
@@ -63,7 +65,6 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     //MARK: - Get Data
     
     private func setupCollectionView() {
-        // Register cell classes
         self.collectionView!.register(UINib(nibName: "AddOnHorizontalScrollCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: horizontalScrollCellIdentifier)
         self.collectionView.register(UINib(nibName: "AddOnSingleCommunityCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: singleCommunityCellIdentifier)
         self.collectionView.register(UINib(nibName: "AddOnCollectionViewFooter", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: footerViewIdentifier)
@@ -71,27 +72,28 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         self.collectionView.register(UINib(nibName: "AddOnQAndACollectionViewCell", bundle: nil), forCellWithReuseIdentifier: qAndACellIdentifier)
         self.collectionView.register(UINib(nibName: "AddOnPlaylistCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: playlistCellIdentifier)
 
-        let newHeight: CGFloat = 260
+        let newHeight: CGFloat = Constants.Numbers.communityHeaderHeight
         collectionView.contentInset = UIEdgeInsets(top: newHeight, left: 0, bottom: 0, right: 0)
         collectionView.contentOffset = CGPoint(x: 0, y: -newHeight)
         collectionView.delaysContentTouches = false
         
         if let flowLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            //If you are looking for the reason, the layout is wrong, it is because of the auto resizing option in storyboard collectionview
+            // If you are looking for the reason, the layout is wrong, it is because of the auto resizing option in storyboard collectionview
             flowLayout.scrollDirection = .vertical
+            flowLayout.sectionInset = .init(top: 10, left: Constants.padding.standard, bottom: 20, right: Constants.padding.standard)
         }
     }
     
-    func getData(fact: Community) {
+    func getData(community: Community) {
         
         var collectionRef: CollectionReference!
-        if fact.language == .english {
+        if community.language == .english {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
         }
         
-        let ref = collectionRef.document(fact.documentID).collection("addOns").order(by: "popularity", descending: true)
+        let ref = collectionRef.document(community.documentID).collection("addOns").order(by: "popularity", descending: true)
         
         ref.getDocuments { (snap, err) in
             if let error = err {
@@ -120,7 +122,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                                 if let title = data["title"] as? String,
                                    let description = data["description"] as? String,
                                    let OP = data["OP"] as? String {
-                                    let addOn = AddOn(style: .playlist, OP: OP, documentID: document.documentID, fact: fact, headerTitle: title, description: description, singleTopic: nil)
+                                    let addOn = AddOn(style: .playlist, OP: OP, documentID: document.documentID, fact: community, headerTitle: title, description: description, singleTopic: nil)
                                     
                                     if let thanksCount = data["thanksCount"] as? Int {
                                         addOn.thanksCount = thanksCount
@@ -150,7 +152,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                         }
                         
                         if let title = data["title"] as? String, let OP = data["OP"] as? String, let description = data["description"] as? String { //Normal collection
-                            let addOn = AddOn(style: .collection, OP: OP, documentID: document.documentID, fact: fact, headerTitle: title, description: description, singleTopic: nil)
+                            let addOn = AddOn(style: .collection, OP: OP, documentID: document.documentID, fact: community, headerTitle: title, description: description, singleTopic: nil)
                             
                             if let imageURL = data["imageURL"] as? String {
                                 addOn.imageURL = imageURL
@@ -181,7 +183,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                                 let singleTopic = Community()
                                 singleTopic.documentID = documentID
                                 
-                                let addOn = AddOn(style: .singleTopic, OP: OP, documentID: document.documentID, fact: fact, headerTitle: headerTitle, description: description, singleTopic: singleTopic)
+                                let addOn = AddOn(style: .singleTopic, OP: OP, documentID: document.documentID, fact: community, headerTitle: headerTitle, description: description, singleTopic: singleTopic)
                                 
                                 if let itemOrder = data["itemOrder"] as? [String] {
                                     addOn.itemOrder = itemOrder
@@ -196,7 +198,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                         } else if let type = data["type"] as? String, let OP = data["OP"] as? String {
                             if type == "QandA" {
 
-                                let addOn = AddOn(style: .QandA, OP: OP, documentID: document.documentID, fact: fact, description: "")
+                                let addOn = AddOn(style: .QandA, OP: OP, documentID: document.documentID, fact: community, description: "")
                                 self.optionalInformations.append(addOn)
                                 index+=1
                             } else {
@@ -220,7 +222,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     func renewCollectionView() {
         self.optionalInformations.removeAll()
         self.collectionView.reloadData()
-        self.getData(fact: self.fact!)
+        self.getData(community: self.community!)
     }
     
     //MARK: - Navigation
@@ -308,7 +310,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         self.pageViewHeaderDelegate?.childScrollViewScrolled(offset: offset)
     }
     
-    // MARK:- UICollectionView Data Source
+    // MARK: - UICollectionView
     
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections
@@ -379,7 +381,6 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         return UICollectionViewCell()
     }
     
-    //MARK:- CollectionView Delegate
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let info = optionalInformations[indexPath.item]
         
@@ -396,9 +397,9 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
     }
     
-    //MARK:- CollectionView Flow Layout
+    //MARK: - CollectionView Flow Layout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = self.collectionView.frame.width-collectionViewInsetsLeftAndRight
+        let width = self.collectionView.frame.width - collectionViewInsetsLeftAndRight
         
         if noOptionalInformation {
             let proposal = optionalInformationProposals[indexPath.row]
@@ -459,15 +460,16 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
         
-        return CGSize(width: collectionView.frame.width, height: 50)
+        return CGSize(width: collectionView.frame.width - collectionViewInsetsLeftAndRight, height: 50)
     }
 }
 
-//MARK:- AddOnCell Delegate, AddOnFooterDelegate
+//MARK: - AddOnCell Delegate, AddOnFooterDelegate
+
 extension AddOnCollectionViewController: AddOnCellDelegate, AddOnFooterViewDelegate {
     
     func goToAddOnStore() {
-        if let community = fact {
+        if let community = community {
             performSegue(withIdentifier: "toNewAddOnSegue", sender: community)
         }
     }
@@ -494,7 +496,7 @@ extension AddOnCollectionViewController: AddOnCellDelegate, AddOnFooterViewDeleg
     
     func thanksTapped(info: AddOn) {
         if let _ = Auth.auth().currentUser {
-            if let fact = fact, info.documentID != "" {
+            if let fact = community, info.documentID != "" {
                 var collectionRef: CollectionReference!
                 if fact.language == .english {
                     collectionRef = db.collection("Data").document("en").collection("topics")

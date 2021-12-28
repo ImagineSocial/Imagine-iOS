@@ -198,10 +198,10 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
     
     func getFollowedCommunities() {
         if let user = Auth.auth().currentUser {
-            dataHelper.getFollowedTopicDocuments(userUID: user.uid) { (documents) in
+            dataHelper.getFollowedTopicDocuments(userUID: user.uid) { documents in
                 var topicCount = documents.count
                 for document in documents {
-                    self.addFact(user: user, document: document) { (fact) in
+                    self.addFact(user: user, document: document) { fact in
                         if let fact = fact {
                             fact.beingFollowed = true
                             self.followedCommunities.append(fact)
@@ -209,7 +209,7 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
                                 $0.title.localizedCompare($1.title) == .orderedAscending //Not case sensitive
                             }
                         } else {
-                            topicCount-=1
+                            topicCount -= 1
                         }
                         if self.followedCommunities.count == topicCount {
                             self.collectionView.reloadData()
@@ -274,9 +274,9 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
     
     //MARK: -Recent Topics
     
-    func topicSelected(fact: Community) {
+    func topicSelected(community: Community) {
         print("TopicSelected")
-        registerRecentFact(fact: fact)
+        registerRecentFact(fact: community)
     }
     
     func registerRecentFact(fact: Community) {
@@ -350,12 +350,10 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
         }
     }
     
-    //MARK: LinkFactAndPost
+    //MARK: Link community and post
     
-    func setFactForPost(fact: Community) {
-        delegate?.selectedFact(fact: fact, isViewAlreadyLoaded: true) // True because 
-        
-        //Can be a opt. Info!
+    func setCommunityForPost(community: Community) {
+        delegate?.selectedFact(fact: community, isViewAlreadyLoaded: true)
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -368,9 +366,7 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
 }
 
 extension CommunityCollectionVC: AddOnDelegate {
-    func fetchCompleted() {
-        print("not needed")
-    }
+    func fetchCompleted() { }
     
     func itemAdded(successfull: Bool) {
         if successfull {
@@ -410,7 +406,7 @@ extension CommunityCollectionVC: TopOfCollectionViewDelegate, NewFactDelegate, T
         
         if let addFactToPost = addFactToPost {
             if addFactToPost == .newPost {
-                self.setFactForPost(fact: fact)
+                self.setCommunityForPost(community: fact)
             } else {
                 self.setFactForOptInfo(fact: fact)
             }

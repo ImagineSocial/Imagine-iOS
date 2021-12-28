@@ -14,6 +14,8 @@ struct Icons {
     
     static let chat = UIImage(named: "chat")?.withRenderingMode(.alwaysTemplate)
     static let friends = UIImage(named: "friends")?.withRenderingMode(.alwaysTemplate)
+    static let move = UIImage(named: "move")?.withRenderingMode(.alwaysTemplate)
+    static let newPostIcon = UIImage(named: "newPostIcon")?.withRenderingMode(.alwaysTemplate)
     static let save = UIImage(named: "save")?.withRenderingMode(.alwaysTemplate)
     static let settings = UIImage(named: "settings")?.withRenderingMode(.alwaysTemplate)
 }

@@ -166,9 +166,9 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
         }
     }
     
-    func topicSelected(fact: Community) {
+    func topicSelected(community: Community) {
         let factVC = CommunityCollectionVC()
-        factVC.registerRecentFact(fact: fact)
+        factVC.registerRecentFact(fact: community)
     }
     
     // MARK: -UICollectionViewDataSource
@@ -192,19 +192,19 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let topics = topicFacts {
-            let fact = topics[indexPath.item]
+            let community = topics[indexPath.item]
             
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: factCellIdentifier, for: indexPath) as? FactCell {
-                cell.fact = fact
+                cell.community = community
                 
                 return cell
             }
         } else if let discussions = discussionFacts {
-            let fact = discussions[indexPath.item]
+            let community = discussions[indexPath.item]
             
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: discussionCellIdentifier, for: indexPath) as? DiscussionCell {
                 
-                cell.fact = fact
+                cell.community = community
                 
                 return cell
             }

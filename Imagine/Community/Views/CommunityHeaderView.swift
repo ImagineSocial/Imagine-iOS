@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-protocol CommunityFeedHeaderDelegate: class {
+protocol CommunityHeaderDelegate: class {
     func segmentedControlTapped(index: Int, direction: UIPageViewController.NavigationDirection)
     func newPostTapped()
     func notLoggedIn()
@@ -17,78 +17,146 @@ protocol CommunityFeedHeaderDelegate: class {
 
 class CommunityHeaderView: UIView {
     
-    @IBOutlet weak var headerImageView: UIImageView!
-    @IBOutlet weak var headerTitleLabel: UILabel!
-    @IBOutlet weak var headerDescriptionLabeel: UILabel!
-    @IBOutlet weak var newPostButton: UILabel!
-    @IBOutlet weak var headerSegmentedControl: UISegmentedControl!
-    @IBOutlet weak var followButton: DesignableButton!
-    @IBOutlet weak var followerCountLabel: UILabel!
-    @IBOutlet weak var postCountLabel: UILabel!
+    // MARK: - Variables
+    
+    static let identifier = "CommunityHeaderView"
     
     var segmentIndicatorCenterXConstraint: NSLayoutConstraint?
     var segmentIndicatorWidthConstraint: NSLayoutConstraint?
     
-    weak var delegate: CommunityFeedHeaderDelegate?
+    weak var delegate: CommunityHeaderDelegate?
     var lastIndex = 0
     
     let db = Firestore.firestore()
     
     var community: Community? {
-            didSet {
-                if let community = community {
-                    
-                    if let url = URL(string: community.imageURL) {
-                        headerImageView.sd_setImage(with: url, completed: nil)
-                    } else {
-                        headerImageView.image = UIImage(named: "default-community")
-                    }
-                    
-                    if community.beingFollowed {
-                        followButton.setTitle("Unfollow", for: .normal)
-                    }
-                    
-                    headerDescriptionLabeel.text = community.description
-                    headerTitleLabel.text = community.title
-                    
-                    self.followerCountLabel.text = String(community.followerCount)
-                    self.postCountLabel.text = String(community.postCount)
-                } else {
-                    print("No Info we got")
-                }
-            }
+        didSet {
+            guard let community = community else { return }
+            
+            setCommunity(community)
         }
+    }
     
-    override func awakeFromNib() {
-        followButton.layer.borderColor = UIColor.label.cgColor
-        followButton.layer.borderWidth = 1
+    // MARK: - Elements
+    
+    let imageView = BaseImageView(image: nil, contentMode: .scaleAspectFill)
+    let moveImage = BaseImageView(image: Icons.move, tintColor: .secondaryLabel)
+    let titleLabel = BaseLabel(font: .standard(with: .semibold, size: 20))
+    let descriptionLabel = BaseTextLabel(font: .standard(size: 14))
+    let newPostButton = BaseButtonWithImage(image: Icons.newPostIcon)
+    let segmentedControl = BaseSegmentedControl(items: [Strings.topics, Strings.feed], font: .standard(with: .medium, size: 14))
+    let segmentIndicator = BaseView(backgroundColor: .label)
+    let followButton = BaseButtonWithText(font: .standard(with: .medium, size: 14), borderColor: nil)
+    let followerCountLabel = BaseLabel(textColor: .secondaryLabel, font: .standard(size: 12))
+    let postCountLabel = BaseLabel(textColor: .secondaryLabel, font: .standard(size: 12))
+    
+    lazy var countStackView = BaseStackView(subviews: [followerCountLabel, postCountLabel], spacing: 2, axis: .vertical, distribution: .fill)
+    
+    override init(frame: CGRect) {
+        super.init(frame: .zero)
         
+        imageView.clipsToBounds = true
+        backgroundColor = .systemBackground
+        
+        setupConstraints()
         setSegmentedIndicatorView()
     }
     
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    override func layoutSubviews() {
+        if #available(iOS 15.0, *) {
+            followButton.setTitleColor(.white, for: .normal)
+        } else {
+            followButton.cornerRadius = followButton.frame.width / 2
+        }
+    }
+    
+    private func setupConstraints() {
+        addSubview(imageView)
+        addSubview(moveImage)
+        addSubview(titleLabel)
+        addSubview(descriptionLabel)
+        addSubview(segmentedControl)
+        addSubview(segmentIndicator)
+        addSubview(followButton)
+        addSubview(newPostButton)
+        addSubview(countStackView)
+        
+        let padding = Constants.padding.standard
+        
+        imageView.constrain(top: topAnchor, leading: leadingAnchor, trailing: trailingAnchor, height: 175)
+        moveImage.constrain(top: topAnchor, trailing: trailingAnchor, paddingTop: padding, paddingTrailing: -padding, width: 30, height: 30)
+        titleLabel.constrain(top: imageView.bottomAnchor, leading: leadingAnchor, paddingTop: 10, paddingLeading: padding)
+        newPostButton.constrain(centerY: titleLabel.centerYAnchor, leading: titleLabel.trailingAnchor, trailing: trailingAnchor, paddingLeading: padding, paddingTrailing: -padding, width: 22, height: 22)
+        descriptionLabel.constrain(top: titleLabel.bottomAnchor, leading: titleLabel.leadingAnchor, trailing: trailingAnchor, paddingTop: 5, paddingTrailing: -padding)
+        countStackView.constrain(top: descriptionLabel.bottomAnchor, leading: titleLabel.leadingAnchor, paddingTop: 10)
+        followButton.constrain(bottom: countStackView.bottomAnchor, trailing: descriptionLabel.trailingAnchor)
+        segmentedControl.constrain(top: countStackView.bottomAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor, paddingTop: 20, paddingBottom: -10, height: 30)
+        
+        segmentedControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
+        followButton.addTarget(self, action: #selector(followButtonTapped), for: .touchUpInside)
+        newPostButton.addTarget(self, action: #selector(newPostButtonTapped), for: .touchUpInside)
+        
+        if #available(iOS 15.0, *) {
+            var configuration = UIButton.Configuration.tinted()
+            configuration.titlePadding = 5
+            configuration.buttonSize = .small
+            configuration.cornerStyle = .capsule
+            
+            followButton.configuration = configuration
+        } else {
+            followButton.layer.borderColor = UIColor.label.cgColor
+            followButton.layer.borderWidth = 1
+            followButton.titleEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        }
+    }
+    
+    private func setCommunity(_ community: Community) {
+        if let url = URL(string: community.imageURL) {
+            imageView.sd_setImage(with: url, completed: nil)
+        } else {
+            imageView.image = UIImage(named: "default-community")
+        }
+        
+        if community.beingFollowed {
+            followButton.setTitle("Unfollow", for: .normal)
+        }
+        
+        descriptionLabel.text = community.description
+        titleLabel.text = community.title
+        
+        self.followerCountLabel.text = "Follower: \(community.followerCount)"
+        self.postCountLabel.text = "Posts: \(community.postCount)"
+    }
+    
     func setSegmentedIndicatorView() {
-        let bg = UIImage()
-        headerSegmentedControl.setBackgroundImage(bg, for: .normal, barMetrics: .default)
-        headerSegmentedControl.setDividerImage(bg, forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
+        let image = UIImage()
+        segmentedControl.setBackgroundImage(image, for: .normal, barMetrics: .default)
+        segmentedControl.setDividerImage(image, forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
         
-        headerSegmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 15)!, NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel], for: .normal)
-        headerSegmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 16)!, NSAttributedString.Key.foregroundColor: UIColor.label], for: .selected)
+        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 15)!, NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel], for: .normal)
+        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 16)!, NSAttributedString.Key.foregroundColor: UIColor.label], for: .selected)
         
-        self.addSubview(segmentIndicator)
-        segmentIndicator.bottomAnchor.constraint(equalTo: self.headerSegmentedControl.bottomAnchor, constant: 3).isActive = true
+        segmentIndicator.bottomAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 3).isActive = true
         segmentIndicator.heightAnchor.constraint(equalToConstant: 2).isActive = true
-        let width: CGFloat = CGFloat(15+headerSegmentedControl.titleForSegment(at: 0)!.count*8)
         
-        self.segmentIndicatorWidthConstraint =  segmentIndicator.widthAnchor.constraint(equalToConstant: width)
-        self.segmentIndicatorWidthConstraint!.isActive = true
-        self.segmentIndicatorCenterXConstraint = segmentIndicator.centerXAnchor.constraint(equalToSystemSpacingAfter: headerSegmentedControl.centerXAnchor, multiplier: CGFloat(1/headerSegmentedControl.numberOfSegments))
-        self.segmentIndicatorCenterXConstraint!.isActive = true
+        guard let title = segmentedControl.titleForSegment(at: 0) else {
+            print("## Return because")
+            return }
         
+        let width: CGFloat = CGFloat(15 + title.count * 8)
+
+        segmentIndicatorWidthConstraint = segmentIndicator.widthAnchor.constraint(equalToConstant: width)
+        segmentIndicatorWidthConstraint!.isActive = true
+        segmentIndicatorCenterXConstraint = segmentIndicator.centerXAnchor.constraint(equalToSystemSpacingAfter: segmentedControl.centerXAnchor, multiplier: CGFloat(1 / segmentedControl.numberOfSegments))
+        segmentIndicatorCenterXConstraint!.isActive = true
     }
 
-    @IBAction func segmentedControlChanged(_ sender: Any) {
-        
-        let index = headerSegmentedControl.selectedSegmentIndex
+    @objc func segmentedControlChanged() {
+        let index = segmentedControl.selectedSegmentIndex
         
         if index > lastIndex {
             delegate?.segmentedControlTapped(index: index, direction: .forward)
@@ -96,11 +164,11 @@ class CommunityHeaderView: UIView {
             delegate?.segmentedControlTapped(index: index, direction: .reverse)
         }
         
-        let numberOfSegments = CGFloat(headerSegmentedControl.numberOfSegments)
+        let numberOfSegments = CGFloat(segmentedControl.numberOfSegments)
         let selectedIndex = CGFloat(index)
-        let titlecount = CGFloat((headerSegmentedControl.titleForSegment(at: Int(selectedIndex))!.count))
-        let newX = CGFloat(1/(numberOfSegments / CGFloat(3.0 + CGFloat(selectedIndex-1.0)*2.0)))
-        let newWidth = CGFloat(15+titlecount*8)
+        let titlecount = CGFloat((segmentedControl.titleForSegment(at: Int(selectedIndex))!.count))
+        let newX = CGFloat(1 / (numberOfSegments / CGFloat(3.0 + CGFloat(selectedIndex - 1.0) * 2.0)))
+        let newWidth = CGFloat(15 + titlecount * 8)
         
         self.segmentIndicatorWidthConstraint!.constant = newWidth
         self.segmentIndicatorCenterXConstraint = self.segmentIndicatorCenterXConstraint!.setMultiplier(multiplier: newX)
@@ -112,7 +180,7 @@ class CommunityHeaderView: UIView {
         }
     }
     
-    @IBAction func followTopicButtonTapped(_ sender: Any) {
+    @objc func followButtonTapped() {
         guard let community = community else { return }
         
         if let _ = Auth.auth().currentUser {
@@ -127,7 +195,7 @@ class CommunityHeaderView: UIView {
         }
     }
     
-    @IBAction func newPostButtonTapped(_ sender: Any) {
+    @objc func newPostButtonTapped() {
         delegate?.newPostTapped()
     }
     
@@ -179,9 +247,7 @@ class CommunityHeaderView: UIView {
     }
     
     func updateFollowCount(fact: Community, follow: Bool) {
-        if let followButton = self.followButton {
-            followButton.isEnabled = true   // updateFollowCount is called from other instances, where there ist no view instantiated, just the class
-        }
+        followButton.isEnabled = true   // updateFollowCount is called from other instances, where there ist no view instantiated, just the class
         
         if let user = Auth.auth().currentUser {
             
@@ -204,28 +270,4 @@ class CommunityHeaderView: UIView {
             }
         }
     }
-    
-    
-    let segmentIndicator: UIView = {
-        let v = UIView()
-        v.translatesAutoresizingMaskIntoConstraints = false
-        v.backgroundColor = UIColor.label
-        
-        return v
-    }()
-    
-    class func loadViewFromNib(named: String? = nil) -> Self {
-        let name = named ?? "\(Self.self)"
-        guard
-            let nib = Bundle.main.loadNibNamed(name, owner: nil, options: nil)
-            else { fatalError("missing expected nib named: \(name)") }
-        guard
-            /// we're using `first` here because compact map chokes compiler on
-            /// optimized release, so you can't use two views in one nib if you wanted to
-            /// and are now looking at this
-            let view = nib.first as? Self
-            else { fatalError("view of type \(Self.self) not found in \(nib)") }
-        return view
-    }
-    
 }

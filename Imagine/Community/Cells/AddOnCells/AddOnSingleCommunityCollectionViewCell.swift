@@ -40,7 +40,6 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
                 addOnDescriptionLabel.text = info.description
                 
                 if let community = info.singleTopic {
-                    print("URL: \(community.imageURL), \(community.title), \(community.documentID)")
                     if !isFetchingPreviewPosts {
                         self.isFetchingPreviewPosts = true
                         self.getPreviewPictures(community: community)
@@ -64,7 +63,7 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
                 self.postHelper.getPreviewPicturesForCommunity(community: community) { [weak self] (posts) in
                     DispatchQueue.main.async {
                         if let posts = posts, posts.count != 0, let self = self {
-                            print("Got posts for SingleAddOn: \(posts)")
+
                             self.previewPosts = posts
                             self.topicPreviewCollectionView.reloadData()
                             self.isFetchingPreviewPosts = false

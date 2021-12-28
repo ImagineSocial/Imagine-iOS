@@ -41,19 +41,19 @@ class DiscussionCell: BaseCollectionViewCell {
         })
     }
     
-    var fact: Community? {
+    var community: Community? {
         didSet {
-            guard let fact = fact else { return }
+            guard let community = community else { return }
             
-            self.getArguments(fact: fact)
+            self.getArguments(community: community)
             
-            if let url = URL(string: fact.imageURL) {
+            if let url = URL(string: community.imageURL) {
                 topicImageView.sd_setImage(with: url, completed: nil)
             } else {
                 topicImageView.image = UIImage(named: "default-community")
             }
-            topicNameLabel.text = fact.title
-            topicDescriptionLabel.text = fact.description
+            topicNameLabel.text = community.title
+            topicDescriptionLabel.text = community.description
                      
             
         }
@@ -65,18 +65,18 @@ class DiscussionCell: BaseCollectionViewCell {
         contentView.layer.cornerRadius = cornerRadius ?? Constants.cellCornerRadius
     }
     
-    func getArguments(fact: Community) {
-        if fact.documentID == "" { return }
+    func getArguments(community: Community) {
+        if community.documentID == "" { return }
         
         var collectionRef: CollectionReference!
         
-        if fact.language == .english {
+        if community.language == .english {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
         }
         
-        let ref = collectionRef.document(fact.documentID).collection("arguments")
+        let ref = collectionRef.document(community.documentID).collection("arguments")
         
         let proRef = ref.whereField("proOrContra", isEqualTo: "pro").order(by: "upvotes", descending: true).limit(to: 1)
         proRef.getDocuments { (snap, err) in

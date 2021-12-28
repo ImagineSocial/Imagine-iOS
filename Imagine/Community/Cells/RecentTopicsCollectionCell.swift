@@ -102,11 +102,7 @@ extension RecentTopicsCollectionCell: UICollectionViewDataSource, UICollectionVi
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        if facts.count != 0 {
-            return facts.count
-        } else {
-            return 4
-        }
+        facts.count != 0 ? facts.count : 6
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -123,7 +119,7 @@ extension RecentTopicsCollectionCell: UICollectionViewDataSource, UICollectionVi
         } else {
             // Blank Cell
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: placeHolderIdentifier, for: indexPath) as? PlaceHolderCell {
-                
+                cell.isRound = true
                 
                 return cell
             }

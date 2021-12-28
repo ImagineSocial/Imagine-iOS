@@ -170,11 +170,11 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
             }
             
         } else if let topics = topicResults {
-            let fact = topics[indexPath.item]
+            let community = topics[indexPath.item]
             
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: topicCellIdentifier, for: indexPath) as? FactCell {
                 
-                cell.fact = fact
+                cell.community = community
                 
                 return cell
             }

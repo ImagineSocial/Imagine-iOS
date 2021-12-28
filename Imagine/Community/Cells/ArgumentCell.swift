@@ -51,6 +51,8 @@ class ArgumentCell: UITableViewCell {
         super.awakeFromNib()
  
         contentView.clipsToBounds = false
+        
+        
     }
     
     override func layoutSubviews() {

@@ -51,13 +51,13 @@ class FactCell: BaseCollectionViewCell {
         containerView.layer.cornerRadius = Constants.communityCornerRadius
     }
     
-    var fact: Community? {
+    var community: Community? {
         didSet {
-            if let fact = fact {
-                factCellLabel.text = fact.title
-                factDescriptionLabel.text = fact.description
+            if let community = community {
+                factCellLabel.text = community.title
+                factDescriptionLabel.text = community.description
                 
-                if let url = URL(string: fact.imageURL) {
+                if let url = URL(string: community.imageURL) {
                     factCellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
                 } else {
                     factCellImageView.image = UIImage(named: "default-community")
@@ -83,13 +83,9 @@ class FactCell: BaseCollectionViewCell {
                     if let error = err {
                         print("We have an error: \(error.localizedDescription)")
                     } else {
-                        if let snap = snap {
-                            if let data = snap.data() {
-                                if let fact = CommunityHelper().getCommunity(currentUser: user,documentID: snap.documentID, data: data) {
-                                    
-                                    self.fact = fact
-                                }
-                            }
+                        if let snap = snap, let data = snap.data(), let community = CommunityHelper().getCommunity(currentUser: user,documentID: snap.documentID, data: data) {
+                            
+                            self.community = community
                         }
                     }
                 }
