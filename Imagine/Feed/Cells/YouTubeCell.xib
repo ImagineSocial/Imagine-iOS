@@ -36,7 +36,7 @@
                                 </constraints>
                             </view>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.60000002384185791" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="foQ-ja-tns">
-                                <rect key="frame" x="12" y="79" width="372" height="42"/>
+                                <rect key="frame" x="12" y="81" width="372" height="42"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                 <nil key="highlightedColor"/>
@@ -87,10 +87,10 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aKO-WN-Awj" customClass="FeedUserView" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="5" y="29" width="386" height="45"/>
+                                <rect key="frame" x="5" y="29" width="386" height="40"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="45" id="QRE-LX-suT"/>
+                                    <constraint firstAttribute="height" constant="40" id="QRE-LX-suT"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -107,10 +107,10 @@
                             <constraint firstItem="Dm2-78-G4e" firstAttribute="leading" secondItem="cQq-sW-UfR" secondAttribute="leading" constant="5" id="XJ4-1x-4U9"/>
                             <constraint firstAttribute="trailing" secondItem="foQ-ja-tns" secondAttribute="trailing" constant="12" id="aZd-GU-e7h"/>
                             <constraint firstAttribute="bottom" secondItem="qKU-C0-QfY" secondAttribute="bottom" constant="6" id="cPU-Nb-cP7"/>
-                            <constraint firstItem="Dm2-78-G4e" firstAttribute="top" secondItem="foQ-ja-tns" secondAttribute="bottom" constant="12" id="hiz-mj-CiE"/>
+                            <constraint firstItem="Dm2-78-G4e" firstAttribute="top" secondItem="foQ-ja-tns" secondAttribute="bottom" constant="10" id="hiz-mj-CiE"/>
                             <constraint firstAttribute="trailing" secondItem="Dm2-78-G4e" secondAttribute="trailing" constant="5" id="kxf-ez-HSc"/>
                             <constraint firstAttribute="trailing" secondItem="aKO-WN-Awj" secondAttribute="trailing" constant="5" id="pgk-ub-Pmk"/>
-                            <constraint firstItem="foQ-ja-tns" firstAttribute="top" secondItem="aKO-WN-Awj" secondAttribute="bottom" constant="5" id="pvG-er-gIO"/>
+                            <constraint firstItem="foQ-ja-tns" firstAttribute="top" secondItem="aKO-WN-Awj" secondAttribute="bottom" constant="12" id="pvG-er-gIO"/>
                             <constraint firstItem="aKO-WN-Awj" firstAttribute="top" secondItem="mM7-ZA-2Pk" secondAttribute="bottom" constant="5" id="ucI-b5-zwg"/>
                         </constraints>
                     </view>

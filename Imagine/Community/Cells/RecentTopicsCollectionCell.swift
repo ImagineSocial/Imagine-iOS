@@ -119,7 +119,6 @@ extension RecentTopicsCollectionCell: UICollectionViewDataSource, UICollectionVi
         } else {
             // Blank Cell
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: placeHolderIdentifier, for: indexPath) as? PlaceHolderCell {
-                cell.isRound = true
                 
                 return cell
             }

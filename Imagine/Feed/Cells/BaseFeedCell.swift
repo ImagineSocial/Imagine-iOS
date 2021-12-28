@@ -56,6 +56,7 @@ class BaseFeedCell : UITableViewCell {
         super.prepareForReuse()
         
         feedLikeView.prepareForReuse(ownProfile: ownProfile)
+        feedUserView.locationLabel.text = ""
         contentView.clipsToBounds = false
         clipsToBounds = false
     }

@@ -72,7 +72,7 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999998807907104" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zXD-2l-pnC">
-                                <rect key="frame" x="12" y="79" width="468" height="0.0"/>
+                                <rect key="frame" x="12" y="81" width="468" height="0.0"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                 <nil key="highlightedColor"/>
@@ -116,10 +116,10 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OZi-Ui-25m" customClass="FeedUserView" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="5" y="29" width="482" height="45"/>
+                                <rect key="frame" x="5" y="29" width="482" height="40"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="45" id="3OA-OH-brr"/>
+                                    <constraint firstAttribute="height" constant="40" id="3OA-OH-brr"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -127,7 +127,7 @@
                         <constraints>
                             <constraint firstItem="U0d-21-SXR" firstAttribute="trailing" secondItem="t4x-ao-7Mr" secondAttribute="trailing" constant="-10" id="04r-cY-58w"/>
                             <constraint firstItem="d1A-v5-7Vd" firstAttribute="top" secondItem="t4x-ao-7Mr" secondAttribute="bottom" constant="6" id="6Ly-ZC-dCd"/>
-                            <constraint firstItem="zXD-2l-pnC" firstAttribute="top" secondItem="OZi-Ui-25m" secondAttribute="bottom" constant="5" id="7bH-RN-3r7"/>
+                            <constraint firstItem="zXD-2l-pnC" firstAttribute="top" secondItem="OZi-Ui-25m" secondAttribute="bottom" constant="12" id="7bH-RN-3r7"/>
                             <constraint firstItem="OZi-Ui-25m" firstAttribute="leading" secondItem="2Nr-9E-z4D" secondAttribute="leading" constant="5" id="IbC-SM-hf8"/>
                             <constraint firstAttribute="trailing" secondItem="IFc-hq-zRW" secondAttribute="trailing" id="P34-R0-2Cu"/>
                             <constraint firstAttribute="trailing" secondItem="zXD-2l-pnC" secondAttribute="trailing" constant="12" id="YTO-WK-TaX"/>
@@ -142,7 +142,7 @@
                             <constraint firstItem="OZi-Ui-25m" firstAttribute="top" secondItem="IFc-hq-zRW" secondAttribute="bottom" constant="5" id="sCj-8k-BWL"/>
                             <constraint firstItem="IFc-hq-zRW" firstAttribute="leading" secondItem="2Nr-9E-z4D" secondAttribute="leading" id="srU-9p-afE"/>
                             <constraint firstAttribute="trailing" secondItem="OZi-Ui-25m" secondAttribute="trailing" constant="5" id="tuS-d4-nTe"/>
-                            <constraint firstItem="t4x-ao-7Mr" firstAttribute="top" secondItem="zXD-2l-pnC" secondAttribute="bottom" constant="12" id="wY0-Lb-75O"/>
+                            <constraint firstItem="t4x-ao-7Mr" firstAttribute="top" secondItem="zXD-2l-pnC" secondAttribute="bottom" constant="10" id="wY0-Lb-75O"/>
                         </constraints>
                     </view>
                 </subviews>

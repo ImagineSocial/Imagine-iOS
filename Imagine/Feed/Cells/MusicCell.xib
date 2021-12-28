@@ -77,7 +77,7 @@
                                 </userDefinedRuntimeAttributes>
                             </view>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.69999998807907104" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NoK-Rt-Djh">
-                                <rect key="frame" x="12" y="79" width="390" height="136"/>
+                                <rect key="frame" x="12" y="81" width="390" height="136"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                 <nil key="highlightedColor"/>
@@ -194,10 +194,10 @@
                                 </wkWebViewConfiguration>
                             </wkWebView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LLX-lz-Ibv" customClass="FeedUserView" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="5" y="29" width="404" height="45"/>
+                                <rect key="frame" x="5" y="29" width="404" height="40"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="45" id="dTs-wZ-edg"/>
+                                    <constraint firstAttribute="height" constant="40" id="dTs-wZ-edg"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -208,10 +208,10 @@
                             <constraint firstItem="LLX-lz-Ibv" firstAttribute="leading" secondItem="aSH-oj-o2H" secondAttribute="leading" constant="5" id="EGS-k8-Hw5"/>
                             <constraint firstItem="naX-mV-ive" firstAttribute="leading" secondItem="aSH-oj-o2H" secondAttribute="leading" constant="5" id="Gh9-5o-vLK"/>
                             <constraint firstItem="48G-xD-vXN" firstAttribute="top" secondItem="aSH-oj-o2H" secondAttribute="top" id="HW7-Ct-It6"/>
-                            <constraint firstItem="NoK-Rt-Djh" firstAttribute="top" secondItem="LLX-lz-Ibv" secondAttribute="bottom" constant="5" id="Ibi-u9-1YQ"/>
+                            <constraint firstItem="NoK-Rt-Djh" firstAttribute="top" secondItem="LLX-lz-Ibv" secondAttribute="bottom" constant="12" id="Ibi-u9-1YQ"/>
                             <constraint firstItem="X8I-zo-25V" firstAttribute="leading" secondItem="aSH-oj-o2H" secondAttribute="leading" constant="10" id="L1P-7U-pbr"/>
                             <constraint firstAttribute="trailing" secondItem="Kg3-Uz-9BX" secondAttribute="trailing" constant="10" id="UAO-eV-lx5"/>
-                            <constraint firstItem="X8I-zo-25V" firstAttribute="top" secondItem="NoK-Rt-Djh" secondAttribute="bottom" constant="12" id="Y4D-Tb-LW9"/>
+                            <constraint firstItem="X8I-zo-25V" firstAttribute="top" secondItem="NoK-Rt-Djh" secondAttribute="bottom" constant="10" id="Y4D-Tb-LW9"/>
                             <constraint firstAttribute="bottom" secondItem="Kg3-Uz-9BX" secondAttribute="bottom" constant="6" id="Yyo-ao-dev"/>
                             <constraint firstAttribute="trailing" secondItem="48G-xD-vXN" secondAttribute="trailing" id="aea-8r-r7W"/>
                             <constraint firstItem="48G-xD-vXN" firstAttribute="leading" secondItem="aSH-oj-o2H" secondAttribute="leading" id="aho-PR-snA"/>

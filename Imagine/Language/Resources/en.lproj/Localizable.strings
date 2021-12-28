@@ -87,19 +87,17 @@
 "report_markVisually_description" = "Thank you for your submission. Our team will review your report. If the content you reported contains misleading information, it will be marked accordingly. At a later time, the community will be able to check posts democratically. You can find more information about our reporting process in our info area. \nThank you for helping us improve Imagine!";
 
 "report_ruleViolation/content_description" = "Thank you for your submission. Our team will review your report. If the content you reported violates our guidelines, it will be deleted, and the user who posted it will be given a warning or banned. At a later time, the community will be able to check posts democratically. You can find more information about our reporting process in our info area. \nThank you for helping us improve Imagine!";
-
- 
  
 
 //Date Format
 
+"oneMonthAgo" = "One month ago";
+"oneYearAgo" = "One year ago";
 "%d days ago" = "%d days ago";
-
 "%d hours ago" = "%d hours ago";
+"%d months ago" = "%d months ago";
+"%d years ago" = "%d years ago";
 "few_moments_ago" = "A few moments ago";
-
- 
- 
 
 //SignUp
 

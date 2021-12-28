@@ -46,6 +46,10 @@ class FeedUserView: UIView, NibLoadable {
         NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
     
+    override func layoutSubviews() {
+        print("## Height: \(nameLabel.frame.height)")
+    }
+    
     //MARK: - SetUp UI
     func setUpUI() {
         // Profile Picture
@@ -104,10 +108,9 @@ class FeedUserView: UIView, NibLoadable {
         profilePictureImageView.isHidden = true
         nameLabelLeadingToProfilePictureTrailingConstraint.isActive = false
         nameLabelLeadingToSuperViewLeadingConstraint.isActive = true
-        nameLabel.font = UIFont(name: "IBMPlexSans-Medium", size: 12)
     }
     
-    //MARK:- LinkedCommunity
+    //MARK: - LinkedCommunity
     func setCommunity(post: Post) {
         
         self.linkedCommunityImageView.layer.borderColor = UIColor.secondaryLabel.cgColor
@@ -138,7 +141,6 @@ class FeedUserView: UIView, NibLoadable {
         profilePictureImageView.isHidden = false
         nameLabelLeadingToProfilePictureTrailingConstraint.isActive = true
         nameLabelLeadingToSuperViewLeadingConstraint.isActive = false
-        nameLabel.font = UIFont(name: "IBMPlexSans", size: 12)
     }
     
     

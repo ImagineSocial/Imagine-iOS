@@ -161,17 +161,17 @@
                                 </constraints>
                             </view>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="751" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.80000001192092896" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dNQ-8Z-e5x">
-                                <rect key="frame" x="12" y="79" width="418" height="9"/>
+                                <rect key="frame" x="12" y="84" width="418" height="6"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1c3-2i-BWG" customClass="FeedUserView" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="5" y="29" width="432" height="45"/>
+                                <rect key="frame" x="5" y="29" width="432" height="40"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="45" id="cJj-DI-l0s"/>
+                                    <constraint firstAttribute="height" constant="40" id="cJj-DI-l0s"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -185,7 +185,7 @@
                             <constraint firstItem="Zny-dO-a84" firstAttribute="leading" secondItem="QsH-6g-g7k" secondAttribute="leading" constant="10" id="TvM-zi-Y4M"/>
                             <constraint firstItem="KKO-3p-lk0" firstAttribute="leading" secondItem="QsH-6g-g7k" secondAttribute="leading" id="Tvz-uU-hRa"/>
                             <constraint firstAttribute="trailing" secondItem="KKO-3p-lk0" secondAttribute="trailing" id="UnR-Oa-LMu"/>
-                            <constraint firstItem="dNQ-8Z-e5x" firstAttribute="top" secondItem="1c3-2i-BWG" secondAttribute="bottom" constant="5" id="WIi-Lg-TZA"/>
+                            <constraint firstItem="dNQ-8Z-e5x" firstAttribute="top" secondItem="1c3-2i-BWG" secondAttribute="bottom" constant="15" id="WIi-Lg-TZA"/>
                             <constraint firstItem="GsP-nB-mdv" firstAttribute="top" secondItem="2hP-9K-emv" secondAttribute="top" id="WsB-NR-AMN"/>
                             <constraint firstItem="1c3-2i-BWG" firstAttribute="leading" secondItem="QsH-6g-g7k" secondAttribute="leading" constant="5" id="X4H-zd-rHH"/>
                             <constraint firstItem="GsP-nB-mdv" firstAttribute="leading" secondItem="2hP-9K-emv" secondAttribute="leading" id="Zqa-7K-wsT"/>
@@ -193,7 +193,7 @@
                             <constraint firstAttribute="trailing" secondItem="Zny-dO-a84" secondAttribute="trailing" constant="10" id="n4s-ce-e8V"/>
                             <constraint firstItem="GsP-nB-mdv" firstAttribute="width" secondItem="2hP-9K-emv" secondAttribute="width" id="pRM-XR-Gfs"/>
                             <constraint firstItem="1c3-2i-BWG" firstAttribute="top" secondItem="KKO-3p-lk0" secondAttribute="bottom" constant="5" id="pSX-n1-r2e"/>
-                            <constraint firstItem="2hP-9K-emv" firstAttribute="top" secondItem="dNQ-8Z-e5x" secondAttribute="bottom" constant="12" id="rN6-Fy-9ZO"/>
+                            <constraint firstItem="2hP-9K-emv" firstAttribute="top" secondItem="dNQ-8Z-e5x" secondAttribute="bottom" constant="10" id="rN6-Fy-9ZO"/>
                             <constraint firstAttribute="trailing" secondItem="2hP-9K-emv" secondAttribute="trailing" constant="5" id="ruq-vE-1hW"/>
                             <constraint firstItem="Zny-dO-a84" firstAttribute="top" secondItem="2hP-9K-emv" secondAttribute="bottom" constant="6" id="vnI-rs-MMa"/>
                             <constraint firstItem="2hP-9K-emv" firstAttribute="leading" secondItem="QsH-6g-g7k" secondAttribute="leading" constant="5" id="zd7-QP-94c"/>

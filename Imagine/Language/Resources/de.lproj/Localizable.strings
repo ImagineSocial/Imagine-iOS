@@ -76,11 +76,17 @@
 "report_ruleViolation/content_description" = "Ein Mitarbeiter wird deine Anfrage überprüfen. Sollte deine Meldung korrekt sein, wird dieser Beitrag gelöscht und der User ermahnt, bzw. blockiert. Zu einem späteren Zeitpunkt übernehmen die User demokratisch diese Überprüfung. Mehr Infos zu unserem Meldesystem findest du im Info-Bereich.\nVielen Dank für deine Mithilfe!";
 
 //Date Format
+
+"oneMonthAgo" = "Vor einem Monat";
+"oneYearAgo" = "Vor einem Jahr";
 "%d days ago" = "Vor %d Tagen";
 "%d hours ago" = "Vor %d Stunden";
+"%d months ago" = "Vor %d Monaten";
+"%d years ago" = "Vor %d Jahren";
 "few_moments_ago" = "Vor ein paar Minuten";
 
 //SignUp
+
 "enter_first_name" = "Schön, dass du hier bist! Wie lautet dein Vorname?";
 "enter_second_name" = "Freut mich dich kennenzulernen %@. Wie ist dein Nachname?";
 "enter_email" = "Wie ist deine Email-Adresse?";

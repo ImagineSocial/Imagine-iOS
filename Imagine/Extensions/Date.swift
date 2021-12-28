@@ -24,7 +24,7 @@ extension Date {
             dateFormatter.dateStyle = .medium
         } else if calendar.compare(Date(), to: self, toGranularity: .weekOfYear) == .orderedSame {
             let weekday = calendar.dateComponents([.weekday], from: self).weekday ?? 0
-            return dateFormatter.weekdaySymbols[weekday-1]
+            return dateFormatter.weekdaySymbols[weekday - 1]
         } else {
             dateFormatter.timeStyle = .none
             dateFormatter.dateStyle = .short
@@ -39,31 +39,32 @@ extension Date {
         let calendar = Calendar(identifier: .gregorian)
         dateFormatter.doesRelativeDateFormatting = true
         
-        var feedString = ""
+        var feedString: String
         let date = Date()
         
-        // To-do: the date variable is not in the correct time zone??
-        
-        if calendar.isDateInToday(self) {
-            
-            if date.hoursLater(than: self) == 0 {
-                feedString = NSLocalizedString("few_moments_ago", comment: "few_moments_ago")
+        switch monthsAgo {
+        case 0:
+            if calendar.isDateInToday(self) {
+                if date.hoursLater(than: self) == 0 {
+                    feedString = Strings.momentsAgo
+                } else {
+                    feedString = String.localizedStringWithFormat(Strings.xHoursAgo, date.hoursLater(than: self))
+                }
+            } else if calendar.isDateInYesterday(self){
+                feedString = Strings.yesterday
             } else {
-                let hoursAgoString = NSLocalizedString("%d hours ago", comment: "How many hours is the post old")
-                
-                feedString = String.localizedStringWithFormat(hoursAgoString, date.hoursLater(than: self))
+                if self.daysAgo == 1 {
+                    feedString = Strings.yesterday
+                } else {
+                    feedString = String.localizedStringWithFormat(Strings.xDaysAgo, self.daysAgo)
+                }
             }
-            
-        } else if calendar.isDateInYesterday(self){
-            feedString = NSLocalizedString("yesterday", comment: "yesterday")
-        } else {
-            if self.daysAgo == 1 {
-                feedString = NSLocalizedString("yesterday", comment: "yesterday")
-            } else {
-                let daysAgoString = NSLocalizedString("%d days ago", comment: "How many days is the post old")
-                
-                feedString = String.localizedStringWithFormat(daysAgoString, self.daysAgo)
-            }
+        case 1:
+            feedString = Strings.oneMonthAgo
+            case 2,3,4,5,6,7,8,9,10,11,12:
+            feedString = String.localizedStringWithFormat(Strings.xMonthsAgo, self.monthsAgo)
+        default:
+            feedString = self.yearsAgo == 1 ? Strings.oneYearAgo : String.localizedStringWithFormat(Strings.xYearsAgo, self.yearsAgo)
         }
         
         return feedString

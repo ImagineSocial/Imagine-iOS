@@ -11,9 +11,6 @@
         <array key="IBMPlexSans-Regular.ttf">
             <string>IBMPlexSans</string>
         </array>
-        <array key="IBMPlexSans-Thin.ttf">
-            <string>IBMPlexSans-Thin</string>
-        </array>
         <array key="Kalam-Regular.ttf">
             <string>Kalam-Regular</string>
         </array>
@@ -39,7 +36,7 @@
                                 </constraints>
                             </view>
                             <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="tKN-cc-W6j">
-                                <rect key="frame" x="12" y="79" width="327" height="60"/>
+                                <rect key="frame" x="12" y="84" width="327" height="70"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
                                 <nil key="textColor"/>
@@ -83,38 +80,28 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lag-SI-PTk">
-                                <rect key="frame" x="12" y="145" width="327" height="0.0"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <fontDescription key="fontDescription" name="IBMPlexSans-Thin" family="IBM Plex Sans" pointSize="9"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aPP-Gw-vgS" customClass="FeedUserView" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="5" y="29" width="341" height="45"/>
+                                <rect key="frame" x="5" y="29" width="341" height="40"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="45" id="hYs-16-bEV"/>
+                                    <constraint firstAttribute="height" constant="40" id="hYs-16-bEV"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="Lag-SI-PTk" firstAttribute="top" secondItem="tKN-cc-W6j" secondAttribute="bottom" constant="6" id="3ha-wT-6Us"/>
-                            <constraint firstItem="pe0-He-yrA" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Lag-SI-PTk" secondAttribute="bottom" constant="6" id="M3T-nJ-20G"/>
+                            <constraint firstAttribute="trailing" secondItem="tKN-cc-W6j" secondAttribute="trailing" constant="12" id="Iwt-bD-Ros"/>
                             <constraint firstItem="4bP-aJ-f1X" firstAttribute="leading" secondItem="r8g-de-6MK" secondAttribute="leading" id="RyK-JJ-QO3"/>
                             <constraint firstItem="aPP-Gw-vgS" firstAttribute="top" secondItem="4bP-aJ-f1X" secondAttribute="bottom" constant="5" id="TJY-WF-RsB"/>
                             <constraint firstItem="pe0-He-yrA" firstAttribute="leading" secondItem="r8g-de-6MK" secondAttribute="leading" constant="10" id="U8o-bx-6uV"/>
-                            <constraint firstItem="Lag-SI-PTk" firstAttribute="leading" secondItem="tKN-cc-W6j" secondAttribute="leading" id="Wy9-CM-p3q"/>
                             <constraint firstAttribute="trailing" secondItem="pe0-He-yrA" secondAttribute="trailing" constant="10" id="YfG-l5-Jpi"/>
                             <constraint firstAttribute="trailing" secondItem="4bP-aJ-f1X" secondAttribute="trailing" id="ZsC-JK-Una"/>
-                            <constraint firstItem="Lag-SI-PTk" firstAttribute="trailing" secondItem="tKN-cc-W6j" secondAttribute="trailing" id="bvL-BX-sZ8"/>
-                            <constraint firstItem="Lag-SI-PTk" firstAttribute="leading" secondItem="r8g-de-6MK" secondAttribute="leading" constant="12" id="d5r-Ty-UsU"/>
-                            <constraint firstItem="pe0-He-yrA" firstAttribute="top" secondItem="tKN-cc-W6j" secondAttribute="bottom" constant="25" id="gxn-Rq-7oc"/>
-                            <constraint firstAttribute="trailing" secondItem="Lag-SI-PTk" secondAttribute="trailing" constant="12" id="h58-vX-PEx"/>
+                            <constraint firstItem="pe0-He-yrA" firstAttribute="top" secondItem="tKN-cc-W6j" secondAttribute="bottom" constant="10" id="gxn-Rq-7oc"/>
                             <constraint firstItem="4bP-aJ-f1X" firstAttribute="top" secondItem="r8g-de-6MK" secondAttribute="top" id="h7o-DJ-KO3"/>
                             <constraint firstAttribute="trailing" secondItem="aPP-Gw-vgS" secondAttribute="trailing" constant="5" id="igk-WI-QfA"/>
+                            <constraint firstItem="tKN-cc-W6j" firstAttribute="leading" secondItem="r8g-de-6MK" secondAttribute="leading" constant="12" id="mA4-h2-8oK"/>
                             <constraint firstItem="aPP-Gw-vgS" firstAttribute="leading" secondItem="r8g-de-6MK" secondAttribute="leading" constant="5" id="swL-g2-gCr"/>
-                            <constraint firstItem="tKN-cc-W6j" firstAttribute="top" secondItem="aPP-Gw-vgS" secondAttribute="bottom" constant="5" id="uXa-mX-G22"/>
+                            <constraint firstItem="tKN-cc-W6j" firstAttribute="top" secondItem="aPP-Gw-vgS" secondAttribute="bottom" constant="15" id="uXa-mX-G22"/>
                             <constraint firstAttribute="bottom" secondItem="pe0-He-yrA" secondAttribute="bottom" constant="6" id="wjg-e1-5Eo"/>
                         </constraints>
                     </view>
@@ -129,7 +116,6 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="containerView" destination="r8g-de-6MK" id="Y2F-sf-jmX"/>
-                <outlet property="descriptionLabel" destination="Lag-SI-PTk" id="SQa-IG-fqt"/>
                 <outlet property="feedLikeView" destination="pe0-He-yrA" id="RQ1-aw-QRa"/>
                 <outlet property="feedUserView" destination="aPP-Gw-vgS" id="vUK-na-JoU"/>
                 <outlet property="reportView" destination="4bP-aJ-f1X" id="Dpj-8q-Z4g"/>
@@ -137,7 +123,6 @@
                 <outlet property="reportViewHeightConstraint" destination="l5B-Ch-Dot" id="GyA-zu-duu"/>
                 <outlet property="reportViewLabel" destination="N3b-0T-HQo" id="a7Q-a2-PV9"/>
                 <outlet property="titleLabel" destination="tKN-cc-W6j" id="wer-2z-91O"/>
-                <outlet property="titleToLikeButtonsConstraint" destination="gxn-Rq-7oc" id="WuW-lF-z9y"/>
             </connections>
             <point key="canvasLocation" x="77.599999999999994" y="100.74962518740631"/>
         </tableViewCell>

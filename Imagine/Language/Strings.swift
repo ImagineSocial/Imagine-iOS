@@ -16,6 +16,17 @@ struct Strings {
     static let feed = "Feed"
     static let topics = NSLocalizedString("topics", comment: "topics")
     
+    // MARK: - Feed
+    
+    static let momentsAgo = NSLocalizedString("few_moments_ago", comment: "few_moments_ago")
+    static let oneMonthAgo = NSLocalizedString("oneMonthAgo", comment: "One month ago")
+    static let oneYearAgo = NSLocalizedString("oneYearAgo", comment: "One year ago")
+    static let yesterday = NSLocalizedString("yesterday", comment: "yesterday")
+    static let xDaysAgo = NSLocalizedString("%d days ago", comment: "How many days is the post old")
+    static let xHoursAgo = NSLocalizedString("%d hours ago", comment: "How many hours is the post old")
+    static let xMonthsAgo = NSLocalizedString("%d months ago", comment: "how many months is the post old")
+    static let xYearsAgo = NSLocalizedString("%d years ago", comment: "How many years is the post old")
+    
     // MARK: - ImagineCommunityVC
     
     static let justFinishedHeader = "Just finished"

@@ -34,7 +34,7 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
                 <label userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zI0-Ca-Bj5" userLabel="createDateLabel">
-                    <rect key="frame" x="45" y="38" width="0.0" height="0.0"/>
+                    <rect key="frame" x="45" y="40" width="0.0" height="0.0"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="10"/>
                     <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -83,7 +83,7 @@
                     </connections>
                 </button>
                 <label userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="253" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AFN-l0-lor" userLabel="nameLabel">
-                    <rect key="frame" x="45" y="10" width="0.0" height="0.0"/>
+                    <rect key="frame" x="45" y="8" width="0.0" height="0.0"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="14"/>
                     <nil key="textColor"/>
@@ -112,7 +112,7 @@
                     </connections>
                 </button>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8ew-3D-tdj" userLabel="locationLabel">
-                    <rect key="frame" x="47" y="38" width="0.0" height="0.0"/>
+                    <rect key="frame" x="47" y="40" width="0.0" height="0.0"/>
                     <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="9"/>
                     <color key="textColor" systemColor="secondaryLabelColor"/>
                     <nil key="highlightedColor"/>
@@ -122,7 +122,7 @@
             <constraints>
                 <constraint firstItem="m5U-G4-nLp" firstAttribute="top" secondItem="9aV-nY-z9U" secondAttribute="top" constant="-3" id="2L9-dq-1Ij"/>
                 <constraint firstItem="AFN-l0-lor" firstAttribute="leading" secondItem="ALs-pH-lWY" secondAttribute="leading" constant="10" id="2P8-N5-b6L"/>
-                <constraint firstItem="zI0-Ca-Bj5" firstAttribute="bottom" secondItem="ebc-pK-phh" secondAttribute="bottom" id="4Pe-2z-05y"/>
+                <constraint firstItem="zI0-Ca-Bj5" firstAttribute="bottom" secondItem="ebc-pK-phh" secondAttribute="bottom" constant="2" id="4Pe-2z-05y"/>
                 <constraint firstItem="vwb-kM-63T" firstAttribute="leading" secondItem="ALs-pH-lWY" secondAttribute="leading" constant="2" id="53C-iH-Rx2"/>
                 <constraint firstItem="8ew-3D-tdj" firstAttribute="leading" secondItem="zI0-Ca-Bj5" secondAttribute="trailing" constant="2" id="A4T-bf-Ji1"/>
                 <constraint firstItem="m5U-G4-nLp" firstAttribute="height" secondItem="9aV-nY-z9U" secondAttribute="height" constant="6" id="Aoo-Qb-w74"/>
@@ -135,7 +135,7 @@
                 <constraint firstItem="SNs-K8-mzk" firstAttribute="leading" secondItem="9aV-nY-z9U" secondAttribute="trailing" constant="10" id="Yrb-mG-fnB"/>
                 <constraint firstItem="zI0-Ca-Bj5" firstAttribute="leading" secondItem="AFN-l0-lor" secondAttribute="leading" id="ZCe-aS-FBc"/>
                 <constraint firstItem="lYa-qq-Oej" firstAttribute="bottom" secondItem="m5U-G4-nLp" secondAttribute="bottom" constant="3" id="eB6-Jk-RuM"/>
-                <constraint firstItem="AFN-l0-lor" firstAttribute="top" secondItem="ebc-pK-phh" secondAttribute="top" id="hkf-bq-COj"/>
+                <constraint firstItem="AFN-l0-lor" firstAttribute="top" secondItem="ebc-pK-phh" secondAttribute="top" constant="-2" id="hkf-bq-COj"/>
                 <constraint firstItem="ebc-pK-phh" firstAttribute="leading" secondItem="ALs-pH-lWY" secondAttribute="leading" constant="10" id="k46-Nl-oBN"/>
                 <constraint firstItem="ebc-pK-phh" firstAttribute="centerY" secondItem="SNs-K8-mzk" secondAttribute="centerY" id="ncD-it-EDV"/>
                 <constraint firstItem="vwb-kM-63T" firstAttribute="top" secondItem="ALs-pH-lWY" secondAttribute="top" constant="1" id="rlc-I2-jhF"/>

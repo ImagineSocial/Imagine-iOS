@@ -10,10 +10,6 @@ import UIKit
 
 class ThoughtCell : BaseFeedCell {
     
-    //MARK:- IBOutlets
-    @IBOutlet weak var titleToLikeButtonsConstraint: NSLayoutConstraint!
-    @IBOutlet weak var descriptionLabel: UILabel!
-    
     //MARK:- Cell Lifecycle
     override func awakeFromNib() {
         selectionStyle = .none
@@ -44,16 +40,6 @@ class ThoughtCell : BaseFeedCell {
                 }
             } else {
                 setDefaultButtonImages()
-            }
-            
-            if post.description != "" {
-                self.titleToLikeButtonsConstraint.constant = 20
-                let newLineString = "\n"    // Need to hardcode this and replace the \n of the fetched text
-                let descriptionText = post.description.replacingOccurrences(of: "\\n", with: newLineString)
-                self.descriptionLabel.text = descriptionText
-            } else {
-                self.descriptionLabel.text = ""
-                self.titleToLikeButtonsConstraint.constant = 10
             }
             
             titleLabel.text = post.title
