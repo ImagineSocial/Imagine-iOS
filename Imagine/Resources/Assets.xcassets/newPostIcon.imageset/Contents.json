@@ -1,12 +1,10 @@
 {
   "images" : [
     {
-      "filename" : "newPostIcon.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "newPostIcon@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

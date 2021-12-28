@@ -107,6 +107,7 @@ class ReportConfirmViewController: UIViewController {
             }
         } else if let comment = comment {
             //todo: Find Comment Ref and update Data
+            print("Find comment to update the report for comment: \(comment.commentID)")
         }
     }
     

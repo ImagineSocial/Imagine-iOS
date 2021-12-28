@@ -12,7 +12,7 @@ import FirebaseFirestore
 
 enum DataType {
     case jobOffer
-    case facts
+    case communities
     case blogPosts
     case vote
 }
@@ -21,15 +21,6 @@ enum DeepDataType {
     case arguments
     case sources
 }
-/*
- var collectionRef: CollectionReference!
- let language = LanguageSelection().getLanguage()
- if language == .english {
-     collectionRef = db.collection("Data").document("en").collection("posts")
- } else {
-     collectionRef = db.collection("Posts")
- }
- */
 
 class DataRequest {
     
@@ -75,7 +66,7 @@ class DataRequest {
             
             orderString = "endOfVoteDate"
             
-        case .facts:
+        case .communities:
             list = [Community]()
             dataPath = "Facts"
             if language == .english {
@@ -105,7 +96,7 @@ class DataRequest {
         }
         var ref = collectionRef.order(by: orderString, descending: descending)
         
-        if get == .facts {
+        if get == .communities {
             if language == .english {
                 collectionRef = db.collection("Data").document("en").collection("topics")
             } else {
@@ -211,9 +202,9 @@ class DataRequest {
                             
                             list.append(vote)
                             
-                        case .facts:
-                            if let fact = self.communityHelper.getCommunity(currentUser: self.user, documentID: documentID, data: documentData) {
-                                list.append(fact)
+                        case .communities:
+                            if let community = self.communityHelper.getCommunity(currentUser: self.user, documentID: documentID, data: documentData) {
+                                list.append(community)
                             }
                         case .jobOffer:
                             guard let title = documentData["jobTitle"] as? String,
@@ -352,7 +343,6 @@ class DataRequest {
         }
         
         var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
         if fact.language == .english {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {

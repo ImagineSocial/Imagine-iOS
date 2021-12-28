@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSans-Medium.ttf">
+            <string>IBMPlexSans-Medium</string>
+        </array>
+        <array key="IBMPlexSans-Regular.ttf">
+            <string>IBMPlexSans</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="77" id="GcM-Ww-GQa" customClass="NotificationCell" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="77"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="GcM-Ww-GQa" id="WuE-qK-2Xx">
+                <rect key="frame" x="0.0" y="0.0" width="414" height="77"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="&quot;Wow sieht das gut aus!&quot;" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yQV-Yv-85i">
+                        <rect key="frame" x="8" y="25" width="396" height="47"/>
+                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="11"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Malte hat dein Bild kommentiert: " textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="nBZ-yg-xnp">
+                        <rect key="frame" x="8" y="5" width="396" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="9uj-oJ-zj5"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="13"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="yQV-Yv-85i" secondAttribute="bottom" constant="5" id="Ch4-E6-4WN"/>
+                    <constraint firstItem="yQV-Yv-85i" firstAttribute="top" secondItem="nBZ-yg-xnp" secondAttribute="bottom" id="IKb-Tg-aaj"/>
+                    <constraint firstAttribute="trailing" secondItem="yQV-Yv-85i" secondAttribute="trailing" constant="10" id="MLU-HH-u1x"/>
+                    <constraint firstItem="yQV-Yv-85i" firstAttribute="leading" secondItem="WuE-qK-2Xx" secondAttribute="leading" constant="8" id="WpG-ps-hxb"/>
+                    <constraint firstItem="nBZ-yg-xnp" firstAttribute="leading" secondItem="WuE-qK-2Xx" secondAttribute="leading" constant="8" id="YIz-c1-zAh"/>
+                    <constraint firstAttribute="trailing" secondItem="nBZ-yg-xnp" secondAttribute="trailing" constant="10" id="azF-yZ-SXQ"/>
+                    <constraint firstItem="nBZ-yg-xnp" firstAttribute="top" secondItem="WuE-qK-2Xx" secondAttribute="top" constant="5" id="bTE-4P-7P4"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="headerLabel" destination="nBZ-yg-xnp" id="Zpi-tN-Iq7"/>
+                <outlet property="mainTextLabel" destination="yQV-Yv-85i" id="Lnw-uM-kjT"/>
+            </connections>
+            <point key="canvasLocation" x="-4.3478260869565224" y="44.53125"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

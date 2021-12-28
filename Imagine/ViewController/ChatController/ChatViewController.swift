@@ -100,7 +100,6 @@ class ChatViewController: MSGMessengerViewController {
             button.frame = CGRect(x: 0, y: 0, width: 35, height: 35)
             button.addTarget(self, action: #selector(self.toUserTapped), for: .touchUpInside)
             button.layer.masksToBounds = true
-            button.translatesAutoresizingMaskIntoConstraints = false
             button.imageView?.contentMode = .scaleAspectFill
             
             if let url = URL(string: participant.imageURL) {
@@ -111,8 +110,7 @@ class ChatViewController: MSGMessengerViewController {
                         
                         //set image for button
                         button.setImage(image, for: .normal)
-                        button.widthAnchor.constraint(equalToConstant: 35).isActive = true
-                        button.heightAnchor.constraint(equalToConstant: 35).isActive = true
+                        button.constrain(width: 35, height: 35)
                         button.layer.cornerRadius = button.frame.width/2
                     }
                 } catch {
@@ -250,8 +248,8 @@ class ChatViewController: MSGMessengerViewController {
     }
     
     func setNotification(chat: Chat, bodyString: String, messageID: String) {
-        if let currentUser = currentUser {
-            let notificationRef = db.collection("Users").document(chat.participant.userUID).collection("notifications").document()
+        if let currentUser = currentUser, let participant = chat.participant {
+            let notificationRef = db.collection("Users").document(participant.userID).collection("notifications").document()
             let notificationData: [String: Any] = ["type": "message", "message": bodyString, "name": currentUser.displayName, "chatID": chat.documentID, "sentAt": Timestamp(date: Date()), "messageID": messageID]
             
             if let chat = self.chat {

@@ -30,22 +30,22 @@ class CommunityHelper {
         
         let stringDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
         
-        let fact = Community()
-        fact.documentID = documentID
-        fact.title = name
-        fact.createDate = stringDate
-        fact.moderators.append(OP)  //Later there will be more moderators, so it is an array
+        let community = Community()
+        community.documentID = documentID
+        community.title = name
+        community.createDate = stringDate
+        community.moderators.append(OP)  //Later there will be more moderators, so it is an array
         
         if let postCount = data["postCount"] as? Int {
-            fact.postCount = postCount
+            community.postCount = postCount
         }
         
         if let follower = data["follower"] as? [String] {
-            fact.followerCount = follower.count
+            community.followerCount = follower.count
             if let user = currentUser {
                 for userID in follower {
                     if userID == user.uid {
-                        fact.beingFollowed = true
+                        community.beingFollowed = true
                     }
                 }
             }
@@ -53,31 +53,30 @@ class CommunityHelper {
         
         if let language = data["language"] as? String {
             if language == "en" {
-                fact.language = .english
+                community.language = .english
             }
         }
         
         if let imageURL = data["imageURL"] as? String { // Not mandatory (in fact not selectable)
-            fact.imageURL = imageURL
+            community.imageURL = imageURL
         }
         if let description = data["description"] as? String {   // Was introduced later on
-            fact.description = description
+            community.description = description
         }
         if let displayType = data["displayOption"] as? String { // Was introduced later on
-            fact.displayOption = self.getDisplayType(string: displayType)
+            community.displayOption = self.getDisplayType(string: displayType)
         }
         
         if let displayNames = data["factDisplayNames"] as? String {
-            fact.factDisplayNames = self.getDisplayNames(string: displayNames)
+            community.factDisplayNames = self.getDisplayNames(string: displayNames)
         }
         
         if let isAddOnFirstView = data["isAddOnFirstView"] as? Bool {
-            fact.isAddOnFirstView = isAddOnFirstView
+            community.isAddOnFirstView = isAddOnFirstView
         }
         
-        fact.fetchComplete = true
-        
-        return fact
+        community.fetchComplete = true
+        return community
     }
     
     func loadCommunity(fact: Community, loadedFact: @escaping (Community?) -> Void) {
@@ -95,16 +94,18 @@ class CommunityHelper {
         let ref = collectionRef.document(fact.documentID)
         
         
-        ref.getDocument { (snap, err) in
+        ref.getDocument { [weak self] (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
                 if let snap = snap {
-                    if let data = snap.data() {
-                        if let fact = self.getCommunity(currentUser: self.user, documentID: snap.documentID, data: data) {
-                            loadedFact(fact)
-                        } else {
-                            loadedFact(nil)
+                    if let self = self {
+                        if let data = snap.data() {
+                            if let fact = self.getCommunity(currentUser: self.user, documentID: snap.documentID, data: data) {
+                                loadedFact(fact)
+                            } else {
+                                loadedFact(nil)
+                            }
                         }
                     }
                 }
@@ -117,7 +118,7 @@ class CommunityHelper {
         case "topic":
             return .topic
         default:
-            return .fact
+            return .discussion
         }
     }
     

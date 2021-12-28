@@ -16,7 +16,7 @@ enum TableViewDisplayOptions {
     case normal
 }
 
-class PostsOfFactTableViewController: BaseFeedTableViewController {
+class CommunityPostTableViewController: BaseFeedTableViewController {
     
     @IBOutlet weak var infoButton: UIBarButtonItem!
     
@@ -33,12 +33,16 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
     
     var isMainViewController = true
     
-    var pageViewHeaderDelegate: PageViewHeaderDelegate?
+    weak var pageViewHeaderDelegate: PageViewHeaderDelegate?
     
     let defaults = UserDefaults.standard
     
     var postCount = 0
     var followerCount = 0
+    
+    deinit {
+        print("## Deinit postsofFact")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -344,7 +348,7 @@ class PostsOfFactTableViewController: BaseFeedTableViewController {
     }
 }
 
-extension PostsOfFactTableViewController: NewFactDelegate {
+extension CommunityPostTableViewController: NewFactDelegate {
     
     func finishedCreatingNewInstance(item: Any?) {
         self.posts.removeAll()

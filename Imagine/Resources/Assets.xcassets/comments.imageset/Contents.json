@@ -1,10 +1,12 @@
 {
   "images" : [
     {
+      "filename" : "comments.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "comments@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

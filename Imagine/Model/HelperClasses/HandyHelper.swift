@@ -54,33 +54,6 @@ class HandyHelper {
         
         return stringDate
     }
-    
-    func getUserForNewBlogpostOnly(userUID: String) -> User {   // Only for Blogpost cause it gets the whole name, no matter if friend or not
-        
-        // User Daten raussuchen
-        let userRef = db.collection("Users").document(userUID)
-        
-        let user = User()
-
-        userRef.getDocument(completion: { (document, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else if let document = document {
-                if let docData = document.data() {
-
-                    let name = docData["name"] as? String ?? ""
-                    let surname = docData["surname"] as? String ?? ""
-                    user.imageURL = docData["profilePictureURL"] as? String ?? ""
-                    user.userUID = userUID
-                    user.displayName = "\(name) \(surname)"
-                    
-                    
-                }
-            }
-        })
-
-        return user
-    }
 
     
     func setLabelHeight(titleCount: Int) -> CGFloat {
@@ -206,13 +179,15 @@ class HandyHelper {
     
     func notifyUserForUpvote(button: VoteButton, post: Post) {
         
-        if let user = Auth.auth().currentUser {
-            if user.uid == post.originalPosterUID {
-                
-                //No notifications if you like your own posts for whatever reason
-                return
-            }
+        guard let currentUser = Auth.auth().currentUser, let user = post.user else {
+            return
         }
+        
+        if currentUser.uid == user.userID {
+            //No notifications if you like your own posts for whatever reason
+            return
+        }
+        
         var buttonString: String?
         
         switch button {
@@ -237,7 +212,7 @@ class HandyHelper {
                 data["language"] = "en"
             }
             
-            let ref = db.collection("Users").document(post.originalPosterUID).collection("notifications").document()
+            let ref = db.collection("Users").document(user.userID).collection("notifications").document()
             
             ref.setData(data) { (err) in
                 if let error = err {

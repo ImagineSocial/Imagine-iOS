@@ -17,35 +17,62 @@ struct Constants {
     static let niceColor = UIColor(red:0.98, green:0.71, blue:0.58, alpha:1)
     static let green = UIColor(red:0.36, green:0.70, blue:0.37, alpha:1.0)      //#5DB25E
     static let red = UIColor(red:1.00, green:0.54, blue:0.52, alpha:1.0)
+    static let blue = UIColor(red: 23/255, green: 145/255, blue: 255/255, alpha: 1)
     static let backgroundColorForTableViews = UIColor(red:0.33, green:0.47, blue:0.65, alpha:0.5)
     
     static let cellCornerRadius: CGFloat = 15
+    static let communityCornerRadius: CGFloat = 8
+    
+    static let defaultImage = UIImage(named: "default")
+    
+    struct padding {
+        /// 30
+        static let large: CGFloat = 30
+        
+        /// 18
+        static let standard: CGFloat = 18
+        
+        /// 10
+        static let small: CGFloat = 10
+        
+        /// 10
+        static let innerCell: CGFloat = 10
+    }
+    
+    struct size {
+        static let button: CGFloat = 30
+    }
     
     struct strings {
-        static let anonymPosterName = NSLocalizedString("constants_anonymousPosterName", comment: "an anonymous user")
+        static let anonymPosterName = "Somebody"
         static let textOfTheWeek = "Tauscht euch aus, seid nett und lernt neue Menschen kennen!"
     }
     
     struct NewPostConstants {
-        static let infoButtonSize: CGFloat = 22
+        static let infoButtonSize: CGFloat = 20
         static let labelHeight: CGFloat = 17
         static let defaultOptionViewHeight: CGFloat = 45
+        static let pictureViewHeightConstant: CGFloat = 100
+        static let increasedPictureViewHeightConstraint: CGFloat = 200
     }
     
     struct Numbers {
         static let feedCornerRadius: CGFloat = 12
-        static let communityHeaderHeight: CGFloat = 260
-        static let feedShadowRadius: CGFloat = 4
+        static let communityHeaderHeight: CGFloat = 370
+        static let feedShadowRadius: CGFloat = 10
         
         //multiPictureCell
         static let panoramaCollectionViewHeight: CGFloat = 400
+        
+        // CommentView
+        static let commentViewHeight: CGFloat = 60
     }
     
     struct characterLimits {
         static let postTitleCharacterLimit = 200
         
-        static let factTitleCharacterLimit = 30
-        static let factDescriptionCharacterLimit = 120
+        static let communityTitleCharacterLimit = 30
+        static let communityDescriptionCharacterLimit = 120
         
         static let argumentTitleCharacterLimit = 85
         

@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "thanksButton.png",
+      "filename" : "liebespfeil.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "thanksButton@2x.png",
+      "filename" : "liebespfeil@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "thanksButton@3x.png",
+      "filename" : "liebespfeil@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

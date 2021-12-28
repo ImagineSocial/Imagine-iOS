@@ -12,8 +12,6 @@ target 'Imagine' do
  pod 'Firebase/Storage'
  pod 'Firebase/Auth'
  pod 'Firebase/Messaging'
- pod 'Firebase/Performance'
- pod 'Firebase/Analytics'
  pod 'SDWebImage'
  pod 'SwiftLinkPreview'
  pod 'MessengerKit', :git => 'https://github.com/steve228uk/MessengerKit.git'
@@ -22,7 +20,7 @@ target 'Imagine' do
  pod 'ReachabilitySwift'
  pod 'EasyTipView'
  pod 'BSImagePicker', '~> 3.0'
- pod 'PromiseKit', "~> 6.8"
  pod 'CropViewController'
+ pod 'IQKeyboardManagerSwift'
  
 end
