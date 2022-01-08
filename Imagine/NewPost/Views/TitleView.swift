@@ -12,7 +12,7 @@ class TitleView: UIView {
     
     //MARK:- Initialization
     init() {
-        super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        super.init(frame: .zero)
         
         translatesAutoresizingMaskIntoConstraints = false
         backgroundColor = .systemBackground
@@ -50,7 +50,7 @@ class TitleView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = NSLocalizedString("newPost_title_label_text", comment: "title:")
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 15)
+        label.font = .standard(with: .medium, size: 15)
         
         return label
     }()
@@ -59,7 +59,7 @@ class TitleView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "200"
-        label.font = UIFont(name: "IBMPlexSans-Medium", size: 11)
+        label.font = .standard(with: .medium, size: 11)
         
         return label
     }()
@@ -67,7 +67,7 @@ class TitleView: UIView {
     let titleTextView: UITextView = {
         let textView = UITextView()
         textView.translatesAutoresizingMaskIntoConstraints = false
-        textView.font = UIFont(name: "IBMPlexSans", size: 14)
+        textView.font = .standard(size: 14)
         textView.returnKeyType = UIReturnKeyType.next
         textView.enablesReturnKeyAutomatically = true
         

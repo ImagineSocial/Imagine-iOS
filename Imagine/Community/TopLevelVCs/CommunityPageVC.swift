@@ -92,6 +92,66 @@ class CommunityPageVC: UIPageViewController {
         }
     }
     
+    func addViewController() {
+        guard let community = community else {
+            return
+        }
+        
+        //Add The VCs
+        if let addOnCollectionVC = storyboard?.instantiateViewController(withIdentifier: "addOnCollectionVC") as? AddOnCollectionViewController {
+            
+            addOnCollectionVC.pageViewHeaderDelegate = self
+            addOnCollectionVC.community = community
+            argumentVCs.append(addOnCollectionVC)
+        }
+        
+        if community.displayOption == .discussion {
+            
+            if let factParentVC = storyboard?.instantiateViewController(withIdentifier: "factParentVC") as? DiscussionParentVC {
+                
+                factParentVC.pageViewHeaderDelegate = self
+                factParentVC.community = community
+                argumentVCs.append(factParentVC)
+            }
+        }
+        
+        if let postOfFactVC = storyboard?.instantiateViewController(withIdentifier: "postsOfFactVC") as? CommunityPostTableVC {
+            
+            postOfFactVC.pageViewHeaderDelegate = self
+            postOfFactVC.community = community
+            argumentVCs.append(postOfFactVC)
+        }
+                
+        if community.displayOption == .discussion {
+            self.headerView.segmentedControlView.segmentedControl.insertSegment(withTitle: Strings.discussion, at: 1, animated: false)
+        }
+        
+        // Set the VCs and declare the firstVC
+        
+        if community.isAddOnFirstView {
+            self.presentedVC = 0
+            self.headerView.segmentedControlView.segmentedControlChanged()
+            
+            if let firstVC = argumentVCs[0] as? AddOnCollectionViewController {
+                setViewControllers([firstVC], direction: .forward, animated: true, completion: nil)
+            }
+        } else {
+            self.presentedVC = 1
+            self.headerView.segmentedControlView.segmentedControl.selectedSegmentIndex = 1
+            self.headerView.segmentedControlView.segmentedControlChanged()
+            
+            if community.displayOption == .discussion {
+                if let secondVC = argumentVCs[1] as? DiscussionParentVC {
+                    setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
+                }
+            } else {
+                if let secondVC = argumentVCs[1] as? CommunityPostTableVC {
+                    setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
+                }
+            }
+        }
+    }
+    
     private func setBarButton() {
         guard let community = community else {
             return
@@ -156,7 +216,6 @@ class CommunityPageVC: UIPageViewController {
         }
     }
     
-    //MARK: - Prepare For Segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let community = sender as? Community else {
             return
@@ -185,73 +244,6 @@ class CommunityPageVC: UIPageViewController {
             break
         }
     }
-    
-    
-    func addViewController() {
-        guard let community = community else {
-            return
-        }
-        
-        //Add The VCs
-        if let addOnCollectionVC = storyboard?.instantiateViewController(withIdentifier: "addOnCollectionVC") as? AddOnCollectionViewController {
-            
-            addOnCollectionVC.pageViewHeaderDelegate = self
-            addOnCollectionVC.community = community
-            argumentVCs.append(addOnCollectionVC)
-        }
-        
-        if community.displayOption == .discussion {
-            
-            if let factParentVC = storyboard?.instantiateViewController(withIdentifier: "factParentVC") as? DiscussionParentVC {
-                
-                factParentVC.pageViewHeaderDelegate = self
-                factParentVC.community = community
-                argumentVCs.append(factParentVC)
-            }
-        }
-        
-        if let postOfFactVC = storyboard?.instantiateViewController(withIdentifier: "postsOfFactVC") as? CommunityPostTableVC {
-            
-            postOfFactVC.pageViewHeaderDelegate = self
-            postOfFactVC.community = community
-            argumentVCs.append(postOfFactVC)
-            
-        }
-        
-        self.headerView.segmentedControl.setTitle(Strings.topics, forSegmentAt: 0)
-        
-        if community.displayOption == .discussion {
-            self.headerView.segmentedControl.insertSegment(withTitle: Strings.discussion, at: 1, animated: false)
-            self.headerView.segmentedControl.setTitle("Feed", forSegmentAt: 2)
-        } else {
-            self.headerView.segmentedControl.setTitle("Feed", forSegmentAt: 1)
-        }
-        
-        // Set the VCs and declare the firstVC
-        
-        if community.isAddOnFirstView {
-            self.presentedVC = 0
-            self.headerView.segmentedControlChanged()
-            
-            if let firstVC = argumentVCs[0] as? AddOnCollectionViewController {
-                setViewControllers([firstVC], direction: .forward, animated: true, completion: nil)
-            }
-        } else {
-            self.presentedVC = 1
-            self.headerView.segmentedControl.selectedSegmentIndex = 1
-            self.headerView.segmentedControlChanged()
-            
-            if community.displayOption == .discussion {
-                if let secondVC = argumentVCs[1] as? DiscussionParentVC {
-                    setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
-                }
-            } else {
-                if let secondVC = argumentVCs[1] as? CommunityPostTableVC {
-                    setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
-                }
-            }
-        }
-    }
 }
 
 //MARK: - PageVC
@@ -265,8 +257,8 @@ extension CommunityPageVC: UIPageViewControllerDataSource, UIPageViewControllerD
         if let currentViewController = pageViewController.viewControllers?.first, let index = argumentVCs.index(of: currentViewController){
             
             self.presentedVC = index
-            headerView.segmentedControl.selectedSegmentIndex = index
-            headerView.segmentedControlChanged()
+            headerView.segmentedControlView.segmentedControl.selectedSegmentIndex = index
+            headerView.segmentedControlView.segmentedControlChanged()
             
             switch index {
             case 0:

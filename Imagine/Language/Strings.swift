@@ -43,6 +43,13 @@ struct Strings {
     static let proposalOpen = NSLocalizedString("campaignVC_segment_open_proposal", comment: "Open")
     static let proposalFinished = NSLocalizedString("campaignVC_segment_done_proposal", comment: "Finished")
     
+    // MARK: - NewPost
+    
+    static let text = NSLocalizedString("newPost_segmentControl_label_text", comment: "")
+    static let picture = NSLocalizedString("newPost_segmentControl_label_picture", comment: "")
+    static let link = NSLocalizedString("newPost_segmentControl_label_link", comment: "")
+    
+    
     // MARK: - Side Menu
     
     static let sideMenuNotification = NSLocalizedString("sideMenu_notifications_label", comment: "notifications:")

@@ -19,7 +19,7 @@ import FirebaseFirestore
 class PostViewController: UIViewController, UIScrollViewDelegate {
     
     
-    //MARK: - IBOutlets
+    // MARK: - IBOutlets
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var contentView: UIView!
     
@@ -47,13 +47,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var linkPreviewDescription: UILabel!
     @IBOutlet weak var linkPreviewView: UIView!
     
-    //hide Profile Picture
+    // hide Profile Picture
     @IBOutlet weak var leadingNameLabelToSuperviewConstraint: NSLayoutConstraint!
     @IBOutlet weak var leadingNameLabelToProfilePictureConstraint: NSLayoutConstraint!
     
     
     
-    //MARK: - Variables
+    // MARK: - Variables
     var post = Post()
     
     let db = Firestore.firestore()
@@ -71,18 +71,18 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     fileprivate var imageHeightConstraint : NSLayoutConstraint?
     fileprivate var commentTableViewHeightConstraint: NSLayoutConstraint?
     
-    //ImageCollectionView
+    // ImageCollectionView
     let defaultLinkString = "link-default"
     var imageURLs = [String]()
     let identifier = "MultiPictureCell"
     let panoramaHeightMaximum: CGFloat = 500
     
-    //Comment
+    // Comment
     let commentIdentifier = "CommentCell"
     var floatingCommentView: CommentAnswerView?
     
     
-    //GIFS
+    // GIFS
     var avPlayer: AVPlayer?
     var avPlayerLayer: AVPlayerLayer?
     
@@ -894,37 +894,28 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     //MARK: - CommentAnswerView
+    
     func createFloatingCommentView() {
         let viewHeight = self.view.frame.height
-        let screenHeight = UIScreen.main.bounds.height
         
-        if viewHeight == screenHeight { // I dont know why, but they are the same for one cyrcle, probably the view is not loaded right
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.createFloatingCommentView()
-                
-                return
-            }
-        } else {
-            if floatingCommentView == nil {
-                let commentViewHeight: CGFloat = 60
-                floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: viewHeight-commentViewHeight, width: self.view.frame.width, height: commentViewHeight))
-                
-                
-                floatingCommentView!.delegate = self
-                self.contentView.addSubview(floatingCommentView!)
-                
-                floatingCommentView!.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
-                floatingCommentView!.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
-                let bottomConstraint = floatingCommentView!.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor)
-                    bottomConstraint.isActive = true
-                floatingCommentView!.bottomConstraint = bottomConstraint
-                floatingCommentView!.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
-                floatingCommentView!.addKeyboardObserver()
-                floatingCommentView!.commentSection = .post
-                
-                self.contentView.bringSubviewToFront(floatingCommentView!)
-            }
-        }
+        guard floatingCommentView == nil else { return }
+        
+        let commentViewHeight: CGFloat = 60
+        floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: viewHeight-commentViewHeight, width: self.view.frame.width, height: commentViewHeight))
+        
+        guard let floatingCommentView = floatingCommentView else { return }
+
+        floatingCommentView.delegate = self
+        self.contentView.addSubview(floatingCommentView)
+        
+        floatingCommentView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        floatingCommentView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        floatingCommentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
+        let bottomConstraint = floatingCommentView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor)
+        bottomConstraint.isActive = true
+        
+        floatingCommentView.addKeyboardObserver()
+        floatingCommentView.commentSection = .post
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -947,7 +938,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
+        
         if scrollView == self.scrollView {
             if let view = floatingCommentView {
                 let offset = scrollView.contentOffset.y

@@ -39,13 +39,16 @@ protocol JustPostedDelegate: class {
 //TODO: Outsource the network POST requests, functions of outsources buttons
 class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, CropViewControllerDelegate {
     
-    //MARK: -IBOutlets
+    // MARK: - Elements
     @IBOutlet weak var headerLabel: UILabel!
-    @IBOutlet weak var postSelectionSegmentedControl: UISegmentedControl!
     @IBOutlet weak var shareButton: UIBarButtonItem!
     @IBOutlet weak var headerView: UIView!
     
-    //MARK: - Variables
+    let segmentedControlView = BaseSegmentedControlView(items: [Strings.text, Strings.picture, Strings.link], tintColor: .imagineColor, font: .standard(with: .medium, size: 15))
+    
+    
+    // MARK: - Variables
+    
     //image variables
     var imagePicker = UIImagePickerController()
     let pictureViewHeightConstant = Constants.NewPostConstants.pictureViewHeightConstant
@@ -139,6 +142,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     var linkFactExplanationTipView: EasyTipView?
     
     //MARK: Outsourced Views
+    
     let titleView = TitleView()
     let descriptionView = DescriptionView()
     lazy var linkView = LinkView(newPostVC: self)
@@ -148,6 +152,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     lazy var linkCommunityView = LinkCommunityView(newPostVC: self)
     
     //MARK: - View Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -224,11 +229,11 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         NSLayoutConstraint.activate([
             scrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            scrollView.topAnchor.constraint(equalTo: postSelectionSegmentedControl.bottomAnchor, constant: 8),
+            scrollView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 10),
             scrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
             
             scrollView.frameLayoutGuide.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.frameLayoutGuide.topAnchor.constraint(equalTo: postSelectionSegmentedControl.bottomAnchor, constant: 8),
+            scrollView.frameLayoutGuide.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 10),
             scrollView.frameLayoutGuide.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.frameLayoutGuide.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
@@ -250,11 +255,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
         
-        let font: [AnyHashable : Any] = [NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 15) as Any]
-        postSelectionSegmentedControl.tintColor = .imagineColor
-        postSelectionSegmentedControl.setTitleTextAttributes(font as? [NSAttributedString.Key : Any], for: .normal)
-        
-        
+        headerView.addSubview(segmentedControlView)
+        segmentedControlView.delegate = self
+        segmentedControlView.constrain(top: headerLabel.bottomAnchor, leading: headerView.leadingAnchor, bottom: headerView.bottomAnchor, trailing: headerLabel.trailingAnchor, paddingTop: 10, paddingBottom: -5, height: 30)
+                
         //Load the UI
         setCompleteUIForThought()
         setPictureViewUI()
@@ -262,22 +266,20 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         setUpOptionViewUI() // Shows linked Fact in here, if there is one
     }
     
-    //MARK: - Navigation
+    // MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "searchFactsSegue" {
-            if let navCon = segue.destination as? UINavigationController {
-                if let factVC = navCon.topViewController as? CommunityCollectionVC {
-                    factVC.addFactToPost = .newPost
-                    factVC.delegate = self
-                }
+        switch segue.identifier {
+        case "searchFactsSegue":
+            if let navCon = segue.destination as? UINavigationController, let factVC = navCon.topViewController as? CommunityCollectionVC {
+                factVC.addFactToPost = .newPost
+                factVC.delegate = self
             }
-        }
-        
-        if segue.identifier == "toMapSegue" {
+        case "toMapSegue":
             if let mapVC = segue.destination as? MapViewController {
                 mapVC.locationDelegate = self
             }
+        default: break
         }
     }
     
@@ -540,7 +542,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     
                     if self.selectedOption != .picture || self.selectedOption != .multiPicture {
                         //Switch to picture mode so the meme can be shown
-                        self.postSelectionSegmentedControl.selectedSegmentIndex = 1
+                        self.segmentedControlView.segmentedControl.selectedSegmentIndex = 1
                         self.prepareForSelectionChange()
                     }
                 }
@@ -801,10 +803,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         setTitleViewUI()
         setDescriptionViewUI()
         
-        self.descriptionViewTopAnchor = descriptionView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1)
-        self.descriptionViewTopAnchor!.isActive = true
+        descriptionViewTopAnchor = descriptionView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 1)
+        descriptionViewTopAnchor!.isActive = true
         
-        self.postSelectionSegmentedControl.isEnabled = true
+        segmentedControlView.segmentedControl.isEnabled = true
     }
     
     
@@ -963,21 +965,6 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         let endView = UIView()
         endView.backgroundColor = .systemBackground
         endView.translatesAutoresizingMaskIntoConstraints = false
-        
-        //When you want to post as somebody else
-//        if let user = Auth.auth().currentUser {
-//            if user.uid == Constants.userIDs.uidMalte || user.uid == Constants.userIDs.uidSophie || user.uid == Constants.userIDs.uidYvonne {
-//                endView.addSubview(fakeNameSegmentedControl)
-//                fakeNameSegmentedControl.leadingAnchor.constraint(equalTo: endView.leadingAnchor, constant: 10).isActive = true
-//                fakeNameSegmentedControl.trailingAnchor.constraint(equalTo: endView.trailingAnchor, constant: -10).isActive = true
-//                fakeNameSegmentedControl.topAnchor.constraint(equalTo: endView.topAnchor, constant: 10).isActive = true
-//                fakeNameSegmentedControl.heightAnchor.constraint(equalToConstant: 30).isActive = true
-//
-//                endView.addSubview(fakeNameInfoLabel)
-//                fakeNameInfoLabel.topAnchor.constraint(equalTo: fakeNameSegmentedControl.bottomAnchor, constant: 10).isActive = true
-//                fakeNameInfoLabel.leadingAnchor.constraint(equalTo: endView.leadingAnchor, constant: 10).isActive = true
-//            }
-//        }
 
         self.contentView.addSubview(endView)
         endView.topAnchor.constraint(equalTo: optionView.bottomAnchor, constant: 1).isActive = true
@@ -987,55 +974,10 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
         endView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor).isActive = true
     }
     
-    
-//    //MARK: PostAsSomebodyElse-UI
-//    
-//    let fakeNameSegmentedControl: UISegmentedControl = {
-//        let items = ["Me","FM", "MR", "AN", "LV", "LM"]
-//       let control = UISegmentedControl(items: items)
-//        control.translatesAutoresizingMaskIntoConstraints = false
-//        control.addTarget(self, action: #selector(segmentControlChanged(sender:)), for: .valueChanged)
-//        control.selectedSegmentIndex = 0
-//        
-//        return control
-//    }()
-//    
-//    @objc func segmentControlChanged(sender: UISegmentedControl) {
-//        switch sender.selectedSegmentIndex {
-//        case 0:
-//            if let user = Auth.auth().currentUser {
-//                fakeProfileUserID = user.uid
-//                fakeNameInfoLabel.text = "Dein persönliches Profil"
-//            }
-//        case 1:
-//            fakeProfileUserID = Constants.userIDs.FrankMeindlID
-//            fakeNameInfoLabel.text = "Frank Meindl"
-//        case 2:
-//            fakeProfileUserID = Constants.userIDs.MarkusRiesID
-//            fakeNameInfoLabel.text = "Markus Ries"
-//        case 3:
-//            fakeProfileUserID = Constants.userIDs.AnnaNeuhausID
-//            fakeNameInfoLabel.text = "Anna Neuhaus"
-//        case 4:
-//            fakeProfileUserID = Constants.userIDs.LaraVoglerID
-//            fakeNameInfoLabel.text = "Lara Vogler"
-//        case 5:
-//            fakeProfileUserID = Constants.userIDs.LenaMasgarID
-//            fakeNameInfoLabel.text = "Lena Masgar"
-//        default:
-//            fakeProfileUserID = Constants.userIDs.FrankMeindlID
-//        }
-//    }
-//    
-//    let fakeNameInfoLabel: UILabel = {
-//       let label = UILabel()
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        label.font = UIFont(name: "IBMPlexSans", size: 13)
-//        
-//        return label
-//    }()
+
     
     //MARK: - Animate UI Changes
+    
     func insertUIForLink() {
         self.descriptionViewTopAnchor!.isActive = false
         
@@ -1055,7 +997,7 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                 self.linkView.webImageViewStackView.alpha = 1
                 self.linkView.linkInfoButton.alpha = 1
             }, completion: { (_) in
-                self.postSelectionSegmentedControl.isEnabled = true
+                self.segmentedControlView.segmentedControl.isEnabled = true
             })
         }
     }
@@ -1102,19 +1044,15 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
                     self.pictureView.removePictureButton.alpha = 1
                 }
             }, completion: { (_) in
-                self.postSelectionSegmentedControl.isEnabled = true
+                self.segmentedControlView.segmentedControl.isEnabled = true
             })
         }
     }
     
     //MARK: - Animate Layout Change
     
-    @IBAction func postSelectionSegmentChanged(_ sender: Any) {
-        prepareForSelectionChange()
-    }
-    
     func prepareForSelectionChange() {
-        self.postSelectionSegmentedControl.isEnabled = false
+        segmentedControlView.segmentedControl.isEnabled = false
         
         switch self.selectedOption {
         case .picture, .multiPicture:
@@ -1159,15 +1097,15 @@ class NewPostViewController: UIViewController, UIImagePickerControllerDelegate, 
     }
     
     func setTheChange() {
-        if postSelectionSegmentedControl.selectedSegmentIndex == 0 {
+        if segmentedControlView.segmentedControl.selectedSegmentIndex == 0 {
             self.selectedOption = .thought
             setCompleteUIForThought()
         }
-        if postSelectionSegmentedControl.selectedSegmentIndex == 1 {
+        if segmentedControlView.segmentedControl.selectedSegmentIndex == 1 {
             self.selectedOption = .picture
             insertUIForPicture()
         }
-        if postSelectionSegmentedControl.selectedSegmentIndex == 2 {
+        if segmentedControlView.segmentedControl.selectedSegmentIndex == 2 {
             self.selectedOption = .link
             insertUIForLink()
         }
@@ -1309,5 +1247,13 @@ extension NewPostViewController: MemeViewDelegate {
         }
         
         self.memeView = nil
+    }
+}
+
+// MARK: - BaseSegmentControl Delegate
+
+extension NewPostViewController: BaseSegmentControlDelegate {
+    func segmentChanged(to index: Int, direction: UIPageViewController.NavigationDirection) {
+        prepareForSelectionChange()
     }
 }

@@ -22,7 +22,7 @@ class DiscussionParentVC: UIViewController {
     @IBOutlet weak var backgroundView: UIView!
     @IBOutlet weak var contraArgumentLabel: UILabel!
     @IBOutlet weak var proArgumentLabel: UILabel!
-    
+    @IBOutlet weak var offsetLayoutConstraint: NSLayoutConstraint!
     @IBOutlet weak var infoButton: UIButton!
     
     var community: Community?
@@ -46,6 +46,8 @@ class DiscussionParentVC: UIViewController {
         if needNavigationController {
             setDismissButton()
         }
+        
+        offsetLayoutConstraint.constant = Constants.Numbers.communityHeaderHeight + 20
     }
     
     override func viewWillDisappear(_ animated: Bool) {
