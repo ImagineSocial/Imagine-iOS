@@ -39,6 +39,7 @@
 		024F64F8275AD237002DFC06 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F64F7275AD236002DFC06 /* UIApplication.swift */; };
 		024F64FA275AE4F2002DFC06 /* BaseCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F64F9275AE4F2002DFC06 /* BaseCollectionViewCell.swift */; };
 		026F467A27690A3600C279D2 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026F467927690A3600C279D2 /* Icons.swift */; };
+		027BA8C527CBCEC600A8919F /* SmallTopicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027BA8C427CBCEC600A8919F /* SmallTopicCell.swift */; };
 		0289957326FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */; };
 		0289957726FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957626FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift */; };
 		0289957B26FB601D007CAFB7 /* PostVC+MultiPicCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957A26FB601C007CAFB7 /* PostVC+MultiPicCollectionView.swift */; };
@@ -295,7 +296,6 @@
 		E9F31DCB23F6D2A3001D5D25 /* FactCollectionHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9F31DCA23F6D2A3001D5D25 /* FactCollectionHeader.xib */; };
 		E9F31DCD23F6D6D2001D5D25 /* FactCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F31DCC23F6D6D2001D5D25 /* FactCell.swift */; };
 		E9F31DCF23F6D78C001D5D25 /* RecentTopicsCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F31DCE23F6D78C001D5D25 /* RecentTopicsCollectionCell.swift */; };
-		E9F31DD123F70D8A001D5D25 /* SmallTopicCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9F31DD023F70D8A001D5D25 /* SmallTopicCell.xib */; };
 		E9F6030F235DE5DF00A58D08 /* CommunityFeedTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F6030E235DE5DF00A58D08 /* CommunityFeedTableVC.swift */; };
 		E9F622DD25E9501E00AAD2C0 /* RepostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F622DC25E9501E00AAD2C0 /* RepostView.swift */; };
 		E9F622E125E96DD500AAD2C0 /* LinkedCommunityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F622E025E96DD500AAD2C0 /* LinkedCommunityView.swift */; };
@@ -342,6 +342,7 @@
 		024F64F7275AD236002DFC06 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		024F64F9275AE4F2002DFC06 /* BaseCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionViewCell.swift; sourceTree = "<group>"; };
 		026F467927690A3600C279D2 /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
+		027BA8C427CBCEC600A8919F /* SmallTopicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallTopicCell.swift; sourceTree = "<group>"; };
 		0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommunityCollectionVC+CollectionView.swift"; sourceTree = "<group>"; };
 		0289957626FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseFeedTableVC+TableView.swift"; sourceTree = "<group>"; };
 		0289957A26FB601C007CAFB7 /* PostVC+MultiPicCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostVC+MultiPicCollectionView.swift"; sourceTree = "<group>"; };
@@ -607,7 +608,6 @@
 		E9F31DCA23F6D2A3001D5D25 /* FactCollectionHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FactCollectionHeader.xib; sourceTree = "<group>"; };
 		E9F31DCC23F6D6D2001D5D25 /* FactCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactCell.swift; sourceTree = "<group>"; };
 		E9F31DCE23F6D78C001D5D25 /* RecentTopicsCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentTopicsCollectionCell.swift; sourceTree = "<group>"; };
-		E9F31DD023F70D8A001D5D25 /* SmallTopicCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SmallTopicCell.xib; sourceTree = "<group>"; };
 		E9F6030E235DE5DF00A58D08 /* CommunityFeedTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityFeedTableVC.swift; sourceTree = "<group>"; };
 		E9F622DC25E9501E00AAD2C0 /* RepostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepostView.swift; sourceTree = "<group>"; };
 		E9F622E025E96DD500AAD2C0 /* LinkedCommunityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkedCommunityView.swift; sourceTree = "<group>"; };
@@ -916,9 +916,9 @@
 				E9F31DCC23F6D6D2001D5D25 /* FactCell.swift */,
 				E96CE89522959E6D00BACD3B /* ArgumentCell.xib */,
 				E96CE8972295A13B00BACD3B /* ArgumentCell.swift */,
-				E9F31DD023F70D8A001D5D25 /* SmallTopicCell.xib */,
 				E9F31DC723F6D109001D5D25 /* RecentTopicsCollectionCell.xib */,
 				E9F31DCE23F6D78C001D5D25 /* RecentTopicsCollectionCell.swift */,
+				027BA8C427CBCEC600A8919F /* SmallTopicCell.swift */,
 				E98BA591241BFF3700C62DA8 /* AddTopicCell.xib */,
 				E9A02AA6232D3181000DAB69 /* AddFactTableViewCell.swift */,
 				E97FDFBD246AA4130049E1E4 /* ShowAllTopicsCell.xib */,
@@ -1758,7 +1758,6 @@
 				E90AC38924FA52C4002A36F0 /* IBMPlexSans-Bold.ttf in Resources */,
 				E9F1F225247A9E77004E1E90 /* SettingHeaderView.xib in Resources */,
 				E93665822513C810008CC8A9 /* AddOnQAndACollectionViewCell.xib in Resources */,
-				E9F31DD123F70D8A001D5D25 /* SmallTopicCell.xib in Resources */,
 				E936659125150832008CC8A9 /* AddOnQAndAQuestionCell.xib in Resources */,
 				E90AC38424FA52C4002A36F0 /* IBMPlexSans-Regular.ttf in Resources */,
 				E9F31DCB23F6D2A3001D5D25 /* FactCollectionHeader.xib in Resources */,
@@ -2051,6 +2050,7 @@
 				E9E521C6245AE6EE002585A2 /* TrippyViewController.swift in Sources */,
 				E97DBED922AEA81A007100E1 /* Post.swift in Sources */,
 				E962AC36222DA19700C6D6EF /* DesignablePopUp.swift in Sources */,
+				027BA8C527CBCEC600A8919F /* SmallTopicCell.swift in Sources */,
 				024F64F327580416002DFC06 /* BaseScrollView.swift in Sources */,
 				E9B9445F225800EE000145E2 /* UserFeedTableViewController.swift in Sources */,
 				E9C42EF12364396B00FC50BA /* SearchUserCell.swift in Sources */,

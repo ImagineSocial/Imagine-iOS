@@ -23,7 +23,6 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
     @IBOutlet weak var addOnDescriptionLabel: UILabel!
     @IBOutlet weak var halfTransparentBackgroundView: UIView!
     
-    let previewCellIdentifier = "SmallTopicCell"
     let postHelper = FirestoreRequest.shared
     
     var isFetchingPreviewPosts = false
@@ -76,7 +75,7 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
     
     override func awakeFromNib() {
         //CollectionView
-        topicPreviewCollectionView.register(UINib(nibName: "SmallTopicCell", bundle: nil), forCellWithReuseIdentifier: previewCellIdentifier)
+        topicPreviewCollectionView.register(SmallTopicCell.self, forCellWithReuseIdentifier: SmallTopicCell.identifier)
         
         if let layout = topicPreviewCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             layout.scrollDirection = .vertical
@@ -114,7 +113,7 @@ extension AddOnSingleCommunityCollectionViewCell: UICollectionViewDelegateFlowLa
         if let posts = previewPosts {
             let post = posts[indexPath.item]
             
-            if let cell = topicPreviewCollectionView.dequeueReusableCell(withReuseIdentifier: previewCellIdentifier, for: indexPath) as? SmallTopicCell {
+            if let cell = topicPreviewCollectionView.dequeueReusableCell(withReuseIdentifier: SmallTopicCell.identifier, for: indexPath) as? SmallTopicCell {
                 
                 if let url = URL(string: post.imageURL) {
                     cell.cellImageView.sd_setImage(with: url, completed: nil)

@@ -19,7 +19,6 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
     @IBOutlet weak var collectionView: UICollectionView!
     
     var communities = [Community]()
-    let identifier = "SmallTopicCell"
     let placeHolderIdentifier = "PlaceHolderCell"
     
     let db = FirestoreRequest.shared.db
@@ -31,7 +30,7 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
         collectionView.dataSource = self
         collectionView.delaysContentTouches = false
         
-        collectionView.register(UINib(nibName: "SmallTopicCell", bundle: nil), forCellWithReuseIdentifier: identifier)
+        collectionView.register(SmallTopicCell.self, forCellWithReuseIdentifier: SmallTopicCell.identifier)
         collectionView.register(UINib(nibName: "PlaceHolderCell", bundle: nil), forCellWithReuseIdentifier: placeHolderIdentifier)
         
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
@@ -105,7 +104,7 @@ extension RecentTopicsCollectionCell: UICollectionViewDataSource, UICollectionVi
         if communities.count != 0 {
             let community = communities[indexPath.item]
             
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as? SmallTopicCell {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SmallTopicCell.identifier, for: indexPath) as? SmallTopicCell {
                 
                 cell.community = community
                 
@@ -138,59 +137,6 @@ extension RecentTopicsCollectionCell: UICollectionViewDataSource, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        let newSize = CGSize(width: (collectionView.frame.size.height), height: (collectionView.frame.size.height))
-        
-        return newSize
-    }
-}
-
-
-class SmallTopicCell: UICollectionViewCell {
-    
-    @IBOutlet weak var cellImageView: UIImageView!
-    
-    override var isHighlighted: Bool {
-        didSet {
-            toggleIsHighlighted()
-        }
-    }
-    
-    func toggleIsHighlighted() {
-        UIView.animate(withDuration: 0.1, delay: 0, options: [.curveEaseOut], animations: {
-            self.alpha = self.isHighlighted ? 0.9 : 1.0
-            self.transform = self.isHighlighted ?
-            CGAffineTransform.identity.scaledBy(x: 0.97, y: 0.97) :
-            CGAffineTransform.identity
-        })
-    }
-    
-    override func awakeFromNib() {
-        cellImageView.contentMode = .scaleAspectFill
-        
-        clipsToBounds = false
-        layer.masksToBounds = true
-    }
-    
-    override func prepareForReuse() {
-        cellImageView.image = nil
-    }
-    
-    var community: Community? {
-        didSet {
-            guard let community = community else { return }
-            
-            if let url = URL(string: community.imageURL) {
-                cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
-            } else {
-                cellImageView.image = UIImage(named: "default-community")
-            }
-        }
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        cellImageView.layer.cornerRadius = cellImageView.frame.width / 2
+        .init(width: (collectionView.frame.size.height), height: (collectionView.frame.size.height))
     }
 }

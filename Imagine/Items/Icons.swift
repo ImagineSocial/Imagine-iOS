@@ -10,6 +10,7 @@ import UIKit
 
 struct Icons {
     
+    static let defaultCommunity = UIImage(named: "default-community")
     static let defaultUser = UIImage(named: "default-user")
     static let dismiss = UIImage(named: "DismissTemplate")?.withRenderingMode(.alwaysTemplate)
     
