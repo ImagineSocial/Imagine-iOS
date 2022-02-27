@@ -357,13 +357,6 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 }
             }
         }
-        if segue.identifier == "linkTapped" {
-            if let chosenLink = sender as? String {
-                if let webVC = segue.destination as? WebViewController {
-                    webVC.link = chosenLink
-                }
-            }
-        }
         
         if segue.identifier == "toVoteDetailSegue" {
             if let vote = sender as? Vote {

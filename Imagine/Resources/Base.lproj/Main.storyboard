@@ -53,7 +53,6 @@
                     </navigationItem>
                     <connections>
                         <segue destination="CAi-hu-Dpl" kind="presentation" identifier="meldenSegue" modalPresentationStyle="overFullScreen" modalTransitionStyle="coverVertical" id="lPj-29-RPy"/>
-                        <segue destination="Xdq-P6-bO5" kind="presentation" identifier="goToLink" id="Fse-Ev-roe"/>
                         <segue destination="Ll6-Iq-u30" kind="show" identifier="showPost" id="RQq-29-OD8"/>
                         <segue destination="f0g-lQ-xiT" kind="show" identifier="toUserSegue" id="bgh-YH-8ed"/>
                         <segue destination="tji-cH-XE4" kind="show" identifier="toFriendsSegue" id="W1P-Tf-4HL"/>
@@ -362,7 +361,6 @@
                         <segue destination="Ll6-Iq-u30" kind="show" identifier="showPost" id="vmK-uC-sq0"/>
                         <segue destination="9Mf-TT-1Be" kind="presentation" identifier="toFactSegue" id="Il1-5P-Ppa"/>
                         <segue destination="CAi-hu-Dpl" kind="presentation" identifier="meldenSegue" modalPresentationStyle="overFullScreen" modalTransitionStyle="coverVertical" id="qci-Xf-KIZ"/>
-                        <segue destination="Xdq-P6-bO5" kind="presentation" identifier="goToLink" id="pQk-Px-f9e"/>
                         <segue destination="TPx-YI-7pe" kind="presentation" identifier="goToNewPost" id="tr6-dT-hHg"/>
                         <segue destination="YtM-nJ-Ysh" kind="show" identifier="toSettingSegue" id="rcq-dA-XSi"/>
                         <segue destination="f0g-lQ-xiT" kind="show" identifier="toUserSegue" id="AxG-TA-XAq"/>
@@ -884,7 +882,6 @@
                         <outlet property="sourceTextView" destination="3Mg-Pj-0WO" id="aA4-Uk-YAR"/>
                         <outlet property="sourceTextViewHeightConstraint" destination="1UX-CE-DDd" id="gjb-DN-8rq"/>
                         <outlet property="titleLabel" destination="3I3-dA-SMz" id="GCA-RS-dhu"/>
-                        <segue destination="Xdq-P6-bO5" kind="presentation" identifier="goToLink" id="3ne-nt-vq2"/>
                         <segue destination="f0g-lQ-xiT" kind="show" identifier="toUserSegue" id="wCG-nO-PPC"/>
                     </connections>
                 </viewController>
@@ -3317,7 +3314,6 @@
                         <segue destination="brD-xQ-jhB" kind="show" identifier="toMoreInfoSegue" id="774-TM-1NT"/>
                         <segue destination="clm-pG-aS0" kind="show" identifier="toChatSegue" id="yNA-zh-mO4"/>
                         <segue destination="ynG-Ac-02v" kind="presentation" identifier="toSecretSegue" modalPresentationStyle="fullScreen" id="aBp-6c-rRl"/>
-                        <segue destination="Xdq-P6-bO5" kind="presentation" identifier="linkTapped" id="4O7-Dd-y1Z"/>
                         <segue destination="M6J-4z-fSa" kind="show" identifier="toSettingsSegue" id="abH-Sm-SDu"/>
                         <segue destination="g1J-bS-cZR" kind="show" identifier="toVoteDetailSegue" id="m6b-eV-Frv"/>
                         <segue destination="NAL-jA-H5h" kind="show" identifier="toJobOfferDetailSegue" id="Cdz-Pl-3MF"/>
@@ -4752,7 +4748,6 @@
                         <segue destination="Ll6-Iq-u30" kind="show" identifier="showPost" id="Nkm-Bu-csR"/>
                         <segue destination="AOV-W1-RFY" kind="presentation" identifier="toBlogPost" id="mSg-Kz-Oj8"/>
                         <segue destination="clm-pG-aS0" kind="show" identifier="toChatSegue" id="s3U-v0-RhF"/>
-                        <segue destination="Xdq-P6-bO5" kind="presentation" identifier="goToLink" id="Zwt-mC-YlF"/>
                         <segue destination="EeO-4a-quz" kind="presentation" identifier="toFactSegue" id="oN4-jG-mYq"/>
                         <segue destination="YtM-nJ-Ysh" kind="show" identifier="toSettingSegue" id="DuH-Jg-LAd"/>
                         <segue destination="3uR-tP-o9i" kind="presentation" identifier="showLeanLink" id="eLB-Zu-Y0b"/>
@@ -5335,7 +5330,6 @@
                         <outlet property="scrollView" destination="fmn-Dl-jfo" id="N4n-zl-ggM"/>
                         <outlet property="titleLabel" destination="Hez-vl-L2L" id="7DF-2N-OEx"/>
                         <outlet property="urlLabel" destination="BxU-ap-6MY" id="f4G-45-e87"/>
-                        <segue destination="Xdq-P6-bO5" kind="presentation" identifier="goToLink" id="2Dh-7B-KeX"/>
                         <segue destination="f0g-lQ-xiT" kind="show" identifier="toUserSegue" id="WcQ-qJ-vYb"/>
                         <segue destination="CAi-hu-Dpl" kind="presentation" identifier="reportSegue" modalPresentationStyle="overFullScreen" modalTransitionStyle="coverVertical" id="6ey-z4-yGI"/>
                         <segue destination="Pa4-QS-dr3" kind="presentation" identifier="toTranslateSegue" id="ilO-fQ-UNL"/>
@@ -6090,90 +6084,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rs9-it-hQS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="9407.2000000000007" y="1727.5862068965519"/>
-        </scene>
-        <!--Web View Controller-->
-        <scene sceneID="M93-15-Xts">
-            <objects>
-                <viewController id="Xdq-P6-bO5" customClass="WebViewController" customModule="Imagine" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="AvN-YC-CFO">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3HY-58-oVH">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
-                                <color key="barTintColor" systemColor="systemBackgroundColor"/>
-                                <items>
-                                    <navigationItem id="bSC-Co-YYY">
-                                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="gep-op-OAB">
-                                            <connections>
-                                                <action selector="dismissTapped:" destination="Xdq-P6-bO5" id="hL3-je-eXA"/>
-                                            </connections>
-                                        </barButtonItem>
-                                    </navigationItem>
-                                </items>
-                            </navigationBar>
-                            <wkWebView contentMode="scaleToFill" allowsBackForwardNavigationGestures="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gqv-z0-hAD">
-                                <rect key="frame" x="0.0" y="56" width="375" height="591"/>
-                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <wkWebViewConfiguration key="configuration" allowsInlineMediaPlayback="YES">
-                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" audio="YES" video="YES"/>
-                                    <wkPreferences key="preferences"/>
-                                </wkWebViewConfiguration>
-                            </wkWebView>
-                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="F0k-Zd-hwe">
-                                <rect key="frame" x="0.0" y="56" width="375" height="2"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="2" id="vFe-7h-4k5"/>
-                                </constraints>
-                            </progressView>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iXa-K7-0z6">
-                                <rect key="frame" x="0.0" y="603" width="375" height="44"/>
-                                <items>
-                                    <barButtonItem image="arrowtriangle.left" catalog="system" width="80" id="guC-Fx-mgl">
-                                        <connections>
-                                            <action selector="toLastSite:" destination="Xdq-P6-bO5" id="22f-0G-OgS"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem image="arrowtriangle.right" catalog="system" width="80" id="EAy-4I-KgE">
-                                        <connections>
-                                            <action selector="toNextSite:" destination="Xdq-P6-bO5" id="NLe-Ra-2EA"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem image="arrow.clockwise" catalog="system" width="80" id="VXN-pc-DMB">
-                                        <connections>
-                                            <action selector="refresh:" destination="Xdq-P6-bO5" id="FpD-Xp-ATK"/>
-                                        </connections>
-                                    </barButtonItem>
-                                </items>
-                            </toolbar>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="0nu-UI-Ikw"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <constraints>
-                            <constraint firstItem="F0k-Zd-hwe" firstAttribute="leading" secondItem="AvN-YC-CFO" secondAttribute="leading" id="2ui-qa-z6x"/>
-                            <constraint firstItem="3HY-58-oVH" firstAttribute="top" secondItem="0nu-UI-Ikw" secondAttribute="top" id="9D8-iQ-n8E"/>
-                            <constraint firstAttribute="trailing" secondItem="F0k-Zd-hwe" secondAttribute="trailing" id="Fh6-TX-TvK"/>
-                            <constraint firstItem="0nu-UI-Ikw" firstAttribute="trailing" secondItem="3HY-58-oVH" secondAttribute="trailing" id="GX1-Pr-hFH"/>
-                            <constraint firstItem="F0k-Zd-hwe" firstAttribute="top" secondItem="3HY-58-oVH" secondAttribute="bottom" id="GzH-gu-4bd"/>
-                            <constraint firstItem="gqv-z0-hAD" firstAttribute="leading" secondItem="0nu-UI-Ikw" secondAttribute="leading" id="KiP-mc-HU2"/>
-                            <constraint firstItem="iXa-K7-0z6" firstAttribute="leading" secondItem="AvN-YC-CFO" secondAttribute="leading" id="Xzd-9W-Hri"/>
-                            <constraint firstItem="gqv-z0-hAD" firstAttribute="top" secondItem="3HY-58-oVH" secondAttribute="bottom" id="igW-up-UCM"/>
-                            <constraint firstItem="3HY-58-oVH" firstAttribute="leading" secondItem="AvN-YC-CFO" secondAttribute="leading" id="nFY-Xz-dJu"/>
-                            <constraint firstItem="0nu-UI-Ikw" firstAttribute="trailing" secondItem="iXa-K7-0z6" secondAttribute="trailing" id="o8z-s9-NUi"/>
-                            <constraint firstItem="0nu-UI-Ikw" firstAttribute="bottom" secondItem="gqv-z0-hAD" secondAttribute="bottom" id="qko-AD-HHZ"/>
-                            <constraint firstItem="0nu-UI-Ikw" firstAttribute="bottom" secondItem="iXa-K7-0z6" secondAttribute="bottom" id="ucR-iK-6We"/>
-                            <constraint firstItem="0nu-UI-Ikw" firstAttribute="trailing" secondItem="gqv-z0-hAD" secondAttribute="trailing" id="xVW-xn-hoh"/>
-                        </constraints>
-                    </view>
-                    <size key="freeformSize" width="375" height="667"/>
-                    <connections>
-                        <outlet property="progressView" destination="F0k-Zd-hwe" id="CYg-TC-sJ9"/>
-                        <outlet property="webView" destination="gqv-z0-hAD" id="319-ID-K5c"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="kZS-29-AEg" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="7356" y="250"/>
         </scene>
         <!--Blog Post View Controller-->
         <scene sceneID="6nc-xN-foA">
@@ -6933,7 +6843,6 @@
                         <segue destination="Ll6-Iq-u30" kind="show" identifier="showPost" id="o9p-bX-wCy"/>
                         <segue destination="f0g-lQ-xiT" kind="show" identifier="toUserSegue" id="qdf-cE-3ul"/>
                         <segue destination="CAi-hu-Dpl" kind="presentation" identifier="meldenSegue" modalPresentationStyle="overFullScreen" modalTransitionStyle="coverVertical" id="XWO-Oy-u7W"/>
-                        <segue destination="Xdq-P6-bO5" kind="presentation" identifier="goToLink" id="Qbt-BZ-S0E"/>
                         <segue destination="EeO-4a-quz" kind="presentation" identifier="toFactSegue" id="yvl-Aw-SD5"/>
                     </connections>
                 </tableViewController>
@@ -7913,7 +7822,6 @@
         <segue reference="qj1-wx-hi6"/>
         <segue reference="W1P-Tf-4HL"/>
         <segue reference="SpZ-08-BhO"/>
-        <segue reference="Fse-Ev-roe"/>
         <segue reference="lPj-29-RPy"/>
         <segue reference="RQq-29-OD8"/>
         <segue reference="bgh-YH-8ed"/>
@@ -7936,9 +7844,6 @@
         <image name="ImagineSign" width="640" height="641"/>
         <image name="YouTubeButtonIcon" width="38.5" height="27"/>
         <image name="alarm-clock" width="30" height="30"/>
-        <image name="arrow.clockwise" catalog="system" width="115" height="128"/>
-        <image name="arrowtriangle.left" catalog="system" width="128" height="113"/>
-        <image name="arrowtriangle.right" catalog="system" width="128" height="113"/>
         <image name="communityTab" width="30" height="30"/>
         <image name="default" width="1191" height="670"/>
         <image name="default-user" width="423" height="423"/>

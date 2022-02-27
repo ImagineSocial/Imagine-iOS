@@ -88,27 +88,21 @@ class ArgumentDetailVC: UIViewController, UITextViewDelegate {
     }
     
     @IBAction func showSourceButtonTapped(_ sender: Any) {
-        if let source = source {
-            performSegue(withIdentifier: "goToLink", sender: source.source)
-        }
+        guard let source = source else { return }
+        
+        let vc = WebVC()
+        vc.link = source.source
+        
+        let navVC = UINavigationController(rootViewController: vc)
+        navVC.isToolbarHidden = false
+        
+        present(navVC, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "goToLink" {
-            if let webVC = segue.destination as? WebViewController {
-                if let link = sender as? String {
-                    webVC.link = link
-                }
-            }
-        }
-        if segue.identifier == "toUserSegue" {
-            if let chosenUser = sender as? User {
-                if let userVC = segue.destination as? UserFeedTableViewController {
-                    userVC.userOfProfile = chosenUser
-                    userVC.currentState = .otherUser
-                    
-                }
-            }
+        if segue.identifier == "toUserSegue", let chosenUser = sender as? User, let userVC = segue.destination as? UserFeedTableViewController {
+            userVC.userOfProfile = chosenUser
+            userVC.currentState = .otherUser
         }
     }
     

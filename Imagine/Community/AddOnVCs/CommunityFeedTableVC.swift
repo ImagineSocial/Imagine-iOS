@@ -290,10 +290,6 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
                 userVC.userOfProfile = chosenUser
                 userVC.currentState = .otherUser
             }
-        case "goToLink" :
-            if let post = sender as? Post,let webVC = segue.destination as? WebViewController {
-                webVC.post = post
-            }
         default:
             break
         }

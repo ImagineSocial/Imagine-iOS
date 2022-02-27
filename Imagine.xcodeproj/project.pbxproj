@@ -40,6 +40,7 @@
 		024F64FA275AE4F2002DFC06 /* BaseCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024F64F9275AE4F2002DFC06 /* BaseCollectionViewCell.swift */; };
 		026F467A27690A3600C279D2 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026F467927690A3600C279D2 /* Icons.swift */; };
 		027BA8C527CBCEC600A8919F /* SmallTopicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027BA8C427CBCEC600A8919F /* SmallTopicCell.swift */; };
+		027BA8C727CBD49100A8919F /* WebVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027BA8C627CBD49100A8919F /* WebVC.swift */; };
 		0289957326FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */; };
 		0289957726FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957626FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift */; };
 		0289957B26FB601D007CAFB7 /* PostVC+MultiPicCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957A26FB601C007CAFB7 /* PostVC+MultiPicCollectionView.swift */; };
@@ -201,7 +202,6 @@
 		E98FAEA423FAB9C10064A614 /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98FAEA323FAB9C10064A614 /* CommentCell.swift */; };
 		E98FAEA623FAD2CC0064A614 /* CommentFooter.xib in Resources */ = {isa = PBXBuildFile; fileRef = E98FAEA523FAD2CC0064A614 /* CommentFooter.xib */; };
 		E98FAEA823FAD4780064A614 /* CommentAnswerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98FAEA723FAD4780064A614 /* CommentAnswerView.swift */; };
-		E991CCD82270972F00940834 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E991CCD72270972F00940834 /* WebViewController.swift */; };
 		E991CCDA2273474F00940834 /* ThoughtPostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E991CCD92273474F00940834 /* ThoughtPostCell.xib */; };
 		E991CCDC2273476C00940834 /* ThoughtCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E991CCDB2273476C00940834 /* ThoughtCell.swift */; };
 		E9925A9823D86F4C00E1A9D4 /* MultiPictureCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9925A9723D86F4C00E1A9D4 /* MultiPictureCell.xib */; };
@@ -343,6 +343,7 @@
 		024F64F9275AE4F2002DFC06 /* BaseCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionViewCell.swift; sourceTree = "<group>"; };
 		026F467927690A3600C279D2 /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
 		027BA8C427CBCEC600A8919F /* SmallTopicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallTopicCell.swift; sourceTree = "<group>"; };
+		027BA8C627CBD49100A8919F /* WebVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebVC.swift; sourceTree = "<group>"; };
 		0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommunityCollectionVC+CollectionView.swift"; sourceTree = "<group>"; };
 		0289957626FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseFeedTableVC+TableView.swift"; sourceTree = "<group>"; };
 		0289957A26FB601C007CAFB7 /* PostVC+MultiPicCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostVC+MultiPicCollectionView.swift"; sourceTree = "<group>"; };
@@ -513,7 +514,6 @@
 		E98FAEA323FAB9C10064A614 /* CommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
 		E98FAEA523FAD2CC0064A614 /* CommentFooter.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CommentFooter.xib; sourceTree = "<group>"; };
 		E98FAEA723FAD4780064A614 /* CommentAnswerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentAnswerView.swift; sourceTree = "<group>"; };
-		E991CCD72270972F00940834 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		E991CCD92273474F00940834 /* ThoughtPostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ThoughtPostCell.xib; sourceTree = "<group>"; };
 		E991CCDB2273476C00940834 /* ThoughtCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThoughtCell.swift; sourceTree = "<group>"; };
 		E9925A9723D86F4C00E1A9D4 /* MultiPictureCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MultiPictureCell.xib; sourceTree = "<group>"; };
@@ -1360,7 +1360,7 @@
 		E971195225EBD0A50078B2D3 /* WebViewVC */ = {
 			isa = PBXGroup;
 			children = (
-				E991CCD72270972F00940834 /* WebViewController.swift */,
+				027BA8C627CBD49100A8919F /* WebVC.swift */,
 			);
 			path = WebViewVC;
 			sourceTree = "<group>";
@@ -1861,6 +1861,7 @@
 				E9CF17C423CB3F41000E5149 /* Campaign.swift in Sources */,
 				E9600E882235076C003E5A7A /* PostViewController.swift in Sources */,
 				02EBEFE22635B40F00373C45 /* FeedLikeView.swift in Sources */,
+				027BA8C727CBD49100A8919F /* WebVC.swift in Sources */,
 				E962AC172224430400C6D6EF /* AppDelegate.swift in Sources */,
 				022C3DB127B85ABD00908F54 /* NewPostBaseCell.swift in Sources */,
 				E962AC38222DB46400C6D6EF /* ReportOptionViewController.swift in Sources */,
@@ -1978,7 +1979,6 @@
 				023C54E7275C391700A9E461 /* FeedTitleLabel.swift in Sources */,
 				E962AC3A222DB5DB00C6D6EF /* ReportTableViewController.swift in Sources */,
 				0237972A2789D863004DFAB9 /* NewPostVC+CollectionView.swift in Sources */,
-				E991CCD82270972F00940834 /* WebViewController.swift in Sources */,
 				E9E6BD0E25F7842C0012A870 /* ImagineCommunityProposalHeader.swift in Sources */,
 				E9D9561824F82791007E5D18 /* AddOnCollectionViewController.swift in Sources */,
 				E90E1A4D25FF655300855FE1 /* FeedUserView.swift in Sources */,

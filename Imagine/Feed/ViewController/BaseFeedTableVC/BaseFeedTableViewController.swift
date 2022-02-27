@@ -108,16 +108,6 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
     
     
     //MARK: - Others
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-        if segue.identifier == "goToLink" {
-            if let post = sender as? Post {
-                if let webVC = segue.destination as? WebViewController {
-                    webVC.post = post
-                }
-            }
-        }
-    }
     
     func reachabilityChanged(_ isReachable: Bool) {
         print("changed! Connection reachable: ", isReachable, "fetch requested: ", fetchRequested)
@@ -405,7 +395,13 @@ extension BaseFeedTableViewController: PostCellDelegate {
     }
     
     func linkTapped(post: Post) {
-        performSegue(withIdentifier: "goToLink", sender: post)
+        let vc = WebVC()
+        vc.post = post
+        
+        let navVC = UINavigationController(rootViewController: vc)
+        navVC.isToolbarHidden = false
+        
+        present(navVC, animated: true)
     }
     
     func factTapped(fact: Community) {

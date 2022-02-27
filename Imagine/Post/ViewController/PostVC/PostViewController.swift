@@ -596,7 +596,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }()
     
     @objc func linkTapped() {
-        performSegue(withIdentifier: "goToLink", sender: post)
+        let vc = WebVC()
+        vc.post = post
+        
+        let navVC = UINavigationController(rootViewController: vc)
+        navVC.isToolbarHidden = false
+        
+        present(navVC, animated: true)
     }
     
     //MARK: - YouTube Post
@@ -873,10 +879,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 userVC.userOfProfile = chosenUser
                 userVC.currentState = .otherUser
                 
-            }
-        case "goToLink":
-            if let post = sender as? Post, let webVC = segue.destination as? WebViewController {
-                webVC.post = post
             }
         case "reportSegue":
             if let chosenPost = sender as? Post, let reportVC = segue.destination as? ReportViewController {
