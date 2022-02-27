@@ -11,7 +11,7 @@ import UIKit
 class PinchToZoomViewController: UIViewController, UIScrollViewDelegate {
     
     var scrollView : UIScrollView!
-    var imageView : UIImageView!
+    let imageView = UIImageView()
     var post:Post?
     var imageURL: String?
     
@@ -19,7 +19,6 @@ class PinchToZoomViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         
         self.navigationController?.isNavigationBarHidden = true
         
@@ -36,12 +35,10 @@ class PinchToZoomViewController: UIViewController, UIScrollViewDelegate {
         view.addGestureRecognizer(slideDown)
         view.addGestureRecognizer(slideRight)
         
-        imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         
         showPicture()
         setUpScrollViewToZoom()
-        
     }
     
     func setUpScrollViewToZoom() {
@@ -55,6 +52,7 @@ class PinchToZoomViewController: UIViewController, UIScrollViewDelegate {
         scrollView.autoresizingMask = UIView.AutoresizingMask(rawValue: UIView.AutoresizingMask.flexibleWidth.rawValue | UIView.AutoresizingMask.flexibleHeight.rawValue)
         
         scrollView.addSubview(imageView)
+        imageView.fillSuperview()
         view.addSubview(scrollView)
     }
     
@@ -107,13 +105,6 @@ class PinchToZoomViewController: UIViewController, UIScrollViewDelegate {
             }
         }
     }
-    
-//    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
-//        UIView.animate(withDuration: 0.5) {
-//            scrollView.zoomScale = 1.0
-//        }
-//    }
-    
     
     
     @objc func dismissView(gesture: UISwipeGestureRecognizer) {

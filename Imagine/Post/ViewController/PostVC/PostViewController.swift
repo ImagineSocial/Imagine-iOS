@@ -56,8 +56,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     // MARK: - Variables
     var post = Post()
     
-    let db = Firestore.firestore()
-    let handyHelper = HandyHelper()
+    let db = FirestoreRequest.shared.db
+    let handyHelper = HandyHelper.shared
     
     var ownPost = false
     var currentUser: User?
@@ -74,7 +74,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     // ImageCollectionView
     let defaultLinkString = "link-default"
     var imageURLs = [String]()
-    let identifier = "MultiPictureCell"
     let panoramaHeightMaximum: CGFloat = 500
     
     // Comment
@@ -224,7 +223,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         commentTableView.post = self.post   // Absichern, wenn der Post keine Kommentare hat, brauch man auch nicht danach suchen und sich die Kosten sparen
         
         //Image Collection View
-        imageCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
+        imageCollectionView.register(MultiImageCollectionCell.self, forCellWithReuseIdentifier: MultiImageCollectionCell.identifier)
         imageCollectionView.dataSource = self
         imageCollectionView.delegate = self
         
@@ -417,7 +416,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             if let user = post.user {
                 nameLabel.text = user.displayName
                 
-                if let url = URL(string: user.imageURL) {
+                if let imageURL = user.imageURL, let url = URL(string: imageURL) {
                     profilePictureImageView.sd_setImage(with: url, completed: nil)
                 }
             }
@@ -452,7 +451,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             //No post data yet
             let toComments = post.toComments
             let votes = post.newUpvotes
-            FirestoreRequest().getPostsFromDocumentIDs(posts: [post]) { (posts) in
+            FirestoreRequest.shared.getPostsFromDocumentIDs(posts: [post]) { (posts) in
                 if let posts = posts {
                     if posts.count != 0 {
                         let post = posts[0]
@@ -865,7 +864,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 communityVC.community = community
             }
         case "goToPostsOfTopic":
-            if let community = sender as? Community, let navCon = segue.destination as? UINavigationController, let factVC = navCon.topViewController as? CommunityPostTableVC {
+            if let community = sender as? Community, let navCon = segue.destination as? UINavigationController, let factVC = navCon.topViewController as? CommunityFeedTableVC {
                 factVC.community = community
                 factVC.needNavigationController = true
             }

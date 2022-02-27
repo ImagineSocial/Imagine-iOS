@@ -165,7 +165,7 @@ class LinkCell : BaseFeedCell {
             if post.language == .english {
                 return 
             }
-            let db = Firestore.firestore()
+            let db = FirestoreRequest.shared.db
             var string = "Posts"
             if post.isTopicPost {
                 string = "TopicPosts"

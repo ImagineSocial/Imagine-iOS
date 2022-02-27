@@ -18,7 +18,6 @@ class MultiPictureCell: BaseFeedCell {
     
     //MARK: - Variables
     
-    private let identifier = "MultiPictureCell"
     private var images: [String]?
     
     private var pageControlHeightValue: CGFloat = 15
@@ -55,7 +54,7 @@ class MultiPictureCell: BaseFeedCell {
         
         self.initiateCell()
         
-        collectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
+        collectionView.register(MultiImageCollectionCell.self, forCellWithReuseIdentifier: MultiImageCollectionCell.identifier)
         
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -141,7 +140,7 @@ extension MultiPictureCell: UICollectionViewDelegate, UICollectionViewDataSource
         if let images = self.images {
             let image = images[indexPath.item]
             
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as? MultiImageCollectionCell {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MultiImageCollectionCell.identifier, for: indexPath) as? MultiImageCollectionCell {
                 
                 cell.imageURL = image
                 
@@ -187,33 +186,6 @@ extension MultiPictureCell: UICollectionViewDelegate, UICollectionViewDataSource
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let post = post {
             delegate?.collectionViewTapped(post: post)
-        }
-    }
-}
-
-
-
-//MARK: - MultiImageCollectionCell
-
-class MultiImageCollectionCell: UICollectionViewCell {
-    
-    @IBOutlet weak var collectionImageView: UIImageView!
-    
-    var image: UIImage? {
-        didSet {
-            if let image = image {
-                collectionImageView.image = image
-            }
-        }
-    }
-    var imageURL: String? {
-        didSet {
-            if let imageURL = imageURL {
-                
-                if let url = URL(string: imageURL) {
-                    collectionImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
-                }
-            }
         }
     }
 }

@@ -11,7 +11,7 @@ import UIKit
 
 class ImagineDataRequest {
     
-    private let db = Firestore.firestore()
+    private let db = FirestoreRequest.shared.db
     
     //MARK:- Get Monthly Report
     public func getReportData(returnData: @escaping (ReportData?) -> Void) {

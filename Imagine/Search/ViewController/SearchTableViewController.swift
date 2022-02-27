@@ -15,9 +15,9 @@ protocol CustomSearchViewControllerDelegate {
 
 class SearchTableViewController: UITableViewController, UISearchControllerDelegate {
     
-    let db = Firestore.firestore()
-    let handyHelper = HandyHelper()
-    let postHelper = PostHelper()
+    let db = FirestoreRequest.shared.db
+    let handyHelper = HandyHelper.shared
+    let postHelper = PostHelper.shared
     
     var postResults: [Post]?
     var userResults: [User]?
@@ -319,13 +319,11 @@ extension SearchTableViewController: UISearchResultsUpdating, UISearchBarDelegat
         
         func addUser(document: DocumentSnapshot) {
             
-            let userIsAlreadyFetched = userResults.contains { $0.userID == document.documentID }
-            if userIsAlreadyFetched {   // Check if we got the user in on of the other queries
+            if userResults.contains(where: { $0.userID == document.documentID }) {   // Check if we got the user in on of the other queries
                 return
             }
             
-            let user = User(userID: document.documentID)
-            user.generateUser(isAFriend: false, document: document) { user in
+            AuthenticationManager.shared.generateUser(document: document) { user in
                 if let user = user {
                     userResults.append(user)
                 }
@@ -354,26 +352,3 @@ extension SearchTableViewController: UISearchResultsUpdating, UISearchBarDelegat
     }
     
 }
-
-/*
- if let title = docData["title"] as? String, let type = docData["type"] as? String, let op = docData["originalPoster"] as? String, let createDate = docData["createTime"] as? Timestamp {
-     let imageURL = docData["imageURL"] as? String
-     let imageHeight = docData["imageHeight"] as? Double
-     let imageWidth = docData["imageWidth"] as? Double
-     post.title = title
-     post.documentID = document.documentID
-     post.imageURL = imageURL ?? ""
-     if let postType = self.handyHelper.setPostType(fetchedString: type) {
-         post.type = postType
-     }
-     post.mediaWidth = CGFloat(imageWidth ?? 0)
-     post.mediaHeight = CGFloat(imageHeight ?? 0)
-     post.documentID = document.documentID
-     post.originalPosterUID = op
-     post.createTime = createDate.dateValue().formatRelativeString()
-     post.getUser(isAFriend: false)
-     
-     
-     
- }
- */

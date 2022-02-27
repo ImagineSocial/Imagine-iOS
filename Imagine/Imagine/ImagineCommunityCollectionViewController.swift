@@ -45,7 +45,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        HandyHelper().deleteNotifications(type: .blogPost, id: "blogPost")//Maybe
+        HandyHelper.shared.deleteNotifications(type: .blogPost, id: "blogPost")//Maybe
         
         self.extendedLayoutIncludesOpaqueBars = true
         navigationController?.navigationBar.prefersLargeTitles = true

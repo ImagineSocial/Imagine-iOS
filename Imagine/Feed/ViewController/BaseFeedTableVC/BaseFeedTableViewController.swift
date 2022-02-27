@@ -27,9 +27,9 @@ enum PostSortOptions {
 class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDelegate {
     
     var posts = [Post]()
-    let handyHelper = HandyHelper()
-    lazy var firestoreRequest = FirestoreRequest()  // Lazy or it calls Firestore before AppDelegate.swift
-    let db = Firestore.firestore()
+    let handyHelper = HandyHelper.shared
+    var firestoreRequest = FirestoreRequest()
+    let db = FirestoreRequest.shared.db
     
     var sortOptionsShown = false
     var sortBy: PostSortOptions = .dateDecreasing
@@ -107,7 +107,7 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
     }
     
     
-    //MARK:- Others
+    //MARK: - Others
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "goToLink" {

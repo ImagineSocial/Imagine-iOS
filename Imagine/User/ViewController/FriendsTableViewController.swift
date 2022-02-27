@@ -22,10 +22,10 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
     var alreadyFriends = [Friend]()
     var requestedFriends = [Friend]()
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     var isNewMessage = false
     
-    let handyHelper = HandyHelper()
+    let handyHelper = HandyHelper.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,7 +69,7 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                         
                         friend.user = User(userID: documentID)
                         friend.accepted = accepted
-                        friend.requestedAt = HandyHelper().getStringDate(timestamp: requestedAt)
+                        friend.requestedAt = HandyHelper.shared.getStringDate(timestamp: requestedAt)
                         
                         if accepted {
                             self.alreadyFriends.append(friend)
@@ -168,7 +168,7 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                 if let user = friend.user {
                     cell.nameLabel.text = user.displayName
                     
-                    if let url = URL(string: user.imageURL) {
+                    if let urlString = user.imageURL, let url = URL(string: urlString) {
                         cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
                     }
                 }

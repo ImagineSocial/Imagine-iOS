@@ -20,7 +20,7 @@ class NewBlogPostViewController: UIViewController {
     @IBOutlet weak var headerLabel: UILabel!
     
     var user:User?
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -14,7 +14,7 @@ class SearchUserCell: UICollectionViewCell {
             if let user = user {
                 profilePictureImageView.image = nil
                 nameLabel.text = user.displayName
-                if let url = URL(string: user.imageURL) {
+                if let urlString = user.imageURL, let url = URL(string: urlString) {
                     profilePictureImageView.sd_setImage(with: url, completed: nil)
                 } else {
                     profilePictureImageView.image = UIImage(named: "default-user")

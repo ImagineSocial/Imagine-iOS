@@ -32,12 +32,12 @@ class BaseFeedCell : UITableViewCell {
     @IBOutlet weak var feedLikeView: FeedLikeView!
     
     //MARK:- Variables
-    private let handyHelper = HandyHelper()
+    private let handyHelper = HandyHelper.shared
     
     var centerX: NSLayoutConstraint?
     var distanceConstraint: NSLayoutConstraint?
     
-    private let db = Firestore.firestore()
+    private let db = FirestoreRequest.shared.db
     private let communityRequest = CommunityRequest()
     
     var cellStyle: CellType?

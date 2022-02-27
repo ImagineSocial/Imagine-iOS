@@ -134,8 +134,8 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     var notifications = [Comment]()
     
     let reuseIdentifier = "notificationCell"
-    let db = Firestore.firestore()
-    let handyHelper = HandyHelper()
+    let db = FirestoreRequest.shared.db
+    let handyHelper = HandyHelper.shared
     
     let sideMenuView: UIView = {
         let vc = UIView()

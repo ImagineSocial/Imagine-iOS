@@ -31,7 +31,7 @@ class AddOnQAndACollectionViewCell: BaseAddOnCollectionViewCell {
     
     let answerTextfieldCellIdentifier = "AddOnQAndATextfieldCell"
     let questionCellIdentifier = "AddOnQAndAQuestionCell"
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     var questions = [QandAQuestion]()
     
@@ -326,7 +326,7 @@ class AddOnQAndATextfieldCell: UITableViewCell {
     @IBOutlet weak var sendButton: DesignableButton!
     @IBOutlet weak var answerTextField: UITextField!
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     let answerPlaceholder = "Antworte auf die Frage"
     let questionPlaceholder = "Stelle eine neue Frage"
     

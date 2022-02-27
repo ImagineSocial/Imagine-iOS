@@ -191,7 +191,7 @@ extension ArgumentDetailVC: CommentViewDelegate, CommentTableViewDelegate {
         self.deleteAlert(title: NSLocalizedString("delete_comment_alert_title", comment: "delete comment?"), message: NSLocalizedString("delete_comment_alert_message", comment: "sure to delete?"), delete:  { (delete) in
             if delete {
                 
-                HandyHelper().deleteCommentInFirebase(comment: comment, answerToComment: answerToComment)
+                HandyHelper.shared.deleteCommentInFirebase(comment: comment, answerToComment: answerToComment)
             }
         })
     }

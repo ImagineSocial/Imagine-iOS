@@ -2,16 +2,80 @@
 //  NewPostVC+Upload.swift
 //  Imagine
 //
-//  Created by Don Malte on 22.09.21.
-//  Copyright © 2021 Malte Schoppe. All rights reserved.
+//  Created by Don Malte on 14.01.22.
+//  Copyright © 2022 Malte Schoppe. All rights reserved.
 //
 
 import UIKit
 import Firebase
 
-extension NewPostViewController {
+extension NewPostVC {
     
-    //MARK: Prepare Multi Picture
+    @objc func shareTapped() {
+        guard let userID = AuthenticationManager.shared.user?.userID else {
+            self.notLoggedInAlert()
+            return
+        }
+        
+        if !sharingEnabled {
+            return
+        }
+        
+        let postRef: DocumentReference?
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection().getLanguage()
+        
+        if comingFromAddOnVC || postOnlyInTopic {
+            if language == .english {
+                collectionRef = db.collection("Data").document("en").collection("topicPosts")
+            } else {
+                collectionRef = db.collection("TopicPosts")
+            }
+            postRef = collectionRef.document()
+        } else {
+            if language == .english {
+                collectionRef = db.collection("Data").document("en").collection("posts")
+            } else {
+                collectionRef = db.collection("Posts")
+            }
+            postRef = collectionRef.document()
+        }
+        
+        if titleText != nil, let postRef = postRef {
+            self.view.activityStartAnimating()
+            sharingEnabled = false
+            
+            switch selectedOption {
+            case .thought:
+                self.postThought(postRef: postRef, userID: userID)
+            case .multiPicture:
+                prepareMultiPicturePost(postRef: postRef, userID: userID)
+            case .picture:
+                preparePicturePost(postRef: postRef, userID: userID)
+            case .link:
+                prepareLinkPost(postRef: postRef, userID: userID)
+            }
+        } else {
+            self.alert(message: NSLocalizedString("missing_info_alert_title", comment: "enter title pls"))
+        }
+    }
+
+
+    
+    @objc func donePosting() {
+        if comingFromPostsOfFact {
+            self.dismiss(animated: true) {
+                self.newInstanceDelegate?.finishedCreatingNewInstance(item: nil)
+            }
+        } else {
+            delegate?.posted()
+            tabBarController?.selectedIndex = 0
+        }
+    }
+    
+    
+    // MARK: Prepare Multi Picture
+    
     func prepareMultiPicturePost(postRef: DocumentReference, userID: String) {
         if multiImageAssets.count >= 2 && multiImageAssets.count <= 3 {
             
@@ -37,43 +101,43 @@ extension NewPostViewController {
         } else {
             self.alert(message: NSLocalizedString("error_choosing_multiple_pictures_message", comment: "choose more"), title: NSLocalizedString("error_title", comment: "got error"))
             self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
+            sharingEnabled = true
         }
     }
  
-    //MARK: Prepare Picture
+    // MARK: Prepare Picture
     func preparePicturePost(postRef: DocumentReference, userID: String) {
-        if let image = self.selectedImageFromPicker {
-            
-            if let thumbnail = image.getThumbnail() {
-                self.uploadThumbnailImage(postRef: postRef, image: thumbnail)   //Upload thumbnail image and store it in an internal file, upload later on. Not yet integrated in the chain of asynchrounious requests
-            }
-            
-            if let compressedImage = self.getPictureInCompressedQuality(image: image) {
-                self.uploadImage(data: compressedImage, postRef: postRef, index: nil) { (url) in
-                    
-                    if let url = url {
-                        self.imageURL = url
-                        
-                        self.postPicture(postRef: postRef, userID: userID)
-                    } else {
-                        DispatchQueue.main.async {
-                            self.alert(message: "We couldnt upload the image. Please try again or get in contact with the devs. Thanks!", title: "We have an error :/")
-                        }
-                    }
-                }
-            }
-        } else {
+        guard let image = self.selectedImageFromPicker else {
             self.alert(message: NSLocalizedString("error_choosing_picture", comment: "got no pic"), title: NSLocalizedString("error_title", comment: "got error"))
             self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
+            sharingEnabled = true
+            return
+        }
+        
+        if let thumbnail = image.getThumbnail() {
+            self.uploadThumbnailImage(postRef: postRef, image: thumbnail)   // Upload thumbnail image and store it in an internal file, upload later on. Not yet integrated in the chain of asynchrounious requests
+        }
+        
+        if let compressedImage = self.getPictureInCompressedQuality(image: image) {
+            self.uploadImage(data: compressedImage, postRef: postRef, index: nil) { url in
+                
+                guard let url = url else {
+                    DispatchQueue.main.async {
+                        self.alert(message: "We couldnt upload the image. Please try again or get in contact with the devs. Thanks!", title: "We have an error :/")
+                    }
+                    return
+                }
+                self.imageURL = url
+                
+                self.postPicture(postRef: postRef, userID: userID)
+            }
         }
     }
     
     //MARK: Prepare Link
     func prepareLinkPost(postRef: DocumentReference, userID: String) {
         
-        if let text = linkView.linkTextField.text {
+        if let text = link {
             
             //Is GIF?
             if text.contains(".mp4") {
@@ -82,12 +146,10 @@ extension NewPostViewController {
                 //Is Music Post?
             } else if text.contains("music.apple.com") || text.contains("open.spotify.com/") || text.contains("deezer.page.link") {
                 self.getSongwhipData(link: text) { (data) in
-                    if let data = data {
-                        if let link = data["link"] as? String {
-                            self.getLinkPreview(linkString: link) { (link) in
-                                if let link = link {
-                                    self.postLink(postRef: postRef, userID: userID, link: link, songwhipData: data)
-                                }
+                    if let data = data, let link = data["link"] as? String {
+                        self.getLinkPreview(linkString: link) { link in
+                            if let link = link {
+                                self.postLink(postRef: postRef, userID: userID, link: link, songwhipData: data)
                             }
                         }
                     } else {
@@ -124,7 +186,9 @@ extension NewPostViewController {
                 }
             }
         } else {
-            self.alert(message: NSLocalizedString("missing_info_alert_link", comment: "enter link please"))
+            self.view.activityStopAnimating()
+            sharingEnabled = true
+            self.alert(message: NSLocalizedString("error_no_link", comment: "no link"), title: NSLocalizedString("error_title", comment: "got error"))
         }
     }
     
@@ -144,19 +208,27 @@ extension NewPostViewController {
     
     private func getDefaultUploadData(userID: String) -> [String: Any] {
         
-        let text = descriptionView.descriptionTextView.text.trimmingCharacters(in: .newlines)
+        let text = (descriptionText ?? "").trimmingCharacters(in: .newlines)
         let descriptionText = text.replacingOccurrences(of: "\n", with: "\\n")  // Save line breaks in a way that we can extract them later
         
-        let title = titleView.titleTextView.text!
+        let title = titleText ?? ""
         let tags = self.getTagsToSave()
         
         var dataDictionary: [String: Any] = ["title": title, "description": descriptionText, "createTime": getDate(), "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "report": getReportString(), "tags": tags]
         
-        let options = optionView.getSettings()
+        // TODO: Dies hier
+        // let options = optionView.getSettings()
         
         //Set right user reference
         let userString: String!
         let hideProfileOption: [String: Any] = ["hideProfile": true]
+        
+        guard let cell = getCell(for: .options) as? NewPostOptionCell else {
+            
+            return dataDictionary
+        }
+        
+        let options = cell.option
         
         if options.postAnonymous {
             userString = anonymousString
@@ -172,8 +244,8 @@ extension NewPostViewController {
             dataDictionary["notificationRecipients"] = [userID]   //So he can set notifications off in his own post
         }
         
-        //location
-        if let location = linkedLocation {
+        // location
+        if let location = location {
             dataDictionary["locationName"] = location.title
             let geoPoint = GeoPoint(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
             dataDictionary["locationCoordinate"] = geoPoint
@@ -181,7 +253,7 @@ extension NewPostViewController {
         
         dataDictionary["originalPoster"] = userString
         
-        //If you want to hide the profilePicture in a non anonymous post
+        // If you want to hide the profilePicture in a non anonymous post
         if options.hideProfile {
             dataDictionary["designOptions"] = hideProfileOption
         }
@@ -200,31 +272,24 @@ extension NewPostViewController {
     }
     
     func postLink(postRef: DocumentReference, userID: String, link: Link, songwhipData: [String: Any]?) {
-        if linkView.linkTextField.text != "" {
-            
-            var dataDictionary = getDefaultUploadData(userID: userID)
-            dataDictionary["type"] = "link"
-            dataDictionary["link"] = link.link
-            dataDictionary["linkTitle"] = link.linkTitle
-            dataDictionary["linkDescription"] = link.linkDescription
-            dataDictionary["linkShortURL"] = link.shortURL
-            
-            if let dictionary = songwhipData {
-                //Merge the uploaddata and the songwhip data to one dictionary and keep the songwhip link, not the streaming service link
-                dataDictionary = dataDictionary.merging(dictionary) { (_, new) in new }
-            }
-            
-            if let url = link.imageURL {
-                dataDictionary["linkImageURL"] = url
-            }
-                            
-            self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
-            print("post link")
-        } else {
-            self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
-            self.alert(message: NSLocalizedString("error_no_link", comment: "no link"), title: NSLocalizedString("error_title", comment: "got error"))
+        var dataDictionary = getDefaultUploadData(userID: userID)
+        dataDictionary["type"] = "link"
+        dataDictionary["link"] = link.link
+        dataDictionary["linkTitle"] = link.linkTitle
+        dataDictionary["linkDescription"] = link.linkDescription
+        dataDictionary["linkShortURL"] = link.shortURL
+        
+        if let dictionary = songwhipData {
+            //Merge the uploaddata and the songwhip data to one dictionary and keep the songwhip link, not the streaming service link
+            dataDictionary = dataDictionary.merging(dictionary) { (_, new) in new }
         }
+        
+        if let url = link.imageURL {
+            dataDictionary["linkImageURL"] = url
+        }
+        
+        self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
+        print("post link")
     }
     
     func postPicture(postRef: DocumentReference, userID: String) {
@@ -245,7 +310,7 @@ extension NewPostViewController {
             
         } else {
             self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
+            sharingEnabled = true
             self.alert(message: NSLocalizedString("error_no_picture", comment: "no picture"), title: NSLocalizedString("error_title", comment: "got error"))
         }
     }
@@ -264,14 +329,17 @@ extension NewPostViewController {
     
     func postGIF(postRef: DocumentReference, userID: String) {
         
-        let text = linkView.linkTextField.text
-        
-        var link: String?
-        
         //Check if GIF
-        if let text = text {
-            if text.contains(".mp4") {
-                link = text
+        if let link = link {
+            if link.contains(".mp4") {
+                var dataDictionary = getDefaultUploadData(userID: userID)
+
+                dataDictionary["type"] = "GIF"
+                dataDictionary["link"] = link
+
+                self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
+
+                print("post GIF")
             } else {
                 self.alert(message: NSLocalizedString("error_gif_wrong_ending", comment: "just .mp4"), title: NSLocalizedString("error_title", comment: "got error"))
                 return
@@ -279,39 +347,26 @@ extension NewPostViewController {
         } else {
             self.alert(message: "Bitte gib einen link zu deinem GIF ein.", title: "Kein Link angegeben")
             self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
+            sharingEnabled = true
             
             return
-        }
-        
-                    
-        if let link = link {
-            
-            var dataDictionary = getDefaultUploadData(userID: userID)
-
-            dataDictionary["type"] = "GIF"
-            dataDictionary["link"] = link
-
-            self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
-
-            print("post GIF")
         }
     }
     
     
     func postYTVideo(postRef: DocumentReference, userID: String) {
-        if let _ = linkView.linkTextField.text?.youtubeID {  // YouTubeVideo
+        if let link = link?.youtubeID {  // YouTubeVideo
             
             var dataDictionary = getDefaultUploadData(userID: userID)
             dataDictionary["type"] = "youTubeVideo"
-            dataDictionary["link"] = linkView.linkTextField.text!
+            dataDictionary["link"] = link
             
             self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
             
             print("post YouTubeVideo")
         } else {
             self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
+            sharingEnabled = true
         }
     }
     
@@ -324,24 +379,23 @@ extension NewPostViewController {
         
         var data = dataDictionary
         
-        if let fact = self.linkedFact { // If there is a fact that should be linked to this post, and append its ID to the array
-            data["linkedFactID"] = fact.documentID
+        if let community = linkedCommunity { // If there is a fact that should be linked to this post, and append its ID to the array
+            data["linkedFactID"] = community.documentID
             
             // Add the post to the specific fact, so that it can be looked into
-            uploadCommunityPostData(postDocumentID: documentID, communityID: fact.documentID, language: language)
+            uploadCommunityPostData(postDocumentID: documentID, communityID: community.documentID, language: language)
         }
         
         
-        postRef.setData(data) { (err) in
+        postRef.setData(data) { err in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
                 //TODO: Inform User
             } else {
-                
                 //upload data to the user
                 self.uploadUserPostData(postDocumentID: documentID, userID: userID, language: language)
                 
-                if self.camPic { // To Save on your device, not the best solution though
+                if self.savePictureAfterwards { // To Save on your device, not the best solution though
                     self.savePhotoToAlbum(image: self.selectedImageFromPicker)
                 }
                 
@@ -460,17 +514,17 @@ extension NewPostViewController {
 
                 returnLink(link)
 
-            }) { (err) in
+            }) { err in
                 print("We have an error: \(err.localizedDescription)")
                 self.alert(message: err.localizedDescription, title: NSLocalizedString("error_title", comment: "got error"))
                 self.view.activityStopAnimating()
-                self.shareButton.isEnabled = true
+                self.sharingEnabled = true
                 
                 returnLink(nil)
             }
         } else {
             self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
+            sharingEnabled = true
             self.alert(message: NSLocalizedString("error_link_not_valid", comment: "not valid"), title: NSLocalizedString("error_title", comment: "got error"))
             
             returnLink(nil)
@@ -548,7 +602,7 @@ extension NewPostViewController {
     func getTagsToSave() -> [String] {
         // Detect the nouns in the title and save them to Firebase in an array. We cant really search in Firebase, but we search through an array, so that way we can at least give the search function in the feedtableviewcontroller some functionality
         var tags = [String]()
-        guard let title = titleView.titleTextView.text else { return [""] }
+        guard let title = titleText else { return [""] }
         
         let tagger = NSLinguisticTagger(tagSchemes: [.lexicalClass], options: 0)
         tagger.string = title
@@ -594,58 +648,43 @@ extension NewPostViewController {
         } else {
             // remove ActivityIndicator incl. backgroundView
             self.view.activityStopAnimating()
-            self.shareButton.isEnabled = true
+            sharingEnabled = true
             
             let alert = UIAlertController(title: "Done!", message: NSLocalizedString("message_after_done_posting", comment: "thanks"), preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                 
                 self.removeInputDataAndResetView()
-                
             }))
-            self.present(alert, animated: true) {
-            }
+            self.present(alert, animated: true)
         }
     }
     
     func removeInputDataAndResetView() {
         //remove text
-        self.descriptionView.descriptionTextView.text.removeAll()
-        self.linkView.linkTextField.text?.removeAll()
-        self.titleView.titleTextView.text?.removeAll()
-        self.titleView.characterCountLabel.text = "200"
+        
+        NewPostItem.allCases.forEach { item in
+            if let cell = getCell(for: item) as? NewPostBaseCell {
+                cell.resetInput()
+            }
+        }
         
         //remove picture/s
         self.previewPictures.removeAll()
-        self.pictureView.previewCollectionView.reloadData()
         self.selectedImageFromPicker = nil
         self.selectedImagesFromPicker.removeAll()
-        self.pictureView.removePictureButton.alpha = 0
-        self.pictureView.removePictureButton.isEnabled = false
         self.selectedImageWidth = 0
         self.selectedImageHeight = 0
         
-        
-        self.pictureViewHeight!.constant = self.pictureViewHeightConstant
-        
-        if self.optionViewHeight?.constant != self.defaultOptionViewHeight {
-            self.optionButtonTapped()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.donePosting()
         }
-        self.linkCommunityView.addedFactDescriptionLabel.text?.removeAll()
-        self.linkCommunityView.addedFactImageView.image = nil
-        self.linkCommunityView.addedFactImageView.layer.borderColor = UIColor.clear.cgColor
-        self.cancelLinkedFactTapped()
-        
-        self.titleView.titleTextView.resignFirstResponder()
-        self.descriptionView.descriptionTextView.resignFirstResponder()
-        self.linkView.linkTextField.resignFirstResponder()
-        
-        Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(self.donePosting), userInfo: nil, repeats: false)
     }
 }
 
 
 //MARK: - Picture Upload
-extension NewPostViewController {
+
+extension NewPostVC {
     
     //MARK: Upload Image
     
@@ -686,4 +725,6 @@ extension NewPostViewController {
             })
         })
     }
+    
+    
 }

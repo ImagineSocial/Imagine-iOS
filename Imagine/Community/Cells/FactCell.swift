@@ -17,7 +17,7 @@ class FactCell: BaseCollectionViewCell {
     @IBOutlet weak var factDescriptionLabel: UILabel!
     @IBOutlet weak var containerView: UIView!
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     static let identifier = "FactCell"
     
@@ -83,7 +83,7 @@ class FactCell: BaseCollectionViewCell {
                     if let error = err {
                         print("We have an error: \(error.localizedDescription)")
                     } else {
-                        if let snap = snap, let data = snap.data(), let community = CommunityHelper().getCommunity(currentUser: user,documentID: snap.documentID, data: data) {
+                        if let snap = snap, let data = snap.data(), let community = CommunityHelper.shared.getCommunity(currentUser: user,documentID: snap.documentID, data: data) {
                             
                             self.community = community
                         }

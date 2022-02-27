@@ -35,9 +35,9 @@ class ReportViewController: UIViewController {
     var repost : RepostType = .repost
     var reportComment = false
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
-    let handyHelper = HandyHelper()
+    let handyHelper = HandyHelper.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()

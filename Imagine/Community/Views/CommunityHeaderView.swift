@@ -23,7 +23,7 @@ class CommunityHeaderView: UIView {
     
     weak var delegate: CommunityHeaderDelegate?
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     var community: Community? {
         didSet {

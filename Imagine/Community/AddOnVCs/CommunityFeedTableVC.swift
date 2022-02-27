@@ -16,7 +16,7 @@ enum TableViewDisplayOptions {
     case normal
 }
 
-class CommunityPostTableVC: BaseFeedTableViewController {
+class CommunityFeedTableVC: BaseFeedTableViewController {
     
     @IBOutlet weak var infoButton: UIBarButtonItem!
     
@@ -256,72 +256,46 @@ class CommunityPostTableVC: BaseFeedTableViewController {
     //MARK: - Prepare For Segue
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showPost" {
-            if let chosenPost = sender as? Post {
-                if let postVC = segue.destination as? PostViewController {
-                    postVC.post = chosenPost
-                    postVC.navigationController?.navigationBar.setBackgroundImage(nil, for: UIBarMetrics.default)
-                    postVC.navigationController?.navigationBar.shadowImage = nil
-                }
-            }
-        }
         
-        if segue.identifier == "meldenSegue" {
-            if let chosenPost = sender as? Post {
-                if let reportVC = segue.destination as? ReportViewController {
-                    reportVC.post = chosenPost
-                }
+        switch segue.identifier {
+        case "showPost":
+            if let chosenPost = sender as? Post, let postVC = segue.destination as? PostViewController {
+                postVC.post = chosenPost
+                postVC.navigationController?.navigationBar.setBackgroundImage(nil, for: UIBarMetrics.default)
+                postVC.navigationController?.navigationBar.shadowImage = nil
             }
-        }
-        
-        if segue.identifier == "toFactSegue" {
-            if let fact = sender as? Community {
-                if let navCon = segue.destination as? UINavigationController {
-                    if let factVC = navCon.topViewController as? DiscussionParentVC {
-                        factVC.community = fact
-                        factVC.needNavigationController = true
-                    }
-                }
+        case "meldenSegue":
+            if let chosenPost = sender as? Post, let reportVC = segue.destination as? ReportViewController {
+                reportVC.post = chosenPost
             }
-        }
-        
-        if segue.identifier == "goToNewPost" {
-            if let fact = sender as? Community {
-                if let navCon = segue.destination as? UINavigationController {
-                    if let newPostVC = navCon.topViewController as? NewPostViewController {
-                        newPostVC.selectedFact(fact: fact, isViewAlreadyLoaded: false)
-                        newPostVC.comingFromPostsOfFact = true
-                        newPostVC.postOnlyInTopic = true
-                        newPostVC.newInstanceDelegate = self
-                    }
-                }
+        case "toFactSegue":
+            if let fact = sender as? Community, let navCon = segue.destination as? UINavigationController, let factVC = navCon.topViewController as? DiscussionParentVC {
+                factVC.community = fact
+                factVC.needNavigationController = true
             }
-        }
-        
-        if segue.identifier == "toSettingSegue" {
-            if let fact = sender as? Community {
-                if let vc = segue.destination as? SettingTableViewController {
-                    vc.topic = fact
-                    vc.settingFor = .community
-                }
+        case "goToNewPost" :
+            if let fact = sender as? Community, let navCon = segue.destination as? UINavigationController, let newPostVC = navCon.topViewController as? NewPostVC {
+                newPostVC.selectedFact(community: fact, isViewAlreadyLoaded: false)
+                newPostVC.comingFromPostsOfFact = true
+                newPostVC.postOnlyInTopic = true
+                newPostVC.newInstanceDelegate = self
             }
-        }
-        
-        if segue.identifier == "toUserSegue" {
-            if let userVC = segue.destination as? UserFeedTableViewController {
-                if let chosenUser = sender as? User {   // Another User
-                    userVC.userOfProfile = chosenUser
-                    userVC.currentState = .otherUser
-                } 
+        case "toSettingSegue" :
+            if let fact = sender as? Community, let vc = segue.destination as? SettingTableViewController {
+                vc.topic = fact
+                vc.settingFor = .community
             }
-        }
-        
-        if segue.identifier == "goToLink" {
-            if let post = sender as? Post {
-                if let webVC = segue.destination as? WebViewController {
-                    webVC.post = post
-                }
+        case "toUserSegue" :
+            if let userVC = segue.destination as? UserFeedTableViewController, let chosenUser = sender as? User {   // Another User
+                userVC.userOfProfile = chosenUser
+                userVC.currentState = .otherUser
             }
+        case "goToLink" :
+            if let post = sender as? Post,let webVC = segue.destination as? WebViewController {
+                webVC.post = post
+            }
+        default:
+            break
         }
     }
     
@@ -330,7 +304,7 @@ class CommunityPostTableVC: BaseFeedTableViewController {
     }
 }
 
-extension CommunityPostTableVC: NewFactDelegate {
+extension CommunityFeedTableVC: NewFactDelegate {
     
     func finishedCreatingNewInstance(item: Any?) {
         self.posts.removeAll()

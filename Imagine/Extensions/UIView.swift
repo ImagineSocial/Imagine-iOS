@@ -153,6 +153,15 @@ extension UIView {
         ])
     }
     
+    func constrainSquare(width: CGFloat) {
+        self.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            self.widthAnchor.constraint(equalToConstant: width),
+            self.heightAnchor.constraint(equalToConstant: width)
+        ])
+    }
+    
     func fillSuperview(paddingTop: CGFloat = 0,
                        paddingLeading: CGFloat = 0,
                        paddingBottom: CGFloat = 0,

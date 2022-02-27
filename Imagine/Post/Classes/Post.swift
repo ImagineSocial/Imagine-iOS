@@ -54,8 +54,8 @@ class Post {
     
     var survey: Survey?
     
-    private let handyHelper = HandyHelper()
-    private let db = Firestore.firestore()
+    private let handyHelper = HandyHelper.shared
+    private let db = FirestoreRequest.shared.db
     
     
     //MARK: Get Repost
@@ -82,9 +82,7 @@ class Post {
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else if let document = document {
-                    let postHelper = PostHelper()
-                    
-                    if let post = postHelper.addThePost(document: document, isTopicPost: self!.repostIsTopicPost, language: self!.repostLanguage) {
+                    if let post = PostHelper.shared.addThePost(document: document, isTopicPost: self!.repostIsTopicPost, language: self!.repostLanguage) {
                         
                         returnRepost(post)
                     }

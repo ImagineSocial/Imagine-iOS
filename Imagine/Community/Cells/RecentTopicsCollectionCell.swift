@@ -18,11 +18,11 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
     
     @IBOutlet weak var collectionView: UICollectionView!
     
-    var facts = [Community]()
+    var communities = [Community]()
     let identifier = "SmallTopicCell"
     let placeHolderIdentifier = "PlaceHolderCell"
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     var delegate: RecentTopicCellDelegate?
     
@@ -61,11 +61,11 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
                 loadFact(user: user, factID: string, language: language)
             }
         } else {
-            if self.facts.count >= 10 {
-                self.facts.removeLast()
+            if self.communities.count >= 10 {
+                self.communities.removeLast()
             }
             
-            self.facts = self.facts.filter{ $0.documentID != factStrings[0] }
+            self.communities = self.communities.filter{ $0.documentID != factStrings[0] }
             
             loadFact(user: user, factID: factStrings[0], language: language)
         }
@@ -84,14 +84,9 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
-                if let snapshot = snap {
-                    if let data = snapshot.data() {
-                        if let fact = CommunityHelper().getCommunity(currentUser: user, documentID: snapshot.documentID, data: data) {
-                            
-                            self.facts.insert(fact, at: 0)
-                            self.collectionView.reloadData()
-                        }
-                    }
+                if let snapshot = snap, let data = snapshot.data(), let community = CommunityHelper.shared.getCommunity(currentUser: user, documentID: snapshot.documentID, data: data) {
+                    self.communities.insert(community, at: 0)
+                    self.collectionView.reloadData()
                 }
             }
         }
@@ -102,17 +97,17 @@ extension RecentTopicsCollectionCell: UICollectionViewDataSource, UICollectionVi
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        facts.count != 0 ? facts.count : 6
+        communities.count != 0 ? communities.count : 6
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        if facts.count != 0 {
-            let fact = facts[indexPath.item]
+        if communities.count != 0 {
+            let community = communities[indexPath.item]
             
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as? SmallTopicCell {
                 
-                cell.fact = fact
+                cell.community = community
                 
                 return cell
             }
@@ -128,8 +123,8 @@ extension RecentTopicsCollectionCell: UICollectionViewDataSource, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if facts.count != 0 {
-            let fact = facts[indexPath.item]
+        if communities.count != 0 {
+            let fact = communities[indexPath.item]
             
             fact.getFollowStatus { (isFollowed) in
                 if isFollowed {
@@ -181,14 +176,14 @@ class SmallTopicCell: UICollectionViewCell {
         cellImageView.image = nil
     }
     
-    var fact: Community? {
+    var community: Community? {
         didSet {
-            if let fact = fact {
-                if let url = URL(string: fact.imageURL) {
-                    cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
-                } else {
-                    cellImageView.image = UIImage(named: "default-community")
-                }
+            guard let community = community else { return }
+            
+            if let url = URL(string: community.imageURL) {
+                cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
+            } else {
+                cellImageView.image = UIImage(named: "default-community")
             }
         }
     }

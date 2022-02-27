@@ -17,7 +17,7 @@ class ReportConfirmViewController: UIViewController {
     var choosenReportOption: ReportOption?
     var post: Post?
     var comment: Comment?
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     let language = LanguageSelection().getLanguage()
     
     @IBOutlet weak var MeldegrundLabel: UILabel!

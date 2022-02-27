@@ -29,7 +29,7 @@ class DiscussionParentVC: UIViewController {
     var proArgumentList = [Argument]()
     var contraArgumentList = [Argument]()
     var needNavigationController = false
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     let radius:CGFloat = 6
     
     var tipView: EasyTipView?
@@ -142,7 +142,7 @@ class DiscussionParentVC: UIViewController {
         
         if segue.identifier == "toPostsSegue" {
             if let chosenCommunity = sender as? Community {
-                if let postVC = segue.destination as? CommunityPostTableVC {
+                if let postVC = segue.destination as? CommunityFeedTableVC {
                     postVC.community = chosenCommunity
                 }
             }

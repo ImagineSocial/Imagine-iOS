@@ -34,8 +34,8 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     var topicPosts = [Post]()
     var savedPosts = [Post]()
     
-    let db = Firestore.firestore()
-    let postHelper = PostHelper()
+    let db = FirestoreRequest.shared.db
+    let postHelper = PostHelper.shared
     
     var addOn: AddOn? {
         didSet {
@@ -234,7 +234,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
             profileView.trailingAnchor.constraint(equalTo: profileNameLabel.trailingAnchor, constant: 5).isActive = true
             profileView.heightAnchor.constraint(equalToConstant: 26).isActive = true
                         
-            if let url = URL(string: user.imageURL) {
+            if let urlString = user.imageURL, let url = URL(string: urlString) {
                 profileImageView.sd_setImage(with: url, completed: nil)
             } else {
                 profileImageView.image = UIImage(named: "default-user")
@@ -356,7 +356,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let post: Post!
+        let post: Post
         switch selectedPostType {
         case .post:
             post = posts[indexPath.row]

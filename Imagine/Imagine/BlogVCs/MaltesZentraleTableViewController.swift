@@ -12,7 +12,7 @@ import Firebase
 class MaltesZentraleTableViewController: UITableViewController {
 
     var mitteilungen = [Mitteilung]()
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,12 +20,6 @@ class MaltesZentraleTableViewController: UITableViewController {
         getNotifications()
         getBugs()
         getReports()
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
     func getBugs() {

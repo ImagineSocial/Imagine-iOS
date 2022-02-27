@@ -39,7 +39,7 @@ class AddOnPlaylistCollectionViewCell: BaseAddOnCollectionViewCell {
     weak var delegate: AddOnCellDelegate?
     
     private let trackTableViewCellIdentifier = "AddOnPlaylistTrackTableViewCell"
-    private let db = Firestore.firestore()
+    private let db = FirestoreRequest.shared.db
     
     var tracks = [Post]()
     

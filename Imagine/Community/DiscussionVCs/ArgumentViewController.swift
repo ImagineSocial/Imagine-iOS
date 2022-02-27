@@ -39,7 +39,7 @@ class ArgumentViewController: UIViewController, ReachabilityObserverDelegate {
     var argument: Argument?
     var community: Community?
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     var tipView: EasyTipView?
     
     override func viewDidLoad() {
@@ -312,7 +312,7 @@ extension ArgumentViewController: CommentTableViewDelegate, CommentViewDelegate 
     func commentGotDeleteRequest(comment: Comment, answerToComment: Comment?) {
         self.deleteAlert(title: NSLocalizedString("delete_comment_alert_title", comment: "delete comment?"), message: NSLocalizedString("delete_comment_alert_message", comment: "cant be redeemememed"), delete:  { (delete) in
             if delete {
-                HandyHelper().deleteCommentInFirebase(comment: comment, answerToComment: answerToComment)
+                HandyHelper.shared.deleteCommentInFirebase(comment: comment, answerToComment: answerToComment)
             }
         })
     }

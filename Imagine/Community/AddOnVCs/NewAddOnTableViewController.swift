@@ -26,7 +26,7 @@ class NewAddOnTableViewController: UITableViewController {
     let addOnHeaderIdentifier = "AddOnHeaderView"
     
     var tipView: EasyTipView?
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     weak var delegate: NewFactDelegate?
 

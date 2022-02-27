@@ -463,11 +463,13 @@
 "topicCollectionFooter_add" = "Erstellen";
 "topicCollectionFooter_showAll" = "Alle anzeigen";
 
-//NewPostVC //Segment geht noch nicht!
+//NewPostVC
 "newPost_header_label" = "Neuer Beitrag";
 "newPost_segmentControl_label_text" = "Text";
 "newPost_segmentControl_label_picture" = "Bild";
 "newPost_segmentControl_label_link" = "Link";
+"newPost_share" = "Teilen";
+
 
 //FactStuff
 //AddPostTableViewController

@@ -12,15 +12,17 @@ import CoreLocation
 
 class PostHelper {
     
-    //MARK:- Variables
-    let handyHelper = HandyHelper()
+    static let shared = PostHelper()
+    
+    //MARK: - Variables
+    let handyHelper = HandyHelper.shared
     let factJSONString = "linkedFactID"
     
     //
     var firestoreRequest: FirestoreRequest?
     
     
-    //MARK:- Class Initilizer
+    //MARK: - Class Initilizer
     
     ///Initialization for the FirestoreRequest Class
     init(firestoreRequest: FirestoreRequest) {

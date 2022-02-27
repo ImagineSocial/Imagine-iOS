@@ -14,7 +14,7 @@ import FirebaseFirestore
 //Get Last Message!
 class ChatsTableViewController: UITableViewController {
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     var chatsList = [Chat]()
     var currentUserUid:String?
     var loggedIn = false
@@ -214,7 +214,7 @@ class ChatsTableViewController: UITableViewController {
                 }
             }
         }
-        let postHelper = FirestoreRequest()
+        let postHelper = FirestoreRequest.shared
         
         //Get Friends of the current User to check when they load the user of the chats
         postHelper.getTheUsersFriend {friends in
@@ -328,7 +328,7 @@ class ChatsTableViewController: UITableViewController {
                         }
                     }
                     
-                    if let url = URL(string: participant.imageURL) {
+                    if let urlString = participant.imageURL, let url = URL(string: urlString) {
                         cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
                     } else {
                         cell.profilePictureImageView.image = UIImage(named: "default-user" )

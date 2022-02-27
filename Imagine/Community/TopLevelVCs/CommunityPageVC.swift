@@ -115,7 +115,7 @@ class CommunityPageVC: UIPageViewController {
             }
         }
         
-        if let postOfFactVC = storyboard?.instantiateViewController(withIdentifier: "postsOfFactVC") as? CommunityPostTableVC {
+        if let postOfFactVC = storyboard?.instantiateViewController(withIdentifier: "postsOfFactVC") as? CommunityFeedTableVC {
             
             postOfFactVC.pageViewHeaderDelegate = self
             postOfFactVC.community = community
@@ -145,7 +145,7 @@ class CommunityPageVC: UIPageViewController {
                     setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
                 }
             } else {
-                if let secondVC = argumentVCs[1] as? CommunityPostTableVC {
+                if let secondVC = argumentVCs[1] as? CommunityFeedTableVC {
                     setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
                 }
             }
@@ -223,8 +223,8 @@ class CommunityPageVC: UIPageViewController {
         
         switch segue.identifier {
         case "goToNewPost":
-            if let navCon = segue.destination as? UINavigationController, let newPostVC = navCon.topViewController as? NewPostViewController {
-                newPostVC.selectedFact(fact: community, isViewAlreadyLoaded: false)
+            if let navCon = segue.destination as? UINavigationController, let newPostVC = navCon.topViewController as? NewPostVC {
+                newPostVC.selectedFact(community: community, isViewAlreadyLoaded: false)
                 newPostVC.comingFromPostsOfFact = true
                 newPostVC.postOnlyInTopic = true
                 newPostVC.newInstanceDelegate = self
@@ -315,11 +315,11 @@ extension CommunityPageVC: PageViewHeaderDelegate, CommunityHeaderDelegate, NewF
         if let _ = item as? Post {
             self.alert(message: "Go back to the feed and reload to see your post.", title: "The community has been shared successfully!")
         } else {
-            if let vc = self.argumentVCs[1] as? CommunityPostTableVC {
+            if let vc = self.argumentVCs[1] as? CommunityFeedTableVC {
                 vc.posts.removeAll()
                 vc.tableView.reloadData()
                 vc.getPosts(getMore: false)
-            } else if let vc = self.argumentVCs[2] as? CommunityPostTableVC {
+            } else if let vc = self.argumentVCs[2] as? CommunityFeedTableVC {
                 vc.posts.removeAll()
                 vc.tableView.reloadData()
                 vc.getPosts(getMore: false)

@@ -10,6 +10,10 @@ import Foundation
 
 struct Strings {
     
+    // MARK: - General
+    
+    static let done = NSLocalizedString("done", comment: "done")
+    
     // MARK: - Community
     
     static let discussion = NSLocalizedString("discussion", comment: "discussion")
@@ -43,11 +47,25 @@ struct Strings {
     static let proposalOpen = NSLocalizedString("campaignVC_segment_open_proposal", comment: "Open")
     static let proposalFinished = NSLocalizedString("campaignVC_segment_done_proposal", comment: "Finished")
     
+    // MARK: - MapVC
+    
+    static let chooseLocation = NSLocalizedString("setting_location_cell_text", comment: "choose location")
+    static let mapSearchPlaceholder = NSLocalizedString("search_map_placeholder", comment: "search_map_placeholder")
+    
     // MARK: - NewPost
     
     static let text = NSLocalizedString("newPost_segmentControl_label_text", comment: "")
     static let picture = NSLocalizedString("newPost_segmentControl_label_picture", comment: "")
     static let link = NSLocalizedString("newPost_segmentControl_label_link", comment: "")
+    static let share = NSLocalizedString("newPost_share", comment: "")
+    
+    static let newPostDescriptionLabel = NSLocalizedString("decriptionLabelText", comment: "...:")
+    static let newPostLocationLabel = NSLocalizedString("location_label_text", comment: "location:")
+    static let newPostPictureLabel = NSLocalizedString("pictureLabelText", comment: "picture:")
+    static let newPostTitleLabel = NSLocalizedString("newPost_title_label_text", comment: "title:")
+    
+    static let newPostLinkCommunity = NSLocalizedString("distribution_button_text", comment: "link community")
+    static let newPostDestinationLabel = NSLocalizedString("distribution_label_text", comment: "destination:")
     
     
     // MARK: - Side Menu

@@ -28,21 +28,55 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate {
     let locationManager = CLLocationManager()
     let searchControllerStoryboardID = "LocationSearchTableViewController"
     
-    var resultSearchController:UISearchController? = nil
+    var resultSearchController: UISearchController?
     
-    var selectedPin:MKPlacemark? = nil
+    var selectedPin: MKPlacemark?
     
-    var location: Location?
+    var location: Location? {
+        didSet {
+            guard let location = location else { return }
+
+            chosenLocationLabel.text = location.title
+            
+            let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+            let region = MKCoordinateRegion(center: location.coordinate, span: span)
+            mapView.setRegion(region, animated: true)
+            
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = location.coordinate
+            annotation.title = location.title
+            mapView.addAnnotation(annotation)
+        }
+    }
+    
     var locationDelegate: ChoosenLocationDelegate?
     
-    @IBOutlet weak var mapView: MKMapView!
-    @IBOutlet weak var currentLocationButton: UIButton!
-    @IBOutlet weak var choosenLocationLabel: UILabel!
-    @IBOutlet weak var chooseCurrentLocationButton: DesignableButton!
+    let mapView = MKMapView()
+    let currentLocationButton = BaseButtonWithImage(image: Icons.location)
+    let chosenLocationLabel = BaseLabel(text: Strings.chooseLocation, textAlignment: .center, backgroundColor: .secondarySystemBackground, cornerRadius: 8)
+    let doneButton = BaseButtonWithText(text: Strings.done, cornerRadius: 8, backgroundColor: .secondarySystemBackground)
+    
+    // MARK: - View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setupConstraints()
+        setUpSearchController()
+        setupMap()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.isTranslucent = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        navigationController?.navigationBar.isTranslucent = false
+    }
+    
+    // MARK: - Setup
+    
+    private func setupMap() {
         //Map
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
@@ -53,31 +87,23 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate {
         mapView.addGestureRecognizer(gestureRecognizer)
         
         mapView.delegate = self
-        
-        if let location = location {
-            choosenLocationLabel.text = location.title
-            
-            let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-            let region = MKCoordinateRegion(center: location.coordinate, span: span)
-            mapView.setRegion(region, animated: true)
-            
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = location.coordinate
-            annotation.title = location.title
-            mapView.addAnnotation(annotation)
-        } else {
-            choosenLocationLabel.text = NSLocalizedString("setting_location_cell_text", comment: "choose location")
-        }
-        
-        setUpSearchController()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        navigationController?.navigationBar.isTranslucent = true
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        navigationController?.navigationBar.isTranslucent = false
+    private func setupConstraints() {
+        view.addSubview(mapView)
+        view.addSubview(currentLocationButton)
+        view.addSubview(chosenLocationLabel)
+        view.addSubview(doneButton)
+        
+        mapView.fillSuperview()
+        doneButton.constrain(bottom: view.bottomAnchor, trailing: view.trailingAnchor, paddingBottom: -75, paddingTrailing: -Constants.padding.standard, width: 75, height: 30)
+        chosenLocationLabel.constrain(bottom: doneButton.topAnchor, trailing: doneButton.trailingAnchor, paddingBottom: -Constants.padding.standard, height: 30)
+        chosenLocationLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 75).isActive = true
+        
+        currentLocationButton.constrain(bottom: chosenLocationLabel.topAnchor, trailing: doneButton.trailingAnchor, paddingBottom: -Constants.padding.standard, width: 28, height: 28)
+        
+        doneButton.addTarget(self, action: #selector(finishWithSelectedLocation), for: .touchUpInside)
+        currentLocationButton.addTarget(self, action: #selector(requestCurrentLocation), for: .touchUpInside)
     }
     
     @objc func mapTapped(gestureRecognizer: UILongPressGestureRecognizer) {
@@ -91,33 +117,30 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate {
         getInformationForAnnotation(annotation: annotation)
     }
     
-    func getInformationForAnnotation(annotation: MKPointAnnotation) {   // Get String of city
+    private func getInformationForAnnotation(annotation: MKPointAnnotation) {
         let geoCoder = CLGeocoder()
         let location = CLLocation(latitude: annotation.coordinate.latitude, longitude: annotation.coordinate.longitude)
         
         //Remove old annotations:
         mapView.removeAnnotations(mapView.annotations)
         
-        geoCoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, err) -> Void in
+        geoCoder.reverseGeocodeLocation(location) { placemarks, err -> Void in
 
             if let error = err {
                 print("We have a map error: \(error.localizedDescription)")
             } else {
-                if let placemarks = placemarks {
-                    if placemarks.count > 0 {
-                        let placemark = placemarks[0]
-                        annotation.title = placemark.locality
-                        self.addLocation(annotation: annotation)
-                    }
+                if let placemarks = placemarks, let placemark = placemarks.first {
+                    annotation.title = placemark.locality
+                    self.addLocation(annotation: annotation)
                 }
             }
-        })
+        }
     }
     
     func addLocation(annotation: MKAnnotation) {
         if let title = annotation.title {
             if let title = title {
-                self.choosenLocationLabel.text = title
+                self.chosenLocationLabel.text = title
                 let location = Location(title: title, coordinate: annotation.coordinate)
                 self.location = location
                 self.mapView.addAnnotation(annotation)
@@ -126,30 +149,33 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     func setUpSearchController() {
-        //Search
-        let locationSearchTableVC = storyboard!.instantiateViewController(withIdentifier: searchControllerStoryboardID) as! LocationSearchTableViewController
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let locationSearchTableVC = storyboard.instantiateViewController(withIdentifier: searchControllerStoryboardID) as? LocationSearchTableViewController else { return }
         
         locationSearchTableVC.mapView = mapView
         locationSearchTableVC.handleMapSearchDelegate = self
         resultSearchController = UISearchController(searchResultsController: locationSearchTableVC)
-        resultSearchController?.searchResultsUpdater = locationSearchTableVC
-        resultSearchController?.hidesNavigationBarDuringPresentation = false
+        
+        guard let resultSearchController = resultSearchController else { return }
+
+        resultSearchController.searchResultsUpdater = locationSearchTableVC
+        resultSearchController.hidesNavigationBarDuringPresentation = false
         definesPresentationContext = true
         
-        //searchBar
-        let searchBar = resultSearchController!.searchBar
+        // Search Bar
+        let searchBar = resultSearchController.searchBar
         searchBar.sizeToFit()
-        searchBar.placeholder = NSLocalizedString("search_map_placeholder", comment: "search_map_placeholder")
+        searchBar.placeholder = Strings.mapSearchPlaceholder
         
         navigationItem.searchController = resultSearchController
     }
     
-    @IBAction func getCurrentLocationTapped(_ sender: Any) {
+    @objc func requestCurrentLocation() {
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
     }
     
-    @IBAction func chooseSelectedLocationTapped(_ sender: Any) {
+    @objc func finishWithSelectedLocation() {
         if let location = location {
             locationDelegate?.gotLocation(location: location)
             self.navigationController?.popViewController(animated: true)
@@ -166,25 +192,18 @@ extension MapViewController: MKMapViewDelegate {
 }
 
 extension MapViewController: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if status == .authorizedWhenInUse {
-            locationManager.requestLocation()
-        }
-    }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.first {
-            print("location: \(location)")
+        guard let location = locations.first else { return }
             
-            let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-            let region = MKCoordinateRegion(center: location.coordinate, span: span)
-            mapView.setRegion(region, animated: true)
-            
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = location.coordinate
-            
-            getInformationForAnnotation(annotation: annotation)
-        }
+        let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+        let region = MKCoordinateRegion(center: location.coordinate, span: span)
+        mapView.setRegion(region, animated: true)
+        
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = location.coordinate
+        
+        getInformationForAnnotation(annotation: annotation)
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -195,9 +214,7 @@ extension MapViewController: CLLocationManagerDelegate {
 extension MapViewController: HandleMapSearch {
     
     func dropPinZoomIn(placemark:MKPlacemark){
-        // cache the pin
         selectedPin = placemark
-        // clear existing pins
         mapView.removeAnnotations(mapView.annotations)
         let annotation = MKPointAnnotation()
         annotation.coordinate = placemark.coordinate

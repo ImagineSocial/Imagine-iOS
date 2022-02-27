@@ -49,7 +49,7 @@ class AddOn {
     
     var thanksCount:Int?
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     var delegate: AddOnDelegate?
     

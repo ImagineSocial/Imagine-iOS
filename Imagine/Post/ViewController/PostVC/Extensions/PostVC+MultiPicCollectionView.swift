@@ -22,7 +22,7 @@ extension PostViewController: UICollectionViewDelegate, UICollectionViewDataSour
         
         let image = imageURLs[indexPath.item]
         
-        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as? MultiImageCollectionCell {
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MultiImageCollectionCell.identifier, for: indexPath) as? MultiImageCollectionCell {
             
             if image == defaultLinkString {
                 cell.image = UIImage(named: "default-link")

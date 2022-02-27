@@ -19,7 +19,7 @@ class SettingViewController: UIViewController {
     @IBOutlet weak var languageSegmentedControl: UISegmentedControl!
     
     let defaults = UserDefaults.standard
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,7 +77,7 @@ class SettingViewController: UIViewController {
                     if let error = error {
                         print("Error fetching FCM registration token: \(error)")
                     } else if let token = token {
-                        HandyHelper().saveFCMToken(token: token)
+                        HandyHelper.shared.saveFCMToken(token: token)
                         application.registerForRemoteNotifications()
                         self.alert(message: "You can now receive notifications from Imagine.")
                     }

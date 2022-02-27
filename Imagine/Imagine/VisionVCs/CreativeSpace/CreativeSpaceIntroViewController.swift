@@ -21,7 +21,7 @@ class CreativeSpaceIntroViewController: UIViewController {
     @IBOutlet weak var ITArtistsButton: DesignableButton!
     @IBOutlet weak var revolutionistButton: DesignableButton!
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     var programmExamples = [VisionExample]()
     var artistExamples = [VisionExample]()

@@ -11,9 +11,12 @@ import Firebase
 
 class CommunityHelper {
     
-    //MARK:- Variables
-    let db = Firestore.firestore()
-    let handyHelper = HandyHelper()
+    static let shared = CommunityHelper()
+    
+    //MARK: - Variables
+    
+    let db = FirestoreRequest.shared.db
+    let handyHelper = HandyHelper.shared
     let user = Auth.auth().currentUser
     
     //MARK:- Get Community

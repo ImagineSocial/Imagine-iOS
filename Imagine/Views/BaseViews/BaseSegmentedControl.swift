@@ -50,7 +50,7 @@ class BaseSegmentedControlView: UIView {
         segmentedControl.setBackgroundImage(image, for: .normal, barMetrics: .default)
         segmentedControl.setDividerImage(image, forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
         
-        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont.standard(with: .medium, size: 15)!, NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel], for: .normal)
+        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont.standard(with: .medium, size: 16)!, NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel], for: .normal)
         segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont.standard(with: .medium, size: 16)!, NSAttributedString.Key.foregroundColor: UIColor.label], for: .selected)
         
         indicatorView.bottomAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 3).isActive = true

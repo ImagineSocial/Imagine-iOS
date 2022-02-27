@@ -81,11 +81,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     /* You have to set currentState and userOfProfile when you call this VC - Couldnt get the init to work */
     
     var imagePicker = UIImagePickerController()
-    var imageURL = ""
     var selectedImageFromPicker = UIImage(named: "default-user")
-    var userOfProfile:User?
+    var userOfProfile: User?
     
-    var currentState:AccessState?
+    var currentState: AccessState?
     
     var socialMediaObjects: [SocialMediaObject]?
     
@@ -405,7 +404,6 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
                 
                 currentUser.imageURL = url.absoluteString
-                self.imageURL = url.absoluteString
             }
         }
     }
@@ -414,10 +412,9 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         
         if let user = userOfProfile {
             self.nameLabel.text = user.displayName
-            self.imageURL = user.imageURL
             self.statusLabel.text = user.statusQuote
             
-            if let url = URL(string: user.imageURL) {
+            if let urlString = user.imageURL, let url = URL(string: urlString) {
                 self.profilePictureImageView.sd_setImage(with: url, completed: nil)
             } else {
                 self.profilePictureImageView.image = UIImage(named: "default-user")
@@ -764,9 +761,9 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     func profilePictureSettingTapped(setting: Setting) {
         switch setting.settingType {
         case .viewPicture:
-            if self.imageURL != "" {
+            if let user = userOfProfile, let imageURL = user.imageURL {
                 let pinchVC = PinchToZoomViewController()
-                pinchVC.imageURL = self.imageURL
+                pinchVC.imageURL = imageURL
                 
                 self.navigationController?.pushViewController(pinchVC, animated: true)
             }
@@ -782,24 +779,21 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     }
     
     func blockUserTapped() {
-        if let _ = Auth.auth().currentUser {
-            if let currentUser = userOfProfile {
+        if let user = AuthenticationManager.shared.user {
+            if let userOfProfile = userOfProfile {
                 let alert = UIAlertController(title: NSLocalizedString("block_user_alert_title", comment: "block user?"), message: NSLocalizedString("block_user_alert_message", comment: "delete from friends and cant contact you again?"), preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: "yes"), style: .destructive, handler: { (_) in
+                alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: "yes"), style: .destructive){ _ in
                     // block User
+                    let blockRef = self.db.collection("Users").document(user.userID)
+                    blockRef.updateData([
+                        "blocked": FieldValue.arrayUnion([userOfProfile.userID]) // Add the person as blocked
+                    ])
                     
-                    if let user = Auth.auth().currentUser {
-                        let blockRef = self.db.collection("Users").document(user.uid)
-                        blockRef.updateData([
-                            "blocked": FieldValue.arrayUnion([currentUser.userID]) // Add the person as blocked
-                            ])
-                        
-                        self.deleteAsFriend()
-                    }
-                }))
-                alert.addAction(UIAlertAction(title: NSLocalizedString("rather_not", comment: "rather_not"), style: .cancel, handler: { (_) in
+                    self.deleteAsFriend()
+                })
+                alert.addAction(UIAlertAction(title: NSLocalizedString("rather_not", comment: "rather_not"), style: .cancel) { _ in
                     alert.dismiss(animated: true, completion: nil)
-                }))
+                })
                 present(alert, animated: true)
             }
         } else {
@@ -824,8 +818,8 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     //MARK: - ImagePickerStuff
     func deletePicture() {  // In Firebase Storage
-        if let user = Auth.auth().currentUser {
-            let imageName = "\(user.uid).profilePicture"
+        if let user = AuthenticationManager.shared.user {
+            let imageName = "\(user.userID).profilePicture"
             let storageRef = Storage.storage().reference().child("profilePictures").child("\(imageName).png")
             
             storageRef.delete { (err) in
@@ -841,44 +835,41 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     
     func savePicture() {
-        if let user = Auth.auth().currentUser {
-            let imageName = "\(user.uid).profilePicture"
-            let storageRef = Storage.storage().reference().child("profilePictures").child("\(imageName).png")
-            
-            if let uploadData = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.2) {   //Es war das Fragezeichen
-                storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in    //Bild speichern
-                    if let error = error {
-                        print(error)
+        guard let user = AuthenticationManager.shared.user else { return }
+        
+        let imageName = "\(user.userID).profilePicture"
+        let storageRef = Storage.storage().reference().child("profilePictures").child("\(imageName).png")
+        
+        if let uploadData = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.2) {   //Es war das Fragezeichen
+            storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in    //Bild speichern
+                if let error = error {
+                    print(error)
+                    return
+                } else {
+                    print("Picture Saved")
+                }
+                storageRef.downloadURL(completion: { (url, err) in  // Hier wird die URL runtergezogen
+                    if let err = err {
+                        print(err)
                         return
-                    } else {
-                        print("Picture Saved")
                     }
-                    storageRef.downloadURL(completion: { (url, err) in  // Hier wird die URL runtergezogen
-                        if let err = err {
-                            print(err)
-                            return
-                        }
-                        
-                        if let url = url {
-                            self.imageURL = url.absoluteString
-                        }
-                        
-                        self.savePictureInUserDatabase()
-                        
-                        
-                    })
+                    
+                    if let url = url?.absoluteString {
+                        self.userOfProfile?.imageURL = url
+                        self.savePictureInUserDatabase(url: url)
+                    }
                 })
-            }
-            
+            })
         }
+        
     }
     
-    func savePictureInUserDatabase() {
-        let user = Auth.auth().currentUser
-        if let user = user {
+    func savePictureInUserDatabase(url: String) {
+
+        if let user = Auth.auth().currentUser {
             let changeRequest = user.createProfileChangeRequest()
             
-            if let url = URL(string: imageURL) {
+            if let url = URL(string: url) {
                 changeRequest.photoURL = url
             }
             changeRequest.commitChanges { error in
@@ -890,10 +881,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                     print("changeRequest hat geklappt")
                 }
             }
+            
             let userRef = db.collection("Users").document(user.uid)
-            userRef.setData(["profilePictureURL": imageURL], mergeFields:["profilePictureURL"]) // MergeFields, so the other data wont be overridden
+            userRef.setData(["profilePictureURL": url], mergeFields:["profilePictureURL"]) // MergeFields, so the other data wont be overridden
         }
-        
     }
     
     //Image Picker stuff
@@ -906,7 +897,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         
         profilePictureImageView.image = selectedImageFromPicker
         
-        if imageURL != "" {
+        if userOfProfile?.imageURL != nil {
             deletePicture()
             savePicture()
         } else {    // If the user got no profile picture
@@ -935,10 +926,11 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             settingsForPicture.showSettings(for: nil)
 
         default:
+            guard let imageURL = userOfProfile?.imageURL else { return }
             // Just show the Image
             let pinchVC = PinchToZoomViewController()
             
-            pinchVC.imageURL = self.imageURL
+            pinchVC.imageURL = imageURL
             self.navigationController?.pushViewController(pinchVC, animated: true)
         }
     }

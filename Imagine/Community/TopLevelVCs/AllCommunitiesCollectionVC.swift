@@ -19,7 +19,7 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
     
     let collectionViewSpacing: CGFloat = 24
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     let dataHelper = DataRequest()
     
     var topicFacts: [Community]?
@@ -126,7 +126,7 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
                     for document in snap.documents {
                         let data = document.data()
                         
-                        if let fact = CommunityHelper().getCommunity(currentUser: user, documentID: document.documentID, data: data) {
+                        if let fact = CommunityHelper.shared.getCommunity(currentUser: user, documentID: document.documentID, data: data) {
                             facts.append(fact)
                         }
                     }

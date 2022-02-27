@@ -24,7 +24,7 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
     @IBOutlet weak var halfTransparentBackgroundView: UIView!
     
     let previewCellIdentifier = "SmallTopicCell"
-    let postHelper = FirestoreRequest()
+    let postHelper = FirestoreRequest.shared
     
     var isFetchingPreviewPosts = false
         

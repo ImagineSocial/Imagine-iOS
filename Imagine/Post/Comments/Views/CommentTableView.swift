@@ -40,7 +40,7 @@ class CommentTableView: UITableView {
     let commentIdentifier = "CommentCell"
     let answerCellIdentifier = "AddOnQAndAAnswerCell"
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     var commentDelegate: CommentTableViewDelegate?
     
@@ -103,8 +103,7 @@ class CommentTableView: UITableView {
     func getcomments() {
         
         guard let section = section,
-            let refAndID = getCommentRefAndID()
-            else { return }
+            let refAndID = getCommentRefAndID() else { return }
         
         refAndID.commentReference.getDocuments { (snap, err) in
             if let error = err {
@@ -116,7 +115,7 @@ class CommentTableView: UITableView {
                         let docData = document.data()
                         
                         let comment = Comment(commentSection: section, sectionItemID: refAndID.sectionItemID, commentID: document.documentID)
-                        comment.initializeCommentFromData(sectionItemID: refAndID.sectionItemID, commentID: document.documentID, data: docData) { (comment) in
+                        comment.initializeCommentFromData(sectionItemID: refAndID.sectionItemID, commentID: document.documentID, data: docData) { comment in
                             
                             comment.getChildren()
                             comment.delegate = self
@@ -130,15 +129,15 @@ class CommentTableView: UITableView {
     
     func getCommentRefAndID() -> (commentReference: Query, sectionItemID: String)? {
         
-        guard let section = section else { return nil}
+        guard let section = section, let post = post else { return nil }
         
-        var ref: Query!
-        var sectionItemID: String!
+        var ref: Query
+        var sectionItemID: String
         
         switch section {
         case .post:
-            ref = db.collection("Comments").document(post!.documentID).collection("threads").order(by: "sentAt", descending: false)
-            sectionItemID = post!.documentID
+            ref = db.collection("Comments").document(post.documentID).collection("threads").order(by: "sentAt", descending: false)
+            sectionItemID = post.documentID
         case .argument:
             ref = db.collection("Comments").document("arguments").collection("comments").document(argument!.documentID).collection("threads").order(by: "sentAt", descending: false)
             sectionItemID = argument!.documentID
@@ -296,7 +295,7 @@ class CommentTableView: UITableView {
                     displayName = "anonym"
                     userID = "anonym"
                 } else {
-                    displayName = currentUser.displayName
+                    displayName = currentUser.displayName ?? ""
                     userID = user.uid
                 }
                 

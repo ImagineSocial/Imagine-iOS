@@ -720,6 +720,7 @@ Spitalhofstraße 56
 "newPost_segmentControl_label_text" = "Text";
 "newPost_segmentControl_label_picture" = "Picture";
 "newPost_segmentControl_label_link" = "Link";
+"newPost_share" = "Share";
 
 
 //FactStuff
