@@ -202,7 +202,7 @@
 //FactCollectionViewController
 "choose_topic_for_addOn_header" = "Wähle ein Thema aus:";
 "popular" = "Angesagt";
-"current_discussions" = "Aktuelle Diskussionen";
+"current_discussions" = "Diskussionen";
 "followed_communities" = "Deine Communities";
 "add_item_label" = "Neues Item hinzufügen";
 "add_item_alert_message" = "Möchtest du das Thema %@ zu dem AddOn hinzufügen?";
@@ -666,3 +666,14 @@
 "surveyCell_writeComment_label" = "Schreibe uns deine Meinung.";
 "surveyCell_disclaimer" = "Die Daten werden anonym ausgewertet und helfen uns dabei unsere User besser zu verstehen. So gestalten wir das Netzwerk nach euren Vorstellungen und Wünschen.";
 "surveyCell_notes_label" = "Anmerkungen:";
+
+
+// MARK: - Alerts
+
+// not logged in
+"notLoggedInTitle" = "Nicht Angemeldet";
+"notLoggedInMessage" = "Melde dich an um alle Funktionen bei Imagine zu nutzen";
+
+
+// MARK: - Discussions
+"sourceNotChecked" = "Quelle: Nicht überprüft";

@@ -794,11 +794,7 @@
 			isa = PBXGroup;
 			children = (
 				023797272789D7B2004DFAB9 /* NewPostVC.swift */,
-				02B7C30727920E5F003384FA /* NewPostVC+MemeMode.swift */,
-				023797292789D863004DFAB9 /* NewPostVC+CollectionView.swift */,
-				0289958226FB653D007CAFB7 /* NewPostVC+Images.swift */,
-				02B7C30927920F2C003384FA /* NewPostVC+Upload.swift */,
-				02B7C30E2792286C003384FA /* NewPostVC+Delegate.swift */,
+				02FB9C062843941100124EAC /* Extensions */,
 				0237972B2789D8B2004DFAB9 /* Cells */,
 				028624202752A5540031AD5E /* Views */,
 				02379738278B6422004DFAB9 /* Enums */,
@@ -1121,6 +1117,18 @@
 				02B7C30C2792135D003384FA /* AuthenticationManager.swift */,
 			);
 			path = "Firebase Authentication";
+			sourceTree = "<group>";
+		};
+		02FB9C062843941100124EAC /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				02B7C30727920E5F003384FA /* NewPostVC+MemeMode.swift */,
+				023797292789D863004DFAB9 /* NewPostVC+CollectionView.swift */,
+				0289958226FB653D007CAFB7 /* NewPostVC+Images.swift */,
+				02B7C30927920F2C003384FA /* NewPostVC+Upload.swift */,
+				02B7C30E2792286C003384FA /* NewPostVC+Delegate.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		66199979602FCB98C67C9712 /* Pods */ = {

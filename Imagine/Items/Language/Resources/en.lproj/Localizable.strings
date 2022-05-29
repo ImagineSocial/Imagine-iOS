@@ -249,7 +249,7 @@
 
 "popular" = "Popular";
 
-"current_discussions" = "Current discussions";
+"current_discussions" = "Discussions";
 
 "followed_communities" = "Your Communities";
 
@@ -1004,3 +1004,16 @@ Offer a detailed insight, a different point of view or an easy start. There are 
 "surveyCell_writeComment_label" = "Tell us your opinion.";
 "surveyCell_disclaimer" = "The data is evaluated anonymously and helps us to better understand our users. This way we can design the network according to your ideas and wishes.";
 "surveyCell_notes_label" = "Notes:";
+
+
+
+// MARK: - Alerts
+
+// not logged in
+"notLoggedInTitle" = "You are not logged in";
+"notLoggedInMessage" = "Log in to use all the features of this app";
+
+
+// MARK: - Discussions
+
+"sourceNotChecked" = "Source: Not validated";

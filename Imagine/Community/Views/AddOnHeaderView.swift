@@ -22,7 +22,6 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
     @IBOutlet weak var headerImageView: DesignableImage!
     @IBOutlet weak var headerTitleLabel: UILabel!
     @IBOutlet weak var headerDescriptionLabel: UILabel!
-//    @IBOutlet weak var showAsFeedButton: DesignableButton!
     @IBOutlet weak var headerGradientView: UIView!
     @IBOutlet weak var expandDescriptionButton: DesignableButton!
     @IBOutlet weak var thanksButton: DesignableButton!

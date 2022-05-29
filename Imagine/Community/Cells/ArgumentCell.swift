@@ -24,25 +24,11 @@ class ArgumentCell: UITableViewCell {
                 
                 headerLabel.text = argument.title
                 bodyLabel.text = argument.description
-//                let upString = NSLocalizedString("consent: %d", comment: "How many people agree with the argument")
+
                 let downvotes = argument.downvotes
                 let upvotes = -downvotes+argument.upvotes
                 numberOfUpvotesLabel.text = String(upvotes)
-//                nummer für die upvotes berechnen und neues Warnzeichen für Quelle
-//                proCountLabel.text = String.localizedStringWithFormat(upString, argument.upvotes)
-//                let downString = NSLocalizedString("doubt: %d", comment: "How many people disagree with the given argument")
-//                contraCountLabel.text = String.localizedStringWithFormat(downString, argument.downvotes)
-                
-                sourceLabel.text = "Quelle: Nicht überprüft"
-                
-                
-//                if argument.source.isEmpty {    // For now, später muss wahrheitswert der Quellen überprüft werden
-//                    // Keine Quelle
-//                    sourceLabel.text = "Quelle: 🚫"
-//                } else {
-//                    sourceLabel.text = " Quelle: ✅ | ▼ \(downVotes/3)  ▲ \(upvotes/3)"
-//                }
-                
+                sourceLabel.text = Strings.sourceNotChecked
             }
         }
     }

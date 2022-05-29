@@ -20,6 +20,9 @@ class ContraArgumentTableVC: UITableViewController {
     
     let identifier = "NibArgumentCell"
     let reuseIdentifier = "AddCell"
+    
+    weak var delegate: DiscussionChildVCDelegate?
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,8 +88,10 @@ class ContraArgumentTableVC: UITableViewController {
                 self.notLoggedInAlert()
             }
         } else {
-            performSegue(withIdentifier: "toDetailFactSegue", sender: argument)
+            delegate?.goToDetail(argument: argument)
         }
+        
+        tableView.deselectRow(at: indexPath, animated: false)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

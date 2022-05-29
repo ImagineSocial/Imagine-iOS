@@ -21,6 +21,8 @@ class ProArgumentTableVC: UITableViewController {
     let identifier = "NibArgumentCell"
     let reuseIdentifier = "addCell"
     
+    weak var delegate: DiscussionChildVCDelegate?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -86,11 +88,12 @@ class ProArgumentTableVC: UITableViewController {
                 self.notLoggedInAlert()
             }
         } else {
-            performSegue(withIdentifier: "toDetailFactSegue", sender: argument)
+            delegate?.goToDetail(argument: argument)
         }
+        
+        tableView.deselectRow(at: indexPath, animated: false)
     }
     
-    //toNewArgumentSegue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toNewArgumentSegue" {
             if let nav = segue.destination as? UINavigationController {
@@ -99,14 +102,6 @@ class ProArgumentTableVC: UITableViewController {
                     vc.new = .argument
                     vc.proOrContra = .pro
                     vc.delegate = self
-                }
-            }
-        }
-        if let vc = segue.destination as? ArgumentViewController {
-            if segue.identifier == "toDetailFactSegue" {
-                if let chosenArgument = sender as? Argument {
-                    vc.argument = chosenArgument
-                    vc.community = self.community
                 }
             }
         }

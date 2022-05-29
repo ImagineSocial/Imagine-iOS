@@ -14,13 +14,16 @@ protocol FinishedWorkCellDelegate {
 
 class FinishedWorkCollectionViewCell: UICollectionViewCell {
     
-    //MARK:- IBOutlets
+    //MARK: - IBOutlets
     @IBOutlet weak var mainLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var showCampaignButton: DesignableButton!
     
-    //MARK:- Variables
+    //MARK: - Variables
+    
+    static let identifier = "FinishedWorkCollectionViewCell"
+
     var finishedWorkItem: FinishedWorkItem? {
         didSet {
             if let finishedWork = finishedWorkItem {
@@ -31,37 +34,34 @@ class FinishedWorkCollectionViewCell: UICollectionViewCell {
     }
     var delegate: FinishedWorkCellDelegate?
     
-    //MARK:- Show/Hide Description
+    //MARK: - Show/Hide Description
     func showDescription() {
-        if let item = finishedWorkItem {
-
-            if item.campaignID != nil {
-                showCampaignButton.isHidden = false
-            }
-            descriptionLabel.text = item.description
-            mainLabel.font = UIFont(name: "IBMPlexSans-Medium", size: 16)
-        }
+        guard let item = finishedWorkItem else { return }
+        
+        showCampaignButton.isHidden = item.campaignID != nil
+        descriptionLabel.text = item.description
     }
     
     func hideDescription() {
         showCampaignButton.isHidden = true
         descriptionLabel.text = ""
-        mainLabel.font = UIFont(name: "IBMPlexSans", size: 15)
     }
     
-    //MARK:- Cell Lifecycle
+    //MARK: - Cell Lifecycle
     override func awakeFromNib() {
         let layer = contentView.layer
         layer.borderWidth = 0.5
         layer.borderColor = UIColor.label.cgColor
         layer.cornerRadius = 15
+        
+        mainLabel.font = UIFont(name: "IBMPlexSans-Medium", size: 16)
     }
     
     override func prepareForReuse() {
         hideDescription()
     }
     
-    //MARK:- IBActions
+    //MARK: - IBActions
     @IBAction func showCampaignTapped(_ sender: Any) {
         if let finishedWorkItem = self.finishedWorkItem, let id = finishedWorkItem.campaignID {
             delegate?.showCampaignTapped(campaignID: id)

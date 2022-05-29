@@ -10,8 +10,17 @@ import Foundation
 
 struct Strings {
     
+    // MARK: - Alerts
+    
+    // Not logged in
+    static let notLoggedInTitle = NSLocalizedString("notLoggedInTitle", comment: "")
+    static let notLoggedInMessage = NSLocalizedString("notLoggedInMessage", comment: "")
+    
+    
     // MARK: - General
     
+    static let cancel = NSLocalizedString("cancel", comment: "cancel")
+    static let delete = NSLocalizedString("delete", comment: "delete")
     static let done = NSLocalizedString("done", comment: "done")
     
     // MARK: - Community
@@ -19,6 +28,10 @@ struct Strings {
     static let discussion = NSLocalizedString("discussion", comment: "discussion")
     static let feed = "Feed"
     static let topics = NSLocalizedString("topics", comment: "topics")
+    
+    // MARK: - Discussions
+    
+    static let sourceNotChecked = NSLocalizedString("sourceNotChecked", comment: "")
     
     // MARK: - Feed
     

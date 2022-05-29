@@ -28,9 +28,6 @@ class ArgumentViewController: UIViewController, ReachabilityObserverDelegate {
     @IBOutlet weak var upvoteCountLabel: UILabel!
     @IBOutlet weak var downvoteCountLabel: UILabel!
     @IBOutlet weak var commentTableView: CommentTableView!
-    @IBOutlet weak var headerImageView: UIImageView!
-    @IBOutlet weak var headerTopicLabel: UILabel!
-    @IBOutlet weak var headerProContraLabel: UILabel!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var contentView: UIView!
     
@@ -114,14 +111,6 @@ class ArgumentViewController: UIViewController, ReachabilityObserverDelegate {
         downvoteCountLabel.text = String(argument.downvotes)
         titleLabel.text = argument.title
         descriptionLabel.text = argument.description
-        
-        if let url = URL(string: community.imageURL) {
-            headerImageView.sd_setImage(with: url, completed: nil)
-        }
-        headerTopicLabel.text = community.title
-        if let names = community.factDisplayNames {
-            self.headerProContraLabel.text = getDisplayString(displayNames: names, proOrContra: argument.proOrContra)
-        }
     }
     
     func getDisplayString(displayNames: FactDisplayName, proOrContra: String) -> String {

@@ -37,7 +37,7 @@ class CommunityHeaderView: UIView {
     
     let imageView = BaseImageView(image: nil, contentMode: .scaleAspectFill)
     let moveImage = BaseImageView(image: Icons.move, tintColor: .secondaryLabel)
-    let titleLabel = BaseLabel(font: .standard(with: .semibold, size: 20))
+    let titleLabel = BaseLabel(font: .standard(with: .semibold, size: 24))
     let descriptionLabel = BaseTextLabel(font: .standard(size: 14))
     let newPostButton = BaseButtonWithImage(image: Icons.newPostIcon)
     let segmentedControlView = BaseSegmentedControlView(items: [Strings.topics, Strings.feed], font: .standard(with: .medium, size: 14))
@@ -63,7 +63,7 @@ class CommunityHeaderView: UIView {
     
     override func layoutSubviews() {
         if #available(iOS 15.0, *) {
-            followButton.setTitleColor(.white, for: .normal)
+            
         } else {
             followButton.cornerRadius = followButton.frame.width / 2
         }
@@ -84,7 +84,7 @@ class CommunityHeaderView: UIView {
         imageView.constrain(top: topAnchor, leading: leadingAnchor, trailing: trailingAnchor, height: 175)
         moveImage.constrain(top: topAnchor, trailing: trailingAnchor, paddingTop: padding, paddingTrailing: -padding, width: 30, height: 30)
         titleLabel.constrain(top: imageView.bottomAnchor, leading: leadingAnchor, paddingTop: 10, paddingLeading: padding)
-        newPostButton.constrain(centerY: titleLabel.centerYAnchor, leading: titleLabel.trailingAnchor, trailing: trailingAnchor, paddingLeading: padding, paddingTrailing: -padding, width: 22, height: 22)
+        newPostButton.constrain(centerY: titleLabel.centerYAnchor, leading: titleLabel.trailingAnchor, trailing: trailingAnchor, paddingLeading: padding, paddingTrailing: -padding, width: 20, height: 20)
         descriptionLabel.constrain(top: titleLabel.bottomAnchor, leading: titleLabel.leadingAnchor, trailing: trailingAnchor, paddingTop: 5, paddingTrailing: -padding)
         countStackView.constrain(top: descriptionLabel.bottomAnchor, leading: titleLabel.leadingAnchor, paddingTop: 10)
         followButton.constrain(bottom: countStackView.bottomAnchor, trailing: descriptionLabel.trailingAnchor)
@@ -98,6 +98,7 @@ class CommunityHeaderView: UIView {
             configuration.titlePadding = 5
             configuration.buttonSize = .small
             configuration.cornerStyle = .capsule
+            configuration.baseBackgroundColor = .imagineColor
             
             followButton.configuration = configuration
         } else {

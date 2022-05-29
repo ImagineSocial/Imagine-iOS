@@ -18,7 +18,7 @@ extension UIViewController {
     }
     
     func notLoggedInAlert() {
-        let alertController = UIAlertController(title: "Nicht Angemeldet", message: "Melde dich an um alle Funktionen bei Imagine zu nutzen!", preferredStyle: .alert)
+        let alertController = UIAlertController(title: Strings.notLoggedInTitle, message: Strings.notLoggedInMessage, preferredStyle: .alert)
         let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
         alertController.addAction(OKAction)
         self.present(alertController, animated: true, completion: nil)
@@ -27,10 +27,10 @@ extension UIViewController {
     func deleteAlert(title: String, message: String, delete: @escaping (Bool) -> Void) {
         
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let deleteAction = UIAlertAction(title: "Löschen", style: .destructive) { (_) in
+        let deleteAction = UIAlertAction(title: Strings.delete, style: .destructive) { (_) in
             delete(true)
         }
-        let abortAction = UIAlertAction(title: "Abbrechen", style: .cancel) { (_) in
+        let abortAction = UIAlertAction(title: Strings.cancel, style: .cancel) { (_) in
             delete(false)
         }
         alertController.addAction(deleteAction)
