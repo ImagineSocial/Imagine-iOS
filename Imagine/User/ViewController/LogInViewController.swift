@@ -55,7 +55,7 @@ class LogInViewController: UIViewController {
     
     
     let attentionLabel = UILabel()
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     var signUp = false
     var name = ""

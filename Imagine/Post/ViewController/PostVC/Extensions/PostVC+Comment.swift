@@ -60,7 +60,7 @@ extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
     func commentGotDeleteRequest(comment: Comment, answerToComment: Comment?) {
         self.deleteAlert(title: NSLocalizedString("delete_comment_alert_title", comment: "title"), message: NSLocalizedString("delete_comment_alert_message", comment: "cant be redeemed"), delete:  { (delete) in
             if delete {
-                HandyHelper().deleteCommentInFirebase(comment: comment, answerToComment: answerToComment)
+                HandyHelper.shared.deleteCommentInFirebase(comment: comment, answerToComment: answerToComment)
                 self.commentTableView.deleteCommentFromTableView(comment: comment, answerToComment: answerToComment)
             }
         })

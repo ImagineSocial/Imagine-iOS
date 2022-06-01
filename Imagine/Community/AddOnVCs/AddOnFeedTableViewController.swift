@@ -198,7 +198,7 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
     }
     
     func Setupnewview() {   //ScrollViewDidScroll
-        guard let addOn = addOn else { return }
+
         let newheight = Headerheight - Headercut / 2
         var getheaderframe = CGRect(x: 0, y: -newheight, width: tableView.bounds.width, height: Headerheight)
         if tableView.contentOffset.y < newheight {
@@ -217,9 +217,6 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
                         button.customView?.tintColor = .label
                     }
                     isTransparent = false
-                    if let title = addOn.headerTitle {
-                        self.navigationItem.title = title
-                    }
                 }
             } else {
                 if !isTransparent {

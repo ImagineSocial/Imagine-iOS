@@ -10,7 +10,7 @@ import UIKit
 
 class BaseButtonWithText: DesignableButton {
     
-    init(text: String = "", titleColor: UIColor = .label, font: UIFont? = UIFont.standard(), cornerRadius: CGFloat = 0, borderColor: CGColor?) {
+    init(text: String = "", titleColor: UIColor = .label, font: UIFont? = UIFont.standard(), cornerRadius: CGFloat = 0, backgroundColor: UIColor = .clear, borderColor: CGColor? = nil) {
         super.init()
         
         self.translatesAutoresizingMaskIntoConstraints = false
@@ -22,6 +22,8 @@ class BaseButtonWithText: DesignableButton {
         
         self.layer.borderColor = borderColor
         self.layer.borderWidth = borderColor != nil ? 1 : 0
+        
+        self.backgroundColor = backgroundColor
     }
     
     required init?(coder: NSCoder) {

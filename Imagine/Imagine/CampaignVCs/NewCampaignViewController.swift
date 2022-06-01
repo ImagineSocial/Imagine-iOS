@@ -34,7 +34,7 @@ class NewCampaignViewController: UIViewController {
     var chosenCategory: CampaignType = .proposal
     
     var tipView: EasyTipView?
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     override func viewDidLoad() {
         super.viewDidLoad()

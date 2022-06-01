@@ -29,10 +29,10 @@ class DataRequest {
     
     //MARK:- Variables
     var dataPath = ""
-    let db = Firestore.firestore()
-    let handyHelper = HandyHelper()
+    let db = FirestoreRequest.shared.db
+    let handyHelper = HandyHelper.shared
     let user = Auth.auth().currentUser
-    let communityHelper = CommunityHelper()
+    let communityHelper = CommunityHelper.shared
     
     //MARK:- Get Data 
     

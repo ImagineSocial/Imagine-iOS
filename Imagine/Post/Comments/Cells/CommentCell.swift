@@ -26,7 +26,7 @@ class CommentCell: UITableViewCell {
     @IBOutlet weak var inlineSeparatorLeadingConstraint: NSLayoutConstraint!
     
     var delegate: CommentCellDelegate?
-    var handyHelper = HandyHelper()
+    var handyHelper = HandyHelper.shared
     let auth = Auth.auth()
     
     var comment: Comment? {
@@ -34,7 +34,7 @@ class CommentCell: UITableViewCell {
             if let comment = comment {
                 if let user = comment.user {
                     nameLabel.text = user.displayName
-                    if let url = URL(string: user.imageURL) {
+                    if let urlString = user.imageURL, let url = URL(string: urlString) {
                         profilePictureImageView.sd_setImage(with: url, completed: nil)
                     }
                     if let currentUser = auth.currentUser {

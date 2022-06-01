@@ -21,7 +21,7 @@ class CobraViewController: UIViewController {
     @IBOutlet weak var fiftyMillionColorLabel: UILabel!
     @IBOutlet weak var hundredMillionColorLabel: UILabel!
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     var clickCount:Double = 0
     let trackThickness: CGFloat = 0.4

@@ -25,7 +25,7 @@ class AddOnPlaylistTrackTableViewCell: UITableViewCell {
     @IBOutlet weak var dismissButton: DesignableButton!
     
     //MARK:- Variables
-    let postHelper = FirestoreRequest()
+    let postHelper = FirestoreRequest.shared
     
     let defaultAlbumCoverHeight:CGFloat = 50
     

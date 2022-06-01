@@ -25,7 +25,7 @@ class RepostView: UIView {
                 if let repostUser = repost.user {
                     repostNameLabel.text = repostUser.displayName
                     
-                    if let url = URL(string: repostUser.imageURL) {
+                    if let urlString = repostUser.imageURL, let url = URL(string: urlString) {
                         repostProfilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
                     }
                 }

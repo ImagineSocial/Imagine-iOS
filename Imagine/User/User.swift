@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-public class User {
+public class User: Codable {
     
     init(userID: String) {
         self.userID = userID        
@@ -18,11 +18,10 @@ public class User {
     //MARK: - Variables
     
     public var userID: String
-    public var displayName = ""
-    public var imageURL = ""
-    public var image = UIImage(named: "default-user")
+    public var displayName: String?
+    public var imageURL: String?
     public var blocked: [String]?
-    public var statusQuote = ""
+    public var statusQuote: String?
     
     //Social Media Links
     public var instagramLink: String?
@@ -40,11 +39,12 @@ public class User {
     public var locationName: String?
     public var locationIsPublic = false
     
-    private let db = Firestore.firestore()
     
     //MARK: - Get Username
+    
     func getUsername(username: @escaping (String?) -> Void) {
-        let ref = db.collection("Users").document(userID)
+        
+        let ref =  FirestoreRequest.shared.db.collection("Users").document(userID)
         ref.getDocument { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
@@ -65,7 +65,7 @@ public class User {
     //MARK: - Get Badges
     func getBadges(returnBadges: @escaping ([String]) -> Void) {
         
-        let ref = db.collection("Users").document(userID)
+        let ref = FirestoreRequest.shared.db.collection("Users").document(userID)
         ref.getDocument { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
@@ -83,8 +83,7 @@ public class User {
     
     //MARK: - Get User
     func getUser(isAFriend: Bool, completion: @escaping (User?) -> Void) {
-        
-        let userRef = db.collection("Users").document(userID)
+        let userRef = FirestoreRequest.shared.db.collection("Users").document(userID)
         
         userRef.getDocument(completion: { (document, err) in
             if let error = err {
@@ -92,59 +91,9 @@ public class User {
                 completion(nil)
             } else {
                 if let document = document {
-                    self.generateUser(isAFriend: isAFriend, document: document, completion: completion)
+                    AuthenticationManager.shared.generateUser(document: document, completion: completion)
                 }
             }
         })
-    }
-    
-    func generateUser(isAFriend: Bool, document: DocumentSnapshot, completion: @escaping (User?) -> Void) {
-        if let docData = document.data() {
-            
-            if isAFriend {
-                let fullName = docData["full_name"] as? String ?? ""
-                self.displayName = fullName
-            } else {
-                let userName = docData["name"] as? String ?? "Username"
-                self.displayName = userName
-            }
-            
-            if let instagramLink = docData["instagramLink"] as? String {
-                self.instagramLink = instagramLink
-                self.instagramDescription = docData["instagramDescription"] as? String
-            }
-            
-            if let patreonLink = docData["patreonLink"] as? String {
-                self.patreonLink = patreonLink
-                self.patreonDescription = docData["patreonDescription"] as? String
-            }
-            if let youTubeLink = docData["youTubeLink"] as? String {
-                self.youTubeLink = youTubeLink
-                self.youTubeDescription = docData["youTubeDescription"] as? String
-            }
-            if let twitterLink = docData["twitterLink"] as? String {
-                self.twitterLink = twitterLink
-                self.twitterDescription = docData["twitterDescription"] as? String
-            }
-            if let songwhipLink = docData["songwhipLink"] as? String {
-                self.songwhipLink = songwhipLink
-                self.songwhipDescription = docData["songwhipDescription"] as? String
-            }
-            
-            if let locationName = docData["locationName"] as? String {
-                self.locationName = locationName
-            }
-            if let locationIsPublic = docData["locationIsPublic"] as? Bool {
-                self.locationIsPublic = locationIsPublic
-            }
-            
-            self.imageURL = docData["profilePictureURL"] as? String ?? ""
-            self.statusQuote = docData["statusText"] as? String ?? ""
-            self.blocked = docData["blocked"] as? [String] ?? nil
-            
-            completion(self)
-        } else {
-            completion(nil)
-        }
     }
 }

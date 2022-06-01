@@ -13,9 +13,9 @@ import AVKit
 
 class SearchCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
-    let db = Firestore.firestore()
-    let handyHelper = HandyHelper()
-    let postHelper = PostHelper()
+    let db = FirestoreRequest.shared.db
+    let handyHelper = HandyHelper.shared
+    let postHelper = PostHelper.shared
     
     let searchController = UISearchController(searchResultsController: nil)
     
@@ -119,7 +119,6 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
     // MARK: UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
@@ -192,34 +191,19 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
     }
     
     
-    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        if let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: searchHeaderIdentifier, for: indexPath) as? SearchCollectionViewHeader {
-            
-            self.headerDelegate = view.self
-            
-            return view
-        }
-        
-        return UICollectionReusableView()
-    }
+    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = self.view.frame.width
         
         
-        if let _ = communityPosts {
-//            if indexPath.item == 0 {
-//
-//                print("Ein drittel: \((width-2)/3), zwei drittel: \((width-2)/3)*2)+1), alles: ", width)
-//                return CGSize(width: (((width-2)/3)*2)+1, height: (((width-2)/3)*2)+1)
-//            } else {
-                return CGSize(width: (width-2)/3, height: (width-2)/3)
-//            }
-        } else if let _ = postResults {
+        if communityPosts != nil {
+            return CGSize(width: (width-2)/3, height: (width-2)/3)
+        } else if postResults != nil {
             return CGSize(width: (width/2)-1, height: (width/2)-1)
-        } else if let _ = topicResults {
+        } else if topicResults != nil {
             return CGSize(width: (width/2)-1, height: (width/2)-1)
-        } else if let _ = userResults {
+        } else if userResults != nil {
             return CGSize(width: width, height: 65)
         } else {
             return CGSize(width: (width-2)/3, height: (width-2)/3)
@@ -245,32 +229,29 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "toPostSegue" {
-            if let vc = segue.destination as? PostViewController {
-                if let post = sender as? Post {
-                    vc.post = post
-                }
+        
+        switch segue.identifier {
+        case "toPostSegue":
+            if let vc = segue.destination as? PostViewController, let post = sender as? Post {
+                vc.post = post
+                vc.navigationItem.largeTitleDisplayMode = .never
             }
-        }
-        if segue.identifier == "toTopicSegue" {
-            if let pageVC = segue.destination as? CommunityPageVC {
-                if let chosenCommunity = sender as? Community {
-                    pageVC.community = chosenCommunity
-                }
+        case "toTopicSegue":
+            if let pageVC = segue.destination as? CommunityPageVC, let chosenCommunity = sender as? Community {
+                pageVC.community = chosenCommunity
             }
-        }
-        if segue.identifier == "toUserSegue" {
-            if let userVC = segue.destination as? UserFeedTableViewController {
-                if let user = sender as? User {
-                    userVC.userOfProfile = user
-                    userVC.currentState = .otherUser
-                }
+        case "toUserSegue":
+            if let userVC = segue.destination as? UserFeedTableViewController, let user = sender as? User {
+                userVC.userOfProfile = user
+                userVC.currentState = .otherUser
             }
+        default:
+            break
         }
     }
 }
 
-//MARK:-SearchController
+//MARK: -SearchController
 
 extension SearchCollectionViewController: UISearchControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate {
     
@@ -485,12 +466,11 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
         
         func addUser(document: DocumentSnapshot) {
             
-            if userResults.contains { $0.userID == document.documentID } {   // Check if we got the user in on of the other queries
+            if userResults.contains(where: { $0.userID == document.documentID }) {   // Check if we got the user in on of the other queries
                 return
             }
             
-            let user = User(userID: document.documentID)
-            user.generateUser(isAFriend: false, document: document) { user in
+            AuthenticationManager.shared.generateUser(document: document) { user in
                 if let user = user {
                     userResults.append(user)
                 }

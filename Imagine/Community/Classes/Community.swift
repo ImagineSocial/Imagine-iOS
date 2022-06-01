@@ -37,7 +37,7 @@ class Community {
     // AddOn Description For the linked Fact/Discussion/Topic
     var addOnTitle: String?
     
-    private let db = Firestore.firestore()
+    private let db = FirestoreRequest.shared.db
     
     //MARK:
     

@@ -71,7 +71,7 @@ class NewCommunityItemTableVC: UITableViewController {
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var doneButton: UIBarButtonItem!
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     let linkCommunityCellIdentifier = "NewCommunityLinkedCommunityCell"
     let pictureCellIdentifier = "NewCommunityPictureCell"
@@ -886,14 +886,14 @@ extension NewCommunityItemTableVC: NewCommunityItemDelegate, LinkFactWithPostDel
         }
     }
     
-    func selectedFact(fact: Community, isViewAlreadyLoaded: Bool) {
-        if fact.documentID != "" {
-            self.selectedTopicIDForSingleTopicAddOn = fact.documentID
+    func selectedFact(community: Community, isViewAlreadyLoaded: Bool) {
+        if community.documentID != "" {
+            self.selectedTopicIDForSingleTopicAddOn = community.documentID
             if let indexPath = self.indexPathOfChooseTopicCell {
                 if let cell = tableView.cellForRow(at: indexPath) as? NewCommunityLinkedCommunityCell {
-                    if let url = URL(string: fact.imageURL) {
+                    if let url = URL(string: community.imageURL) {
                         cell.imageURL = url
-                        cell.choosenTopicLabel.text = fact.title
+                        cell.choosenTopicLabel.text = community.title
                     }
                 }
             }

@@ -20,7 +20,7 @@ class DiscussionCell: BaseCollectionViewCell {
     @IBOutlet weak var contraArgumentLabel: UILabel!
     @IBOutlet weak var contraArgumentCountLabel: UILabel!
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     override var isHighlighted: Bool {
         didSet {

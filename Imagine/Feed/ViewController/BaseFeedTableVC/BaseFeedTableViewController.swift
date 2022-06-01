@@ -27,9 +27,9 @@ enum PostSortOptions {
 class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDelegate {
     
     var posts = [Post]()
-    let handyHelper = HandyHelper()
-    lazy var firestoreRequest = FirestoreRequest()  // Lazy or it calls Firestore before AppDelegate.swift
-    let db = Firestore.firestore()
+    let handyHelper = HandyHelper.shared
+    var firestoreRequest = FirestoreRequest()
+    let db = FirestoreRequest.shared.db
     
     var sortOptionsShown = false
     var sortBy: PostSortOptions = .dateDecreasing
@@ -107,17 +107,7 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
     }
     
     
-    //MARK:- Others
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-        if segue.identifier == "goToLink" {
-            if let post = sender as? Post {
-                if let webVC = segue.destination as? WebViewController {
-                    webVC.post = post
-                }
-            }
-        }
-    }
+    //MARK: - Others
     
     func reachabilityChanged(_ isReachable: Bool) {
         print("changed! Connection reachable: ", isReachable, "fetch requested: ", fetchRequested)
@@ -405,7 +395,13 @@ extension BaseFeedTableViewController: PostCellDelegate {
     }
     
     func linkTapped(post: Post) {
-        performSegue(withIdentifier: "goToLink", sender: post)
+        let vc = WebVC()
+        vc.post = post
+        
+        let navVC = UINavigationController(rootViewController: vc)
+        navVC.isToolbarHidden = false
+        
+        present(navVC, animated: true)
     }
     
     func factTapped(fact: Community) {

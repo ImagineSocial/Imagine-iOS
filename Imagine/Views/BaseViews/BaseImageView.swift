@@ -20,6 +20,7 @@ class BaseImageView: UIImageView {
         self.image = image?.withAlignmentRectInsets(alignmentInsets)
         self.contentMode = contentMode
         self.tintColor = tintColor
+        self.clipsToBounds = true
         
         self.alignmentInsets = alignmentInsets
     }

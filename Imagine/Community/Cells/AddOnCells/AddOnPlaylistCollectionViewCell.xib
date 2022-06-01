@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -89,10 +89,14 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a4B-F8-ATv" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="328" y="532" width="40" height="40"/>
+                                <rect key="frame" x="338" y="537" width="30" height="30"/>
                                 <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="9mx-bD-dWZ"/>
+                                    <constraint firstAttribute="width" constant="30" id="nHc-YG-dKI"/>
+                                </constraints>
                                 <color key="tintColor" systemColor="labelColor"/>
-                                <inset key="imageEdgeInsets" minX="2" minY="2" maxX="2" maxY="2"/>
+                                <inset key="imageEdgeInsets" minX="4" minY="4" maxX="4" maxY="4"/>
                                 <state key="normal" image="thanksButton"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -152,10 +156,10 @@
                             <constraint firstAttribute="bottom" secondItem="DrK-ao-KaP" secondAttribute="bottom" constant="10" id="B0L-dK-Lm2"/>
                             <constraint firstItem="yzd-S4-sJU" firstAttribute="bottom" secondItem="7dX-l2-2zu" secondAttribute="bottom" id="Cbv-Wu-bsp"/>
                             <constraint firstItem="Jhl-76-FNQ" firstAttribute="top" secondItem="7dX-l2-2zu" secondAttribute="bottom" constant="13" id="ETG-Gz-BZq"/>
-                            <constraint firstItem="a4B-F8-ATv" firstAttribute="bottom" secondItem="DrK-ao-KaP" secondAttribute="bottom" id="EjQ-cp-gMV"/>
                             <constraint firstAttribute="trailing" secondItem="DrK-ao-KaP" secondAttribute="trailing" constant="20" id="JWc-j4-3KC"/>
                             <constraint firstAttribute="trailing" secondItem="KQR-eY-zqG" secondAttribute="trailing" constant="20" id="MkA-Pp-aXs"/>
                             <constraint firstItem="0P0-D4-y2B" firstAttribute="top" secondItem="aqR-DU-ffV" secondAttribute="top" constant="8" id="Nzr-Cl-bzD"/>
+                            <constraint firstItem="a4B-F8-ATv" firstAttribute="centerY" secondItem="DrK-ao-KaP" secondAttribute="centerY" id="UHc-h9-Rq0"/>
                             <constraint firstItem="KQR-eY-zqG" firstAttribute="top" secondItem="7dX-l2-2zu" secondAttribute="top" id="UWT-hx-juy"/>
                             <constraint firstItem="mya-Zm-LrD" firstAttribute="leading" secondItem="WFa-vk-shw" secondAttribute="leading" constant="10" id="WWl-oR-4Tg"/>
                             <constraint firstItem="KQR-eY-zqG" firstAttribute="leading" secondItem="7dX-l2-2zu" secondAttribute="trailing" constant="20" id="Wpd-rg-Yxb"/>
@@ -164,11 +168,9 @@
                             <constraint firstAttribute="trailing" secondItem="Jhl-76-FNQ" secondAttribute="trailing" constant="20" id="df7-QF-eUB"/>
                             <constraint firstItem="0P0-D4-y2B" firstAttribute="leading" secondItem="7dX-l2-2zu" secondAttribute="trailing" constant="20" id="eXc-5m-kfk"/>
                             <constraint firstItem="jtD-71-YX4" firstAttribute="leading" secondItem="WFa-vk-shw" secondAttribute="leading" constant="10" id="fHy-M6-dEj"/>
-                            <constraint firstItem="a4B-F8-ATv" firstAttribute="width" secondItem="DrK-ao-KaP" secondAttribute="width" id="mfW-TW-hqO"/>
                             <constraint firstItem="7dX-l2-2zu" firstAttribute="leading" secondItem="WFa-vk-shw" secondAttribute="leading" constant="20" id="o3P-hk-taK"/>
                             <constraint firstItem="Jhl-76-FNQ" firstAttribute="leading" secondItem="7dX-l2-2zu" secondAttribute="leading" id="r9H-h8-zBm"/>
                             <constraint firstItem="yzd-S4-sJU" firstAttribute="leading" secondItem="7dX-l2-2zu" secondAttribute="trailing" constant="20" id="t2i-3R-N39"/>
-                            <constraint firstItem="a4B-F8-ATv" firstAttribute="height" secondItem="DrK-ao-KaP" secondAttribute="height" id="v4S-dX-oi8"/>
                             <constraint firstItem="mya-Zm-LrD" firstAttribute="top" secondItem="Jhl-76-FNQ" secondAttribute="bottom" constant="13" id="w6s-qf-BLQ"/>
                             <constraint firstAttribute="trailing" secondItem="mya-Zm-LrD" secondAttribute="trailing" constant="10" id="weO-bE-xSb"/>
                             <constraint firstItem="DrK-ao-KaP" firstAttribute="leading" secondItem="a4B-F8-ATv" secondAttribute="trailing" constant="20" id="xgs-Jj-fxQ"/>
@@ -207,7 +209,7 @@
         <image name="AppleMusic" width="73" height="73"/>
         <image name="SpotifyIcon" width="161" height="162"/>
         <image name="poweredBySongwhipButton" width="100" height="48.5"/>
-        <image name="thanksButton" width="100" height="100"/>
+        <image name="thanksButton" width="79" height="80"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

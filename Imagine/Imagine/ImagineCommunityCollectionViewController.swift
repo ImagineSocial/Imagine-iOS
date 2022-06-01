@@ -31,10 +31,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     var sortedCampaigns: [Campaign]?
     
     let insetTimesTwo: CGFloat = Constants.padding.standard * 2
-    
-    private let proposalHeaderIdentifier = "ImagineCommunityProposalHeader"
-    private let finishedWordCellIdentifier = "FinishedWorkCollectionViewCell"
-    
+        
     //FinishWorkCell Boolean
     private var isOpen = false
     private var finishedWorkItems = [FinishedWorkItem]()
@@ -45,7 +42,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        HandyHelper().deleteNotifications(type: .blogPost, id: "blogPost")//Maybe
+        HandyHelper.shared.deleteNotifications(type: .blogPost, id: "blogPost")//Maybe
         
         self.extendedLayoutIncludesOpaqueBars = true
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -70,10 +67,10 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         collectionView.register(ImagineCommunityNavigationCell.self, forCellWithReuseIdentifier: ImagineCommunityNavigationCell.identifier)
         collectionView.register(UINib(nibName: "DataReportCell", bundle: nil), forCellWithReuseIdentifier: DataReportCell.identifier)
         collectionView.register(CampaignCell.self, forCellWithReuseIdentifier: CampaignCell.identifier)
-        collectionView.register(UINib(nibName: "FinishedWorkCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: finishedWordCellIdentifier)
+        collectionView.register(UINib(nibName: "FinishedWorkCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: FinishedWorkCollectionViewCell.identifier)
         
         // Register header classes
-        collectionView.register(UINib(nibName: "ImagineCommunityProposalHeader", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: proposalHeaderIdentifier)
+        collectionView.register(UINib(nibName: "ImagineCommunityProposalHeader", bundle: nil), forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ImagineCommunityProposalHeader.identifier)
         collectionView.register(ImagineCommunityHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ImagineCommunityHeader.identifier)
         
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
@@ -158,7 +155,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 return cell
             }
         case .finished:
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: finishedWordCellIdentifier, for: indexPath) as? FinishedWorkCollectionViewCell {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FinishedWorkCollectionViewCell.identifier, for: indexPath) as? FinishedWorkCollectionViewCell {
                 
                 let workItem = finishedWorkItems[indexPath.item]
                 
@@ -210,7 +207,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
                 
                 return CGSize(width: width, height: 40+boundingRect.height)
             } else {
-                return CGSize(width: width, height: 30)
+                return CGSize(width: width, height: 35)
             }
         case .dataReport:
             return CGSize(width: width, height: 140)
@@ -237,7 +234,7 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
         let section = NavigationSection.allCases[indexPath.section]
         
         if section == .campaign {
-            if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: proposalHeaderIdentifier, for: indexPath) as? ImagineCommunityProposalHeader {
+            if let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ImagineCommunityProposalHeader.identifier, for: indexPath) as? ImagineCommunityProposalHeader {
                 
                 headerView.delegate = self
                 
@@ -354,13 +351,6 @@ class ImagineCommunityCollectionViewController: UICollectionViewController, UICo
             if let chosenPost = sender as? BlogPost {
                 if let blogVC = segue.destination as? BlogPostViewController {
                     blogVC.blogPost = chosenPost
-                }
-            }
-        }
-        if segue.identifier == "linkTapped" {
-            if let chosenLink = sender as? String {
-                if let webVC = segue.destination as? WebViewController {
-                    webVC.link = chosenLink
                 }
             }
         }

@@ -59,7 +59,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         }
 
         // Link the delegate to switch to this view again and reload if somebody posts something
-        if let viewControllers = self.tabBarController?.viewControllers, let navVC = viewControllers[2] as? UINavigationController, let newVC = navVC.topViewController as? NewPostViewController {
+        if let viewControllers = self.tabBarController?.viewControllers, let navVC = viewControllers[2] as? UINavigationController, let newVC = navVC.topViewController as? NewPostVC {
             newVC.delegate = self
         }
     }
@@ -227,6 +227,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             if let chosenPost = sender as? Post, let reportVC = segue.destination as? ReportViewController {
                 reportVC.post = chosenPost
             }
+            /*
         case "goToLink":
             if let webVC = segue.destination as? WebViewController {
                 if let chosenPost = sender as? Post {
@@ -236,7 +237,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                 } else if let chosenLink = sender as? String {
                     webVC.link = chosenLink
                 }
-            }
+            }*/
         case "toUserSegue":
             if let userVC = segue.destination as? UserFeedTableViewController {
                 if let chosenUser = sender as? User {   // Another User
@@ -260,7 +261,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                 factVC.community = community
             }
         case "goToPostsOfTopic":
-            if let community = sender as? Community, let factVC = segue.destination as? CommunityPostTableVC {
+            if let community = sender as? Community, let factVC = segue.destination as? CommunityFeedTableVC {
                 factVC.community = community
                 self.notifyFactCollectionViewController(community: community)
             }

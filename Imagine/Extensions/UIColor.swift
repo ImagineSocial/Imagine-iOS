@@ -14,6 +14,7 @@ extension UIColor {
     static let ios12secondarySystemBackground = UIColor(red: 242/255, green: 242/255, blue: 247/255, alpha: 1.0) ////Light Mode Secondary System Background Color for older than ios13
     //#f2f2f7ff
     static let darkRed = UIColor(red: 0.69, green: 0.00, blue: 0.00, alpha: 1.00)
+    static let tron = UIColor(red: 0.05, green: 0.97, blue: 0.97, alpha: 1.00)
     
     
     

@@ -103,7 +103,7 @@ class SimpleCell: UICollectionViewCell {
     
     static let identifier = "SimpleCellIdentifier"
     
-    let imageView = BaseImageView(image: nil)
+    let imageView = BaseImageView(image: nil, tintColor: .imagineColor)
     let containerView = UIView()
     
     var size: CGFloat? {
@@ -147,7 +147,6 @@ class SimpleCell: UICollectionViewCell {
         imageView.constrain(centerX: containerView.centerXAnchor, centerY: containerView.centerYAnchor, width: 28, height: 28)
         
         imageView.clipsToBounds = true
-        imageView.tintColor = .label
         imageView.contentMode = .scaleAspectFit
     }
     

@@ -31,6 +31,8 @@ enum NotificationType {
 
 class HandyHelper {
     
+    static let shared = HandyHelper()
+    
     let db = Firestore.firestore()
     
     func getDateAsTimestamp() -> Timestamp {

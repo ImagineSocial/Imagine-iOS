@@ -7,9 +7,6 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseFirestore
-import FirebaseAuth
 
 enum BlankCellType {
     case savedPicture
@@ -34,7 +31,7 @@ class BlankContentCell: UITableViewCell {
             case .chat:
                 self.pictureView.image = UIImage(named: "chatWithPeople")
                 
-                if let _ = Auth.auth().currentUser {
+                if AuthenticationManager.shared.user != nil {
                     self.descriptionLabel.text = NSLocalizedString("blank_content_chats", comment: "no chats yet")
                 } else {
                     self.descriptionLabel.text = "Tausche dich hier mit deinen Mitmenschen aus"

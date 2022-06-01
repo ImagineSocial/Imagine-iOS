@@ -27,7 +27,7 @@ class ReportABugViewController: UIViewController, UITextViewDelegate {
     @IBOutlet weak var descriptionLabel: UILabel!
     
     var type: BugType = .bug
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     var tipView: EasyTipView?
     

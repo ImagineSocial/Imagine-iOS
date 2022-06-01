@@ -40,7 +40,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
     
     //MARK: - Variables
     
-    private let db = Firestore.firestore()
+    private let db = FirestoreRequest.shared.db
     
     private var floatingCommentView: CommentAnswerView?
     
@@ -410,7 +410,7 @@ extension CampaignViewController: CommentViewDelegate, CommentTableViewDelegate 
         self.deleteAlert(title: NSLocalizedString("delete_comment_alert_title", comment: ""), message: NSLocalizedString("delete_comment_alert_message", comment: "you sure? cant be returned"), delete:  { (delete) in
             if delete {
                 
-                HandyHelper().deleteCommentInFirebase(comment: comment, answerToComment: answerToComment)
+                HandyHelper.shared.deleteCommentInFirebase(comment: comment, answerToComment: answerToComment)
             }
         })
     }

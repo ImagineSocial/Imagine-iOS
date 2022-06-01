@@ -21,7 +21,7 @@ class CurrentProjectsCollectionCell: UICollectionViewCell {
     @IBOutlet weak var secondView: UIView!
     @IBOutlet weak var fourthView: UIView!
         
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
         
     override func awakeFromNib() {
         

@@ -11,8 +11,8 @@ import Firebase
 
 class CommunityRequest {
     
-    private let db = Firestore.firestore()
-    private let communityHelper = CommunityHelper()
+    private let db = FirestoreRequest.shared.db
+    private let communityHelper = CommunityHelper.shared
     
     //MARK:- Get Community
     ///Load the fact and return it asynchroniously

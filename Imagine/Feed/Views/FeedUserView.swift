@@ -92,7 +92,7 @@ class FeedUserView: UIView, NibLoadable {
             nameLabel.text = user.displayName
             
             // Profile Picture
-            if let url = URL(string: user.imageURL) {
+            if let urlString = user.imageURL, let url = URL(string: urlString) {
                 profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
             } else {
                 profilePictureImageView.image = UIImage(named: "default-user")

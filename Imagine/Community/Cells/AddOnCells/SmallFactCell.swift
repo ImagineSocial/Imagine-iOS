@@ -25,7 +25,7 @@ class SmallFactCell: UICollectionViewCell {
     @IBOutlet weak var hairlineView: HairlineView!
     
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     var postTitle: String? {
         didSet {
@@ -60,7 +60,7 @@ class SmallFactCell: UICollectionViewCell {
         didSet {
             if let unloadedFact = unloadedFact {
                 DispatchQueue.global(qos: .default).async {
-                    CommunityHelper().loadCommunity(fact: unloadedFact) { (fact) in
+                    CommunityHelper.shared.loadCommunity(fact: unloadedFact) { (fact) in
                         if let fact = fact {
                             DispatchQueue.main.async {
                                 self.fact = fact

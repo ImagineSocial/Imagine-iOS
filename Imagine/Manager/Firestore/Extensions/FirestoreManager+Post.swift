@@ -20,7 +20,10 @@ enum PostList {
 
 class FirestoreRequest {
     
-    //MARK:- Variables
+    static let shared = FirestoreRequest()
+    
+    // MARK: - Variables
+    
     var posts = [Post]()
     let db = Firestore.firestore()
     
@@ -40,18 +43,13 @@ class FirestoreRequest {
     var totalCountOfPosts = 0
     var alreadyFetchedCount = 0
     
-    var postHelper: PostHelper!
-    
-    //MARK:- Initialization
-    init() {
-        postHelper = PostHelper(firestoreRequest: self)
-    }
+    let postHelper = PostHelper.shared
     
     
     func getTheUsersFriend(fetchedFriends: @escaping ([String]) -> Void) {
         if self.friends == nil {
-            if let user = Auth.auth().currentUser {
-                let userRef = db.collection("Users").document(user.uid).collection("friends")
+            if let user = AuthenticationManager.shared.user {
+                let userRef = db.collection("Users").document(user.userID).collection("friends")
                 
                 userRef.getDocuments { (snaps, err) in
                     if let error = err {
@@ -64,7 +62,7 @@ class FirestoreRequest {
                             }
                             
                             //Add yourself to the list so you see your full name in the feed
-                            friends.append(user.uid)
+                            friends.append(user.userID)
                             
                             self.friends = friends
                             
@@ -444,7 +442,7 @@ class FirestoreRequest {
             if morePostsToFetch {
                 self.posts.removeAll()
                 
-                var collectionRef: CollectionReference!
+                var collectionRef: CollectionReference
                 if community.language == .english {
                     collectionRef = self.db.collection("Data").document("en").collection("topics")
                 } else {

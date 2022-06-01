@@ -96,7 +96,7 @@ class RePostCell : BaseFeedCell {
                         
                         
                         // Profile Picture
-                        if let url = URL(string: repostUser.imageURL) {
+                        if let urlString = repostUser.imageURL, let url = URL(string: urlString) {
                             ogProfilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
                         }
                     }

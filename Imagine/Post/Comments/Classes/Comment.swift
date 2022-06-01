@@ -64,7 +64,7 @@ class Comment {
     }
     var parent: Comment?
     
-    private let db = Firestore.firestore()
+    private let db = FirestoreRequest.shared.db
     
     func getChildren() {
 

@@ -15,6 +15,10 @@ protocol RecentTopicDelegate: class {
     func topicSelected(community: Community)
 }
 
+protocol DiscussionChildVCDelegate: class {
+    func goToDetail(argument: Argument)
+}
+
 class DiscussionParentVC: UIViewController {
     
     @IBOutlet weak var contraArgumentCountLabel: UILabel!
@@ -22,14 +26,14 @@ class DiscussionParentVC: UIViewController {
     @IBOutlet weak var backgroundView: UIView!
     @IBOutlet weak var contraArgumentLabel: UILabel!
     @IBOutlet weak var proArgumentLabel: UILabel!
-    
+    @IBOutlet weak var offsetLayoutConstraint: NSLayoutConstraint!
     @IBOutlet weak var infoButton: UIButton!
     
     var community: Community?
     var proArgumentList = [Argument]()
     var contraArgumentList = [Argument]()
     var needNavigationController = false
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     let radius:CGFloat = 6
     
     var tipView: EasyTipView?
@@ -46,6 +50,8 @@ class DiscussionParentVC: UIViewController {
         if needNavigationController {
             setDismissButton()
         }
+        
+        offsetLayoutConstraint.constant = Constants.Numbers.communityHeaderHeight + 20
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -126,33 +132,33 @@ class DiscussionParentVC: UIViewController {
     
     //MARK:-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let vc = segue.destination as? ProArgumentTableVC {
-            if segue.identifier == "toProSegue" {
+        switch segue.identifier {
+        case "toProSegue":
+            if let vc = segue.destination as? ProArgumentTableVC {
+                vc.community = self.community
+                vc.delegate = self
+            }
+        case "toContraSegue":
+            if let contraVC = segue.destination as? ContraArgumentTableVC {
+                contraVC.community = self.community
+                contraVC.delegate = self
+            }
+        case "toPostsSegue":
+            if let chosenCommunity = sender as? Community, let postVC = segue.destination as? CommunityFeedTableVC {
+                postVC.community = chosenCommunity
+            }
+        case "toSettingSegue":
+            if let fact = sender as? Community, let vc = segue.destination as? SettingTableViewController {
+                vc.topic = fact
+                vc.settingFor = .community
+            }
+        case "toDetailFactSegue" :
+            if let navVC = segue.destination as? UINavigationController, let vc = navVC.topViewController as? ArgumentViewController, let chosenArgument = sender as? Argument {
+                vc.argument = chosenArgument
                 vc.community = self.community
             }
-        }
-        
-        if let contraVC = segue.destination as? ContraArgumentTableVC {
-            if segue.identifier == "toContraSegue" {
-                contraVC.community = self.community
-            }
-        }
-        
-        if segue.identifier == "toPostsSegue" {
-            if let chosenCommunity = sender as? Community {
-                if let postVC = segue.destination as? CommunityPostTableVC {
-                    postVC.community = chosenCommunity
-                }
-            }
-        }
-        
-        if segue.identifier == "toSettingSegue" {
-            if let fact = sender as? Community {
-                if let vc = segue.destination as? SettingTableViewController {
-                    vc.topic = fact
-                    vc.settingFor = .community
-                }
-            }
+        default:
+            break
         }
     }
     
@@ -175,5 +181,11 @@ class DiscussionParentVC: UIViewController {
         if let community = community {
             performSegue(withIdentifier: "toSettingSegue", sender: community)
         }
+    }
+}
+
+extension DiscussionParentVC: DiscussionChildVCDelegate {
+    func goToDetail(argument: Argument) {
+        performSegue(withIdentifier: "toDetailFactSegue", sender: argument)
     }
 }

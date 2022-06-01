@@ -92,6 +92,66 @@ class CommunityPageVC: UIPageViewController {
         }
     }
     
+    func addViewController() {
+        guard let community = community else {
+            return
+        }
+        
+        //Add The VCs
+        if let addOnCollectionVC = storyboard?.instantiateViewController(withIdentifier: "addOnCollectionVC") as? AddOnCollectionViewController {
+            
+            addOnCollectionVC.pageViewHeaderDelegate = self
+            addOnCollectionVC.community = community
+            argumentVCs.append(addOnCollectionVC)
+        }
+        
+        if community.displayOption == .discussion {
+            
+            if let factParentVC = storyboard?.instantiateViewController(withIdentifier: "factParentVC") as? DiscussionParentVC {
+                
+                factParentVC.pageViewHeaderDelegate = self
+                factParentVC.community = community
+                argumentVCs.append(factParentVC)
+            }
+        }
+        
+        if let postOfFactVC = storyboard?.instantiateViewController(withIdentifier: "postsOfFactVC") as? CommunityFeedTableVC {
+            
+            postOfFactVC.pageViewHeaderDelegate = self
+            postOfFactVC.community = community
+            argumentVCs.append(postOfFactVC)
+        }
+                
+        if community.displayOption == .discussion {
+            self.headerView.segmentedControlView.segmentedControl.insertSegment(withTitle: Strings.discussion, at: 1, animated: false)
+        }
+        
+        // Set the VCs and declare the firstVC
+        
+        if community.isAddOnFirstView {
+            self.presentedVC = 0
+            self.headerView.segmentedControlView.segmentedControlChanged()
+            
+            if let firstVC = argumentVCs[0] as? AddOnCollectionViewController {
+                setViewControllers([firstVC], direction: .forward, animated: true, completion: nil)
+            }
+        } else {
+            self.presentedVC = 1
+            self.headerView.segmentedControlView.segmentedControl.selectedSegmentIndex = 1
+            self.headerView.segmentedControlView.segmentedControlChanged()
+            
+            if community.displayOption == .discussion {
+                if let secondVC = argumentVCs[1] as? DiscussionParentVC {
+                    setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
+                }
+            } else {
+                if let secondVC = argumentVCs[1] as? CommunityFeedTableVC {
+                    setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
+                }
+            }
+        }
+    }
+    
     private func setBarButton() {
         guard let community = community else {
             return
@@ -156,7 +216,6 @@ class CommunityPageVC: UIPageViewController {
         }
     }
     
-    //MARK: - Prepare For Segue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let community = sender as? Community else {
             return
@@ -164,8 +223,8 @@ class CommunityPageVC: UIPageViewController {
         
         switch segue.identifier {
         case "goToNewPost":
-            if let navCon = segue.destination as? UINavigationController, let newPostVC = navCon.topViewController as? NewPostViewController {
-                newPostVC.selectedFact(fact: community, isViewAlreadyLoaded: false)
+            if let navCon = segue.destination as? UINavigationController, let newPostVC = navCon.topViewController as? NewPostVC {
+                newPostVC.selectedFact(community: community, isViewAlreadyLoaded: false)
                 newPostVC.comingFromPostsOfFact = true
                 newPostVC.postOnlyInTopic = true
                 newPostVC.newInstanceDelegate = self
@@ -185,73 +244,6 @@ class CommunityPageVC: UIPageViewController {
             break
         }
     }
-    
-    
-    func addViewController() {
-        guard let community = community else {
-            return
-        }
-        
-        //Add The VCs
-        if let addOnCollectionVC = storyboard?.instantiateViewController(withIdentifier: "addOnCollectionVC") as? AddOnCollectionViewController {
-            
-            addOnCollectionVC.pageViewHeaderDelegate = self
-            addOnCollectionVC.community = community
-            argumentVCs.append(addOnCollectionVC)
-        }
-        
-        if community.displayOption == .discussion {
-            
-            if let factParentVC = storyboard?.instantiateViewController(withIdentifier: "factParentVC") as? DiscussionParentVC {
-                
-                factParentVC.pageViewHeaderDelegate = self
-                factParentVC.community = community
-                argumentVCs.append(factParentVC)
-            }
-        }
-        
-        if let postOfFactVC = storyboard?.instantiateViewController(withIdentifier: "postsOfFactVC") as? CommunityPostTableVC {
-            
-            postOfFactVC.pageViewHeaderDelegate = self
-            postOfFactVC.community = community
-            argumentVCs.append(postOfFactVC)
-            
-        }
-        
-        self.headerView.segmentedControl.setTitle(Strings.topics, forSegmentAt: 0)
-        
-        if community.displayOption == .discussion {
-            self.headerView.segmentedControl.insertSegment(withTitle: Strings.discussion, at: 1, animated: false)
-            self.headerView.segmentedControl.setTitle("Feed", forSegmentAt: 2)
-        } else {
-            self.headerView.segmentedControl.setTitle("Feed", forSegmentAt: 1)
-        }
-        
-        // Set the VCs and declare the firstVC
-        
-        if community.isAddOnFirstView {
-            self.presentedVC = 0
-            self.headerView.segmentedControlChanged()
-            
-            if let firstVC = argumentVCs[0] as? AddOnCollectionViewController {
-                setViewControllers([firstVC], direction: .forward, animated: true, completion: nil)
-            }
-        } else {
-            self.presentedVC = 1
-            self.headerView.segmentedControl.selectedSegmentIndex = 1
-            self.headerView.segmentedControlChanged()
-            
-            if community.displayOption == .discussion {
-                if let secondVC = argumentVCs[1] as? DiscussionParentVC {
-                    setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
-                }
-            } else {
-                if let secondVC = argumentVCs[1] as? CommunityPostTableVC {
-                    setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
-                }
-            }
-        }
-    }
 }
 
 //MARK: - PageVC
@@ -265,8 +257,8 @@ extension CommunityPageVC: UIPageViewControllerDataSource, UIPageViewControllerD
         if let currentViewController = pageViewController.viewControllers?.first, let index = argumentVCs.index(of: currentViewController){
             
             self.presentedVC = index
-            headerView.segmentedControl.selectedSegmentIndex = index
-            headerView.segmentedControlChanged()
+            headerView.segmentedControlView.segmentedControl.selectedSegmentIndex = index
+            headerView.segmentedControlView.segmentedControlChanged()
             
             switch index {
             case 0:
@@ -323,11 +315,11 @@ extension CommunityPageVC: PageViewHeaderDelegate, CommunityHeaderDelegate, NewF
         if let _ = item as? Post {
             self.alert(message: "Go back to the feed and reload to see your post.", title: "The community has been shared successfully!")
         } else {
-            if let vc = self.argumentVCs[1] as? CommunityPostTableVC {
+            if let vc = self.argumentVCs[1] as? CommunityFeedTableVC {
                 vc.posts.removeAll()
                 vc.tableView.reloadData()
                 vc.getPosts(getMore: false)
-            } else if let vc = self.argumentVCs[2] as? CommunityPostTableVC {
+            } else if let vc = self.argumentVCs[2] as? CommunityFeedTableVC {
                 vc.posts.removeAll()
                 vc.tableView.reloadData()
                 vc.getPosts(getMore: false)

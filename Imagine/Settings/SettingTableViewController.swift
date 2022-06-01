@@ -46,11 +46,11 @@ enum DestinationForSettings {
 class SettingTableViewController: UITableViewController {
     
     //MARK:- Variables
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     let storDB = Storage.storage().reference()
     
-    let postHelper = FirestoreRequest()
-    let communityHelper = CommunityHelper()
+    let postHelper = FirestoreRequest.shared
+    let communityHelper = CommunityHelper.shared
     let dataHelper = DataRequest()
     var imagePicker = UIImagePickerController()
     
@@ -134,7 +134,7 @@ class SettingTableViewController: UITableViewController {
                 }
             }
         } else if let user = user {
-            let userSetting = UserSetting(name: user.displayName, OP: user.userID)
+            let userSetting = UserSetting(name: user.displayName ?? "", OP: user.userID)
             
             let ref = db.collection("Users").document(user.userID)
             ref.getDocument { (snap, err) in
@@ -394,18 +394,6 @@ class SettingTableViewController: UITableViewController {
             }
         } else {
             print("Not high enough")
-        }
-    }
-    
-    //MARK:- Navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "toMapVCSegue" {
-            if let vc = segue.destination as? MapViewController {
-                if let location = sender as? Location {
-                    vc.location = location
-                }
-                vc.locationDelegate = self
-            }
         }
     }
 
@@ -899,12 +887,15 @@ extension SettingTableViewController: UIImagePickerControllerDelegate, CropViewC
 extension SettingTableViewController: SettingCellDelegate, UINavigationControllerDelegate {
         
     func selectLocation(location: Location?, type: SettingChangeType, forIndexPath: IndexPath) {
-        performSegue(withIdentifier: "toMapVCSegue", sender: location)
         self.locationChangeType = type
         self.locationIndexPath = forIndexPath
+        
+        let vc = MapViewController()
+        vc.location = location
+        vc.locationDelegate = self
+        
+        navigationController?.pushViewController(vc, animated: true)
     }
-    
-    
     
     
     func gotChanged(type: SettingChangeType, value: Any) {

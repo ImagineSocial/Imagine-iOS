@@ -23,6 +23,7 @@ class ImagineCommunityProposalHeader: UICollectionReusableView {
     
     
     //MARK:- Variables
+    static let identifier = "ImagineCommunityProposalHeader"
     var delegate: ImagineCommunityProposalHeaderDelegate?
     
     //MARK:- Cell Lifecycles

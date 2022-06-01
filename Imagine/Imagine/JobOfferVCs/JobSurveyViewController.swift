@@ -29,7 +29,7 @@ class JobSurveyViewController: UIViewController, MFMailComposeViewControllerDele
     var userUID = ""
     var send = false
     var jobTitle:String = ""
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     override func viewDidLoad() {
         super.viewDidLoad()

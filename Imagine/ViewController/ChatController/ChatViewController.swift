@@ -33,7 +33,7 @@ class ChatViewController: MSGMessengerViewController {
     }()
     var fetchedMessages: [MSGMessage] = { return [] }()
     
-    private let db = Firestore.firestore()
+    private let db = FirestoreRequest.shared.db
     var reference: Query?
     var currentUserUid = ""
     var currentUser :MSGUser?
@@ -102,7 +102,7 @@ class ChatViewController: MSGMessengerViewController {
             button.layer.masksToBounds = true
             button.imageView?.contentMode = .scaleAspectFill
             
-            if let url = URL(string: participant.imageURL) {
+            if let urlString = participant.imageURL, let url = URL(string: urlString) {
                 do {
                     let data = try Data(contentsOf: url)
                     
@@ -136,7 +136,7 @@ class ChatViewController: MSGMessengerViewController {
             currentUserUid = uid
             
             self.firebaseListener()
-            FirestoreRequest().getChatUser(uid: uid, sender: true) { (user) in
+            FirestoreRequest.shared.getChatUser(uid: uid, sender: true) { (user) in
                 self.currentUser = user
             }
         }
@@ -210,7 +210,7 @@ class ChatViewController: MSGMessengerViewController {
         
         let sentDate:Date = sentAtTimestamp.dateValue()
         
-        FirestoreRequest().getChatUser(uid: userUID, sender: sender, user: { (user) in
+        FirestoreRequest.shared.getChatUser(uid: userUID, sender: sender, user: { (user) in
             
             let message = MSGMessage(id: id, body: .text(body), user: user, sentAt: sentDate)
             self.fetchedMessages.append(message)
@@ -277,7 +277,7 @@ class ChatViewController: MSGMessengerViewController {
         print("deletenotification")
         readDelegate?.read()    // For the tableView
         if let chat = chat {
-            HandyHelper().deleteNotifications(type: .message, id: chat.documentID)
+            HandyHelper.shared.deleteNotifications(type: .message, id: chat.documentID)
         }
         if let chat = chat {
             chat.unreadMessages = 0

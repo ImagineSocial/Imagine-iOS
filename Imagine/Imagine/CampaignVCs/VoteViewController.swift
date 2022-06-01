@@ -37,8 +37,8 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
     var tipView: EasyTipView?
     
     var vote:Vote?
-    let handyHelper = HandyHelper()
-    let db = Firestore.firestore()
+    let handyHelper = HandyHelper.shared
+    let db = FirestoreRequest.shared.db
     
     override func viewDidLoad() {
         super.viewDidLoad()

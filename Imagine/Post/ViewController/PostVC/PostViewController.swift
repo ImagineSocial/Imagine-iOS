@@ -19,7 +19,7 @@ import FirebaseFirestore
 class PostViewController: UIViewController, UIScrollViewDelegate {
     
     
-    //MARK: - IBOutlets
+    // MARK: - IBOutlets
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var contentView: UIView!
     
@@ -47,17 +47,17 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var linkPreviewDescription: UILabel!
     @IBOutlet weak var linkPreviewView: UIView!
     
-    //hide Profile Picture
+    // hide Profile Picture
     @IBOutlet weak var leadingNameLabelToSuperviewConstraint: NSLayoutConstraint!
     @IBOutlet weak var leadingNameLabelToProfilePictureConstraint: NSLayoutConstraint!
     
     
     
-    //MARK: - Variables
+    // MARK: - Variables
     var post = Post()
     
-    let db = Firestore.firestore()
-    let handyHelper = HandyHelper()
+    let db = FirestoreRequest.shared.db
+    let handyHelper = HandyHelper.shared
     
     var ownPost = false
     var currentUser: User?
@@ -71,18 +71,17 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     fileprivate var imageHeightConstraint : NSLayoutConstraint?
     fileprivate var commentTableViewHeightConstraint: NSLayoutConstraint?
     
-    //ImageCollectionView
+    // ImageCollectionView
     let defaultLinkString = "link-default"
     var imageURLs = [String]()
-    let identifier = "MultiPictureCell"
     let panoramaHeightMaximum: CGFloat = 500
     
-    //Comment
+    // Comment
     let commentIdentifier = "CommentCell"
     var floatingCommentView: CommentAnswerView?
     
     
-    //GIFS
+    // GIFS
     var avPlayer: AVPlayer?
     var avPlayerLayer: AVPlayerLayer?
     
@@ -224,7 +223,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         commentTableView.post = self.post   // Absichern, wenn der Post keine Kommentare hat, brauch man auch nicht danach suchen und sich die Kosten sparen
         
         //Image Collection View
-        imageCollectionView.register(UINib(nibName: "MultiPictureCollectionCell", bundle: nil), forCellWithReuseIdentifier: identifier)
+        imageCollectionView.register(MultiImageCollectionCell.self, forCellWithReuseIdentifier: MultiImageCollectionCell.identifier)
         imageCollectionView.dataSource = self
         imageCollectionView.delegate = self
         
@@ -417,7 +416,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             if let user = post.user {
                 nameLabel.text = user.displayName
                 
-                if let url = URL(string: user.imageURL) {
+                if let imageURL = user.imageURL, let url = URL(string: imageURL) {
                     profilePictureImageView.sd_setImage(with: url, completed: nil)
                 }
             }
@@ -452,7 +451,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             //No post data yet
             let toComments = post.toComments
             let votes = post.newUpvotes
-            FirestoreRequest().getPostsFromDocumentIDs(posts: [post]) { (posts) in
+            FirestoreRequest.shared.getPostsFromDocumentIDs(posts: [post]) { (posts) in
                 if let posts = posts {
                     if posts.count != 0 {
                         let post = posts[0]
@@ -597,7 +596,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }()
     
     @objc func linkTapped() {
-        performSegue(withIdentifier: "goToLink", sender: post)
+        let vc = WebVC()
+        vc.post = post
+        
+        let navVC = UINavigationController(rootViewController: vc)
+        navVC.isToolbarHidden = false
+        
+        present(navVC, animated: true)
     }
     
     //MARK: - YouTube Post
@@ -865,7 +870,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 communityVC.community = community
             }
         case "goToPostsOfTopic":
-            if let community = sender as? Community, let navCon = segue.destination as? UINavigationController, let factVC = navCon.topViewController as? CommunityPostTableVC {
+            if let community = sender as? Community, let navCon = segue.destination as? UINavigationController, let factVC = navCon.topViewController as? CommunityFeedTableVC {
                 factVC.community = community
                 factVC.needNavigationController = true
             }
@@ -874,10 +879,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 userVC.userOfProfile = chosenUser
                 userVC.currentState = .otherUser
                 
-            }
-        case "goToLink":
-            if let post = sender as? Post, let webVC = segue.destination as? WebViewController {
-                webVC.post = post
             }
         case "reportSegue":
             if let chosenPost = sender as? Post, let reportVC = segue.destination as? ReportViewController {
@@ -894,37 +895,28 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     //MARK: - CommentAnswerView
+    
     func createFloatingCommentView() {
         let viewHeight = self.view.frame.height
-        let screenHeight = UIScreen.main.bounds.height
         
-        if viewHeight == screenHeight { // I dont know why, but they are the same for one cyrcle, probably the view is not loaded right
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.createFloatingCommentView()
-                
-                return
-            }
-        } else {
-            if floatingCommentView == nil {
-                let commentViewHeight: CGFloat = 60
-                floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: viewHeight-commentViewHeight, width: self.view.frame.width, height: commentViewHeight))
-                
-                
-                floatingCommentView!.delegate = self
-                self.contentView.addSubview(floatingCommentView!)
-                
-                floatingCommentView!.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
-                floatingCommentView!.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
-                let bottomConstraint = floatingCommentView!.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor)
-                    bottomConstraint.isActive = true
-                floatingCommentView!.bottomConstraint = bottomConstraint
-                floatingCommentView!.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
-                floatingCommentView!.addKeyboardObserver()
-                floatingCommentView!.commentSection = .post
-                
-                self.contentView.bringSubviewToFront(floatingCommentView!)
-            }
-        }
+        guard floatingCommentView == nil else { return }
+        
+        let commentViewHeight: CGFloat = 60
+        floatingCommentView = CommentAnswerView(frame: CGRect(x: 0, y: viewHeight-commentViewHeight, width: self.view.frame.width, height: commentViewHeight))
+        
+        guard let floatingCommentView = floatingCommentView else { return }
+
+        floatingCommentView.delegate = self
+        self.contentView.addSubview(floatingCommentView)
+        
+        floatingCommentView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
+        floatingCommentView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        floatingCommentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 60).isActive = true
+        let bottomConstraint = floatingCommentView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor)
+        bottomConstraint.isActive = true
+        
+        floatingCommentView.addKeyboardObserver()
+        floatingCommentView.commentSection = .post
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -947,7 +939,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-
+        
         if scrollView == self.scrollView {
             if let view = floatingCommentView {
                 let offset = scrollView.contentOffset.y

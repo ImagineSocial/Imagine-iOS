@@ -12,7 +12,7 @@ import FirebaseAnalytics
 import EasyTipView
 
 protocol LinkFactWithPostDelegate {
-    func selectedFact(fact: Community, isViewAlreadyLoaded: Bool)
+    func selectedFact(community: Community, isViewAlreadyLoaded: Bool)
 }
 
 protocol TopOfCollectionViewDelegate {
@@ -38,7 +38,7 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
     var discussionCommunities = [Community]()
     var followedCommunities = [Community]()
         
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     let dataHelper = DataRequest()
     
     var addFactToPost : AddFactToPostType?
@@ -167,7 +167,7 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
                             snap.documents.forEach { document in
                                 let data = document.data()
                                 
-                                if let community = CommunityHelper().getCommunity(currentUser: user, documentID: document.documentID, data: data) {
+                                if let community = CommunityHelper.shared.getCommunity(currentUser: user, documentID: document.documentID, data: data) {
                                     self.discussionCommunities.append(community)
                                 } else {
                                     discussionCount -= 1
@@ -240,7 +240,7 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
             } else {
                 if let snap = snap {
                     if let data = snap.data() {
-                        if let fact = CommunityHelper().getCommunity(currentUser: user, documentID: snap.documentID, data: data) {
+                        if let fact = CommunityHelper.shared.getCommunity(currentUser: user, documentID: snap.documentID, data: data) {
                             returnedFact(fact)
                         }
                     } else {
@@ -353,7 +353,7 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
     //MARK: Link community and post
     
     func setCommunityForPost(community: Community) {
-        delegate?.selectedFact(fact: community, isViewAlreadyLoaded: true)
+        delegate?.selectedFact(community: community, isViewAlreadyLoaded: true)
         self.dismiss(animated: true, completion: nil)
     }
     

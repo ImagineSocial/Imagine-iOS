@@ -21,13 +21,9 @@ class CommunityHeaderView: UIView {
     
     static let identifier = "CommunityHeaderView"
     
-    var segmentIndicatorCenterXConstraint: NSLayoutConstraint?
-    var segmentIndicatorWidthConstraint: NSLayoutConstraint?
-    
     weak var delegate: CommunityHeaderDelegate?
-    var lastIndex = 0
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
     var community: Community? {
         didSet {
@@ -41,12 +37,11 @@ class CommunityHeaderView: UIView {
     
     let imageView = BaseImageView(image: nil, contentMode: .scaleAspectFill)
     let moveImage = BaseImageView(image: Icons.move, tintColor: .secondaryLabel)
-    let titleLabel = BaseLabel(font: .standard(with: .semibold, size: 20))
+    let titleLabel = BaseLabel(font: .standard(with: .semibold, size: 24))
     let descriptionLabel = BaseTextLabel(font: .standard(size: 14))
     let newPostButton = BaseButtonWithImage(image: Icons.newPostIcon)
-    let segmentedControl = BaseSegmentedControl(items: [Strings.topics, Strings.feed], font: .standard(with: .medium, size: 14))
-    let segmentIndicator = BaseView(backgroundColor: .label)
-    let followButton = BaseButtonWithText(font: .standard(with: .medium, size: 14), borderColor: nil)
+    let segmentedControlView = BaseSegmentedControlView(items: [Strings.topics, Strings.feed], font: .standard(with: .medium, size: 14))
+    let followButton = BaseButtonWithText(text: "Follow", font: .standard(with: .medium, size: 14), borderColor: nil)
     let followerCountLabel = BaseLabel(textColor: .secondaryLabel, font: .standard(size: 12))
     let postCountLabel = BaseLabel(textColor: .secondaryLabel, font: .standard(size: 12))
     
@@ -59,7 +54,7 @@ class CommunityHeaderView: UIView {
         backgroundColor = .systemBackground
         
         setupConstraints()
-        setSegmentedIndicatorView()
+        segmentedControlView.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -68,7 +63,7 @@ class CommunityHeaderView: UIView {
     
     override func layoutSubviews() {
         if #available(iOS 15.0, *) {
-            followButton.setTitleColor(.white, for: .normal)
+            
         } else {
             followButton.cornerRadius = followButton.frame.width / 2
         }
@@ -79,8 +74,7 @@ class CommunityHeaderView: UIView {
         addSubview(moveImage)
         addSubview(titleLabel)
         addSubview(descriptionLabel)
-        addSubview(segmentedControl)
-        addSubview(segmentIndicator)
+        addSubview(segmentedControlView)
         addSubview(followButton)
         addSubview(newPostButton)
         addSubview(countStackView)
@@ -90,13 +84,12 @@ class CommunityHeaderView: UIView {
         imageView.constrain(top: topAnchor, leading: leadingAnchor, trailing: trailingAnchor, height: 175)
         moveImage.constrain(top: topAnchor, trailing: trailingAnchor, paddingTop: padding, paddingTrailing: -padding, width: 30, height: 30)
         titleLabel.constrain(top: imageView.bottomAnchor, leading: leadingAnchor, paddingTop: 10, paddingLeading: padding)
-        newPostButton.constrain(centerY: titleLabel.centerYAnchor, leading: titleLabel.trailingAnchor, trailing: trailingAnchor, paddingLeading: padding, paddingTrailing: -padding, width: 22, height: 22)
+        newPostButton.constrain(centerY: titleLabel.centerYAnchor, leading: titleLabel.trailingAnchor, trailing: trailingAnchor, paddingLeading: padding, paddingTrailing: -padding, width: 20, height: 20)
         descriptionLabel.constrain(top: titleLabel.bottomAnchor, leading: titleLabel.leadingAnchor, trailing: trailingAnchor, paddingTop: 5, paddingTrailing: -padding)
         countStackView.constrain(top: descriptionLabel.bottomAnchor, leading: titleLabel.leadingAnchor, paddingTop: 10)
         followButton.constrain(bottom: countStackView.bottomAnchor, trailing: descriptionLabel.trailingAnchor)
-        segmentedControl.constrain(top: countStackView.bottomAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor, paddingTop: 20, paddingBottom: -10, height: 30)
+        segmentedControlView.constrain(top: countStackView.bottomAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor, paddingTop: 20, paddingBottom: -10, height: 30)
         
-        segmentedControl.addTarget(self, action: #selector(segmentedControlChanged), for: .valueChanged)
         followButton.addTarget(self, action: #selector(followButtonTapped), for: .touchUpInside)
         newPostButton.addTarget(self, action: #selector(newPostButtonTapped), for: .touchUpInside)
         
@@ -105,6 +98,7 @@ class CommunityHeaderView: UIView {
             configuration.titlePadding = 5
             configuration.buttonSize = .small
             configuration.cornerStyle = .capsule
+            configuration.baseBackgroundColor = .imagineColor
             
             followButton.configuration = configuration
         } else {
@@ -130,53 +124,6 @@ class CommunityHeaderView: UIView {
         
         self.followerCountLabel.text = "Follower: \(community.followerCount)"
         self.postCountLabel.text = "Posts: \(community.postCount)"
-    }
-    
-    func setSegmentedIndicatorView() {
-        let image = UIImage()
-        segmentedControl.setBackgroundImage(image, for: .normal, barMetrics: .default)
-        segmentedControl.setDividerImage(image, forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
-        
-        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 15)!, NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel], for: .normal)
-        segmentedControl.setTitleTextAttributes([NSAttributedString.Key.font : UIFont(name: "IBMPlexSans-Medium", size: 16)!, NSAttributedString.Key.foregroundColor: UIColor.label], for: .selected)
-        
-        segmentIndicator.bottomAnchor.constraint(equalTo: segmentedControl.bottomAnchor, constant: 3).isActive = true
-        segmentIndicator.heightAnchor.constraint(equalToConstant: 2).isActive = true
-        
-        guard let title = segmentedControl.titleForSegment(at: 0) else {
-            return }
-        
-        let width: CGFloat = CGFloat(15 + title.count * 8)
-
-        segmentIndicatorWidthConstraint = segmentIndicator.widthAnchor.constraint(equalToConstant: width)
-        segmentIndicatorWidthConstraint!.isActive = true
-        segmentIndicatorCenterXConstraint = segmentIndicator.centerXAnchor.constraint(equalToSystemSpacingAfter: segmentedControl.centerXAnchor, multiplier: CGFloat(1 / segmentedControl.numberOfSegments))
-        segmentIndicatorCenterXConstraint!.isActive = true
-    }
-
-    @objc func segmentedControlChanged() {
-        let index = segmentedControl.selectedSegmentIndex
-        
-        if index > lastIndex {
-            delegate?.segmentedControlTapped(index: index, direction: .forward)
-        } else {
-            delegate?.segmentedControlTapped(index: index, direction: .reverse)
-        }
-        
-        let numberOfSegments = CGFloat(segmentedControl.numberOfSegments)
-        let selectedIndex = CGFloat(index)
-        let titlecount = CGFloat((segmentedControl.titleForSegment(at: Int(selectedIndex))!.count))
-        let newX = CGFloat(1 / (numberOfSegments / CGFloat(3.0 + CGFloat(selectedIndex - 1.0) * 2.0)))
-        let newWidth = CGFloat(15 + titlecount * 8)
-        
-        self.segmentIndicatorWidthConstraint!.constant = newWidth
-        self.segmentIndicatorCenterXConstraint = self.segmentIndicatorCenterXConstraint!.setMultiplier(multiplier: newX)
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.layoutIfNeeded()
-        }) { (_) in
-            self.lastIndex = index
-        }
     }
     
     @objc func followButtonTapped() {
@@ -268,5 +215,11 @@ class CommunityHeaderView: UIView {
                 ])
             }
         }
+    }
+}
+
+extension CommunityHeaderView: BaseSegmentControlDelegate {
+    func segmentChanged(to index: Int, direction: UIPageViewController.NavigationDirection) {
+        delegate?.segmentedControlTapped(index: index, direction: direction)
     }
 }

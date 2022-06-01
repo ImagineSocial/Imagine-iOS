@@ -26,7 +26,7 @@ class ProposalForOptionalInformation {
 class AddOnCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 
     //MARK:- Variables
-    private let db = Firestore.firestore()
+    private let db = FirestoreRequest.shared.db
     private let horizontalScrollCellIdentifier = "AddOnHorizontalScrollCell"
     private let singleCommunityCellIdentifier = "SingleCommunityCollectionViewCell"
     private let proposalCellIdentifier = "AddOnProposalCell"
@@ -255,10 +255,10 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         
         if segue.identifier == "newPostSegue" {
             if let navCon = segue.destination as? UINavigationController {
-                if let newPostVC = navCon.topViewController as? NewPostViewController {
+                if let newPostVC = navCon.topViewController as? NewPostVC {
                     if let addOn = sender as? AddOn {
                         newPostVC.comingFromAddOnVC = true
-                        newPostVC.selectedFact(fact: addOn.fact, isViewAlreadyLoaded: false)
+                        newPostVC.selectedFact(community: addOn.fact, isViewAlreadyLoaded: false)
                         newPostVC.addItemDelegate = self
                         newPostVC.addOn = addOn
                     }

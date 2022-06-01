@@ -13,5 +13,10 @@ class FirestoreManager {
     
     let db = Firestore.firestore()
     
+    static let shared = FirestoreManager()
+    
+    init() {
+        
+    }
     
 }

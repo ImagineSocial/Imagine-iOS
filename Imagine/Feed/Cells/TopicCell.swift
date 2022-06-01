@@ -35,7 +35,7 @@ class TopicCell: UITableViewCell {
     
     //MARK: - Variables
     
-    private let db = Firestore.firestore()
+    private let db = FirestoreRequest.shared.db
     private let cornerRadius: CGFloat = 8
     
     var delegate: TopTopicCellDelegate?
