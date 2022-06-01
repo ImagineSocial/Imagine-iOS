@@ -14,7 +14,7 @@ import FirebaseFirestore
 //Get Last Message!
 class ChatsTableViewController: UITableViewController {
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     var chatsList = [Chat]()
     var currentUserUid:String?
     var loggedIn = false
@@ -27,11 +27,7 @@ class ChatsTableViewController: UITableViewController {
         
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.isTranslucent = false
-        if #available(iOS 13.0, *) {
-            self.navigationController?.view.backgroundColor = .systemBackground
-        } else {
-            self.navigationController?.view.backgroundColor = .white
-        }
+        self.navigationController?.view.backgroundColor = .systemBackground
         
         tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: "NibBlankCell")
         
@@ -92,7 +88,8 @@ class ChatsTableViewController: UITableViewController {
                             
                             let chat = Chat()
                             chat.documentID = document.documentID
-                            chat.participant.userUID = participant
+                            chat.participant = User(userID: participant)
+                            
                             if let lastMessageID = documentData["lastReadMessage"] as? String {
                                 chat.lastMessage.uid = lastMessageID
                             }
@@ -189,7 +186,7 @@ class ChatsTableViewController: UITableViewController {
     
     func getLastMessages() {
         for chat in chatsList {
-            let messageRef = db.collection("Chats").document(chat.documentID).collection("threads").order(by: "sentAt", descending: true).limit(to: 1)//I guess
+            let messageRef = db.collection("Chats").document(chat.documentID).collection("threads").order(by: "sentAt", descending: true).limit(to: 1) //I guess
             
             messageRef.getDocuments { (snapshot, err) in
                 if let error = err {
@@ -217,7 +214,8 @@ class ChatsTableViewController: UITableViewController {
                 }
             }
         }
-        let postHelper = FirestoreRequest()
+        let postHelper = FirestoreRequest.shared
+        
         //Get Friends of the current User to check when they load the user of the chats
         postHelper.getTheUsersFriend {friends in
             self.loadUsers(friends: friends)
@@ -250,33 +248,16 @@ class ChatsTableViewController: UITableViewController {
     func loadUsers(friends: [String]) {
         
         for chat in chatsList {
-            // User Daten raussuchen
-            let userRef = db.collection("Users").document(chat.participant.userUID)
+            guard let participant = chat.participant else {
+                continue
+            }
             
-            userRef.getDocument(completion: { (document, err) in
-                if let document = document {
-                    if let docData = document.data() {
-                        
-                        if friends.contains(chat.participant.userUID) {
-                            // Is a friend of the current User
-                            let name = docData["name"] as? String ?? ""
-                            let surname = docData["surname"] as? String ?? ""
-                            
-                            chat.participant.displayName = "\(name) \(surname)"
-                        } else {
-                            chat.participant.displayName = docData["name"] as? String ?? ""
-                        }
-                        chat.participant.imageURL = docData["profilePictureURL"] as? String ?? ""
-                        
-                        self.tableView.reloadData()
-                        self.view.activityStopAnimating()
-                    }
-                }
-                if err != nil {
-                    print("Wir haben einen Error beim User: \(err?.localizedDescription ?? "No error")")
-                }
-            })
+            participant.getUser(isAFriend: friends.contains(participant.userID)) { user in
+                self.tableView.reloadData()
+                self.view.activityStopAnimating()
+            }
         }
+        
         tableView.reloadData()
     }
     
@@ -330,25 +311,28 @@ class ChatsTableViewController: UITableViewController {
                     cell.unreadMessageView.isHidden = true
                 }
                 
-                cell.nameLabel.text = chat.participant.displayName
-                
-                if let currentUserUid = currentUserUid {
-                    if currentUserUid == chat.lastMessage.sender {  // If you are the sender of the last message
-                        cell.lastMessage.text = "Du: \(chat.lastMessage.message)"
-                    } else {
-                        cell.lastMessage.text = "\(chat.participant.displayName): \(chat.lastMessage.message)"
-                    }
-                }
-                
                 cell.lastMessageDateLabel.text = chat.lastMessage.sentAt
                 
                 cell.profilePictureImageView.layer.cornerRadius = cell.profilePictureImageView.frame.width/2
                 cell.profilePictureImageView.layoutIfNeeded()
                 
-                if let url = URL(string: chat.participant.imageURL) {
-                    cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
-                } else {
-                    cell.profilePictureImageView.image = UIImage(named: "default-user" )
+                if let participant = chat.participant {
+                    
+                    cell.nameLabel.text = participant.displayName
+                    
+                    if let currentUserUid = currentUserUid {
+                        if currentUserUid == chat.lastMessage.sender {  // If you are the sender of the last message
+                            cell.lastMessage.text = "Du: \(chat.lastMessage.message)"
+                        } else {
+                            cell.lastMessage.text = "\(participant.displayName): \(chat.lastMessage.message)"
+                        }
+                    }
+                    
+                    if let urlString = participant.imageURL, let url = URL(string: urlString) {
+                        cell.profilePictureImageView.sd_setImage(with: url, completed: nil)
+                    } else {
+                        cell.profilePictureImageView.image = UIImage(named: "default-user" )
+                    }
                 }
                 
                 return cell
@@ -435,7 +419,7 @@ class ChatCell : UITableViewCell {
 //MARK: - Chat Class Declaration
 
 class Chat {
-    var participant = User()
+    var participant: User?
     var documentID = ""
     var unreadMessages = 0
     var lastMessage = Message()

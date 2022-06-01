@@ -27,7 +27,7 @@ class InfoScreen: NSObject {
     var voteCampaignVC: CampaignVoteCollectionViewController?
     
     func showInfoScreen() {
-        if let window = UIApplication.shared.keyWindow {
+        if let window = UIApplication.keyWindow() {
             
             blackView.backgroundColor = UIColor(white: 0, alpha: 0.5)
             
@@ -55,7 +55,7 @@ class InfoScreen: NSObject {
         UIView.animate(withDuration: 0.5, animations: {
             self.blackView.alpha = 0
             
-            if let window = UIApplication.shared.keyWindow {
+            if let window = UIApplication.keyWindow() {
                 self.imageView.frame = CGRect(x: 10, y: window.frame.height, width: self.imageView.frame.width, height: self.imageView.frame.height)
             }
         }, completion: { (_) in

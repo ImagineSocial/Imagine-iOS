@@ -115,10 +115,10 @@ extension AppDelegate : MessagingDelegate {
             if let currentToken = UserDefaults.standard.value(forKey: "fcmToken") as? String {
                 if currentToken != token {
                     //save Token in Database
-                    HandyHelper().saveFCMToken(token: token)
+                    HandyHelper.shared.saveFCMToken(token: token)
                 }
             } else {    // No token set in userdefaults yet
-                HandyHelper().saveFCMToken(token: token)
+                HandyHelper.shared.saveFCMToken(token: token)
             }
         } else {
             print("Couldnt get the fcmToken")

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSans-Medium.ttf">
+            <string>IBMPlexSans-Medium</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionReusableView opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="TopicCollectionFooter" id="8lu-Ja-pWg" customClass="TopicCollectionFooter" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="350" height="85"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <stackView contentMode="scaleToFill" distribution="fillEqually" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="zYX-ED-dvh">
+                    <rect key="frame" x="16" y="5" width="318" height="54"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PIS-PC-z2c" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="149" height="54"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="14"/>
+                            <state key="normal" title="Create">
+                                <color key="titleColor" systemColor="labelColor"/>
+                            </state>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="xibLocKey" value="topicCollectionFooter_add"/>
+                            </userDefinedRuntimeAttributes>
+                            <connections>
+                                <action selector="addTopicTapped:" destination="8lu-Ja-pWg" eventType="touchUpInside" id="l8z-7r-gIu"/>
+                            </connections>
+                        </button>
+                        <button clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bl2-nH-0sZ" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                            <rect key="frame" x="169" y="0.0" width="149" height="54"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="14"/>
+                            <state key="normal" title="Show all">
+                                <color key="titleColor" systemColor="labelColor"/>
+                            </state>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="xibLocKey" value="topicCollectionFooter_showAll"/>
+                            </userDefinedRuntimeAttributes>
+                            <connections>
+                                <action selector="showAllTapped:" destination="8lu-Ja-pWg" eventType="touchUpInside" id="ryf-RW-kAL"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                </stackView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ei3-nG-IZ2" customClass="HairlineView" customModule="Imagine" customModuleProvider="target">
+                    <rect key="frame" x="20" y="79" width="310" height="1"/>
+                    <color key="backgroundColor" systemColor="separatorColor"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="RiM-2n-Pwl"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="oPy-Dx-kab"/>
+            <constraints>
+                <constraint firstItem="zYX-ED-dvh" firstAttribute="top" secondItem="8lu-Ja-pWg" secondAttribute="top" constant="5" id="3Uc-qE-jd6"/>
+                <constraint firstItem="ei3-nG-IZ2" firstAttribute="leading" secondItem="8lu-Ja-pWg" secondAttribute="leading" constant="20" id="7Yj-gF-D7l"/>
+                <constraint firstAttribute="trailing" secondItem="ei3-nG-IZ2" secondAttribute="trailing" constant="20" id="BeO-nd-Scs"/>
+                <constraint firstItem="oPy-Dx-kab" firstAttribute="trailing" secondItem="zYX-ED-dvh" secondAttribute="trailing" constant="16" id="PAr-kp-liJ"/>
+                <constraint firstAttribute="bottom" secondItem="ei3-nG-IZ2" secondAttribute="bottom" constant="5" id="WPD-jo-Ggm"/>
+                <constraint firstItem="ei3-nG-IZ2" firstAttribute="top" secondItem="zYX-ED-dvh" secondAttribute="bottom" constant="20" id="laL-Gx-SaB"/>
+                <constraint firstItem="zYX-ED-dvh" firstAttribute="leading" secondItem="oPy-Dx-kab" secondAttribute="leading" constant="16" id="sLs-Qo-WEX"/>
+            </constraints>
+            <connections>
+                <outlet property="createButton" destination="PIS-PC-z2c" id="Yc0-5o-ysV"/>
+                <outlet property="showAllButton" destination="bl2-nH-0sZ" id="VOl-2z-Idk"/>
+            </connections>
+            <point key="canvasLocation" x="82.608695652173921" y="92.745535714285708"/>
+        </collectionReusableView>
+    </objects>
+    <resources>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="separatorColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

@@ -35,9 +35,9 @@ class ReportViewController: UIViewController {
     var repost : RepostType = .repost
     var reportComment = false
     
-    let db = Firestore.firestore()
+    let db = FirestoreRequest.shared.db
     
-    let handyHelper = HandyHelper()
+    let handyHelper = HandyHelper.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,11 +55,7 @@ class ReportViewController: UIViewController {
                 if alreadySaved {
                     self.savePostButtonIcon.tintColor = Constants.green
                 } else {
-                    if #available(iOS 13.0, *) {
-                        self.savePostButtonIcon.tintColor = .label
-                    } else {
-                        self.savePostButtonIcon.tintColor = .black
-                    }
+                    self.savePostButtonIcon.tintColor = .label
                 }
             }
         }
@@ -80,11 +76,7 @@ class ReportViewController: UIViewController {
     let deleteView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
-        } else {
-            view.backgroundColor = .white
-        }
+        view.backgroundColor = .systemBackground
         
         return view
     }()
@@ -93,29 +85,16 @@ class ReportViewController: UIViewController {
         let imageView = UIImageView(image: UIImage(named: "trash"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
-        if #available(iOS 13.0, *) {
-            imageView.tintColor = .label
-        } else {
-            imageView.tintColor = .black
-        }
+        imageView.tintColor = .label
         
         return imageView
     }()
     
     let trashButton:DesignableButton = {
-        let button = DesignableButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
+        let button = DesignableButton(title: NSLocalizedString("delete_post_label", comment: "delete post"), font: UIFont(name: "IBMPlexSans", size: 15))
+
+        button.titleLabel?.textAlignment = .left
         button.addTarget(self, action: #selector(showAlertForDeleteOption), for: .touchUpInside)
-        button.setTitle(NSLocalizedString("delete_post_label", comment: "delete post"), for: .normal)
-        if #available(iOS 13.0, *) {
-            button.setTitleColor(.label, for: .normal)
-            button.backgroundColor = .systemBackground
-        } else {
-            button.setTitleColor(.black, for: .normal)
-            button.backgroundColor = .white
-        }
-        button.titleLabel?.font = UIFont(name: "IBMPlexSans", size: 15)
-        button.contentHorizontalAlignment = .left
         
         return button
     }()
@@ -139,14 +118,15 @@ class ReportViewController: UIViewController {
     }
     
     func checkIfItsYourPost() {
-        if let user = Auth.auth().currentUser {
-            if let post = post {
-                if user.uid == Constants.userIDs.uidMalte || user.uid == Constants.userIDs.uidSophie || user.uid == Constants.userIDs.uidYvonne {
-                    if post.originalPosterUID == Constants.userIDs.FrankMeindlID || post.originalPosterUID == Constants.userIDs.MarkusRiesID || post.originalPosterUID == Constants.userIDs.AnnaNeuhausID || post.originalPosterUID == Constants.userIDs.LaraVoglerID || post.originalPosterUID == Constants.userIDs.LenaMasgarID  {
+        if let currentUser = Auth.auth().currentUser {
+            if let post = post, let user = post.user {
+                if currentUser.uid == Constants.userIDs.uidMalte {
+                    if user.userID == Constants.userIDs.FrankMeindlID || user.userID == Constants.userIDs.MarkusRiesID || user.userID == Constants.userIDs.AnnaNeuhausID || user.userID == Constants.userIDs.LaraVoglerID || user.userID == Constants.userIDs.LenaMasgarID  {
                         insertDeleteView()
                     }
                 }
-                if post.originalPosterUID == user.uid {
+                
+                if user.userID == currentUser.uid {
                     insertDeleteView()
                 }
             }
@@ -204,7 +184,7 @@ class ReportViewController: UIViewController {
     }
     
     func deletePost() {
-        guard let post = post else { return }
+        guard let post = post, let user = post.user else { return }
         
         let postRef: DocumentReference?
         var collectionRef: CollectionReference!
@@ -256,7 +236,7 @@ class ReportViewController: UIViewController {
                         } else {
                             print("Picture Deleted")
                             
-                            let userPostRef = self.db.collection("Users").document(post.originalPosterUID).collection("posts").document(post.documentID)
+                            let userPostRef = self.db.collection("Users").document(user.userID).collection("posts").document(post.documentID)
                             
                             userPostRef.delete { (err) in
                                 if let error = err {
@@ -282,7 +262,7 @@ class ReportViewController: UIViewController {
                 } else {
                     print("Picture Deleted")
                     
-                    let userPostRef = self.db.collection("Users").document(post.originalPosterUID).collection("posts").document(post.documentID)
+                    let userPostRef = self.db.collection("Users").document(user.userID).collection("posts").document(post.documentID)
                     
                     userPostRef.delete { (err) in
                         if let error = err {
@@ -295,7 +275,7 @@ class ReportViewController: UIViewController {
                 }
             }
         default:
-            let userPostRef = db.collection("Users").document(post.originalPosterUID).collection("posts").document(post.documentID)
+            let userPostRef = db.collection("Users").document(user.userID).collection("posts").document(post.documentID)
             
             userPostRef.delete { (err) in
                 if let error = err {

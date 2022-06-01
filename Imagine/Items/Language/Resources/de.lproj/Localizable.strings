@@ -1,0 +1,679 @@
+/*
+  Localizable.strings
+  Imagine
+
+  Created by Malte Schoppe on 08.06.19.
+  Copyright © 2019 Malte Schoppe. All rights reserved.
+*/
+
+//General
+"I agree" = "Ich stimme zu";
+"cancel" = "Abbrechen";
+"error_title" = "Es ist ein Fehler aufgetreten";
+"title:" = "Titel:";
+"description:" = "Beschreibung:";
+"yes" = "Ja";
+"no" = "Nein";
+"rather_not" = "Doch nicht!";
+"next" = "Weiter";
+"back" = "Zurück";
+"thanks" = "Vielen Dank!";
+"send" = "Abschicken";
+"easy" = "Leicht";
+"medium" = "Mittel";
+"strong" = "Stark";
+"i_am_sure" = "Ich bin mir sicher!";
+"thanks_for_support" = "Danke für deine Unterstützung!";
+"done" = "Fertig!";
+"not_sure" = "Ich bin mir sicher!";
+"thanks" = "Vielen Dank";
+"delete" = "Löschen";
+"community" = "Community";
+"communities" = "Communities";
+"topic" = "Thema";
+"topics" = "Themen";
+"discussion" = "Diskussion";
+"discussions" = "Diskussionen";
+"yesterday" = "Gestern";
+
+
+
+//MeldeViewController
+"Opinion, not a fact" = "Persönliche Meinung";
+"Sensationalism" = "Sensationalismus";
+"Pretentious" = "Angeberisch";
+"Ignorant Thinking" = "Schwarz-Weiß-Denken";
+"Edited Content" = "Bearbeitete Inhalte";
+"Not listed" = "Andere";
+"Disrespectful" = "Respektlos";
+"Offensive" = "Beleidigend";
+"Harassment" = "Belästigung";
+
+"reportOption_insult" = "Beleidigung";
+"reportOption_racism" = "Rassismus";
+"reportOption_homophobia" = "Homophobie";
+"reportOption_violanceGlorification" = "Gewaltverherrlichung";
+"reportOption_suicideTrivialization" = "Verharmlosung von Suizid";
+"reportOption_religiousFreedom" = "Religionsfreiheit angegriffen";
+"reportOption_hateSpeech" = "Hassrede";
+
+"Violance Supporting" = "Gewaltunterstützend";
+"Belittlement of suicide" = "Verharmlosung von Suizid";
+"Disrespectful against religions" = "Inakzeptanz gegenüber Religionen";
+"Denying of facts" = "Fakten verneinen";
+"Conspiracy theory" = "Verschwörungstheorie";
+"Pornography" = "Pornografie";
+"Pedophilia" = "Pädophilie";
+"Presentation of violance" = "Gewaltdarstellung";
+"crime" = "Straftat";
+"animal_cruelty" = "Tierquälerei";
+"misinformation" = "Fehlinformation";
+"misleading" = "Irreführender Inhalt";
+"delete_post_label" = "Post löschen";
+
+"report_reason_description" = "Der Grund für dein Melden: %@";
+"report_markVisually_description" = "Ein Mitarbeiter wird deine Anfrage überprüfen. Sollte deine Meldung korrekt sein, wird dieser Beitrag optisch markiert. Zu einem späteren Zeitpunkt übernehmen die User demokratisch diese Überprüfung. Mehr Infos zu unserem Meldesystem findest du im Info-Bereich.\nVielen Dank für deine Mithilfe!";
+"report_ruleViolation/content_description" = "Ein Mitarbeiter wird deine Anfrage überprüfen. Sollte deine Meldung korrekt sein, wird dieser Beitrag gelöscht und der User ermahnt, bzw. blockiert. Zu einem späteren Zeitpunkt übernehmen die User demokratisch diese Überprüfung. Mehr Infos zu unserem Meldesystem findest du im Info-Bereich.\nVielen Dank für deine Mithilfe!";
+
+//Date Format
+
+"oneMonthAgo" = "Vor einem Monat";
+"oneYearAgo" = "Vor einem Jahr";
+"%d days ago" = "Vor %d Tagen";
+"%d hours ago" = "Vor %d Stunden";
+"%d months ago" = "Vor %d Monaten";
+"%d years ago" = "Vor %d Jahren";
+"few_moments_ago" = "Vor ein paar Minuten";
+
+//SignUp
+
+"enter_first_name" = "Schön, dass du hier bist! Wie lautet dein Vorname?";
+"enter_second_name" = "Freut mich dich kennenzulernen %@. Wie ist dein Nachname?";
+"enter_email" = "Wie ist deine Email-Adresse?";
+"enter password" = "Was soll dein Passwort sein?";
+"password must be safe" = "Das Passwort muss mindestens 6 Zeichen haben, und schon ein bisschen sicher sein!";
+"approve apple rules" = "Stimmst du den Apple Nutzungsbedingungen zu und lädst keine unangebrachten Inhalte hoch?";
+"approve GDPR rules" = "Mit der Registrierung akzeptierst du unsere Datenschutzerklärung und damit die Speicherung und Bearbeitung der eingegebenen Daten nach DSGVO-Vorgaben. Okay?";
+"approve_eula_rules" = "Mit der Registrierung stimmst du unserem Endbenutzer-Lizenzvertrag (EULA) zu, die besagt, dass du keine unangebrachten Inhalte hochlädst und respektvoll mit deinen Mitmenschen umgehst.";
+"ready to go" = "Jetzt kannst du loslegen! Schau dich um und vergiss nicht deine E-Mail-Adresse zu bestätigen🙏 (vielleicht im Spam Ordner)";
+"welcome to imagine" = "Herzlich Willkommen bei Imagine. Zu unseren Prinzipien gehören eine respektvolle und positive Stimmung & Respekt gegenüber anderen Meinungen und Ansichten.";
+"need your help" = "Zur Sicherstellung dieser Prinzipien benötigen wir eure Hilfe. Verstöße können bei uns gemeldet werden und werden schnellstmöglich überprüft.";
+"invalid email" = "Die angegebene Email-Adresse scheint nicht korrekt zu sein. Gib sie bitte erneut ein:";
+"email already in use" = "Die Email-Adresse wird bereits bei uns verwendet. Bitte nutze eine andere:";
+"signup_error" = "Irgendwas ist hier kaputt, versuch es bitte später nochmal!";
+"signup_error_repeat_password" = "Deine beiden Passwörter stimmen nicht überein. Versuch es bitte noch einmal:";
+"signup_error_weak_password" = "Das Passwort muss mindestens 6 Zeichen haben, und schon ein bisschen sicher sein!";
+
+"cancel_signup_title" = "Anmeldung abbrechen?";
+"cancel_signup_message" = "Möchtest du die Anmeldung abbrechen? Die aktuellen Eingaben gehen verloren.";
+"cancel_stay_here" = "Hier bleiben";
+
+"go_to_gdpr" = "Zur Vereinbarung";
+"go_to_imagine" = "Zu Imagine";
+
+//SignUp Placeholder
+"name_placeholder" = "Dein gewählter Vorname wird auf deinem Profil & in deinen Beiträgen für \"Fremde\" sichtbar sein";
+"surname_placeholder" = "Dein Nachname wird nur für deine Freunde auf Imagine sichtbar sein" ;
+"name_example_placeholder" = "Max"; //John
+"surname_example_placeholder" = "Mustermann";//Doe
+"email_example_placeholder" = "mustermann@gmail.com";//JohnDoe@gmail.com
+"password_placeholder" = "Passwort";
+"repeat_password_placeholder" = "Passwort wiederholen";
+
+//Login
+"login_password" = "Nun noch dein Kennwort und wir können loslegen!";
+"login_error_email" = "Deine eingegebene Email-Adresse ist nicht korrekt";
+"login_error_password" = "Dein Passwort ist nicht korrekt, versuche es erneut:";
+"login_forgot_password" = "Gib deine EmailAdresse ein, damit wir dir eine Mail zum zurücksetzen deines Passwortes senden können.";
+
+"forgot_password" = "Passwort vergessen";
+"reset_password_title" = "Die E-Mail wurde gesendet";
+"reset_password_message" = "Schau in dein Postfach, ändere dein Passwort und versuche es erneut. Bis gleich!";
+
+"login_verify_email" = "Deine Email Adresse wurde noch nicht verifiziert. Sollen wir dir erneut eine Bestätigungs Email an %@ senden?";
+"verify_email_send_again" = "Der Link wurde verschickt.";
+
+//Vote
+"consent: %d" = "Zustimmen: %d";
+"doubt: %d" = "Zweifel: %d";
+
+
+
+"back up" = "Nach oben";
+"BSImagePicker.Done" = "Fertig";
+
+
+//Feed VC
+"tap_blue_owen_title" = "Schau dir mal an was wir aus dem Netzwerk so alles machen könnten...";
+"tap_blue_owen_message" = "Hast du schon auf den blauen Owen ↑ geklickt?";
+"accept_cookies_title" = "Wir haben 'Cookies' bei Imagine";
+"accept_cookies_message" = "Gemäß unseren Datenschutzrichtlinien möchten wir damit herausfinden, wie die User unsere App nutzen und welche Features beliebt sind. Anonymisiert natürlich! Du kannst die Einstellung auch jederzeit ändern.";
+"to_gdpr" = "Zu den Datenschutzrichtlinien";
+"accept_cookies" = "Ich akzeptiere Cookies";
+"no_cookies" = "Keine Cookies";
+
+//NewPost
+"newPost_title_label_text" = "Titel:";
+"decriptionLabelText" = "Beschreibung:";
+"newPost_camera_error_text" = "Es scheint, dass deine Einstellungen uns den Zugriff auf deine Kamera untersagen. Du kannst das wie folgt ändern:\n\n1. Schließe die App.\n\n2. Öffne die Einstellungen.\n\n3. Scroll nach unten und wähle Imagine aus.\n\n4. Stell die Kamera ein.\n\n5. Öffne die App und versuche es erneut.";
+"postLinkTipViewText" = "Teile deine Links bei Imagine mit verschiedenen Darstellungsformen:\n\nNormale Websiten werden mit einer Preview und deinem gewählten Titel angezeigt. Teilst du ein YouTube Video wird dieses im bekannten YouTube Format präsentiert. \nHat dein Link die Endung \".mp4\", wird das Video direkt im Feed abgespielt.\nTeilst du einen Songwhip.com Link, wird die geteilte Musik für andere zugänglicher, durch das schnelle Auswählen eines Streamingdienstes.\n\nHast du weitere Ideen für besondere Formate, wie z.B. Netflix oder IMDB, stelle deine Idee im Imagine Tab den anderen Usern vor!";
+"pictureLabelText" = "Bild:";
+"markPostButtonText" = "Post Markieren";
+"opinion" = "Meinung";
+"sansational" = "Sensation";
+"edited" = "Bearbeitet";
+"post_anonymous_label" = "Anonym posten";
+"link_fact_first_open_tip_view_text" = "Bei Imagine kann man einen Beitrag mit einer passenden Community verlinken. Dein Beitrag wird dadurch im Home-Feed und auch in der verlinkten Community angezeigt.\n\nMöchtest du deinen Beitrag ausschließlich in einer Community teilen, kannst du dies nach der Auswahl der Community angeben.";
+"how_many_pics_alert_header" = "Wie viele Bilder willst du posten?";
+"how_many_pics_alert_message" = "Wähle aus, ob du ein einziges Bild, oder eine Reihe von bis zu 3 Bildern hochladen möchtest";
+"how_many_just_one" = "Nur ein Bild";
+"how_many_three" = "Mehrere Bilder";
+"linked_fact_tip_view_text" = "Standardmäßig postest du im Imagine-Feed (Der Haupt-Feed, nachdem du die App öffnest). \nPoste hier alles, was du mit der Welt teilen möchtest.\n\nWählst du eine Community aus, kannst du entscheiden, ob du deinen Beitrag im Imagine-Feed teilst, oder nur in der Community. Die Follower einer Community sehen dann deinen Beitrag (ganz bald jedenfalls) in ihrem angepassten Imagine-Feed.\nPoste in der Community also alles, was sehr themenspezifisch oder nicht für die breite Masse zugänglich ist.";
+"anonymous_name_alert_title" = "Anonymer Name";
+"anonymous_name_alert_message" = "Gib an, welcher Name bei diesem anonymen Post angezeigt werden soll. Der Name darf keine reale Person sein.";
+"anonymous_name_placeholder" = "Max Mustermann";
+"missing_info_alert_link" = "Gib bitte einen Link ein.";
+"missing_info_alert_title" = "Gib bitte einen Titel ein.";
+"error_uploading_multiple_pictures_message" = "Es ist ein Fehler bei der Auswahl der Bilder aufgetreten. Womöglich ist/sind ein oder mehrere Bilder in der Cloud gespeichert. In diesem Falle wähle das Bild in der Fotos-App aus und zoome ein wenig heran, unten rechts erscheint dann ein kleiner Ladekreis. Mache auf diesen Fehler aufmerksam indem du einen Bug-Report im Imagine-Bereich unter \"Mithilfe\" einreichst, dann wissen wir, das jemand auf dieses Problem gestoßen ist.";
+"error_choosing_multiple_pictures_message" = "Wähle bitte weitere Bilder aus oder wähle die Option \"Nur ein Bild\"";
+"error_choosing_picture" = "Du hast kein Bild hochgeladen. Möchtest du kein Bild hochladen, wähle bitte eine andere Post-Option aus";
+"error_link_not_valid" = "Unser Programm sagt uns, dass die URL nicht korrekt ist. Bitte überprüfe den Link";
+"error_no_link" = "Du hast kein Link angegeben. Möchtest du kein Link posten, wähle bitte eine andere Post-Option aus";
+"error_no_picture" = "Du hast kein Bild hochgeladen. Möchtest du kein Bild hochladen, wähle bitte eine andere Post-Option aus";
+"error_gif_wrong_ending" = "Im Moment sind nur Links mit Endung '.mp4' möglich. Die Endung .GIF ist veraltet, wird aus Speichergründen nicht mehr benutzt. Sag uns aber gerne bescheid, wie du deine GIFs verbreiten möchtest!";
+"message_after_done_posting" = "Danke für deine Weisheiten!";
+"just_name_info_message" = "Beim posten wird nur dein Vorname im Feed sichtbar sein!";
+"link_fact_destination_alert_header" = "Wo möchtest du posten?";
+"link_fact_destination_alert_message" = "Möchtest du den Beitrag mit allen im Hauptfeed teilen, oder nur in der Community posten?";
+"link_fact_destination_everybody" = "Mit allen teilen";
+"link_fact_destination_community" = "Mit der Community teilen";
+"location_label_text" = "Location:";
+"distribution_label_text" = "Ziel:";
+"distribution_button_text" = "Community verlinken";
+
+
+//PostViewController
+"error_translate_not_supported" = "Im Moment kann man leider nur Bild-Beiträge übersetzen. Reiche gerne einen Vorschlag für dieses Feature ein, damit wir wissen, dass die Nachfrage da ist. Vielen Dank für dein Verständnis!";
+
+//CommentDelegate
+"delete_comment_alert_title" = "Kommentar löschen?";
+"delete_comment_alert_message" = "Möchtest du das Kommentar wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.";
+
+//FactCollectionViewController
+"choose_topic_for_addOn_header" = "Wähle ein Thema aus:";
+"popular" = "Angesagt";
+"current_discussions" = "Diskussionen";
+"followed_communities" = "Deine Communities";
+"add_item_label" = "Neues Item hinzufügen";
+"add_item_alert_message" = "Möchtest du das Thema %@ zu dem AddOn hinzufügen?";
+"add_item_alert_title" = "Bist du dir sicher?";
+
+//SearchCollectionViewController
+"search_input_placeholder" = "Suche nach Beiträgen, Themen & Usern";
+"posts" = "Beiträge:";
+"search_input_header" = "Community-Beiträge:";
+
+//SettingViewController
+"push_alert_message" = "Push Benachrichtigungen aktiviert!";
+"delete_account_alert_message" = "Dein Account wird innerhalb von 48h gelöscht. Du kannst dich jetzt ausloggen, wir machen den Rest.";
+
+//BaseFeedTableViewController
+"one_moment_placeholder" = "Moment";
+"date_descending" = "Datum";
+"thanks_descending" = "Danke";
+
+//ReportABugViewController
+"more_information_alert" = "Ein bisschen genauer bitte";
+"thanks_alert_message" = "Nett, dass du uns unterstützt! Wir versuchen das Netzwerk durchgehend zu verbessern.";
+"reportABug_header" = "Jede Art der Rückmeldung ist hilfreich für uns!";
+"reportABug_description" = "Hat das Netzwerk potential? Was gefällt dir gut? Was muss deiner Meinung nach ausgebaut werden? \n\nWir sind über jede Rückmeldung dankbar denn wir stehen noch ganz am Anfang!";
+
+//VoteViewController
+"time_till_completion_in_month" = "%d Monate";
+"already_voted_message" = "Jeder User hat nur eine Stimme für jede Abstimmung!";
+"already_voted_title" = "Du hast bereits gewählt";
+"sure_to_vote_title" = "Bereit zum wählen?";
+"sure_to_vote_message" = "Du kannst nur einmal an einer Abstimmung teilnehmen und kannst deine Meinung im Nachhinein nicht ändern!";
+"vote_successfull_alert_message" = "Deine Stimme wurde angenommen.";
+
+//NewCampaignViewController
+"campaign_category_feature" = "Feature";
+"campaign_category_proposal" = "Vorschlag";
+"campaign_category_complaint" = "Beschwerde";
+"campaign_category_call" = "Aufruf";
+"campaign_category_change" = "Veränderung";
+"campaign_category_addOn" = "Community AddOn";
+"submit_successfull_alert_message" = "Danke, dass du hilfst die Seite zu einer besseren zu machen!";
+
+//CampaignViewController
+"thanks_for_vote_message" = "Deine Stimme wurde angenommen.";
+"sure_to_vote_title" = "Bereit zum wählen?";
+"sure_to_vote_message" = "Du hast nur eine Stimme und kannst deine Meinung im Nachhinein nicht ändern!";
+
+//Comment Delegates
+"delete_comment_alert_title" = "Kommentar löschen?";
+"delete_comment_alert_message" = "Möchtest du das Kommentar wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.";
+
+// Mark: - VoteCampaignCollectionViewController
+
+"proposal_header" = "Vorschläge";
+"recent_campaign_header" = "Aktuelle Kampagnen:";
+"votes_header" = "Votes";
+"recent_votes_header" = "Aktuelle Abstimmungen:";
+"proposalIntroDescription" = "Nehme aktiv an der Gestaltung teil:\n\nHast du eine Idee wie man das Netzwerk verbessern oder unsere Ziele erreichen kann, teile sie uns hier mit.\n\nSieh dir zudem die Vorschläge von Anderen an und stimme ab, was umgesetzt werden soll.";
+"proposalButtonText" = "Teile deine Idee";
+
+//Ordner CommunityViewController bis VisionVCs geskipped
+
+//ShowAllFactsCollectionViewController
+//"discussions" = "Diskussionen";
+
+//NewAddOnTableViewController
+"new_addOn_header_header" = "Füge einen Header hinzu.";
+"new_addOn_collection_header" = "Füge eine Kollektion mit Beiträgen und Themen hinzu.";
+"new_addOn_singleTopic_header" = "Verlinke ein aussagekräftiges Thema.";
+"new_addOn_QandA_header" = "Füge ein Frage/Antwort AddOn hinzu.";
+"new_addOn_youtube_playlist_header" = "Eine normale Kollektion mit einer eingebauten YouTube Playlist";
+"new_addOn_youtube_playlist_description" = "Eine Kollektion, bestimmt für YouTube Videos. Teile die Videos in diesem AddOn um die hinterlegte Playlist zu erweitern. So hat man übersichtlich und bequem alle Inhalte an einem Ort, zum abspeichern für später oder direkt zum gucken.";
+"new_addOn_playlist_header" = "Erstelle eine Musik Playlist";
+"new_addOn_playlist_description" = "Erstelle eine Wiedergabeliste aus geteilten Songs, die als Songwhip-Link hochgeladen wurden. Verschaffen dir einen klaren Überblick und wähle einzelne Lieder aus, um sie im Streaming-Dienst deiner Wahl zu öffnen.";
+
+"addOn_type_collection" = "Post & Themen Kollektion";
+"addOn_type_singleTopic" = "Präsentation einer Community";
+"addOn_type_QandA" = "Frage & Antwort Bereich";
+"addOn_type_playlist" = "Musik Playlist";
+
+//AddPostTableViewController
+"search_placeholder" = "Durchsuche Imagine";
+"optional_explanation_placeholder" = "Füge optional eine Beschreibung hinzu...";
+
+
+//SettingTableViewController
+"setting_community_header_text" = "Community-Einstellungen";
+"setting_community_addOn_as_start" = "Themen Ansicht als Startbildschirm";
+"setting_community_addOn_as_start_description" = "Wird deine Community besser von den Unterthemen repräsentiert, als von den Beiträgen, wähle diese Option aus.";
+"setting_user_header_text" = "Profil-Einstellungen";
+"setting_user_personal_bio" = "Steckbrief:";
+"setting_social_media_button_description" = "Gib einen Link zu deinen anderen Konten ein, um einen Button in deinem Profil zu erhalten. Die Beschreibung für die jeweiligen Profile is optional und tauchen erst nach einem Tap in deinem User-Profil auf. Weise so die Besucher auf deine anderen Social-Media Profile hin oder promote deine persönlichen Favoriten.";
+"setting_user_personal_info" = "Persönliche Angaben";
+"setting_user_personal_info_description" = "Mit der Altersangabe unterstützt du Imagine. Wir können diese Angaben nutzen, um unsere User besser zu verstehen und unsere kommenden Werbevorhaben zu optimieren. Das Alter wird nicht öffentlich angezeigt.\nDie Location sorgt für eine bessere Auswahl an Communities und passendere Werbung (später). Im Profil kann es ebenfalls angezeigt werden, um anderen zu zeigen, wo die Mituser herkommen.\nAlle Daten werden bei uns mit Vorsicht gehandhabt und nicht an dritte weitergegeben.";
+"setting_user_birthday" = "Geburtsjahr:";
+"setting_user_location_public" = "Ort in Profil anzeigen?";
+"setting_addOn_header_text" = "Themen-Einstellungen:";
+"setting_addOn_change_order" = "Arrangiere die Beiträge:";
+"setting_location_cell_text" = "Wähle einen Standort aus";
+
+//MapViewController
+"search_map_placeholder" = "Suche nach deinem Ort";
+
+//NewCommunityItemTableViewController
+"new_community_discussion_description" = "Das Thema wird in zwei Spalten dargestellt. Die Gegenüberstellung ermöglicht es sich mit dem Thema gründlich auseinanderzusetzen. \nDie Auswahl der Überschriften der Spalten kannst du hier auswählen:";
+"new_community_topic_description" = "Das Thema wird als Sammlung aller verlinkten Beiträge zu diesem Thema dargestellt.";
+
+//RepostViewController übersprungen!
+
+//AddOnCollectionViewController
+"proposal_header_text" = "Erweitere die Community";
+"proposal_header_description" = "Hier findest du verschiedene Erweiterungen, um eine Community besser zu repräsentieren und zusätzliche Informationen übersichtlich darzustellen.";
+"proposal_me_active_header" = "Was kann ich tun?";
+"proposal_me_active_description" = "Wie kann ein Jeder das Problem der Community bekämpfen oder verbessern?";
+"proposal_top_news_description" = "Übersichtlich die neuesten Nachrichten zu der Community an einem Ort finden.";
+"proposal_beginners_guide_description" = "Erste Schritte für interessierte Neulinge die tiefer in dieses Thema eintauchen möchten.";
+"addOn_creation_successfull" = "Das AddOn wurde erweitert. Vielen Dank für deinen Beitrag!";
+"addOn_newItem_alert_title" = "Füge ein Item hinzu";
+"addOn_newItem_alert_message" = "Möchtest du einen Beitrag oder eine Community zu diesem Thema hinzufügen?";
+"addOn_newItem_alert_oldPost" = "Vorhandener Beitrag";
+"addOn_newItem_alert_newPost" = "Neuer Beitrag (Community)";
+"addOn_newItem_alert_topic" = "Community/Diskussion";
+
+//NewCommunityItemTableViewController
+"new_community_header" = "Erstelle eine neue Community";
+"new_argument_header" = "Erstelle ein neues Argument";
+"new_source_header" = "Erstelle eine neue Quelle";
+"new_addOn_header" = "Erstelle ein neues AddOn";
+"new_argument_source_footer_text" = "Wähle dein Argument im Anschluss aus, um eine Quelle hinzuzufügen. Dies dient der Glaubwürdigkeit deines Argumentes.";
+"new_community_item_error_title" = "Es fehlen Eingaben";
+"new_community_item_error_message" = "Ein Titel und eine Beschreibung sind bei diesem Item notwendig.";
+"new_addOnTopic_missing_community" = "Wir haben keine Community zum verlinken registriert!";
+"new_community_item_not_valid_link" = "Bitte gib einen gültigen Link ein.";
+"new_community_weird_error" = "Es ist ein Fehler aufgetreten. Bitte Versuche es später noch einmal!";
+"new_community_successfull_added" = "Deine Eingabe wurde erfolgreich hinzugefügt!";
+
+//Discussion
+"discussion_pro/contra" = "Contra/Pro";
+"discussion_doubt/proof" = "Zweifel/Bestätigung";
+"discussion_advantage/disadvantage" = "Nachteile/Vorteile";
+"discussion_pro" = "Pro";
+"discussion_contra" = "Contra";
+"discussion_advantage" = "Vorteile";
+"discussion_disadvantage" = "Nachteile";
+"discussion_doubt" = "Zweifel";
+"discussion_proof" = "Bestätigung";
+
+//PostOfFactTableViewController
+"follow_community_description" = "Bei Imagine können Beiträge mit allen geteilt, oder auch seperat in einer Community gepostet werden.\n\nFolge einer Community, um auch diese neuen Community-Posts in deinem Home-Feed zu sehen.";
+
+//ArgumentPageViewController
+//"topics" = "Themen";
+//"discussion" = "Diskussion";
+//"community" = "Community";
+//Community Area done!
+
+//CommentAnswerView
+"comment_answer_placeholder" = " Sag etwas dazu...";
+"comment_indented_answer_label" = "Antwort an: ";
+"comment_answer_button_label" = "Antworten";
+
+//CommentTableView
+"comment_report_label" = "Melden";
+"comment_header_label" = "Kommentare:";
+"comment_notifications_label" = "Benachrichtigungen:";
+
+//SideMenu
+"sideMenu_notifications_label" = "Benachrichtigungen:";
+"sideMenu_notifications_delete_label" = "Alle löschen";
+"sideMenu_chats_label" = "Chats";
+"sideMenu_friends_label" = "Freunde";
+"sideMenu_saved_label" = "Gesichert";
+"sideMenu_setting_label" = "Einstellungen";
+
+//DataHelper
+"dataHelper_feature_label" = "Feature";
+"dataHelper_proposal_label" = "Vorschlag";
+"dataHelper_complaint_label" = "Beschwerde";
+"dataHelper_call_label" = "Aufruf";
+"dataHelper_change_label" = "Veränderung";
+"dataHelper_topic_addOn" = "Themen AddOn";
+
+//SettingCell
+"settingCell_block_label" = "Blockieren";
+"settingCell_camera_label" = "Kamera";
+"settingCell_change_picture" = "Profilbild ändern";
+"settingCell_see_picture" = "Profilbild ansehen";
+"settingCell_write_message_label" = "Nachricht schreiben";
+"settingCell_delete_as_friend_label" = "Als Freund löschen";
+
+//Constants
+"constants_anonymousPosterName" = "Ein anonymer Nutzer";
+"constants_voteCampaignText" = "Gestaltet Imagine \n\nBei den Kampagnen könnt ihr eure eigene Idee einreichen, oder die besten Ideen eurer Mit-User unterstützen. Erreicht eine Kampagne genügend Unterstützer, wird das Anliegen vom Team überprüft. \n\nBei den Abstimmungen werden die Kampagnen aufgeführt, welche nach verschiedene Kriterien überprüft wurden und nun zur Abstimmung freigegeben sind.\n\nPro Kampagne und Abstimmung habt ihr nur eine Stimme.";
+"constants_postCampaignText" = "Reiche deine eigene Idee für Imagine ein.\n\nVeränderungen des Aussehens oder der Haptik, Absicherungen der Demokratie, neue vielversprechende Features, neue Arten der Zusammenarbeit oder eine Überarbeitung der Vision sind stets willkommen. \n\nDie Idee sollte natürlich im Sinne von Vielen sein und nicht gegen unsere Grundsätze verstoßen.";
+"constants_campaignDetailText" = "Diese Kampagne stammt von einem Mitglied von Imagine.\n\nBevor du diese Abstimmung unterstützt oder herunter wählst, versuche bitte die Auswirkungen für das Netzwerk und seiner Nutze zu bedenken. Die Idee sollte der Großzahl der User einen Nutzen bieten und keine Einzelperson hervorheben. \nAuch die Kosten und Folgekosten sollten bedacht werden. \n\nDie Kommentarfunktion für diesen Bereich folgt demnächst.";
+"constants_voteDetailText" = "Die Zukunft von Imagine.\n\nDiese Kampagne wurde auf mögliche Auswirkungen auf Imagine und seine User, die Kosten und Folgenkosten sowie die Dauer der Umsetzung überprüft. Wähle jetzt ob die Idee umgesetzt werden soll, oder nicht.\n\nDie Einschätzungen sind vom Imagine Team getroffen wurden und sind daher ohne Gewähr.";
+"constants_jobOfferText" = "Wir brauchen eure Hilfe in vielen Bereichen.\n\nWir wollen nicht auf Investoren angewiesen sein und möchten unser Netzwerk unabhängig aufbauen. Glaubst du an unsere Vision und entdeckst einen Bereich der dir oder einem Freund liegt, schreib uns gerne an, indem du den Bereich auswählst und den grünen Button am Ende drückst.\n\nWir würden uns freuen.";
+"constants_createRepostText" = "Repost mit zwei Möglichkeiten.\n\n1. Repost: Du möchtest  einen Post, der deiner Meinung nach zu wenig Aufmerksamkeit bekommen hat, erneut in den Umlauf bringen.\n\n2. Übersetzung: Übersetze einen Beitrag und stelle diesen so auch für eine andere Sprache bereit. Gedacht für einen Austausch über Länder- und Sprachgrenzen hinaus.\n\nDie Auswahl von Sprachen für seinen Feed folgt.";
+"constants_factOverviewText" = "Communities sollen bei Imagine dazu dienen, dass sich die User über verschiedene Themen, Hobbies und Interessen austauschen können. In einer Community werden alle verlinkten Beiträge und Unterthemen dargestellt. Die Communities, ihre Inhalte und Unterthemen sind alle von Usern erstellt.\n\nZusätzlich gibt es eine Diskussions-Darstellung, welche Argumente für und gegen eine Tatsache übersichtlich darstellt, inklusive Quellen und Gegenargumenten. So kann man neutral diskutieren und sich übersichtlich eine Meinung bilden.";
+"constants_argumentOverviewText" = "Darstellung aller bisher eingereichten Argumente für und gegen den ausgewählten Fakt.\n\nArgumente werden ausschließlich von Usern erstellt und bewertet. Fehlt hier ein Argument, füge es doch einfach am Ende der Liste hinzu. \n\nDie Bewertung der Quellen folgt in Kürze";
+"constants_argumentDetailText" = "Hier werden die Quellen und Gegenargument für das ausgewählte Argument, sowie dessen Beschreibung dargestellt.\n\nAm unteren Ende findest du die Möglichkeit das Argument zu bewerten. \n\nDie Bewertung ist noch nicht abgesichert, wird aber der jetzigen Art ähneln.";
+"constants_addArgumentText" = "Füge eine Quelle, ein Argument oder Gegenargument hinzu.\n\nDenke bitte daran, die Inhalte neutral wiederzugeben und ausführlich zu erklären.";
+"constants_markPostText" = "Markiere einen Post, wenn du ihn mit Absicht provokant schreibst oder den Inhalt bearbeitet hast. Damit wollen wir Populismus, falschen Vorstellungen und Missverständnissen vorbeugen.\n\n'Meinung': Meinung, kein Fakt. Kann schnell von den Lesern verwechselt werden.\n\n'Sensation': Sensationalistisch gegschrieben\nEine übertriebene Darstellung der beschriebenen Ereignisse.\n\n'Bearbeitet': Inhalt eines Bildes oder Videos nachträglich verschönert.";
+"constants_postAnonymousText" = "Wähle diese Option aus, um deinen Beitrag anonym zu teilen. \n\nFür andere wird es nicht möglich sein, diesen Post zu dir zurückzuverfolg\nSollte dieser Beitrag jedoch gegen unsere Regeln verstoßen und zum Beispiel Hassreden beinhalten, ist es für die Administatoren von Imagine möglich, die Konsequenzen deinem Profil zuzuordnen.";
+"constants_reportBugText" = "Sag uns, was wir für Fehler beheben sollen.\n\nSchließt sich die App abrupt, wird ein Bereich des Bildschirms falsch dargestellt oder eine Funktion funktioniert nicht, so sag uns bitte Bescheid.\n\nSelbst wenn es ein offensichtlicher Fehler ist, so wissen wir was die User am Meisten stört, je mehr Reporte zu diesem Thema bei uns eintreffen.";
+"constants_communityText" = "Erstelle eine neue Community oder eine neue Diskussion. \nEin Bild ist dabei optional aber immer gern gesehen\n\nDu bist vorerst der Moderator der von dir erstellten Communities und Diskussionen und kannst zu einem späteren Zeitpunkt die Informationen und Metadaten bearbeiten.";
+"constants_addOns_singleTopicText" = "Verlinke mit diesem AddOn eine andere Community, die den Menschen aus der derzeitigen Community interessant finden könnten. Die Darstellung enthält Bilder-Beiträge, sowie die Beschreibung der Community in der Vorschau.";
+"constants_addOns_normalText" = "In diesem AddOn kannst du neue oder bestehende Beiträge posten, um ein Unterthema deiner Wahl besser hervorzuheben. Wenn du nur ein Thema markieren möchtest, benutze bitte das AddOn für einzelne Themen";
+"constants_addOns_QandA" = "Füge dieses AddOn hinzu, um einen Ort für mögliche Fragen zu  schaffen. Anfänger können so schneller lernen und Neulinge oder Fremde sich einfacher an einem Ort oder einer Community zurechtfinden.";
+
+////Storyboard
+
+//UserViewController
+"posts_label" = "Beiträge";
+"send_message_label" = "Nachricht";
+"add_as_friend_label" = "Freundschaftsanfrage";
+"remove_as_friend_label" = "Freund entfernen";
+"friend_request_pending" = "Angefragt";
+"user_status_default_text" = "Hier steht dein Status";
+"block_user_alert_title" = "User Blockieren?";
+"block_user_alert_message" = "Der User wird aus deiner Freundesliste gelöscht und darf dich nicht mehr kontaktieren. Fortfahren? ";
+"delete_friend_alert_title" = "Freund entfernen?";
+"delete_friend_alert_message" = "Möchtest du diese Person als Freund löschen?";
+"done_delete_friend_alert_title" = "Freund gelöscht";
+"done_delete_friend_alert_message" = "Der Freund wurde erfolgreich aus deiner Freundesliste gelöscht";
+"add_friend_alert_title" = "Freundschaft angefragt";
+"add_friend_alert_message" = "Die Freundschaftsanfrage wurde erfolgreich verschickt";
+"log_out" = "Abmelden";
+"we_will_meet_again" = "Wir sehen uns bald wieder!";
+
+//LoginViewController
+"login_welcome_label" = "Willkommen bei Imagine!";
+"login_login_label" = "Einloggen";
+"login_register_label" = "Registrieren";
+
+//GeneralSettingView
+"settingVC_title" = "Einstellungen";
+"settingVC_cookie_label" = "Cookies erlauben";
+"settingVC_cookie_description" = "Gemäß unseren Datenschutzrichtlinien möchten wir damit herausfinden, wie die User unsere App nutzen und welche Features beliebt sind. Anonymisiert natürlich!";
+"settingVC_notifications_label" = "Benachrichtigungen erhalten";
+"settingVC_notifications_description" = "Erhalte Push-Benachrichtigungen bei neuen Freundschaftsanfragen, Kommentaren und Chat-Nachrichten";
+"settingVC_deleteButton_label" = "Account löschen";
+"settingVC_gdprButton_label" = "Unsere Datenschutzbedingungen";
+"settingVC_eulaButton_label" = "Die Nutzungsbedingungen (EULA)";
+"settingVC_contact:" = "Kontakt:";
+"settingVC_contact_text" = "Unter \"Community\" -> \"Hilfe\" findest du unsere aktuellen Anliegen. Ansonsten erreichst du uns unter:\n\nmalte.schoppe@gmail.com  Malte Schoppe Spitalhofstraße 56 94032 Passau";
+
+//SearchCollectionVIewController
+"searchCollectionVC_header_label" = "Community-Beiträge: ";
+
+//FriendsVC
+"friendsVC_header_label" = "Freunde";
+
+//FactCollectionViewController
+"factCollectionVC_recent_label" = "Zuletzt angesehen";
+
+//TopicCollectionFooter
+"topicCollectionFooter_add" = "Erstellen";
+"topicCollectionFooter_showAll" = "Alle anzeigen";
+
+//NewPostVC
+"newPost_header_label" = "Neuer Beitrag";
+"newPost_segmentControl_label_text" = "Text";
+"newPost_segmentControl_label_picture" = "Bild";
+"newPost_segmentControl_label_link" = "Link";
+"newPost_share" = "Teilen";
+
+
+//FactStuff
+//AddPostTableViewController
+"addPost_header_label" = "Wähle einen Beitrag aus";
+"addPost_header_description" = "Wähle einen der letzten Beiträge aus oder nutze unsere Suchfunktion";
+"addPost_last_posts_label" = "Letzte Beiträge:";
+
+//FactDetailViewController
+"factDetail_source_label" = "Quellen:";
+"factDetail_counterArgument_label" = "Gegenargumente:";
+
+//NewAddOnTableViewController
+"newAddOn_header_label" = "Willkommen im Themen-Store";
+"newAddOn_header_description" = "Wähle eine Erweiterung aus, um die Community auf deine Weise zu vervollständigen.  Biete einen detaillierten Einblick, eine andere Sichtweise oder einen einfachen Einstieg. Es sind dir keine Grenzen gesetzt.";
+"newAddOn_choosenAddOn_label" = "Gewähltes AddOn:";
+"newAddOn_choosenAddOn_placeholder" = "Wähle ein AddOn aus...";
+
+//TrippyViewController
+"trippy_description_label" = "SCHLAGE EINE ERWEITERUNG VOR! DEINER PHANTASIE SIND KEINE GRENZEN GESETZT!";
+
+//NewCommunityItemTableViewController
+"newCommItem_title_label" = "Titel:";
+"newCommItem_source_label" = "Quelle:";
+"newCommItem_argumentSide_description" = "Welche Seite vertritt dein Argument?";
+"newCommItem_presentation_label" = "Darstellung:";
+"newCommItem_picture_label" = "Bild:";
+"newCommItem_choosePicture_button" = "Bild wählen";
+"newCommItem_choose_button_text" = "Auswählen";
+
+//SettingTableViewController
+"setting_tableView_changePicture_button" = "Bild ändern";
+
+//MeldeViewController
+"report_main_header" = "Melden";
+"report_markVisually_header" = "Optisch Markieren";
+"report_violationOfRules_header" = "Regelverstoß";
+"report_content_header" = "Inhalt";
+"report_savePost_label" = "Post Sichern";
+"report_repost_label" = "Repost";
+"report_translate_label" = "Übersetzen";
+
+//MeldeOptionViewController
+"reportOption_header" = "Was möchtest du melden?";
+
+//MeldeAgreeViewController
+"reportAgree_header" = "Überprüfe deine Angaben:";
+
+//PhotoAccess
+"photoAccess_permission_denied_text" = "Es scheint, dass deine Einstellungen uns den Zugriff auf deine Bild-Ordner untersagen. Du kannst das wie folgt ändern:\n\n1. Schließe die App.\n\n2. Öffne die Einstellungen.\n\n3. Scroll nach unten und wähle Imagine aus.\n\n4. Ändere die Ordner Einstellungen.\n\n5. Öffne die App und versuche es erneut.";
+
+//NewCommunityItem
+"share_community_header_label" = "Teile diese Community im Feed";
+"share_community_footer_description" = "Teile diese Community im Feed, um deinen Mitmenschen bei Imagine diese Community zu empfehlen oder sie darauf aufmerksam zu machen. Der Titel wird über der Community im Feed sichtbar sein, so wie du es kennst.";
+
+//ChatVC
+"chat_security_message" = "Der Chat ist für einen ersten Austausch mit deinen Mitmenschen gedacht. Die Nachrichten sind bei uns noch nicht Ende-zu-Ende Verschlüsselt, und damit nicht sicher. Bedenkt dies bitte und weicht ggf. auf andere Messenger aus. Vielen Dank für euer Verständnis!";
+
+//FriendsTableViewController
+"friendship_allowed_label" = "Ihr seid nun befreundet!";
+"friendship_declined_label" = "Anfrage abgelehnt";
+"friendship_requests_label" = "Freundschaftsanfragen";
+"friends_label" = "Freunde";
+
+//Storyboard
+//SettingVC
+"settingVC_languageSelection_label" = "Content-Sprache:";
+"settingVC_languageSelection_description" = "Starte die App erneut um den Content in der bevorzugten Sprache zu sehen";
+
+//BlankContentFile
+"blank_content_chats" = "Du hast noch keine Chats. Schreibe jetzt deine Freunde an";
+"blank_content_friends" = "Hier werden dir deine Freunde angezeigt";
+"blank_content_saved" = "Hier werden deine gespeicherten Beiträge gesammelt";
+"blank_content_ownPosts" = "Du hast noch keine Beiträge hochgeladen";
+"blank_content_stranger_posts" = "Dieser User hat noch keine Beiträge hochgeladen";
+"blank_content_topic_feed" = "Es sind noch keine Beiträge zu diesem Thema zu finden";
+
+
+//CreativeVCs
+"revolution_footer" = "Je mehr Menschen sich für eine Sache einsetzen, desto größer wird ihr Einfluss. Suchen wir uns zuerst die Probleme, bei der sich alle einig sind und setzen uns effektiv für eine Veränderung ein. Lassen wir das Internet endlich für uns arbeiten!";
+"artist_footer" = "Der Einfluss der User ist fest in unserer Idee verankert. Wir wollen kreatives Denken unterstützen und freuen uns auch über kleine Gimmicks, die nicht zwangsläufig notwendig sind, aber das Erlebnis verbessern. Wir wollen anders sein und Menschen die anders denken und handeln anziehen!";
+"programmer_footer" = "Imagine ist ein Open Source Projekt. Wir können die kreativen Ideen von Vielen ausprobieren, testen und als Features etablieren. Die Möglichkeiten sind endlos, wir sind keinen Aktionären oder Investoren Rechenschaft schuldig, kreieren wir also etwas großes und außergewöhnliches!";
+"artist_header" = "Gestalten wir die Zukunft & die App wie es uns beliebt";
+"programmer_header" = "Wir entscheiden wie sich die App anfühlt!";
+
+//PostVC
+"buttonLabel_thanks" = "Ich fühle mit dir";
+"buttonLabel_wow" = "Wow, ich bin begeistert";
+"buttonLabel_ha" = "Ha, das ist witzig";
+"buttonLabel_nice" = "Das ist ja cool";
+
+//ImagineCommuntiy
+"help_header" = "Mithilfe";
+"moreInfo_header" = "Mehr\nInfos";
+"latest_news_header" = "Aktuelles";
+
+//topTopicCell
+"top_topic_week_post_header" = "Die Themen der Woche: ";
+
+//notificationCell
+"notification_like_singular" = "Jamand hat mit deinem Beitrag interagiert";
+"notification_like_plural" = "Auf deinen Beitrag wurde %d mal reagiert";
+"notification_comment" = "%@ hat kommentiert:";
+
+//SupportTheCommunity
+"helpVC_description" = "Zusammen bauen wir ein freies und unabhängiges Netzwerk auf!";
+"helpVC_title" = "Gemeinsamer Aufbau";
+"helpVC_language" = "Sprache";
+"helpVC_entry_title" = "Wir brauchen dich!";
+"helpVC_entry_summary" = "Wenn du glaubst, mit deinem Wissen oder Erfahrung kannst du uns helfen, aber es gibt keine passende Ausschreibung, gib uns Bescheid! Wir sind auf klüge Köpfe angewiesen!";
+"helpVC_entry_description" = "Schreib uns einfach, welcher Bereich dich besonders interessiert und deine Motivation.\n\n Wir würden uns freuen";
+"helpVC_category_general" = "Allgemein";
+"helpVC_interested_label" = "%d Interessenten";
+
+//BugReport
+"bug_report_header" = "Danke für deine Unterstützung, wo hakt's?";
+"bug_report_description" = "Erkläre uns bitte mit deinen Worten kurz, wo es ein Problem gibt. Wir versuchen uns so schnell es geht darum zu kümmern.   Danke für deine Zeit!";
+
+
+// MARK: - CampaignVCs
+
+"campaignVC_title" = "Vorschläge";
+"campaignVC_shareButton" = "Teile deine Idee";
+"campaignVC_segment_proposal" = "Vorschläge";
+"campaignVC_segment_open_proposal" = "Offen";
+"campaignVC_segment_done_proposal" = "Fertig";
+"campaignVC_segment_vote" = "Abstimmungen";
+
+//ShareProposalVC
+"share_proposal_header" = "Wie kann sich Imagine verbessern?";
+"share_proposal_title" = "Titel:";
+"share_proposal_summary" = "Kurze Zusammenfassung:";
+"share_proposal_description" = "Beschreibung:";
+"share_proposal_category" = "Kategorie:";
+
+//VoteViewController
+"vote_vc_effects" = "Auswirkungen:";
+"vote_vc_cost" = "Kosten:";
+"vote_vc_timeToBuild" = "Dauer:";
+
+//FAQ
+"faq_header" = "So funktioniert unser Netzwerk:";
+
+//JobSurveyVC
+"jobSurvey_title" = "Wir sind über jede Hilfe dankbar!";
+"jobSurvey_qualification_header" = "Was sind denn deine bisherigen Erfahrungen oder Qualifikationen?";
+"jobSurvey_qualification_placeholder" = "...";
+"jobSurvey_link_title" = "Falls du einen Link mit uns teilen möchtest:";
+"jobSurvey_link_placeholder" = "meinPortfolio.html";
+"jobSurvey_location_title" = "Wo wohnst du, bzw. wo hälst du dich in nächster Zeit auf?";
+"jobSurvey_location_placeholder" = "Berlin, Deutschland...";
+"jobSurvey_motivation_title" = "Wie weit geht deine Motivation?";
+"jobSurvey_motivation_placeholder" = "Team-Member, Helfer oder erstmal schauen...";
+"jobSurvey_contact_title" = "Wie können wir dich erreichen?";
+"jobSurvey_contact_placeholder" = "E-Mail Adresse, WhatsApp, Facebook...";
+"jobSurvey_whatElse_title" = "Möchtest du noch etwas loswerden?";
+"jobSurvey_contact_button" = "Jetzt kontaktieren";
+
+"jobSurvey_introduction_label" = "Du möchtest Imagine unterstützen?";
+"jobSurvey_introduction_variable" = "Du möchtest Imagine als %@ unterstützen?";
+"jobSurvey_input_alert" = "Bitte fülle mindestens die Kontaktzeile und die Qualifikationszeile aus";
+"jobSurvey_alert_success" = "Deine Nachricht wurde erfolgreich an uns weitergeleitet!";
+
+//infoTableVIew
+"better_than_others_title" = "Unterschied zu anderen Open Source Netzwerken";
+"better_than_others_description" = "Es gibt viele schlaue Köpfe und Gruppen im Internet, die versuchen den Missständen der jetzigen Netwerke mit Open Source- oder dezentralisierten Netzwerken entgegen zu wirken, doch noch hat sich kein Netzwerk wirklich bewährt.\n\nWir sind also nicht die ersten, wollen aber erst einmal durch eine hohe Benutzerfreundlichkeit glänzen. Aktuelle Formate, wie wir sie aus anderen Netzwerken kennen und mögen, sind pflicht. \n\nDie \"leane\" (schmale) Herangehensweise, also einen Netzwerk-Prototypen so früh wie möglich zu testen, soll uns einen Marktvorteil bieten, da wir nicht auf Crowdfunding und damit entstehende Erwartungshaltungen gebunden sind.\n\nEin wichtiger Punkt ist auch der finanzielle Aspekt. Viele Netzwerke werben mit einer Freiheit von lästiger Werbung. Wir sind auch von Werbung genervt, wollen diese jedoch angenehm umsetzen und so die enormen finanziellen Möglichkeiten nutzen. So wird die Wahrscheinlichkeit des Erfolges erhöht und wir können mehr an die Gesellschaft zurückgeben.";
+"give_to_charity_title" = "Einnahmenverwendung";
+"give_to_charity_description" = "Wir wollen die enormen Einnahmemöglichkeiten von sozialen Netzwerken nutzen um damit etwas Gutes zu tun.\n\nDie Einnahmen, welche die Kosten des Netzwerkes (wie z.B. Server & Marketing) überschreiten, werden für gute Zwecke, wie Spenden und später auch Imagine Projekte genutzt. Die Gemeinschaft baut das Netzwerk auf und hat am Ende auch etwas davon!";
+"our_motivation_title" = "Unsere Motivation";
+"our_motivation_description" = "Unsere Erde und ihre Natur leidet unter den Auswirkungen von Globalisierung und Industrialisierung und die Menschen schauen dabei zu.\n\nAbgelenkt und beschäftigt werden die Probleme der Welt weiter vor uns hergeschoben.\nUnsere Ablenkung bringt uns dabei schlechte Gedanken und lügt uns an, während die Firmen dabei mit unseren Daten reich werden.Da stimmt etwas nicht. Dabei ist das nicht so schwer eine Lösung zu finden. Alle die es jedoch versuchen, werden früher oder später von Geld und Macht manipuliert. Deswegen sorgen wir von Anfang an mit der Demokratie vor.";
+"network_effect_title" = "Network-Effekt";
+"network_effect_description" = "Dem Network-Effekt wird durch unsere Post-Verteilung vorgebeugt. Während es bei anderen Netzwerken zu Beginn einsam ist, wenn Freunde und Bekannte noch nicht beigetreten sind, wird man bei Imagine direkt aufgenommen und erhält einen interessanten Feed den man schrittweise optimiert.\n So funktioniert es als kleines Netzwerk, kann aber auch nach belieben expandieren, ohne das Gemeinschaftsgefühl zu verlieren.";
+"voice_of_team_title" = "Mitspracherecht des Teams";
+"voice_of_team_description" = "Das Team von Imagine setzt sich jeden Tag mit dem Netzwerk auseinander und hat damit einen tieferen Einblick in die Geschehnisse und dessen Folgen.  \nDa wir das Netzwerk jedoch als Community aufbauen wollen, schlagen wir vor, dass wir die Entscheidungsmacht aufteilen. Wir geben den Usern und dem Team einen gewissen Prozentsatz. Bei Entscheidungen haben die ”Profis” also einen Anteil an dem Ausgang der Wahl.  \nSind die User jedoch nicht zufrieden mit der Arbeit und den Entscheidungen des Teams, kann das Mitspracherecht des Teams durch periodische Wahlen angepasst werden.\n Konzept und Ausführung werden wir gemeinsam mit der Community in der Orientierungsphase des Netzwerkes diskutieren und festlegen.";
+"vcs_are_bad_title" = "Nachteile durch Investoren";
+"vcs_are_bad_description" = "Die Start-Up Industrie ist in den vergangenen Jahren stark gewachsen. Mit dem wirtschaftlichen Erfolg von StartUps hat sich auch die Infrastruktur rund um die jungen Firmen gewandelt. Heute wird schnelles Wachstum seltener durch Banken, sondern meist durch Risikokapitalgeber in Form von privaten Investoren (Angel Investor) und Venture Capital (VC) Firmen ermöglicht.\n Durch die niedrige Erfolgsquote von StartUps lassen sich die Investoren ihr Risiko in Anteilen am StartUp gut bezahlen und möchten auch ein Mitbestimmungsrecht in den alltäglichen Entscheidungen haben.  \nDa es jedoch selten bei nur einer Finanzierungsrunde bleibt, wird der Einfluss von Investoren und die Erwartungen an das StartUp immer größer. Das höchste Ziel wird so die Profitmaximierung und die Ambitionen der Gründung können nicht mehr durchgesetzt werden.";
+"principle_title" = "Imagine-Grundsatz";
+"principle_descriprion" = "Kommunikation, Transparenz und soziale Verantwortung sind für uns die wichtigsten Merkmale für ein faires Miteinander zwischen User/Kunde und Unternehmen.  \nWir hoffen, dass in Zukunft Unternehmen eine offene Atmosphäre zu ihren Kunden aufbauen und pflegen. Ihr gegenseitliches Handeln sollte verständlich dargelegt und nicht in langen Datenschutz- und Nutzungsrichtlinien verschlüsselt werden.  \nFirmen suchen trotz hoher Einnahmen, Steuer- und Gesetzeslücken um ihren Profit zu maximieren, während die User und Allgemeinheit nicht berücksichtigt werden.   \nDas Umdenken der Unternehmen muss eingefordert werden. Im Informationszeitalter haben Konsumenten die Möglichkeit sich zu vernetzen, ihre Rechte einzufordern und die derzeitige Profitgier anzuprangern. ";
+"helper_title" = "Helfer & Team";
+"helper_description" = "Um Imagine frei von externen Einflüssen und Absichten zu halten, wollen wir das Netzwerk mit der Unterstützung unserer User aufbauen.  \nWir sind dankbar für jede Unterstützung, können zu Beginn jedoch keine Entlohnungen anbieten. Als Wertschätzung bieten wir den Helfern einen besonderen Status in Netzwerk und bitten sie, ihre angewendete Zeit zu notieren. Sofern es zu einem späteren Zeitpunkt möglich ist, werden diese für ihre Mühen in gemeinschaftlichem Konsens angemessen kompensiert.\n Bei Erfolg des Netzwerkes wird ein Team von Mitarbeitern für die koordinierte Erweiterung des Netzwerkes aufgebaut. Hierfür wird die digitale Vernetzung des Aufbaus gegen eine zentrale Anlaufstelle eingetauscht.  \nStadt der Niederlassung wird aufgrund von Expansions- und Vernetzungschancen ausgewählt.\n Die Helfer zu Beginn von Imagine erhalten für die Auswahl des Teams selbstverständlich einen besonderen Status.";
+
+//QandA Addon
+"qanda_first_question" = "Stelle eine erste Frage";
+
+//SwipeCollectionViewController
+"cookie_alert_header" = "Wir haben 'Cookies' bei Imagine";
+"cookie_alert_description" = "Gemäß unseren Datenschutzrichtlinien möchten wir damit herausfinden, wie die User unsere App nutzen und welche Features beliebt sind. Anonymisiert natürlich und Imagine-Intern! Du kannst deine Auswahl jederzeit in den Einstellungen ändern.";
+"cookie_alert_toEULA" = "Zu den Datenschutzrichtlinien";
+"cookie_alert_accept" = "Ich akzeptiere Cookies";
+"cookie_alert_dontAccept" = "Keine Cookies";
+
+//SurveyCell
+"surveyCell_pickOne_label" = "Wähle eine der möglichen Antworten aus.";
+"surveyCell_pickOrder_label" = "Wähle eine Reihenfolge von 1 bis 4 (am Meisten -> am Wenigsten) aus.";
+"surveyCell_writeComment_label" = "Schreibe uns deine Meinung.";
+"surveyCell_disclaimer" = "Die Daten werden anonym ausgewertet und helfen uns dabei unsere User besser zu verstehen. So gestalten wir das Netzwerk nach euren Vorstellungen und Wünschen.";
+"surveyCell_notes_label" = "Anmerkungen:";
+
+
+// MARK: - Alerts
+
+// not logged in
+"notLoggedInTitle" = "Nicht Angemeldet";
+"notLoggedInMessage" = "Melde dich an um alle Funktionen bei Imagine zu nutzen";
+
+
+// MARK: - Discussions
+"sourceNotChecked" = "Quelle: Nicht überprüft";

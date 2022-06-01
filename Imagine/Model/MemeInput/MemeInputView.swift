@@ -22,7 +22,7 @@ enum MemeViewAlert {
 
 class MemeInputView: UIView {
     
-    //MARK:- IBOutlets
+    // MARK: - IBOutlets
     @IBOutlet weak var headerTitle: UILabel!
     @IBOutlet weak var textLabel: UILabel!
     @IBOutlet weak var memeLabel: UILabel!
@@ -37,13 +37,13 @@ class MemeInputView: UIView {
     @IBOutlet weak var downloadMemeButton: DesignableButton!
     @IBOutlet weak var memeTextViewTopToMemeTopConstraint: NSLayoutConstraint!
     
-    //MARK:- Variables
+    // MARK: - Variables
     let radius: CGFloat = 10
     var delegate: MemeViewDelegate?
     var memeImage: UIImage?
     
     
-    //MARK:- View Lifecycle
+    // MARK: - View Lifecycle
     override func awakeFromNib() {
         //Input TextField
         memeInputTextView.delegate = self
@@ -118,7 +118,7 @@ class MemeInputView: UIView {
     }
     
     
-    //MARK:- Button Actions
+    // MARK: - Button Actions
     @IBAction func doneButtonTapped(_ sender: Any) {
         let text = memeInputTextView.text
         
@@ -190,7 +190,7 @@ class MemeInputView: UIView {
         }
     }
     
-    //MARK:- Dismiss View
+    // MARK: - Dismiss View
     @IBAction func dismissTapped(_ sender: Any) {
         //TODO: Alert if dismiss when selected something already
         dismissMemeView()
@@ -205,7 +205,7 @@ class MemeInputView: UIView {
         }
     }
     
-    //MARK:- Special Intro Animation
+    // MARK: - Special Intro Animation
     
     func startUpMemeMode() {    ///Load everything one after one so it seems that it is starting up in a retro fashion
         

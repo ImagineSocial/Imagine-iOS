@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSans-Bold.ttf">
+            <string>IBMPlexSans-Bold</string>
+        </array>
+        <array key="IBMPlexSans-Regular.ttf">
+            <string>IBMPlexSans</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionReusableView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ImagineCommunityProposalHeader" id="pG6-ae-j97" customClass="ImagineCommunityProposalHeader" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="680" height="200"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="What's next" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IRc-1U-yTx">
+                    <rect key="frame" x="18" y="40" width="644" height="35"/>
+                    <fontDescription key="fontDescription" name="IBMPlexSans-Bold" family="IBM Plex Sans" pointSize="26"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="siG-C7-aXb">
+                    <rect key="frame" x="18" y="95" width="650" height="75"/>
+                    <subviews>
+                        <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="Rcs-sh-620">
+                            <rect key="frame" x="0.0" y="0.0" width="650" height="30"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e3V-Gs-vfm" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                    <rect key="frame" x="0.0" y="0.0" width="317.5" height="30"/>
+                                    <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
+                                    <color key="tintColor" systemColor="systemBackgroundColor"/>
+                                    <state key="normal" title="All">
+                                        <color key="titleColor" systemColor="secondaryLabelColor"/>
+                                    </state>
+                                    <state key="selected">
+                                        <color key="titleColor" systemColor="labelColor"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="selectionAllButtonTapped:" destination="pG6-ae-j97" eventType="touchUpInside" id="cLw-bU-F9X"/>
+                                    </connections>
+                                </button>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hyq-QC-WUk" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                    <rect key="frame" x="332.5" y="0.0" width="317.5" height="30"/>
+                                    <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
+                                    <color key="tintColor" systemColor="systemBackgroundColor"/>
+                                    <state key="normal" title="Features">
+                                        <color key="titleColor" systemColor="secondaryLabelColor"/>
+                                    </state>
+                                    <state key="selected">
+                                        <color key="titleColor" systemColor="labelColor"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="selectionFeatureButtonTapped:" destination="pG6-ae-j97" eventType="touchUpInside" id="gWm-5M-qk8"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                        </stackView>
+                        <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="GO3-9G-aln">
+                            <rect key="frame" x="0.0" y="45" width="650" height="30"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yxh-31-TQ9" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                    <rect key="frame" x="0.0" y="0.0" width="317.5" height="30"/>
+                                    <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
+                                    <color key="tintColor" systemColor="systemBackgroundColor"/>
+                                    <state key="normal" title="Proposal">
+                                        <color key="titleColor" systemColor="secondaryLabelColor"/>
+                                    </state>
+                                    <state key="selected">
+                                        <color key="titleColor" systemColor="labelColor"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="selectionProposalButtonTapped:" destination="pG6-ae-j97" eventType="touchUpInside" id="9mp-ng-pfO"/>
+                                    </connections>
+                                </button>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="7JW-Yw-SjY" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
+                                    <rect key="frame" x="332.5" y="0.0" width="317.5" height="30"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="16"/>
+                                    <color key="tintColor" systemColor="systemBackgroundColor"/>
+                                    <state key="normal" title="Complaint">
+                                        <color key="titleColor" systemColor="secondaryLabelColor"/>
+                                    </state>
+                                    <state key="selected">
+                                        <color key="titleColor" systemColor="labelColor"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="selectionComplaintButtonTapped:" destination="pG6-ae-j97" eventType="touchUpInside" id="Qwy-Lo-qol"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                        </stackView>
+                    </subviews>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="75" id="z83-Wt-8xO"/>
+                    </constraints>
+                </stackView>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="Oam-XM-zXA"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="siG-C7-aXb" secondAttribute="bottom" constant="30" id="BQQ-qb-Cmo"/>
+                <constraint firstItem="siG-C7-aXb" firstAttribute="top" secondItem="IRc-1U-yTx" secondAttribute="bottom" constant="20" id="HJ8-4g-ASr"/>
+                <constraint firstItem="IRc-1U-yTx" firstAttribute="leading" secondItem="Oam-XM-zXA" secondAttribute="leading" constant="18" id="Mbm-Yc-4uT"/>
+                <constraint firstItem="IRc-1U-yTx" firstAttribute="top" secondItem="pG6-ae-j97" secondAttribute="top" constant="40" id="PbK-az-KII"/>
+                <constraint firstItem="Oam-XM-zXA" firstAttribute="trailing" secondItem="siG-C7-aXb" secondAttribute="trailing" constant="18" id="f2q-aE-HGZ"/>
+                <constraint firstItem="Oam-XM-zXA" firstAttribute="trailing" secondItem="IRc-1U-yTx" secondAttribute="trailing" constant="18" id="oog-0L-3cb"/>
+                <constraint firstItem="siG-C7-aXb" firstAttribute="leading" secondItem="Oam-XM-zXA" secondAttribute="leading" constant="18" id="vOQ-pO-yge"/>
+            </constraints>
+            <connections>
+                <outlet property="selectionAllButton" destination="e3V-Gs-vfm" id="pbz-lq-3M9"/>
+                <outlet property="selectionComplaintButton" destination="7JW-Yw-SjY" id="QBd-xa-Q5g"/>
+                <outlet property="selectionFeatureButton" destination="hyq-QC-WUk" id="LM4-Dv-GsK"/>
+                <outlet property="selectionProposalButton" destination="yxh-31-TQ9" id="Ox8-nv-edu"/>
+            </connections>
+            <point key="canvasLocation" x="-175.36231884057972" y="101.11607142857143"/>
+        </collectionReusableView>
+    </objects>
+    <resources>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="secondaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="IBMPlexSans-Regular.ttf">
+            <string>IBMPlexSans</string>
+        </array>
+        <array key="IBMPlexSans-SemiBold.ttf">
+            <string>IBMPlexSans-SemiBold</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="FactCell" id="MZ7-QN-O6v" customClass="FactCell" customModule="Imagine" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="197" height="212"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
+                <rect key="frame" x="0.0" y="0.0" width="197" height="212"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sZQ-xb-zs6">
+                        <rect key="frame" x="0.0" y="0.0" width="197" height="212"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" image="default-community" translatesAutoresizingMaskIntoConstraints="NO" id="KLn-Hg-xHa">
+                                <rect key="frame" x="0.0" y="0.0" width="197" height="90"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="90" id="Dh3-AH-oBA"/>
+                                </constraints>
+                            </imageView>
+                            <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.94999999999999996" translatesAutoresizingMaskIntoConstraints="NO" id="oLR-zF-4gi">
+                                <rect key="frame" x="6" y="90" width="185" height="35"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="5m7-rf-LVP"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="IBMPlexSans-SemiBold" family="IBM Plex Sans" pointSize="16"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="500" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.94999999999999996" translatesAutoresizingMaskIntoConstraints="NO" id="Jez-8Y-1HQ">
+                                <rect key="frame" x="6" y="125" width="185" height="81"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="12"/>
+                                <color key="textColor" systemColor="secondaryLabelColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Jez-8Y-1HQ" firstAttribute="leading" secondItem="sZQ-xb-zs6" secondAttribute="leading" constant="6" id="5ed-No-nuv"/>
+                            <constraint firstAttribute="trailing" secondItem="KLn-Hg-xHa" secondAttribute="trailing" id="8dl-Cx-5fw"/>
+                            <constraint firstItem="oLR-zF-4gi" firstAttribute="top" secondItem="KLn-Hg-xHa" secondAttribute="bottom" id="Czd-1T-qi8"/>
+                            <constraint firstAttribute="trailing" secondItem="Jez-8Y-1HQ" secondAttribute="trailing" constant="6" id="M4O-j3-Thp"/>
+                            <constraint firstAttribute="bottom" secondItem="Jez-8Y-1HQ" secondAttribute="bottom" constant="6" id="Wj0-ia-tiF"/>
+                            <constraint firstItem="oLR-zF-4gi" firstAttribute="leading" secondItem="sZQ-xb-zs6" secondAttribute="leading" constant="6" id="bOx-pV-a4e"/>
+                            <constraint firstItem="KLn-Hg-xHa" firstAttribute="top" secondItem="sZQ-xb-zs6" secondAttribute="top" id="gNy-J6-NZV"/>
+                            <constraint firstItem="Jez-8Y-1HQ" firstAttribute="top" secondItem="oLR-zF-4gi" secondAttribute="bottom" id="gWJ-Gx-sbR"/>
+                            <constraint firstAttribute="trailing" secondItem="oLR-zF-4gi" secondAttribute="trailing" constant="6" id="u1x-tV-l2Y"/>
+                            <constraint firstItem="KLn-Hg-xHa" firstAttribute="leading" secondItem="sZQ-xb-zs6" secondAttribute="leading" id="vVH-DS-WZi"/>
+                        </constraints>
+                    </view>
+                </subviews>
+            </view>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="sZQ-xb-zs6" secondAttribute="trailing" id="Hex-u1-kgd"/>
+                <constraint firstItem="sZQ-xb-zs6" firstAttribute="top" secondItem="MZ7-QN-O6v" secondAttribute="top" id="gZC-u7-2sw"/>
+                <constraint firstItem="sZQ-xb-zs6" firstAttribute="leading" secondItem="MZ7-QN-O6v" secondAttribute="leading" id="ki7-Af-GrQ"/>
+                <constraint firstAttribute="bottom" secondItem="sZQ-xb-zs6" secondAttribute="bottom" id="zcM-3D-3sa"/>
+            </constraints>
+            <size key="customSize" width="197" height="212"/>
+            <connections>
+                <outlet property="containerView" destination="sZQ-xb-zs6" id="fH0-rw-odY"/>
+                <outlet property="factCellImageView" destination="KLn-Hg-xHa" id="Db9-n9-vhn"/>
+                <outlet property="factCellLabel" destination="oLR-zF-4gi" id="mjG-P3-fJo"/>
+                <outlet property="factDescriptionLabel" destination="Jez-8Y-1HQ" id="HBT-Wr-wQa"/>
+                <outlet property="imageViewHeightConstraint" destination="Dh3-AH-oBA" id="KYJ-57-RwA"/>
+            </connections>
+            <point key="canvasLocation" x="119.56521739130436" y="98.4375"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="default-community" width="250" height="216"/>
+        <systemColor name="secondaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
