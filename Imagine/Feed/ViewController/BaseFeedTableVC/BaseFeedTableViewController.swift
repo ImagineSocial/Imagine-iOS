@@ -71,7 +71,7 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
     }
     
     
-    @objc func getPosts(getMore:Bool) {
+    @objc func getPosts(getMore: Bool) {
         
     }
     
@@ -121,144 +121,9 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
         }
     }
     
-    //MARK: - TOP Sorting View
-    
-    let sortingStackView: UIStackView = {
-
-        return UIStackView() // FML
-    }()
     
     // Not in the extension because i could not override it and dont want performSegue in Usertableview
     func userTapped(post: Post) {
-    }
-    
-    let dismissSortButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(decreaseTopView), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    @objc func sortDateDec() {
-        if sortBy == .dateDecreasing {
-            decreaseTopView()
-        } else {
-            sortBy = .dateDecreasing
-            getPosts(getMore: false)
-            decreaseTopView()
-        }
-    }
-    
-    @objc func sortDateAsc() {
-        if sortBy == .dateIncreasing {
-            decreaseTopView()
-        } else {
-            sortBy = .dateIncreasing
-            getPosts(getMore: false)
-            decreaseTopView()
-        }
-    }
-    
-    @objc func sortThanks() {
-        
-        if sortBy == .thanksCount {
-            decreaseTopView()
-        } else {
-            sortBy = .thanksCount
-            getPosts(getMore: false)
-            decreaseTopView()
-        }
-    }
-    
-    @objc func sortWow() {
-        if sortBy == .wowCount {
-            decreaseTopView()
-        } else {
-            sortBy = .wowCount
-            getPosts(getMore: false)
-            decreaseTopView()
-        }
-    }
-    
-    @objc func sortHa() {
-        if sortBy == .haCount {
-            decreaseTopView()
-        } else {
-            sortBy = .haCount
-            getPosts(getMore: false)
-            decreaseTopView()
-        }
-    }
-    
-    @objc func sortNice() {
-        if sortBy == .niceCount {
-            decreaseTopView()
-        } else {
-            sortBy = .niceCount
-            getPosts(getMore: false)
-            decreaseTopView()
-        }
-    }
-    
-    @objc func decreaseTopView() {
-        guard let headerView = tableView.tableHeaderView else {
-          return
-        }
-        
-        let size = CGSize(width: self.view.frame.width, height: 50)
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.sortingStackView.alpha = 0
-        }) { (_) in
-            self.sortingStackView.isHidden = true
-        }
-        
-        if headerView.frame.size.height != size.height {
-            headerView.frame.size.height = size.height
-        }
-        
-        self.tableView.tableHeaderView = headerView
-        
-        UIView.animate(withDuration: 0.7) {
-            self.view.layoutIfNeeded()
-        }
-    }
-    
-    func increaseTopView() {    // For sorting purpose
-        
-        guard let headerView = tableView.tableHeaderView else {
-          return
-        }
-        
-        headerView.addSubview(sortingStackView)
-        sortingStackView.topAnchor.constraint(equalTo: headerView.topAnchor, constant: 10).isActive = true
-        sortingStackView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 10).isActive = true
-        sortingStackView.widthAnchor.constraint(equalToConstant: 65).isActive = true
-        sortingStackView.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -10).isActive = true
-        sortingStackView.isHidden = false
-        
-        headerView.addSubview(dismissSortButton)
-        dismissSortButton.leadingAnchor.constraint(equalTo: sortingStackView.trailingAnchor).isActive = true
-        dismissSortButton.topAnchor.constraint(equalTo: headerView.topAnchor).isActive = true
-        dismissSortButton.bottomAnchor.constraint(equalTo: headerView.bottomAnchor).isActive = true
-        dismissSortButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor).isActive = true
-        
-        let size = CGSize(width: self.view.frame.width, height: 150)
-        
-        if headerView.frame.size.height != size.height {
-            headerView.frame.size.height = size.height
-        }
-        self.tableView.tableHeaderView = headerView
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.view.layoutIfNeeded()
-        }) { (_) in
-            
-            UIView.animate(withDuration: 0.3) {
-                self.sortingStackView.alpha = 1
-            }
-        }
     }
 }
 

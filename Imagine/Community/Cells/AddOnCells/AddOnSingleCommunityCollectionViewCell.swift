@@ -57,16 +57,14 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
     }
     
     func getPreviewPictures(community: Community) {
-        if community.documentID != "" {
-            if self.previewPosts == nil {
-                self.postHelper.getPreviewPicturesForCommunity(community: community) { [weak self] (posts) in
-                    DispatchQueue.main.async {
-                        if let posts = posts, posts.count != 0, let self = self {
-
-                            self.previewPosts = posts
-                            self.topicPreviewCollectionView.reloadData()
-                            self.isFetchingPreviewPosts = false
-                        }
+        if community.documentID != "", previewPosts == nil {
+            self.postHelper.getPreviewPicturesForCommunity(community: community) { [weak self] posts in
+                DispatchQueue.main.async {
+                    if let posts = posts, posts.count != 0, let self = self {
+                        
+                        self.previewPosts = posts
+                        self.topicPreviewCollectionView.reloadData()
+                        self.isFetchingPreviewPosts = false
                     }
                 }
             }

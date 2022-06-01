@@ -217,7 +217,7 @@ class ChatsTableViewController: UITableViewController {
         let postHelper = FirestoreRequest.shared
         
         //Get Friends of the current User to check when they load the user of the chats
-        postHelper.getTheUsersFriend {friends in
+        postHelper.getTheUsersFriend { friends in
             self.loadUsers(friends: friends)
         }
         
@@ -245,8 +245,12 @@ class ChatsTableViewController: UITableViewController {
     }
     
     
-    func loadUsers(friends: [String]) {
+    func loadUsers(friends: [String]?) {
         
+        guard let friends = friends else {
+            return
+        }
+
         for chat in chatsList {
             guard let participant = chat.participant else {
                 continue

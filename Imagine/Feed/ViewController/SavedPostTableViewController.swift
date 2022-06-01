@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
 import FirebaseAuth
 
@@ -31,17 +30,15 @@ class SavedPostTableViewController: BaseFeedTableViewController {
         if isConnected() {
             
             if let user = Auth.auth().currentUser {
-                firestoreRequest.getPostList(getMore: getMore, whichPostList: .savedPosts, userUID: user.uid) { (posts, initialFetch)  in
+                firestoreRequest.getUserPosts(getMore: getMore, postList: .savedPosts, userUID: user.uid) { posts  in
                     
                     guard let posts = posts else {
                         print("No More Posts")
                         self.view.activityStopAnimating()
                         return
                     }
-                    
-                    print("\(posts.count) neue dazu .InitialFetch: ",initialFetch)
-                    
-                    if initialFetch {   // Get the first batch of posts
+                                        
+                    if let firstPost = self.posts.first, firstPost.documentID == "" {   // Get the first batch of posts
                         self.posts = posts
                         self.tableView.reloadData()
                         self.fetchesPosts = false
@@ -49,7 +46,7 @@ class SavedPostTableViewController: BaseFeedTableViewController {
                         self.refreshControl?.endRefreshing()
                         
                     } else {    // Append the next batch to the existing
-                        var indexes : [IndexPath] = [IndexPath]()
+                        var indexes = [IndexPath]()
                         
                         for result in posts {
                             let row = self.posts.count

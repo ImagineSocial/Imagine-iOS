@@ -240,7 +240,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                     
                     self.view.activityStartAnimating()
                     
-                    firestoreRequest.getPostList(getMore: getMore, whichPostList: .postsFromUser, userUID: user.userID) { (posts, initialFetch)  in
+                    firestoreRequest.getUserPosts(getMore: getMore, postList: .postsFromUser, userUID: user.userID) { posts  in
                         
                         guard let posts = posts else {
                             print("No more Posts")
@@ -249,13 +249,13 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                             return
                         }
                         
-                        if initialFetch {   // Get the first batch of posts
+                        if let firstpost = self.posts.first, firstpost.documentID == "" {   // Get the first batch of posts
                             self.posts.removeAll()  //Remove the placeholder
                             self.posts = posts
                             self.tableView.reloadData()
                             self.fetchesPosts = false
                             
-                            let count = self.firestoreRequest.getTotalCount()
+                            let count = self.firestoreRequest.totalCountOfPosts
                             self.totalPostCountLabel.text = String(count)
                             
                             self.refreshControl?.endRefreshing()
@@ -304,8 +304,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             let rightBarButton = UIBarButtonItem(customView: LogOutButton)
             self.navigationItem.rightBarButtonItem = rightBarButton
         case .ownProfile:
-            print("Here will nothing happen")
-            
+            break
         // You can block someone who blocked you for now
         default:
             self.moreButton.isHidden = false

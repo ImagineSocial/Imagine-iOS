@@ -447,7 +447,7 @@ class LogInViewController: UIViewController {
             if let error = error {
                 print("We have an error: \(error.localizedDescription)")
                 
-                if let errCode = AuthErrorCode(rawValue: error._code) {
+                if let errCode = AuthErrorCode.Code(rawValue: error._code) {
                     
                     switch errCode {
                     case .emailAlreadyInUse:
@@ -531,7 +531,7 @@ class LogInViewController: UIViewController {
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
             
             if let error = error {
-                if let errCode = AuthErrorCode(rawValue: error._code) {
+                if let errCode = AuthErrorCode.Code(rawValue: error._code) {
                     
                     switch errCode {
                     case .wrongPassword:
@@ -590,7 +590,7 @@ class LogInViewController: UIViewController {
         Auth.auth().sendPasswordReset(withEmail: email) { (err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
-                if let errCode = AuthErrorCode(rawValue: error._code) {
+                if let errCode = AuthErrorCode.Code(rawValue: error._code) {
                     
                     switch errCode {
                     case .invalidEmail:

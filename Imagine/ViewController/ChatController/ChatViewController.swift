@@ -210,7 +210,10 @@ class ChatViewController: MSGMessengerViewController {
         
         let sentDate:Date = sentAtTimestamp.dateValue()
         
-        FirestoreRequest.shared.getChatUser(uid: userUID, sender: sender, user: { (user) in
+        FirestoreRequest.shared.getChatUser(uid: userUID, sender: sender) { user in
+            guard let user = user else {
+                return
+            }
             
             let message = MSGMessage(id: id, body: .text(body), user: user, sentAt: sentDate)
             self.fetchedMessages.append(message)
@@ -225,7 +228,7 @@ class ChatViewController: MSGMessengerViewController {
                 self.fetchedMessages.removeAll()    // Alle Löschen, sind dann ja in messages
                 
             }
-        })
+        }
     }
     
     

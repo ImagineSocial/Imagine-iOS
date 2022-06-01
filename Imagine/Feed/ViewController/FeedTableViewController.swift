@@ -100,70 +100,69 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     
     //MARK: - Get Data
     
-    @objc override func getPosts(getMore:Bool) {
+    @objc override func getPosts(getMore: Bool) {
         // If "getMore" is true, you want to get more Posts, or the initial batch of 20 Posts, if not you want to refresh the current feed
         
-        if isConnected() {
+        guard isConnected() else {
+            fetchRequested = true
+            return
+        }
+        
+        self.view.activityStartAnimating()
+        
+        DispatchQueue.global(qos: .background).async {
             
-            self.view.activityStartAnimating()
-            
-            DispatchQueue.global(qos: .background).async {
+            self.firestoreRequest.getPostsForMainFeed(getMore: getMore) { posts in
                 
-                self.firestoreRequest.getPostsForMainFeed(getMore: getMore, sort: self.sortBy) { (posts,initialFetch)  in
+                guard let posts = posts else {
+                    return
+                }
+                
+                print("\(posts.count) neue dazu")
+                if let firstPost = self.posts.first, firstPost.documentID == "" {   // Get the first batch of posts
                     
-                    print("\(posts.count) neue dazu")
-                    if initialFetch {   // Get the first batch of posts
-                        
-                        DispatchQueue.main.async {
-                            if !self.isAppAlreadyLaunchedOnce() {
-                                
-                            } else if self.isItTheSecondTimeTheAppLaunches() {
-                                
-                                self.alert(message: NSLocalizedString("tap_blue_owen_title", comment: "go and tap it to see what this could be"), title: NSLocalizedString("tap_blue_owen_message", comment: ""))
-                            } else if !self.alreadyAcceptedPrivacyPolicy() {
-                                self.showGDPRAlert()
-                            }
+                    DispatchQueue.main.async {
+                        if !self.alreadyAcceptedPrivacyPolicy() {
+                            self.showGDPRAlert()
                         }
-                        self.posts.removeAll()  //to get the placeholder out
-                        self.posts = posts
+                    }
+                    self.posts.removeAll()  //to get the placeholder out
+                    self.posts = posts
+                    
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
                         
-                        DispatchQueue.main.async {
-                            self.tableView.reloadData()
-                            
+                        self.fetchesPosts = false
+                        
+                        // remove ActivityIndicator incl. backgroundView
+                        self.view.activityStopAnimating()
+                        
+                        self.refreshControl?.endRefreshing()
+                    }
+                } else {    // Append the next batch to the existing
+                    var indexes = [IndexPath]()
+                    
+                    posts.forEach{ newPost in
+                        let row = self.posts.count
+                        
+                        indexes.append(IndexPath(row: row, section: 0))
+                        self.posts.append(newPost)
+                    }
+                    
+                    DispatchQueue.main.async {
+                        
+                        self.tableView.performBatchUpdates({
+                            self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                            self.tableView.insertRows(at: indexes, with: .bottom)
+                        }, completion: { _ in
                             self.fetchesPosts = false
-                            
-                            // remove ActivityIndicator incl. backgroundView
-                            self.view.activityStopAnimating()
-                            
-                            self.refreshControl?.endRefreshing()
-                        }
-                    } else {    // Append the next batch to the existing
-                        var indexes : [IndexPath] = [IndexPath]()
+                        })
                         
-                        for result in posts {
-                            let row = self.posts.count
-                            
-                            indexes.append(IndexPath(row: row, section: 0))
-                            self.posts.append(result)
-                        }
-                        
-                        DispatchQueue.main.async {
-                            
-                            self.tableView.performBatchUpdates({
-                                self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                                self.tableView.insertRows(at: indexes, with: .bottom)
-                            }, completion: { (_) in
-                                self.fetchesPosts = false
-                            })
-                            
-                            self.view.activityStopAnimating()
-                            print("Jetzt haben wir \(self.posts.count)")
-                        }
+                        self.view.activityStopAnimating()
+                        print("Jetzt haben wir \(self.posts.count)")
                     }
                 }
             }
-        } else {
-            fetchRequested = true
         }
     }
     
@@ -174,15 +173,15 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         var index = 0
         
         while index <= 3 {
-            let post2 = Post()
-            post2.designOptions = PostDesignOption(hideProfilePicture: true)
+            let post = Post()
+            post.designOptions = PostDesignOption(hideProfilePicture: true)
             if index == 1 {
-                post2.type = .picture
+                post.type = .picture
             } else {
-                post2.type = .thought
+                post.type = .thought
             }
-            self.posts.append(post2)
-            index+=1
+            self.posts.append(post)
+            index += 1
         }
         
         self.tableView.reloadData()
@@ -825,16 +824,6 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         }))
         
         self.present(alert, animated: true, completion: nil)
-    }
-    
-    func isItTheSecondTimeTheAppLaunches() -> Bool {
-        if let _ = defaults.string(forKey: "isItTheSecondTimeTheAppLaunches") {
-            return false
-        } else {
-            defaults.set(true, forKey: "isItTheSecondTimeTheAppLaunches")
-            print("App launched second time")
-            return true
-        }
     }
     
     // MARK: EasyTipViewPreferences

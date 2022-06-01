@@ -84,7 +84,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
         self.view.activityStartAnimating()
         
         DispatchQueue.global(qos: .background).async {
-            self.firestoreRequest.getPostsForCommunity(getMore: getMore, community: community) { (posts, initialFetch) in
+            self.firestoreRequest.getPostsForCommunity(getMore: getMore, community: community) { posts in
                 
                 guard let posts = posts else {
                     DispatchQueue.main.async {
@@ -93,7 +93,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
                     return
                 }
                 
-                if initialFetch {   // Get the first batch of posts
+                if let firstPost = self.posts.first, firstPost.documentID == "" {   // Get the first batch of posts
                     
                     self.posts.removeAll()  //to get the placeholder out
                     self.posts = posts
@@ -109,7 +109,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
                         self.refreshControl?.endRefreshing()
                     }
                 } else {    // Append the next batch to the existing
-                    var indexes : [IndexPath] = [IndexPath]()
+                    var indexes = [IndexPath]()
                     
                     for result in posts {
                         let row = self.posts.count

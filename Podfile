@@ -6,12 +6,11 @@ target 'Imagine' do
   use_frameworks!
 
   # Pods for Imagine
- pod 'Firebase/Core'
- pod 'Firebase/Database'
- pod 'Firebase/Firestore'
- pod 'Firebase/Storage'
- pod 'Firebase/Auth'
- pod 'Firebase/Messaging'
+ pod 'FirebaseCore'
+ pod 'FirebaseFirestore'
+ pod 'FirebaseStorage'
+ pod 'FirebaseAuth'
+ pod 'FirebaseMessaging'
  pod 'SDWebImage'
  pod 'SwiftLinkPreview'
  pod 'MessengerKit', :git => 'https://github.com/steve228uk/MessengerKit.git'
