@@ -7,9 +7,7 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
-import FirebaseAuth
 
 class ProArgumentTableVC: UITableViewController {
 
@@ -82,7 +80,7 @@ class ProArgumentTableVC: UITableViewController {
         let argument = argumentList[indexPath.row]
         
         if argument.addMoreData {
-            if let _ = Auth.auth().currentUser {
+            if AuthenticationManager.shared.isLoggedIn {
                 performSegue(withIdentifier: "toNewArgumentSegue", sender: community)
             } else {
                 self.notLoggedInAlert()
@@ -98,7 +96,7 @@ class ProArgumentTableVC: UITableViewController {
         if segue.identifier == "toNewArgumentSegue" {
             if let nav = segue.destination as? UINavigationController {
                 if let vc = nav.topViewController as? NewCommunityItemTableVC {
-                    vc.fact = self.community
+                    vc.community = self.community
                     vc.new = .argument
                     vc.proOrContra = .pro
                     vc.delegate = self

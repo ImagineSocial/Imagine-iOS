@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
 
 protocol AddOnDelegate {
@@ -182,6 +181,8 @@ class AddOn {
         
         let itemID: String!
         
+        guard let user = AuthenticationManager.shared.user else { return }
+        
         if let fact = item as? Community {
             itemID = fact.documentID
         } else if let post = item as? Post {
@@ -199,7 +200,6 @@ class AddOn {
         }
         
         let ref = collectionRef.document(fact.documentID).collection("addOns").document(documentID).collection("items").document(itemID)
-        let user = Auth.auth().currentUser!
         
         var data: [String: Any] = ["OP": user.uid, "createDate": Timestamp(date: Date())]
         

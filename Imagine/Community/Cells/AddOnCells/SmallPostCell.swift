@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 import AVFoundation
 import SwiftLinkPreview
 
@@ -171,23 +170,6 @@ class SmallPostCell: UICollectionViewCell {
             postTitleLabel.text = post.title
         }
     }
-    
-//    func showLinkPreview(result: Response) {
-//        //https://github.com/LeonardoCardoso/SwiftLinkPreview
-//
-//        if let imageURL = result.image {
-//            if imageURL.isValidURL {
-//                self.cellImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
-//            } else {
-//
-//                self.cellImageView.image = UIImage(named: "link-default")
-//            }
-//        }
-//
-//        if let linkSource = result.canonicalUrl {
-//            self.linkLabel.text = linkSource
-//        }
-//    }
     
     func generateThumbnail(url: URL) -> UIImage? {
         do {

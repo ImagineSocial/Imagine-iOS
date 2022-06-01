@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAuth
 import FirebaseFirestore
 
 //Get Last Message!
@@ -34,20 +32,6 @@ class ChatsTableViewController: UITableViewController {
         getChats()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        // Does not get reloaded after you have logged In again!
-        // Wont disappear when not logged in anymore
-        
-        if Auth.auth().currentUser == nil && loggedIn == true {
-            self.chatsList.removeAll()
-            self.tableView.reloadData()
-        } else if Auth.auth().currentUser != nil && loggedIn == false {
-            self.getChats()
-        }
-//        tableView.reloadData()
-    }
-    
-    
     
     /*
      
@@ -65,7 +49,7 @@ class ChatsTableViewController: UITableViewController {
     
     
     func getChats() {   // Get participant and every documentID of every chat that the user has
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             self.loggedIn = true
             if chatsList.count == 0 {
                 self.view.activityStartAnimating()
@@ -114,7 +98,7 @@ class ChatsTableViewController: UITableViewController {
     
     
     func getUnreadMessages() {
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             let notificationRef = db.collection("Users").document(user.uid).collection("notifications").whereField("type", isEqualTo: "message")
             
             notificationRef.addSnapshotListener { (snap, err) in    // Get messageNotifications
@@ -256,7 +240,7 @@ class ChatsTableViewController: UITableViewController {
                 continue
             }
             
-            participant.getUser(isAFriend: friends.contains(participant.userID)) { user in
+            participant.getUser(isAFriend: friends.contains(participant.uid)) { user in
                 self.tableView.reloadData()
                 self.view.activityStopAnimating()
             }
@@ -369,7 +353,7 @@ class ChatsTableViewController: UITableViewController {
     
     
     @IBAction func newMessage(_ sender: Any) {
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
             performSegue(withIdentifier: "toFriendsSegue", sender: nil)
         } else {
             self.notLoggedInAlert()

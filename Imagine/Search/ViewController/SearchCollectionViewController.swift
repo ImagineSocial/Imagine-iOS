@@ -7,8 +7,7 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAnalytics
+import FirebaseFirestore
 import AVKit
 
 class SearchCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
@@ -466,7 +465,7 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
         
         func addUser(document: DocumentSnapshot) {
             
-            if userResults.contains(where: { $0.userID == document.documentID }) {   // Check if we got the user in on of the other queries
+            if userResults.contains(where: { $0.uid == document.documentID }) {   // Check if we got the user in on of the other queries
                 return
             }
             

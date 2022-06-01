@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 protocol CustomSearchViewControllerDelegate {
     func didSelectItem(item: Any)
@@ -319,7 +319,7 @@ extension SearchTableViewController: UISearchResultsUpdating, UISearchBarDelegat
         
         func addUser(document: DocumentSnapshot) {
             
-            if userResults.contains(where: { $0.userID == document.documentID }) {   // Check if we got the user in on of the other queries
+            if userResults.contains(where: { $0.uid == document.documentID }) {   // Check if we got the user in on of the other queries
                 return
             }
             

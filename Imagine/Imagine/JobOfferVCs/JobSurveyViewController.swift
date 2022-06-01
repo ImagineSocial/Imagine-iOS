@@ -8,7 +8,6 @@
 
 import UIKit
 import MessageUI
-import Firebase
 import FirebaseAuth
 import FirebaseFirestore
 

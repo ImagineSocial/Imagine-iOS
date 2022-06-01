@@ -7,7 +7,8 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseCore
+import FirebaseMessaging
 import IQKeyboardManagerSwift
 import AVKit
 
@@ -45,10 +46,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         self.window?.rootViewController = initialViewController
         self.window?.makeKeyAndVisible()
-        
-        if let _ = Auth.auth().currentUser {    // Already signed up but before integration of notifications. Will ask after sign Up. Can delete this after everybody has set it (maybe 3 Users left)
-            registerForPushNoticications(application: application)
-        }
         
         do{ // If i want to play full screen: https://stackoverflow.com/questions/31828654/turn-off-audio-playback-of-avplayer
           try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: [AVAudioSession.CategoryOptions.mixWithOthers])

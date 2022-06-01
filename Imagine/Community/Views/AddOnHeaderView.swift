@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 
 protocol AddOnHeaderDelegate {
     func showDescription()
@@ -60,7 +59,7 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
                     headerTitleLabel.text = NSLocalizedString("new_addOn_QandA_header", comment: "adde a qanda addon")
                 }
                 
-                if let user = Auth.auth().currentUser {
+                if let user = AuthenticationManager.shared.user {
                     if user.uid == info.OP {
                         self.settingButton.isHidden = false
                     }

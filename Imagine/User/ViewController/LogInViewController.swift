@@ -7,10 +7,8 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
 import FirebaseAuth
-import FirebaseAnalytics
 
 private enum LogInFrame {
     case enterEmail

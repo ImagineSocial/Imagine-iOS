@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAnalytics
 
 protocol PageViewHeaderDelegate: class {
     func childScrollViewScrolled(offset: CGFloat)
@@ -168,7 +166,7 @@ class CommunityPageVC: UIPageViewController {
         let shareButton = getShareTopicButton()
         let shareBarButton = UIBarButtonItem(customView: shareButton)
         
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             for mod in community.moderators {
                 if mod == user.uid {
                     self.settingButton = getSettingButton()
@@ -231,7 +229,7 @@ class CommunityPageVC: UIPageViewController {
             }
         case  "shareTopicSegue":
             if let navVC = segue.destination as? UINavigationController, let vc = navVC.topViewController as? NewCommunityItemTableVC {
-                vc.fact = community
+                vc.community = community
                 vc.delegate = self
                 vc.new = .shareTopic
             }

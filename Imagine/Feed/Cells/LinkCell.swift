@@ -8,7 +8,6 @@
 
 import UIKit
 import SwiftLinkPreview
-import Firebase
 
 class LinkCell : BaseFeedCell {
     

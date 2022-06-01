@@ -7,17 +7,17 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 public class User: Codable {
     
     init(userID: String) {
-        self.userID = userID        
+        self.uid = userID        
     }
     
     //MARK: - Variables
     
-    public var userID: String
+    public var uid: String
     public var displayName: String?
     public var imageURL: String?
     public var blocked: [String]?
@@ -44,7 +44,7 @@ public class User: Codable {
     
     func getUsername(username: @escaping (String?) -> Void) {
         
-        let ref =  FirestoreRequest.shared.db.collection("Users").document(userID)
+        let ref =  FirestoreRequest.shared.db.collection("Users").document(uid)
         ref.getDocument { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
@@ -65,7 +65,7 @@ public class User: Codable {
     //MARK: - Get Badges
     func getBadges(returnBadges: @escaping ([String]) -> Void) {
         
-        let ref = FirestoreRequest.shared.db.collection("Users").document(userID)
+        let ref = FirestoreRequest.shared.db.collection("Users").document(uid)
         ref.getDocument { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
@@ -83,7 +83,7 @@ public class User: Codable {
     
     //MARK: - Get User
     func getUser(isAFriend: Bool, completion: @escaping (User?) -> Void) {
-        let userRef = FirestoreRequest.shared.db.collection("Users").document(userID)
+        let userRef = FirestoreRequest.shared.db.collection("Users").document(uid)
         
         userRef.getDocument(completion: { (document, err) in
             if let error = err {

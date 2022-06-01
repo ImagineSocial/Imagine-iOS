@@ -7,12 +7,12 @@
 //
 
 import UIKit
-import Firebase
 import MapKit
 import CropViewController
 import Photos
+import FirebaseAuth
+import FirebaseStorage
 import FirebaseFirestore
-import FirebaseAnalytics
 
 protocol SettingCellDelegate {
     func gotChanged(type: SettingChangeType, value: Any)
@@ -134,9 +134,9 @@ class SettingTableViewController: UITableViewController {
                 }
             }
         } else if let user = user {
-            let userSetting = UserSetting(name: user.displayName ?? "", OP: user.userID)
+            let userSetting = UserSetting(name: user.displayName ?? "", OP: user.uid)
             
-            let ref = db.collection("Users").document(user.userID)
+            let ref = db.collection("Users").document(user.uid)
             ref.getDocument { (snap, err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
@@ -731,21 +731,21 @@ extension SettingTableViewController: UIImagePickerControllerDelegate, CropViewC
     //MARK: Change User URL
     
     func savePictureURLInUserAuth(imageURL: String) {
-        let user = Auth.auth().currentUser
-        if let user = user {
-            let changeRequest = user.createProfileChangeRequest()
-            
-            if let url = URL(string: imageURL) {
-                changeRequest.photoURL = url
-            }
-            changeRequest.commitChanges { error in
-                if error != nil {
-                    // An error happened.
-                    print("Wir haben einen error beim changeRequest: \(String(describing: error?.localizedDescription))")
-                } else {
-                    // Profile updated.
-                    print("changeRequest hat geklappt")
-                }
+        
+        guard let user = Auth.auth().currentUser, let url = URL(string: imageURL) else {
+            return
+        }
+        let changeRequest = user.createProfileChangeRequest()
+        
+        changeRequest.photoURL = url
+
+        changeRequest.commitChanges { error in
+            if error != nil {
+                // An error happened.
+                print("Wir haben einen error beim changeRequest: \(String(describing: error?.localizedDescription))")
+            } else {
+                // Profile updated.
+                print("changeRequest hat geklappt")
             }
         }
     }
@@ -783,7 +783,7 @@ extension SettingTableViewController: UIImagePickerControllerDelegate, CropViewC
             
             savePictureInStorage(storageReference: storageRef, imageData: imageData)
         } else if let user = user {
-            let imageName = "\(user.userID).profilePicture.png"
+            let imageName = "\(user.uid).profilePicture.png"
             let storageRef = storDB.child("profilePictures").child(imageName)
             
             savePictureInStorage(storageReference: storageRef, imageData: imageData)
@@ -811,11 +811,11 @@ extension SettingTableViewController: UIImagePickerControllerDelegate, CropViewC
         if let topic = topic {
             let imageName = "\(topic.documentID).png"
             let storageRef = storDB.child("factPictures").child(imageName)
-        
+            
             self.deletePictureInStorage(storageReference: storageRef)
         
         } else if let user = user {
-            let imageName = "\(user.userID).profilePicture.png"
+            let imageName = "\(user.uid).profilePicture.png"
             let storageRef = storDB.child("profilePictures").child(imageName)
             
             self.deletePictureInStorage(storageReference: storageRef)
@@ -1123,7 +1123,7 @@ extension SettingTableViewController: SettingCellDelegate, UINavigationControlle
                 }
             }
         } else if let user = user {
-            let ref = db.collection("Users").document(user.userID)
+            let ref = db.collection("Users").document(user.uid)
             ref.updateData(data) { (err) in
                 if let error = err {
                     print("We could not update the data: \(error.localizedDescription)")

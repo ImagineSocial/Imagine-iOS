@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 class CommunityHelper {
     
@@ -17,11 +17,10 @@ class CommunityHelper {
     
     let db = FirestoreRequest.shared.db
     let handyHelper = HandyHelper.shared
-    let user = Auth.auth().currentUser
     
     //MARK:- Get Community
     
-    func getCommunity(currentUser: Firebase.User?, documentID: String, data: [String: Any]) -> Community? {
+    func getCommunity(documentID: String, data: [String: Any]) -> Community? {
         
         guard let name = data["name"] as? String,
             let createTimestamp = data["createDate"] as? Timestamp,
@@ -45,7 +44,7 @@ class CommunityHelper {
         
         if let follower = data["follower"] as? [String] {
             community.followerCount = follower.count
-            if let user = currentUser {
+            if let user = AuthenticationManager.shared.user {
                 for userID in follower {
                     if userID == user.uid {
                         community.beingFollowed = true
@@ -84,6 +83,7 @@ class CommunityHelper {
     
     func loadCommunity(fact: Community, loadedFact: @escaping (Community?) -> Void) {
         
+        
         if fact.documentID == "" {
             loadedFact(nil)
         }
@@ -104,7 +104,7 @@ class CommunityHelper {
                 if let snap = snap {
                     if let self = self {
                         if let data = snap.data() {
-                            if let fact = self.getCommunity(currentUser: self.user, documentID: snap.documentID, data: data) {
+                            if let fact = self.getCommunity(documentID: snap.documentID, data: data) {
                                 loadedFact(fact)
                             } else {
                                 loadedFact(nil)

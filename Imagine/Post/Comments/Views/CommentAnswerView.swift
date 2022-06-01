@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 
 protocol CommentViewDelegate {
     func sendButtonTapped(text: String, isAnonymous: Bool, answerToComment: Comment?)

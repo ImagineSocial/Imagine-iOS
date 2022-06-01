@@ -7,10 +7,7 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
-import FirebaseAuth
-import FirebaseAnalytics
 import SDWebImage
 import AVKit
 
@@ -228,7 +225,7 @@ extension BaseFeedTableViewController: PostCellDelegate {
     }
     
     func thanksTapped(post: Post) {
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
             handyHelper.updatePost(button: .thanks, post: post)
         } else {
             self.notLoggedInAlert()
@@ -236,7 +233,7 @@ extension BaseFeedTableViewController: PostCellDelegate {
     }
     
     func wowTapped(post: Post) {
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
         handyHelper.updatePost(button: .wow, post: post)
         } else {
             self.notLoggedInAlert()
@@ -244,7 +241,7 @@ extension BaseFeedTableViewController: PostCellDelegate {
     }
     
     func haTapped(post: Post) {
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
         handyHelper.updatePost(button: .ha, post: post)
         } else {
             self.notLoggedInAlert()
@@ -252,7 +249,7 @@ extension BaseFeedTableViewController: PostCellDelegate {
     }
     
     func niceTapped(post: Post) {
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
             handyHelper.updatePost(button: .nice, post: post)
         } else {
             self.notLoggedInAlert()

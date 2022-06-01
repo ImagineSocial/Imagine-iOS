@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAuth
 import FirebaseFirestore
 
 struct Category {
@@ -44,7 +42,7 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
         requestedFriends.removeAll()
         sections.removeAll()
         
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             let friendsRef = db.collection("Users").document(user.uid).collection("friends")
             
             friendsRef.order(by: "accepted", descending: false) // Requests on top
@@ -217,20 +215,20 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
     
     
     func acceptInvitation(user: User) {
-        if let currentUser = Auth.auth().currentUser {
-            let requestRef = db.collection("Users").document(currentUser.uid).collection("friends").document(user.userID)
+        if let currentUser = AuthenticationManager.shared.user {
+            let requestRef = db.collection("Users").document(currentUser.uid).collection("friends").document(user.uid)
             
             requestRef.updateData(["accepted": true])   // Accept and change the database of the current User
             
             let data: [String:Any] = ["accepted": true, "requestedAt" : Timestamp(date: Date())]
             
-            let friendRef = db.collection("Users").document(user.userID).collection("friends").document(currentUser.uid)
+            let friendRef = db.collection("Users").document(user.uid).collection("friends").document(currentUser.uid)
             
             friendRef.setData(data) { (err) in    // Change Database of the inviter
                 if let error = err {
                     print("We have an errror while trying to add a friend: \(error.localizedDescription)")
                 } else {
-                    self.handyHelper.deleteNotifications(type: .friend, id: user.userID)
+                    self.handyHelper.deleteNotifications(type: .friend, id: user.uid)
                 }
             }
             
@@ -238,10 +236,10 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
     }
     
     func declineInvitation(user: User) {
-        if let currentUser = Auth.auth().currentUser {
-            let requestRef = db.collection("Users").document(currentUser.uid).collection("friends").document(user.userID)
+        if let currentUser = AuthenticationManager.shared.user {
+            let requestRef = db.collection("Users").document(currentUser.uid).collection("friends").document(user.uid)
             requestRef.delete()
-            handyHelper.deleteNotifications(type: .friend, id: user.userID)
+            handyHelper.deleteNotifications(type: .friend, id: user.uid)
         }
     }
     
@@ -263,10 +261,10 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
                 // block User
                 
-                if let currentUser = Auth.auth().currentUser, let user = friend.user {
+                if let currentUser = AuthenticationManager.shared.user, let user = friend.user {
                     let blockRef = self.db.collection("Users").document(currentUser.uid)
                     blockRef.updateData([
-                        "blocked": FieldValue.arrayUnion([user.userID]) // Add the person as blocked
+                        "blocked": FieldValue.arrayUnion([user.uid]) // Add the person as blocked
                         ])
                     
                     self.deleteFriend(user: user)
@@ -287,8 +285,8 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
     
     func deleteFriend(user: User) {
         // Unfollow this person
-        if let currentUser = Auth.auth().currentUser {
-            let friendsUID = user.userID
+        if let currentUser = AuthenticationManager.shared.user {
+            let friendsUID = user.uid
             
             let friendsRefOfCurrentProfile = db.collection("Users").document(friendsUID).collection("friends").document(currentUser.uid)
             friendsRefOfCurrentProfile.delete()
@@ -317,9 +315,9 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
     
     func goToChatTapped(friend: Friend) {
         
-        if let currentUser = Auth.auth().currentUser, let user = friend.user {
+        if let currentUser = AuthenticationManager.shared.user, let user = friend.user {
             // Check if there is already a chat
-            let chatRef = db.collection("Users").document(currentUser.uid).collection("chats").whereField("participant", isEqualTo: user.userID).limit(to: 1)
+            let chatRef = db.collection("Users").document(currentUser.uid).collection("chats").whereField("participant", isEqualTo: user.uid).limit(to: 1)
             
             chatRef.getDocuments { (querySnapshot, error) in
                 if error != nil {
@@ -333,14 +331,14 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                         chat.participant = user
                         chat.documentID = newDocumentID
                         
-                        newChatRef.setData(["participants": [user.userID, currentUser.uid]]) { (err) in
+                        newChatRef.setData(["participants": [user.uid, currentUser.uid]]) { (err) in
                             if let error = err {
                                 print("We have an error: \(error.localizedDescription)")
                             }
                         }
                         
                         // Create Chat Reference for the current User
-                        let dataForCurrentUsersDatabase = ["participant": user.userID]
+                        let dataForCurrentUsersDatabase = ["participant": user.uid]
                         let currentUsersDatabaseRef = self.db.collection("Users").document(currentUser.uid).collection("chats").document(newDocumentID)
                         
                         currentUsersDatabaseRef.setData(dataForCurrentUsersDatabase) { (error) in
@@ -351,7 +349,7 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
                         
                         // Create Chat Reference for the User of the profile
                         let dataForProfileUsersDatabase = ["participant": currentUser.uid]
-                        let profileUsersDatabaseRef = self.db.collection("Users").document(user.userID).collection("chats").document(newDocumentID)
+                        let profileUsersDatabaseRef = self.db.collection("Users").document(user.uid).collection("chats").document(newDocumentID)
                         
                         profileUsersDatabaseRef.setData(dataForProfileUsersDatabase) { (error) in
                             if error != nil {

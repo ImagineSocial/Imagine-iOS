@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
 
 class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, RecentTopicDelegate {
@@ -116,7 +115,6 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
         }
         let ref = collectionRef.whereField("displayOption", isEqualTo: sortByString)
         
-        let user = Auth.auth().currentUser
         ref.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
@@ -126,7 +124,7 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
                     for document in snap.documents {
                         let data = document.data()
                         
-                        if let fact = CommunityHelper.shared.getCommunity(currentUser: user, documentID: document.documentID, data: data) {
+                        if let fact = CommunityHelper.shared.getCommunity(documentID: document.documentID, data: data) {
                             facts.append(fact)
                         }
                     }

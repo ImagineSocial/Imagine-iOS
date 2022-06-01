@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseAuth
 import DateToolsSwift
 
@@ -225,7 +224,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
     
     @objc func deleteAllTapped() {
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             let ref = db.collection("Users").document(user.uid).collection("notifications").whereField("type", isEqualTo: "upvote")
             
             ref.getDocuments { (snap, err) in

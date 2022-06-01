@@ -7,9 +7,7 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
-import FirebaseAuth
 import FirebaseStorage
 
 // Worked on this at the beginning of the idea, a lot of code needs to be refusrbished
@@ -118,17 +116,15 @@ class ReportViewController: UIViewController {
     }
     
     func checkIfItsYourPost() {
-        if let currentUser = Auth.auth().currentUser {
-            if let post = post, let user = post.user {
-                if currentUser.uid == Constants.userIDs.uidMalte {
-                    if user.userID == Constants.userIDs.FrankMeindlID || user.userID == Constants.userIDs.MarkusRiesID || user.userID == Constants.userIDs.AnnaNeuhausID || user.userID == Constants.userIDs.LaraVoglerID || user.userID == Constants.userIDs.LenaMasgarID  {
-                        insertDeleteView()
-                    }
-                }
-                
-                if user.userID == currentUser.uid {
+        if let currentUser = AuthenticationManager.shared.user, let post = post, let user = post.user {
+            if currentUser.uid == Constants.userIDs.uidMalte {
+                if user.uid == Constants.userIDs.FrankMeindlID || user.uid == Constants.userIDs.MarkusRiesID || user.uid == Constants.userIDs.AnnaNeuhausID || user.uid == Constants.userIDs.LaraVoglerID || user.uid == Constants.userIDs.LenaMasgarID  {
                     insertDeleteView()
                 }
+            }
+            
+            if user.uid == currentUser.uid {
+                insertDeleteView()
             }
         }
     }
@@ -236,7 +232,7 @@ class ReportViewController: UIViewController {
                         } else {
                             print("Picture Deleted")
                             
-                            let userPostRef = self.db.collection("Users").document(user.userID).collection("posts").document(post.documentID)
+                            let userPostRef = self.db.collection("Users").document(user.uid).collection("posts").document(post.documentID)
                             
                             userPostRef.delete { (err) in
                                 if let error = err {
@@ -262,7 +258,7 @@ class ReportViewController: UIViewController {
                 } else {
                     print("Picture Deleted")
                     
-                    let userPostRef = self.db.collection("Users").document(user.userID).collection("posts").document(post.documentID)
+                    let userPostRef = self.db.collection("Users").document(user.uid).collection("posts").document(post.documentID)
                     
                     userPostRef.delete { (err) in
                         if let error = err {
@@ -275,7 +271,7 @@ class ReportViewController: UIViewController {
                 }
             }
         default:
-            let userPostRef = db.collection("Users").document(user.userID).collection("posts").document(post.documentID)
+            let userPostRef = db.collection("Users").document(user.uid).collection("posts").document(post.documentID)
             
             userPostRef.delete { (err) in
                 if let error = err {
@@ -330,7 +326,7 @@ class ReportViewController: UIViewController {
         default:
             reportCategory = .content
         }
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
             if let post = post {
                 performSegue(withIdentifier: "reportOptionSegue", sender: post)
             } else if let comment = comment {
@@ -342,7 +338,7 @@ class ReportViewController: UIViewController {
     }
     
     @IBAction func repostPressed(_ sender: Any) {
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
             if let post = post {
                 if post.type == .picture {
                     performSegue(withIdentifier: "toRepostSegue", sender: post)
@@ -356,7 +352,7 @@ class ReportViewController: UIViewController {
     }
     
     @IBAction func translatePressed(_ sender: Any) {
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
             self.repost = .translation
             if let post = post {
                 if post.type == .picture {
@@ -371,7 +367,7 @@ class ReportViewController: UIViewController {
     }
     
     @IBAction func savePostTapped(_ sender: Any) {
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             
             guard let post = post else { return }
             

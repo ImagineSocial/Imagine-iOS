@@ -8,9 +8,8 @@
 
 import UIKit
 import SwiftLinkPreview
-import Firebase
-import FirebaseFirestore
 import FirebaseAuth
+import FirebaseFirestore
 import FirebaseStorage
 import AVKit
 import WebKit
@@ -240,7 +239,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                     
                     self.view.activityStartAnimating()
                     
-                    firestoreRequest.getUserPosts(getMore: getMore, postList: .postsFromUser, userUID: user.userID) { posts  in
+                    firestoreRequest.getUserPosts(getMore: getMore, postList: .postsFromUser, userUID: user.uid) { posts  in
                         
                         guard let posts = posts else {
                             print("No more Posts")
@@ -703,15 +702,15 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     func checkIfAlreadyFriends() {
         if let user = Auth.auth().currentUser {
             if let currentProfile = userOfProfile {
-                if currentProfile.userID == "" {
+                if currentProfile.uid == "" {
                     
-                    if user.uid == currentProfile.userID {    // Your profile but you view it as a stranger, the people want to see a difference, like: "Well this is how other people see my profile..."
+                    if user.uid == currentProfile.uid {    // Your profile but you view it as a stranger, the people want to see a difference, like: "Well this is how other people see my profile..."
                         self.addAsFriendButton.isHidden = true
                         self.chatWithUserButton.isHidden = true
                         
                         self.currentState = .ownProfile
                     } else { // Check if you are already friends or you have requested it
-                        let friendsRef = db.collection("Users").document(user.uid).collection("friends").document(currentProfile.userID)
+                        let friendsRef = db.collection("Users").document(user.uid).collection("friends").document(currentProfile.uid)
                         
                         friendsRef.getDocument { (document, err) in
                             if let err = err {
@@ -783,9 +782,9 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 let alert = UIAlertController(title: NSLocalizedString("block_user_alert_title", comment: "block user?"), message: NSLocalizedString("block_user_alert_message", comment: "delete from friends and cant contact you again?"), preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: "yes"), style: .destructive){ _ in
                     // block User
-                    let blockRef = self.db.collection("Users").document(user.userID)
+                    let blockRef = self.db.collection("Users").document(user.uid)
                     blockRef.updateData([
-                        "blocked": FieldValue.arrayUnion([userOfProfile.userID]) // Add the person as blocked
+                        "blocked": FieldValue.arrayUnion([userOfProfile.uid]) // Add the person as blocked
                     ])
                     
                     self.deleteAsFriend()
@@ -818,7 +817,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     //MARK: - ImagePickerStuff
     func deletePicture() {  // In Firebase Storage
         if let user = AuthenticationManager.shared.user {
-            let imageName = "\(user.userID).profilePicture"
+            let imageName = "\(user.uid).profilePicture"
             let storageRef = Storage.storage().reference().child("profilePictures").child("\(imageName).png")
             
             storageRef.delete { (err) in
@@ -836,7 +835,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     func savePicture() {
         guard let user = AuthenticationManager.shared.user else { return }
         
-        let imageName = "\(user.userID).profilePicture"
+        let imageName = "\(user.uid).profilePicture"
         let storageRef = Storage.storage().reference().child("profilePictures").child("\(imageName).png")
         
         if let uploadData = self.selectedImageFromPicker?.jpegData(compressionQuality: 0.2) {   //Es war das Fragezeichen
@@ -970,7 +969,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         
         guard let state = currentState else { return }
         
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
             switch state {
             case .friendOfCurrentUser:
                 // Unfollow this person
@@ -1004,10 +1003,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         self.view.activityStartAnimating()
         if let user = Auth.auth().currentUser, let currentProfile = userOfProfile, let name = user.displayName {
                 
-                let friendsRef = db.collection("Users").document(currentProfile.userID).collection("friends").document(user.uid)
+                let friendsRef = db.collection("Users").document(currentProfile.uid).collection("friends").document(user.uid)
                 let data: [String:Any] = ["accepted": false, "requestedAt" : Timestamp(date: Date())]
                 
-                let notificationsRef = db.collection("Users").document(currentProfile.userID).collection("notifications").document()
+                let notificationsRef = db.collection("Users").document(currentProfile.uid).collection("notifications").document()
                 var notificationData : [String: Any] = ["type": "friend", "name": name, "userID": user.uid]
                 
                 let language = LanguageSelection().getLanguage()
@@ -1041,13 +1040,13 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     }
     
     func deleteAsFriend() {
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             if let currentProfile = userOfProfile {
                 
-                let friendsRefOfCurrentProfile = db.collection("Users").document(currentProfile.userID).collection("friends").document(user.uid)
+                let friendsRefOfCurrentProfile = db.collection("Users").document(currentProfile.uid).collection("friends").document(user.uid)
                 friendsRefOfCurrentProfile.delete()
                 
-                let friendsRefOfLoggedInUser = db.collection("Users").document(user.uid).collection("friends").document(currentProfile.userID)
+                let friendsRefOfLoggedInUser = db.collection("Users").document(user.uid).collection("friends").document(currentProfile.uid)
                 friendsRefOfLoggedInUser.delete()
                 
                 
@@ -1089,7 +1088,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             if let currentUser = Auth.auth().currentUser {
                 
                 // Check if there is already a chat
-                let chatRef = db.collection("Users").document(currentUser.uid).collection("chats").whereField("participant", isEqualTo: profileUser.userID).limit(to: 1)
+                let chatRef = db.collection("Users").document(currentUser.uid).collection("chats").whereField("participant", isEqualTo: profileUser.uid).limit(to: 1)
                 
                 chatRef.getDocuments { (querySnapshot, error) in
                     if let error = error {
@@ -1120,14 +1119,14 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 chat.participant = profileUser
                 chat.documentID = newDocumentID
                 
-                newChatRef.setData(["participants": [profileUser.userID, loggedInUser.uid]]) { (err) in
+                newChatRef.setData(["participants": [profileUser.uid, loggedInUser.uid]]) { (err) in
                     if let error = err {
                         print("We have an error: ", error.localizedDescription)
                     }
                 }
                 
                 // Create Chat Reference for the current User
-                let dataForCurrentUsersDatabase = ["participant": profileUser.userID]
+                let dataForCurrentUsersDatabase = ["participant": profileUser.uid]
                 let currentUsersDatabaseRef = self.db.collection("Users").document(loggedInUser.uid).collection("chats").document(newDocumentID)
                 
                 currentUsersDatabaseRef.setData(dataForCurrentUsersDatabase) { (err) in
@@ -1138,7 +1137,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 
                 // Create Chat Reference for the User of the profile
                 let dataForProfileUsersDatabase = ["participant": loggedInUser.uid]
-                let profileUsersDatabaseRef = self.db.collection("Users").document(profileUser.userID).collection("chats").document(newDocumentID)
+                let profileUsersDatabaseRef = self.db.collection("Users").document(profileUser.uid).collection("chats").document(newDocumentID)
                 
                 profileUsersDatabaseRef.setData(dataForProfileUsersDatabase) { (err) in
                     if let error = err {

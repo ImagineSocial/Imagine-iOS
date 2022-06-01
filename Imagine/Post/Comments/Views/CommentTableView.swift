@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAuth
 import FirebaseFirestore
 
 enum CommentSection {
@@ -89,7 +87,7 @@ class CommentTableView: UITableView {
         
         self.headerView = CommentTableViewHeader(frame: CGRect(x: 0, y: 0, width: 276, height: 30))
         self.headerView!.delegate = self
-        if let user = Auth.auth().currentUser, let recipients = notificationRecipients {
+        if let user = AuthenticationManager.shared.user, let recipients = notificationRecipients {
             for recipient in recipients {
                 if user.uid == recipient {
                     // self.headerView!.showNotificationButton()    -> Maybe later when the ui isnt as intrusive
@@ -242,8 +240,8 @@ class CommentTableView: UITableView {
     
     func checkIfTheCurrentUserIsBlocked(post: Post) {
         if let user = post.user {
-            if let currentUser = Auth.auth().currentUser {
-                db.collection("Users").document(user.userID).getDocument { (document, err) in
+            if let currentUser = AuthenticationManager.shared.user {
+                db.collection("Users").document(user.uid).getDocument { (document, err) in
                     if let error = err {
                         print("We have an error: \(error.localizedDescription)")
                     } else {
@@ -263,7 +261,7 @@ class CommentTableView: UITableView {
     }
     
     func setCurrentUser() {
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             let user = User(userID: user.uid)
             user.getUser(isAFriend: false) { user in
                 if let user = user {
@@ -279,7 +277,7 @@ class CommentTableView: UITableView {
         
         var sectionItemID: String!
         
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             
             if allowedToComment {
                 guard let currentUser = currentUser else {
@@ -459,7 +457,7 @@ class CommentTableView: UITableView {
                                 if recipient == commenterUID {
                                     continue // No notification for your own comment
                                 } else {
-                                    if let user = post.user, recipient == user.userID {
+                                    if let user = post.user, recipient == user.uid {
                                         self.setNotification(post: post, userID: recipient, bodyString: bodyString, displayName: displayName, forOP: true)
                                     } else {
                                         self.setNotification(post: post, userID: recipient, bodyString: bodyString, displayName: displayName, forOP: false)
@@ -613,9 +611,9 @@ extension CommentTableView: UITableViewDataSource, UITableViewDelegate {
         }
         editAction.backgroundColor = .imagineColor
         
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             if let commentAuthor = comment.user {
-                if user.uid == commentAuthor.userID {
+                if user.uid == commentAuthor.uid {
                     let deleteAction = UITableViewRowAction(style: .destructive, title: NSLocalizedString("delete", comment: "delete")) { (rowAction, indexPath) in
                         
                         if comment.isIndented {
@@ -679,7 +677,7 @@ extension CommentTableView: CommentTableViewHeaderDelegate, CommentCellDelegate 
     
     
     func switchChanged(isOn: Bool) {
-        if let user = Auth.auth().currentUser, let post = post {
+        if let user = AuthenticationManager.shared.user, let post = post {
             if isOn {
                 self.addUserAsNotificationRecipient(post: post, userUID: user.uid)
             } else {

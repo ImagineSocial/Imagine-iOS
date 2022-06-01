@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 protocol TopTopicCellDelegate {
     func owenTapped()

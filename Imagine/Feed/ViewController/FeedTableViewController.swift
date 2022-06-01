@@ -7,10 +7,8 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseAuth
 import FirebaseFirestore
-import FirebaseAnalytics
 import SDWebImage
 import Reachability
 import EasyTipView
@@ -346,7 +344,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                 self.setNotificationListener()
             } else {    // Already got barButtons
                 
-                if let _ = Auth.auth().currentUser {
+                if AuthenticationManager.shared.isLoggedIn {
                     if self.loggedIn == false { // Logged in but no profileButton
                         self.createBarButton()
                     }
@@ -520,7 +518,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                 post.language = comment.sectionItemLanguage
                 post.newUpvotes = comment.upvotes
 
-                if let user = Auth.auth().currentUser {     //Only works if you get notifications for your own posts
+                if let user = AuthenticationManager.shared.user {     //Only works if you get notifications for your own posts
                     post.user = User(userID: user.uid)
                 }
                 
@@ -533,7 +531,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                 post.isTopicPost = comment.isTopicPost
                 post.toComments = true
                 post.language = comment.sectionItemLanguage
-                if let user = Auth.auth().currentUser {
+                if let user = AuthenticationManager.shared.user {
                     post.user = User(userID: user.uid)
                 }
                 
@@ -549,7 +547,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     
     func checkForLoggedInUser() {
         print("check")
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
             //Still logged in
             self.loadBarButtonItem()
             self.screenEdgeRecognizer.isEnabled = true
@@ -582,7 +580,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             return
         } else {
             print("Set listener")
-            if let user = Auth.auth().currentUser {
+            if let user = AuthenticationManager.shared.user {
                 let notRef = db.collection("Users").document(user.uid).collection("notifications")
                 
                 notificationListener = notRef.addSnapshotListener { (snap, err) in
@@ -811,7 +809,6 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             
             self.defaults.set(true, forKey: "acceptedCookies")
             self.defaults.set(true, forKey: "askedAboutCookies")
-            Analytics.setAnalyticsCollectionEnabled(true)
             self.dismiss(animated: true, completion: nil)
         }))
         

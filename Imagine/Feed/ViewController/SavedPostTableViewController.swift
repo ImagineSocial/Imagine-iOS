@@ -8,7 +8,6 @@
 
 import UIKit
 import FirebaseFirestore
-import FirebaseAuth
 
 class SavedPostTableViewController: BaseFeedTableViewController {
     
@@ -29,7 +28,7 @@ class SavedPostTableViewController: BaseFeedTableViewController {
         
         if isConnected() {
             
-            if let user = Auth.auth().currentUser {
+            if let user = AuthenticationManager.shared.user {
                 firestoreRequest.getUserPosts(getMore: getMore, postList: .savedPosts, userUID: user.uid) { posts  in
                     
                     guard let posts = posts else {

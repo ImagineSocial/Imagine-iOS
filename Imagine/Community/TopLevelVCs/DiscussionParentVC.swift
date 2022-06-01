@@ -8,8 +8,6 @@
 
 import UIKit
 import EasyTipView
-import Firebase
-import FirebaseAnalytics
 
 protocol RecentTopicDelegate: class {
     func topicSelected(community: Community)

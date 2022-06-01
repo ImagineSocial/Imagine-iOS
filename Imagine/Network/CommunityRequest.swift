@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Firebase
+import FirebaseFirestore
 
 class CommunityRequest {
     
@@ -31,13 +31,9 @@ class CommunityRequest {
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
                 } else {
-                    //                    if self == nil {
-                    //                        print("Cant get document \(community.documentID) because self isnt there")
-                    //                    } // AddOnCollectionVC gets deinitialized though, does that mean "weak self" is not necessar here? For the post Objects it is!
                     if let document = doc, let data = document.data() {
-                        let user = Auth.auth().currentUser
                         
-                        if let community = self.communityHelper.getCommunity(currentUser: user, documentID: document.documentID, data: data) {
+                        if let community = self.communityHelper.getCommunity(documentID: document.documentID, data: data) {
                             completion(community)
                         } else {
                             print("Error: COuldnt get a community")

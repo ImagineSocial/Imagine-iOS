@@ -7,7 +7,8 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseAuth
+import FirebaseFirestore
 
 protocol CommunityHeaderDelegate: class {
     func segmentedControlTapped(index: Int, direction: UIPageViewController.NavigationDirection)

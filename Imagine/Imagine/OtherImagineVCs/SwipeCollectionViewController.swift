@@ -7,8 +7,7 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAnalytics
+import FirebaseFirestore
 
 enum SwipeCollectionDiashow {
     case vision
@@ -148,7 +147,6 @@ class SwipeCollectionViewController: UICollectionViewController, UICollectionVie
                         
                         defaults.set(true, forKey: "acceptedCookies")
                         defaults.set(true, forKey: "askedAboutCookies")
-                        Analytics.setAnalyticsCollectionEnabled(true)
                         self.dismiss(animated: true, completion: nil)
                     }))
                     
@@ -178,8 +176,7 @@ class SwipeCollectionViewController: UICollectionViewController, UICollectionVie
     }
     
     func signUpTapped() {
-        let user = Auth.auth().currentUser
-        if user == nil {
+        if !AuthenticationManager.shared.isLoggedIn {
             performSegue(withIdentifier: "toLoginSegue", sender: nil)
         }
     }

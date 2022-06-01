@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
 
 class QandAQuestion {
@@ -354,13 +353,14 @@ class AddOnQAndATextfieldCell: UITableViewCell {
     @IBAction func sendButtonTapped(_ sender: Any) {
         guard let type = type, let info = info, let text = answerTextField.text, text != "" else { return }
         
-        if let user = Auth.auth().currentUser {
-            storeInFirebase(info: info, type: type, text: text, user: user)
-        }
+        storeInFirebase(info: info, type: type, text: text)
     }
     
-    func storeInFirebase(info: AddOn, type: QandAAnswerType, text: String, user: Firebase.User) {
-        
+    func storeInFirebase(info: AddOn, type: QandAAnswerType, text: String) {
+        guard let user = AuthenticationManager.shared.user else {
+            return
+        }
+
         var collectionRef: CollectionReference!
         if info.fact.language == .english {
             collectionRef = db.collection("Data").document("en").collection("topics")

@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
 
 protocol RecentTopicCellDelegate {
@@ -53,11 +52,10 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
             key = "recentTopics"
         }
         let factStrings = defaults.stringArray(forKey: key) ?? [String]()
-        let user = Auth.auth().currentUser
         
         if initialFetch {
             for string in factStrings {
-                loadFact(user: user, factID: string, language: language)
+                loadCommunity(with: string, language: language)
             }
         } else {
             if self.communities.count >= 10 {
@@ -66,24 +64,24 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
             
             self.communities = self.communities.filter{ $0.documentID != factStrings[0] }
             
-            loadFact(user: user, factID: factStrings[0], language: language)
+            loadCommunity(with: factStrings[0], language: language)
         }
     }
     
-    func loadFact(user: Firebase.User?, factID: String, language: Language) {
+    func loadCommunity(with id: String, language: Language) {
         var collectionRef: CollectionReference!
         if language == .english {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
         }
-        let factRef = collectionRef.document(factID)
+        let factRef = collectionRef.document(id)
         
         factRef.getDocument { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
-                if let snapshot = snap, let data = snapshot.data(), let community = CommunityHelper.shared.getCommunity(currentUser: user, documentID: snapshot.documentID, data: data) {
+                if let snapshot = snap, let data = snapshot.data(), let community = CommunityHelper.shared.getCommunity(documentID: snapshot.documentID, data: data) {
                     self.communities.insert(community, at: 0)
                     self.collectionView.reloadData()
                 }

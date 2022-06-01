@@ -11,7 +11,6 @@ import Photos
 import EasyTipView
 import SwiftLinkPreview
 import CropViewController
-import Firebase
 
 enum NewPostButton {
     case meme, option, location, linkInfo, anonymousInfo, linkedCommunityInfo, linkCommunity, cancelLinkedCommunity, cancelLocation

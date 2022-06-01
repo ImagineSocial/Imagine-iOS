@@ -8,9 +8,7 @@
 
 import UIKit
 import MessengerKit
-import Firebase
 import FirebaseFirestore
-import FirebaseAuth
 
 enum chatType {
     case normal
@@ -132,7 +130,7 @@ class ChatViewController: MSGMessengerViewController {
     }
     
     func setCurrentUser() {
-        if let uid = Auth.auth().currentUser?.uid {
+        if let uid = AuthenticationManager.shared.user?.uid {
             currentUserUid = uid
             
             self.firebaseListener()
@@ -252,11 +250,11 @@ class ChatViewController: MSGMessengerViewController {
     
     func setNotification(chat: Chat, bodyString: String, messageID: String) {
         if let currentUser = currentUser, let participant = chat.participant {
-            let notificationRef = db.collection("Users").document(participant.userID).collection("notifications").document()
+            let notificationRef = db.collection("Users").document(participant.uid).collection("notifications").document()
             let notificationData: [String: Any] = ["type": "message", "message": bodyString, "name": currentUser.displayName, "chatID": chat.documentID, "sentAt": Timestamp(date: Date()), "messageID": messageID]
             
             if let chat = self.chat {
-                if let user = Auth.auth().currentUser {
+                if let user = AuthenticationManager.shared.user {
                     let message = chat.lastMessage
                     message.message = bodyString
                     message.sender = user.uid

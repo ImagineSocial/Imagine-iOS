@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 class FactCell: BaseCollectionViewCell {
     
@@ -78,12 +78,11 @@ class FactCell: BaseCollectionViewCell {
                 }
                 let ref = collectionRef.document(unloadedFact.documentID)
                 
-                let user = Auth.auth().currentUser
                 ref.getDocument { (snap, err) in
                     if let error = err {
                         print("We have an error: \(error.localizedDescription)")
                     } else {
-                        if let snap = snap, let data = snap.data(), let community = CommunityHelper.shared.getCommunity(currentUser: user,documentID: snap.documentID, data: data) {
+                        if let snap = snap, let data = snap.data(), let community = CommunityHelper.shared.getCommunity(documentID: snap.documentID, data: data) {
                             
                             self.community = community
                         }

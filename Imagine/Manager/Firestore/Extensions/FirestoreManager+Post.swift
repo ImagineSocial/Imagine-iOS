@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Firebase
 import FirebaseFirestore
 
 // This enum differentiates between savedPosts or posts for the "getTheSavedPosts" function
@@ -73,7 +72,7 @@ class FirestoreRequest {
             return
         }
         
-        let userRef = FirestoreReference.collectionRef(.users, collectionReference: FirestoreCollectionReference(document: user.userID, collection: "friends"))
+        let userRef = FirestoreReference.collectionRef(.users, collectionReference: FirestoreCollectionReference(document: user.uid, collection: "friends"))
         
         userRef.getDocuments { snap, error in
             guard let snaps = snap, error == nil else {
@@ -86,7 +85,7 @@ class FirestoreRequest {
             }
             
             //Add yourself to the list so you see your full name in the feed
-            friends.append(user.userID)
+            friends.append(user.uid)
             
             self.friends = friends
             
@@ -241,7 +240,7 @@ class FirestoreRequest {
     
     func getFollowedTopicIDs(completion: @escaping ([String]?) -> Void) {
         var topicIDs = [String]()
-        guard let user = Auth.auth().currentUser else {
+        guard let user = AuthenticationManager.shared.user else {
             completion(nil)
             return
         }

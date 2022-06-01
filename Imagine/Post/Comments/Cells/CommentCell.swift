@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 
 protocol CommentCellDelegate {
     func userTapped(user: User)
@@ -27,7 +26,6 @@ class CommentCell: UITableViewCell {
     
     var delegate: CommentCellDelegate?
     var handyHelper = HandyHelper.shared
-    let auth = Auth.auth()
     
     var comment: Comment? {
         didSet {
@@ -37,8 +35,8 @@ class CommentCell: UITableViewCell {
                     if let urlString = user.imageURL, let url = URL(string: urlString) {
                         profilePictureImageView.sd_setImage(with: url, completed: nil)
                     }
-                    if let currentUser = auth.currentUser {
-                        if currentUser.uid == user.userID {
+                    if let currentUser = AuthenticationManager.shared.user {
+                        if currentUser.uid == user.uid {
                             niceButton.setImage(nil, for: .normal)
                             niceButton.setTitle(String(comment.likes), for: .normal)
                         }
@@ -90,7 +88,7 @@ class CommentCell: UITableViewCell {
     }
     
     @IBAction func niceButtonTapped(_ sender: Any) {
-        if let _ = auth.currentUser, let comment = comment {
+        if AuthenticationManager.shared.isLoggedIn, let comment = comment {
             handyHelper.setLikeOnComment(comment: comment, answerToComment: comment.parent)
             niceButton.setImage(nil, for: .normal)
             niceButton.setTitle(String(comment.likes+1), for: .normal)

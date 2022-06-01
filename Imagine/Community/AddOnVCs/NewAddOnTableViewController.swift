@@ -8,9 +8,7 @@
 
 import UIKit
 import EasyTipView
-import Firebase
 import FirebaseFirestore
-import FirebaseAnalytics
 
 class NewAddOnTableViewController: UITableViewController {
     
@@ -19,7 +17,7 @@ class NewAddOnTableViewController: UITableViewController {
     @IBOutlet weak var didSelectAddOnImageView: UIImageView!
     
     var optionalInformations = [AddOn]()
-    var fact: Community?
+    var community: Community?
     var selectedAddOnStyle: AddOnStyle?
     
     let addOnStoreCellIdentifier = "AddOnStoreImageTableViewCell"
@@ -33,7 +31,7 @@ class NewAddOnTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let _ = fact else {
+        guard let _ = community else {
             print("No Fact")
             navigationController?.popViewController(animated: false)
             return
@@ -202,7 +200,7 @@ class NewAddOnTableViewController: UITableViewController {
             if let navVC = segue.destination as? UINavigationController {
                 if let vc = navVC.topViewController as? NewCommunityItemTableVC {
                     if let style = sender as? AddOnStyle {
-                        if let fact = fact {
+                        if let community = community {
                             if style == .singleTopic {
                                 vc.new = .singleTopicAddOn
                             } else if style == .collectionWithYTPlaylist {
@@ -210,7 +208,7 @@ class NewAddOnTableViewController: UITableViewController {
                             } else {
                                 vc.new = .addOn
                             }
-                            vc.fact = fact
+                            vc.community = community
                             vc.delegate = self
                         }
                     }
@@ -220,18 +218,17 @@ class NewAddOnTableViewController: UITableViewController {
     }
     
     @IBAction func doneTapped(_ sender: Any) {
-        if let user = Auth.auth().currentUser, let fact = fact {
-            if let style = self.selectedAddOnStyle {
-                if style == .QandA {
-                    createNewQandAAddOn(user: user, fact: fact)
-                } else {
-                    performSegue(withIdentifier: "toNewAddOnSegue", sender: style)
-                }
-            }
+        guard let user = AuthenticationManager.shared.user, let community = community, let style = self.selectedAddOnStyle else {
+            return
+        }
+        if style == .QandA {
+            createNewQandAAddOn(user: user, fact: community)
+        } else {
+            performSegue(withIdentifier: "toNewAddOnSegue", sender: style)
         }
     }
     
-    func createNewQandAAddOn(user: FirebaseAuth.User, fact: Community) {
+    func createNewQandAAddOn(user: User, fact: Community) {
         var collectionRef: CollectionReference!
         if fact.language == .english {
             collectionRef = db.collection("Data").document("en").collection("topics")

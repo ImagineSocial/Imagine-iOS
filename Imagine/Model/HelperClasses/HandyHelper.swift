@@ -7,9 +7,7 @@
 //
 
 import Foundation
-import Firebase
 import FirebaseFirestore
-import FirebaseAuth
 import DateToolsSwift
 import AVKit
 
@@ -181,11 +179,11 @@ class HandyHelper {
     
     func notifyUserForUpvote(button: VoteButton, post: Post) {
         
-        guard let currentUser = Auth.auth().currentUser, let user = post.user else {
+        guard let currentUser = AuthenticationManager.shared.user, let user = post.user else {
             return
         }
         
-        if currentUser.uid == user.userID {
+        if currentUser.uid == user.uid {
             //No notifications if you like your own posts for whatever reason
             return
         }
@@ -214,7 +212,7 @@ class HandyHelper {
                 data["language"] = "en"
             }
             
-            let ref = db.collection("Users").document(user.userID).collection("notifications").document()
+            let ref = db.collection("Users").document(user.uid).collection("notifications").document()
             
             ref.setData(data) { (err) in
                 if let error = err {
@@ -298,7 +296,7 @@ class HandyHelper {
     func checkIfAlreadySaved(post: Post, alreadySaved: @escaping(Bool) -> Void ) {
         var saved = false
         
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             let savedRef = db.collection("Users").document(user.uid).collection("saved").whereField("documentID", isEqualTo: post.documentID)
             savedRef.getDocuments { (snap, err) in
                 if let error = err {
@@ -332,7 +330,7 @@ class HandyHelper {
     }
     
     func saveFCMToken(token:String) {
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             let userRef = db.collection("Users").document(user.uid)
             
             userRef.setData(["fcmToken":token], mergeFields: ["fcmToken"])
@@ -344,7 +342,7 @@ class HandyHelper {
     func deleteNotifications(type: NotificationType, id: String) {
         print("delete Notification")
         
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             
             switch type {
             case .message:
@@ -431,15 +429,12 @@ class HandyHelper {
     }
     
     func setLikeOnComment(comment: Comment, answerToComment: Comment?) {
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             let ref = getCommentRef(comment: comment, answerToComment: answerToComment)
             
             ref.updateData([
                 "likes" : FieldValue.arrayUnion([user.uid])
             ])
-        } else {
-            return
         }
     }
-    
 }

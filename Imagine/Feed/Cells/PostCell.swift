@@ -8,7 +8,6 @@
 
 import UIKit
 import SDWebImage
-import Firebase
 
 protocol PostCellDelegate: class {
     func userTapped(post: Post)

@@ -7,12 +7,13 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseStorage
+import FirebaseFirestore
 
 extension NewPostVC {
     
     @objc func shareTapped() {
-        guard let userID = AuthenticationManager.shared.user?.userID else {
+        guard let userID = AuthenticationManager.shared.user?.uid else {
             self.notLoggedInAlert()
             return
         }

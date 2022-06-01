@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Firebase
 import FirebaseFirestore
 
 enum DataType {
@@ -31,7 +30,6 @@ class DataRequest {
     var dataPath = ""
     let db = FirestoreRequest.shared.db
     let handyHelper = HandyHelper.shared
-    let user = Auth.auth().currentUser
     let communityHelper = CommunityHelper.shared
     
     //MARK:- Get Data 
@@ -203,7 +201,7 @@ class DataRequest {
                             list.append(vote)
                             
                         case .communities:
-                            if let community = self.communityHelper.getCommunity(currentUser: self.user, documentID: documentID, data: documentData) {
+                            if let community = self.communityHelper.getCommunity(documentID: documentID, data: documentData) {
                                 list.append(community)
                             }
                         case .jobOffer:

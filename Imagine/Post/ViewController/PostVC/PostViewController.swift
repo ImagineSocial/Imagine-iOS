@@ -9,10 +9,8 @@
 import UIKit
 import SDWebImage
 import SwiftLinkPreview
-import Firebase
 import YoutubePlayer_in_WKWebView
 import AVKit
-import FirebaseAuth
 import FirebaseFirestore
 
 
@@ -250,7 +248,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     func showPost() {
         
-        if let user = Auth.auth().currentUser, let OP = post.user, user.uid == OP.userID { // Your own Post -> Different UI for a different Feeling. Shows like counts
+        if let user = AuthenticationManager.shared.user, let OP = post.user, user.uid == OP.uid { // Your own Post -> Different UI for a different Feeling. Shows like counts
             self.ownPost = true
             self.feedLikeView.setOwnCell(post: post)
         }
@@ -481,7 +479,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func checkIfAlreadySaved() {
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             let savedRef = db.collection("Users").document(user.uid).collection("saved").whereField("documentID", isEqualTo: post.documentID)
             
             savedRef.getDocuments { (snap, err) in
@@ -627,7 +625,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     //MARK: - Like Buttons
     
     func updateLikeCount(button: DesignableButton) {
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
             var voteButton: VoteButton
             switch button {
             case feedLikeView.thanksButton:
@@ -811,7 +809,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     
     @IBAction func savePostTapped(_ sender: Any) {
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             let ref = db.collection("Users").document(user.uid).collection("saved").document(post.documentID)
             
             var data: [String:Any] = ["createTime": Timestamp(date: Date())]

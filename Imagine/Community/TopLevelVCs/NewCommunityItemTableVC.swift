@@ -7,8 +7,8 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
+import FirebaseStorage
 import EasyTipView
 import CropViewController
 
@@ -86,7 +86,7 @@ class NewCommunityItemTableVC: UITableViewController {
     
     var new: NewCommunityItemType?
     
-    var fact: Community?
+    var community: Community?
     var argument: Argument?
     var deepArgument: Argument?
     
@@ -151,7 +151,7 @@ class NewCommunityItemTableVC: UITableViewController {
             headerLabel.text = NSLocalizedString("new_source_header", comment: "create new source")
             cells.append(contentsOf: [.setTitle, .setDescription, .setLink])
         case .deepArgument:
-            guard let _ = fact, let _ = argument else {
+            guard let _ = community, let _ = argument else {
                 self.dismiss(animated: true, completion: nil)
                 return
             }
@@ -263,7 +263,7 @@ class NewCommunityItemTableVC: UITableViewController {
         case .setArgumentProContra:
             if let cell = tableView.dequeueReusableCell(withIdentifier: argumentCellIdentifier, for: indexPath) as? NewCommunityArgumentCell {
                 cell.delegate = self
-                cell.fact = fact
+                cell.fact = community
                 cell.proOrContra = proOrContra
                 
                 return cell
@@ -370,13 +370,15 @@ class NewCommunityItemTableVC: UITableViewController {
     }
     
     @IBAction func doneButtonTapped(_ sender: Any) {
-        if let _ = Auth.auth().currentUser {
-            self.view.activityStartAnimating()
-            self.doneButton.isEnabled = false
-            self.createNewInstance()
-        } else {
+        guard AuthenticationManager.shared.isLoggedIn else {
             self.notLoggedInAlert()
+            return
         }
+        
+        self.view.activityStartAnimating()
+        self.doneButton.isEnabled = false
+        self.createNewInstance()
+        
     }
     
     //MARK:- SetData
@@ -399,7 +401,7 @@ class NewCommunityItemTableVC: UITableViewController {
             let ref = collectionRef.document()
             
             if selectedImageFromPicker != nil {
-                if let user = Auth.auth().currentUser {
+                if let user = AuthenticationManager.shared.user {
                     self.savePicture(userID: user.uid, topicRef: ref, new: .community)
                 }
             } else {
@@ -408,7 +410,7 @@ class NewCommunityItemTableVC: UITableViewController {
         case .source:
             createNewSource()
         case .addOnPlaylist:
-            if let fact = fact {
+            if let fact = community {
                 var collectionRef: CollectionReference!
                 if fact.language == .english {
                     collectionRef = db.collection("Data").document("en").collection("topics")
@@ -422,7 +424,7 @@ class NewCommunityItemTableVC: UITableViewController {
                 
             }
         case .addOn:
-            if let fact = fact {
+            if let fact = community {
                 var collectionRef: CollectionReference!
                 if fact.language == .english {
                     collectionRef = db.collection("Data").document("en").collection("topics")
@@ -433,7 +435,7 @@ class NewCommunityItemTableVC: UITableViewController {
                 let ref = collectionRef.document(fact.documentID).collection("addOns").document()
                 
                 if selectedImageFromPicker != nil {
-                    if let user = Auth.auth().currentUser {
+                    if let user = AuthenticationManager.shared.user {
                         self.savePicture(userID: user.uid, topicRef: ref, new: .addOn)
                     }
                 } else {
@@ -441,7 +443,7 @@ class NewCommunityItemTableVC: UITableViewController {
                 }
             }
         case .addOnYouTubePlaylistDesign:
-            if let fact = fact {
+            if let fact = community {
                 var collectionRef: CollectionReference!
                 if fact.language == .english {
                     collectionRef = db.collection("Data").document("en").collection("topics")
@@ -452,7 +454,7 @@ class NewCommunityItemTableVC: UITableViewController {
                 let ref = collectionRef.document(fact.documentID).collection("addOns").document()
                 
                 if selectedImageFromPicker != nil {
-                    if let user = Auth.auth().currentUser {
+                    if let user = AuthenticationManager.shared.user {
                         self.savePicture(userID: user.uid, topicRef: ref, new: .addOnYouTubePlaylistDesign)
                     }
                 } else {
@@ -472,314 +474,281 @@ class NewCommunityItemTableVC: UITableViewController {
     }
     
     func createSingleTopicPost() {
-        if let fact = fact {
-            if let title = titleText, title != "" {
+        guard let community = community, let title = titleText, title != "", let user = AuthenticationManager.shared.user else {
+            self.alert(message: NSLocalizedString("new_community_item_error_title", comment: "input missing"))
+            return
+        }
+        
+        var collectionRef: CollectionReference!
+        if community.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("posts")
+        } else {
+            collectionRef = db.collection("Posts")
+        }
+        let ref = collectionRef.document()
+        
+        var description = ""
+        if let descriptionText = descriptionText {
+            description = descriptionText
+        }
+        
+        let dataDictionary: [String: Any] = ["title": title, "description": description, "createTime": Timestamp(date: Date()), "originalPoster": user.uid, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "singleTopic", "report": "normal", "linkedFactID": community.documentID, "notificationRecipients": [user.uid]]
+        
+        ref.setData(dataDictionary) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                let post = Post()
+                post.documentID = ref.documentID
+                post.title = title
+                post.language = community.language
                 
-                let OP = Auth.auth().currentUser!
+                let userRef = self.db.collection("Users").document(user.uid).collection("posts").document(ref.documentID)
+                var data: [String: Any] = ["createTime": Timestamp(date: Date())]
                 
-                var collectionRef: CollectionReference!
-                if fact.language == .english {
-                    collectionRef = db.collection("Data").document("en").collection("posts")
-                } else {
-                    collectionRef = db.collection("Posts")
+                if community.language == .english {
+                    data["language"] = "en"
                 }
-                let ref = collectionRef.document()
-                
-                var description = ""
-                if let descriptionText = descriptionText {
-                    description = descriptionText
-                }
-
-                let dataDictionary: [String: Any] = ["title": title, "description": description, "createTime": Timestamp(date: Date()), "originalPoster": OP.uid, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "singleTopic", "report": "normal", "linkedFactID": fact.documentID, "notificationRecipients": [OP.uid]]
-                
-                ref.setData(dataDictionary) { (err) in
+                userRef.setData(data) { (err) in
                     if let error = err {
                         print("We have an error: \(error.localizedDescription)")
+                        self.finished(item: post)   // finish anyway
                     } else {
-                        let post = Post()
-                        post.documentID = ref.documentID
-                        post.title = title
-                        post.language = fact.language
-                        
-                        let userRef = self.db.collection("Users").document(OP.uid).collection("posts").document(ref.documentID)
-                        var data: [String: Any] = ["createTime": Timestamp(date: Date())]
-                        
-                        if fact.language == .english {
-                            data["language"] = "en"
-                        }
-                        userRef.setData(data) { (err) in
-                            if let error = err {
-                                print("We have an error: \(error.localizedDescription)")
-                                self.finished(item: post)   // finish anyway
-                            } else {
-                                self.finished(item: post)
-                            }
-                        }
+                        self.finished(item: post)
                     }
                 }
-            } else {
-                self.alert(message: NSLocalizedString("new_community_item_error_title", comment: "input missing"))
             }
         }
+        
     }
     
     func createNewSingleTopicAddOn() {
         
-        if let fact = fact {
-            if let title = titleText, let description = descriptionText {
-                if let linkedFactID = self.selectedTopicIDForSingleTopicAddOn {
-                    var collectionRef: CollectionReference!
-                    if fact.language == .english {
-                        collectionRef = db.collection("Data").document("en").collection("topics")
-                    } else {
-                        collectionRef = db.collection("Facts")
-                    }
-                    let ref = collectionRef.document(fact.documentID).collection("addOns")
-                    
-                    let op = Auth.auth().currentUser!
-                    
-                    let data: [String: Any] = ["OP": op.uid, "headerTitle": title, "description": description, "linkedFactID": linkedFactID, "popularity": 0, "type": "singleTopic"]
-                    
-                    ref.addDocument(data: data) { (err) in
-                        if let error = err {
-                            print("We have an error: \(error.localizedDescription)")
-                        } else {
-                            self.finished(item: nil)// Will reload the database in the delegate
-                        }
-                    }
-                } else {
-                    self.alert(message: NSLocalizedString("new_addOnTopic_missing_community", comment: "there is no linked community"))
-                }
+        guard let community = community, let title = titleText, let description = descriptionText, let linkedFactID = self.selectedTopicIDForSingleTopicAddOn, let user = AuthenticationManager.shared.user else {
+            self.showTitleDescriptionAlert()
+            return
+        }
+        var collectionRef: CollectionReference!
+        if community.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        let ref = collectionRef.document(community.documentID).collection("addOns")
+        
+        
+        let data: [String: Any] = ["OP": user.uid, "headerTitle": title, "description": description, "linkedFactID": linkedFactID, "popularity": 0, "type": "singleTopic"]
+        
+        ref.addDocument(data: data) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
             } else {
-                self.showTitleDescriptionAlert()
+                self.finished(item: nil)// Will reload the database in the delegate
             }
         }
     }
     
     func createNewAddOn(ref: DocumentReference, imageURL: String?, isYouTubePlaylistDesign: Bool) {
         
-            if let title = titleText, let description = descriptionText {
+        guard let title = titleText, let description = descriptionText, let user = AuthenticationManager.shared.user else {
+            showTitleDescriptionAlert()
+            return
+        }
                 
-                let op = Auth.auth().currentUser!
-                
-                var data: [String: Any] = ["OP": op.uid, "title": title, "description": description, "popularity": 0, "type": "default"]
-                
-                if isYouTubePlaylistDesign {
-                    data["design"] = "youTubePlaylist"
-                }
-                
-                ref.setData(data) { (err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        self.finished(item: nil)// Will reload the database in the delegate
-                    }
-                }
+        var data: [String: Any] = ["OP": user.uid, "title": title, "description": description, "popularity": 0, "type": "default"]
+        
+        if isYouTubePlaylistDesign {
+            data["design"] = "youTubePlaylist"
+        }
+        
+        ref.setData(data) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
             } else {
-                showTitleDescriptionAlert()
+                self.finished(item: nil)// Will reload the database in the delegate
             }
+        }
     }
     
     func createNewAddOnPlaylist(ref: DocumentReference) {
         
-            if let title = titleText, let description = descriptionText {
-                
-                let op = Auth.auth().currentUser!
-                
-                let data: [String: Any] = ["OP": op.uid, "title": title, "description": description, "popularity": 0, "type": "playlist"]
-                
-                ref.setData(data) { (err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        self.finished(item: nil)// Will reload the database in the delegate
-                    }
-                }
+        guard let title = titleText, let description = descriptionText, let user = AuthenticationManager.shared.user else {
+            showTitleDescriptionAlert()
+            return
+        }
+        
+        let data: [String: Any] = ["OP": user.uid, "title": title, "description": description, "popularity": 0, "type": "playlist"]
+        
+        ref.setData(data) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
             } else {
-                showTitleDescriptionAlert()
-            }
-    }
-    
-    func createNewSource() {
-        if let fact = fact, let argument = argument {   // Only possible to add source to specific argument
-            if let title = titleText, let description = descriptionText {
-                if let source = sourceLink, source.isValidURL {
-                    
-                    var collectionRef: CollectionReference!
-                    if fact.language == .english {
-                        collectionRef = db.collection("Data").document("en").collection("topics")
-                    } else {
-                        collectionRef = db.collection("Facts")
-                    }
-                    
-                    let argumentRef = collectionRef.document(fact.documentID).collection("arguments").document(argument.documentID).collection("sources").document()
-                    
-                    let op = Auth.auth().currentUser!
-                    
-                    let data: [String:Any] = ["title" : title, "description": description, "source": source, "OP": op.uid]
-                    
-                    argumentRef.setData(data, completion: { (err) in
-                        if let error = err {
-                            print("We have an error: \(error.localizedDescription)")
-                        } else {
-                            let newSource = Source(addMoreDataCell: false)
-                            newSource.title = title
-                            newSource.description = description
-                            newSource.source = source
-                            newSource.documentID = argumentRef.documentID
-                            
-                            self.finished(item: newSource)
-                        }
-                    })
-                } else {
-                    self.alert(message: NSLocalizedString("new_community_item_not_valid_link", comment: "not valid link"))
-                }
-            } else {
-                showTitleDescriptionAlert()
+                self.finished(item: nil)// Will reload the database in the delegate
             }
         }
     }
     
-    func createNewDeepArgument() {
-        if let fact = fact, let argument = argument {
-            if let title = titleText, let description = descriptionText {
-                var collectionRef: CollectionReference!
-                if fact.language == .english {
-                    collectionRef = db.collection("Data").document("en").collection("topics")
-                } else {
-                    collectionRef = db.collection("Facts")
-                }
-                let ref = collectionRef.document(fact.documentID).collection("arguments").document(argument.documentID).collection("arguments").document()
-                let op = Auth.auth().currentUser!
-                
-                let data: [String:Any] = ["title" : title, "description": description, "OP": op.uid]
-                
-                ref.setData(data) { (err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        let argument = Argument(addMoreDataCell: false)
-                        argument.title  = title
-                        argument.description = description
-                        argument.documentID = ref.documentID
-                        
-                        self.finished(item: argument)
-                    }
-                }
-            } else {
-                showTitleDescriptionAlert()
-            }
+    func createNewSource() {
+        guard let community = community, let argument = argument, let title = titleText, let description = descriptionText, let user = AuthenticationManager.shared.user, let source = sourceLink, source.isValidURL else {
+            showTitleDescriptionAlert()
+            return
+        }
+        
+        var collectionRef: CollectionReference!
+        if community.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
-            self.alert(message: "Es ist ein Fehler aufgetreten. Bitte Versuche es später noch einmal!", title: "Hmm...")
+            collectionRef = db.collection("Facts")
+        }
+        
+        let argumentRef = collectionRef.document(community.documentID).collection("arguments").document(argument.documentID).collection("sources").document()
+        
+        let data: [String:Any] = ["title" : title, "description": description, "source": source, "OP": user.uid]
+        
+        argumentRef.setData(data, completion: { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                let newSource = Source(addMoreDataCell: false)
+                newSource.title = title
+                newSource.description = description
+                newSource.source = source
+                newSource.documentID = argumentRef.documentID
+                
+                self.finished(item: newSource)
+            }
+        })
+    }
+    
+    func createNewDeepArgument() {
+        guard let community = community, let argument = argument, let title = titleText, let description = descriptionText, let user = AuthenticationManager.shared.user else {
+            showTitleDescriptionAlert()
+            return
+        }
+        var collectionRef: CollectionReference!
+        if community.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        let ref = collectionRef.document(community.documentID).collection("arguments").document(argument.documentID).collection("arguments").document()
+        
+        let data: [String:Any] = ["title" : title, "description": description, "OP": user.uid]
+        
+        ref.setData(data) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                let argument = Argument(addMoreDataCell: false)
+                argument.title  = title
+                argument.description = description
+                argument.documentID = ref.documentID
+                
+                self.finished(item: argument)
+            }
         }
     }
     
     func createNewArgument() {
-        if let fact = fact {
-            if let title = titleText, let description = descriptionText {
-                
-                var collectionRef: CollectionReference!
-                if fact.language == .english {
-                    collectionRef = db.collection("Data").document("en").collection("topics")
-                } else {
-                    collectionRef = db.collection("Facts")
-                }
-                
-                let ref = collectionRef.document(fact.documentID).collection("arguments").document()
-                
-                let op = Auth.auth().currentUser!
-                let proOrContra = getProOrContraString()
-                
-                let data: [String:Any] = ["title" : title, "description": description, "proOrContra": proOrContra, "OP": op.uid, "upvotes": 0, "downvotes": 0]
-                
-                ref.setData(data) { (err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        let argument = Argument(addMoreDataCell: false)
-                        argument.title  = title
-                        argument.description = description
-                        argument.proOrContra = proOrContra
-                        argument.documentID = ref.documentID
-                        
-                        self.finished(item: argument)
-                    }
-                }
-            } else {
-                showTitleDescriptionAlert()
-            }
+        guard let community = community, let title = titleText, let description = descriptionText, let user = AuthenticationManager.shared.user else {
+            showTitleDescriptionAlert()
+            return
+        }
+        var collectionRef: CollectionReference!
+        if community.language == .english {
+            collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
-            self.alert(message: NSLocalizedString("new_community_weird_error", comment: "something went wrong, try later"), title: "Hmm...")
+            collectionRef = db.collection("Facts")
+        }
+        
+        let ref = collectionRef.document(community.documentID).collection("arguments").document()
+        
+        let proOrContra = getProOrContraString()
+        
+        let data: [String:Any] = ["title" : title, "description": description, "proOrContra": proOrContra, "OP": user.uid, "upvotes": 0, "downvotes": 0]
+        
+        ref.setData(data) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                let argument = Argument(addMoreDataCell: false)
+                argument.title  = title
+                argument.description = description
+                argument.proOrContra = proOrContra
+                argument.documentID = ref.documentID
+                
+                self.finished(item: argument)
+            }
         }
     }
     
     func createNewCommunity(ref: DocumentReference, imageURL: String?) {
         
-        if let op = Auth.auth().currentUser {
-            if let title = titleText, let description = descriptionText {
-                
-                let displayOption = self.getNewFactDisplayString(displayOption: self.pickedDisplayOption)
-                
-                var data = [String: Any]()
-                let name = title
-                let description = description
-                let fact = Community()
-                
-                data = ["follower": [op.uid],"name": name, "description": description, "createDate": Timestamp(date: Date()), "OP": op.uid, "displayOption": displayOption.displayOption, "popularity": 0]
-                
-                if let factDisplayName = displayOption.factDisplayNames {
-                    data["factDisplayNames"] = factDisplayName
-                }
-                
-                fact.title = name
-                fact.description = description
-                fact.beingFollowed = true
-                fact.documentID = ref.documentID
-                fact.displayOption = self.pickedDisplayOption
-                fact.moderators = [op.uid]
-                fact.language = language
-                
-                if let url = imageURL {
-                    data["imageURL"] = url
-                    fact.imageURL = url
-                }
-                if language == .english {
-                    data["language"] = "en"
-                }
-                
-                self.setUserChanges(documentID: ref.documentID) //Follow Topic and set Mod Badge
-                
-                ref.setData(data) { (err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        self.finished(item: fact)    // Will reload the database in the delegate
-                    }
-                }
+        guard let user = AuthenticationManager.shared.user, let title = titleText, let description = descriptionText else {
+            self.showTitleDescriptionAlert()
+            
+            return
+        }
+        
+        let displayOption = self.getNewFactDisplayString(displayOption: self.pickedDisplayOption)
+        
+        var data = [String: Any]()
+        let name = title
+        let fact = Community()
+        
+        data = ["follower": [user.uid],"name": name, "description": description, "createDate": Timestamp(date: Date()), "OP": user.uid, "displayOption": displayOption.displayOption, "popularity": 0]
+        
+        if let factDisplayName = displayOption.factDisplayNames {
+            data["factDisplayNames"] = factDisplayName
+        }
+        
+        fact.title = name
+        fact.description = description
+        fact.beingFollowed = true
+        fact.documentID = ref.documentID
+        fact.displayOption = self.pickedDisplayOption
+        fact.moderators = [user.uid]
+        fact.language = language
+        
+        if let url = imageURL {
+            data["imageURL"] = url
+            fact.imageURL = url
+        }
+        if language == .english {
+            data["language"] = "en"
+        }
+        
+        self.setUserChanges(documentID: ref.documentID) //Follow Topic and set Mod Badge
+        
+        ref.setData(data) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
             } else {
-                self.showTitleDescriptionAlert()
+                self.finished(item: fact)    // Will reload the database in the delegate
             }
         }
     }
     
     func setUserChanges(documentID: String) {
         let header = CommunityHeaderView()
-        let fact = Community()
-        fact.documentID = documentID
-        fact.language = language
+        let community = Community()
+        community.documentID = documentID
+        community.language = language
         
-        header.followTopic(community: fact)
+        header.followTopic(community: community)
         
-        if let user = Auth.auth().currentUser {
-            let ref = db.collection("Users").document(user.uid)
-            ref.updateData([
-                "badges" : FieldValue.arrayUnion(["mod"])
-            ]) { (err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    print("Succesfully added badge")
-                }
+        guard let user = AuthenticationManager.shared.user else {
+            return
+        }
+        
+        let ref = db.collection("Users").document(user.uid)
+        ref.updateData([
+            "badges" : FieldValue.arrayUnion(["mod"])
+        ]) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                print("Succesfully added badge")
             }
         }
     }

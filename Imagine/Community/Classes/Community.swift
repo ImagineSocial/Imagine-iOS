@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 enum TopicDisplayType {
     case normal
@@ -43,7 +43,7 @@ class Community {
     
     //MARK:- Get Follow Status
     func getFollowStatus(isFollowed: @escaping (Bool) -> Void) {
-        if let user = Auth.auth().currentUser , documentID != "" {
+        if let user = AuthenticationManager.shared.user , documentID != "" {
             let ref = db.collection("Users").document(user.uid).collection("topics").document(documentID)
             
             ref.getDocument { (document, err) in

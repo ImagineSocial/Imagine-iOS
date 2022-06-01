@@ -7,14 +7,13 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
 import FirebaseAuth
 
 class ArgumentTableVC: UITableViewController {
     
     var argument: Argument?
-    var fact: Community?
+    var community: Community?
     var argumentList = [Argument]()
     
     let identifier = "NibArgumentCell"
@@ -32,7 +31,7 @@ class ArgumentTableVC: UITableViewController {
     }
     
     func getArguments() {
-        if let argument = argument, let fact = fact {
+        if let argument = argument, let fact = community {
             DataRequest().getDeepestArgument(fact: fact, argumentID: argument.documentID, deepDataType: .arguments) { (deepestData) in
                 if let arguments = deepestData as? [Argument] {
                     self.argumentList = arguments
@@ -103,7 +102,7 @@ class ArgumentTableVC: UITableViewController {
         if segue.identifier == "toNewArgumentSegue" {
             if let nav = segue.destination as? UINavigationController {
                 if let vc = nav.topViewController as? NewCommunityItemTableVC {
-                    vc.fact = self.fact
+                    vc.community = self.community
                     vc.argument = self.argument
                     vc.new = .deepArgument
                     vc.delegate = self

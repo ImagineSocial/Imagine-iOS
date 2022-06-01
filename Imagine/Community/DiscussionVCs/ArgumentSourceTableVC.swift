@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
 import FirebaseAuth
 
@@ -103,7 +102,7 @@ class ArgumentSourceTableVC: UITableViewController {
         if segue.identifier == "toNewArgumentSegue" {
             if let nav = segue.destination as? UINavigationController {
                 if let vc = nav.topViewController as? NewCommunityItemTableVC {
-                    vc.fact = self.fact
+                    vc.community = self.fact
                     vc.argument = self.argument
                     vc.new = .source
                     vc.delegate = self

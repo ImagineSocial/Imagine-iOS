@@ -8,9 +8,7 @@
 
 import UIKit
 import SDWebImage
-import Firebase
 import FirebaseFirestore
-import FirebaseAuth
 import EasyTipView
 
 enum RepostType {
@@ -163,7 +161,7 @@ class RepostViewController: UIViewController {
         }
         let postRef = collectionRef.document()
                 
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             
             var dataDictionary: [String: Any] = ["title": titleTranslationTextView.text, "description": descriptionTranslationTextView.text, "createTime": Timestamp(date: Date()), "type": getRepostTypeString(), "OGpostDocumentID" : post.documentID, "report": "normal", "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "originalPoster": user.uid]
             

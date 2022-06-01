@@ -8,8 +8,6 @@
 
 import UIKit
 import FirebaseFirestore
-import Firebase
-import FirebaseAuth
 
 class ReportConfirmViewController: UIViewController {
 
@@ -113,7 +111,7 @@ class ReportConfirmViewController: UIViewController {
     
     func saveReport() {
         
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             
             let notificationRef = db.collection("Users").document("CZOcL3VIwMemWwEfutKXGAfdlLy1").collection("notifications").document()
             var notificationData: [String: Any] = ["type": "message", "message": "Jemand hat eine Sache markiert oder gemeldet", "name": "Meldung", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "messageID": user.uid]

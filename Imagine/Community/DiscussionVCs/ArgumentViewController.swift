@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
 import FirebaseAuth
 import EasyTipView
@@ -208,7 +207,7 @@ class ArgumentViewController: UIViewController, ReachabilityObserverDelegate {
         if segue.identifier == "toArgumentTableView" {
             if let argumentVC = segue.destination as? ArgumentTableVC {
                 argumentVC.argument = self.argument
-                argumentVC.fact = self.community
+                argumentVC.community = self.community
             }
         }
         if segue.identifier == "toUserSegue" {

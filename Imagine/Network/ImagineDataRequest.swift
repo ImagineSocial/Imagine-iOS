@@ -6,7 +6,7 @@
 //  Copyright © 2021 Malte Schoppe. All rights reserved.
 //
 
-import Firebase
+import FirebaseFirestore
 import UIKit
 
 class ImagineDataRequest {

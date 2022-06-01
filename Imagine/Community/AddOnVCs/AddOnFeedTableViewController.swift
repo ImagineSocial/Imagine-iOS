@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 class AddOnFeedTableViewController: BaseFeedTableViewController {
     
@@ -140,17 +140,15 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
         let dismissBarButton = UIBarButtonItem(customView: dismissButton)
         self.dismissBarButton = dismissBarButton
         
-        if let user = Auth.auth().currentUser {
-            if user.uid == addOn.OP {
-                let settingButton = DesignableButton(image: Icons.settings)
-                settingButton.addTarget(self, action: #selector(self.settingButtonTapped), for: .touchUpInside)
-                settingButton.constrain(width: 30, height: 30)
-                
-                let settingBarButton = UIBarButtonItem(customView: settingButton)
-                self.navigationItem.rightBarButtonItems = [dismissBarButton, settingBarButton]
-                
-                return
-            }
+        if let user = AuthenticationManager.shared.user, user.uid == addOn.OP {
+            let settingButton = DesignableButton(image: Icons.settings)
+            settingButton.addTarget(self, action: #selector(self.settingButtonTapped), for: .touchUpInside)
+            settingButton.constrain(width: 30, height: 30)
+            
+            let settingBarButton = UIBarButtonItem(customView: settingButton)
+            self.navigationItem.rightBarButtonItems = [dismissBarButton, settingBarButton]
+            
+            return
         }
         
         self.navigationItem.rightBarButtonItem = dismissBarButton

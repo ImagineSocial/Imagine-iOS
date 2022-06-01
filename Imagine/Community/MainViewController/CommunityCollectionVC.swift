@@ -7,8 +7,7 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAnalytics
+import FirebaseFirestore
 import EasyTipView
 
 protocol LinkFactWithPostDelegate {
@@ -151,7 +150,6 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
                 }
                 let ref = collectionRef.whereField("displayOption", isEqualTo: "fact").order(by: "popularity", descending: true).limit(to: 6)
                 
-                let user = Auth.auth().currentUser
                 
                 ref.getDocuments { (snap, err) in
                     if let error = err {
@@ -167,7 +165,7 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
                             snap.documents.forEach { document in
                                 let data = document.data()
                                 
-                                if let community = CommunityHelper.shared.getCommunity(currentUser: user, documentID: document.documentID, data: data) {
+                                if let community = CommunityHelper.shared.getCommunity(documentID: document.documentID, data: data) {
                                     self.discussionCommunities.append(community)
                                 } else {
                                     discussionCount -= 1
@@ -197,30 +195,32 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
     }
     
     func getFollowedCommunities() {
-        if let user = Auth.auth().currentUser {
-            dataHelper.getFollowedTopicDocuments(userUID: user.uid) { documents in
-                var topicCount = documents.count
-                for document in documents {
-                    self.addFact(user: user, document: document) { fact in
-                        if let fact = fact {
-                            fact.beingFollowed = true
-                            self.followedCommunities.append(fact)
-                            self.followedCommunities.sort {
-                                $0.title.localizedCompare($1.title) == .orderedAscending //Not case sensitive
-                            }
-                        } else {
-                            topicCount -= 1
+        guard let user = AuthenticationManager.shared.user else {
+            return
+        }
+        
+        dataHelper.getFollowedTopicDocuments(userUID: user.uid) { documents in
+            var topicCount = documents.count
+            for document in documents {
+                self.addFact(document: document) { fact in
+                    if let fact = fact {
+                        fact.beingFollowed = true
+                        self.followedCommunities.append(fact)
+                        self.followedCommunities.sort {
+                            $0.title.localizedCompare($1.title) == .orderedAscending //Not case sensitive
                         }
-                        if self.followedCommunities.count == topicCount {
-                            self.collectionView.reloadData()
-                        }
+                    } else {
+                        topicCount -= 1
+                    }
+                    if self.followedCommunities.count == topicCount {
+                        self.collectionView.reloadData()
                     }
                 }
             }
         }
     }
     
-    func addFact(user: Firebase.User?, document: QueryDocumentSnapshot, returnedFact: @escaping (Community?) -> Void) {
+    func addFact(document: QueryDocumentSnapshot, returnedFact: @escaping (Community?) -> Void) {
         let data = document.data()
         
         var collectionRef: CollectionReference = self.db.collection("Facts")
@@ -240,7 +240,7 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
             } else {
                 if let snap = snap {
                     if let data = snap.data() {
-                        if let fact = CommunityHelper.shared.getCommunity(currentUser: user, documentID: snap.documentID, data: data) {
+                        if let fact = CommunityHelper.shared.getCommunity(documentID: snap.documentID, data: data) {
                             returnedFact(fact)
                         }
                     } else {

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 class CobraViewController: UIViewController {
 
@@ -58,7 +58,7 @@ class CobraViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
             if actualTapCount != 0 {
                 let ref = db.collection("Feedback").document("cobra")
                 print("Update count")
@@ -124,9 +124,9 @@ class CobraViewController: UIViewController {
     }
     
     @IBAction func showMeTapped(_ sender: Any) {
-        let user = Auth.auth().currentUser
-        if user == nil {
+        guard AuthenticationManager.shared.isLoggedIn else {
             self.notLoggedInAlert()
+            return
         }
         
         clickCount = clickCount+1

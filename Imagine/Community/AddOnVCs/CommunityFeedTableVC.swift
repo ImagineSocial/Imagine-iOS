@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 import AVKit
 import EasyTipView
 
@@ -205,7 +205,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
         let topicID = "UOlUbkeFexR147dYh9eB"
         let addOnID = "2o6GSAPeYCYP3ZytD51l"
         
-        let dataDictionary: [String: Any] = ["title": post.title, "description": post.description, "createTime": Timestamp(date: Date()), "originalPoster": post.user?.userID ?? "", "thanksCount":post.votes.thanks, "wowCount":post.votes.thanks, "haCount":post.votes.thanks, "niceCount":post.votes.thanks, "type": "thought", "report": "normal", "linkedFactID": topicID]
+        let dataDictionary: [String: Any] = ["title": post.title, "description": post.description, "createTime": Timestamp(date: Date()), "originalPoster": post.user?.uid ?? "", "thanksCount":post.votes.thanks, "wowCount":post.votes.thanks, "haCount":post.votes.thanks, "niceCount":post.votes.thanks, "type": "thought", "report": "normal", "linkedFactID": topicID]
         /*
          "imageHeight": post.mediaHeight, "imageWidth": post.mediaWidth,
          */
