@@ -102,7 +102,7 @@ class SettingTableViewController: UITableViewController {
         
         if let topic = topic {
             var collectionRef: CollectionReference!
-            if topic.language == .english {
+            if topic.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topics")
             } else {
                 collectionRef = db.collection("Facts")
@@ -182,10 +182,8 @@ class SettingTableViewController: UITableViewController {
                             
                             if let locationName = data["locationName"] as? String, let locationCoordinate = data["locationCoordinate"] as? GeoPoint {
                                 
-                                let latitude = CLLocationDegrees(locationCoordinate.latitude)
-                                let longitude = CLLocationDegrees(locationCoordinate.longitude)
-                                let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                                let location = Location(title: locationName, coordinate: coordinate)
+                                let geoPoint = GeoPoint(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
+                                let location = Location(title: locationName, geoPoint: geoPoint)
                                 
                                 userSetting.location = location
                             }
@@ -1109,7 +1107,7 @@ extension SettingTableViewController: SettingCellDelegate, UINavigationControlle
     func changeDataInFirestore(data: [String: Any]) {
         if let topic = topic {
             var collectionRef: CollectionReference!
-            if topic.language == .english {
+            if topic.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topics")
             } else {
                 collectionRef = db.collection("Facts")
@@ -1133,7 +1131,7 @@ extension SettingTableViewController: SettingCellDelegate, UINavigationControlle
             }
         } else if let addOn = addOn {
             var collectionRef: CollectionReference!
-            if addOn.fact.language == .english {
+            if addOn.fact.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topics")
             } else {
                 collectionRef = db.collection("Facts")

@@ -37,7 +37,7 @@ class ImagineDataRequest {
                         }
                         
                         var userCount:Int!
-                        if language == .german {
+                        if language == .de {
                             userCount = userCountDE
                         } else {
                             userCount = userCountEN

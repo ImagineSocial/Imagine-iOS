@@ -8,7 +8,7 @@
 
 import UIKit
 
-enum SurveyType {
+enum SurveyType: String, Codable {
     case pickOne
     case pickOrder
     case comment
@@ -265,7 +265,7 @@ extension SurveyCell: UITextViewDelegate {
     }
 }
 
-class Survey {
+class Survey: Codable {
     var type: SurveyType
     var question: String
     

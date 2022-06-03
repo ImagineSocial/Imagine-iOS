@@ -79,7 +79,7 @@ class AddOnQAndACollectionViewCell: BaseAddOnCollectionViewCell {
     func getQuestions(info: AddOn) {
         
         var collectionRef: CollectionReference!
-        if info.fact.language == .english {
+        if info.fact.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
@@ -362,7 +362,7 @@ class AddOnQAndATextfieldCell: UITableViewCell {
         }
 
         var collectionRef: CollectionReference!
-        if info.fact.language == .english {
+        if info.fact.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")

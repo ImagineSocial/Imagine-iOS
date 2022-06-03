@@ -45,7 +45,7 @@ class HandyHelper {
         let formatter = DateFormatter()
         let date:Date = timestamp.dateValue()
         let language = LanguageSelection().getLanguage()
-        if language == .german {
+        if language == .de {
             formatter.dateFormat = "dd.MM.yyyy HH:mm"
         } else {
             formatter.dateFormat = "MM/dd/yyyy HH:mm"
@@ -128,14 +128,14 @@ class HandyHelper {
         var collectionRef: CollectionReference!
         
         if post.isTopicPost {
-            if post.language == .english {
+            if post.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topicPosts")
             } else {
                 collectionRef = db.collection("TopicPosts")
             }
             ref = collectionRef.document(post.documentID)
         } else {
-            if post.language == .english {
+            if post.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("posts")
             } else {
                 collectionRef = db.collection("Posts")
@@ -208,7 +208,7 @@ class HandyHelper {
             if post.isTopicPost {
                 data["isTopicPost"] = true
             }
-            if post.language == .english {
+            if post.language == .en {
                 data["language"] = "en"
             }
             

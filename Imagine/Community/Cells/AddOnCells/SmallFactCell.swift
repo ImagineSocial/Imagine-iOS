@@ -151,7 +151,7 @@ class SmallFactCell: UICollectionViewCell {
         if fact.documentID == "" { return }
         
         var collectionRef: CollectionReference!
-        if fact.language == .english {
+        if fact.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")

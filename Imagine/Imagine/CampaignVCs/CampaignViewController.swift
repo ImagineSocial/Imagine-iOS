@@ -205,7 +205,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         
         let language = LanguageSelection().getLanguage()
         
-        let collectionRef = (language == .english) ? db.collection("Data").document("en").collection("campaigns") : db.collection("Campaigns")
+        let collectionRef = (language == .en) ? db.collection("Data").document("en").collection("campaigns") : db.collection("Campaigns")
         
         let postRef = collectionRef.document(campaign.documentID)
         
@@ -244,7 +244,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         
         var collectionRef: CollectionReference!
         let language = LanguageSelection().getLanguage()
-        if language == .english {
+        if language == .en {
             collectionRef = db.collection("Data").document("en").collection("campaigns")
         } else {
             collectionRef = db.collection("Campaigns")
@@ -279,7 +279,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
             if let user = Auth.auth().currentUser {
                 var collectionRef: CollectionReference!
                 let language = LanguageSelection().getLanguage()
-                if language == .english {
+                if language == .en {
                     collectionRef = db.collection("Data").document("en").collection("campaigns")
                 } else {
                     collectionRef = db.collection("Campaigns")

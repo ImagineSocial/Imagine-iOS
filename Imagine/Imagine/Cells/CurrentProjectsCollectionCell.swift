@@ -44,7 +44,7 @@ class CurrentProjectsCollectionCell: UICollectionViewCell {
     func getData(labels: [UILabel]) {
         var collectionRef: CollectionReference!
         let language = LanguageSelection().getLanguage()
-        if language == .english {
+        if language == .en {
             collectionRef = db.collection("Data").document("en").collection("topTopicData")
         } else {
             collectionRef = db.collection("TopTopicData")

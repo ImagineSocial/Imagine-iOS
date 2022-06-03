@@ -21,7 +21,7 @@ class CommunityRequest {
         if community.documentID != "" {
             
             var collectionRef: CollectionReference!
-            if language == .english {
+            if language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topics")
             } else {
                 collectionRef = db.collection("Facts")

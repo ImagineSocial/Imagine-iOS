@@ -47,7 +47,7 @@ class Comment {
     var createTime = Date()
     var author = ""
     var sectionItemID: String
-    var sectionItemLanguage: Language = .german
+    var sectionItemLanguage = Language.de
     var isTopicPost = false
     var upvotes: Votes?
     var likes = 0

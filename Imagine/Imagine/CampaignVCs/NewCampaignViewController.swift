@@ -96,7 +96,7 @@ class NewCampaignViewController: UIViewController {
         if let title = titleTextField.text, let summary = shortBodyTextField.text {
             var collectionRef: CollectionReference!
             let language = LanguageSelection().getLanguage()
-            if language == .english {
+            if language == .en {
                 collectionRef = db.collection("Data").document("en").collection("campaigns")
             } else {
                 collectionRef = db.collection("Campaigns")

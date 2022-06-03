@@ -46,6 +46,14 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
     
     var isFactSegueEnabled = true
     
+    var placeholderAreShown: Bool {
+        if let firstPost = posts.first, firstPost.documentID == "" {
+            return true
+        }
+        
+        return false
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
                 

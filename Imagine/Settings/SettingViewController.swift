@@ -48,7 +48,7 @@ class SettingViewController: UIViewController {
         }
 
         let language = LanguageSelection().getLanguage()
-        if language == .english {
+        if language == .en {
             languageSegmentedControl.selectedSegmentIndex = 1
         }
     }
@@ -144,7 +144,7 @@ class SettingViewController: UIViewController {
     
     @IBAction func dataControlTapped(_ sender: Any) {
         let language = LanguageSelection().getLanguage()
-        if language == .german {
+        if language == .de {
             if let url = URL(string: "https://www.imagine.social/datenschutzerklaerung-app") {
                 UIApplication.shared.open(url)
             }
@@ -156,7 +156,7 @@ class SettingViewController: UIViewController {
     }
     @IBAction func eulaTapped(_ sender: Any) {
         let language = LanguageSelection().getLanguage()
-        if language == .german {
+        if language == .de {
             if let url = URL(string: "https://www.imagine.social/eula") {
                 UIApplication.shared.open(url)
             }

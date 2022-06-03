@@ -132,7 +132,7 @@ class SwipeCollectionViewController: UICollectionViewController, UICollectionVie
                     
                     alert.addAction(UIAlertAction(title: NSLocalizedString("cookie_alert_toEULA", comment: "to privacy policy"), style: .default, handler: { (_) in
                         let language = LanguageSelection().getLanguage()
-                        if language == .german {
+                        if language == .de {
                             if let url = URL(string: "https://www.imagine.social/datenschutzerklaerung-app") {
                                 UIApplication.shared.open(url)
                             }

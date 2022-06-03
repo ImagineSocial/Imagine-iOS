@@ -49,7 +49,7 @@ class DataRequest {
         case .blogPosts:
             list = [BlogPost]()
             dataPath = "BlogPosts"
-            if language == .english {
+            if language == .en {
                 dataPath = "blogPosts"
             }
             
@@ -58,7 +58,7 @@ class DataRequest {
         case .vote:
             list = [Vote]()
             dataPath = "Votes"
-            if language == .english {
+            if language == .en {
                 dataPath = "votes"
             }
             
@@ -67,7 +67,7 @@ class DataRequest {
         case .communities:
             list = [Community]()
             dataPath = "Facts"
-            if language == .english {
+            if language == .en {
                 dataPath = "topics"
             }
             
@@ -77,7 +77,7 @@ class DataRequest {
         case .jobOffer:
             list = [JobOffer]()
             dataPath = "JobOffers"
-            if language == .english {
+            if language == .en {
                 dataPath = "jobOffers"
             }
             
@@ -87,7 +87,7 @@ class DataRequest {
             
         }
         
-        if language == .english {
+        if language == .en {
             collectionRef = db.collection("Data").document("en").collection(dataPath)
         } else {
             collectionRef = db.collection(dataPath)
@@ -95,7 +95,7 @@ class DataRequest {
         var ref = collectionRef.order(by: orderString, descending: descending)
         
         if get == .communities {
-            if language == .english {
+            if language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topics")
             } else {
                 collectionRef = db.collection("Facts")
@@ -268,7 +268,7 @@ class DataRequest {
         
         var collectionRef: CollectionReference!
 
-        if fact.language == .english {
+        if fact.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
@@ -341,7 +341,7 @@ class DataRequest {
         }
         
         var collectionRef: CollectionReference!
-        if fact.language == .english {
+        if fact.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")

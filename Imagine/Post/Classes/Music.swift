@@ -8,12 +8,12 @@
 
 import Foundation
 
-enum MusicType {
+enum MusicType: String, Codable {
     case track
     case album
 }
 
-class Music {
+class Music: Codable {
     var type: MusicType
     var name: String
     var artist: String

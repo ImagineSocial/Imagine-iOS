@@ -9,7 +9,7 @@
 import Foundation
 
 /// An enum that declares the type of a Post object
-enum PostType {
+enum PostType: String, Codable {
     case picture
     case link
     case thought

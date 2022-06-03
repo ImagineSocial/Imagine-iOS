@@ -612,7 +612,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                                                 }
                                                 if let language = data["language"] as? String {
                                                     if language == "en" {
-                                                        comment.sectionItemLanguage = .english
+                                                        comment.sectionItemLanguage = .en
                                                     }
                                                 }
                                                 comment.author = author
@@ -641,7 +641,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                                                     }
                                                     if let language = data["language"] as? String {
                                                         if language == "en" {
-                                                            comment.sectionItemLanguage = .english
+                                                            comment.sectionItemLanguage = .en
                                                         }
                                                     }
                                                     
@@ -701,7 +701,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     }
     
     func addUpvote(comment: Comment, buttonType: String) {
-        if let votes = comment.upvotes {
+        if var votes = comment.upvotes {
 
             switch buttonType {
             case "thanks":

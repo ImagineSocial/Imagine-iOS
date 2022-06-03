@@ -409,7 +409,7 @@ extension ChatViewController: MSGDataSource {
             // Datum vom Timestamp umwandeln
             let formatter = DateFormatter()
             let language = LanguageSelection().getLanguage()
-            if language == .english {
+            if language == .en {
                 formatter.dateFormat = "MM/dd/yyyy HH:mm"
             } else {
                 formatter.dateFormat = "dd.MM.yyyy HH:mm"

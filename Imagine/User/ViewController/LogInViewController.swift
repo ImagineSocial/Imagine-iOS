@@ -631,7 +631,7 @@ class LogInViewController: UIViewController {
         let language = LanguageSelection().getLanguage()
         if self.signUpFrame == .acceptPrivacyAgreement {
             
-            if language == .english {
+            if language == .en {
                 if let url = URL(string: "https://en.imagine.social/datenschutzerklaerung-app") {
                     UIApplication.shared.open(url)
                 }
@@ -641,7 +641,7 @@ class LogInViewController: UIViewController {
                 }
             }
         } else {
-            if language == .english {
+            if language == .en {
                 if let url = URL(string: "https://en.imagine.social/eula") {
                     UIApplication.shared.open(url)
                 }

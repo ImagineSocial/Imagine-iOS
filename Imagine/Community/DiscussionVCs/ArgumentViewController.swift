@@ -153,7 +153,7 @@ class ArgumentViewController: UIViewController, ReachabilityObserverDelegate {
         if isConnected() {
             if let argument = argument, let community = community {
                 var collectionRef: CollectionReference!
-                if community.language == .english {
+                if community.language == .en {
                     collectionRef = db.collection("Data").document("en").collection("topics")
                 } else {
                     collectionRef = db.collection("Facts")

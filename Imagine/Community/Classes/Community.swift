@@ -15,7 +15,7 @@ enum TopicDisplayType {
     case showAll
 }
 
-class Community {
+class Community: Codable {
     
     //MARK:- Variables
     var title = ""
@@ -32,18 +32,17 @@ class Community {
     var isAddOnFirstView = false
     var postCount = 0
     var followerCount = 0
-    var language: Language = .german
+    var language: Language = .de
     
     // AddOn Description For the linked Fact/Discussion/Topic
     var addOnTitle: String?
+        
     
-    private let db = FirestoreRequest.shared.db
-    
-    //MARK:
-    
-    //MARK:- Get Follow Status
+    //MARK: - Get Follow Status
     func getFollowStatus(isFollowed: @escaping (Bool) -> Void) {
         if let user = AuthenticationManager.shared.user , documentID != "" {
+            let db = FirestoreRequest.shared.db
+
             let ref = db.collection("Users").document(user.uid).collection("topics").document(documentID)
             
             ref.getDocument { (document, err) in

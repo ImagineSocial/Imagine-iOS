@@ -63,7 +63,7 @@ class NewBlogPostViewController: UIViewController {
                 
                 var collectionRef: CollectionReference!
                 let language = LanguageSelection().getLanguage()
-                if language == .english {
+                if language == .en {
                     collectionRef = db.collection("Data").document("en").collection("blogPosts")
                 } else {
                     collectionRef = db.collection("BlogPosts")

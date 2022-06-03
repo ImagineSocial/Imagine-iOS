@@ -143,7 +143,7 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
                 
                 var collectionRef: CollectionReference!
                 let language = LanguageSelection().getLanguage()
-                if language == .english {
+                if language == .en {
                     collectionRef = self.db.collection("Data").document("en").collection("topics")
                 } else {
                     collectionRef = self.db.collection("Facts")
@@ -284,9 +284,9 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
         let defaults = UserDefaults.standard
         let key:String!
         switch fact.language {
-        case .english:
+        case .en:
             key = "recentTopics-en"
-        case .german:
+        case .de:
             key = "recentTopics"
         }
         

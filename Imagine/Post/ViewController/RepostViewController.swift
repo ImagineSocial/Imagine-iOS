@@ -154,7 +154,7 @@ class RepostViewController: UIViewController {
         var collectionRef: CollectionReference!
         let language = LanguageSelection().getLanguage()
         
-        if language == .english {
+        if language == .en {
             collectionRef = db.collection("Data").document("en").collection("posts")
         } else {
             collectionRef = db.collection("Posts")
@@ -169,7 +169,7 @@ class RepostViewController: UIViewController {
                 dataDictionary["repostIsTopicPost"] = true
             }
             
-            if post.language == .english {
+            if post.language == .en {
                 dataDictionary["repostLanguage"] = "en"
             } else {
                 dataDictionary["repostLanguage"] = "de"

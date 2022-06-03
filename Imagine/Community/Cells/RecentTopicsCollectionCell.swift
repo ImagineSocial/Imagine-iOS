@@ -46,9 +46,9 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
         var key: String!
         
         switch language {
-        case .english:
+        case .en:
             key = "recentTopics-en"
-        case .german:
+        case .de:
             key = "recentTopics"
         }
         let factStrings = defaults.stringArray(forKey: key) ?? [String]()
@@ -70,7 +70,7 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
     
     func loadCommunity(with id: String, language: Language) {
         var collectionRef: CollectionReference!
-        if language == .english {
+        if language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")

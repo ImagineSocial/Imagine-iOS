@@ -8,12 +8,18 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseFirestoreSwift
 
 // This enum differentiates between savedPosts or posts for the "getTheSavedPosts" function
 enum PostList {
     case postsFromUser
     case savedPosts
 }
+
+enum FirestoreError: Error {
+        case notAuthorized
+        case brokenAppleCredential
+    }
 
 
 class FirestoreRequest {
@@ -44,21 +50,21 @@ class FirestoreRequest {
     
     let postHelper = PostHelper.shared
     
-//    func decode<T>(query: Query, completion: @escaping (Result<[T], Error>) -> Void) where T: Decodable {
-//        
-//        query.addSnapshotListener { querySnapshot, error in
-//            guard let documents = querySnapshot?.documents else {
-//                // completion(.failure(error ?? Error))
-//                return
-//            }
-//            
-//            let objects = documents.compactMap { queryDocumentSnapshot -> T? in
-//                try? queryDocumentSnapshot.data(as: T.self)
-//            }
-//            
-//            completion(.success(objects))
-//        }
-//    }
+    func decode<T: Decodable>(query: Query, completion: @escaping (Result<[T], Error>) -> Void) {
+        
+        query.addSnapshotListener { querySnapshot, error in
+            guard let documents = querySnapshot?.documents else {
+                completion(.failure(error ?? FirestoreError.brokenAppleCredential))
+                return
+            }
+            
+            let objects = documents.compactMap { queryDocumentSnapshot -> T? in
+                try? queryDocumentSnapshot.data(as: T.self)
+            }
+            
+            completion(.success(objects))
+        }
+    }
     
     
     func getTheUsersFriend(completion: @escaping ([String]?) -> Void) {
@@ -127,18 +133,28 @@ class FirestoreRequest {
         
         posts.removeAll()
         
-        var postRef = FirestoreReference.collectionRef(.posts)
+        var postQuery = FirestoreReference.collectionRef(.posts)
         
         if getMore {    // If you want to get More Posts
             if let lastSnap = lastSnap {        // For the next loading batch of 20, that will start after this snapshot
-                postRef = postRef.start(afterDocument: lastSnap)
+                postQuery = postQuery.start(afterDocument: lastSnap)
                 self.startBeforeSnap = lastSnap
             }
         }
         
+        FirestoreRequest().decode(query: postQuery) { (result: Result<[Post], Error>) in
+            switch result {
+            case .success(let posts):
+                print("posts: ", posts)
+            case .failure(let failure):
+                print("failure: ", failure.localizedDescription)
+            }
+        }
+
+        return
         self.getTheUsersFriend { _ in // First get the friends to choose which name to fetch
             
-            postRef.getDocuments { [weak self] snap, error in
+            postQuery.getDocuments { [weak self] snap, error in
                 
                 guard let snap = snap, let self = self else {
                     completion(nil)
@@ -333,7 +349,7 @@ class FirestoreRequest {
                         }
                         if let language = data["language"] as? String {
                             if language == "en" {
-                                post.language = .english
+                                post.language = .en
                             }
                         }
                         documentIDsOfPosts.append(post)
@@ -359,7 +375,7 @@ class FirestoreRequest {
                         }
                         if let language = data["language"] as? String {
                             if language == "en" {
-                                post.language = .english
+                                post.language = .en
                             }
                         }
                         documentIDsOfPosts.append(post)

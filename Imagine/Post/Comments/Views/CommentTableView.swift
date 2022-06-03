@@ -348,7 +348,7 @@ class CommentTableView: UITableView {
                         if post.isTopicPost {
                             data["isTopicPost"] = true
                         }
-                        if post.language == .english {
+                        if post.language == .en {
                             data["language"] = "en"
                         }
                     }
@@ -411,7 +411,7 @@ class CommentTableView: UITableView {
         
         var data: [String: Any] = ["createTime": Timestamp(date: Date()), "originalPoster": userUID, "section": sectionString, "documentID": documentID]
         
-        if language == .english {
+        if language == .en {
             data["language"] = "en"
         }
         let ref = db.collection("AnonymousPosts")
@@ -428,14 +428,14 @@ class CommentTableView: UITableView {
         var collectionRef: CollectionReference!
         
         if post.isTopicPost {
-            if post.language == .english {
+            if post.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topicPosts")
             } else {
                 collectionRef = db.collection("TopicPosts")
             }
             ref = collectionRef.document(post.documentID)
         } else {
-            if post.language == .english {
+            if post.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("posts")
             } else {
                 collectionRef = db.collection("Posts")
@@ -490,13 +490,13 @@ class CommentTableView: UITableView {
     func addUserAsNotificationRecipient(post: Post, userUID: String) {
         var collectionRef: CollectionReference!
         if post.isTopicPost {
-            if post.language == .english {
+            if post.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topicPosts")
             } else {
                 collectionRef = db.collection("TopicPosts")
             }
         } else {
-            if post.language == .english {
+            if post.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("posts")
             } else {
                 collectionRef = db.collection("Posts")
@@ -519,13 +519,13 @@ class CommentTableView: UITableView {
     func removeUserAsNotificationRecipient(post: Post, userUID: String) {
         var collectionRef: CollectionReference!
         if post.isTopicPost {
-            if post.language == .english {
+            if post.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topicPosts")
             } else {
                 collectionRef = db.collection("TopicPosts")
             }
         } else {
-            if post.language == .english {
+            if post.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("posts")
             } else {
                 collectionRef = db.collection("Posts")
@@ -547,7 +547,7 @@ class CommentTableView: UITableView {
         
         var notificationData: [String: Any] = ["type": "comment", "comment": bodyString, "name": displayName, "postID": post.documentID, "isTopicPost": post.isTopicPost, "forOP": forOP]   //"forOP" changes the message in the notification: "You got a comment: " vs "X-Post got a comment"
         
-        if post.language == .english {
+        if post.language == .en {
             notificationData["language"] = "en"
         }
         

@@ -338,7 +338,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 linkPreviewView.isHidden = false
                 self.urlLabel.text = link.shortURL
                 self.linkPreviewTitle.text = link.linkTitle
-                self.linkPreviewDescription.text = link.linkDescription
+                self.linkPreviewDescription.text = link.description
                 self.imageCollectionView.backgroundColor = .secondarySystemBackground
                 
                 if let imageURL = link.imageURL {

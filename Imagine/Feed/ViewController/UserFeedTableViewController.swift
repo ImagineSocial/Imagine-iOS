@@ -1010,7 +1010,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 var notificationData : [String: Any] = ["type": "friend", "name": name, "userID": user.uid]
                 
                 let language = LanguageSelection().getLanguage()
-                if language == .english {
+                if language == .en {
                     notificationData["language"] = "en"
                 }
                 notificationsRef.setData(notificationData) { (err) in

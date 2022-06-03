@@ -254,13 +254,13 @@ class PostHelper {
                     post.repostDocumentID = postDocumentID
                     if let repostLanguage = documentData["repostLanguage"] as? String {
                         if repostLanguage == "en" {
-                            post.repostLanguage = .english
-                            if post.language != .english {
+                            post.repostLanguage = .en
+                            if post.language != .en {
                                 post.type = .translation
                             }
                         } else if repostLanguage == "de" {
-                            post.repostLanguage = .german
-                            if post.language != .german {
+                            post.repostLanguage = .de
+                            if post.language != .de {
                                 post.type = .translation
                             }
                         }
@@ -378,8 +378,7 @@ class PostHelper {
         }
         
         if let locationName = documentData["locationName"] as? String, let locationCoordinates = documentData["locationCoordinate"] as? GeoPoint {
-            let coordinate = CLLocationCoordinate2D(latitude: locationCoordinates.latitude, longitude: locationCoordinates.longitude)
-            let location = Location(title: locationName, coordinate: coordinate)
+            let location = Location(title: locationName, geoPoint: locationCoordinates)
             
             post.location = location
         }

@@ -95,7 +95,7 @@ class AddOn {
         if fact.documentID != "" && documentID != "" {
             DispatchQueue.global(qos: .default).async {
                 var collectionRef: CollectionReference!
-                if self.fact.language == .english {
+                if self.fact.language == .en {
                     collectionRef = self.db.collection("Data").document("en").collection("topics")
                 } else {
                     collectionRef = self.db.collection("Facts")
@@ -193,7 +193,7 @@ class AddOn {
         }
         
         var collectionRef: CollectionReference!
-        if fact.language == .english {
+        if fact.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
@@ -239,7 +239,7 @@ class AddOn {
                 print("We have an error: \(error.localizedDescription)")
             } else {
                 var collectionRef: CollectionReference!
-                if self.fact.language == .english {
+                if self.fact.language == .en {
                     collectionRef = self.db.collection("Data").document("en").collection("topics")
                 } else {
                     collectionRef = self.db.collection("Facts")
@@ -291,7 +291,7 @@ class AddOn {
     func updateTopicPostInFact(addOnID: String, postDocumentID: String) {       //Add the AddOnDocumentIDs to the fact, so we can delete every trace of the post if you choose to delete it later. Otherwise there would be empty post in an AddOn
         
         var collectionRef: CollectionReference!
-        if fact.language == .english {
+        if fact.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")

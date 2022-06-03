@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Votes {
+struct Votes: Codable {
     var thanks = 0
     var wow = 0
     var ha = 0

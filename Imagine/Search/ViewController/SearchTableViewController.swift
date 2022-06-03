@@ -166,7 +166,7 @@ extension SearchTableViewController: UISearchResultsUpdating, UISearchBarDelegat
         
         switch searchScope {
         case 0: // Search Posts
-            if language == .english {
+            if language == .en {
                 collectionRef = self.db.collection("Data").document("en").collection("posts")
             } else {
                 collectionRef = self.db.collection("Posts")
@@ -263,7 +263,7 @@ extension SearchTableViewController: UISearchResultsUpdating, UISearchBarDelegat
                 }
             }
         case 2: // Search topicPosts
-            if language == .english {
+            if language == .en {
                 collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
             } else {
                 collectionRef = self.db.collection("topicPosts")

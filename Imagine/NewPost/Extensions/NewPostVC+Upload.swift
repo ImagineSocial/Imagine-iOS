@@ -9,8 +9,67 @@
 import UIKit
 import FirebaseStorage
 import FirebaseFirestore
+import FirebaseFirestoreSwift
 
 extension NewPostVC {
+    
+    
+    func shareObject() {
+        let post = Post()
+        
+        
+        post.description = (descriptionText ?? "").trimmingCharacters(in: .newlines).replacingOccurrences(of: "\n", with: "\\n")  // Save line breaks in a way that we can extract them later
+        let descriptionText = text
+        
+        let title = titleText ?? ""
+        let tags = self.getTagsToSave()
+        
+        var dataDictionary: [String: Any] = ["title": title, "description": descriptionText, "createTime": getDate(), "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "report": getReportString(), "tags": tags]
+        
+        // TODO: Dies hier
+        // let options = optionView.getSettings()
+        
+        //Set right user reference
+        let userString: String!
+        let hideProfileOption: [String: Any] = ["hideProfile": true]
+        
+        guard let cell = getCell(for: .options) as? NewPostOptionCell else {
+            
+            return dataDictionary
+        }
+        
+        let options = cell.option
+        
+        if options.postAnonymous {
+            userString = anonymousString
+            
+            dataDictionary["designOptions"] = hideProfileOption
+            
+            if let synonym = options.synonymString {
+                // Add the synonym, set in the optionView
+                dataDictionary["anonymousName"] = synonym
+            }
+        } else {
+            userString = userID
+            dataDictionary["notificationRecipients"] = [userID]   //So he can set notifications off in his own post
+        }
+        
+        // location
+        if let location = location {
+            dataDictionary["locationName"] = location.title
+            let geoPoint = GeoPoint(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+            dataDictionary["locationCoordinate"] = geoPoint
+        }
+        
+        dataDictionary["originalPoster"] = userString
+        
+        // If you want to hide the profilePicture in a non anonymous post
+        if options.hideProfile {
+            dataDictionary["designOptions"] = hideProfileOption
+        }
+        
+    }
+    
     
     @objc func shareTapped() {
         guard let userID = AuthenticationManager.shared.user?.uid else {
@@ -27,14 +86,14 @@ extension NewPostVC {
         let language = LanguageSelection().getLanguage()
         
         if comingFromAddOnVC || postOnlyInTopic {
-            if language == .english {
+            if language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topicPosts")
             } else {
                 collectionRef = db.collection("TopicPosts")
             }
             postRef = collectionRef.document()
         } else {
-            if language == .english {
+            if language == .en {
                 collectionRef = db.collection("Data").document("en").collection("posts")
             } else {
                 collectionRef = db.collection("Posts")
@@ -135,7 +194,7 @@ extension NewPostVC {
         }
     }
     
-    //MARK: Prepare Link
+    // MARK: Prepare Link
     func prepareLinkPost(postRef: DocumentReference, userID: String) {
         
         if let text = link {
@@ -267,7 +326,7 @@ extension NewPostVC {
         var data = getDefaultUploadData(userID: userID)
         data["type"] = "thought"
         
-        self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: data)
+        self.uploadTheData(documentReference: postRef, userID: userID, dataDictionary: data)
         
         print("post thought")
     }
@@ -277,7 +336,7 @@ extension NewPostVC {
         dataDictionary["type"] = "link"
         dataDictionary["link"] = link.link
         dataDictionary["linkTitle"] = link.linkTitle
-        dataDictionary["linkDescription"] = link.linkDescription
+        dataDictionary["linkDescription"] = link.description
         dataDictionary["linkShortURL"] = link.shortURL
         
         if let dictionary = songwhipData {
@@ -289,7 +348,7 @@ extension NewPostVC {
             dataDictionary["linkImageURL"] = url
         }
         
-        self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
+        self.uploadTheData(documentReference: postRef, userID: userID, dataDictionary: dataDictionary)
         print("post link")
     }
     
@@ -306,7 +365,7 @@ extension NewPostVC {
                 dataDictionary["thumbnailImageURL"] = thumbnailURL
             }
             
-            self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
+            self.uploadTheData(documentReference: postRef, userID: userID, dataDictionary: dataDictionary)
             print("post picture")
             
         } else {
@@ -324,7 +383,7 @@ extension NewPostVC {
         dataDictionary["imageHeight"] = Double(selectedImageHeight)
         dataDictionary["imageWidth"] = Double(selectedImageWidth)
         
-        self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
+        self.uploadTheData(documentReference: postRef, userID: userID, dataDictionary: dataDictionary)
         print("post multiPicture")
     }
     
@@ -338,7 +397,7 @@ extension NewPostVC {
                 dataDictionary["type"] = "GIF"
                 dataDictionary["link"] = link
 
-                self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
+                self.uploadTheData(documentReference: postRef, userID: userID, dataDictionary: dataDictionary)
 
                 print("post GIF")
             } else {
@@ -362,7 +421,7 @@ extension NewPostVC {
             dataDictionary["type"] = "youTubeVideo"
             dataDictionary["link"] = link
             
-            self.uploadTheData(postRef: postRef, userID: userID, dataDictionary: dataDictionary)
+            self.uploadTheData(documentReference: postRef, userID: userID, dataDictionary: dataDictionary)
             
             print("post YouTubeVideo")
         } else {
@@ -372,9 +431,9 @@ extension NewPostVC {
     }
     
     //MARK: -Upload Data
-    private func uploadTheData(postRef: DocumentReference, userID: String, dataDictionary: [String: Any]) {
+    private func uploadTheData(documentReference: DocumentReference, userID: String, dataDictionary: [String: Any]) {
         
-        let documentID = postRef.documentID
+        let documentID = documentReference.documentID
         
         let language = LanguageSelection().getLanguage()
         
@@ -387,8 +446,15 @@ extension NewPostVC {
             uploadCommunityPostData(postDocumentID: documentID, communityID: community.documentID, language: language)
         }
         
+        do {
+            // setData updates values or creates them if they don't exist
+            try documentReference?.setData(from: object)
+        } catch {
+            print("Error bro")
+        }
         
-        postRef.setData(data) { err in
+        
+        documentReference.setData(data) { err in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
                 //TODO: Inform User
@@ -434,7 +500,7 @@ extension NewPostVC {
         
         var data: [String: Any] = ["createTime": self.getDate()]
         
-        if language == .english {
+        if language == .en {
             data["language"] = "en"
         }
         
@@ -460,7 +526,7 @@ extension NewPostVC {
     private func uploadCommunityPostData(postDocumentID: String, communityID: String, language: Language) {
         var collectionRef: CollectionReference!
 
-        if language == .english {
+        if language == .en {
             collectionRef = self.db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = self.db.collection("Facts")

@@ -124,7 +124,7 @@ class FirestoreReference {
         
         // The german language got no subfolder for the data because of the bad database structure.
         switch language {
-        case .german:
+        case .de:
             reference = db.collection(type.mainString)
         default:
             if type.gotLanguageSubcollection, let languageString = type.languageString {

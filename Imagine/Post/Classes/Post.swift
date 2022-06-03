@@ -9,11 +9,11 @@
 import Foundation
 import FirebaseFirestore
 
-struct PostDesignOption {
+struct PostDesignOption: Codable {
     var hideProfilePicture = false
 }
 
-class Post {
+class Post: Codable {
     
     //MARK:- Variables
     var title = ""
@@ -27,12 +27,12 @@ class Post {
     var type: PostType = .picture
     var mediaHeight: CGFloat = 0.0
     var mediaWidth: CGFloat = 0.0
-    var report:ReportType = .normal
+    var report: ReportType = .normal
     var documentID = ""
     var createTime = ""
     var repostDocumentID: String?
     var repostIsTopicPost = false
-    var repostLanguage: Language = .german
+    var repostLanguage: Language = .de
     var commentCount = 0
     var createDate: Date?
     var toComments = false // If you want to skip to comments (For now)
@@ -45,7 +45,7 @@ class Post {
     var community: Community?
     var addOnTitle: String?    // Description in the OptionalInformation Section in the topic area
     var isTopicPost = false // Just postet in a topic, not in the main feed
-    var language: Language = .german
+    var language: Language = .de
     var designOptions: PostDesignOption?
     var location: Location?
     
@@ -53,22 +53,22 @@ class Post {
     
     var survey: Survey?
     
-    private let handyHelper = HandyHelper.shared
-    private let db = FirestoreRequest.shared.db
-    
     
     //MARK: Get Repost
     func getRepost(returnRepost: @escaping (Post) -> Void) {
+        
+        let db = FirestoreRequest.shared.db
+        
         if let repostID = repostDocumentID {
             var collectionRef: CollectionReference!
             if repostIsTopicPost {
-                if repostLanguage == .english {
+                if repostLanguage == .en {
                     collectionRef = db.collection("Data").document("en").collection("topicPosts")
                 } else {
                     collectionRef = db.collection("TopicPosts")
                 }
             } else {
-                if repostLanguage == .english {
+                if repostLanguage == .en {
                     collectionRef = db.collection("Data").document("en").collection("posts")
                 } else {
                     collectionRef = db.collection("Posts")

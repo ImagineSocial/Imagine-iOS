@@ -43,13 +43,13 @@ enum ArgumentType {
     case contra
 }
 
-enum FactDisplayName {
+enum FactDisplayName: String, Codable {
     case proContra
     case confirmDoubt
     case advantageDisadvantage
 }
 
-enum DisplayOption {
+enum DisplayOption: String, Codable {
     case discussion
     case topic
 }
@@ -392,7 +392,7 @@ class NewCommunityItemTableVC: UITableViewController {
         case .community:
             
             var collectionRef: CollectionReference!
-            if language == .english {
+            if language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topics")
             } else {
                 collectionRef = db.collection("Facts")
@@ -412,7 +412,7 @@ class NewCommunityItemTableVC: UITableViewController {
         case .addOnPlaylist:
             if let fact = community {
                 var collectionRef: CollectionReference!
-                if fact.language == .english {
+                if fact.language == .en {
                     collectionRef = db.collection("Data").document("en").collection("topics")
                 } else {
                     collectionRef = db.collection("Facts")
@@ -426,7 +426,7 @@ class NewCommunityItemTableVC: UITableViewController {
         case .addOn:
             if let fact = community {
                 var collectionRef: CollectionReference!
-                if fact.language == .english {
+                if fact.language == .en {
                     collectionRef = db.collection("Data").document("en").collection("topics")
                 } else {
                     collectionRef = db.collection("Facts")
@@ -445,7 +445,7 @@ class NewCommunityItemTableVC: UITableViewController {
         case .addOnYouTubePlaylistDesign:
             if let fact = community {
                 var collectionRef: CollectionReference!
-                if fact.language == .english {
+                if fact.language == .en {
                     collectionRef = db.collection("Data").document("en").collection("topics")
                 } else {
                     collectionRef = db.collection("Facts")
@@ -480,7 +480,7 @@ class NewCommunityItemTableVC: UITableViewController {
         }
         
         var collectionRef: CollectionReference!
-        if community.language == .english {
+        if community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("posts")
         } else {
             collectionRef = db.collection("Posts")
@@ -506,7 +506,7 @@ class NewCommunityItemTableVC: UITableViewController {
                 let userRef = self.db.collection("Users").document(user.uid).collection("posts").document(ref.documentID)
                 var data: [String: Any] = ["createTime": Timestamp(date: Date())]
                 
-                if community.language == .english {
+                if community.language == .en {
                     data["language"] = "en"
                 }
                 userRef.setData(data) { (err) in
@@ -529,7 +529,7 @@ class NewCommunityItemTableVC: UITableViewController {
             return
         }
         var collectionRef: CollectionReference!
-        if community.language == .english {
+        if community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
@@ -595,7 +595,7 @@ class NewCommunityItemTableVC: UITableViewController {
         }
         
         var collectionRef: CollectionReference!
-        if community.language == .english {
+        if community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
@@ -626,7 +626,7 @@ class NewCommunityItemTableVC: UITableViewController {
             return
         }
         var collectionRef: CollectionReference!
-        if community.language == .english {
+        if community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
@@ -655,7 +655,7 @@ class NewCommunityItemTableVC: UITableViewController {
             return
         }
         var collectionRef: CollectionReference!
-        if community.language == .english {
+        if community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
@@ -714,7 +714,7 @@ class NewCommunityItemTableVC: UITableViewController {
             data["imageURL"] = url
             fact.imageURL = url
         }
-        if language == .english {
+        if language == .en {
             data["language"] = "en"
         }
         

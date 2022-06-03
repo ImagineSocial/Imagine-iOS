@@ -640,6 +640,8 @@ PODS:
     - "gRPC-C++ (~> 1.44.0)"
     - leveldb-library (~> 1.22)
     - nanopb (< 2.30910.0, >= 2.30908.0)
+  - FirebaseFirestoreSwift (9.1.0):
+    - FirebaseFirestore (~> 9.0)
   - FirebaseInstallations (9.1.0):
     - FirebaseCore (~> 9.0)
     - GoogleUtilities/Environment (~> 7.7)
@@ -766,6 +768,7 @@ DEPENDENCIES:
   - FirebaseAuth
   - FirebaseCore
   - FirebaseFirestore
+  - FirebaseFirestoreSwift
   - FirebaseMessaging
   - FirebaseStorage
   - IQKeyboardManagerSwift
@@ -791,6 +794,7 @@ SPEC REPOS:
     - FirebaseCoreExtension
     - FirebaseCoreInternal
     - FirebaseFirestore
+    - FirebaseFirestoreSwift
     - FirebaseInstallations
     - FirebaseMessaging
     - FirebaseStorage
@@ -834,6 +838,7 @@ SPEC CHECKSUMS:
   FirebaseCoreExtension: c2efdc29b8ffeaa0be3e1bd1fc59758de9b3fe6d
   FirebaseCoreInternal: f3c838ae0b41cd840bbf34f90debfede78d352e5
   FirebaseFirestore: 20b1df7d65058b038745ecebb60f741a10e40a6f
+  FirebaseFirestoreSwift: 5d57539cec470bf3c9a752db009ff7e9d1a77d09
   FirebaseInstallations: a91c74276b544524ce144c8315d8cdbce2dbe30b
   FirebaseMessaging: 0bf5caa621182ccc66ba3be3b15e68d800d98e9f
   FirebaseStorage: 1706d112a8a9d39f3b5465d00a0cb75725f16f63
@@ -854,6 +859,6 @@ SPEC CHECKSUMS:
   SwiftLinkPreview: c1bc5b2cb3cd42f2865137c1a61f5d788dcf5c9c
   YoutubePlayer-in-WKWebView: 4fca3b4f6f09940077bfbae7bddb771f2b43aacd
 
-PODFILE CHECKSUM: 1e9bc57955cf5ae3127afb3ac9f2a444ad3ed469
+PODFILE CHECKSUM: 6f62879adb72bcb8f3cafaf585b4750a6caef267
 
 COCOAPODS: 1.11.3

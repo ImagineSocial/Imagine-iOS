@@ -84,7 +84,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
             
             var collectionRef: CollectionReference!
             let language = LanguageSelection().getLanguage()
-            if language == .english {
+            if language == .en {
                 collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
             } else {
                 collectionRef = self.db.collection("TopicPosts")
@@ -307,7 +307,7 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
         switch searchScope {
         case 0: // Search Posts
             var collectionRef: CollectionReference!
-            if language == .english {
+            if language == .en {
                 collectionRef = db.collection("Data").document("en").collection("posts")
             } else {
                 collectionRef = db.collection("Posts")
@@ -338,7 +338,7 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
             
             // You have to write the whole noun
             var tagCollectionRef: CollectionReference!
-            if language == .english {
+            if language == .en {
                 tagCollectionRef = db.collection("Data").document("en").collection("posts")
             } else {
                 tagCollectionRef = db.collection("Posts")
@@ -369,7 +369,7 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
             
         case 1:
             var collectionRef: CollectionReference!
-            if language == .english {
+            if language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topics")
             } else {
                 collectionRef = db.collection("Facts")

@@ -82,13 +82,13 @@ class ReportConfirmViewController: UIViewController {
         if let post = post {
             var collectionRef: CollectionReference!
             if post.isTopicPost {
-                if self.language == .english {
+                if self.language == .en {
                     collectionRef = db.collection("Data").document("en").collection("topicPosts")
                 } else {
                     collectionRef = db.collection("TopicPosts")
                 }
             } else {
-                if self.language == .english {
+                if self.language == .en {
                     collectionRef = db.collection("Data").document("en").collection("posts")
                 } else {
                     collectionRef = db.collection("Posts")
@@ -116,7 +116,7 @@ class ReportConfirmViewController: UIViewController {
             let notificationRef = db.collection("Users").document("CZOcL3VIwMemWwEfutKXGAfdlLy1").collection("notifications").document()
             var notificationData: [String: Any] = ["type": "message", "message": "Jemand hat eine Sache markiert oder gemeldet", "name": "Meldung", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "messageID": user.uid]
             
-            if language == .english {
+            if language == .en {
                 notificationData["language"] = "en"
             }
             
@@ -132,7 +132,7 @@ class ReportConfirmViewController: UIViewController {
                 
                 var data: [String:Any] = ["time": Timestamp(date: Date()), "category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported post":post.documentID]
                 
-                if language == .english {
+                if language == .en {
                     data["language"] = "en"
                 }
                 
@@ -141,7 +141,7 @@ class ReportConfirmViewController: UIViewController {
             } else if let comment = comment {
                 var data: [String:Any] = ["time": Timestamp(date: Date()), "category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported comment": comment.commentID]
                 
-                if language == .english {
+                if language == .en {
                     data["language"] = "en"
                 }
                 

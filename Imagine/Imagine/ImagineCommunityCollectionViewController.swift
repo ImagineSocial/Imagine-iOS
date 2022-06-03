@@ -413,7 +413,7 @@ extension ImagineCommunityCollectionViewController: CommunityNavigationItemDeleg
         case .website:
             let language = LanguageSelection().getLanguage()
             var url: URL?
-            if language == .german {
+            if language == .de {
                 url = URL(string: "https://imagine.social")
             } else {
                 url = URL(string: "https://en.imagine.social")

@@ -230,7 +230,7 @@ class NewAddOnTableViewController: UITableViewController {
     
     func createNewQandAAddOn(user: User, fact: Community) {
         var collectionRef: CollectionReference!
-        if fact.language == .english {
+        if fact.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")

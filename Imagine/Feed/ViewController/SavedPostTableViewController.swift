@@ -37,7 +37,7 @@ class SavedPostTableViewController: BaseFeedTableViewController {
                         return
                     }
                                         
-                    if let firstPost = self.posts.first, firstPost.documentID == "" {   // Get the first batch of posts
+                    if placeholderAreShown {   // Get the first batch of posts
                         self.posts = posts
                         self.tableView.reloadData()
                         self.fetchesPosts = false

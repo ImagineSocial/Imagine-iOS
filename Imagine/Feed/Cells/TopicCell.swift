@@ -74,7 +74,7 @@ class TopicCell: UITableViewCell {
     func getData() {
         var collectionRef: CollectionReference!
         let language = LanguageSelection().getLanguage()
-        if language == .english {
+        if language == .en {
             collectionRef = db.collection("Data").document("en").collection("topTopicData")
         } else {
             collectionRef = db.collection("TopTopicData")
@@ -137,7 +137,7 @@ class TopicCell: UITableViewCell {
         
         for factID in factIDs {
             var collectionRef: CollectionReference!
-            if language == .english {
+            if language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topics")
             } else {
                 collectionRef = db.collection("Facts")
@@ -171,7 +171,7 @@ class TopicCell: UITableViewCell {
                             }
                             if let language = data["language"] as? String {
                                 if language == "en" {
-                                    fact.language = .english
+                                    fact.language = .en
                                 }
                             }
                             fact.fetchComplete = true

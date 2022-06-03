@@ -8,18 +8,25 @@
 
 import UIKit
 import MapKit
+import FirebaseFirestore
 
 protocol HandleMapSearch {
     func dropPinZoomIn(placemark:MKPlacemark)
 }
 
-class Location {
+class Location: Codable {
     var title: String
-    var coordinate: CLLocationCoordinate2D
+    var locationCoordinate: GeoPoint
     
-    init(title: String, coordinate: CLLocationCoordinate2D) {
+    var coordinate: CLLocationCoordinate2D {
+        get {
+            CLLocationCoordinate2D(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
+        }
+    }
+    
+    init(title: String, geoPoint: GeoPoint) {
         self.title = title
-        self.coordinate = coordinate
+        self.locationCoordinate = geoPoint
     }
 }
 
@@ -141,7 +148,7 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate {
         if let title = annotation.title {
             if let title = title {
                 self.chosenLocationLabel.text = title
-                let location = Location(title: title, coordinate: annotation.coordinate)
+                let location = Location(title: title, geoPoint: GeoPoint(latitude: annotation.coordinate.latitude, longitude: annotation.coordinate.longitude))
                 self.location = location
                 self.mapView.addAnnotation(annotation)
             }

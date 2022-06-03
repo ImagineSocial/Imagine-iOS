@@ -71,7 +71,7 @@ class FactCell: BaseCollectionViewCell {
             if let unloadedFact = unloadedFact, unloadedFact.documentID != "" {
                 var collectionRef: CollectionReference!
                 let language = LanguageSelection().getLanguage()
-                if language == .english {
+                if language == .en {
                     collectionRef = db.collection("Data").document("en").collection("topics")
                 } else {
                     collectionRef = db.collection("Facts")

@@ -152,7 +152,7 @@ class CommunityHeaderView: UIView {
             
             var data: [String: Any] = ["createDate": Timestamp(date: Date())]
             
-            if community.language == .english {
+            if community.language == .en {
                 data["language"] = "en"
             }
             topicRef.setData(data) { (err) in
@@ -199,7 +199,7 @@ class CommunityHeaderView: UIView {
         if let user = Auth.auth().currentUser {
             
             var collectionRef: CollectionReference!
-            if fact.language == .english {
+            if fact.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topics")
             } else {
                 collectionRef = db.collection("Facts")

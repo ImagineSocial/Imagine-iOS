@@ -97,7 +97,7 @@ class LinkCell : BaseFeedCell {
             // Show Preview of Link
             if let link = post.link {
                 linkPreviewTitleLabel.text = link.linkTitle
-                linkPreviewDescriptionLabel.text = link.linkDescription
+                linkPreviewDescriptionLabel.text = link.description
                 urlLabel.text = link.shortURL
                 
                 if let imageURL = link.imageURL {
@@ -161,7 +161,7 @@ class LinkCell : BaseFeedCell {
     
     func setLinkStuffInFirebase(data: [String: Any]) {
         if let post = post {
-            if post.language == .english {
+            if post.language == .en {
                 return 
             }
             let db = FirestoreRequest.shared.db

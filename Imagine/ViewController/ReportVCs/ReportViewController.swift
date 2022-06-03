@@ -133,7 +133,7 @@ class ReportViewController: UIViewController {
         guard let post = post else { return }
         
         var collectionRef: CollectionReference!
-        if fact.language == .english {
+        if fact.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
@@ -163,7 +163,7 @@ class ReportViewController: UIViewController {
         
         if let fact = post.community {
             var collectionRef: CollectionReference!
-            if fact.language == .english {
+            if fact.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topics")
             } else {
                 collectionRef = db.collection("Facts")
@@ -185,14 +185,14 @@ class ReportViewController: UIViewController {
         let postRef: DocumentReference?
         var collectionRef: CollectionReference!
         if post.isTopicPost {
-            if post.language == .english {
+            if post.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topicPosts")
             } else {
                 collectionRef = db.collection("TopicPosts")
             }
             postRef = collectionRef.document(post.documentID)
         } else {
-            if post.language == .english {
+            if post.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("posts")
             } else {
                 collectionRef = db.collection("Posts")

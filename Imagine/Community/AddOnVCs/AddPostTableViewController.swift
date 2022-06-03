@@ -93,7 +93,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
         
         var collectionRef: CollectionReference!
         let language = LanguageSelection().getLanguage()
-        if language == .english {
+        if language == .en {
             collectionRef = self.db.collection("Data").document("en").collection("posts")
         } else {
             collectionRef = self.db.collection("Posts")
@@ -126,7 +126,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
         
         var collectionRef: CollectionReference!
         let language = LanguageSelection().getLanguage()
-        if language == .english {
+        if language == .en {
             collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
         } else {
             collectionRef = self.db.collection("TopicPosts")
@@ -424,7 +424,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     func checkIfFirstEntry(collectionReferenceString: String, fact: Community, gotCollection: @escaping (Bool) -> Void) {
         var collectionRef: CollectionReference!
         let language = LanguageSelection().getLanguage()
-        if language == .english {
+        if language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")

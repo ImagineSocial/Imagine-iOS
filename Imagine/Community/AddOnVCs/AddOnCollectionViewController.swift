@@ -82,7 +82,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     func getData(community: Community) {
         
         var collectionRef: CollectionReference!
-        if community.language == .english {
+        if community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
@@ -496,7 +496,7 @@ extension AddOnCollectionViewController: AddOnCellDelegate, AddOnFooterViewDeleg
         }
         if let fact = community, info.documentID != "" {
             var collectionRef: CollectionReference!
-            if fact.language == .english {
+            if fact.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topics")
             } else {
                 collectionRef = db.collection("Facts")
