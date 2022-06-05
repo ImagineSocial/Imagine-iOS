@@ -16,9 +16,9 @@ class RepostView: UIView {
         didSet {
             if let repost = repost {
                 repostTitleLabel.text = repost.title
-                repostCreateDateLabel.text = repost.createTime
+                repostCreateDateLabel.text = repost.createDate.formatForFeed()
                 
-                if let imageURL = URL(string: repost.imageURL) {
+                if let link = repost.image?.url, let imageURL = URL(string: link) {
                     repostImageView.sd_setImage(with: imageURL, completed: nil)
                 }
                 

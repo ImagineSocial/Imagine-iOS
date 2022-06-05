@@ -498,9 +498,8 @@ class NewCommunityItemTableVC: UITableViewController {
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
-                let post = Post()
+                let post = Post(type: .singleTopic, title: title, createDate: Date())
                 post.documentID = ref.documentID
-                post.title = title
                 post.language = community.language
                 
                 let userRef = self.db.collection("Users").document(user.uid).collection("posts").document(ref.documentID)

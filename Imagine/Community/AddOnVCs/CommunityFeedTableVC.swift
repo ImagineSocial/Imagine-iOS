@@ -59,10 +59,8 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
         var index = 0
         
         while index <= 2 {
-            let post = Post()
-            
-            post.type = (index == 1) ? .picture : .thought
-            
+            let post = Post(type: (index == 1) ? .picture : .thought, title: "", createDate: Date())
+                        
             self.posts.append(post)
             index+=1
         }

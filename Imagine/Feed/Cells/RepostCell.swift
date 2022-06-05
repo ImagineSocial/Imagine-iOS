@@ -83,7 +83,7 @@ class RePostCell : BaseFeedCell {
             // Repost Sachen einstellen
             if let repost = post.repost {
                 originalTitleLabel.text = repost.title
-                originalCreateDateLabel.text = repost.createTime
+                originalCreateDateLabel.text = repost.createDate.formatForFeed()
                 
                 if repost.anonym {
                     ogProfilePictureImageView.image = UIImage(named: "anonym-user")
@@ -103,7 +103,7 @@ class RePostCell : BaseFeedCell {
                 }
                 
                 
-                if let url = URL(string: repost.imageURL) {
+                if let link = repost.image?.url, let url = URL(string: link) {
                     cellImageView.isHidden = false      // Check ich nicht, aber geht!
                     cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
                 }

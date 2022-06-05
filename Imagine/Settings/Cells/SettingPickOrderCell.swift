@@ -17,27 +17,24 @@ class SettingPickOrderCell: UITableViewCell {
     //MARK:- Variables
     var post: Post? {
         didSet {
-            if let post = post {
-                self.pickOrderLabel.text = post.title
-
-                if post.imageURL != "" {
-                    if let url = URL(string: post.imageURL) {
-                        self.pickOrderImageView.sd_setImage(with: url, completed: nil)
-                    }
-                }
+            guard let post = post else {
+                return
+            }
+            self.pickOrderLabel.text = post.title
+            
+            if let imageURL = post.image?.url, let url = URL(string: imageURL) {
+                self.pickOrderImageView.sd_setImage(with: url, completed: nil)
             }
         }
     }
     
-    var fact: Community? {
+    var community: Community? {
         didSet {
-            if let fact = fact {
-                self.pickOrderLabel.text = fact.title
+            if let community = community {
+                self.pickOrderLabel.text = community.title
                 
-                if fact.imageURL != "" {
-                    if let url = URL(string: fact.imageURL) {
-                        self.pickOrderImageView.sd_setImage(with: url, completed: nil)
-                    }
+                if community.imageURL != "", let url = URL(string: community.imageURL) {
+                    self.pickOrderImageView.sd_setImage(with: url, completed: nil)
                 }
             }
         }
@@ -53,7 +50,7 @@ class SettingPickOrderCell: UITableViewCell {
     
     
     override func prepareForReuse() {
-        self.fact = nil
+        self.community = nil
         self.post = nil
         
         self.pickOrderImageView.image = nil

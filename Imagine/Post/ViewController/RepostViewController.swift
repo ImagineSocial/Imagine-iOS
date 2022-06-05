@@ -28,7 +28,7 @@ class RepostViewController: UIViewController {
     @IBOutlet weak var useOriginalTextButton: DesignableButton!
     @IBOutlet weak var shareButton: UIBarButtonItem!
     
-    var post = Post()
+    var post: Post?
     var repost: RepostType = .repost
     
     var tipView: EasyTipView?
@@ -63,6 +63,11 @@ class RepostViewController: UIViewController {
     
     func setPost() {
         
+        guard let post = post else {
+            return
+        }
+
+        
         switch repost {
         case .repost:
             useOriginalTextButton.isHidden = false
@@ -84,16 +89,14 @@ class RepostViewController: UIViewController {
             case .picture:
                 postImageView.isHidden = false
                 
-                if let url = URL(string: post.imageURL) {
+                if let link = post.image?.url, let url = URL(string: link) {
                     postImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
                 }
             case .multiPicture:
                 postImageView.isHidden = false
                 
-                if let urls = post.imageURLs {
-                    if let url = URL(string: urls[0]) {
-                        postImageView.sd_setImage(with: url, completed: nil)
-                    }
+                if let imageURL = post.images?.first?.url, let url = URL(string: imageURL) {
+                    postImageView.sd_setImage(with: url, completed: nil)
                 }
             default:
                 postImageView.isHidden = true
@@ -119,7 +122,7 @@ class RepostViewController: UIViewController {
             case .picture:
                 postImageView.isHidden = false
                 
-                if let url = URL(string: post.imageURL) {
+                if let link = post.image?.url, let url = URL(string: link) {
                     postImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
                 }
             default:
@@ -129,7 +132,7 @@ class RepostViewController: UIViewController {
     }
     
     @IBAction func useOriginalTextPressed(_ sender: Any) {
-        titleTranslationTextView.text = post.title
+        titleTranslationTextView.text = post?.title
     }
     
 
@@ -151,6 +154,11 @@ class RepostViewController: UIViewController {
     }
     
     func uploadRepost() {
+        
+        guard let post = post else {
+            return
+        }
+
         var collectionRef: CollectionReference!
         let language = LanguageSelection().getLanguage()
         

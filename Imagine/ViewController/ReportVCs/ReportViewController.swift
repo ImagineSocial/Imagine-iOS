@@ -200,7 +200,7 @@ class ReportViewController: UIViewController {
             postRef = collectionRef.document(post.documentID)
         }
         
-        if let _ = post.thumbnailImageURL {
+        if let _ = post.image?.thumbnailUrl {
             deleteThumbnail(documentID: post.documentID)
         }
         
@@ -221,8 +221,8 @@ class ReportViewController: UIViewController {
         case .multiPicture:
             let id = post.documentID
             var index = 0
-            if let imageURLs = post.imageURLs {
-                for _ in imageURLs {
+            if let images = post.images {
+                for _ in images {
                     let storageRef = Storage.storage().reference().child("postPictures").child("\(id)-\(index).png")
                     
                     index+=1
@@ -238,7 +238,7 @@ class ReportViewController: UIViewController {
                                 if let error = err {
                                     print("We have an error: \(error.localizedDescription)")
                                 } else {
-                                    if index == imageURLs.count {
+                                    if index == images.count {
                                         self.dismiss(animated: true, completion: nil)
                                         self.alert(message: "Fertig", title: "Das Bild wurde erfolgreich gelöscht. Aktualisiere den Feed und es ist weg")
                                     }

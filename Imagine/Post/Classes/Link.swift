@@ -8,22 +8,15 @@
 
 import Foundation
 
-class Link: Codable {
+struct Link: Codable {
+    var url: String
+    var shortURL: String?
     var imageURL: String?
-    var link: String
-    var shortURL: String
-    var linkTitle: String
-    var description: String
+    var linkTitle: String?
+    var description: String?
     var songwhip: Songwhip?
-
-    
-    init(link: String, title: String, description: String, shortURL: String, imageURL: String?) {
-        self.link = link
-        self.linkTitle = title
-        self.description = description
-        self.shortURL = shortURL
-        self.imageURL = imageURL
-    }
+    var mediaHeight: Double?
+    var mediaWidth: Double?
 }
 
 struct Songwhip: Codable {

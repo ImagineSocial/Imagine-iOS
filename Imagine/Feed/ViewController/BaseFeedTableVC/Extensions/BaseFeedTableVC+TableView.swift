@@ -72,17 +72,17 @@ extension BaseFeedTableViewController {
         case .multiPicture:
             let identifier = "MultiPictureCell"
             
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? MultiPictureCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? MultiPictureCell, let image = post.images?.first {
                 
                 cell.ownProfile = isOwnProfile
                 cell.delegate = self
                 cell.post = post
                 
-                let imageHeight = post.mediaHeight
-                let imageWidth = post.mediaWidth
+                let imageHeight = image.height
+                let imageWidth = image.width
                 
                 let ratio = imageWidth / imageHeight
-                let width = self.view.frame.width-20  // 5+5 from contentView and 5+5 from inset
+                let width = self.view.frame.width - 20  // 5+5 from contentView and 5+5 from inset
                 var newHeight = width / ratio
                 
                 if newHeight >= 500 {
@@ -146,14 +146,14 @@ extension BaseFeedTableViewController {
         case .picture:
             let identifier = "NibPostCell"
             
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? PostCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? PostCell, let image = post.image {
                 
                 cell.ownProfile = isOwnProfile
                 cell.delegate = self
                 cell.post = post
                 
-                let imageHeight = post.mediaHeight
-                let imageWidth = post.mediaWidth
+                let imageHeight = image.height
+                let imageWidth = image.width
                 
                 let ratio = imageWidth / imageHeight
                 let width = self.view.frame.width-20  // 5+5 from contentView and 5+5 from inset
@@ -192,8 +192,8 @@ extension BaseFeedTableViewController {
                 cell.post = post
                 cell.delegate = self
                 
-                let imageHeight = post.mediaHeight
-                let imageWidth = post.mediaWidth
+                let imageHeight = post.image?.height ?? 0
+                let imageWidth = post.image?.width ?? 0
                 
                 let ratio = imageWidth / imageHeight
                 let width = self.view.frame.width-20  // 5+5 from contentView and 5+5 from inset
@@ -205,7 +205,7 @@ extension BaseFeedTableViewController {
                 
                 cell.GIFViewHeightConstraint.constant = newHeight
                 
-                if let url = URL(string: post.linkURL) {
+                if let linkURL = post.link?.url, let url = URL(string: linkURL) {
                     cell.videoPlayerItem = AVPlayerItem.init(url: url)
                     cell.startPlayback()
                 }

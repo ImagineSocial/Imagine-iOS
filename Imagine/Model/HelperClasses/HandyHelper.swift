@@ -169,10 +169,10 @@ class HandyHelper {
         }
     }
 
-
-    func getWidthAndHeightFromVideo(url: URL) -> CGSize? {
-        guard let track = AVURLAsset(url: url).tracks(withMediaType: AVMediaType.video).first else { return nil }
-       let size = track.naturalSize.applying(track.preferredTransform)
+    
+    func getWidthAndHeightFromVideo(urlString: String) -> CGSize {
+        guard let url = URL(string: urlString), let track = AVURLAsset(url: url).tracks(withMediaType: AVMediaType.video).first else { return CGSize.zero }
+        let size = track.naturalSize.applying(track.preferredTransform)
         
         return CGSize(width: abs(size.width), height: abs(size.height))
     }
@@ -293,7 +293,12 @@ class HandyHelper {
         }
     }
     
-    func checkIfAlreadySaved(post: Post, alreadySaved: @escaping(Bool) -> Void ) {
+    func checkIfAlreadySaved(post: Post?, completion: @escaping(Bool) -> Void ) {
+        guard let post = post else {
+            completion(false)
+            return
+        }
+
         var saved = false
         
         if let user = AuthenticationManager.shared.user {
@@ -307,9 +312,9 @@ class HandyHelper {
                             // Already saved
                             saved = true
                         }
-                        alreadySaved(saved)
+                        completion(saved)
                     } else {
-                        alreadySaved(saved)
+                        completion(saved)
                     }
                 }
             }
@@ -339,8 +344,10 @@ class HandyHelper {
         }
     }
     
-    func deleteNotifications(type: NotificationType, id: String) {
-        print("delete Notification")
+    func deleteNotifications(type: NotificationType, id: String?) {
+        guard let id = id else {
+            return
+        }
         
         if let user = AuthenticationManager.shared.user {
             

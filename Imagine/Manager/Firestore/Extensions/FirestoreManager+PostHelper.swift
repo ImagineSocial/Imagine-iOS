@@ -109,18 +109,17 @@ class PostHelper {
                 } else if postType == "picture" {
                     
                     guard let imageURL = documentData["imageURL"] as? String,
-                          let picHeight = documentData["imageHeight"] as? Double,
-                          let picWidth = documentData["imageWidth"] as? Double
+                          let height = documentData["imageHeight"] as? Double,
+                          let width = documentData["imageWidth"] as? Double
                     
                     else {
                         return nil
                     }
                     
-                    post.imageURL = imageURL
-                    post.mediaWidth = CGFloat(picWidth)
-                    post.mediaHeight = CGFloat(picHeight)
+                    let image = PostImage(url: imageURL, height: height, width: width)
+                    post.image = image
                     
-                    let ratio = picWidth / picHeight
+                    let ratio = width / height
                     if ratio > 2 {
                         post.type = .panorama
                     } else {
@@ -134,17 +133,16 @@ class PostHelper {
                 } else if postType == "multiPicture" {
                     
                     guard let images = documentData["imageURLs"] as? [String],
-                          let picHeight = documentData["imageHeight"] as? Double,
-                          let picWidth = documentData["imageWidth"] as? Double
+                          let height = documentData["imageHeight"] as? Double,
+                          let width = documentData["imageWidth"] as? Double
                     else {
                         return nil
                     }
                     
                     post.type = .multiPicture
-                    post.imageURLs = images
-                    post.mediaWidth = CGFloat(picWidth)
-                    post.mediaHeight = CGFloat(picHeight)
                     
+                    let postImages = images.compactMap({ PostImage(url: $0, height: height, width: width) })    // The width and height will only be correct for the first object in the array
+                    post.images = postImages
                     
                     return post
                     
@@ -153,8 +151,8 @@ class PostHelper {
                     
                     guard let linkURL = documentData["link"] as? String else { return nil  }
                     
-                    
-                    post.linkURL = linkURL
+                    let link = Link(url: linkURL)
+                    post.link = link
                     post.type = .youTubeVideo
                     
                     return post
@@ -168,21 +166,10 @@ class PostHelper {
                         return nil
                     }
                     
-                    post.linkURL = gifURL
+                    let size = handyHelper.getWidthAndHeightFromVideo(urlString: gifURL)
+                    let link = Link(url: gifURL, mediaHeight: size.height, mediaWidth: size.width)
+                    post.link = link
                     post.type = .GIF
-                    
-                    
-                    if let url = URL(string: gifURL) {
-                        let size = handyHelper.getWidthAndHeightFromVideo(url: url)
-                        
-                        if let size = size {
-                            post.mediaWidth = size.width
-                            post.mediaHeight = size.height
-                        } else {
-                            print("Couldnt get a valid Video")
-                            return nil
-                        }
-                    }
                     
                     return post
                     
@@ -191,8 +178,7 @@ class PostHelper {
                     //MARK: Link
                 } else if postType == "link" {
                     
-                    guard let linkURL = documentData["link"] as? String
-                    else {
+                    guard let linkURL = documentData["link"] as? String else {
                         return nil
                     }
                     var link: Link?
@@ -200,14 +186,9 @@ class PostHelper {
                     if let shortURL = documentData["linkShortURL"] as? String, let linkTitle = documentData["linkTitle"] as? String, let linkDescription = documentData["linkDescription"] as? String {
                         let linkImageURL = documentData["linkImageURL"] as? String
                         
-                        link = Link(link: linkURL, title: linkTitle, description: linkDescription, shortURL: shortURL, imageURL: linkImageURL)
-                    } else if !linkURL.contains("songwhip.com") {
-                        if let request = firestoreRequest {
-                            request.notifyMalte(documentID: documentID, isTopicPost: isTopicPost)
-                        }
+                        link = Link(url: linkURL, shortURL: shortURL, imageURL: linkImageURL, linkTitle: linkTitle, description: linkDescription)
                     }
                     
-                    post.linkURL = linkURL
                     post.link = link
                     post.type = .link
                     
@@ -250,7 +231,7 @@ class PostHelper {
                         return nil
                     }
                     
-                    let post = Post()
+                    let post = Post.standard
                     post.repostDocumentID = postDocumentID
                     if let repostLanguage = documentData["repostLanguage"] as? String {
                         if repostLanguage == "en" {
@@ -294,7 +275,6 @@ class PostHelper {
         
         guard let documentData = document.data(),
               let title = documentData["title"] as? String,
-              let description = documentData["description"] as? String,
               let reportString = documentData["report"] as? String,
               let createTimestamp = documentData["createTime"] as? Timestamp,
               let originalPoster = documentData["originalPoster"] as? String,
@@ -310,10 +290,7 @@ class PostHelper {
         if reportString == "blocked" {
             return nil
         }
-        
-        let dateToSort = createTimestamp.dateValue()
-        let stringDate = createTimestamp.dateValue().formatForFeed()
-        
+                
         //Check if the poster is a friend of yours
         let isAFriend: Bool!
         
@@ -323,16 +300,13 @@ class PostHelper {
             isAFriend = false
         }
         
-        let post = Post()
-        post.title = title
-        post.description = description
+        let post = Post(type: .picture, title: title, createDate: createTimestamp.dateValue())
+        post.description = documentData["description"] as? String
         post.documentID = document.documentID
-        post.createTime = stringDate
         post.votes.thanks = thanksCount
         post.votes.wow = wowCount
         post.votes.ha = haCount
         post.votes.nice = niceCount
-        post.createDate = dateToSort
         
         //Tried to export these extra values because they repeat themself in every "type" case but because of my async func "getFact" if a factID exists and move the post afterwards
         if let report = self.handyHelper.setReportType(fetchedString: reportString) {
@@ -353,7 +327,7 @@ class PostHelper {
         if originalPoster == "anonym" {
             post.anonym = true
             if let anonymousName = documentData["anonymousName"] as? String {
-                post.anonymousName = anonymousName
+                post.options?.anonymousName = anonymousName
             }
         } else {
             let user = User(userID: originalPoster)
@@ -368,13 +342,8 @@ class PostHelper {
         } // else { it stays 0
         
         //Design Options
-        if let designOptions = documentData["designOptions"] as? [String: Any] {
-            if let hideProfile = designOptions["hideProfile"] as? Bool {
-                if hideProfile {
-                    let option = PostDesignOption(hideProfilePicture: true)
-                    post.designOptions = option
-                }
-            }
+        if let designOptions = documentData["designOptions"] as? [String: Any], let hideProfile = designOptions["hideProfile"] as? Bool, hideProfile {
+            post.options = PostDesignOption(hideProfilePicture: true)
         }
         
         if let locationName = documentData["locationName"] as? String, let locationCoordinates = documentData["locationCoordinate"] as? GeoPoint {
@@ -384,7 +353,7 @@ class PostHelper {
         }
         
         if let thumbnailURL = documentData["thumbnailImageURL"] as? String {
-            post.thumbnailImageURL = thumbnailURL
+            post.image?.thumbnailUrl = thumbnailURL
         }
         
         return post

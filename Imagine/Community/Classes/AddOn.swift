@@ -134,7 +134,7 @@ class AddOn {
                                     
                                     self.items.append(item)
                                 } else if type == "topicPost" {
-                                    let post = Post()
+                                    let post = Post.standard
                                     post.documentID = document.documentID
                                     post.isTopicPost = true
                                     post.language = self.fact.language
@@ -146,7 +146,7 @@ class AddOn {
                                     let item = AddOnItem(documentID: document.documentID, item: post)
                                     self.items.append(item)
                                 } else {    // Post
-                                    let post = Post()
+                                    let post = Post.standard
                                     post.documentID = document.documentID
                                     post.language = self.fact.language
                                     
@@ -222,7 +222,9 @@ class AddOn {
                 data["musicImage"] = music.musicImageURL
                 data["musicName"] = music.name
                 data["artist"] = music.artist
-                data["musicURL"] = post.linkURL
+                if let url = post.link?.url {
+                    data["musicURL"] = url
+                }
             }
             
             if post.isTopicPost {

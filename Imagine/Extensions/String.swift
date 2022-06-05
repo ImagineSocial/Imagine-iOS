@@ -86,4 +86,8 @@ extension String {
             return false
         }
     }
+    
+    var customFormat: String {
+        self.trimmingCharacters(in: .newlines).replacingOccurrences(of: "\n", with: "\\n")  // Save line breaks in a way that we can extract them later
+    }
 }

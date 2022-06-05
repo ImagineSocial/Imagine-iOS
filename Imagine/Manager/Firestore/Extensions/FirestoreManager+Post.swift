@@ -152,7 +152,7 @@ class FirestoreRequest {
         }
 
         return
-        self.getTheUsersFriend { _ in // First get the friends to choose which name to fetch
+        getTheUsersFriend { _ in // First get the friends to choose which name to fetch
             
             postQuery.getDocuments { [weak self] snap, error in
                 
@@ -173,7 +173,7 @@ class FirestoreRequest {
                     self.getFollowedTopicPosts(startSnap: self.startBeforeSnap, endSnap: lastSnap) { posts in
                         var combinedPosts = self.posts
                         combinedPosts.append(contentsOf: self.posts)
-                        let finalPosts = combinedPosts.sorted(by: { $0.createDate ?? Date() > $1.createDate ?? Date() })
+                        let finalPosts = combinedPosts.sorted(by: { $0.createDate > $1.createDate})
                         completion(finalPosts)
                     }
                 } else {
@@ -327,8 +327,7 @@ class FirestoreRequest {
             }
             
             if snap.documents.count == 0 {    // Hasnt posted or saved anything yet
-                let post = Post()
-                post.type = .nothingPostedYet
+                let post = Post.nothingPosted
                 completion([post])
             } else {
                 
@@ -342,7 +341,7 @@ class FirestoreRequest {
                         let documentID = document.documentID
                         let data = document.data()
                         
-                        let post = Post()
+                        let post = Post.standard
                         post.documentID = documentID
                         if let _ = data["isTopicPost"] as? Bool {
                             post.isTopicPost = true
@@ -357,7 +356,7 @@ class FirestoreRequest {
                     
                     self.getPostsFromDocumentIDs(posts: documentIDsOfPosts) { [weak self] _ in
                         // Needs to be sorted because the posts are fetched without the date that they were added
-                        self?.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                        self?.posts.sort(by: { $0.createDate.compare($1.createDate) == .orderedDescending })
                         completion(self?.posts)
                     }
                 case .savedPosts:
@@ -365,7 +364,7 @@ class FirestoreRequest {
                         let documentID = document.documentID
                         let data = document.data()
                         
-                        let post = Post()
+                        let post = Post.standard
                         post.documentID = documentID
                         if let _ = data["isTopicPost"] as? Bool {
                             post.isTopicPost = true
@@ -385,7 +384,7 @@ class FirestoreRequest {
                     self.getPostsFromDocumentIDs(posts: documentIDsOfPosts) { [weak self] _ in
                         if let self = self {
                             // Needs to be sorted because the posts are fetched without the date that they were added
-                            self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                            self.posts.sort(by: { $0.createDate.compare($1.createDate) == .orderedDescending })
                             completion(self.posts)
                         }
                     }
@@ -425,8 +424,7 @@ class FirestoreRequest {
             }
             
             if snap.documents.count == 0 {    // Hasnt posted or saved anything yet
-                let post = Post()
-                post.type = .nothingPostedYet
+                let post = Post.nothingPosted
                 completion([post])
             } else {
                 
@@ -440,7 +438,7 @@ class FirestoreRequest {
                     let documentID = document.documentID
                     let data = document.data()
                     
-                    let post = Post()
+                    let post = Post.standard
                     post.documentID = documentID
                     post.language = community.language
                     
@@ -453,7 +451,7 @@ class FirestoreRequest {
                 
                 self.getPostsFromDocumentIDs(posts: documentIDsOfPosts) { [weak self] _ in    // First fetch the normal Posts, then the "JustTopic" Posts
                     guard let self = self else { return }
-                    self.posts.sort(by: { $0.createDate?.compare($1.createDate ?? Date()) == .orderedDescending })
+                    self.posts.sort(by: { $0.createDate.compare($1.createDate) == .orderedDescending })
                     
                     completion(self.posts)
                 }

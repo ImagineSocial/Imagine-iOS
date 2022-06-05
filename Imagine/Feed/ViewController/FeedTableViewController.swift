@@ -171,8 +171,8 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         var index = 0
         
         while index <= 3 {
-            let post = Post()
-            post.designOptions = PostDesignOption(hideProfilePicture: true)
+            let post = Post.standard
+            post.options = PostDesignOption(hideProfilePicture: true)
             if index == 1 {
                 post.type = .picture
             } else {
@@ -512,7 +512,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             performSegue(withIdentifier: "toEULASegue", sender: nil)
         case .toPost:
             if let comment = comment{
-                let post = Post()
+                let post = Post(type: .picture, title: "", createDate: Date())
                 post.documentID = comment.sectionItemID
                 post.isTopicPost = comment.isTopicPost
                 post.language = comment.sectionItemLanguage
@@ -526,7 +526,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             }
         case .toComment:
             if let comment = comment {
-                let post = Post()
+                let post = Post(type: .picture, title: "", createDate: Date())
                 post.documentID = comment.sectionItemID
                 post.isTopicPost = comment.isTopicPost
                 post.toComments = true

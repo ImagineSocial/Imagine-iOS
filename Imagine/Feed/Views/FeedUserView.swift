@@ -68,11 +68,9 @@ class FeedUserView: UIView, NibLoadable {
     func setUser(post: Post) {
         
         //check options
-        if let options = post.designOptions {
-            if options.hideProfilePicture {
-                self.isProfilePictureHidden = true
-                hideProfilePicture()
-            }
+        if let options = post.options, options.hideProfilePicture {
+            self.isProfilePictureHidden = true
+            hideProfilePicture()
         }
         
         //check location
@@ -80,9 +78,9 @@ class FeedUserView: UIView, NibLoadable {
             locationLabel.text = "in \(location.title)"
         }
         
-        createDateLabel.text = post.createTime
+        createDateLabel.text = post.createDate.formatForFeed()
         if post.anonym {
-            if let anonymousName = post.anonymousName {
+            if let anonymousName = post.options?.anonymousName {
                 nameLabel.text = anonymousName
             } else {
                 nameLabel.text = Constants.strings.anonymPosterName

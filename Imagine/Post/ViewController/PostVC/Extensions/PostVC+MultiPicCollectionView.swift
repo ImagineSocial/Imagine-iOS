@@ -39,16 +39,19 @@ extension PostViewController: UICollectionViewDelegate, UICollectionViewDataSour
     // MARK: MultiPictureCollectionViewDelegate
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        guard let post = post else {
+            return CGSize.zero
+        }
         
-        if post.type == .panorama {
-            var height = post.mediaHeight
+        if post.type == .panorama, let image = post.image {
+            var height = image.height
             if height > panoramaHeightMaximum {
                 height = panoramaHeightMaximum
             }
-            let width = post.mediaWidth
+            let width = image.width
             
-            let ratio = width/post.mediaHeight
-            let newWidth = ratio*height
+            let ratio = width / image.height
+            let newWidth = ratio * height
             
             let panoSize = CGSize(width: newWidth, height: height)
             return panoSize

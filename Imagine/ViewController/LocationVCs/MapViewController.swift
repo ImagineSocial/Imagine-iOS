@@ -16,17 +16,17 @@ protocol HandleMapSearch {
 
 class Location: Codable {
     var title: String
-    var locationCoordinate: GeoPoint
+    var coordinate: GeoPoint
     
-    var coordinate: CLLocationCoordinate2D {
+    var clCoordinate: CLLocationCoordinate2D {
         get {
-            CLLocationCoordinate2D(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
+            CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
         }
     }
     
     init(title: String, geoPoint: GeoPoint) {
         self.title = title
-        self.locationCoordinate = geoPoint
+        self.coordinate = geoPoint
     }
 }
 
@@ -46,11 +46,11 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate {
             chosenLocationLabel.text = location.title
             
             let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-            let region = MKCoordinateRegion(center: location.coordinate, span: span)
+            let region = MKCoordinateRegion(center: location.clCoordinate, span: span)
             mapView.setRegion(region, animated: true)
             
             let annotation = MKPointAnnotation()
-            annotation.coordinate = location.coordinate
+            annotation.coordinate = location.clCoordinate
             annotation.title = location.title
             mapView.addAnnotation(annotation)
         }

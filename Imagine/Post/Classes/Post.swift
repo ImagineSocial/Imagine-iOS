@@ -11,34 +11,44 @@ import FirebaseFirestore
 
 struct PostDesignOption: Codable {
     var hideProfilePicture = false
+    var anonymousName: String?
+}
+
+struct PostImage: Codable {
+    var url: String
+    var height: Double = 0
+    var width: Double = 0
+    var thumbnailUrl: String?
 }
 
 class Post: Codable {
     
-    //MARK:- Variables
-    var title = ""
-    var imageURL = ""
-    var imageURLs: [String]?
-    var thumbnailImageURL: String?
-    var description = ""
-    var linkURL = ""
+    init(type: PostType, title: String, createDate: Date) {
+        self.type = type
+        self.title = title
+        self.createDate = createDate
+    }
+    
+    // MARK: Variables
+    
+    var title: String
+    var createDate: Date
+    var image: PostImage?
+    var images: [PostImage]?
+    var description: String?
     var link: Link?
     var music: Music?
-    var type: PostType = .picture
-    var mediaHeight: CGFloat = 0.0
-    var mediaWidth: CGFloat = 0.0
-    var report: ReportType = .normal
+    var type: PostType
+    var report = ReportType.normal
     var documentID = ""
-    var createTime = ""
     var repostDocumentID: String?
     var repostIsTopicPost = false
-    var repostLanguage: Language = .de
+    var repostLanguage = Language.de
     var commentCount = 0
-    var createDate: Date?
     var toComments = false // If you want to skip to comments (For now)
     var anonym = false
-    var anonymousName: String?
     var user: User?
+    var userID: String?
     var votes = Votes()
     var newUpvotes: Votes?
     var repost: Post?
@@ -46,15 +56,24 @@ class Post: Codable {
     var addOnTitle: String?    // Description in the OptionalInformation Section in the topic area
     var isTopicPost = false // Just postet in a topic, not in the main feed
     var language: Language = .de
-    var designOptions: PostDesignOption?
+    var options: PostDesignOption?
     var location: Location?
-    
+    var tags: [String]?
     var notificationRecipients = [String]()
     
     var survey: Survey?
     
+    static var standard: Post {
+        Post(type: .picture, title: "", createDate: Date())
+    }
     
-    //MARK: Get Repost
+    static var nothingPosted: Post {
+        Post(type: .nothingPostedYet, title: "", createDate: Date())
+    }
+    
+    
+    // MARK: Repost
+    
     func getRepost(returnRepost: @escaping (Post) -> Void) {
         
         let db = FirestoreRequest.shared.db

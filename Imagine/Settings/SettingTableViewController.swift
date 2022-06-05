@@ -466,7 +466,7 @@ class SettingTableViewController: UITableViewController {
                 if let post = item.item as? Post {
                     cell.post = post
                 } else if let fact = item.item as? Community {
-                    cell.fact = fact
+                    cell.community = fact
                 }
                 
                 return cell
@@ -966,7 +966,7 @@ extension SettingTableViewController: SettingCellDelegate, UINavigationControlle
                 firestoreValue = location.title
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.gotChanged(type: .changeUserLocation, value: location.coordinate)
+                    self.gotChanged(type: .changeUserLocation, value: location.clCoordinate)
                 }
             } else if let coordinate = value as? CLLocationCoordinate2D {
                 firestoreKey = "locationCoordinate"

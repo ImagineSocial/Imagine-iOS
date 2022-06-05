@@ -108,23 +108,17 @@ extension AddOnSingleCommunityCollectionViewCell: UICollectionViewDelegateFlowLa
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        if let posts = previewPosts {
+        if let posts = previewPosts, let cell = topicPreviewCollectionView.dequeueReusableCell(withReuseIdentifier: SmallTopicCell.identifier, for: indexPath) as? SmallTopicCell {
             let post = posts[indexPath.item]
             
-            if let cell = topicPreviewCollectionView.dequeueReusableCell(withReuseIdentifier: SmallTopicCell.identifier, for: indexPath) as? SmallTopicCell {
+            if let imageURL = post.image?.url, let url = URL(string: imageURL) {
+                cell.cellImageView.sd_setImage(with: url, completed: nil)
                 
-                if let url = URL(string: post.imageURL) {
-                    cell.cellImageView.sd_setImage(with: url, completed: nil)
-                    
-                } else {
-                    // Get the link image oder whatever
-                }
-                //                cell.setGradientView()
-                
-                return cell
             }
+            
+            return cell
         }
-        
+                
         return UICollectionViewCell()
     }
     

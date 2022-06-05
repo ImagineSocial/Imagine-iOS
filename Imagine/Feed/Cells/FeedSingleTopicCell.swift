@@ -83,7 +83,7 @@ class FeedSingleTopicCell: BaseFeedCell {
     
     //MARK:- Load Single Topic
     func loadSingleTopic(post: Post, community: Community) {
-        let info = AddOn(style: .singleTopic, OP: "", documentID: "", fact: Community(), headerTitle: post.title, description: post.description, singleTopic: community)
+        let info = AddOn(style: .singleTopic, OP: "", documentID: "", fact: Community(), headerTitle: post.title, description: post.description ?? "", singleTopic: community)
         
         self.addOnInfo = info
         post.community = community

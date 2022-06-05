@@ -105,8 +105,8 @@ class LinkCell : BaseFeedCell {
                         self.linkThumbNailImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
                     }
                 }
-            } else {
-                slp.preview(post.linkURL) { (response) in
+            } else if let link = post.link?.url {
+                slp.preview(link) { (response) in
                     self.showLinkPreview(result: response)
                 } onError: { (err) in
                     print("We have an error: \(err.localizedDescription)")

@@ -29,11 +29,13 @@ extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
     }
     
     func recipientChanged(isActive: Bool, userUID: String) {
+        guard let post = post else { return }
+        
         if isActive {
-            self.post.notificationRecipients.append(userUID)
+            post.notificationRecipients.append(userUID)
         } else {
-            let newList = self.post.notificationRecipients.filter { $0 != userUID }
-            self.post.notificationRecipients = newList
+            let newList = post.notificationRecipients.filter { $0 != userUID }
+            post.notificationRecipients = newList
         }
     }
     

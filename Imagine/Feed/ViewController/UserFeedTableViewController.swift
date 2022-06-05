@@ -152,7 +152,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         var index = 0
         
         while index <= 2 {
-            let post = Post()
+            let post = Post.standard
             if index == 1 {
                 post.type = .picture
             } else {
@@ -164,27 +164,16 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         self.tableView.reloadData()
         
         //Check if allowed to load
-        if let user = Auth.auth().currentUser {
-            if let profileUser = userOfProfile {
-                if let blocked = profileUser.blocked {
-                    for id in blocked {
-                        if id == user.uid {
-                            self.currentState = .blockedToInteract
-                            
-                            // remove ActivityIndicator
-                            self.view.activityStopAnimating()
-                            
-                            print("blocked")
-                        }
-                    }   // Get User after checked
-                    self.getUserDetails()
-                } else {    // Nobody blocked yet
-                    self.getUserDetails()
+        if let user = Auth.auth().currentUser, let profileUser = userOfProfile, let blocked = profileUser.blocked {
+            for id in blocked {
+                if id == user.uid {
+                    self.currentState = .blockedToInteract
+                    
+                    self.view.activityStopAnimating()                    
+                    print("blocked")
                 }
-                
-            } else {    // From side menu
-               getUserDetails()
-            }
+            }   // Get User after checked
+            self.getUserDetails()
         } else {    // Nobody logged in
             getUserDetails()
         }

@@ -28,43 +28,44 @@ class SavedPostTableViewController: BaseFeedTableViewController {
         
         if isConnected() {
             
-            if let user = AuthenticationManager.shared.user {
-                firestoreRequest.getUserPosts(getMore: getMore, postList: .savedPosts, userUID: user.uid) { posts  in
-                    
-                    guard let posts = posts else {
-                        print("No More Posts")
-                        self.view.activityStopAnimating()
-                        return
-                    }
-                                        
-                    if placeholderAreShown {   // Get the first batch of posts
-                        self.posts = posts
-                        self.tableView.reloadData()
-                        self.fetchesPosts = false
-                        
-                        self.refreshControl?.endRefreshing()
-                        
-                    } else {    // Append the next batch to the existing
-                        var indexes = [IndexPath]()
-                        
-                        for result in posts {
-                            let row = self.posts.count
-                            indexes.append(IndexPath(row: row, section: 0))
-                            self.posts.append(result)
-                        }
-                        
-                        self.tableView.performBatchUpdates({
-                            self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                            self.tableView.insertRows(at: indexes, with: .bottom)
-                        }, completion: { (_) in
-                            self.fetchesPosts = false
-                        })
-                    }
-                    print("Jetzt haben wir \(self.posts.count)")
-                    
-                    // remove ActivityIndicator incl. backgroundView
+            guard let user = AuthenticationManager.shared.user else {
+                return
+            }
+            firestoreRequest.getUserPosts(getMore: getMore, postList: .savedPosts, userUID: user.uid) { posts  in
+                
+                guard let posts = posts else {
+                    print("No More Posts")
                     self.view.activityStopAnimating()
+                    return
                 }
+                
+                if self.placeholderAreShown {   // Get the first batch of posts
+                    self.posts = posts
+                    self.tableView.reloadData()
+                    self.fetchesPosts = false
+                    
+                    self.refreshControl?.endRefreshing()
+                    
+                } else {    // Append the next batch to the existing
+                    var indexes = [IndexPath]()
+                    
+                    for result in posts {
+                        let row = self.posts.count
+                        indexes.append(IndexPath(row: row, section: 0))
+                        self.posts.append(result)
+                    }
+                    
+                    self.tableView.performBatchUpdates({
+                        self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                        self.tableView.insertRows(at: indexes, with: .bottom)
+                    }, completion: { (_) in
+                        self.fetchesPosts = false
+                    })
+                }
+                print("Jetzt haben wir \(self.posts.count)")
+                
+                // remove ActivityIndicator incl. backgroundView
+                self.view.activityStopAnimating()
             }
         } else {
             fetchRequested = true

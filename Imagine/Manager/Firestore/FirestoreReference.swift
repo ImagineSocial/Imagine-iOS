@@ -110,10 +110,14 @@ class FirestoreReference {
         return reference
     }
     
-    static func documentRef(_ type: CollectionType, documentID: String, collectionReference: FirestoreCollectionReference? = nil) -> DocumentReference {
+    static func documentRef(_ type: CollectionType, documentID: String?, collectionReference: FirestoreCollectionReference? = nil) -> DocumentReference {
         
         let reference = mainRef(type, collectionReference: collectionReference)
         
+        guard let documentID = documentID else {
+            return reference.document()
+        }
+
         return reference.document(documentID)
     }
     

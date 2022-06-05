@@ -15,59 +15,44 @@ extension NewPostVC {
     
     
     func shareObject() {
-        let post = Post()
-        
-        
-        post.description = (descriptionText ?? "").trimmingCharacters(in: .newlines).replacingOccurrences(of: "\n", with: "\\n")  // Save line breaks in a way that we can extract them later
-        let descriptionText = text
-        
-        let title = titleText ?? ""
-        let tags = self.getTagsToSave()
-        
-        var dataDictionary: [String: Any] = ["title": title, "description": descriptionText, "createTime": getDate(), "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "report": getReportString(), "tags": tags]
-        
-        // TODO: Dies hier
-        // let options = optionView.getSettings()
-        
-        //Set right user reference
-        let userString: String!
-        let hideProfileOption: [String: Any] = ["hideProfile": true]
-        
-        guard let cell = getCell(for: .options) as? NewPostOptionCell else {
-            
-            return dataDictionary
+        guard let cell = getCell(for: .options) as? NewPostOptionCell, let title = titleText, let user = AuthenticationManager.shared.user else {
+            return
         }
         
-        let options = cell.option
+        // TODO: Look what kind of post it is before this initial post is created - Link is the option but it can be different things!
+        let post = Post(type: .picture, title: title, createDate: Date())
         
-        if options.postAnonymous {
-            userString = anonymousString
-            
-            dataDictionary["designOptions"] = hideProfileOption
-            
-            if let synonym = options.synonymString {
-                // Add the synonym, set in the optionView
-                dataDictionary["anonymousName"] = synonym
-            }
-        } else {
-            userString = userID
-            dataDictionary["notificationRecipients"] = [userID]   //So he can set notifications off in his own post
+        if let description = descriptionText {
+            post.description = description.customFormat
         }
         
-        // location
-        if let location = location {
-            dataDictionary["locationName"] = location.title
-            let geoPoint = GeoPoint(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-            dataDictionary["locationCoordinate"] = geoPoint
+        post.tags = getTags()
+        post.report = reportType
+        post.votes = Votes()
+        
+        let option = cell.option
+        
+        if option.postAnonymous || option.hideProfile {
+            post.options = PostDesignOption(hideProfilePicture: option.hideProfile, anonymousName: option.synonymString)
         }
         
-        dataDictionary["originalPoster"] = userString
+       
+        post.userID = option.postAnonymous ? anonymousString : user.uid
         
-        // If you want to hide the profilePicture in a non anonymous post
-        if options.hideProfile {
-            dataDictionary["designOptions"] = hideProfileOption
+        if !option.postAnonymous {
+            post.notificationRecipients = [user.uid]   //So he can set notifications off in his own post
         }
         
+        post.location = location
+        
+        let documentReference = FirestoreReference.documentRef(.posts, documentID: nil)
+        
+        do {
+            // setData updates values or creates them if they don't exist
+            try documentReference.setData(from: post)
+        } catch {
+            print("Error bro")
+        }
     }
     
     
@@ -272,9 +257,9 @@ extension NewPostVC {
         let descriptionText = text.replacingOccurrences(of: "\n", with: "\\n")  // Save line breaks in a way that we can extract them later
         
         let title = titleText ?? ""
-        let tags = self.getTagsToSave()
+        let tags = getTags()
         
-        var dataDictionary: [String: Any] = ["title": title, "description": descriptionText, "createTime": getDate(), "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "report": getReportString(), "tags": tags]
+        var dataDictionary: [String: Any] = ["title": title, "description": descriptionText, "createTime": Timestamp(date: Date()), "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "report": reportType.rawValue, "tags": tags]
         
         // TODO: Dies hier
         // let options = optionView.getSettings()
@@ -307,7 +292,7 @@ extension NewPostVC {
         // location
         if let location = location {
             dataDictionary["locationName"] = location.title
-            let geoPoint = GeoPoint(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+            let geoPoint = GeoPoint(latitude: location.clCoordinate.latitude, longitude: location.clCoordinate.longitude)
             dataDictionary["locationCoordinate"] = geoPoint
         }
         
@@ -334,7 +319,7 @@ extension NewPostVC {
     func postLink(postRef: DocumentReference, userID: String, link: Link, songwhipData: [String: Any]?) {
         var dataDictionary = getDefaultUploadData(userID: userID)
         dataDictionary["type"] = "link"
-        dataDictionary["link"] = link.link
+        dataDictionary["link"] = link.url
         dataDictionary["linkTitle"] = link.linkTitle
         dataDictionary["linkDescription"] = link.description
         dataDictionary["linkShortURL"] = link.shortURL
@@ -446,13 +431,6 @@ extension NewPostVC {
             uploadCommunityPostData(postDocumentID: documentID, communityID: community.documentID, language: language)
         }
         
-        do {
-            // setData updates values or creates them if they don't exist
-            try documentReference?.setData(from: object)
-        } catch {
-            print("Error bro")
-        }
-        
         
         documentReference.setData(data) { err in
             if let error = err {
@@ -468,7 +446,7 @@ extension NewPostVC {
                 
                 //Finish posting process
                 if self.comingFromAddOnVC {
-                    let post = Post()
+                    let post = Post.standard
                     post.documentID = documentID
                     post.isTopicPost = true
                     
@@ -498,7 +476,7 @@ extension NewPostVC {
         }
         
         
-        var data: [String: Any] = ["createTime": self.getDate()]
+        var data: [String: Any] = ["createTime": Timestamp(date: Date())]
         
         if language == .en {
             data["language"] = "en"
@@ -534,7 +512,7 @@ extension NewPostVC {
         
         let topicRef = collectionRef.document(communityID).collection("posts").document(postDocumentID)
         
-        var data: [String: Any] = ["createTime": self.getDate()]
+        var data: [String: Any] = ["createTime": Timestamp(date: Date())]
         
         if self.comingFromAddOnVC || postOnlyInTopic {
             data["type"] = "topicPost"  // To fetch in a different ref when loading the posts of the topic
@@ -549,36 +527,13 @@ extension NewPostVC {
         }
     }
     
-    //MARK:- GET Upload Data
-    
-    func getDate() -> Timestamp {
-        return Timestamp(date: Date())
-    }
-    
     //MARK: Get LinkPreview
     
     func getLinkPreview(linkString: String, returnLink: @escaping (Link?) -> Void) {
         if linkString.isValidURL {
             slp.preview(linkString, onSuccess: { (response) in
-                var imageURL: String?
-                var shortURL = ""
-                var linkTitle = ""
-                var linkDescription = ""
-
-                if let URL = response.image {
-                    imageURL = URL
-                }
-                if let URL = response.canonicalUrl {
-                    shortURL = URL
-                }
-                if let title = response.title {
-                    linkTitle = title
-                }
-                if let description = response.description {
-                    linkDescription = description
-                }
-                let link = Link(link: linkString, title: linkTitle, description: linkDescription, shortURL: shortURL, imageURL: imageURL)
-
+                let link = Link(url: linkString, shortURL: response.canonicalUrl, imageURL: response.image, linkTitle: response.title, description: response.description)
+                
                 returnLink(link)
 
             }) { err in
@@ -666,7 +621,7 @@ extension NewPostVC {
     }
     
     //MARK: Get Tags to Save
-    func getTagsToSave() -> [String] {
+    func getTags() -> [String] {
         // Detect the nouns in the title and save them to Firebase in an array. We cant really search in Firebase, but we search through an array, so that way we can at least give the search function in the feedtableviewcontroller some functionality
         var tags = [String]()
         guard let title = titleText else { return [""] }
@@ -686,21 +641,6 @@ extension NewPostVC {
             }
         }
         return tags
-    }
-    
-    func getReportString() -> String {
-        switch reportType {
-        case .normal:
-            return "normal"
-        case .opinion:
-            return "opinion"
-        case .sensationalism:
-            return "sensationalism"
-        case .edited:
-            return "edited"
-        default:
-            return "normal"
-        }
     }
     
     //MARK:- Finished Posting

@@ -94,12 +94,10 @@ class PostCell : BaseFeedCell {
             titleLabel.text = post.title
             feedLikeView.setPost(post: post)
             
-            if let url = URL(string: post.imageURL) {
-                if let cellImageView = cellImageView {
-                    cellImageView.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
-                    cellImageView.sd_imageIndicator?.startAnimatingIndicator()
-                    cellImageView.sd_setImage(with: url, placeholderImage: Constants.defaultImage, options: [], completed: nil)
-                }
+            if let imageURL = post.image?.url, let url = URL(string: imageURL), let cellImageView = cellImageView {
+                cellImageView.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
+                cellImageView.sd_imageIndicator?.startAnimatingIndicator()
+                cellImageView.sd_setImage(with: url, placeholderImage: Constants.defaultImage, options: [], completed: nil)
             }
             
             setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)

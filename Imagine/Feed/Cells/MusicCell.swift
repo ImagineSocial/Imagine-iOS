@@ -41,7 +41,7 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         self.initiateCell()
         
         titleLabel.adjustsFontSizeToFitWidth = true
-                                
+        
         webView.navigationDelegate = self   // should deinit it to avoid memory leak
         webView.layer.cornerRadius = 8
         webView.clipsToBounds = true
@@ -108,65 +108,66 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
     override func setCell() {
         super.setCell()
         
-        if let post = post {
-            if let url = URL(string: post.linkURL) {
-                let request = URLRequest(url: url)
-                webView.load(request)
-            }
-            
-            if let music = post.music {
-                if let url = URL(string: music.musicImageURL) {
-                    albumPreviewImageView.sd_setImage(with: url, completed: nil)
-                }
-                
-                musicTitleLabel.text = music.name
-                artistLabel.text = music.artist
-                if let releaseDate = music.releaseDate {
-                    releaseYearLabel.text = getYearFromDate(date: releaseDate)
-                }
-            }
-            
-            if ownProfile { // Set in the UserFeedTableViewController DataSource
-                
-                if let _ = cellStyle {
-                    print("Already Set")
-                } else {
-                    cellStyle = .ownCell
-                    setOwnCell(post: post)
-                }
-            } else {
-                setDefaultButtonImages()
-            }
-            
-            if post.user == nil {
-                if post.anonym {
-                    self.setUser()
-                } else {
-                    self.checkForUser()
-                }
-            } else {
-                setUser()
-            }
-            
-            titleLabel.text = post.title
-            feedLikeView.setPost(post: post)
-            
-            
-            if let fact = post.community {
-                                
-                if fact.title == "" {
-                    if fact.beingFollowed {
-                        self.getCommunity(beingFollowed: true)
-                    } else {
-                        self.getCommunity(beingFollowed: false)
-                    }
-                } else {
-                    self.setCommunity(post: post)
-                }
-            }
-            
-            setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
+        guard let post = post else {
+            return
         }
+        if let linkURL = post.link?.url, let url = URL(string: linkURL) {
+            let request = URLRequest(url: url)
+            webView.load(request)
+        }
+        
+        if let music = post.music {
+            if let url = URL(string: music.musicImageURL) {
+                albumPreviewImageView.sd_setImage(with: url, completed: nil)
+            }
+            
+            musicTitleLabel.text = music.name
+            artistLabel.text = music.artist
+            if let releaseDate = music.releaseDate {
+                releaseYearLabel.text = getYearFromDate(date: releaseDate)
+            }
+        }
+        
+        if ownProfile { // Set in the UserFeedTableViewController DataSource
+            
+            if let _ = cellStyle {
+                print("Already Set")
+            } else {
+                cellStyle = .ownCell
+                setOwnCell(post: post)
+            }
+        } else {
+            setDefaultButtonImages()
+        }
+        
+        if post.user == nil {
+            if post.anonym {
+                self.setUser()
+            } else {
+                self.checkForUser()
+            }
+        } else {
+            setUser()
+        }
+        
+        titleLabel.text = post.title
+        feedLikeView.setPost(post: post)
+        
+        
+        if let fact = post.community {
+            
+            if fact.title == "" {
+                if fact.beingFollowed {
+                    self.getCommunity(beingFollowed: true)
+                } else {
+                    self.getCommunity(beingFollowed: false)
+                }
+            } else {
+                self.setCommunity(post: post)
+            }
+        }
+        
+        setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
     }
     
     //MARK:- Animate Web View
@@ -184,9 +185,9 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
             self.expandViewButton.alpha = 0
             
             self.layoutIfNeeded()
-        } completion: { (_) in            
+        } completion: { (_) in
             self.musicPostDelegate?.expandView()
-
+            
             self.albumPreviewImageView.isHidden = true
             self.albumPreviewShadowView.isHidden = true
             self.musicTitleLabel.isHidden = true
@@ -217,7 +218,7 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         return stringDate
     }
     
-
+    
     //MARK:- IBActions
     @IBAction func expandViewButtonTapped(_ sender: Any) {
         let generator = UIImpactFeedbackGenerator(style: .light)

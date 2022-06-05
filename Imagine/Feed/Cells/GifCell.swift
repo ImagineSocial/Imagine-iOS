@@ -47,24 +47,20 @@ class GifCell: BaseFeedCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        if let playerLayer = avPlayerLayer {
+        guard let playerLayer = avPlayerLayer, let post = post, let imageHeight = post.link?.mediaHeight, let imageWidth = post.link?.mediaWidth else {
             
-            if let post = post {
-                let imageHeight = post.mediaHeight
-                let imageWidth = post.mediaWidth
-                
-                let containerWidth = self.contentView.frame.width-10
-                
-                let ratio = imageWidth / imageHeight
-                var newHeight = containerWidth / ratio
-                
-                if newHeight >= 500 {
-                    newHeight = 500
-                }
-                
-                playerLayer.frame = CGRect(x: 0, y: 0, width: containerWidth, height: newHeight)
-            }
+            return
         }
+        let containerWidth = self.contentView.frame.width-10
+        
+        let ratio = imageWidth / imageHeight
+        var newHeight = containerWidth / ratio
+        
+        if newHeight >= 500 {
+            newHeight = 500
+        }
+        
+        playerLayer.frame = CGRect(x: 0, y: 0, width: containerWidth, height: newHeight)
     }
     
     //MARK:- Set Cell

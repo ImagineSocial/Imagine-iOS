@@ -79,31 +79,32 @@ class SmallPostCell: UICollectionViewCell {
                 }
             }
             
-            if post.type == .picture {
+            switch post.type {
+            case .picture:
                 smallCellImageView.isHidden = true
                 
-                if let thumbnailURL = post.thumbnailImageURL, let url = URL(string: thumbnailURL) {
+                if let thumbnailURL = post.image?.thumbnailUrl, let url = URL(string: thumbnailURL) {
                     cellImageView.sd_setImage(with: url, completed: nil)
-                } else if let url = URL(string: post.imageURL) {
+                } else if let imageURL = post.image?.url, let url = URL(string: imageURL) {
                     cellImageView.sd_setImage(with: url, completed: nil)
                 } else {
                     cellImageView.image = Constants.defaultImage
                 }
-            } else if post.type == .multiPicture {
+            case .multiPicture:
                 smallCellImageView.isHidden = true
                 
-                if let images = post.imageURLs {
-                    if let url = URL(string: images[0]) {
+                if let image = post.images?.first {
+                    if let url = URL(string: image.url) {
                         cellImageView.sd_setImage(with: url, completed: nil)
                     } else {
                         cellImageView.image = UIImage(named: "default")
                     }
                 }
-            } else if post.type == .GIF {
+            case .GIF:
                 smallCellImageView.image = UIImage(named: "GIFIcon")
                 smallCellImageView.contentMode = .center
                 
-                if let url = URL(string: post.linkURL) {
+                if let linkURL = post.link?.url, let url = URL(string: linkURL) {
                     DispatchQueue.global(qos: .default).async {  // Quite some work to do apparently
                         let image = self.generateThumbnail(url: url)
                         DispatchQueue.main.async {
@@ -115,7 +116,7 @@ class SmallPostCell: UICollectionViewCell {
                         }
                     }
                 }
-            } else if post.type == .link {
+            case .link:
                 smallCellImageView.image = UIImage(named: "translate")
                 cellImageView.image = UIImage(named: "link-default")
                 
@@ -145,12 +146,10 @@ class SmallPostCell: UICollectionViewCell {
                 } else {
                     print("#Error: got no link in link cell")
                 }
-                
-            } else if post.type == .youTubeVideo {
-                
+            case .youTubeVideo:
                 postImageViewHeightConstraint.constant = cellImageView.frame.width*(9/16)   // Frame is 16/9 Format
                 
-                if let youtubeID = post.linkURL.youtubeID {
+                if let linkURL = post.link?.url, let youtubeID = linkURL.youtubeID {
                     let thumbnailURL = "https://img.youtube.com/vi/\(youtubeID)/sddefault.jpg"
                     
                     if let url = URL(string: thumbnailURL) {
@@ -161,7 +160,7 @@ class SmallPostCell: UICollectionViewCell {
                 }
                 
                 smallCellImageView.image = UIImage(named: "youtubeIcon")
-            } else {
+            default:
                 // THought
                 postImageViewHeightConstraint.constant = 0
                 smallCellImageView.isHidden = true

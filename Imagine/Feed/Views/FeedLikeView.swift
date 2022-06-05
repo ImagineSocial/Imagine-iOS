@@ -72,8 +72,11 @@ class FeedLikeView: UIView, NibLoadable {
     //MARK:- Layout
     
     /// If you look at your own Feed at UserFeedTableView
-    func setOwnCell(post: Post) {
-        
+    func setOwnCell(post: Post?) {
+        guard let post = post else {
+            return
+        }
+
         //Set vote count
         thanksButton.setTitle(String(post.votes.thanks), for: .normal)
         wowButton.setTitle(String(post.votes.wow), for: .normal)

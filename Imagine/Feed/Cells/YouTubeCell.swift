@@ -53,7 +53,7 @@ class YouTubeCell: BaseFeedCell {
                 setDefaultButtonImages()
             }
             
-            if let youtubeID = post.linkURL.youtubeID {
+            if let linkURL = post.link?.url, let youtubeID = linkURL.youtubeID {
                 // Not an actual solution because we cant cache the loading process, needs time everytime you see a youtubecell
                 playerView.load(withVideoId: youtubeID, playerVars: ["playsinline":1])  // Plays in tableview, no auto fullscreen
             }
