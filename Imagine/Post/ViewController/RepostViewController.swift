@@ -155,12 +155,13 @@ class RepostViewController: UIViewController {
     
     func uploadRepost() {
         
-        guard let post = post else {
+        guard let post = post, let documentID = post.documentID, let user = AuthenticationManager.shared.user else {
+            notLoggedInAlert()
             return
         }
-
+        
         var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         
         if language == .en {
             collectionRef = db.collection("Data").document("en").collection("posts")
@@ -168,37 +169,33 @@ class RepostViewController: UIViewController {
             collectionRef = db.collection("Posts")
         }
         let postRef = collectionRef.document()
-                
-        if let user = AuthenticationManager.shared.user {
-            
-            var dataDictionary: [String: Any] = ["title": titleTranslationTextView.text, "description": descriptionTranslationTextView.text, "createTime": Timestamp(date: Date()), "type": getRepostTypeString(), "OGpostDocumentID" : post.documentID, "report": "normal", "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "originalPoster": user.uid]
-            
-            if post.isTopicPost {
-                dataDictionary["repostIsTopicPost"] = true
-            }
-            
-            if post.language == .en {
-                dataDictionary["repostLanguage"] = "en"
-            } else {
-                dataDictionary["repostLanguage"] = "de"
-            }
-            
-            postRef.setData(dataDictionary, completion: { (err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    print("Successfully created repost")
-                }
-            })
-            
-            let alert = UIAlertController(title: NSLocalizedString("done", comment: "done"), message: NSLocalizedString("message_after_done_posting", comment: "thanks for sharing"), preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
-                self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
-            }))
-            present(alert, animated: true) {
-            }
+        
+        
+        var dataDictionary: [String: Any] = ["title": titleTranslationTextView.text, "description": descriptionTranslationTextView.text, "createTime": Timestamp(date: Date()), "type": getRepostTypeString(), "OGpostDocumentID" : documentID, "report": "normal", "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "originalPoster": user.uid]
+        
+        if post.isTopicPost {
+            dataDictionary["repostIsTopicPost"] = true
+        }
+        
+        if post.language == .en {
+            dataDictionary["repostLanguage"] = "en"
         } else {
-            self.notLoggedInAlert()
+            dataDictionary["repostLanguage"] = "de"
+        }
+        
+        postRef.setData(dataDictionary, completion: { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                print("Successfully created repost")
+            }
+        })
+        
+        let alert = UIAlertController(title: NSLocalizedString("done", comment: "done"), message: NSLocalizedString("message_after_done_posting", comment: "thanks for sharing"), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
+            self.view.window?.rootViewController?.dismiss(animated: true, completion: nil)
+        }))
+        present(alert, animated: true) {
         }
     }
     

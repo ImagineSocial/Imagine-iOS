@@ -92,7 +92,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     func getPosts() {
         
         var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         if language == .en {
             collectionRef = self.db.collection("Data").document("en").collection("posts")
         } else {
@@ -125,7 +125,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     func getTopicPosts() {
         
         var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         if language == .en {
             collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
         } else {
@@ -240,7 +240,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
                 profileImageView.image = UIImage(named: "default-user")
             }
             
-            profileNameLabel.text = user.displayName
+            profileNameLabel.text = user.name
         } else {
             profileNameLabel.text = ""
             profileImageView.image = nil
@@ -412,7 +412,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     
     func checkIfFirstEntry(collectionReferenceString: String, fact: Community, gotCollection: @escaping (Bool) -> Void) {
         var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         if language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {

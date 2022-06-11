@@ -17,7 +17,7 @@ class ImagineDataRequest {
     public func getReportData(returnData: @escaping (ReportData?) -> Void) {
         
         let dataRef = db.collection("TopTopicData").document("TopTopicData")
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         
         dataRef.getDocument { (snap, err) in
             if let error = err {

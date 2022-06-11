@@ -150,7 +150,7 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                     if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DIYCellIdentifier, for: indexPath) as? SmallPostCell {
                         
                         cell.delegate = self
-                        if post.documentID != "" {
+                        if post.documentID == nil {
                             cell.loadPost(post: post)
                         } else {    //NewAddOnTableVC
                             cell.post = post

@@ -160,23 +160,22 @@ class LinkCell : BaseFeedCell {
     }
     
     func setLinkStuffInFirebase(data: [String: Any]) {
-        if let post = post {
-            if post.language == .en {
-                return 
-            }
-            let db = FirestoreRequest.shared.db
-            var string = "Posts"
-            if post.isTopicPost {
-                string = "TopicPosts"
-            }
-            let ref = db.collection(string).document(post.documentID)
-
-            ref.updateData(data) { (err) in
-                if let error = err {
-                    print("###Wir haben einene Erororo: \(error.localizedDescription)")
-                } else {
-                    print("###Link DIngs erfolgreich")
-                }
+        guard let post = post, let documentID = post.documentID, post.language != .en else {
+            return
+        }
+        
+        let db = FirestoreRequest.shared.db
+        var string = "Posts"
+        if post.isTopicPost {
+            string = "TopicPosts"
+        }
+        let ref = db.collection(string).document(documentID)
+        
+        ref.updateData(data) { (err) in
+            if let error = err {
+                print("###Wir haben einene Erororo: \(error.localizedDescription)")
+            } else {
+                print("###Link DIngs erfolgreich")
             }
         }
     }

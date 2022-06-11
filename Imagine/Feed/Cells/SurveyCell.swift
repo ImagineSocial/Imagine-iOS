@@ -21,6 +21,8 @@ protocol SurveyCellDelegate {
 
 class SurveyCell: UITableViewCell {
     
+    static var identifier = "SurveyCell"
+    
     @IBOutlet weak var questionLabel: UILabel!
     @IBOutlet weak var firstAnswerLabel: UILabel!
     @IBOutlet weak var firstAnswerButton: UIButton!
@@ -206,34 +208,33 @@ class SurveyCell: UITableViewCell {
     }
     
     @IBAction func doneButtonTapped(_ sender: Any) {
-        if let post = post, let indexPath = indexPath {
-            var data: [Any] = [""]
-            
-            if let survey = post.survey {
-                switch survey.type {
-                case .pickOrder:
-                    data = pickOrderArray
-                default:
-                    if let selectedAnswer = pickOneSelectedAnswer {
-                        data = [selectedAnswer]
-                    }
-                }
-                var answerText: String?
-                if answerTextView.text != "" {
-                    answerText = answerTextView.text
-                }
-                
-                delegate?.surveyCompleted(surveyID: post.documentID, indexPath: indexPath, data: data, comment: answerText)
-            } else {
-                print("Got no survey")
+        guard let post = post, let documentID = post.documentID, let indexPath = indexPath, let survey = post.survey else {
+            return
+        }
+        var data: [Any] = [""]
+        
+        switch survey.type {
+        case .pickOrder:
+            data = pickOrderArray
+        default:
+            if let selectedAnswer = pickOneSelectedAnswer {
+                data = [selectedAnswer]
             }
         }
-        
-    }
-    @IBAction func dontShowAgainTapped(_ sender: Any) {
-        if let post = post, let indexPath = indexPath {
-            delegate?.dontShowAgain(surveyID: post.documentID, indexPath: indexPath)
+        var answerText: String?
+        if answerTextView.text != "" {
+            answerText = answerTextView.text
         }
+        
+        delegate?.surveyCompleted(surveyID: documentID, indexPath: indexPath, data: data, comment: answerText)
+    }
+    
+    @IBAction func dontShowAgainTapped(_ sender: Any) {
+        guard let post = post, let documentID = post.documentID, let indexPath = indexPath else {
+            return
+        }
+        
+        delegate?.dontShowAgain(surveyID: documentID, indexPath: indexPath)
     }
     
     @IBAction func firstAnswerButtonTapped(_ sender: Any) {

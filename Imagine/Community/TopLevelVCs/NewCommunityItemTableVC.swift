@@ -82,7 +82,7 @@ class NewCommunityItemTableVC: UITableViewController {
     
     let settingFooterIdentifier = "SettingFooter"
     
-    let language = LanguageSelection().getLanguage()
+    let language = LanguageSelection.language
     
     var new: NewCommunityItemType?
     
@@ -401,8 +401,8 @@ class NewCommunityItemTableVC: UITableViewController {
             let ref = collectionRef.document()
             
             if selectedImageFromPicker != nil {
-                if let user = AuthenticationManager.shared.user {
-                    self.savePicture(userID: user.uid, topicRef: ref, new: .community)
+                if let userID = AuthenticationManager.shared.user?.uid {
+                    self.savePicture(userID: userID, topicRef: ref, new: .community)
                 }
             } else {
                 createNewCommunity(ref: ref, imageURL: nil)
@@ -435,8 +435,8 @@ class NewCommunityItemTableVC: UITableViewController {
                 let ref = collectionRef.document(fact.documentID).collection("addOns").document()
                 
                 if selectedImageFromPicker != nil {
-                    if let user = AuthenticationManager.shared.user {
-                        self.savePicture(userID: user.uid, topicRef: ref, new: .addOn)
+                    if let userID = AuthenticationManager.shared.user?.uid {
+                        self.savePicture(userID: userID, topicRef: ref, new: .addOn)
                     }
                 } else {
                     createNewAddOn(ref: ref, imageURL: nil, isYouTubePlaylistDesign: false)
@@ -454,8 +454,8 @@ class NewCommunityItemTableVC: UITableViewController {
                 let ref = collectionRef.document(fact.documentID).collection("addOns").document()
                 
                 if selectedImageFromPicker != nil {
-                    if let user = AuthenticationManager.shared.user {
-                        self.savePicture(userID: user.uid, topicRef: ref, new: .addOnYouTubePlaylistDesign)
+                    if let userID = AuthenticationManager.shared.user?.uid {
+                        self.savePicture(userID: userID, topicRef: ref, new: .addOnYouTubePlaylistDesign)
                     }
                 } else {
                     createNewAddOn(ref: ref, imageURL: nil, isYouTubePlaylistDesign: true)
@@ -474,7 +474,7 @@ class NewCommunityItemTableVC: UITableViewController {
     }
     
     func createSingleTopicPost() {
-        guard let community = community, let title = titleText, title != "", let user = AuthenticationManager.shared.user else {
+        guard let community = community, let title = titleText, title != "", let userID = AuthenticationManager.shared.user?.uid else {
             self.alert(message: NSLocalizedString("new_community_item_error_title", comment: "input missing"))
             return
         }
@@ -492,17 +492,17 @@ class NewCommunityItemTableVC: UITableViewController {
             description = descriptionText
         }
         
-        let dataDictionary: [String: Any] = ["title": title, "description": description, "createTime": Timestamp(date: Date()), "originalPoster": user.uid, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "singleTopic", "report": "normal", "linkedFactID": community.documentID, "notificationRecipients": [user.uid]]
+        let dataDictionary: [String: Any] = ["title": title, "description": description, "createTime": Timestamp(date: Date()), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "singleTopic", "report": "normal", "linkedFactID": community.documentID, "notificationRecipients": [userID]]
         
         ref.setData(dataDictionary) { (err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
-                let post = Post(type: .singleTopic, title: title, createDate: Date())
+                let post = Post(type: .singleTopic, title: title, createdAt: Date())
                 post.documentID = ref.documentID
                 post.language = community.language
                 
-                let userRef = self.db.collection("Users").document(user.uid).collection("posts").document(ref.documentID)
+                let userRef = self.db.collection("Users").document(userID).collection("posts").document(ref.documentID)
                 var data: [String: Any] = ["createTime": Timestamp(date: Date())]
                 
                 if community.language == .en {
@@ -523,7 +523,7 @@ class NewCommunityItemTableVC: UITableViewController {
     
     func createNewSingleTopicAddOn() {
         
-        guard let community = community, let title = titleText, let description = descriptionText, let linkedFactID = self.selectedTopicIDForSingleTopicAddOn, let user = AuthenticationManager.shared.user else {
+        guard let community = community, let title = titleText, let description = descriptionText, let linkedFactID = self.selectedTopicIDForSingleTopicAddOn, let userID = AuthenticationManager.shared.user?.uid else {
             self.showTitleDescriptionAlert()
             return
         }
@@ -536,7 +536,7 @@ class NewCommunityItemTableVC: UITableViewController {
         let ref = collectionRef.document(community.documentID).collection("addOns")
         
         
-        let data: [String: Any] = ["OP": user.uid, "headerTitle": title, "description": description, "linkedFactID": linkedFactID, "popularity": 0, "type": "singleTopic"]
+        let data: [String: Any] = ["OP": userID, "headerTitle": title, "description": description, "linkedFactID": linkedFactID, "popularity": 0, "type": "singleTopic"]
         
         ref.addDocument(data: data) { (err) in
             if let error = err {
@@ -549,12 +549,12 @@ class NewCommunityItemTableVC: UITableViewController {
     
     func createNewAddOn(ref: DocumentReference, imageURL: String?, isYouTubePlaylistDesign: Bool) {
         
-        guard let title = titleText, let description = descriptionText, let user = AuthenticationManager.shared.user else {
+        guard let title = titleText, let description = descriptionText, let userID = AuthenticationManager.shared.user?.uid else {
             showTitleDescriptionAlert()
             return
         }
                 
-        var data: [String: Any] = ["OP": user.uid, "title": title, "description": description, "popularity": 0, "type": "default"]
+        var data: [String: Any] = ["OP": userID, "title": title, "description": description, "popularity": 0, "type": "default"]
         
         if isYouTubePlaylistDesign {
             data["design"] = "youTubePlaylist"
@@ -571,12 +571,12 @@ class NewCommunityItemTableVC: UITableViewController {
     
     func createNewAddOnPlaylist(ref: DocumentReference) {
         
-        guard let title = titleText, let description = descriptionText, let user = AuthenticationManager.shared.user else {
+        guard let title = titleText, let description = descriptionText, let userID = AuthenticationManager.shared.user?.uid else {
             showTitleDescriptionAlert()
             return
         }
         
-        let data: [String: Any] = ["OP": user.uid, "title": title, "description": description, "popularity": 0, "type": "playlist"]
+        let data: [String: Any] = ["OP": userID, "title": title, "description": description, "popularity": 0, "type": "playlist"]
         
         ref.setData(data) { (err) in
             if let error = err {
@@ -588,7 +588,7 @@ class NewCommunityItemTableVC: UITableViewController {
     }
     
     func createNewSource() {
-        guard let community = community, let argument = argument, let title = titleText, let description = descriptionText, let user = AuthenticationManager.shared.user, let source = sourceLink, source.isValidURL else {
+        guard let community = community, let argument = argument, let title = titleText, let description = descriptionText, let userID = AuthenticationManager.shared.user?.uid, let source = sourceLink, source.isValidURL else {
             showTitleDescriptionAlert()
             return
         }
@@ -602,7 +602,7 @@ class NewCommunityItemTableVC: UITableViewController {
         
         let argumentRef = collectionRef.document(community.documentID).collection("arguments").document(argument.documentID).collection("sources").document()
         
-        let data: [String:Any] = ["title" : title, "description": description, "source": source, "OP": user.uid]
+        let data: [String:Any] = ["title" : title, "description": description, "source": source, "OP": userID]
         
         argumentRef.setData(data, completion: { (err) in
             if let error = err {
@@ -620,7 +620,7 @@ class NewCommunityItemTableVC: UITableViewController {
     }
     
     func createNewDeepArgument() {
-        guard let community = community, let argument = argument, let title = titleText, let description = descriptionText, let user = AuthenticationManager.shared.user else {
+        guard let community = community, let argument = argument, let title = titleText, let description = descriptionText, let userID = AuthenticationManager.shared.user?.uid else {
             showTitleDescriptionAlert()
             return
         }
@@ -632,7 +632,7 @@ class NewCommunityItemTableVC: UITableViewController {
         }
         let ref = collectionRef.document(community.documentID).collection("arguments").document(argument.documentID).collection("arguments").document()
         
-        let data: [String:Any] = ["title" : title, "description": description, "OP": user.uid]
+        let data: [String:Any] = ["title" : title, "description": description, "OP": userID]
         
         ref.setData(data) { (err) in
             if let error = err {
@@ -649,7 +649,7 @@ class NewCommunityItemTableVC: UITableViewController {
     }
     
     func createNewArgument() {
-        guard let community = community, let title = titleText, let description = descriptionText, let user = AuthenticationManager.shared.user else {
+        guard let community = community, let title = titleText, let description = descriptionText, let userID = AuthenticationManager.shared.user?.uid else {
             showTitleDescriptionAlert()
             return
         }
@@ -664,7 +664,7 @@ class NewCommunityItemTableVC: UITableViewController {
         
         let proOrContra = getProOrContraString()
         
-        let data: [String:Any] = ["title" : title, "description": description, "proOrContra": proOrContra, "OP": user.uid, "upvotes": 0, "downvotes": 0]
+        let data: [String:Any] = ["title" : title, "description": description, "proOrContra": proOrContra, "OP": userID, "upvotes": 0, "downvotes": 0]
         
         ref.setData(data) { (err) in
             if let error = err {
@@ -683,7 +683,7 @@ class NewCommunityItemTableVC: UITableViewController {
     
     func createNewCommunity(ref: DocumentReference, imageURL: String?) {
         
-        guard let user = AuthenticationManager.shared.user, let title = titleText, let description = descriptionText else {
+        guard let userID = AuthenticationManager.shared.user?.uid, let title = titleText, let description = descriptionText else {
             self.showTitleDescriptionAlert()
             
             return
@@ -695,7 +695,7 @@ class NewCommunityItemTableVC: UITableViewController {
         let name = title
         let fact = Community()
         
-        data = ["follower": [user.uid],"name": name, "description": description, "createDate": Timestamp(date: Date()), "OP": user.uid, "displayOption": displayOption.displayOption, "popularity": 0]
+        data = ["follower": [userID],"name": name, "description": description, "createDate": Timestamp(date: Date()), "OP": userID, "displayOption": displayOption.displayOption, "popularity": 0]
         
         if let factDisplayName = displayOption.factDisplayNames {
             data["factDisplayNames"] = factDisplayName
@@ -706,7 +706,7 @@ class NewCommunityItemTableVC: UITableViewController {
         fact.beingFollowed = true
         fact.documentID = ref.documentID
         fact.displayOption = self.pickedDisplayOption
-        fact.moderators = [user.uid]
+        fact.moderators = [userID]
         fact.language = language
         
         if let url = imageURL {
@@ -736,11 +736,11 @@ class NewCommunityItemTableVC: UITableViewController {
         
         header.followTopic(community: community)
         
-        guard let user = AuthenticationManager.shared.user else {
+        guard let userID = AuthenticationManager.shared.user?.uid else {
             return
         }
         
-        let ref = db.collection("Users").document(user.uid)
+        let ref = db.collection("Users").document(userID)
         ref.updateData([
             "badges" : FieldValue.arrayUnion(["mod"])
         ]) { (err) in

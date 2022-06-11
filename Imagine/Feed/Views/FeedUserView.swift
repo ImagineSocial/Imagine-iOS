@@ -78,7 +78,7 @@ class FeedUserView: UIView, NibLoadable {
             locationLabel.text = "in \(location.title)"
         }
         
-        createDateLabel.text = post.createDate.formatForFeed()
+        createDateLabel.text = post.createdAt.formatForFeed()
         if post.anonym {
             if let anonymousName = post.options?.anonymousName {
                 nameLabel.text = anonymousName
@@ -87,7 +87,7 @@ class FeedUserView: UIView, NibLoadable {
             }
             profilePictureImageView.image = UIImage(named: "anonym-user")
         } else if let user = post.user {
-            nameLabel.text = user.displayName
+            nameLabel.text = user.name
             
             // Profile Picture
             if let urlString = user.imageURL, let url = URL(string: urlString) {

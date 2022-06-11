@@ -19,6 +19,7 @@ enum PostType: String, Codable {
     case GIF
     case multiPicture
     case panorama
+    case music
     case singleTopic
     case topTopicCell
     case nothingPostedYet

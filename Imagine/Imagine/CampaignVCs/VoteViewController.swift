@@ -111,7 +111,7 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
         if let user = Auth.auth().currentUser {
             if let vote = vote {
                 var collectionRef: CollectionReference!
-                let language = LanguageSelection().getLanguage()
+                let language = LanguageSelection.language
                 if language == .en {
                     collectionRef = db.collection("Data").document("en").collection("votes")
                 } else {
@@ -167,7 +167,7 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
                 self.view.activityStartAnimating()
                 
                 var collectionRef: CollectionReference!
-                let language = LanguageSelection().getLanguage()
+                let language = LanguageSelection.language
                 if language == .en {
                     collectionRef = db.collection("Data").document("en").collection("votes")
                 } else {
@@ -217,7 +217,7 @@ class VoteViewController: UIViewController, ReachabilityObserverDelegate {
     func registerVoter(userUID: String) {
         if let vote = vote {
             var collectionRef: CollectionReference!
-            let language = LanguageSelection().getLanguage()
+            let language = LanguageSelection.language
             if language == .en {
                 collectionRef = db.collection("Data").document("en").collection("votes")
             } else {

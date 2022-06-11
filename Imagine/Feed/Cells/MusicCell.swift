@@ -16,7 +16,9 @@ protocol MusicPostDelegate: class {
 
 class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
     
-    //MARK:- IBOutlets
+    static var identifier = "MusicCell"
+    
+    //MARK: - IBOutlets
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var webViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var expandViewButton: DesignableButton!

@@ -122,7 +122,7 @@ extension NewPostVC: NewPostCollectionDelegate {
         case .description:
             self.descriptionText = text
         case .link:
-            self.link = text
+            self.url = text
         }
     }
     

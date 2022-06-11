@@ -38,8 +38,6 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
         setBarButtons()
         
         UpdateView()
-        self.refreshControl?.attributedTitle = NSAttributedString(string: "")
-        self.refreshControl?.removeTarget(self, action: #selector(getPosts(getMore:)), for: .touchUpInside)
         
         edgesForExtendedLayout = .top
         self.isFactSegueEnabled = false //DOnt go to the topic in said same topic
@@ -74,7 +72,7 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
                         
                         DispatchQueue.global(qos: .default).async {
                             let sorted = posts.compactMap { object in
-                                orderList.index(of: object.documentID).map { index in (object, index) }
+                                orderList.index(of: object.documentID!).map { index in (object, index) }
                             }.sorted(by: { $0.1 < $1.1 } ).map { $0.0 }
                             
                             self.posts = sorted
@@ -85,7 +83,7 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
                         }
                     } else {
                         
-                        let sortedPosts = posts.sorted(by: { $0.createDate ?? Date() > $1.createDate ?? Date() })
+                        let sortedPosts = posts.sorted(by: { $0.createdAt > $1.createdAt })
                         self.posts = sortedPosts
                         
                         DispatchQueue.main.async {

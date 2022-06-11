@@ -43,7 +43,7 @@ class DataRequest {
         var descending = false
         
         var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         
         switch get {
         case .blogPosts:

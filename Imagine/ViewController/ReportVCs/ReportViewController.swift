@@ -130,7 +130,7 @@ class ReportViewController: UIViewController {
     }
     
     func deleteTopicPost(fact: Community) {
-        guard let post = post else { return }
+        guard let post = post, let documentID = post.documentID else { return }
         
         var collectionRef: CollectionReference!
         if fact.language == .en {
@@ -138,7 +138,7 @@ class ReportViewController: UIViewController {
         } else {
             collectionRef = db.collection("Facts")
         }
-        let ref = collectionRef.document(fact.documentID).collection("posts").document(post.documentID)
+        let ref = collectionRef.document(fact.documentID).collection("posts").document(documentID)
         
         ref.getDocument { (snap, err) in
             if let error = err {
@@ -159,7 +159,7 @@ class ReportViewController: UIViewController {
     }
     
     func deletePostInAddOn(addOnID: String) {
-        guard let post = post else { return }
+        guard let post = post, let documentID = post.documentID else { return }
         
         if let fact = post.community {
             var collectionRef: CollectionReference!
@@ -168,7 +168,7 @@ class ReportViewController: UIViewController {
             } else {
                 collectionRef = db.collection("Facts")
             }
-            let ref = collectionRef.document(fact.documentID).collection("addOns").document(addOnID).collection("items").document(post.documentID)
+            let ref = collectionRef.document(fact.documentID).collection("addOns").document(addOnID).collection("items").document(documentID)
             
             ref.delete { (err) in
                 if let error = err {
@@ -180,7 +180,7 @@ class ReportViewController: UIViewController {
     }
     
     func deletePost() {
-        guard let post = post, let user = post.user else { return }
+        guard let post = post, let userID = post.user?.uid, let documentID = post.documentID else { return }
         
         let postRef: DocumentReference?
         var collectionRef: CollectionReference!
@@ -190,18 +190,18 @@ class ReportViewController: UIViewController {
             } else {
                 collectionRef = db.collection("TopicPosts")
             }
-            postRef = collectionRef.document(post.documentID)
+            postRef = collectionRef.document(documentID)
         } else {
             if post.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("posts")
             } else {
                 collectionRef = db.collection("Posts")
             }
-            postRef = collectionRef.document(post.documentID)
+            postRef = collectionRef.document(documentID)
         }
         
         if let _ = post.image?.thumbnailUrl {
-            deleteThumbnail(documentID: post.documentID)
+            deleteThumbnail(documentID: documentID)
         }
         
         if let fact = post.community {
@@ -219,29 +219,29 @@ class ReportViewController: UIViewController {
         
         switch post.type {
         case .multiPicture:
-            let id = post.documentID
             var index = 0
-            if let images = post.images {
-                for _ in images {
-                    let storageRef = Storage.storage().reference().child("postPictures").child("\(id)-\(index).png")
-                    
-                    index+=1
-                    storageRef.delete { (err) in
-                        if let err = err {
-                            print("We have an error deleting the old picture in storage: \(err.localizedDescription)")
-                        } else {
-                            print("Picture Deleted")
-                            
-                            let userPostRef = self.db.collection("Users").document(user.uid).collection("posts").document(post.documentID)
-                            
-                            userPostRef.delete { (err) in
-                                if let error = err {
-                                    print("We have an error: \(error.localizedDescription)")
-                                } else {
-                                    if index == images.count {
-                                        self.dismiss(animated: true, completion: nil)
-                                        self.alert(message: "Fertig", title: "Das Bild wurde erfolgreich gelöscht. Aktualisiere den Feed und es ist weg")
-                                    }
+            guard let images = post.images else {
+                return
+            }
+            for _ in images {
+                let storageRef = Storage.storage().reference().child("postPictures").child("\(documentID)-\(index).png")
+                
+                index+=1
+                storageRef.delete { (err) in
+                    if let err = err {
+                        print("We have an error deleting the old picture in storage: \(err.localizedDescription)")
+                    } else {
+                        print("Picture Deleted")
+                        
+                        let userPostRef = self.db.collection("Users").document(userID).collection("posts").document(documentID)
+                        
+                        userPostRef.delete { (err) in
+                            if let error = err {
+                                print("We have an error: \(error.localizedDescription)")
+                            } else {
+                                if index == images.count {
+                                    self.dismiss(animated: true, completion: nil)
+                                    self.alert(message: "Fertig", title: "Das Bild wurde erfolgreich gelöscht. Aktualisiere den Feed und es ist weg")
                                 }
                             }
                         }
@@ -249,8 +249,7 @@ class ReportViewController: UIViewController {
                 }
             }
         case .picture:
-            let imageName = post.documentID
-            let storageRef = Storage.storage().reference().child("postPictures").child("\(imageName).png")
+            let storageRef = Storage.storage().reference().child("postPictures").child("\(documentID).png")
             
             storageRef.delete { (err) in
                 if let err = err {
@@ -258,7 +257,7 @@ class ReportViewController: UIViewController {
                 } else {
                     print("Picture Deleted")
                     
-                    let userPostRef = self.db.collection("Users").document(user.uid).collection("posts").document(post.documentID)
+                    let userPostRef = self.db.collection("Users").document(userID).collection("posts").document(documentID)
                     
                     userPostRef.delete { (err) in
                         if let error = err {
@@ -271,7 +270,7 @@ class ReportViewController: UIViewController {
                 }
             }
         default:
-            let userPostRef = db.collection("Users").document(user.uid).collection("posts").document(post.documentID)
+            let userPostRef = db.collection("Users").document(userID).collection("posts").document(documentID)
             
             userPostRef.delete { (err) in
                 if let error = err {
@@ -367,29 +366,26 @@ class ReportViewController: UIViewController {
     }
     
     @IBAction func savePostTapped(_ sender: Any) {
-        if let user = AuthenticationManager.shared.user {
-            
-            guard let post = post else { return }
-            
-            let ref = db.collection("Users").document(user.uid).collection("saved").document()
-            
-            let data: [String:Any] = ["createTime": Timestamp(date: Date()), "documentID": post.documentID]
-            
-            ref.setData(data) { (err) in
-                if let error = err {
-                    print("We have an error saving this post: \(error.localizedDescription)")
-                } else {
-                    print("Successfully saved")
-                    self.savePostButtonIcon.tintColor = Constants.green
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                        self.dismiss(animated: true, completion: nil)
-                    }
+        guard let userID = AuthenticationManager.shared.user?.uid, let post = post, let documentID = post.documentID else {
+            self.notLoggedInAlert()
+            return
+        }
+        
+        let ref = db.collection("Users").document(userID).collection("saved").document()
+        
+        let data: [String:Any] = ["createTime": Timestamp(date: Date()), "documentID": documentID]
+        
+        ref.setData(data) { (err) in
+            if let error = err {
+                print("We have an error saving this post: \(error.localizedDescription)")
+            } else {
+                print("Successfully saved")
+                self.savePostButtonIcon.tintColor = Constants.green
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                    self.dismiss(animated: true, completion: nil)
                 }
             }
-            
-        } else {
-            self.notLoggedInAlert()
         }
     }
     

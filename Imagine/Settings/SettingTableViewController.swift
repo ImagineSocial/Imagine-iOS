@@ -133,10 +133,10 @@ class SettingTableViewController: UITableViewController {
                     }
                 }
             }
-        } else if let user = user {
-            let userSetting = UserSetting(name: user.displayName ?? "", OP: user.uid)
+        } else if let user = user, let userID = user.uid {
+            let userSetting = UserSetting(name: user.name ?? "", OP: userID)
             
-            let ref = db.collection("Users").document(user.uid)
+            let ref = db.collection("Users").document(userID)
             ref.getDocument { (snap, err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
@@ -192,7 +192,7 @@ class SettingTableViewController: UITableViewController {
                             }
                             
                             userSetting.imageURL = user.imageURL
-                            userSetting.statusText = user.statusQuote
+                            userSetting.statusText = user.statusText
                             self.userSetting = userSetting
                             self.setUpViewController()
                         }
@@ -336,10 +336,10 @@ class SettingTableViewController: UITableViewController {
         self.listCount = items.count
         
         for item in items {
-            if let post = item.item as? Post {
+            if let post = item.item as? Post, let documentID = post.documentID {
                 self.postHelper.loadPost(post: post) { (post) in
                     if let post = post {
-                        let item = AddOnItem(documentID: post.documentID, item: post)
+                        let item = AddOnItem(documentID: documentID, item: post)
                         self.itemList.append(item)
                         self.addNewList()
                     } else {
@@ -1120,8 +1120,9 @@ extension SettingTableViewController: SettingCellDelegate, UINavigationControlle
                     self.view.activityStopAnimating()
                 }
             }
-        } else if let user = user {
-            let ref = db.collection("Users").document(user.uid)
+        } else if let userID = user?.uid {
+            let ref = db.collection("Users").document(userID)
+            
             ref.updateData(data) { (err) in
                 if let error = err {
                     print("We could not update the data: \(error.localizedDescription)")

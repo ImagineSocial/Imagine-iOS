@@ -17,10 +17,9 @@ enum PostList {
 }
 
 enum FirestoreError: Error {
-        case notAuthorized
-        case brokenAppleCredential
-    }
-
+    case notAuthorized
+    case brokenAppleCredential
+}
 
 class FirestoreRequest {
     
@@ -31,7 +30,7 @@ class FirestoreRequest {
     var posts = [Post]()
     let db = Firestore.firestore()
     
-    let language = LanguageSelection().getLanguage()
+    let language = LanguageSelection.language
     
     var initialFetch = true
     
@@ -50,35 +49,18 @@ class FirestoreRequest {
     
     let postHelper = PostHelper.shared
     
-    func decode<T: Decodable>(query: Query, completion: @escaping (Result<[T], Error>) -> Void) {
-        
-        query.addSnapshotListener { querySnapshot, error in
-            guard let documents = querySnapshot?.documents else {
-                completion(.failure(error ?? FirestoreError.brokenAppleCredential))
-                return
-            }
-            
-            let objects = documents.compactMap { queryDocumentSnapshot -> T? in
-                try? queryDocumentSnapshot.data(as: T.self)
-            }
-            
-            completion(.success(objects))
-        }
-    }
-    
-    
     func getTheUsersFriend(completion: @escaping ([String]?) -> Void) {
         guard friends == nil else {
             completion(friends)
             return
         }
         
-        guard let user = AuthenticationManager.shared.user else {
+        guard let userID = AuthenticationManager.shared.user?.uid else {
             completion(nil)
             return
         }
         
-        let userRef = FirestoreReference.collectionRef(.users, collectionReference: FirestoreCollectionReference(document: user.uid, collection: "friends"))
+        let userRef = FirestoreReference.collectionRef(.users, collectionReference: FirestoreCollectionReference(document: userID, collection: "friends"))
         
         userRef.getDocuments { snap, error in
             guard let snaps = snap, error == nil else {
@@ -91,7 +73,7 @@ class FirestoreRequest {
             }
             
             //Add yourself to the list so you see your full name in the feed
-            friends.append(user.uid)
+            friends.append(userID)
             
             self.friends = friends
             
@@ -142,16 +124,6 @@ class FirestoreRequest {
             }
         }
         
-        FirestoreRequest().decode(query: postQuery) { (result: Result<[Post], Error>) in
-            switch result {
-            case .success(let posts):
-                print("posts: ", posts)
-            case .failure(let failure):
-                print("failure: ", failure.localizedDescription)
-            }
-        }
-
-        return
         getTheUsersFriend { _ in // First get the friends to choose which name to fetch
             
             postQuery.getDocuments { [weak self] snap, error in
@@ -173,7 +145,7 @@ class FirestoreRequest {
                     self.getFollowedTopicPosts(startSnap: self.startBeforeSnap, endSnap: lastSnap) { posts in
                         var combinedPosts = self.posts
                         combinedPosts.append(contentsOf: self.posts)
-                        let finalPosts = combinedPosts.sorted(by: { $0.createDate > $1.createDate})
+                        let finalPosts = combinedPosts.sorted(by: { $0.createdAt > $1.createdAt})
                         completion(finalPosts)
                     }
                 } else {
@@ -256,12 +228,12 @@ class FirestoreRequest {
     
     func getFollowedTopicIDs(completion: @escaping ([String]?) -> Void) {
         var topicIDs = [String]()
-        guard let user = AuthenticationManager.shared.user else {
+        guard let userID = AuthenticationManager.shared.user?.uid else {
             completion(nil)
             return
         }
         
-        let topicRef = FirestoreReference.collectionRef(.users, collectionReference: FirestoreCollectionReference(document: user.uid, collection: "topics"))
+        let topicRef = FirestoreReference.collectionRef(.users, collectionReference: FirestoreCollectionReference(document: userID, collection: "topics"))
         
         topicRef.getDocuments { (snap, err) in
             guard let snap = snap else {
@@ -356,7 +328,7 @@ class FirestoreRequest {
                     
                     self.getPostsFromDocumentIDs(posts: documentIDsOfPosts) { [weak self] _ in
                         // Needs to be sorted because the posts are fetched without the date that they were added
-                        self?.posts.sort(by: { $0.createDate.compare($1.createDate) == .orderedDescending })
+                        self?.posts.sort(by: { $0.createdAt.compare($1.createdAt) == .orderedDescending })
                         completion(self?.posts)
                     }
                 case .savedPosts:
@@ -384,7 +356,7 @@ class FirestoreRequest {
                     self.getPostsFromDocumentIDs(posts: documentIDsOfPosts) { [weak self] _ in
                         if let self = self {
                             // Needs to be sorted because the posts are fetched without the date that they were added
-                            self.posts.sort(by: { $0.createDate.compare($1.createDate) == .orderedDescending })
+                            self.posts.sort(by: { $0.createdAt.compare($1.createdAt) == .orderedDescending })
                             completion(self.posts)
                         }
                     }
@@ -451,7 +423,7 @@ class FirestoreRequest {
                 
                 self.getPostsFromDocumentIDs(posts: documentIDsOfPosts) { [weak self] _ in    // First fetch the normal Posts, then the "JustTopic" Posts
                     guard let self = self else { return }
-                    self.posts.sort(by: { $0.createDate.compare($1.createDate) == .orderedDescending })
+                    self.posts.sort(by: { $0.createdAt.compare($1.createdAt) == .orderedDescending })
                     
                     completion(self.posts)
                 }
@@ -578,7 +550,7 @@ class FirestoreRequest {
     func loadPost(post: Post, completion: @escaping (Post?) -> Void) {
         let ref: DocumentReference!
         
-        if post.documentID == "" {   // NewAddOnTableVC
+        if post.documentID == nil {   // NewAddOnTableVC
             completion(nil)
         }
         

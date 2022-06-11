@@ -26,28 +26,22 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
     var posts = [Post]()
     let handyHelper = HandyHelper.shared
     var firestoreRequest = FirestoreRequest()
+    var firestoreManager = FirestoreManager()
     let db = FirestoreRequest.shared.db
     
-    var sortOptionsShown = false
-    var sortBy: PostSortOptions = .dateDecreasing
-    
-    let imageCache = NSCache<NSString, UIImage>()
+    var morePostsAvailable = true
     
     var fetchesPosts = true
     var noPostsType: BlankCellType = .savedPicture
     
     var fetchRequested = false
-    
-    let surveyCellIdentifier = "SurveyCell"
-    let musicCellIdentifier = "MusicCell"
-    let singleTopicCellIdentifier = "FeedSingleTopicCell"
-    
+        
     var isOwnProfile = false    //to change the button like count visibility
     
     var isFactSegueEnabled = true
     
     var placeholderAreShown: Bool {
-        if let firstPost = posts.first, firstPost.documentID == "" {
+        if let firstPost = posts.first, firstPost.documentID == nil {
             return true
         }
         
@@ -69,17 +63,89 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
         tableView.separatorStyle = .none
         tableView.refreshControl = refreshControl
         
-        refreshControl.addTarget(self, action: #selector(getPosts(getMore:)), for: .valueChanged)   // getMore is false in this instance
+        refreshControl.addTarget(self, action: #selector(reloadFeed), for: .valueChanged)   // getMore is false in this instance
         refreshControl.attributedTitle = NSAttributedString(string: NSLocalizedString("one_moment_placeholder", comment: "one moment..."))
         
         self.tableView.addSubview(refreshControl)
     }
     
     
-    @objc func getPosts(getMore: Bool) {
+    @objc func getPosts() {
         
     }
     
+    @objc func reloadFeed() {
+        
+    }
+    
+    
+    /// Show empty cells while fetching the posts
+    func setPlaceholderAndGetPosts() {
+        var index = 0
+        
+        while index <= 3 {
+            let post = Post.standard
+            post.options = PostDesignOption(hideProfilePicture: true)
+            if index == 1 {
+                post.type = .picture
+            } else {
+                post.type = .thought
+            }
+            self.posts.append(post)
+            index += 1
+        }
+        
+        self.tableView.reloadData()
+        getPosts()
+    }
+    
+    func setPosts(_ posts: [Post]) {
+        self.posts.removeAll()  //to get the placeholder out
+        self.posts = posts
+        
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+            
+            self.fetchesPosts = false
+            
+            // remove ActivityIndicator incl. backgroundView
+            self.view.activityStopAnimating()
+
+            self.refreshControl?.endRefreshing()
+        }
+    }
+    
+    func appendPosts(_ posts: [Post]) {
+        var indexes = [IndexPath]()
+        
+        posts.forEach{ newPost in
+            let row = self.posts.count
+            
+            indexes.append(IndexPath(row: row, section: 0))
+            self.posts.append(newPost)
+        }
+        
+        DispatchQueue.main.async {
+            
+            self.tableView.performBatchUpdates({
+                self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
+                self.tableView.insertRows(at: indexes, with: .bottom)
+            }, completion: { _ in
+                self.fetchesPosts = false
+            })
+            
+            self.view.activityStopAnimating()
+            print("Jetzt haben wir \(self.posts.count)")
+        }
+    }
+    
+    func returnedPostsAreEmpty() {
+        if placeholderAreShown {
+            // Hide loading placeholder and show empty placeholder
+        } else {
+            morePostsAvailable = false
+        }
+    }
     
     //InfoView
     
@@ -119,7 +185,7 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
         
         if isReachable {
             if fetchRequested { // To automatically redo the requested task
-                self.getPosts(getMore: true)
+                self.getPosts()
             }
         } else {
             // Just in the FeedTableVC
@@ -301,16 +367,11 @@ extension BaseFeedTableViewController {
         let contentYoffset = scrollView.contentOffset.y
         let distanceFromBottom = scrollView.contentSize.height - contentYoffset
         
-        if distanceFromBottom < height {
+        if distanceFromBottom < height, !fetchesPosts && morePostsAvailable {
+            print("End reached!")
             
-            if fetchesPosts == false {
-                print("Ende erreicht!")
-                
-                fetchesPosts = true
-                self.getPosts(getMore: true)
-            }
-            
-            // If I am at the total end of posts to fetch i got no solution for the feedtableview yet
+            fetchesPosts = true
+            self.getPosts()
         }
     }
 }

@@ -162,7 +162,7 @@ extension SearchTableViewController: UISearchResultsUpdating, UISearchBarDelegat
         var userResults = [User]()
         
         var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         
         switch searchScope {
         case 0: // Search Posts

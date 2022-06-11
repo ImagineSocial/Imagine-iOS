@@ -411,7 +411,7 @@ extension ImagineCommunityCollectionViewController: CommunityNavigationItemDeleg
         case .settings:
             performSegue(withIdentifier: "toSettingsSegue", sender: nil)
         case .website:
-            let language = LanguageSelection().getLanguage()
+            let language = LanguageSelection.language
             var url: URL?
             if language == .de {
                 url = URL(string: "https://imagine.social")

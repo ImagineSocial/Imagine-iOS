@@ -17,12 +17,12 @@ class SearchPostCell: UITableViewCell {
             }
             titleLabel.text = post.title
             if let user = post.user {
-                nameLabel.text = "\(user.displayName)  -  \(post.createDate.formatForFeed())"
+                nameLabel.text = "\(user.name)  -  \(post.createdAt.formatForFeed())"
             } else {
                 if post.anonym {
-                    nameLabel.text = "Anonym  -  \(post.createDate.formatForFeed())"
+                    nameLabel.text = "Anonym  -  \(post.createdAt.formatForFeed())"
                 } else {
-                    nameLabel.text = "        -  \(post.createDate.formatForFeed())"
+                    nameLabel.text = "        -  \(post.createdAt.formatForFeed())"
                     self.getName()
                 }
             }
@@ -71,7 +71,7 @@ class SearchPostCell: UITableViewCell {
         if index < 20 {
             if let post = self.post {
                 if let user = post.user {
-                    self.nameLabel.text = "\(user.displayName ?? "")  -  \(post.createDate.formatForFeed())"
+                    self.nameLabel.text = "\(user.name ?? "")  -  \(post.createdAt.formatForFeed())"
                 } else {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         self.getName()

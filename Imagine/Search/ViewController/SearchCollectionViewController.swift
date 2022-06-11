@@ -83,7 +83,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
         DispatchQueue.global(qos: .background).async {
             
             var collectionRef: CollectionReference!
-            let language = LanguageSelection().getLanguage()
+            let language = LanguageSelection.language
             if language == .en {
                 collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
             } else {
@@ -303,7 +303,7 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
         var postResults = [Post]()
         var userResults = [User]()
         var topicResults = [Community]()
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         switch searchScope {
         case 0: // Search Posts
             var collectionRef: CollectionReference!

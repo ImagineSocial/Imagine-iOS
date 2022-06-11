@@ -83,7 +83,7 @@ class RePostCell : BaseFeedCell {
             // Repost Sachen einstellen
             if let repost = post.repost {
                 originalTitleLabel.text = repost.title
-                originalCreateDateLabel.text = repost.createDate.formatForFeed()
+                originalCreateDateLabel.text = repost.createdAt.formatForFeed()
                 
                 if repost.anonym {
                     ogProfilePictureImageView.image = UIImage(named: "anonym-user")
@@ -92,7 +92,7 @@ class RePostCell : BaseFeedCell {
                     titleLabel.text = post.title
                     
                     if let repostUser = repost.user {
-                        ogPosterNameLabel.text = repostUser.displayName
+                        ogPosterNameLabel.text = repostUser.name
                         
                         
                         // Profile Picture

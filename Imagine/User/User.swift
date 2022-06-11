@@ -7,93 +7,57 @@
 //
 
 import UIKit
-import FirebaseFirestore
+import FirebaseFirestoreSwift
 
-public class User: Codable {
+class User: Codable {
     
     init(userID: String) {
-        self.uid = userID        
+        self.uid = userID
     }
     
     //MARK: - Variables
     
-    public var uid: String
-    public var displayName: String?
-    public var imageURL: String?
-    public var blocked: [String]?
-    public var statusQuote: String?
+    @DocumentID var uid: String?
+    var name: String?
+    var imageURL: String?
+    var blocked: [String]?
+    var statusText: String?
     
     //Social Media Links
-    public var instagramLink: String?
-    public var instagramDescription: String?
-    public var patreonLink: String?
-    public var patreonDescription: String?
-    public var youTubeLink: String?
-    public var youTubeDescription: String?
-    public var twitterLink: String?
-    public var twitterDescription: String?
-    public var songwhipLink: String?
-    public var songwhipDescription: String?
+    var instagramLink: String?
+    var instagramDescription: String?
+    var patreonLink: String?
+    var patreonDescription: String?
+    var youTubeLink: String?
+    var youTubeDescription: String?
+    var twitterLink: String?
+    var twitterDescription: String?
+    var songwhipLink: String?
+    var songwhipDescription: String?
     
     //location
-    public var locationName: String?
-    public var locationIsPublic = false
+    var locationName: String?
+    var locationIsPublic = false
     
-    
-    //MARK: - Get Username
-    
-    func getUsername(username: @escaping (String?) -> Void) {
-        
-        let ref =  FirestoreRequest.shared.db.collection("Users").document(uid)
-        ref.getDocument { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap, let data = snap.data() {
-                    if let name = data["name"] as? String {
-                        username(name)
-                    } else {
-                        username(nil)
-                    }
-                } else {
-                    username(nil)
-                }
-            }
-        }
+    enum CodingKeys: String, CodingKey {
+        case imageURL = "profilePictureURL"
+        case name, statusText, blocked, instagramLink, instagramDescription, patreonLink, patreonDescription, youTubeLink, youTubeDescription, twitterLink, twitterDescription, songwhipLink, songwhipDescription, locationName, locationIsPublic
     }
     
-    //MARK: - Get Badges
-    func getBadges(returnBadges: @escaping ([String]) -> Void) {
-        
-        let ref = FirestoreRequest.shared.db.collection("Users").document(uid)
-        ref.getDocument { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    if let data = snap.data() {
-                        if let badges = data["badges"] as? [String] {
-                            returnBadges(badges)
-                        }
-                    }
-                }
-            }
-        }
-    }
     
     //MARK: - Get User
-    func getUser(isAFriend: Bool, completion: @escaping (User?) -> Void) {
-        let userRef = FirestoreRequest.shared.db.collection("Users").document(uid)
+    func loadUser(completion: @escaping (User?) -> Void) {
         
-        userRef.getDocument(completion: { (document, err) in
-            if let error = err {
-                print("We got an error with a user: \(error.localizedDescription)")
+        let reference = FirestoreReference.documentRef(.users, documentID: uid)
+        
+        FirestoreManager.decodeSingle(reference: reference) { (result: Result<User, Error>) in
+            switch result {
+            case .success(let user):
+                completion(user)
+            case .failure(let error):
                 completion(nil)
-            } else {
-                if let document = document {
-                    AuthenticationManager.shared.generateUser(document: document, completion: completion)
-                }
+                print("We got an error: \(error.localizedDescription)")
             }
-        })
+        }
     }
 }

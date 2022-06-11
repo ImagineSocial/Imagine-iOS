@@ -16,14 +16,14 @@ class RepostView: UIView {
         didSet {
             if let repost = repost {
                 repostTitleLabel.text = repost.title
-                repostCreateDateLabel.text = repost.createDate.formatForFeed()
+                repostCreateDateLabel.text = repost.createdAt.formatForFeed()
                 
                 if let link = repost.image?.url, let imageURL = URL(string: link) {
                     repostImageView.sd_setImage(with: imageURL, completed: nil)
                 }
                 
                 if let repostUser = repost.user {
-                    repostNameLabel.text = repostUser.displayName
+                    repostNameLabel.text = repostUser.name
                     
                     if let urlString = repostUser.imageURL, let url = URL(string: urlString) {
                         repostProfilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)

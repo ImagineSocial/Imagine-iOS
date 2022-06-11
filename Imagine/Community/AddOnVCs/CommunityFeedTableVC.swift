@@ -54,23 +54,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
         setPlaceholderAndGetPosts()
     }
     
-    func setPlaceholderAndGetPosts() {
-        //setPlaceholder
-        var index = 0
-        
-        while index <= 2 {
-            let post = Post(type: (index == 1) ? .picture : .thought, title: "", createDate: Date())
-                        
-            self.posts.append(post)
-            index+=1
-        }
-        
-        self.tableView.reloadData()
-        
-        getPosts(getMore: true)
-    }
-    
-    override func getPosts(getMore: Bool) {
+    override func getPosts() {
         
         guard let community = community else { return }
         
@@ -82,7 +66,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
         self.view.activityStartAnimating()
         
         DispatchQueue.global(qos: .background).async {
-            self.firestoreRequest.getPostsForCommunity(getMore: getMore, community: community) { posts in
+            self.firestoreRequest.getPostsForCommunity(getMore: !self.posts.isEmpty, community: community) { posts in
                 
                 guard let posts = posts else {
                     DispatchQueue.main.async {
@@ -91,7 +75,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
                     return
                 }
                 
-                if let firstPost = self.posts.first, firstPost.documentID == "" {   // Get the first batch of posts
+                if self.placeholderAreShown {   // Get the first batch of posts
                     
                     self.posts.removeAll()  //to get the placeholder out
                     self.posts = posts
@@ -176,12 +160,9 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
         let height = scrollView.frame.size.height
         let distanceFromBottom = scrollView.contentSize.height - offset
         
-        if distanceFromBottom < height {
-            if fetchesPosts == false {
-                
-                fetchesPosts = true
-                self.getPosts(getMore: true)
-            }
+        if distanceFromBottom < height, morePostsAvailable, fetchesPosts == false {
+            fetchesPosts = true
+            self.getPosts()
         }
     }
     
@@ -303,6 +284,6 @@ extension CommunityFeedTableVC: NewFactDelegate {
     func finishedCreatingNewInstance(item: Any?) {
         self.posts.removeAll()
         self.tableView.reloadData()
-        self.getPosts(getMore: false)
+        self.getPosts()
     }
 }

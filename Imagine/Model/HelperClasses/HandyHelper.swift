@@ -44,7 +44,7 @@ class HandyHelper {
         // Timestamp umwandeln
         let formatter = DateFormatter()
         let date:Date = timestamp.dateValue()
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         if language == .de {
             formatter.dateFormat = "dd.MM.yyyy HH:mm"
         } else {
@@ -124,6 +124,10 @@ class HandyHelper {
     
     
     func updatePost(button: VoteButton, post: Post) {
+        
+        guard let documentID = post.documentID else {
+            return
+        }
         var ref: DocumentReference?
         var collectionRef: CollectionReference!
         
@@ -133,14 +137,14 @@ class HandyHelper {
             } else {
                 collectionRef = db.collection("TopicPosts")
             }
-            ref = collectionRef.document(post.documentID)
+            ref = collectionRef.document(documentID)
         } else {
             if post.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("posts")
             } else {
                 collectionRef = db.collection("Posts")
             }
-            ref = collectionRef.document(post.documentID)
+            ref = collectionRef.document(documentID)
         }
             
         var keyForFirestore: String?
@@ -179,11 +183,11 @@ class HandyHelper {
     
     func notifyUserForUpvote(button: VoteButton, post: Post) {
         
-        guard let currentUser = AuthenticationManager.shared.user, let user = post.user else {
+        guard let currentUser = AuthenticationManager.shared.user, let userID = post.user?.uid else {
             return
         }
         
-        if currentUser.uid == user.uid {
+        if currentUser.uid == userID {
             //No notifications if you like your own posts for whatever reason
             return
         }
@@ -201,25 +205,26 @@ class HandyHelper {
             buttonString = "nice"
         }
         
-        if let button = buttonString {
-            
-            var data: [String: Any] = ["type": "upvote", "button": button, "postID": post.documentID, "title": post.title]
-            
-            if post.isTopicPost {
-                data["isTopicPost"] = true
-            }
-            if post.language == .en {
-                data["language"] = "en"
-            }
-            
-            let ref = db.collection("Users").document(user.uid).collection("notifications").document()
-            
-            ref.setData(data) { (err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    print("notification set")
-                }
+        guard let button = buttonString, let documentID = post.documentID else {
+            return
+        }
+        
+        var data: [String: Any] = ["type": "upvote", "button": button, "postID": documentID, "title": post.title]
+        
+        if post.isTopicPost {
+            data["isTopicPost"] = true
+        }
+        if post.language == .en {
+            data["language"] = "en"
+        }
+        
+        let ref = db.collection("Users").document(userID).collection("notifications").document()
+        
+        ref.setData(data) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                print("notification set")
             }
         }
     }
@@ -298,24 +303,25 @@ class HandyHelper {
             completion(false)
             return
         }
-
+        
         var saved = false
         
-        if let user = AuthenticationManager.shared.user {
-            let savedRef = db.collection("Users").document(user.uid).collection("saved").whereField("documentID", isEqualTo: post.documentID)
-            savedRef.getDocuments { (snap, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    if let snap = snap {
-                        if snap.documents.count != 0 {
-                            // Already saved
-                            saved = true
-                        }
-                        completion(saved)
-                    } else {
-                        completion(saved)
+        guard let userID = AuthenticationManager.shared.user?.uid, let documentID = post.documentID else {
+            return
+        }
+        let savedRef = db.collection("Users").document(userID).collection("saved").whereField("documentID", isEqualTo: documentID)
+        savedRef.getDocuments { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    if snap.documents.count != 0 {
+                        // Already saved
+                        saved = true
                     }
+                    completion(saved)
+                } else {
+                    completion(saved)
                 }
             }
         }
@@ -335,8 +341,8 @@ class HandyHelper {
     }
     
     func saveFCMToken(token:String) {
-        if let user = AuthenticationManager.shared.user {
-            let userRef = db.collection("Users").document(user.uid)
+        if let userID = AuthenticationManager.shared.user?.uid {
+            let userRef = db.collection("Users").document(userID)
             
             userRef.setData(["fcmToken":token], mergeFields: ["fcmToken"])
             
@@ -349,27 +355,27 @@ class HandyHelper {
             return
         }
         
-        if let user = AuthenticationManager.shared.user {
+        if let userID = AuthenticationManager.shared.user?.uid {
             
             switch type {
             case .message:
-                let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("chatID", isEqualTo: id)
+                let notRef = db.collection("Users").document(userID).collection("notifications").whereField("chatID", isEqualTo: id)
                 
                 self.deleteInFirebase(ref: notRef)
             case .comment:
-                let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("postID", isEqualTo: id)
+                let notRef = db.collection("Users").document(userID).collection("notifications").whereField("postID", isEqualTo: id)
                 
                 self.deleteInFirebase(ref: notRef)
             case .friend:
-                let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("userID", isEqualTo: id)
+                let notRef = db.collection("Users").document(userID).collection("notifications").whereField("userID", isEqualTo: id)
                 
                 self.deleteInFirebase(ref: notRef)
             case .blogPost:
-                let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("type", isEqualTo: "blogPost")
+                let notRef = db.collection("Users").document(userID).collection("notifications").whereField("type", isEqualTo: "blogPost")
                 
                 self.deleteInFirebase(ref: notRef)
             case .upvote:
-                let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("type", isEqualTo: "upvote").whereField("postID", isEqualTo: id)
+                let notRef = db.collection("Users").document(userID).collection("notifications").whereField("type", isEqualTo: "upvote").whereField("postID", isEqualTo: id)
                 
                 self.deleteInFirebase(ref: notRef)
                 
@@ -436,11 +442,11 @@ class HandyHelper {
     }
     
     func setLikeOnComment(comment: Comment, answerToComment: Comment?) {
-        if let user = AuthenticationManager.shared.user {
+        if let userID = AuthenticationManager.shared.user?.uid{
             let ref = getCommentRef(comment: comment, answerToComment: answerToComment)
             
             ref.updateData([
-                "likes" : FieldValue.arrayUnion([user.uid])
+                "likes" : FieldValue.arrayUnion([userID])
             ])
         }
     }

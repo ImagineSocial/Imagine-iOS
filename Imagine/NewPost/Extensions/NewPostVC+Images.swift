@@ -11,7 +11,14 @@ import BSImagePicker
 import Photos
 import CropViewController
 
-extension NewPostVC: UIImagePickerControllerDelegate {
+struct UploadImage {
+    var imageData: Data
+    var width: Double
+    var height: Double
+    var url: String?
+}
+
+extension NewPostVC: UIImagePickerControllerDelegate {    
     
     func removeImages() {
         selectedImagesFromPicker.removeAll()
@@ -82,27 +89,6 @@ extension NewPostVC: UIImagePickerControllerDelegate {
     
     
     // MARK: - Prepare for Upload
-    func getPictureInCompressedQuality(image: UIImage) -> Data? {
-        guard let originalImage = image.jpegData(compressionQuality: 1) else { return nil }
-        let data = NSData(data: originalImage)
-        
-        let imageSize = data.count / 1000
-        
-        var compression = 0.0
-        
-        if imageSize <= 500 {   // When the imageSize is under 500kB it wont be compressed, because you can see the difference
-            // No compression
-            return originalImage
-        } else if imageSize <= 1000 {
-            compression = 0.4
-        } else if imageSize <= 2000 {
-            compression = 0.25
-        } else {
-            compression = 0.1
-        }
-        
-        return image.jpegData(compressionQuality: compression)
-    }
     
     func getImages(forPreview: Bool, images: @escaping ([Data]) -> Void)  {
         self.selectedImagesFromPicker.removeAll()
@@ -132,7 +118,7 @@ extension NewPostVC: UIImagePickerControllerDelegate {
                             print("Height already set")
                         }
                         
-                        if let comImage = self.getPictureInCompressedQuality(image: image) {
+                        if let comImage = image.compressedData() {
                             self.selectedImagesFromPicker.append(comImage)
                             
                             if self.selectedImagesFromPicker.count == self.multiImageAssets.count {

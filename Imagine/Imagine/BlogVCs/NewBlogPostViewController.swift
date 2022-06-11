@@ -18,13 +18,11 @@ class NewBlogPostViewController: UIViewController {
     @IBOutlet weak var categoryTextField: UITextField!
     @IBOutlet weak var headerLabel: UILabel!
     
-    var user:User?
     let db = FirestoreRequest.shared.db
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        getUser()
         // Do any additional setup after loading the view.
     }
     
@@ -35,15 +33,6 @@ class NewBlogPostViewController: UIViewController {
         categoryTextField.resignFirstResponder()
     }
     
-    func getUser() {
-        if let user = Auth.auth().currentUser {
-            User(userID: user.uid).getUser(isAFriend: false) { user in
-                if let user = user {
-                    self.user = user
-                }
-            }
-        }
-    }
     
     @IBAction func selectImageButtonTapped(_ sender: Any) {
     }
@@ -51,47 +40,42 @@ class NewBlogPostViewController: UIViewController {
     
     @IBAction func shareButtonTapped(_ sender: Any) {
         
-        if user == nil {
-            headerLabel.text = "Kein User da!"
-            return
+        guard let _ = AuthenticationManager.shared.user,
+              let title = titleTextField.text,
+              let category = categoryTextField.text,
+              let description = descriptionTextView.text else { return }
+        
+        
+        var collectionRef: CollectionReference!
+        let language = LanguageSelection.language
+        if language == .en {
+            collectionRef = db.collection("Data").document("en").collection("blogPosts")
         } else {
-            
-            if let _ = user,
-               let title = titleTextField.text,
-               let category = categoryTextField.text,
-               let description = descriptionTextView.text {
-                
-                var collectionRef: CollectionReference!
-                let language = LanguageSelection().getLanguage()
-                if language == .en {
-                    collectionRef = db.collection("Data").document("en").collection("blogPosts")
-                } else {
-                    collectionRef = db.collection("BlogPosts")
-                }
-                
-                let blogRef = collectionRef.document()
-                
-                let dataDictionary: [String: Any] = ["title": title, "subtitle": shortDescriptionTextfield.text, "category" : category, "description": description, "createDate": Timestamp(date: Date()), "poster": "Imagine"]
-                
-                
-                blogRef.setData(dataDictionary) { (err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        print("BlogPost successfully set")
-                    }
-                }
-                
-                self.getEveryUserAndSetNotification()
-                
-                
-                let alert = UIAlertController(title: "Fertig!", message: "Danke, dass du postest Malte!", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
-                    
-                }))
-                present(alert, animated: true) {        }
+            collectionRef = db.collection("BlogPosts")
+        }
+        
+        let blogRef = collectionRef.document()
+        
+        let dataDictionary: [String: Any] = ["title": title, "subtitle": shortDescriptionTextfield.text, "category" : category, "description": description, "createDate": Timestamp(date: Date()), "poster": "Imagine"]
+        
+        
+        blogRef.setData(dataDictionary) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                print("BlogPost successfully set")
             }
         }
+        
+        self.getEveryUserAndSetNotification()
+        
+        
+        let alert = UIAlertController(title: "Fertig!", message: "Danke, dass du postest Malte!", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
+            
+        }))
+        present(alert, animated: true) {        }
+        
     }
     
     func getEveryUserAndSetNotification() {

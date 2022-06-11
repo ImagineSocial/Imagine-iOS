@@ -20,6 +20,7 @@ struct Link: Codable {
 }
 
 struct Songwhip: Codable {
+    var title: String
     var musicType: String
     var releaseDate: Date
     var artist: SongwhipArtist

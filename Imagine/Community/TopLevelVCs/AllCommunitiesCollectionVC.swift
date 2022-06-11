@@ -107,7 +107,7 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
         let sortByString = getDisplayOptionString(type: type)
         
         var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         if language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {

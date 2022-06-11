@@ -40,10 +40,10 @@ class Community: Codable {
     
     //MARK: - Get Follow Status
     func getFollowStatus(isFollowed: @escaping (Bool) -> Void) {
-        if let user = AuthenticationManager.shared.user , documentID != "" {
+        if let userID = AuthenticationManager.shared.user?.uid, documentID != "" {
             let db = FirestoreRequest.shared.db
 
-            let ref = db.collection("Users").document(user.uid).collection("topics").document(documentID)
+            let ref = db.collection("Users").document(userID).collection("topics").document(documentID)
             
             ref.getDocument { (document, err) in
                 if let document = document {

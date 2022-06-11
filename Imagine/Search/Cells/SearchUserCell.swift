@@ -13,7 +13,7 @@ class SearchUserCell: UICollectionViewCell {
         didSet {
             if let user = user {
                 profilePictureImageView.image = nil
-                nameLabel.text = user.displayName
+                nameLabel.text = user.name
                 if let urlString = user.imageURL, let url = URL(string: urlString) {
                     profilePictureImageView.sd_setImage(with: url, completed: nil)
                 } else {

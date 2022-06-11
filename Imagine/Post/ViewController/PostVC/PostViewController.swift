@@ -193,7 +193,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         
         titleLabel.text = post.title
-        createDateLabel.text = post.createDate.formatForFeed()
+        createDateLabel.text = post.createdAt.formatForFeed()
         feedLikeView.commentCountLabel.text = String(post.commentCount)
         
         if let fact = post.community {   // Isnt attached if you come from search
@@ -440,7 +440,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 nameLabel.text = Constants.strings.anonymPosterName
             }
         } else if let user = post.user {
-            nameLabel.text = user.displayName
+            nameLabel.text = user.name
             
             if let imageURL = user.imageURL, let url = URL(string: imageURL) {
                 profilePictureImageView.sd_setImage(with: url, completed: nil)
@@ -502,21 +502,18 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func checkIfAlreadySaved() {
-        guard let post = post else {
+        guard let post = post, let documentID = post.documentID, let userID = AuthenticationManager.shared.user?.uid else {
             return
         }
-
-        if let user = AuthenticationManager.shared.user {
-            let savedRef = db.collection("Users").document(user.uid).collection("saved").whereField("documentID", isEqualTo: post.documentID)
-            
-            savedRef.getDocuments { (snap, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    if snap!.documents.count != 0 {
-                        // Already saved
-                        self.savePostButton.tintColor = Constants.green
-                    }
+        let savedRef = db.collection("Users").document(userID).collection("saved").whereField("documentID", isEqualTo: documentID)
+        
+        savedRef.getDocuments { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if snap!.documents.count != 0 {
+                    // Already saved
+                    self.savePostButton.tintColor = Constants.green
                 }
             }
         }
@@ -838,29 +835,26 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     
     @IBAction func savePostTapped(_ sender: Any) {
-        guard let post = post else {
+        guard let post = post, let userID = AuthenticationManager.shared.user?.uid, let documentID = post.documentID else {
+            notLoggedInAlert()
             return
         }
-
-        if let user = AuthenticationManager.shared.user {
-            let ref = db.collection("Users").document(user.uid).collection("saved").document(post.documentID)
-            
-            var data: [String:Any] = ["createTime": Timestamp(date: Date())]
-            
-            if post.isTopicPost {
-                data["isTopicPost"] = true
+        
+        let ref = db.collection("Users").document(userID).collection("saved").document(documentID)
+        
+        var data: [String:Any] = ["createTime": Timestamp(date: Date())]
+        
+        if post.isTopicPost {
+            data["isTopicPost"] = true
+        }
+        
+        ref.setData(data) { (err) in
+            if let error = err {
+                print("We have an error saving this post: \(error.localizedDescription)")
+            } else {
+                print("Successfully saved")
+                self.savePostButton.tintColor = Constants.green
             }
-                    
-            ref.setData(data) { (err) in
-                if let error = err {
-                    print("We have an error saving this post: \(error.localizedDescription)")
-                } else {
-                    print("Successfully saved")
-                    self.savePostButton.tintColor = Constants.green
-                }
-            }
-        } else {
-            self.notLoggedInAlert()
         }
     }
     

@@ -300,7 +300,7 @@ class PostHelper {
             isAFriend = false
         }
         
-        let post = Post(type: .picture, title: title, createDate: createTimestamp.dateValue())
+        let post = Post(type: .picture, title: title, createdAt: createTimestamp.dateValue())
         post.description = documentData["description"] as? String
         post.documentID = document.documentID
         post.votes.thanks = thanksCount
@@ -331,7 +331,7 @@ class PostHelper {
             }
         } else {
             let user = User(userID: originalPoster)
-            user.getUser(isAFriend: isAFriend) { user in
+            user.loadUser() { user in
                 post.user = user
             }
         }

@@ -91,7 +91,7 @@ struct FirestoreCollectionReference {
 
 class FirestoreReference {
     
-    static let language = LanguageSelection().getLanguage()
+    static let language = LanguageSelection.language
     static let db = Firestore.firestore()
     
     static func collectionRef(_ type: CollectionType, collectionReference: FirestoreCollectionReference? = nil, query: FirestoreQuery? = nil) -> Query {

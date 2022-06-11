@@ -113,11 +113,11 @@ class NewPostOptionCell: NewPostBaseCell {
         if let user = Auth.auth().currentUser {
             
             //Get only first name to accurately show how it will be displayed
-            User(userID: user.uid).getUsername() { (username) in
-                if let name = username {
-                    self.username = name
-                    self.previewNameLabel.text = name
-                }
+            User(userID: user.uid).loadUser() { user in
+                guard let name = user?.name else { return }
+                    
+                self.username = name
+                self.previewNameLabel.text = name
             }
             
             //Show Profile Picture

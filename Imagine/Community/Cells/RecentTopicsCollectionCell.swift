@@ -42,7 +42,7 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
     func getFacts(initialFetch: Bool) {
         
         let defaults = UserDefaults.standard
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         var key: String!
         
         switch language {

@@ -92,7 +92,7 @@ class ChatViewController: MSGMessengerViewController {
     
     func setNavUserButton() {
         if let participant = chat?.participant {
-            self.navigationItem.title = participant.displayName
+            self.navigationItem.title = participant.name
             
             let button = DesignableButton()
             button.frame = CGRect(x: 0, y: 0, width: 35, height: 35)
@@ -249,15 +249,15 @@ class ChatViewController: MSGMessengerViewController {
     }
     
     func setNotification(chat: Chat, bodyString: String, messageID: String) {
-        if let currentUser = currentUser, let participant = chat.participant {
-            let notificationRef = db.collection("Users").document(participant.uid).collection("notifications").document()
+        if let currentUser = currentUser, let participantID = chat.participant?.uid {
+            let notificationRef = db.collection("Users").document(participantID).collection("notifications").document()
             let notificationData: [String: Any] = ["type": "message", "message": bodyString, "name": currentUser.displayName, "chatID": chat.documentID, "sentAt": Timestamp(date: Date()), "messageID": messageID]
             
             if let chat = self.chat {
-                if let user = AuthenticationManager.shared.user {
+                if let userID = AuthenticationManager.shared.user?.uid {
                     let message = chat.lastMessage
                     message.message = bodyString
-                    message.sender = user.uid
+                    message.sender = userID
                     message.sentAtDate = Date()
                     message.sentAt = Date().formatRelativeString()
                     message.uid = messageID
@@ -408,7 +408,7 @@ extension ChatViewController: MSGDataSource {
             
             // Datum vom Timestamp umwandeln
             let formatter = DateFormatter()
-            let language = LanguageSelection().getLanguage()
+            let language = LanguageSelection.language
             if language == .en {
                 formatter.dateFormat = "MM/dd/yyyy HH:mm"
             } else {

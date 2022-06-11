@@ -22,11 +22,9 @@ extension BaseFeedTableViewController {
         tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: "NibBlankCell")
         tableView.register(UINib(nibName: "GifCell", bundle: nil), forCellReuseIdentifier: "GIFCell")
         tableView.register(UINib(nibName: "TopicCell", bundle: nil), forCellReuseIdentifier: "TopicCell")
-        tableView.register(UINib(nibName: "SurveyCell", bundle: nil), forCellReuseIdentifier: surveyCellIdentifier)
-        tableView.register(UINib(nibName: "MusicCell", bundle: nil), forCellReuseIdentifier: musicCellIdentifier)
-        tableView.register(UINib(nibName: "FeedSingleTopicCell", bundle: nil), forCellReuseIdentifier: singleTopicCellIdentifier)
-        
-        tableView.register(UINib(nibName: "AdvertisingCell", bundle: nil), forCellReuseIdentifier: "AdvertisingCell")
+        tableView.register(UINib(nibName: "SurveyCell", bundle: nil), forCellReuseIdentifier: SurveyCell.identifier)
+        tableView.register(UINib(nibName: "MusicCell", bundle: nil), forCellReuseIdentifier: MusicCell.identifier)
+        tableView.register(UINib(nibName: "FeedSingleTopicCell", bundle: nil), forCellReuseIdentifier: FeedSingleTopicCell.identifier)
     }
     
     // MARK: - Table view data source
@@ -48,14 +46,9 @@ extension BaseFeedTableViewController {
         }
         
         let post = posts[indexPath.row]
-        if post.title == "ad" {
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "AdvertisingCell", for: indexPath) as? AdvertisingCell {
-                cell.title = "Unser neues Mittagsangebot: Hol dir einen Cafe mit unserem Bircher Müsli, #FakeAd Edition!  Löse den Imagine Gutschein-Code ein und spare 10% auf deinen Cafe!"
-                return cell
-            }
-        }
+        
         if let _ = post.survey {
-            if let cell = tableView.dequeueReusableCell(withIdentifier: surveyCellIdentifier, for: indexPath) as? SurveyCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: SurveyCell.identifier, for: indexPath) as? SurveyCell {
                 
                 cell.post = post
                 cell.indexPath = indexPath
@@ -212,28 +205,26 @@ extension BaseFeedTableViewController {
                 
                 return cell
             }
-        case .link:
-            if post.music != nil {
-                if let cell = tableView.dequeueReusableCell(withIdentifier: musicCellIdentifier, for: indexPath) as? MusicCell {
-                    
-                    cell.ownProfile = isOwnProfile
-                    cell.post = post
-                    cell.delegate = self
-                    cell.musicPostDelegate = self
-                    
-                    return cell
-                }
-            } else {
-                let identifier = "NibLinkCell"
+        case .music:
+            if let cell = tableView.dequeueReusableCell(withIdentifier: MusicCell.identifier, for: indexPath) as? MusicCell {
                 
-                if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? LinkCell {
-                    
-                    cell.ownProfile = isOwnProfile
-                    cell.delegate = self
-                    cell.post = post
-                    
-                    return cell
-                }
+                cell.ownProfile = isOwnProfile
+                cell.post = post
+                cell.delegate = self
+                cell.musicPostDelegate = self
+                
+                return cell
+            }
+        case .link:
+            let identifier = "NibLinkCell"
+            
+            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? LinkCell {
+                
+                cell.ownProfile = isOwnProfile
+                cell.delegate = self
+                cell.post = post
+                
+                return cell
             }
         case .youTubeVideo:
             let identifier = "NibYouTubeCell"
@@ -256,7 +247,7 @@ extension BaseFeedTableViewController {
                 return cell
             }
         case .singleTopic:
-            if let cell = tableView.dequeueReusableCell(withIdentifier: singleTopicCellIdentifier, for: indexPath) as? FeedSingleTopicCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: FeedSingleTopicCell.identifier, for: indexPath) as? FeedSingleTopicCell {
                 
                 cell.post = post
                 cell.delegate = self
@@ -299,11 +290,6 @@ extension BaseFeedTableViewController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        // Check to see which table view cell was selected. Needed for searchController
-        
-//        var extraHeightForReportView:CGFloat = 0
-//        var heightForRow:CGFloat = 150
-        
         let post = posts[indexPath.row]
         let postType = post.type
         
@@ -314,13 +300,6 @@ extension BaseFeedTableViewController {
         if let _ = post.survey {
             return UITableView.automaticDimension
         }
-        
-//        switch post.report {
-//        case .normal:
-//            extraHeightForReportView = 0
-//        default:
-//            extraHeightForReportView = 30
-//        }
         
         switch postType {
         case .topTopicCell:

@@ -51,7 +51,7 @@ class NewPostVC: UIViewController, UINavigationControllerDelegate {
     var descriptionText: String?
     var images: [UIImage]?
     var location: Location?
-    var link: String?
+    var url: String?
     var linkedCommunity: Community?
     
     var imageURLs = [String]()

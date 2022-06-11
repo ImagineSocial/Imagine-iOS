@@ -628,7 +628,7 @@ class LogInViewController: UIViewController {
     }
     
     @objc func toEulaTapped() {
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         if self.signUpFrame == .acceptPrivacyAgreement {
             
             if language == .en {

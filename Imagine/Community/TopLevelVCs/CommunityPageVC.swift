@@ -316,11 +316,11 @@ extension CommunityPageVC: PageViewHeaderDelegate, CommunityHeaderDelegate, NewF
             if let vc = self.argumentVCs[1] as? CommunityFeedTableVC {
                 vc.posts.removeAll()
                 vc.tableView.reloadData()
-                vc.getPosts(getMore: false)
+                vc.getPosts()
             } else if let vc = self.argumentVCs[2] as? CommunityFeedTableVC {
                 vc.posts.removeAll()
                 vc.tableView.reloadData()
-                vc.getPosts(getMore: false)
+                vc.getPosts()
             }
         }
     }

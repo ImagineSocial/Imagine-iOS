@@ -142,7 +142,7 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
                 }
                 
                 var collectionRef: CollectionReference!
-                let language = LanguageSelection().getLanguage()
+                let language = LanguageSelection.language
                 if language == .en {
                     collectionRef = self.db.collection("Data").document("en").collection("topics")
                 } else {
@@ -195,11 +195,11 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
     }
     
     func getFollowedCommunities() {
-        guard let user = AuthenticationManager.shared.user else {
+        guard let userID = AuthenticationManager.shared.user?.uid else {
             return
         }
         
-        dataHelper.getFollowedTopicDocuments(userUID: user.uid) { documents in
+        dataHelper.getFollowedTopicDocuments(userUID: userID) { documents in
             var topicCount = documents.count
             for document in documents {
                 self.addFact(document: document) { fact in

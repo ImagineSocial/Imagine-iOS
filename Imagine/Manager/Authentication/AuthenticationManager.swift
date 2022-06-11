@@ -50,7 +50,7 @@ class AuthenticationManager {
         
         let user = User(userID: document.documentID)
         
-        user.displayName = docData["name"] as? String
+        user.name = docData["name"] as? String
         user.instagramLink = docData["instagramLink"] as? String
         user.instagramDescription = docData["instagramDescription"] as? String
         
@@ -68,7 +68,7 @@ class AuthenticationManager {
         user.locationIsPublic = docData["locationIsPublic"] as? Bool ?? false
         
         user.imageURL = docData["profilePictureURL"] as? String
-        user.statusQuote = docData["statusText"] as? String
+        user.statusText = docData["statusText"] as? String
         user.blocked = docData["blocked"] as? [String] ?? nil
         
         completion(user)

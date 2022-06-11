@@ -10,6 +10,8 @@ import UIKit
 
 class FeedSingleTopicCell: BaseFeedCell {
     
+    static var identifier = "FeedSingleTopicCell"
+    
     //MARK:- IBOutlets
     @IBOutlet weak var collectionView: UICollectionView!
     

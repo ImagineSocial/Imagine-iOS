@@ -14,10 +14,10 @@ enum Language: String, Codable {
 }
 
 class LanguageSelection {
-    let defaults = UserDefaults.standard
-    let pre = Locale.preferredLanguages[0]
+    static let defaults = UserDefaults.standard
+    static let pre = Locale.preferredLanguages[0]
     
-    func getLanguage() -> Language {
+    static var language: Language {
         if let language = defaults.string(forKey: "languageSelection") {
             
             return language == "de" ? .de : .en

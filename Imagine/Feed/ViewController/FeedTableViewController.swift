@@ -98,7 +98,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     
     //MARK: - Get Data
     
-    @objc override func getPosts(getMore: Bool) {
+    @objc override func getPosts() {
         // If "getMore" is true, you want to get more Posts, or the initial batch of 20 Posts, if not you want to refresh the current feed
         
         guard isConnected() else {
@@ -110,80 +110,30 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         
         DispatchQueue.global(qos: .background).async {
             
-            self.firestoreRequest.getPostsForMainFeed(getMore: getMore) { posts in
-                
+            self.firestoreManager.getPosts(for: .main) { posts in
                 guard let posts = posts else {
                     return
                 }
                 
-                print("\(posts.count) neue dazu")
-                if let firstPost = self.posts.first, firstPost.documentID == "" {   // Get the first batch of posts
-                    
-                    DispatchQueue.main.async {
-                        if !self.alreadyAcceptedPrivacyPolicy() {
-                            self.showGDPRAlert()
-                        }
-                    }
-                    self.posts.removeAll()  //to get the placeholder out
-                    self.posts = posts
-                    
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                        
-                        self.fetchesPosts = false
-                        
-                        // remove ActivityIndicator incl. backgroundView
-                        self.view.activityStopAnimating()
-                        
-                        self.refreshControl?.endRefreshing()
-                    }
-                } else {    // Append the next batch to the existing
-                    var indexes = [IndexPath]()
-                    
-                    posts.forEach{ newPost in
-                        let row = self.posts.count
-                        
-                        indexes.append(IndexPath(row: row, section: 0))
-                        self.posts.append(newPost)
-                    }
-                    
-                    DispatchQueue.main.async {
-                        
-                        self.tableView.performBatchUpdates({
-                            self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                            self.tableView.insertRows(at: indexes, with: .bottom)
-                        }, completion: { _ in
-                            self.fetchesPosts = false
-                        })
-                        
-                        self.view.activityStopAnimating()
-                        print("Jetzt haben wir \(self.posts.count)")
-                    }
+                if posts.isEmpty {
+                    self.returnedPostsAreEmpty()
+                    return
+                }
+                
+                posts.forEach { $0.loadUser() }
+                
+                self.placeholderAreShown ? self.setPosts(posts) : self.appendPosts(posts)
+            }
+            
+            return
+            
+            // Das hier noch irgendwie
+            DispatchQueue.main.async {
+                if !self.alreadyAcceptedPrivacyPolicy() {
+                    self.showGDPRAlert()
                 }
             }
         }
-    }
-    
-    //MARK: Present Data
-    
-    /// Show empty cells while fetching the posts
-    func setPlaceholderAndGetPosts() {
-        var index = 0
-        
-        while index <= 3 {
-            let post = Post.standard
-            post.options = PostDesignOption(hideProfilePicture: true)
-            if index == 1 {
-                post.type = .picture
-            } else {
-                post.type = .thought
-            }
-            self.posts.append(post)
-            index += 1
-        }
-        
-        self.tableView.reloadData()
-        getPosts(getMore: true)
     }
     
     
@@ -475,7 +425,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         
         if isReachable {
             if fetchRequested { // To automatically redo the requested task
-                self.getPosts(getMore: true)
+                self.getPosts()
             }
             
             if self.navigationItem.leftBarButtonItem == nil {
@@ -512,27 +462,27 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             performSegue(withIdentifier: "toEULASegue", sender: nil)
         case .toPost:
             if let comment = comment{
-                let post = Post(type: .picture, title: "", createDate: Date())
+                let post = Post(type: .picture, title: "", createdAt: Date())
                 post.documentID = comment.sectionItemID
                 post.isTopicPost = comment.isTopicPost
                 post.language = comment.sectionItemLanguage
                 post.newUpvotes = comment.upvotes
 
-                if let user = AuthenticationManager.shared.user {     //Only works if you get notifications for your own posts
-                    post.user = User(userID: user.uid)
+                if let userID = AuthenticationManager.shared.user?.uid {     //Only works if you get notifications for your own posts
+                    post.user = User(userID: userID)
                 }
                 
                 performSegue(withIdentifier: "showPost", sender: post)
             }
         case .toComment:
             if let comment = comment {
-                let post = Post(type: .picture, title: "", createDate: Date())
+                let post = Post(type: .picture, title: "", createdAt: Date())
                 post.documentID = comment.sectionItemID
                 post.isTopicPost = comment.isTopicPost
                 post.toComments = true
                 post.language = comment.sectionItemLanguage
-                if let user = AuthenticationManager.shared.user {
-                    post.user = User(userID: user.uid)
+                if let userID = AuthenticationManager.shared.user?.uid {
+                    post.user = User(userID: userID)
                 }
                 
                 performSegue(withIdentifier: "showPost", sender: post)
@@ -580,8 +530,8 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             return
         } else {
             print("Set listener")
-            if let user = AuthenticationManager.shared.user {
-                let notRef = db.collection("Users").document(user.uid).collection("notifications")
+            if let userID = AuthenticationManager.shared.user?.uid {
+                let notRef = db.collection("Users").document(userID).collection("notifications")
                 
                 notificationListener = notRef.addSnapshotListener { (snap, err) in
                     if let error = err {
@@ -893,7 +843,7 @@ extension FeedTableViewController: LogOutDelegate {
 
 extension FeedTableViewController: JustPostedDelegate {
     func posted() {
-        self.getPosts(getMore: false)
+        self.getPosts()
     }
 }
 

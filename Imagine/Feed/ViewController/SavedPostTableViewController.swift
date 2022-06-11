@@ -15,23 +15,22 @@ class SavedPostTableViewController: BaseFeedTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        getPosts(getMore: true)
+        getPosts()
         
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
         
         self.noPostsType = .savedPicture
-        // navigationItem.rightBarButtonItem = editButtonItem
     }
     
-    override func getPosts(getMore: Bool) {
+    override func getPosts() {
         
         if isConnected() {
             
-            guard let user = AuthenticationManager.shared.user else {
+            guard let userID = AuthenticationManager.shared.user?.uid else {
                 return
             }
-            firestoreRequest.getUserPosts(getMore: getMore, postList: .savedPosts, userUID: user.uid) { posts  in
+            firestoreRequest.getUserPosts(getMore: !posts.isEmpty, postList: .savedPosts, userUID: userID) { posts  in
                 
                 guard let posts = posts else {
                     print("No More Posts")

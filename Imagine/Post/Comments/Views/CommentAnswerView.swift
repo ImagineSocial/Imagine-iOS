@@ -151,7 +151,7 @@ class CommentAnswerView: UIView {
         recipientNameLabel.trailingAnchor.constraint(equalTo: cancelRecipientButton.leadingAnchor, constant: -10).isActive = true
         
         if let user = comment.user {
-            recipientNameLabel.text = user.displayName
+            recipientNameLabel.text = user.name
         } else {
             recipientNameLabel.text = comment.text
         }

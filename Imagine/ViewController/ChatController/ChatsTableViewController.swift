@@ -49,14 +49,14 @@ class ChatsTableViewController: UITableViewController {
     
     
     func getChats() {   // Get participant and every documentID of every chat that the user has
-        if let user = AuthenticationManager.shared.user {
+        if let userID = AuthenticationManager.shared.user?.uid {
             self.loggedIn = true
             if chatsList.count == 0 {
                 self.view.activityStartAnimating()
             }
-            currentUserUid = user.uid
+            currentUserUid = userID
             
-            let chatsRef = db.collection("Users").document(user.uid).collection("chats")
+            let chatsRef = db.collection("Users").document(userID).collection("chats")
             
             chatsRef.getDocuments { (snapshot, error) in
                 if let error = error {
@@ -98,8 +98,8 @@ class ChatsTableViewController: UITableViewController {
     
     
     func getUnreadMessages() {
-        if let user = AuthenticationManager.shared.user {
-            let notificationRef = db.collection("Users").document(user.uid).collection("notifications").whereField("type", isEqualTo: "message")
+        if let userID = AuthenticationManager.shared.user?.uid {
+            let notificationRef = db.collection("Users").document(userID).collection("notifications").whereField("type", isEqualTo: "message")
             
             notificationRef.addSnapshotListener { (snap, err) in    // Get messageNotifications
                 if let error = err {
@@ -231,16 +231,12 @@ class ChatsTableViewController: UITableViewController {
     
     func loadUsers(friends: [String]?) {
         
-        guard let friends = friends else {
-            return
-        }
-
         for chat in chatsList {
             guard let participant = chat.participant else {
                 continue
             }
             
-            participant.getUser(isAFriend: friends.contains(participant.uid)) { user in
+            participant.loadUser() { user in
                 self.tableView.reloadData()
                 self.view.activityStopAnimating()
             }
@@ -306,13 +302,13 @@ class ChatsTableViewController: UITableViewController {
                 
                 if let participant = chat.participant {
                     
-                    cell.nameLabel.text = participant.displayName
+                    cell.nameLabel.text = participant.name
                     
                     if let currentUserUid = currentUserUid {
                         if currentUserUid == chat.lastMessage.sender {  // If you are the sender of the last message
                             cell.lastMessage.text = "Du: \(chat.lastMessage.message)"
                         } else {
-                            cell.lastMessage.text = "\(participant.displayName): \(chat.lastMessage.message)"
+                            cell.lastMessage.text = "\(participant.name): \(chat.lastMessage.message)"
                         }
                     }
                     

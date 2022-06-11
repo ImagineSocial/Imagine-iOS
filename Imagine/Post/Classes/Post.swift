@@ -8,6 +8,7 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseFirestoreSwift
 
 struct PostDesignOption: Codable {
     var hideProfilePicture = false
@@ -23,24 +24,24 @@ struct PostImage: Codable {
 
 class Post: Codable {
     
-    init(type: PostType, title: String, createDate: Date) {
+    init(type: PostType, title: String, createdAt: Date) {
         self.type = type
         self.title = title
-        self.createDate = createDate
+        self.createdAt = createdAt
     }
     
     // MARK: Variables
     
+    @DocumentID var documentID: String?
+    var type: PostType
     var title: String
-    var createDate: Date
+    var createdAt: Date
     var image: PostImage?
     var images: [PostImage]?
     var description: String?
     var link: Link?
     var music: Music?
-    var type: PostType
     var report = ReportType.normal
-    var documentID = ""
     var repostDocumentID: String?
     var repostIsTopicPost = false
     var repostLanguage = Language.de
@@ -52,7 +53,7 @@ class Post: Codable {
     var votes = Votes()
     var newUpvotes: Votes?
     var repost: Post?
-    var community: Community?
+    var communityID: String?
     var addOnTitle: String?    // Description in the OptionalInformation Section in the topic area
     var isTopicPost = false // Just postet in a topic, not in the main feed
     var language: Language = .de
@@ -63,14 +64,26 @@ class Post: Codable {
     
     var survey: Survey?
     
+    var community: Community?
+    
     static var standard: Post {
-        Post(type: .picture, title: "", createDate: Date())
+        Post(type: .picture, title: "", createdAt: Date())
     }
     
     static var nothingPosted: Post {
-        Post(type: .nothingPostedYet, title: "", createDate: Date())
+        Post(type: .nothingPostedYet, title: "", createdAt: Date())
     }
     
+    // MARK: User
+    
+    func loadUser() {
+        guard let userID = userID else { return }
+
+        let user = User(userID: userID)
+        user.loadUser { user in
+            self.user = user
+        }
+    }
     
     // MARK: Repost
     

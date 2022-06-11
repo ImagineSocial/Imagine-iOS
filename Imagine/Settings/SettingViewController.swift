@@ -47,8 +47,7 @@ class SettingViewController: UIViewController {
             deleteAccountButton.isEnabled = false
         }
 
-        let language = LanguageSelection().getLanguage()
-        if language == .en {
+        if LanguageSelection.language == .en {
             languageSegmentedControl.selectedSegmentIndex = 1
         }
     }
@@ -64,7 +63,7 @@ class SettingViewController: UIViewController {
     
     @IBAction func notificationSwitchChanged(_ sender: Any) {
         
-        guard let user = AuthenticationManager.shared.user else {
+        guard let userID = AuthenticationManager.shared.user?.uid else {
             return
         }
         let application = UIApplication.shared
@@ -83,7 +82,7 @@ class SettingViewController: UIViewController {
             
         } else {
             
-            let userRef = db.collection("Users").document(user.uid)
+            let userRef = db.collection("Users").document(userID)
             
             userRef.updateData([
                 "fcmToken": FieldValue.delete(),
@@ -103,13 +102,13 @@ class SettingViewController: UIViewController {
         deleteAccountButton.isEnabled = false
         deleteAccountButton.alpha = 0.5
         
-        guard let user = AuthenticationManager.shared.user else {
+        guard let userID = AuthenticationManager.shared.user?.uid else {
             return
         }
         
         let maltesUID = "CZOcL3VIwMemWwEfutKXGAfdlLy1"
         let notificationRef = db.collection("Users").document(maltesUID).collection("notifications").document()
-        let notificationData: [String: Any] = ["type": "message", "message": "Jemand möchte seinen Account löschen", "name": "System", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "UserID": user.uid]
+        let notificationData: [String: Any] = ["type": "message", "message": "Jemand möchte seinen Account löschen", "name": "System", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "UserID": userID]
         
         notificationRef.setData(notificationData) { (err) in
             if let error = err {
@@ -143,7 +142,7 @@ class SettingViewController: UIViewController {
     }
     
     @IBAction func dataControlTapped(_ sender: Any) {
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         if language == .de {
             if let url = URL(string: "https://www.imagine.social/datenschutzerklaerung-app") {
                 UIApplication.shared.open(url)
@@ -155,7 +154,7 @@ class SettingViewController: UIViewController {
         }
     }
     @IBAction func eulaTapped(_ sender: Any) {
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         if language == .de {
             if let url = URL(string: "https://www.imagine.social/eula") {
                 UIApplication.shared.open(url)

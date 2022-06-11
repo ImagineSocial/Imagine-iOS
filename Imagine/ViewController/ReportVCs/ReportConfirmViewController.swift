@@ -16,7 +16,7 @@ class ReportConfirmViewController: UIViewController {
     var post: Post?
     var comment: Comment?
     let db = FirestoreRequest.shared.db
-    let language = LanguageSelection().getLanguage()
+    let language = LanguageSelection.language
     
     @IBOutlet weak var MeldegrundLabel: UILabel!
     @IBOutlet weak var HinweisTextLabel: UILabel!
@@ -79,33 +79,32 @@ class ReportConfirmViewController: UIViewController {
             }
         }
         
-        if let post = post {
-            var collectionRef: CollectionReference!
-            if post.isTopicPost {
-                if self.language == .en {
-                    collectionRef = db.collection("Data").document("en").collection("topicPosts")
-                } else {
-                    collectionRef = db.collection("TopicPosts")
-                }
+        guard let post = post, let documentID = post.documentID else {
+            return
+        }
+        var collectionRef: CollectionReference!
+        if post.isTopicPost {
+            if self.language == .en {
+                collectionRef = db.collection("Data").document("en").collection("topicPosts")
             } else {
-                if self.language == .en {
-                    collectionRef = db.collection("Data").document("en").collection("posts")
-                } else {
-                    collectionRef = db.collection("Posts")
-                }
+                collectionRef = db.collection("TopicPosts")
             }
-            let postRef = collectionRef.document(post.documentID)
-            postRef.updateData(["report": reportOptionForDatabase]) { err in
-                if let err = err {
-                    print("Error updating document: \(err)")
-                } else {
-                    print("Document successfully updated")
-                    
-                }
+        } else {
+            if self.language == .en {
+                collectionRef = db.collection("Data").document("en").collection("posts")
+            } else {
+                collectionRef = db.collection("Posts")
             }
-        } else if let comment = comment {
-            //todo: Find Comment Ref and update Data
-            print("Find comment to update the report for comment: \(comment.commentID)")
+        }
+        
+        let postRef = collectionRef.document(documentID)
+        postRef.updateData(["report": reportOptionForDatabase]) { err in
+            if let err = err {
+                print("Error updating document: \(err)")
+            } else {
+                print("Document successfully updated")
+                
+            }
         }
     }
     
@@ -128,9 +127,9 @@ class ReportConfirmViewController: UIViewController {
                 }
             }
             
-            if let post = post {
+            if let post = post, let documentID = post.documentID {
                 
-                var data: [String:Any] = ["time": Timestamp(date: Date()), "category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported post":post.documentID]
+                var data: [String:Any] = ["time": Timestamp(date: Date()), "category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported post":documentID]
                 
                 if language == .en {
                     data["language"] = "en"
