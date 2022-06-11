@@ -14,3 +14,7 @@ struct Votes: Codable {
     var ha = 0
     var nice = 0
 }
+
+enum VoteType: String {
+    case thanks, wow, ha, nice
+}

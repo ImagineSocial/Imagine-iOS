@@ -121,4 +121,41 @@ class Post: Codable {
             })
         }
     }
+    
+    func registerVote(for type: VoteType) {
+        
+        switch type {
+        case .thanks:
+            votes.thanks += 1
+        case .wow:
+            votes.wow += 1
+        case .ha:
+            votes.ha += 1
+        case .nice:
+            votes.nice += 1
+        }
+        
+        uploadVote()
+    }
+    
+    
+    private func uploadVote() {
+        guard let documentID = self.documentID else { return }
+        
+        let reference = FirestoreReference.documentRef(isTopicPost ? .topicPosts : .posts, documentID: documentID)
+        
+        FirestoreManager.uploadObject(object: getUploadPost(), documentReference: reference) { error in
+            guard let error = error else {
+                return
+            }
+
+            print("We have an error: \(error.localizedDescription)")
+        }
+    }
+    
+    private func getUploadPost() -> Post {
+        let post = self
+        post.user = nil
+        return post
+    }
 }

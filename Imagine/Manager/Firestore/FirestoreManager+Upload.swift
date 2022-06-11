@@ -14,7 +14,7 @@ extension FirestoreManager {
     static func uploadObject<T: Codable>(object: T, documentReference: DocumentReference, completion: @escaping (Error?) -> Void) {
         do {
             // setData updates values or creates them if they don't exist
-            try documentReference.setData(from: object)
+            try documentReference.setData(from: object, merge: true)
             completion(nil)
         } catch {
             completion(error)

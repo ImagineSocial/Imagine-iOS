@@ -13,7 +13,6 @@ import FirebaseFirestoreSwift
 
 extension NewPostVC {
     
-    
     func shareObject() {
         guard checkIfDataIsComplete(), let cell = getCell(for: .options) as? NewPostOptionCell, let title = titleText, let userID = AuthenticationManager.shared.user?.uid else {
             return

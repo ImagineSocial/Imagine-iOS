@@ -21,11 +21,6 @@ class FirestoreManager {
     var lastSnapshot: QueryDocumentSnapshot?
     
     static let shared = FirestoreManager()
-    
-    init() {
-        
-    }
-    
 }
 
 // Fetch

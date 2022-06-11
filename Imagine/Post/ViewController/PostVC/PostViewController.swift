@@ -989,7 +989,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
 }
 
 extension PostViewController: FeedLikeViewDelegate {
-    func registerVote(button: DesignableButton) {
-        self.updateLikeCount(button: button)
+    func registerVote(for type: VoteType) {
+        post?.registerVote(for: type)
+        feedLikeView.showButtonInteraction(type: type, post: post)
     }
 }

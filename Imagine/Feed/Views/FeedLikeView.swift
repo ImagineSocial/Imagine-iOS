@@ -9,7 +9,7 @@
 import UIKit
 
 protocol FeedLikeViewDelegate: class {
-    func registerVote(button: DesignableButton)
+    func registerVote(for type: VoteType)
 }
 
 class FeedLikeView: UIView, NibLoadable {
@@ -112,15 +112,46 @@ class FeedLikeView: UIView, NibLoadable {
     //MARK:- IBActions
     
     @IBAction func thanksButtonTapped(_ sender: Any) {
-        delegate?.registerVote(button: thanksButton)
+        delegate?.registerVote(for: .thanks)
     }
     @IBAction func wowButtonTapped(_ sender: Any) {
-        delegate?.registerVote(button: wowButton)
+        delegate?.registerVote(for: .wow)
     }
     @IBAction func haButtonTapped(_ sender: Any) {
-        delegate?.registerVote(button: haButton)
+        delegate?.registerVote(for: .ha)
     }
     @IBAction func niceButtonTapped(_ sender: Any) {
-        delegate?.registerVote(button: niceButton)
+        delegate?.registerVote(for: .nice)
+    }
+    
+    func showButtonInteraction(type: VoteType, post: Post?) {
+        
+        guard let post = post else { return }
+
+        var title: String
+        var button: DesignableButton
+        
+        switch type {
+        case .thanks:
+            title = String(post.votes.thanks)
+            button = thanksButton
+        case .wow:
+            title = String(post.votes.wow)
+            button = wowButton
+        case .ha:
+            title = String(post.votes.ha)
+            button = haButton
+        case .nice:
+            title = String(post.votes.nice)
+            button = niceButton
+        }
+        
+        
+        button.isEnabled = false
+        button.setImage(nil, for: .normal)
+        button.setTitle(title, for: .normal)
+        
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
     }
 }

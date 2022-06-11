@@ -70,7 +70,7 @@ enum CollectionType: String {
     var defaultQuery: FirestoreQuery? {
         switch self {
         case .posts, .users, .topicPosts:
-            return FirestoreQuery(field: "createTime", limit: 15)
+            return FirestoreQuery(field: "createdAt", limit: 15)
         default:
             return nil
         }
