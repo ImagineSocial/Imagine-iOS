@@ -83,7 +83,7 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
     func setPlaceholderAndGetPosts() {
         var index = 0
         
-        while index <= 3 {
+        while index <= 4 {
             let post = Post.standard
             post.options = PostDesignOption(hideProfilePicture: true)
             if index == 1 {

@@ -185,19 +185,6 @@ extension BaseFeedTableViewController {
                 cell.post = post
                 cell.delegate = self
                 
-                let imageHeight = post.image?.height ?? 0
-                let imageWidth = post.image?.width ?? 0
-                
-                let ratio = imageWidth / imageHeight
-                let width = self.view.frame.width-20  // 5+5 from contentView and 5+5 from inset
-                var newHeight = width / ratio
-                
-                if newHeight >= 500 {
-                    newHeight = 500
-                }
-                
-                cell.GIFViewHeightConstraint.constant = newHeight
-                
                 if let linkURL = post.link?.url, let url = URL(string: linkURL) {
                     cell.videoPlayerItem = AVPlayerItem.init(url: url)
                     cell.startPlayback()

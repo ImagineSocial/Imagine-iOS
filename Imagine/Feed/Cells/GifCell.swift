@@ -15,7 +15,7 @@ class GifCell: BaseFeedCell {
     //MARK:- IBOutlets
     @IBOutlet weak var gifView: UIView!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
-    @IBOutlet weak var GIFViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var gifViewHeightConstraint: NSLayoutConstraint!
     
     //MARK:- Variables
     private var avPlayer: AVPlayer?
@@ -47,82 +47,88 @@ class GifCell: BaseFeedCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        guard let playerLayer = avPlayerLayer, let post = post, let imageHeight = post.link?.mediaHeight, let imageWidth = post.link?.mediaWidth else {
-            
-            return
-        }
-        let containerWidth = self.contentView.frame.width-10
-        
-        let ratio = imageWidth / imageHeight
-        var newHeight = containerWidth / ratio
-        
-        if newHeight >= 500 {
-            newHeight = 500
-        }
-        
-        playerLayer.frame = CGRect(x: 0, y: 0, width: containerWidth, height: newHeight)
+        guard let playerLayer = avPlayerLayer else { return }
+
+        avPlayerLayer?.frame = gifView.bounds
+        print("playlay: \(playerLayer.frame), gifview: \(gifView.frame)")
     }
     
     //MARK:- Set Cell
     override func setCell() {
         super.setCell()
         
-        if let post = post {
-            if ownProfile { // Set in the UserFeedTableViewController DataSource
-                
-                if let _ = cellStyle {
-                    print("Already Set")
-                } else {
-                    cellStyle = .ownCell
-                    setOwnCell(post: post)
-                }
+        guard let post = post else { return }
+        
+        setViewHeight(for: post)
+        
+        if ownProfile {
+            if let _ = cellStyle {
+                print("Already Set")
             } else {
-                setDefaultButtonImages()
+                cellStyle = .ownCell
+                setOwnCell(post: post)
             }
-            
-            if post.user == nil {
-                if post.anonym {
-                    self.setUser()
-                } else {
-                    self.checkForUser()
-                }
-            } else {
-                setUser()
-            }
-            
-            titleLabel.text = post.title
-            feedLikeView.setPost(post: post)
-            
-            
-            if let fact = post.community {
-                                
-                if fact.title == "" {
-                    if fact.beingFollowed {
-                        self.getCommunity(beingFollowed: true)
-                    } else {
-                        self.getCommunity(beingFollowed: false)
-                    }
-                } else {
-                    self.setCommunity(post: post)
-                }
-            }
-            
-            setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
+        } else {
+            setDefaultButtonImages()
         }
+        
+        if post.user == nil {
+            if post.anonym {
+                self.setUser()
+            } else {
+                self.checkForUser()
+            }
+        } else {
+            setUser()
+        }
+        
+        titleLabel.text = post.title
+        feedLikeView.setPost(post: post)
+        
+        
+        if let fact = post.community {
+            
+            if fact.title == "" {
+                if fact.beingFollowed {
+                    self.getCommunity(beingFollowed: true)
+                } else {
+                    self.getCommunity(beingFollowed: false)
+                }
+            } else {
+                self.setCommunity(post: post)
+            }
+        }
+        
+        setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
+    }
+    
+    func setViewHeight(for post: Post) {
+        guard let link = post.link else { return }
+        let imageHeight = link.mediaHeight ?? 0
+        let imageWidth = link.mediaWidth ?? 0
+        
+        let ratio = imageWidth / imageHeight
+        let width = frame.width - 20  // 5+5 from contentView and 5+5 from inset
+        var newHeight = width / ratio
+        
+        if newHeight >= 500 {
+            newHeight = 500
+        }
+        
+        gifViewHeightConstraint.constant = newHeight
     }
     
     //MARK:- GIFPlayer
     func setupGIFPlayer(){
         self.avPlayer = AVPlayer.init(playerItem: self.videoPlayerItem)
         avPlayerLayer = AVPlayerLayer(player: avPlayer)
-        avPlayerLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
+        avPlayerLayer?.videoGravity = .resizeAspectFill
         avPlayer?.actionAtItemEnd = .none
         avPlayer?.isMuted = true
         avPlayer?.addObserver(self, forKeyPath: "timeControlStatus", options: [.old, .new], context: nil)
         
-        
-//        avPlayerLayer?.frame = self.bounds
-        self.gifView.layer.addSublayer(avPlayerLayer!)
+        avPlayerLayer?.frame = gifView.bounds
+        gifView.layer.addSublayer(avPlayerLayer!)
         
         //To Loop the Video
         NotificationCenter.default.addObserver(self,

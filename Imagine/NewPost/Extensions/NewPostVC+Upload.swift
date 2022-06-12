@@ -18,6 +18,9 @@ extension NewPostVC {
             return
         }
         
+        view.activityStartAnimating()
+        sharingEnabled = false
+        
         let post = Post(type: .picture, title: title, createdAt: Date())
         
         if let description = descriptionText {

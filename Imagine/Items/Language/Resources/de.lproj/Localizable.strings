@@ -178,7 +178,7 @@
 "error_choosing_multiple_pictures_message" = "Wähle bitte weitere Bilder aus oder wähle die Option \"Nur ein Bild\"";
 "error_choosing_picture" = "Du hast kein Bild hochgeladen. Möchtest du kein Bild hochladen, wähle bitte eine andere Post-Option aus";
 "error_link_not_valid" = "Unser Programm sagt uns, dass die URL nicht korrekt ist. Bitte überprüfe den Link";
-"error_no_link" = "Du hast kein Link angegeben. Möchtest du kein Link posten, wähle bitte eine andere Post-Option aus";
+"error_no_link" = "Du hast keinen Link angegeben. Möchtest du kein Link posten, wähle bitte eine andere Post-Option aus";
 "error_no_picture" = "Du hast kein Bild hochgeladen. Möchtest du kein Bild hochladen, wähle bitte eine andere Post-Option aus";
 "error_gif_wrong_ending" = "Im Moment sind nur Links mit Endung '.mp4' möglich. Die Endung .GIF ist veraltet, wird aus Speichergründen nicht mehr benutzt. Sag uns aber gerne bescheid, wie du deine GIFs verbreiten möchtest!";
 "message_after_done_posting" = "Danke für deine Weisheiten!";

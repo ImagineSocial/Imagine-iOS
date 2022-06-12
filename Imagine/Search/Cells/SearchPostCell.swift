@@ -16,8 +16,8 @@ class SearchPostCell: UITableViewCell {
                 return
             }
             titleLabel.text = post.title
-            if let user = post.user {
-                nameLabel.text = "\(user.name)  -  \(post.createdAt.formatForFeed())"
+            if let user = post.user, let name = user.name {
+                nameLabel.text = "\(name)  -  \(post.createdAt.formatForFeed())"
             } else {
                 if post.anonym {
                     nameLabel.text = "Anonym  -  \(post.createdAt.formatForFeed())"
@@ -33,8 +33,8 @@ class SearchPostCell: UITableViewCell {
             case .link:
                 postImageView.contentMode = .scaleAspectFit
                 
-                if let music = post.music {
-                    if let url = URL(string: music.musicImageURL) {
+                if let songwhip = post.link?.songwhip {
+                    if let url = URL(string: songwhip.musicImage) {
                         postImageView.sd_setImage(with: url, completed: nil)
                     }
                 } else {

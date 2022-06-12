@@ -118,17 +118,7 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
             webView.load(request)
         }
         
-        if let music = post.music {
-            if let url = URL(string: music.musicImageURL) {
-                albumPreviewImageView.sd_setImage(with: url, completed: nil)
-            }
-            
-            musicTitleLabel.text = music.name
-            artistLabel.text = music.artist
-            if let releaseDate = music.releaseDate {
-                releaseYearLabel.text = getYearFromDate(date: releaseDate)
-            }
-        }
+        setupSongwhip(post.link?.songwhip)
         
         if ownProfile { // Set in the UserFeedTableViewController DataSource
             
@@ -156,10 +146,10 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         feedLikeView.setPost(post: post)
         
         
-        if let fact = post.community {
+        if let community = post.community {
             
-            if fact.title == "" {
-                if fact.beingFollowed {
+            if community.title == "" {
+                if community.beingFollowed {
                     self.getCommunity(beingFollowed: true)
                 } else {
                     self.getCommunity(beingFollowed: false)
@@ -170,6 +160,18 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         }
         
         setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)
+    }
+    
+    private func setupSongwhip(_ songwhip: Songwhip?) {
+        guard let songwhip = songwhip else { return }
+        
+        if let url = URL(string: songwhip.musicImage) {
+            albumPreviewImageView.sd_setImage(with: url, completed: nil)
+        }
+        
+        musicTitleLabel.text = songwhip.artist.name
+        artistLabel.text = songwhip.artist.name
+        releaseYearLabel.text = songwhip.releaseDate.year()
     }
     
     //MARK:- Animate Web View
@@ -210,14 +212,6 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
             decisionHandler(.allow)
         }
         
-    }
-    
-    func getYearFromDate(date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy"
-        let stringDate = dateFormatter.string(from: date)
-        
-        return stringDate
     }
     
     

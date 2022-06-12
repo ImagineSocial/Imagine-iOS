@@ -140,7 +140,10 @@ class AddOn {
                                     post.language = self.fact.language
                                     
                                     if let music = self.addMusicObject(data: data) {
-                                        post.music = music
+                                        var link = Link(url: music.songwhipURL)
+                                        
+                                        link.songwhip = music.getSongwhip()
+                                        post.link = link
                                     }
                                     
                                     let item = AddOnItem(documentID: document.documentID, item: post)
@@ -155,7 +158,10 @@ class AddOn {
                                     }
                                     
                                     if let music = self.addMusicObject(data: data) {
-                                        post.music = music
+                                        var link = Link(url: music.songwhipURL)
+                                        
+                                        link.songwhip = music.getSongwhip()
+                                        post.link = link
                                     }
                                     
                                     let item = AddOnItem(documentID: document.documentID, item: post)
@@ -181,7 +187,7 @@ class AddOn {
         
         let itemID: String!
         
-        guard let user = AuthenticationManager.shared.user else { return }
+        guard let userID = AuthenticationManager.shared.user?.uid else { return }
         
         if let fact = item as? Community {
             itemID = fact.documentID
@@ -201,7 +207,7 @@ class AddOn {
         
         let ref = collectionRef.document(fact.documentID).collection("addOns").document(documentID).collection("items").document(itemID)
         
-        var data: [String: Any] = ["OP": user.uid, "createDate": Timestamp(date: Date())]
+        var data: [String: Any] = ["OP": userID, "createDate": Timestamp(date: Date())]
         
         if let fact = item as? Community {
             data["type"] = "fact"
@@ -217,13 +223,14 @@ class AddOn {
             if post.type == .youTubeVideo {
                 self.notifyMalteForYouTubePlaylist(fact: fact, addOn: documentID)
             }
-            
-            if let music = post.music {
-                data["musicImage"] = music.musicImageURL
-                data["musicName"] = music.name
-                data["artist"] = music.artist
+            if let songwhip = post.link?.songwhip {
+                var songwhipData = [String: Any]()
+
+                songwhipData["musicImage"] = songwhip.musicImage
+                songwhipData["title"] = songwhip.title
+                songwhipData["artist"] = ["name": songwhip.artist.name, "image": songwhip.artist.image]
                 if let url = post.link?.url {
-                    data["musicURL"] = url
+                    songwhipData["url"] = url
                 }
             }
             

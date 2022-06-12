@@ -166,7 +166,7 @@ class PostHelper {
                         return nil
                     }
                     
-                    let size = handyHelper.getWidthAndHeightFromVideo(urlString: gifURL)
+                    let size = gifURL.getURLVideoSize()
                     let link = Link(url: gifURL, mediaHeight: size.height, mediaWidth: size.width)
                     post.link = link
                     post.type = .GIF
@@ -201,16 +201,9 @@ class PostHelper {
                        let musicImage = documentData["musicImage"] as? String {
                         
                         let releaseDate = releaseDateTimestamp.dateValue()
-                        let musicType: MusicType!
-                        if type == "track" {
-                            musicType = .track
-                        } else {
-                            musicType = .album
-                        }
                         
-                        let music = Music(type: musicType, name: name, artist: artist, releaseDate: releaseDate, artistImageURL: artistImage, musicImageURL: musicImage, songwhipURL: linkURL)
-                        post.music = music
-                        
+                        let songwhip = Songwhip(title: name, musicType: type, releaseDate: releaseDate, artist: SongwhipArtist(name: artist, image: artistImage), musicImage: musicImage)
+                        post.link?.songwhip = songwhip
                     }
                     
                     return post
@@ -233,14 +226,16 @@ class PostHelper {
                     
                     let post = Post.standard
                     post.repostDocumentID = postDocumentID
+                    
+                    let repost = Post.standard
                     if let repostLanguage = documentData["repostLanguage"] as? String {
                         if repostLanguage == "en" {
-                            post.repostLanguage = .en
+                            repost.language = .en
                             if post.language != .en {
                                 post.type = .translation
                             }
                         } else if repostLanguage == "de" {
-                            post.repostLanguage = .de
+                            repost.language = .de
                             if post.language != .de {
                                 post.type = .translation
                             }
@@ -249,9 +244,10 @@ class PostHelper {
                         post.type = .repost
                     }
                     if let repostIsTopicPost = documentData["repostIsTopicPost"] as? Bool {
-                        post.repostIsTopicPost = repostIsTopicPost
+                        repost.isTopicPost = repostIsTopicPost
                     }
                     
+                    post.repost = repost
                     post.getRepost(returnRepost: { (repost) in
                         post.repost = repost
                     })

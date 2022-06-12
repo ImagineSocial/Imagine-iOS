@@ -172,14 +172,6 @@ class HandyHelper {
             notifyUserForUpvote(button: button, post: post)
         }
     }
-
-    
-    func getWidthAndHeightFromVideo(urlString: String) -> CGSize {
-        guard let url = URL(string: urlString), let track = AVURLAsset(url: url).tracks(withMediaType: AVMediaType.video).first else { return CGSize.zero }
-        let size = track.naturalSize.applying(track.preferredTransform)
-        
-        return CGSize(width: abs(size.width), height: abs(size.height))
-    }
     
     func notifyUserForUpvote(button: VoteButton, post: Post) {
         

@@ -111,10 +111,8 @@ class AddOnPlaylistCollectionViewCell: BaseAddOnCollectionViewCell {
             let track = tracks[index]
             let imageView = imageViews[index]
             
-            if let music = track.music {
-                if let url = URL(string: music.musicImageURL) {
-                    imageView!.sd_setImage(with: url, completed: nil)
-                }
+            if let songwhip = track.link?.songwhip, let url = URL(string: songwhip.musicImage), let imageView = imageView {
+                imageView.sd_setImage(with: url)
             }
             
             index+=1
@@ -203,7 +201,7 @@ extension AddOnPlaylistCollectionViewCell: UITableViewDelegate, UITableViewDataS
         
         if let cell = tableView.dequeueReusableCell(withIdentifier: trackTableViewCellIdentifier, for: indexPath) as? AddOnPlaylistTrackTableViewCell {
             
-            if let _ = track.music {
+            if let _ = track.link?.songwhip {
                 cell.track = track
             }
             cell.delegate = self

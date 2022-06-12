@@ -25,6 +25,7 @@ struct Songwhip: Codable {
     var releaseDate: Date
     var artist: SongwhipArtist
     var musicImage: String
+    var url: String?
 }
 
 struct SongwhipArtist: Codable {

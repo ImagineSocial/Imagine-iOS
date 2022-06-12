@@ -46,7 +46,7 @@ extension FirestoreManager {
     
     func decode<T: Decodable>(query: Query, completion: @escaping (Result<[T], Error>) -> Void) {
         
-        query.addSnapshotListener { querySnapshot, error in
+        query.getDocuments { querySnapshot, error in
             guard let documents = querySnapshot?.documents else {
                 completion(.failure(error ?? FirestoreError.brokenAppleCredential))
                 return

@@ -11,17 +11,46 @@ import UIKit
 // MARK: - String
 
 extension String {
-    var youtubeID: String? {
-        let pattern = "((?<=(v|V)/)|(?<=be/)|(?<=(\\?|\\&)v=)|(?<=embed/))([\\w-]++)"
+    
+    static var quotes: (String, String) {
+        guard
+            let bQuote = Locale.current.quotationBeginDelimiter,
+            let eQuote = Locale.current.quotationEndDelimiter
+            else { return ("\"", "\"") }
+
+        return (bQuote, eQuote)
+    }
+
+    var quoted: String {
+        let (bQuote, eQuote) = String.quotes
+        return bQuote + self + eQuote
+    }
+    
+    var customFormat: String {
+        self.trimmingCharacters(in: .newlines).replacingOccurrences(of: "\n", with: "\\n")  // Save line breaks in a way that we can extract them later
+    }
+}
+
+
+import AVFoundation
+
+// MARK: - URL Stuff
+extension String {
+    func getURLVideoSize() -> CGSize {
+        guard let url = URL(string: self), let track = AVURLAsset(url: url).tracks(withMediaType: AVMediaType.video).first else { return CGSize.zero }
+        let size = track.naturalSize.applying(track.preferredTransform)
         
-        let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
-        let range = NSRange(location: 0, length: count)
-        
-        guard let result = regex?.firstMatch(in: self, range: range) else {
-            return nil
+        return CGSize(width: abs(size.width), height: abs(size.height))
+    }
+    
+    var isValidURL: Bool {
+        let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+        if let match = detector.firstMatch(in: self, options: [], range: NSRange(location: 0, length: self.utf16.count)) {
+            // it is a link, if the match covers the whole string
+            return match.range.length == self.utf16.count
+        } else {
+            return false
         }
-        
-        return (self as NSString).substring(with: result.range)
     }
     
     var imgurID: String? {
@@ -63,31 +92,16 @@ extension String {
         }
     }
     
-    static var quotes: (String, String) {
-        guard
-            let bQuote = Locale.current.quotationBeginDelimiter,
-            let eQuote = Locale.current.quotationEndDelimiter
-            else { return ("\"", "\"") }
-
-        return (bQuote, eQuote)
-    }
-
-    var quoted: String {
-        let (bQuote, eQuote) = String.quotes
-        return bQuote + self + eQuote
-    }
-    
-    var isValidURL: Bool {
-        let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
-        if let match = detector.firstMatch(in: self, options: [], range: NSRange(location: 0, length: self.utf16.count)) {
-            // it is a link, if the match covers the whole string
-            return match.range.length == self.utf16.count
-        } else {
-            return false
+    var youtubeID: String? {
+        let pattern = "((?<=(v|V)/)|(?<=be/)|(?<=(\\?|\\&)v=)|(?<=embed/))([\\w-]++)"
+        
+        let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+        let range = NSRange(location: 0, length: count)
+        
+        guard let result = regex?.firstMatch(in: self, range: range) else {
+            return nil
         }
-    }
-    
-    var customFormat: String {
-        self.trimmingCharacters(in: .newlines).replacingOccurrences(of: "\n", with: "\\n")  // Save line breaks in a way that we can extract them later
+        
+        return (self as NSString).substring(with: result.range)
     }
 }

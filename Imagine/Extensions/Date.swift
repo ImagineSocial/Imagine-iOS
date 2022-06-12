@@ -69,4 +69,13 @@ extension Date {
         
         return feedString
     }
+    
+    
+    func year() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy"
+        let stringDate = dateFormatter.string(from: self)
+        
+        return stringDate
+    }
 }

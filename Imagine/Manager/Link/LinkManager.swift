@@ -23,7 +23,9 @@ class LinkManager {
         
         switch url {
         case let string where string.contains(".mp4"):
-            let fullLink = Link(url: url)
+            let size = string.getURLVideoSize()
+
+            let fullLink = Link(url: url, mediaHeight: size.height, mediaWidth: size.width)
             completion(fullLink, .GIF)
         case let string where string.contains("music.apple.com") || string.contains("open.spotify.com") || string.contains("deezer.page.link"):
             getSongwhipLink(urlString: url) { link in

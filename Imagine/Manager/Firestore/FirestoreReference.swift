@@ -94,7 +94,7 @@ class FirestoreReference {
     static let language = LanguageSelection.language
     static let db = Firestore.firestore()
     
-    static func collectionRef(_ type: CollectionType, collectionReference: FirestoreCollectionReference? = nil, query: FirestoreQuery? = nil) -> Query {
+    static func collectionRef(_ type: CollectionType, collectionReference: FirestoreCollectionReference? = nil, query: FirestoreQuery? = nil, language: Language? = nil) -> Query {
         
         let reference = mainRef(type, collectionReference: collectionReference)
         
@@ -110,7 +110,7 @@ class FirestoreReference {
         return reference
     }
     
-    static func documentRef(_ type: CollectionType, documentID: String?, collectionReference: FirestoreCollectionReference? = nil) -> DocumentReference {
+    static func documentRef(_ type: CollectionType, documentID: String?, collectionReference: FirestoreCollectionReference? = nil, language: Language? = nil) -> DocumentReference {
         
         let reference = mainRef(type, collectionReference: collectionReference)
         
@@ -123,11 +123,13 @@ class FirestoreReference {
     
     // MARK: - Main Ref
     
-    static func mainRef(_ type: CollectionType, collectionReference: FirestoreCollectionReference? = nil) -> CollectionReference {
+    static func mainRef(_ type: CollectionType, collectionReference: FirestoreCollectionReference? = nil, language: Language? = nil) -> CollectionReference {
         var reference: CollectionReference
         
+        let setLanguage = language ?? self.language
+        
         // The german language got no subfolder for the data because of the bad database structure.
-        switch language {
+        switch setLanguage {
         case .de:
             reference = db.collection(type.mainString)
         default:

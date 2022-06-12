@@ -255,7 +255,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
         } else if post.type == .GIF {
             headerImageView.image = UIImage(named: "GIFIcon")
         } else if post.type == .link {
-            if let music = post.music, let url = URL(string: music.musicImageURL) {
+            if let songwhip = post.link?.songwhip, let url = URL(string: songwhip.musicImage) {
                 headerImageView.sd_setImage(with: url, completed: nil)
             } else if let link = post.link, let imageURL = link.imageURL, let url = URL(string: imageURL) {
                 headerImageView.sd_setImage(with: url, completed: nil)

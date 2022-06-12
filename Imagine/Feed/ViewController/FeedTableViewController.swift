@@ -150,7 +150,6 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                 performSegue(withIdentifier: "toFactSegue", sender: fact)
             }
         } else {
-//            changePostLocation(post: post)
             performSegue(withIdentifier: "showPost", sender: post)
         }
         
@@ -479,7 +478,6 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                 let post = Post(type: .picture, title: "", createdAt: Date())
                 post.documentID = comment.sectionItemID
                 post.isTopicPost = comment.isTopicPost
-                post.toComments = true
                 post.language = comment.sectionItemLanguage
                 if let userID = AuthenticationManager.shared.user?.uid {
                     post.user = User(userID: userID)

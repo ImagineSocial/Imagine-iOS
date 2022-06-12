@@ -40,4 +40,8 @@ class Music: Codable {
         self.musicImageURL = musicImageURL
         self.songwhipURL = songwhipURL
     }
+    
+    func getSongwhip() -> Songwhip {
+        Songwhip(title: name, musicType: type.rawValue, releaseDate: releaseDate ?? Date(), artist: SongwhipArtist(name: name, image: artistImageURL ?? ""), musicImage: musicImageURL)
+    }
 }

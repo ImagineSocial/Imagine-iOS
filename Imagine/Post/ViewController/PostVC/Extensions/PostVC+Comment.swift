@@ -29,14 +29,16 @@ extension PostViewController: CommentTableViewDelegate, CommentViewDelegate {
     }
     
     func recipientChanged(isActive: Bool, userUID: String) {
-        guard let post = post else { return }
+        guard let post = post, var recipients = post.notificationRecipients else { return }
         
         if isActive {
-            post.notificationRecipients.append(userUID)
+            recipients.append(userUID)
         } else {
-            let newList = post.notificationRecipients.filter { $0 != userUID }
+            let newList = recipients.filter { $0 != userUID }
             post.notificationRecipients = newList
         }
+        
+        post.notificationRecipients = recipients
     }
     
     func notAllowedToComment() {

@@ -40,13 +40,9 @@ class Post: Codable {
     var images: [PostImage]?
     var description: String?
     var link: Link?
-    var music: Music?
     var report = ReportType.normal
     var repostDocumentID: String?
-    var repostIsTopicPost = false
-    var repostLanguage = Language.de
     var commentCount = 0
-    var toComments = false // If you want to skip to comments (For now)
     var anonym = false
     var user: User?
     var userID: String?
@@ -60,7 +56,7 @@ class Post: Codable {
     var options: PostDesignOption?
     var location: Location?
     var tags: [String]?
-    var notificationRecipients = [String]()
+    var notificationRecipients: [String]?
     
     var survey: Survey?
     
@@ -89,36 +85,17 @@ class Post: Codable {
     
     func getRepost(returnRepost: @escaping (Post) -> Void) {
         
-        let db = FirestoreRequest.shared.db
+        guard let repost = repost, let repostID = repost.documentID else { return }
         
-        if let repostID = repostDocumentID {
-            var collectionRef: CollectionReference!
-            if repostIsTopicPost {
-                if repostLanguage == .en {
-                    collectionRef = db.collection("Data").document("en").collection("topicPosts")
-                } else {
-                    collectionRef = db.collection("TopicPosts")
-                }
-            } else {
-                if repostLanguage == .en {
-                    collectionRef = db.collection("Data").document("en").collection("posts")
-                } else {
-                    collectionRef = db.collection("Posts")
-                }
+        let postRef = FirestoreReference.documentRef(repost.isTopicPost ? .topicPosts : .posts, documentID: repostID)
+        
+        postRef.getDocument { (document, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else if let document = document, let post = PostHelper.shared.addThePost(document: document, isTopicPost: repost.isTopicPost, language: repost.language) {
+                
+                returnRepost(post)
             }
-    
-            let postRef = collectionRef.document(repostID)
-                        
-            postRef.getDocument(completion: { [weak self] (document, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else if let document = document {
-                    if let post = PostHelper.shared.addThePost(document: document, isTopicPost: self!.repostIsTopicPost, language: self!.repostLanguage) {
-                        
-                        returnRepost(post)
-                    }
-                }
-            })
         }
     }
     
@@ -154,8 +131,15 @@ class Post: Codable {
     }
     
     private func getUploadPost() -> Post {
-        let post = self
-        post.user = nil
+        // I want to upload the whole object with the updated votes, because Firebase automatically checks what changed. But I have the loaded User
+        let post = Post(type: self.type, title: self.title, createdAt: self.createdAt)
+        post.votes = self.votes
+        post.language = self.language
+        post.report = self.report
+        post.commentCount = self.commentCount
+        post.anonym = self.anonym
+        post.isTopicPost = self.isTopicPost
+
         return post
     }
 }

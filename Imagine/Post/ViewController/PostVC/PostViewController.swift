@@ -314,9 +314,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             }
         }
         
-        if post.toComments {    // Comes from the SideMenu NotifactionCenter with comment
-            self.scrollToBottom()
-        }
         imageCollectionView.reloadData()    // To load the image, when the data has to be fetched in "setUpViewController"
     }
     
@@ -474,22 +471,19 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         if post.user == nil && !post.anonym {
 
-            //No post data yet
-            let toComments = post.toComments
             let votes = post.newUpvotes
             FirestoreRequest.shared.getPostsFromDocumentIDs(posts: [post]) { posts in
                 guard let posts = posts, let post = posts.first else {
                     return
                 }
                 
-                        post.toComments = toComments
-                        post.newUpvotes = votes
+                post.newUpvotes = votes
                 self.post = post
-                        self.loadPost()
-                        if post.user == nil && !post.anonym {
-                            self.loadUser(post: post)
-                        }
-                  
+                self.loadPost()
+                if post.user == nil && !post.anonym {
+                    self.loadUser(post: post)
+                }
+                
             }
         } else {
             self.loadPost()
