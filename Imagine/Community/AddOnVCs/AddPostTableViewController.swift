@@ -35,7 +35,6 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     var savedPosts = [Post]()
     
     let db = FirestoreRequest.shared.db
-    let postHelper = PostHelper.shared
     
     var addOn: AddOn? {
         didSet {
@@ -89,72 +88,28 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
 //        navigationItem.hidesSearchBarWhenScrolling = false
     }
     
-    func getPosts() {
+    func getPosts(forTopics: Bool = false) {
         
-        var collectionRef: CollectionReference!
-        let language = LanguageSelection.language
-        if language == .en {
-            collectionRef = self.db.collection("Data").document("en").collection("posts")
-        } else {
-            collectionRef = self.db.collection("Posts")
-        }
-        let ref: Query!
+        var collectionRef = FirestoreReference.collectionRef(forTopics ? .topicPosts : .posts)
+        
         if playlistTracksOnly {
-            ref = collectionRef.whereField("musicType", isEqualTo: "track").order(by: "createTime", descending: true).limit(to: 15)
-        } else {
-            ref = collectionRef.order(by: "createTime", descending: true).limit(to: 15)
+            collectionRef = collectionRef.whereField("musicType", isEqualTo: "track")
         }
         
-        ref.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    for document in snap.documents {
-                                                
-                        if let post = self.postHelper.addThePost(document: document, isTopicPost: false, language: language) {
-                            self.posts.append(post)
-                        }
-                    }
+        FirestoreManager.shared.decode(query: collectionRef) { (result: Result<[Post], Error>) in
+            switch result {
+            case .success(let posts):
+                self.posts = posts
+                
+                DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
+            case .failure(let error):
+                print("We have an error: \(error.localizedDescription)")
             }
         }
     }
     
-    func getTopicPosts() {
-        
-        var collectionRef: CollectionReference!
-        let language = LanguageSelection.language
-        if language == .en {
-            collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
-        } else {
-            collectionRef = self.db.collection("TopicPosts")
-        }
-        
-        let ref: Query!
-        if playlistTracksOnly {
-            ref = collectionRef.whereField("musicType", isEqualTo: "track").order(by: "createTime", descending: true).limit(to: 15)
-        } else {
-            ref = collectionRef.order(by: "createTime", descending: true).limit(to: 15)
-        }
-        
-        ref.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    for document in snap.documents {
-                                                
-                        if let post = self.postHelper.addThePost(document: document, isTopicPost: true, language: language) {
-                            self.topicPosts.append(post)
-                        }
-                    }
-                    self.tableView.reloadData()
-                }
-            }
-        }
-    }
     
     func setUpSearchController() {
         
@@ -378,7 +333,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
         case 1:
             selectedPostType = .topicPost
             if topicPosts.count == 0 {
-                self.getTopicPosts()
+                self.getPosts(forTopics: true)
             } else {
                 tableView.reloadData()
             }

@@ -1,43 +1,63 @@
 //
-//  FirestoreManager+Post.swift
+//  MigrationManager.swift
 //  Imagine
 //
-//  Created by Don Malte on 25.09.21.
-//  Copyright © 2021 Malte Schoppe. All rights reserved.
+//  Created by Don Malte on 27.06.22.
+//  Copyright © 2022 Malte Schoppe. All rights reserved.
 //
 
 import Foundation
 import FirebaseFirestore
-import CoreLocation
 
-class PostHelper {
+/*
+ 1. Fetch Object mit alter Technik und Struktur
+ 2. Upload Objekt mit neuem Pfad
+ 
+ // Posts
+ - Posts (de/en)
+ - TopicPosts (de/en)
+ 
+ // PostData
+ - User - Posts
+ - User - Saved
+ - Community - Posts
+ 
+ */
+
+class MigrationManager {
     
-    static let shared = PostHelper()
-    
-    //MARK: - Variables
-    let handyHelper = HandyHelper.shared
     let factJSONString = "linkedFactID"
+    let handyHelper = HandyHelper.shared
     
-    //
-    var firestoreRequest: FirestoreRequest?
-    
-    
-    //MARK: - Class Initilizer
-    
-    ///Initialization for the FirestoreRequest Class
-    init(firestoreRequest: FirestoreRequest) {
-        self.firestoreRequest = firestoreRequest
+    var posts = [Post]()
+
+    func getPosts(for language: Language, topicPosts: Bool, completion: @escaping ([Post]?) -> Void) {
+                
+        var posts = [Post]()
+        let postQuery = FirestoreReference.collectionRef(topicPosts ? .topicPosts : .posts)
         
+        postQuery.getDocuments { [weak self] snap, error in
+            
+            guard let snap = snap, let self = self else {
+                completion(nil)
+                return
+            }
+            
+            
+            for document in snap.documents {
+                if let post = self.addThePost(document: document, isTopicPost: false, language: language) {
+                    posts.append(post)
+                }
+            }
+            
+            completion(posts)
+        }
     }
-    
-    ///Initialization if you just need to Add a Post object
-    init() {
-        
-    }
-    
-    //MARK:- addThePost
-    
-    ///Insert DocumentSnapshot and either get a full Post object back if "forFeed" is set to false or add the Post object to the posts array for the main feed to return the array later on
+}
+
+// MARK: - Legacy Fetch Code
+
+extension MigrationManager {
     func addThePost(document: DocumentSnapshot, isTopicPost: Bool, language: Language) -> Post? {
         
         let documentID = document.documentID
@@ -248,9 +268,9 @@ class PostHelper {
                     }
                     
                     post.repost = repost
-                    post.getRepost(returnRepost: { (repost) in
+                    post.getRepost { repost in
                         post.repost = repost
-                    })
+                    }
                     
                     return post
                 }
@@ -288,13 +308,6 @@ class PostHelper {
         }
                 
         //Check if the poster is a friend of yours
-        let isAFriend: Bool!
-        
-        if let request = firestoreRequest {
-            isAFriend = request.checkIfOPIsAFriend(userUID: originalPoster)
-        } else {
-            isAFriend = false
-        }
         
         let post = Post(type: .picture, title: title, createdAt: createTimestamp.dateValue())
         post.description = documentData["description"] as? String
@@ -305,7 +318,7 @@ class PostHelper {
         post.votes.nice = niceCount
         
         //Tried to export these extra values because they repeat themself in every "type" case but because of my async func "getFact" if a factID exists and move the post afterwards
-        if let report = self.handyHelper.setReportType(fetchedString: reportString) {
+        if let report = handyHelper.setReportType(fetchedString: reportString) {
             post.report = report
         }
         
@@ -355,21 +368,10 @@ class PostHelper {
         return post
     }
     
-    
-    //MARK:- Community
-    
     func addCommunity(communityID: String) -> Community {
+        let community = Community()
+        community.documentID = communityID
         
-        if let request = firestoreRequest {
-            let community = request.addFact(factID: communityID)
-            
-            return community
-        } else {
-            let community = Community()
-            community.documentID = communityID
-            
-            return community
-        }
+        return community
     }
 }
-

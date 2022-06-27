@@ -46,9 +46,7 @@ class FirestoreRequest {
     var morePostsToFetch = true
     var totalCountOfPosts = 0
     var alreadyFetchedCount = 0
-    
-    let postHelper = PostHelper.shared
-    
+        
     func getTheUsersFriend(completion: @escaping ([String]?) -> Void) {
         guard friends == nil else {
             completion(friends)
@@ -94,142 +92,6 @@ class FirestoreRequest {
         }
     }
     
-    /*
-     The Structure at the moment for the main feed:
-     getTheUsersFriend("friends", saved in this View) { // to get the right name for the feed
-     getLast15Posts() {
-     getFollowedTopicIDs() { //Is called inside "getFollowedTopicPosts"
-     getFollowedTopicPosts() {   // They are limited to the last date of the getLast15Posts fetch, if getMore, there is also a startAfter query, so the 15 posts fetched from the main query always limit the topicPosts
-     
-     
-     func orderIt() by createTime and return the posts
-     }
-     }
-     }
-     }
-     */
-    
-    
-    //MARK: - Main Feed
-    func getPostsForMainFeed(getMore: Bool, completion: @escaping ([Post]?) -> Void) {
-        
-        posts.removeAll()
-        
-        var postQuery = FirestoreReference.collectionRef(.posts)
-        
-        if getMore {    // If you want to get More Posts
-            if let lastSnap = lastSnap {        // For the next loading batch of 20, that will start after this snapshot
-                postQuery = postQuery.start(afterDocument: lastSnap)
-                self.startBeforeSnap = lastSnap
-            }
-        }
-        
-        getTheUsersFriend { _ in // First get the friends to choose which name to fetch
-            
-            postQuery.getDocuments { [weak self] snap, error in
-                
-                guard let snap = snap, let self = self else {
-                    completion(nil)
-                    return
-                }
-                
-                self.lastSnap = snap.documents.last    // Last document for the next fetch cycle
-                
-                for document in snap.documents {
-                    if let post = self.postHelper.addThePost(document: document, isTopicPost: false, language: self.language) {
-                        self.posts.append(post)
-                    }
-                }
-                
-                if let lastSnap = self.lastSnap {
-                    self.getFollowedTopicPosts(startSnap: self.startBeforeSnap, endSnap: lastSnap) { posts in
-                        guard let posts = posts else {
-                            completion(self.posts)
-                            return
-                        }
-
-                        var combinedPosts = posts
-                        combinedPosts.append(contentsOf: self.posts)
-                        let finalPosts = combinedPosts.sorted(by: { $0.createdAt > $1.createdAt})
-                        completion(finalPosts)
-                    }
-                } else {
-                    completion(self.posts)
-                }
-            }
-        }
-    }
-    
-    
-    
-    func getFollowedTopicPosts(startSnap: QueryDocumentSnapshot?, endSnap: QueryDocumentSnapshot, completion: @escaping ([Post]?) -> Void) {
-        
-        var topicPosts = [Post]()
-        
-        var startTimestamp = Timestamp(date: Date()) //now, i.e. the first fetch
-        
-        if let startSnap = startSnap {  // If there is a startSnap, the fetch starts after that
-            let data = startSnap.data()
-            
-            if let startStamp = data["createTime"] as? Timestamp {
-                startTimestamp = startStamp
-            }
-        }
-        
-        let collectionRef = FirestoreReference.collectionRef(.topicPosts)
-        
-        let data = endSnap.data()
-        
-        self.getFollowedTopicIDs { [weak self] topicIDs in
-            
-            guard let self = self, let topicIDs = topicIDs, let endTimestamp = data["createTime"] as? Timestamp else {
-                completion(nil)
-                return
-            }
-            
-            let topicTotalCount = topicIDs.count
-            var topicCount = 0
-            
-            if topicIDs.count == 0 {
-                completion(nil)
-            }
-            
-            topicIDs.forEach { topicID in
-                
-                let ref = collectionRef
-                    .whereField("linkedFactID", isEqualTo: topicID)
-                    .whereField("createTime", isLessThanOrEqualTo: startTimestamp)
-                    .whereField("createTime", isGreaterThanOrEqualTo: endTimestamp)
-                
-                ref.getDocuments { (snap, err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                        topicCount += 1
-                    } else {
-                        topicCount += 1
-                        guard let snap = snap else {
-                            return
-                        }
-                        
-                        var postCount = 0
-                        
-                        for document in snap.documents {
-                            postCount += 1
-                            
-                            if let post = self.postHelper.addThePost(document: document, isTopicPost: true, language: self.language) {
-                                topicPosts.append(post)
-                            }
-                        }
-                        
-                        if topicCount == topicTotalCount && postCount == snap.documents.count {
-                            completion(topicPosts)
-                        }
-                    }
-                }
-            }
-        }
-        
-    }
     
     func getFollowedTopicIDs(completion: @escaping ([String]?) -> Void) {
         var topicIDs = [String]()
@@ -443,29 +305,18 @@ class FirestoreRequest {
             return
         }
         
-        let ref = FirestoreReference.collectionRef(.topicPosts)
-            .whereField("linkedFactID", isEqualTo: community.documentID)
+        let query = FirestoreReference.collectionRef(.topicPosts)
+            .whereField("communityID", isEqualTo: community.documentID)
             .whereField("type", isEqualTo: "picture")
             .limit(to: 6)
         
-        ref.getDocuments { [weak self] snap, error in
-            
-            guard let snap = snap, error == nil, !snap.documents.isEmpty else {
-                
-                completion(nil)
-                return
+        FirestoreManager.shared.decode(query: query) { (result: Result<[Post], Error>) in
+            switch result {
+            case .success(let posts):
+                completion(posts)
+            case .failure(let error):
+                print("We have an error fetching previewPosts: \(error.localizedDescription)")
             }
-            
-            var posts = [Post]()
-            
-            snap.documents.forEach { document in
-                
-                if let post = self?.postHelper.addThePost(document: document, isTopicPost: true, language: community.language) {
-                    posts.append(post)
-                }
-            }
-            
-            completion(posts)
         }
     }
     
@@ -496,43 +347,25 @@ class FirestoreRequest {
     // MARK: - Get Posts from DocumentIDs
     func getPostsFromDocumentIDs(posts: [Post], completion: @escaping ([Post]?) -> Void) {
         
-        var endIndex = posts.count
-        var startIndex = 0
+        var errorCount = 0
         
         if posts.count == 0 {
             completion(self.posts)
         } else {
-            
-            getTheUsersFriend { _ in // First get the friends to check which name to fetch
+            posts.enumerated().forEach { index, post in
+                let documentReference = FirestoreReference.documentRef(post.isTopicPost ? .topicPosts : .posts, documentID: post.documentID)
                 
-                posts.forEach { post in
-                    var ref: DocumentReference
-                    
-                    if post.isTopicPost {
-                        ref = FirestoreReference.documentRef(.topicPosts, documentID: post.documentID)
-                    } else {
-                        ref = FirestoreReference.documentRef(.posts, documentID: post.documentID)
+                FirestoreManager.shared.decodeSingle(reference: documentReference) { (result: Result<Post, Error>) in
+                    switch result {
+                    case .success(let post):
+                        self.posts.append(post)
+                    case .failure(let error):
+                        print("We have an error: \(error.localizedDescription)")
+                        errorCount += 1
                     }
                     
-                    ref.getDocument { document, error in
-                        guard let document = document, error == nil else {
-                            
-                            completion(nil)
-                            return
-                        }
-                        
-                        
-                        if let post = self.postHelper.addThePost(document: document, isTopicPost: post.isTopicPost, language: post.language) {
-                            self.posts.append(post)
-                            
-                            startIndex+=1
-                        } else {
-                            endIndex-=1
-                        }
-                        
-                        if startIndex == endIndex {
-                            completion(self.posts)
-                        }
+                    if index == self.posts.count + errorCount {
+                        completion(self.posts)
                     }
                 }
             }
@@ -540,17 +373,6 @@ class FirestoreRequest {
     }
     
     //MARK:- Stuff
-    
-    func addFact(factID: String) -> Community {
-        let fact = Community()
-        fact.documentID = factID
-        for topic in self.followedTopicIDs {
-            if factID == topic {
-                fact.beingFollowed = true
-            }
-        }
-        return fact
-    }
     
     func loadPost(post: Post, completion: @escaping (Post?) -> Void) {
         let ref: DocumentReference!

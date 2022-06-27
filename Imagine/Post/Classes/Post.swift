@@ -83,18 +83,18 @@ class Post: Codable {
     
     // MARK: Repost
     
-    func getRepost(returnRepost: @escaping (Post) -> Void) {
+    func getRepost(completion: @escaping (Post) -> Void) {
         
         guard let repost = repost, let repostID = repost.documentID else { return }
         
         let postRef = FirestoreReference.documentRef(repost.isTopicPost ? .topicPosts : .posts, documentID: repostID)
         
-        postRef.getDocument { (document, err) in
-            if let error = err {
+        FirestoreManager.shared.decodeSingle(reference: postRef) { (result: Result<Post, Error>) in
+            switch result {
+            case .success(let post):
+                completion(post)
+            case .failure(let error):
                 print("We have an error: \(error.localizedDescription)")
-            } else if let document = document, let post = PostHelper.shared.addThePost(document: document, isTopicPost: repost.isTopicPost, language: repost.language) {
-                
-                returnRepost(post)
             }
         }
     }

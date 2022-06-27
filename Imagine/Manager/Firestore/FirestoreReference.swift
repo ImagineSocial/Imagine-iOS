@@ -80,6 +80,7 @@ enum CollectionType: String {
 
 struct FirestoreQuery {
     var field: String
+    var equalTo: String? = nil
     var descending = true
     var limit: Int?
 }
