@@ -80,6 +80,7 @@
 "oneMonthAgo" = "Vor einem Monat";
 "oneYearAgo" = "Vor einem Jahr";
 "%d days ago" = "Vor %d Tagen";
+"%d hour ago" = "Vor %d Stunde";
 "%d hours ago" = "Vor %d Stunden";
 "%d months ago" = "Vor %d Monaten";
 "%d years ago" = "Vor %d Jahren";

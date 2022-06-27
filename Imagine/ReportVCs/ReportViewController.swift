@@ -117,13 +117,7 @@ class ReportViewController: UIViewController {
     
     func checkIfItsYourPost() {
         if let currentUser = AuthenticationManager.shared.user, let post = post, let user = post.user {
-            if currentUser.uid == Constants.userIDs.uidMalte {
-                if user.uid == Constants.userIDs.FrankMeindlID || user.uid == Constants.userIDs.MarkusRiesID || user.uid == Constants.userIDs.AnnaNeuhausID || user.uid == Constants.userIDs.LaraVoglerID || user.uid == Constants.userIDs.LenaMasgarID  {
-                    insertDeleteView()
-                }
-            }
-            
-            if user.uid == currentUser.uid {
+            if currentUser.uid == Constants.userIDs.uidMalte || user.uid == currentUser.uid {
                 insertDeleteView()
             }
         }
@@ -248,7 +242,7 @@ class ReportViewController: UIViewController {
                     }
                 }
             }
-        case .picture:
+        case .picture, .panorama:
             let storageRef = Storage.storage().reference().child("postPictures").child("\(documentID).png")
             
             storageRef.delete { (err) in
@@ -311,7 +305,7 @@ class ReportViewController: UIViewController {
     }
     
     @IBAction func dismissPressed(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
+        dismiss(animated: true)
     }
     
     @IBAction func reportOptionsScreenTapped(_ sender: DesignableButton) {
@@ -366,20 +360,13 @@ class ReportViewController: UIViewController {
     }
     
     @IBAction func savePostTapped(_ sender: Any) {
-        guard let userID = AuthenticationManager.shared.user?.uid, let post = post, let documentID = post.documentID else {
+        guard AuthenticationManager.shared.user != nil, let post = post else {
             self.notLoggedInAlert()
             return
         }
         
-        let ref = db.collection("Users").document(userID).collection("saved").document()
-        
-        let data: [String:Any] = ["createTime": Timestamp(date: Date()), "documentID": documentID]
-        
-        ref.setData(data) { (err) in
-            if let error = err {
-                print("We have an error saving this post: \(error.localizedDescription)")
-            } else {
-                print("Successfully saved")
+        post.savePost { success in
+            if success {
                 self.savePostButtonIcon.tintColor = Constants.green
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {

@@ -99,6 +99,27 @@ class Post: Codable {
         }
     }
     
+    func savePost(completion: @escaping (Bool) -> Void) {
+        guard let userID = AuthenticationManager.shared.user?.uid, let documentID = self.documentID else {
+            completion(false)
+            return
+        }
+        
+        let ref = FirestoreReference.documentRef(.users, documentID: documentID, collectionReference: FirestoreCollectionReference(document: userID, collection: "saved"))
+        
+        let data = PostData(createdAt: Date(), userID: userID, language: language, isTopicPost: isTopicPost)
+        
+        FirestoreManager.uploadObject(object: data, documentReference: ref) { error in
+            if let error = error {
+                print("We have an error saving this post: \(error.localizedDescription)")
+                completion(false)
+                return
+            }
+            print("Successfully saved")
+            completion(true)
+        }
+    }
+    
     func registerVote(for type: VoteType) {
         
         switch type {

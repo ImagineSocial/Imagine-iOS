@@ -40,6 +40,7 @@ extension NewPostVC {
         
         if let community = linkedCommunity { // If there is a fact that should be linked to this post, and append its ID to the array
             post.communityID = community.documentID
+            post.isTopicPost = true
         }
        
         post.userID = option.postAnonymous ? anonymousString : userID
@@ -50,7 +51,7 @@ extension NewPostVC {
         
         post.location = location
         
-        let documentReference = FirestoreReference.documentRef(.posts, documentID: nil)
+        let documentReference = FirestoreReference.documentRef(linkedCommunity == nil ? .posts : .topicPosts, documentID: nil)
         
         // Dann ein File FirestoreManager-Upload wo dieses Objekt zum hochladen bearbeitet wird
         
@@ -71,7 +72,10 @@ extension NewPostVC {
                 }
 
                 post.image = image
-                post.type = .picture
+                
+                let ratio = image.width / image.height
+                
+                post.type = ratio > 2 ? .panorama : .picture
                 
                 self.uploadObject(object: post, documentReference: documentReference)
             }
@@ -107,7 +111,9 @@ extension NewPostVC {
                 print("We have an error: ", error.localizedDescription)
             } else {
                 
-                self.uploadCommunityData(documentID: documentReference.documentID)
+                if self.linkedCommunity != nil {
+                    self.uploadCommunityData(documentID: documentReference.documentID)
+                }
                 self.uploadUserData(documentID: documentReference.documentID)
                 
                 if self.savePictureAfterwards { // To Save on your device, not the best solution though
@@ -202,10 +208,11 @@ extension NewPostVC {
     
     private func uploadUserData(documentID: String) {
         guard let userID = AuthenticationManager.shared.user?.uid else { return }
-        let reference = FirestoreReference.documentRef(.users, documentID: documentID)
+        let collectionReference = FirestoreCollectionReference(document: userID, collection: "posts")
+        let reference = FirestoreReference.documentRef(.users, documentID: documentID, collectionReference: collectionReference)
         
         let isTopicPost = comingFromAddOnVC || postOnlyInTopic || linkedCommunity != nil
-        let data = PostUserUploadData(createdAt: Date(), isTopicPost: isTopicPost, userID: userID, language: LanguageSelection.language.rawValue)
+        let data = PostData(createdAt: Date(), userID: userID, language: LanguageSelection.language, isTopicPost: isTopicPost)
         
         FirestoreManager.uploadObject(object: data, documentReference: reference) { error in
             if let error = error {
@@ -214,26 +221,12 @@ extension NewPostVC {
         }
     }
     
-    private struct PostUserUploadData: Codable {
-        var createdAt: Date
-        var isTopicPost: Bool
-        var userID: String
-        var language: String
-    }
-    
-    private struct PostCommunityUploadData: Codable {
-        var createdAt: Date
-        var userID: String
-        var type: String?
-        var language: String
-    }
-    
     private func uploadCommunityData(documentID: String) {
         guard let userID = AuthenticationManager.shared.user?.uid, let community = linkedCommunity else { return }
-        let reference = FirestoreReference.documentRef(.communities, documentID: documentID, collectionReference: FirestoreCollectionReference(document: community.documentID, collection: "posts"))
+        let collectionReference = FirestoreCollectionReference(document: community.documentID, collection: "posts")
+        let reference = FirestoreReference.documentRef(.communities, documentID: documentID, collectionReference: collectionReference)
         
-        let type = (comingFromAddOnVC || postOnlyInTopic) ? "topicPost" : nil
-        let data = PostCommunityUploadData(createdAt: Date(), userID: userID, type: type, language: LanguageSelection.language.rawValue)
+        let data = PostData(createdAt: Date(), userID: userID, language: LanguageSelection.language, isTopicPost: true)
         
         FirestoreManager.uploadObject(object: data, documentReference: reference) { error in
             if let error = error {

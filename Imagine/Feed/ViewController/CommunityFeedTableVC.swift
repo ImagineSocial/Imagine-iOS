@@ -51,67 +51,29 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
         tableView.contentInset = UIEdgeInsets(top: newHeight, left: 0, bottom: 0, right: 0)
         tableView.contentOffset = CGPoint(x: 0, y: -newHeight)
         
-        setPlaceholderAndGetPosts()
+        setPlaceholders()
+        getPosts()
     }
     
     override func getPosts() {
-        
-        guard let community = community else { return }
-        
-        guard isConnected() else {
-            fetchRequested = true
+                
+        guard let community = community, isConnected() else {
+            fetchRequested = isConnected()
             return
         }
         
-        self.view.activityStartAnimating()
+        view.activityStartAnimating()
         
         DispatchQueue.global(qos: .background).async {
-            self.firestoreRequest.getPostsForCommunity(getMore: !self.posts.isEmpty, community: community) { posts in
-                
+            
+            self.firestoreManager.getCommunityPosts(communityID: community.documentID) { posts in
                 guard let posts = posts else {
-                    DispatchQueue.main.async {
-                        self.view.activityStopAnimating()
-                    }
+                    print("No Posts")
+                    self.view.activityStopAnimating()
                     return
                 }
                 
-                if self.placeholderAreShown {   // Get the first batch of posts
-                    
-                    self.posts.removeAll()  //to get the placeholder out
-                    self.posts = posts
-                    
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                        
-                        self.fetchesPosts = false
-                        
-                        // remove ActivityIndicator incl. backgroundView
-                        self.view.activityStopAnimating()
-                        
-                        self.refreshControl?.endRefreshing()
-                    }
-                } else {    // Append the next batch to the existing
-                    var indexes = [IndexPath]()
-                    
-                    for result in posts {
-                        let row = self.posts.count
-                        
-                        indexes.append(IndexPath(row: row, section: 0))
-                        self.posts.append(result)
-                    }
-                    
-                    DispatchQueue.main.async {
-                        
-                        self.tableView.performBatchUpdates({
-                            self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                            self.tableView.insertRows(at: indexes, with: .bottom)
-                        }, completion: { (_) in
-                            self.fetchesPosts = false
-                        })
-                        
-                        self.view.activityStopAnimating()
-                    }
-                }
+                self.placeholderAreShown ? self.setPosts(posts) : self.appendPosts(posts)
             }
         }
     }
@@ -160,8 +122,8 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
         let height = scrollView.frame.size.height
         let distanceFromBottom = scrollView.contentSize.height - offset
         
-        if distanceFromBottom < height, morePostsAvailable, fetchesPosts == false {
-            fetchesPosts = true
+        if distanceFromBottom < height, morePostsAvailable, fetchInProgress == false {
+            fetchInProgress = true
             self.getPosts()
         }
     }
@@ -266,7 +228,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
             }
         case "toUserSegue" :
             if let userVC = segue.destination as? UserFeedTableViewController, let chosenUser = sender as? User {   // Another User
-                userVC.userOfProfile = chosenUser
+                userVC.user = chosenUser
                 userVC.currentState = .otherUser
             }
         default:

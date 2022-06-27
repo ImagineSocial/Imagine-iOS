@@ -94,6 +94,7 @@
 "oneMonthAgo" = "One month ago";
 "oneYearAgo" = "One year ago";
 "%d days ago" = "%d days ago";
+"%d hour ago" = "%d hour ago";
 "%d hours ago" = "%d hours ago";
 "%d months ago" = "%d months ago";
 "%d years ago" = "%d years ago";

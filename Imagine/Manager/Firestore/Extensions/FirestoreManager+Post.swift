@@ -11,9 +11,9 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 
 // This enum differentiates between savedPosts or posts for the "getTheSavedPosts" function
-enum PostList {
-    case postsFromUser
-    case savedPosts
+enum UserPostType {
+    case user
+    case saved
 }
 
 enum FirestoreError: Error {
@@ -143,7 +143,12 @@ class FirestoreRequest {
                 
                 if let lastSnap = self.lastSnap {
                     self.getFollowedTopicPosts(startSnap: self.startBeforeSnap, endSnap: lastSnap) { posts in
-                        var combinedPosts = self.posts
+                        guard let posts = posts else {
+                            completion(self.posts)
+                            return
+                        }
+
+                        var combinedPosts = posts
                         combinedPosts.append(contentsOf: self.posts)
                         let finalPosts = combinedPosts.sorted(by: { $0.createdAt > $1.createdAt})
                         completion(finalPosts)
@@ -251,7 +256,7 @@ class FirestoreRequest {
     
     
     //MARK: - Saved and User
-    func getUserPosts(getMore: Bool, postList: PostList, userUID : String, completion: @escaping ([Post]?) -> Void) {
+    func getUserPosts(getMore: Bool, postList: UserPostType, userUID : String, completion: @escaping ([Post]?) -> Void) {
         
         // check if there are more posts to fetch
         guard morePostsToFetch else {
@@ -265,9 +270,9 @@ class FirestoreRequest {
         var postListReference: String!
         
         switch postList {
-        case .postsFromUser:
+        case .user:
             postListReference = "posts"
-        case .savedPosts:
+        case .saved:
             postListReference = "saved"
         }
         
@@ -308,7 +313,7 @@ class FirestoreRequest {
                 self.lastSavedPostsSnap = snap.documents.last // For the next batch
                 
                 switch postList {
-                case .postsFromUser:
+                case .user:
                     for document in snap.documents {
                         let documentID = document.documentID
                         let data = document.data()
@@ -331,7 +336,7 @@ class FirestoreRequest {
                         self?.posts.sort(by: { $0.createdAt.compare($1.createdAt) == .orderedDescending })
                         completion(self?.posts)
                     }
-                case .savedPosts:
+                case .saved:
                     for document in snap.documents {
                         let documentID = document.documentID
                         let data = document.data()

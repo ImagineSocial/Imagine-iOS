@@ -49,7 +49,8 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         
         setNotificationListener()
         
-        setPlaceholderAndGetPosts()
+        setPlaceholders()
+        getPosts()
         
         // Show intro slides for different features in the app
         if !self.isAppAlreadyLaunchedOnce() {
@@ -101,16 +102,17 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     @objc override func getPosts() {
         // If "getMore" is true, you want to get more Posts, or the initial batch of 20 Posts, if not you want to refresh the current feed
         
-        guard isConnected() else {
-            fetchRequested = true
+        guard isConnected(), !fetchInProgress else {
+            fetchRequested = !isConnected()
             return
         }
         
         self.view.activityStartAnimating()
+        self.fetchInProgress = true
         
         DispatchQueue.global(qos: .background).async {
             
-            self.firestoreManager.getPosts(for: .main) { posts in
+            self.firestoreManager.getPostsForMainFeed { posts in
                 guard let posts = posts else {
                     return
                 }
@@ -119,9 +121,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                     self.returnedPostsAreEmpty()
                     return
                 }
-                
-                posts.forEach { $0.loadUser() }
-                
+                                
                 self.placeholderAreShown ? self.setPosts(posts) : self.appendPosts(posts)
             }
             
@@ -187,7 +187,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         case "toUserSegue":
             if let userVC = segue.destination as? UserFeedTableViewController {
                 if let chosenUser = sender as? User {   // Another User
-                    userVC.userOfProfile = chosenUser
+                    userVC.user = chosenUser
                     userVC.currentState = .otherUser
                 } else { // The CurrentUser
                     userVC.delegate = self

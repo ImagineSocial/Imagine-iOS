@@ -164,15 +164,10 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func setUpUI() {
-        
         feedLikeView.setDefaultButtonImages()
-                
-        savePostButton.tintColor = .label
-        
+                        
         handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
-            if alreadySaved {
-                self.savePostButton.tintColor = Constants.green
-            }
+            self.savePostButton.tintColor = alreadySaved ? Constants.green : .label
         }
     }
     
@@ -268,7 +263,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 let item = AVPlayerItem(url: url)
                 self.videoPlayerItem = item
             }
-        case .link:
+        case .link, .music:
             if let link = post.link {
                 setUpLinkButton()
                 imageCollectionViewHeightConstraint.constant = 200
@@ -495,24 +490,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         createFloatingCommentView()
     }
     
-    func checkIfAlreadySaved() {
-        guard let post = post, let documentID = post.documentID, let userID = AuthenticationManager.shared.user?.uid else {
-            return
-        }
-        let savedRef = db.collection("Users").document(userID).collection("saved").whereField("documentID", isEqualTo: documentID)
-        
-        savedRef.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if snap!.documents.count != 0 {
-                    // Already saved
-                    self.savePostButton.tintColor = Constants.green
-                }
-            }
-        }
-    }
-    
     // MARK: - Linked Community View
     
     func setCommunity() {
@@ -624,7 +601,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     //MARK: - YouTube Post
     
     func setUpYouTubeVideoUI() {
-        imageCollectionViewHeightConstraint.constant = 200
+        imageCollectionViewHeightConstraint.constant = 250
         contentView.addSubview(youTubeView)
         youTubeView.leadingAnchor.constraint(equalTo: imageCollectionView.leadingAnchor).isActive = true
         youTubeView.trailingAnchor.constraint(equalTo: imageCollectionView.trailingAnchor).isActive = true
@@ -829,24 +806,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     
     @IBAction func savePostTapped(_ sender: Any) {
-        guard let post = post, let userID = AuthenticationManager.shared.user?.uid, let documentID = post.documentID else {
+        guard let post = post, AuthenticationManager.shared.user != nil else {
             notLoggedInAlert()
             return
         }
         
-        let ref = db.collection("Users").document(userID).collection("saved").document(documentID)
-        
-        var data: [String:Any] = ["createTime": Timestamp(date: Date())]
-        
-        if post.isTopicPost {
-            data["isTopicPost"] = true
-        }
-        
-        ref.setData(data) { (err) in
-            if let error = err {
-                print("We have an error saving this post: \(error.localizedDescription)")
-            } else {
-                print("Successfully saved")
+        post.savePost { success in
+            if success {
                 self.savePostButton.tintColor = Constants.green
             }
         }
@@ -899,7 +865,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             }
         case "toUserSegue":
             if let chosenUser = sender as? User, let userVC = segue.destination as? UserFeedTableViewController {
-                userVC.userOfProfile = chosenUser
+                userVC.user = chosenUser
                 userVC.currentState = .otherUser
                 
             }

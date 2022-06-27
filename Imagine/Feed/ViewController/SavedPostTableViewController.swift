@@ -15,7 +15,9 @@ class SavedPostTableViewController: BaseFeedTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setPlaceholders()
         getPosts()
+        navigationController?.hideHairline()
         
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
@@ -24,50 +26,24 @@ class SavedPostTableViewController: BaseFeedTableViewController {
     }
     
     override func getPosts() {
+        guard isConnected(), !fetchInProgress, let userID = AuthenticationManager.shared.user?.uid else {
+            fetchRequested = !isConnected()
+            return
+        }
         
-        if isConnected() {
-            
-            guard let userID = AuthenticationManager.shared.user?.uid else {
-                return
-            }
-            firestoreRequest.getUserPosts(getMore: !posts.isEmpty, postList: .savedPosts, userUID: userID) { posts  in
-                
+        self.view.activityStartAnimating()
+        self.fetchInProgress = true
+        
+        DispatchQueue.global(qos: .background).async {
+            self.firestoreManager.getSavedPosts(userID: userID) { posts in
                 guard let posts = posts else {
-                    print("No More Posts")
+                    print("No Posts")
                     self.view.activityStopAnimating()
                     return
                 }
                 
-                if self.placeholderAreShown {   // Get the first batch of posts
-                    self.posts = posts
-                    self.tableView.reloadData()
-                    self.fetchesPosts = false
-                    
-                    self.refreshControl?.endRefreshing()
-                    
-                } else {    // Append the next batch to the existing
-                    var indexes = [IndexPath]()
-                    
-                    for result in posts {
-                        let row = self.posts.count
-                        indexes.append(IndexPath(row: row, section: 0))
-                        self.posts.append(result)
-                    }
-                    
-                    self.tableView.performBatchUpdates({
-                        self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                        self.tableView.insertRows(at: indexes, with: .bottom)
-                    }, completion: { (_) in
-                        self.fetchesPosts = false
-                    })
-                }
-                print("Jetzt haben wir \(self.posts.count)")
-                
-                // remove ActivityIndicator incl. backgroundView
-                self.view.activityStopAnimating()
+                self.placeholderAreShown ? self.setPosts(posts) : self.appendPosts(posts)
             }
-        } else {
-            fetchRequested = true
         }
     }
     
@@ -84,51 +60,24 @@ class SavedPostTableViewController: BaseFeedTableViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showPost" {
-            if let chosenPost = sender as? Post {
-                if let postVC = segue.destination as? PostViewController {
-                    postVC.post = chosenPost
-                }
-            }
-        }
-        if segue.identifier == "toUserSegue" {
-            if let chosenUser = sender as? User {
-                if let userVC = segue.destination as? UserFeedTableViewController {
-                    userVC.userOfProfile = chosenUser
-                    userVC.currentState = .otherUser
-                }
-            }
+        if segue.identifier == "showPost", let chosenPost = sender as? Post, let postVC = segue.destination as? PostViewController {
+            postVC.post = chosenPost
         }
         
-        if segue.identifier == "meldenSegue" {
-            if let chosenPost = sender as? Post {
-                if let reportVC = segue.destination as? ReportViewController {
-                    reportVC.post = chosenPost
-                }
-            }
+        if segue.identifier == "toUserSegue", let chosenUser = sender as? User, let userVC = segue.destination as? UserFeedTableViewController {
+            userVC.user = chosenUser
+            userVC.currentState = .otherUser
         }
-        if segue.identifier == "toFactSegue" {
-            if let community = sender as? Community {
-               
-                if let factVC = segue.destination as? CommunityPageVC {
-                    
-                    factVC.community = community
-                }
-                
-            }
+        
+        if segue.identifier == "meldenSegue", let chosenPost = sender as? Post, let reportVC = segue.destination as? ReportViewController {
+            reportVC.post = chosenPost
+        }
+        if segue.identifier == "toFactSegue", let community = sender as? Community, let communityVC = segue.destination as? CommunityPageVC {
+            communityVC.community = community
         }
     }
     
     override func userTapped(post: Post) {
         performSegue(withIdentifier: "toUserSegue", sender: post.user)
     }
-    
-//    override func setEditing(_ editing: Bool, animated: Bool) {
-//        // Takes care of toggling the button's title.
-//        super.setEditing(!isEditing, animated: true)
-//        
-//        // Toggle table view editing.
-//        tableView.setEditing(!tableView.isEditing, animated: true)
-//    }
-
 }

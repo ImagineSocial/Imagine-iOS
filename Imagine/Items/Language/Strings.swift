@@ -40,6 +40,7 @@ struct Strings {
     static let oneYearAgo = NSLocalizedString("oneYearAgo", comment: "One year ago")
     static let yesterday = NSLocalizedString("yesterday", comment: "yesterday")
     static let xDaysAgo = NSLocalizedString("%d days ago", comment: "How many days is the post old")
+    static let xHourAgo = NSLocalizedString("%d hour ago", comment: "The post i one is the post old")
     static let xHoursAgo = NSLocalizedString("%d hours ago", comment: "How many hours is the post old")
     static let xMonthsAgo = NSLocalizedString("%d months ago", comment: "how many months is the post old")
     static let xYearsAgo = NSLocalizedString("%d years ago", comment: "How many years is the post old")

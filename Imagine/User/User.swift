@@ -22,6 +22,7 @@ class User: Codable {
     var imageURL: String?
     var blocked: [String]?
     var statusText: String?
+    var postCount: Int?
     
     //Social Media Links
     var instagramLink: String?
@@ -41,7 +42,7 @@ class User: Codable {
     
     enum CodingKeys: String, CodingKey {
         case imageURL = "profilePictureURL"
-        case name, statusText, blocked, instagramLink, instagramDescription, patreonLink, patreonDescription, youTubeLink, youTubeDescription, twitterLink, twitterDescription, songwhipLink, songwhipDescription, locationName, locationIsPublic
+        case name, statusText, blocked, instagramLink, instagramDescription, patreonLink, patreonDescription, youTubeLink, youTubeDescription, twitterLink, twitterDescription, songwhipLink, songwhipDescription, locationName, locationIsPublic, postCount
     }
     
     
@@ -50,9 +51,10 @@ class User: Codable {
         
         let reference = FirestoreReference.documentRef(.users, documentID: uid)
         
-        FirestoreManager.decodeSingle(reference: reference) { (result: Result<User, Error>) in
+        FirestoreManager.shared.decodeSingle(reference: reference) { (result: Result<User, Error>) in
             switch result {
             case .success(let user):
+                user.uid = reference.documentID
                 completion(user)
             case .failure(let error):
                 completion(nil)

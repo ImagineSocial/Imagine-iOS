@@ -380,7 +380,7 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
         if segue.identifier == "toUserSegue" {
             if let choosenUser = sender as? User {
                 if let nextVC = segue.destination as? UserFeedTableViewController{
-                    nextVC.userOfProfile = choosenUser
+                    nextVC.user = choosenUser
                     nextVC.currentState = .friendOfCurrentUser
                 }
             }

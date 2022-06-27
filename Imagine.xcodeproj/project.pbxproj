@@ -44,6 +44,7 @@
 		026F467A27690A3600C279D2 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026F467927690A3600C279D2 /* Icons.swift */; };
 		027BA8C527CBCEC600A8919F /* SmallTopicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027BA8C427CBCEC600A8919F /* SmallTopicCell.swift */; };
 		027BA8C727CBD49100A8919F /* WebVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027BA8C627CBD49100A8919F /* WebVC.swift */; };
+		027F9B1A2863A0FD0034FDC9 /* UINavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027F9B192863A0FD0034FDC9 /* UINavigationController.swift */; };
 		0289957326FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */; };
 		0289957726FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957626FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift */; };
 		0289957B26FB601D007CAFB7 /* PostVC+MultiPicCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957A26FB601C007CAFB7 /* PostVC+MultiPicCollectionView.swift */; };
@@ -63,6 +64,7 @@
 		02B7C30A27920F2C003384FA /* NewPostVC+Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B7C30927920F2C003384FA /* NewPostVC+Upload.swift */; };
 		02B7C30D2792135D003384FA /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B7C30C2792135D003384FA /* AuthenticationManager.swift */; };
 		02B7C30F2792286C003384FA /* NewPostVC+Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B7C30E2792286C003384FA /* NewPostVC+Delegate.swift */; };
+		02BF874628562B1900DE1361 /* FirestoreManager+Fetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BF874528562B1900DE1361 /* FirestoreManager+Fetch.swift */; };
 		02EBEFE22635B40F00373C45 /* FeedLikeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EBEFE12635B40F00373C45 /* FeedLikeView.swift */; };
 		02EBEFE52635B41D00373C45 /* FeedLikeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02EBEFE42635B41D00373C45 /* FeedLikeView.xib */; };
 		02FB9C0828452F3C00124EAC /* FirestoreReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FB9C0728452F3C00124EAC /* FirestoreReference.swift */; };
@@ -351,6 +353,7 @@
 		026F467927690A3600C279D2 /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
 		027BA8C427CBCEC600A8919F /* SmallTopicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallTopicCell.swift; sourceTree = "<group>"; };
 		027BA8C627CBD49100A8919F /* WebVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebVC.swift; sourceTree = "<group>"; };
+		027F9B192863A0FD0034FDC9 /* UINavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINavigationController.swift; sourceTree = "<group>"; };
 		0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommunityCollectionVC+CollectionView.swift"; sourceTree = "<group>"; };
 		0289957626FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseFeedTableVC+TableView.swift"; sourceTree = "<group>"; };
 		0289957A26FB601C007CAFB7 /* PostVC+MultiPicCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostVC+MultiPicCollectionView.swift"; sourceTree = "<group>"; };
@@ -370,6 +373,7 @@
 		02B7C30927920F2C003384FA /* NewPostVC+Upload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewPostVC+Upload.swift"; sourceTree = "<group>"; };
 		02B7C30C2792135D003384FA /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
 		02B7C30E2792286C003384FA /* NewPostVC+Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewPostVC+Delegate.swift"; sourceTree = "<group>"; };
+		02BF874528562B1900DE1361 /* FirestoreManager+Fetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FirestoreManager+Fetch.swift"; sourceTree = "<group>"; };
 		02EBEFE12635B40F00373C45 /* FeedLikeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLikeView.swift; sourceTree = "<group>"; };
 		02EBEFE42635B41D00373C45 /* FeedLikeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedLikeView.xib; sourceTree = "<group>"; };
 		02FB9C0728452F3C00124EAC /* FirestoreReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreReference.swift; sourceTree = "<group>"; };
@@ -719,6 +723,13 @@
 			path = Link;
 			sourceTree = "<group>";
 		};
+		027F9B1B2869B1F30034FDC9 /* Migration */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Migration;
+			sourceTree = "<group>";
+		};
 		0286240A27529D400031AD5E /* Feed */ = {
 			isa = PBXGroup;
 			children = (
@@ -736,6 +747,7 @@
 				E962AC282224442000C6D6EF /* FeedTableViewController.swift */,
 				E9B9445E225800EE000145E2 /* UserFeedTableViewController.swift */,
 				E9530C5222DDE94D007D6A00 /* SavedPostTableViewController.swift */,
+				E9F6030E235DE5DF00A58D08 /* CommunityFeedTableVC.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -1112,6 +1124,7 @@
 			isa = PBXGroup;
 			children = (
 				022981C226FB49D400B07BC8 /* FirestoreManager.swift */,
+				02BF874528562B1900DE1361 /* FirestoreManager+Fetch.swift */,
 				0247C01F2854C71E002876AB /* FirestoreManager+Upload.swift */,
 				02FB9C0728452F3C00124EAC /* FirestoreReference.swift */,
 				0289958626FF422B007CAFB7 /* Extensions */,
@@ -1129,6 +1142,7 @@
 				029F7B3F2730537B0029254A /* NSLayoutConstraint.swift */,
 				029F7B41273053920029254A /* UIScrollView.swift */,
 				029F7B43273053A80029254A /* UIColor.swift */,
+				027F9B192863A0FD0034FDC9 /* UINavigationController.swift */,
 				029F7B45273053C00029254A /* UIViewController.swift */,
 				029F7B47273053D10029254A /* UIImage.swift */,
 				029F7B49273053E30029254A /* UIKit.swift */,
@@ -1264,10 +1278,12 @@
 				E9F622F525EA492800AAD2C0 /* Network */,
 				022981C126FB49C000B07BC8 /* Manager */,
 				E971190B25EBB9450078B2D3 /* ViewController */,
+				E9B1872D222ECC2C00923037 /* ReportVCs */,
 				E9F622DA25E94FE200AAD2C0 /* Views */,
 				E9F622F425EA48AF00AAD2C0 /* Model */,
 				029F7B3A273053010029254A /* Extensions */,
 				E971190925EBA03C0078B2D3 /* Items */,
+				027F9B1B2869B1F30034FDC9 /* Migration */,
 				E924BB3623435CDD00BC6024 /* Imagine.entitlements */,
 				E962AC222224430600C6D6EF /* Info.plist */,
 				E9526C10250FB10D0088004F /* GoogleService-Info.plist */,
@@ -1313,7 +1329,6 @@
 			isa = PBXGroup;
 			children = (
 				E971191925EBC3DF0078B2D3 /* LocationVCs */,
-				E9B1872D222ECC2C00923037 /* ReportVCs */,
 				E971195225EBD0A50078B2D3 /* WebViewVC */,
 				E98B22EC22CA3936000F965F /* ChatController */,
 			);
@@ -1345,7 +1360,6 @@
 			isa = PBXGroup;
 			children = (
 				E9D9561724F82791007E5D18 /* AddOnCollectionViewController.swift */,
-				E9F6030E235DE5DF00A58D08 /* CommunityFeedTableVC.swift */,
 				E904BF0124264525003EC8DF /* AddPostTableViewController.swift */,
 				E9E521B92458477F002585A2 /* NewAddOnTableViewController.swift */,
 				E9959EA524F5885E0067174A /* AddOnFeedTableViewController.swift */,
@@ -1954,6 +1968,7 @@
 				E9817B2C25EBDCCC00E56FC6 /* Vote.swift in Sources */,
 				E9817B5A25EC03E900E56FC6 /* SettingPickOrderCell.swift in Sources */,
 				E9FE46CF25FB5AE500F4C973 /* UIView.swift in Sources */,
+				02BF874628562B1900DE1361 /* FirestoreManager+Fetch.swift in Sources */,
 				024F64FA275AE4F2002DFC06 /* BaseCollectionViewCell.swift in Sources */,
 				E9FE46CC25FA9C8A00F4C973 /* DataReportCell.swift in Sources */,
 				029F7B3C273053490029254A /* Date.swift in Sources */,
@@ -2047,6 +2062,7 @@
 				E9817B3625EBE21B00E56FC6 /* TopicSetting.swift in Sources */,
 				E93043B12293F06E00DC66D5 /* DataRequest.swift in Sources */,
 				E9C42EEF2364393400FC50BA /* SearchPostCell.swift in Sources */,
+				027F9B1A2863A0FD0034FDC9 /* UINavigationController.swift in Sources */,
 				E9A9FAE122A50ED90088BD37 /* CobraViewController.swift in Sources */,
 				0247C0202854C71E002876AB /* FirestoreManager+Upload.swift in Sources */,
 				E9817B5725EC03BE00E56FC6 /* SettingSwitchCell.swift in Sources */,

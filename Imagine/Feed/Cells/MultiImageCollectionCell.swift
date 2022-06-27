@@ -12,7 +12,7 @@ class MultiImageCollectionCell: UICollectionViewCell {
     
     static let identifier = "MultiImageCollectionCell"
     
-    let imageView = BaseImageView(image: nil, contentMode: .scaleToFill)
+    let imageView = BaseImageView(image: nil)
     
     override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -43,7 +43,7 @@ class MultiImageCollectionCell: UICollectionViewCell {
         didSet {
             guard let imageURL = imageURL, let url = URL(string: imageURL) else { return}
             
-            imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
+            imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [])
         }
     }
 }

@@ -31,7 +31,7 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
     
     var morePostsAvailable = true
     
-    var fetchesPosts = true
+    var fetchInProgress = false
     var noPostsType: BlankCellType = .savedPicture
     
     var fetchRequested = false
@@ -71,16 +71,17 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
     
     
     @objc func getPosts() {
-        
     }
     
     @objc func reloadFeed() {
-        
+        posts.removeAll()
+        firestoreManager.reset()
+        setPlaceholders()
     }
     
     
     /// Show empty cells while fetching the posts
-    func setPlaceholderAndGetPosts() {
+    func setPlaceholders() {
         var index = 0
         
         while index <= 4 {
@@ -96,18 +97,16 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
         }
         
         self.tableView.reloadData()
-        getPosts()
     }
     
     func setPosts(_ posts: [Post]) {
         self.posts.removeAll()  //to get the placeholder out
         self.posts = posts
+        fetchInProgress = false
         
         DispatchQueue.main.async {
             self.tableView.reloadData()
-            
-            self.fetchesPosts = false
-            
+                        
             // remove ActivityIndicator incl. backgroundView
             self.view.activityStopAnimating()
 
@@ -131,7 +130,7 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
                 self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
                 self.tableView.insertRows(at: indexes, with: .bottom)
             }, completion: { _ in
-                self.fetchesPosts = false
+                self.fetchInProgress = false
             })
             
             self.view.activityStopAnimating()
@@ -367,10 +366,8 @@ extension BaseFeedTableViewController {
         let contentYoffset = scrollView.contentOffset.y
         let distanceFromBottom = scrollView.contentSize.height - contentYoffset
         
-        if distanceFromBottom < height, !fetchesPosts && morePostsAvailable {
-            print("End reached!")
-            
-            fetchesPosts = true
+        if distanceFromBottom < height, !fetchInProgress && morePostsAvailable {
+            print("End reached!")            
             self.getPosts()
         }
     }

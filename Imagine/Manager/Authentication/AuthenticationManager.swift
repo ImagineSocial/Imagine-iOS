@@ -13,9 +13,12 @@ import FirebaseFirestore
 class AuthenticationManager {
     
     static let shared = AuthenticationManager()
-    
+   
+    var userFetchCompleted = false
     
     var user: User?
+    var userID = Auth.auth().currentUser?.uid
+    
     var isLoggedIn: Bool {
         user != nil
     }

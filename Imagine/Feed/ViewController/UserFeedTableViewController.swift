@@ -43,6 +43,7 @@ class SocialMediaObject {
     }
 }
 
+
 protocol LogOutDelegate {
     /// Triggered when the User logges themselve out. Otherwise they would get notified after they logged themself in and a new user could not get a new notificationListener
     func deleteListener()
@@ -59,8 +60,6 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     @IBOutlet weak var moreButton: DesignableButton!
     @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var totalPostCountLabel: UILabel!
-    @IBOutlet weak var firstBadgeImageView: UIImageView!
-    @IBOutlet weak var secondBadgeImageView: UIImageView!
     @IBOutlet weak var interactionBarHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var settingButton: UIButton!
@@ -74,14 +73,13 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     @IBOutlet weak var socialMediaDescriptionViewHeight: NSLayoutConstraint!
     @IBOutlet weak var socialMediaDescriptionLabel: UILabel!
     @IBOutlet weak var socialMediaDescriptionButton: DesignableButton!
-    @IBOutlet weak var socialMediaDescriptionImageView: UIImageView!
     
     
     /* You have to set currentState and userOfProfile when you call this VC - Couldnt get the init to work */
     
     var imagePicker = UIImagePickerController()
     var selectedImageFromPicker = UIImage(named: "default-user")
-    var userOfProfile: User?
+    var user: User?
     
     var currentState: AccessState?
     
@@ -108,11 +106,10 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         chatWithUserButton.layer.borderWidth = 0.75
         addAsFriendButton.layer.borderWidth = 0.75
         
-        firstBadgeImageView.isHidden = true
-        secondBadgeImageView.isHidden = true
-        
+        setPlaceholders()
         setCurrentState()   // check if blocked or own profile
         setBarButtonItem()
+        navigationController?.hideHairline()
         
         imagePicker.delegate = self
         
@@ -147,68 +144,56 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     }
     
     func setCurrentState() {
-        
-        //setPlaceholder
-        var index = 0
-        
-        while index <= 2 {
-            let post = Post.standard
-            if index == 1 {
-                post.type = .picture
-            } else {
-                post.type = .thought
-            }
-            self.posts.append(post)
-            index+=1
-        }
-        self.tableView.reloadData()
-        
         //Check if allowed to load
-        if let user = AuthenticationManager.shared.user, let profileUser = userOfProfile, let blocked = profileUser.blocked {
-            for id in blocked {
-                if id == user.uid {
-                    self.currentState = .blockedToInteract
-                    
-                    self.view.activityStopAnimating()                    
-                    print("blocked")
-                }
-            }   // Get User after checked
-            self.getUserDetails()
-        } else {    // Nobody logged in
+        guard let user = AuthenticationManager.shared.user, let profileUser = self.user, let blocked = profileUser.blocked else {
             getUserDetails()
+            return
         }
+        
+        blocked.forEach { id in
+            if id == user.uid {
+                currentState = .blockedToInteract
+                view.activityStopAnimating()
+
+                return
+            }
+        }
+        
+        getUserDetails()
     }
     
     func getUserDetails() {
         
         guard let state = currentState else {
-            
-            print("Hier ist kein State")
-            self.navigationController?.popViewController(animated: true)
+            navigationController?.popViewController(animated: true)
             return
         }
         
         switch state {
         case .ownProfile:
-            self.setOwnProfile()
-            self.noPostsType = .userProfile
+            setOwnProfile()
+            getPosts()
+            noPostsType = .userProfile
         case .ownProfileWithEditing:
-            self.isOwnProfile = true
-            self.settingButton.isHidden = false
-            self.noPostsType = .ownProfile
-            self.setOwnProfile()
+            isOwnProfile = true
+            settingButton.isHidden = false
+            noPostsType = .ownProfile
+            setOwnProfile()
+            getPosts()
         case .otherUser:
-            self.checkIfAlreadyFriends()
-            self.setUserProfile()
-            self.noPostsType = .userProfile
+            checkIfAlreadyFriends()
+            setUserProfile()
+            getPosts()
+            noPostsType = .userProfile
         case .friendOfCurrentUser:
-            self.addAsFriendButton.setTitle(NSLocalizedString("remove_as_friend_label", comment: "remove as friend"), for: .normal)
-            self.setUserProfile()
-            self.noPostsType = .userProfile
+            addAsFriendButton.setTitle(NSLocalizedString("remove_as_friend_label", comment: "remove as friend"), for: .normal)
+            setUserProfile()
+            getPosts()
+            noPostsType = .userProfile
         case .blockedToInteract:
-            self.profilePictureImageView.image = UIImage(named: "default-user")
-            if let currentUser = userOfProfile {
-                self.nameLabel.text = currentUser.name  //Blocked means not befriended, so it shows the username
+            profilePictureImageView.image = UIImage(named: "default-user")
+            if let currentUser = user {
+                nameLabel.text = currentUser.name  //Blocked means not befriended, so it shows the username
             }
         }
     }
@@ -220,56 +205,23 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         switch currentState {
         case .blockedToInteract:
             self.refreshControl?.endRefreshing()
-            print("no posts will get fetched cause blocked")
+            return
         default:
-            if isConnected() {
-                
-                if let userID = userOfProfile?.uid {
-                    
-                    self.view.activityStartAnimating()
-                    
-                    firestoreRequest.getUserPosts(getMore: !posts.isEmpty, postList: .postsFromUser, userUID: userID) { posts  in
-                        
-                        guard let posts = posts else {
-                            print("No more Posts")
-                            self.view.activityStopAnimating()
-                            
-                            return
-                        }
-                        
-                        if let firstpost = self.posts.first, firstpost.documentID != nil {   // Get the first batch of posts
-                            self.posts.removeAll()  //Remove the placeholder
-                            self.posts = posts
-                            self.tableView.reloadData()
-                            self.fetchesPosts = false
-                            
-                            let count = self.firestoreRequest.totalCountOfPosts
-                            self.totalPostCountLabel.text = String(count)
-                            
-                            self.refreshControl?.endRefreshing()
-                        } else {    // Append the next batch to the existing
-                            var indexes : [IndexPath] = [IndexPath]()
-                            
-                            for result in posts {
-                                let row = self.posts.count
-                                indexes.append(IndexPath(row: row, section: 0))
-                                self.posts.append(result)
-                            }
-                            
-                            self.tableView.performBatchUpdates({
-                                self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                                self.tableView.insertRows(at: indexes, with: .bottom)
-                            }, completion: { (_) in
-                                self.fetchesPosts = false
-                            })
-                        }
-                        
-                        // remove ActivityIndicator incl. backgroundView
-                        self.view.activityStopAnimating()
-                    }
+            guard isConnected(), let userID = user?.uid else {
+                fetchRequested = !isConnected()
+                return
+            }
+            
+            view.activityStartAnimating()
+            
+            firestoreManager.getUserPosts(userID: userID) { posts in
+                guard let posts = posts else {
+                    print("No Posts")
+                    self.view.activityStopAnimating()
+                    return
                 }
-            } else {
-                fetchRequested = true
+                
+                self.placeholderAreShown ? self.setPosts(posts) : self.appendPosts(posts)
             }
         }
     }
@@ -373,10 +325,8 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             
             self.updateTopViewUIOfOwnProfile()
             
-            self.userOfProfile = currentUser
-                        
-            self.getPosts()
-            
+            self.user = currentUser
+                                    
             if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" { // That means its me, Malte
                 blogPostButton.isHidden = false
             }
@@ -395,53 +345,55 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     func setUserProfile() {
         
-        if let user = userOfProfile {
-            self.nameLabel.text = user.name
-            self.statusLabel.text = user.statusText
-            
-            if let urlString = user.imageURL, let url = URL(string: urlString) {
-                self.profilePictureImageView.sd_setImage(with: url, completed: nil)
-            } else {
-                self.profilePictureImageView.image = UIImage(named: "default-user")
-            }
-                        
-            getPosts()
-            
-            //Social Media Buttons
-            var medias = [SocialMediaObject]()
-            
-            if let instagramLink = user.instagramLink {
-                let media = SocialMediaObject(type: .instagram, link: instagramLink, description: user.instagramDescription)
-                medias.append(media)
-            }
-            if let patreonLink = user.patreonLink {
-                let media = SocialMediaObject(type: .patreon, link: patreonLink, description: user.patreonDescription)
-                medias.append(media)
-            }
-            if let youTubeLink = user.youTubeLink {
-                let media = SocialMediaObject(type: .youTube, link: youTubeLink, description: user.youTubeDescription)
-                medias.append(media)
-            }
-            if let twitterLink = user.twitterLink {
-                let media = SocialMediaObject(type: .twitter, link: twitterLink, description: user.twitterDescription)
-                medias.append(media)
-            }
-            if let songwhipLink = user.songwhipLink {
-                let media = SocialMediaObject(type: .songwhip, link: songwhipLink, description: user.songwhipDescription)
-                medias.append(media)
-            }
-            
-            if medias.count != 0 {
-                self.socialMediaObjects = medias
-                self.setSocialMediaBar(socialMediaObjects: medias)
-            }
-            
-            if user.locationIsPublic {
-                if let location = user.locationName {
-                    self.locationLabel.text = location
-                    self.locationImageView.isHidden = false
-                    self.locationLabel.isHidden = false
-                }
+        guard let user = user else {
+            return
+        }
+        
+        nameLabel.text = user.name
+        statusLabel.text = user.statusText
+        
+        if let urlString = user.imageURL, let url = URL(string: urlString) {
+            profilePictureImageView.sd_setImage(with: url, completed: nil)
+        } else {
+            profilePictureImageView.image = UIImage(named: "default-user")
+        }
+        
+        //Social Media Buttons
+        var medias = [SocialMediaObject]()
+        
+        if let instagramLink = user.instagramLink {
+            let media = SocialMediaObject(type: .instagram, link: instagramLink, description: user.instagramDescription)
+            medias.append(media)
+        }
+        if let patreonLink = user.patreonLink {
+            let media = SocialMediaObject(type: .patreon, link: patreonLink, description: user.patreonDescription)
+            medias.append(media)
+        }
+        if let youTubeLink = user.youTubeLink {
+            let media = SocialMediaObject(type: .youTube, link: youTubeLink, description: user.youTubeDescription)
+            medias.append(media)
+        }
+        if let twitterLink = user.twitterLink {
+            let media = SocialMediaObject(type: .twitter, link: twitterLink, description: user.twitterDescription)
+            medias.append(media)
+        }
+        if let songwhipLink = user.songwhipLink {
+            let media = SocialMediaObject(type: .songwhip, link: songwhipLink, description: user.songwhipDescription)
+            medias.append(media)
+        }
+        
+        if medias.count != 0 {
+            self.socialMediaObjects = medias
+            self.setSocialMediaBar(socialMediaObjects: medias)
+        }
+        
+        totalPostCountLabel.text = String(user.postCount ?? 0)
+
+        if user.locationIsPublic {
+            if let location = user.locationName {
+                self.locationLabel.text = location
+                self.locationImageView.isHidden = false
+                self.locationLabel.isHidden = false
             }
         }
     }
@@ -601,11 +553,9 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 self.view.layoutIfNeeded()
                 self.socialMediaDescriptionLabel.alpha = 0
                 self.socialMediaDescriptionButton.alpha = 0
-                self.socialMediaDescriptionImageView.alpha = 0
             } completion: { (_) in  //now closed
                 self.currentSocialMediaInDescription = nil
                 self.socialMediaDescriptionLabel.text = nil
-                self.socialMediaDescriptionImageView.image = nil
                 if open {   //open it again with the intended media
                     self.changeSocialMediaDescriptionViewHeight(open: true, media: media)
                 }
@@ -619,7 +569,6 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
 
             UIView.animate(withDuration: 0.3) {
                 self.view.layoutIfNeeded()
-                self.socialMediaDescriptionImageView.alpha = 1
                 self.socialMediaDescriptionLabel.alpha = 1
                 self.socialMediaDescriptionButton.alpha = 1
             } completion: { (_) in  //now Open
@@ -632,20 +581,23 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     }
     
     func setSocialMediaDescriptionImageView(media: SocialMediaObject) {
-        let imageView = socialMediaDescriptionImageView!
+        let image: UIImage?
         
         switch media.type {
         case .instagram:
-            imageView.image = UIImage(named: "InstagramIcon")
+            image = UIImage(named: "InstagramIcon")
         case .patreon:
-            imageView.image = UIImage(named: "PatreonIcon")
+            image = UIImage(named: "PatreonIcon")
         case .youTube:
-            imageView.image = UIImage(named: "YouTubeButtonIcon")
+            image = UIImage(named: "YouTubeButtonIcon")
         case .twitter:
-            imageView.image = UIImage(named: "TwitterIcon")
+            image = UIImage(named: "TwitterIcon")
         case .songwhip:
-            imageView.image = UIImage(named: "MusicIcon")
+            image = UIImage(named: "MusicIcon")
         }
+        
+        socialMediaDescriptionButton.imageView?.contentMode = .scaleAspectFit
+        socialMediaDescriptionButton.setImage(image, for: .normal)
     }
     
     
@@ -673,7 +625,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     }
     
     func checkIfAlreadyFriends() {
-        if let user = Auth.auth().currentUser, let currentProfile = userOfProfile, let userID = currentProfile.uid {
+        if let user = Auth.auth().currentUser, let currentProfile = self.user, let userID = currentProfile.uid {
             
             if user.uid == currentProfile.uid {    // Your profile but you view it as a stranger, the people want to see a difference, like: "Well this is how other people see my profile..."
                 self.addAsFriendButton.isHidden = true
@@ -719,14 +671,14 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     func profilePictureSettingTapped(setting: Setting) {
         switch setting.settingType {
         case .viewPicture:
-            if let user = userOfProfile, let imageURL = user.imageURL {
+            if let user = user, let imageURL = user.imageURL {
                 let pinchVC = PinchToZoomViewController()
                 pinchVC.imageURL = imageURL
                 
                 self.navigationController?.pushViewController(pinchVC, animated: true)
             }
         case .photoLibrary:
-            if let user = userOfProfile {
+            if let user = user {
                 performSegue(withIdentifier: "toSettingSegue", sender: user)
             }
         case .blockUser:
@@ -738,7 +690,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     func blockUserTapped() {
         if let userID = AuthenticationManager.shared.user?.uid {
-            if let userOfProfileID = userOfProfile {
+            if let userOfProfileID = user {
                 let alert = UIAlertController(title: NSLocalizedString("block_user_alert_title", comment: "block user?"), message: NSLocalizedString("block_user_alert_message", comment: "delete from friends and cant contact you again?"), preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: "yes"), style: .destructive){ _ in
                     // block User
@@ -813,7 +765,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                     }
                     
                     if let url = url?.absoluteString {
-                        self.userOfProfile?.imageURL = url
+                        self.user?.imageURL = url
                         self.savePictureInUserDatabase(url: url)
                     }
                 })
@@ -855,7 +807,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         
         profilePictureImageView.image = selectedImageFromPicker
         
-        if userOfProfile?.imageURL != nil {
+        if user?.imageURL != nil {
             deletePicture()
             savePicture()
         } else {    // If the user got no profile picture
@@ -884,7 +836,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             settingsForPicture.showSettings(for: nil)
 
         default:
-            guard let imageURL = userOfProfile?.imageURL else { return }
+            guard let imageURL = user?.imageURL else { return }
             // Just show the Image
             let pinchVC = PinchToZoomViewController()
             
@@ -920,7 +872,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     @IBAction func toSettingsTapped(_ sender: Any) {
         
-        if let user = userOfProfile {
+        if let user = user {
             performSegue(withIdentifier: "toSettingSegue", sender: user)
         }
     }
@@ -961,7 +913,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     func sendInvitation() {
         self.view.activityStartAnimating()
-        if let user = Auth.auth().currentUser, let currentProfileID = userOfProfile?.uid,  let name = user.displayName {
+        if let user = Auth.auth().currentUser, let currentProfileID = self.user?.uid,  let name = user.displayName {
                 
                 let friendsRef = db.collection("Users").document(currentProfileID).collection("friends").document(user.uid)
                 let data: [String:Any] = ["accepted": false, "requestedAt" : Timestamp(date: Date())]
@@ -1000,7 +952,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     }
     
     func deleteAsFriend() {
-        if let userID = AuthenticationManager.shared.user?.uid, let currentProfileID = userOfProfile?.uid {
+        if let userID = AuthenticationManager.shared.user?.uid, let currentProfileID = user?.uid {
             
             let friendsRefOfCurrentProfile = db.collection("Users").document(currentProfileID).collection("friends").document(userID)
             friendsRefOfCurrentProfile.delete()
@@ -1041,7 +993,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     
     func checkIfThereIsAlreadyAChat() {
-        if let profileUser = userOfProfile, let userID = profileUser.uid, let currentUser = Auth.auth().currentUser {
+        if let profileUser = user, let userID = profileUser.uid, let currentUser = Auth.auth().currentUser {
             
             // Check if there is already a chat
             let chatRef = db.collection("Users").document(currentUser.uid).collection("chats").whereField("participant", isEqualTo: userID).limit(to: 1)
@@ -1065,7 +1017,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     }
     
     func createNewChat() {
-        if let profileUser = userOfProfile, let userID = profileUser.uid, let loggedInUser = Auth.auth().currentUser {
+        if let profileUser = user, let userID = profileUser.uid, let loggedInUser = Auth.auth().currentUser {
                 let chat = Chat()
                 let newChatRef = self.db.collection("Chats").document()
                 let newDocumentID = newChatRef.documentID
@@ -1080,7 +1032,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 }
                 
                 // Create Chat Reference for the current User
-                let dataForCurrentUsersDatabase = ["participant": profileUser.uid]
+                let dataForCurrentUsersDatabase = ["participant": userID]
                 let currentUsersDatabaseRef = self.db.collection("Users").document(loggedInUser.uid).collection("chats").document(newDocumentID)
                 
                 currentUsersDatabaseRef.setData(dataForCurrentUsersDatabase) { (err) in

@@ -241,7 +241,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
             }
         case "toUserSegue":
             if let userVC = segue.destination as? UserFeedTableViewController, let user = sender as? User {
-                userVC.userOfProfile = user
+                userVC.user = user
                 userVC.currentState = .otherUser
             }
         default:

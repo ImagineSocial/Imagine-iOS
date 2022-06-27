@@ -11,7 +11,7 @@ import FirebaseFirestore
 
 enum CollectionType: String {
     
-    case anonymousPosts, blogPosts, bugs, campaigns, chats, communities, feedback, posts, reports, topTopicData, topicPosts, users, votes
+    case anonymousPosts, blogPosts, bugs, campaigns, chats, communities, feedback, posts, reports, topTopicData, topicPosts, users, votes, userFeed, communityPosts
     
     var gotLanguageSubcollection: Bool {
         self.languageString != nil
@@ -29,7 +29,7 @@ enum CollectionType: String {
             return "Campaigns"
         case .chats:
             return "Chats"
-        case .communities:
+        case .communities, .communityPosts:
             return "Facts"
         case .feedback:
             return "Feedback"
@@ -41,7 +41,7 @@ enum CollectionType: String {
             return "TopTopicData"
         case .topicPosts:
             return "TopicPosts"
-        case .users:
+        case .users, .userFeed:
             return "Users"
         case .votes:
             return "Votes"
@@ -52,7 +52,7 @@ enum CollectionType: String {
         switch self {
         case .campaigns:
             return "campaigns"
-        case .communities:
+        case .communities, .communityPosts:
             return "topics"
         case .posts:
             return "posts"
@@ -69,7 +69,7 @@ enum CollectionType: String {
     
     var defaultQuery: FirestoreQuery? {
         switch self {
-        case .posts, .users, .topicPosts:
+        case .posts, .userFeed, .communityPosts:
             return FirestoreQuery(field: "createdAt", limit: 15)
         default:
             return nil
@@ -97,17 +97,18 @@ class FirestoreReference {
     static func collectionRef(_ type: CollectionType, collectionReference: FirestoreCollectionReference? = nil, query: FirestoreQuery? = nil, language: Language? = nil) -> Query {
         
         let reference = mainRef(type, collectionReference: collectionReference)
+        var completeQuery: Query?
         
         // Check if we got a query or a default query
         if let query = query ?? type.defaultQuery {
-            reference.order(by: query.field, descending: query.descending)
+            completeQuery = reference.order(by: query.field, descending: query.descending)
             
-            if let limit = query.limit {
-                reference.limit(to: limit)
+            if let limit = query.limit, let query = completeQuery {
+                completeQuery = query.limit(to: limit)
             }
         }
         
-        return reference
+        return completeQuery ?? reference
     }
     
     static func documentRef(_ type: CollectionType, documentID: String?, collectionReference: FirestoreCollectionReference? = nil, language: Language? = nil) -> DocumentReference {
@@ -142,7 +143,7 @@ class FirestoreReference {
         
         // Custom data for specific collections
         if let collectionReference = collectionReference {
-            reference.document(collectionReference.document).collection(collectionReference.collection)
+            reference = reference.document(collectionReference.document).collection(collectionReference.collection)
         }
         
         return reference

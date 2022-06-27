@@ -375,7 +375,7 @@ class ChatViewController: MSGMessengerViewController {
         if segue.identifier == "toUserSegue" {
             if let chosenUser = sender as? User {
                 if let userVC = segue.destination as? UserFeedTableViewController {
-                    userVC.userOfProfile = chosenUser
+                    userVC.user = chosenUser
                     userVC.currentState = .otherUser
                 }
             }
