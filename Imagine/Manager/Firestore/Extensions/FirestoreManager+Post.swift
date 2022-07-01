@@ -375,26 +375,20 @@ class FirestoreRequest {
     //MARK:- Stuff
     
     func loadPost(post: Post, completion: @escaping (Post?) -> Void) {
-        let ref: DocumentReference!
-        
+    
         if post.documentID == nil {   // NewAddOnTableVC
             completion(nil)
         }
         
-        if post.isTopicPost {
-            ref = FirestoreReference.documentRef(.topicPosts, documentID: post.documentID)
-        } else {
-            ref = FirestoreReference.documentRef(.posts, documentID: post.documentID)
-        }
+        let ref = FirestoreReference.documentRef(post.isTopicPost ? .topicPosts : .posts, documentID: post.documentID)
         
-        ref.getDocument { snap, error in
-            guard let snap = snap, error == nil else {
+        FirestoreManager.shared.decodeSingle(reference: ref) { (result: Result<Post, Error>) in
+            switch result {
+            case .success(let post):
+                completion(post)
+            case .failure(let error):
+                print("We have an error: \(error.localizedDescription)")
                 completion(nil)
-                return
-            }
-            
-            if let fullPost = self.postHelper.addThePost(document: snap, isTopicPost: post.isTopicPost, language: post.language){
-                completion(fullPost)
             }
         }
     }
