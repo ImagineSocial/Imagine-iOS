@@ -847,21 +847,20 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     @objc func logOutTapped() {
         let alert = UIAlertController(title: NSLocalizedString("log_out", comment: "log_out"), message: NSLocalizedString("we_will_meet_again", comment: "we_will_meet_again"), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("log_out", comment: "log_out"), style: .destructive , handler: { (_) in
-            // abmelden
-            do {
-                try Auth.auth().signOut()
-                print("Log Out successful")
-                self.delegate?.deleteListener()
-                self.navigationController?.popViewController(animated: true)
-            } catch {
-                print("Log Out not successfull")
-            }
-        }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("rather_not", comment: "rather not"), style: .cancel, handler: { (_) in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("log_out", comment: "log_out"), style: .destructive) { _ in
+            self.dismissViewAndRemoveUser()
+        })
+        alert.addAction(UIAlertAction(title: NSLocalizedString("rather_not", comment: "rather not"), style: .cancel) { _ in
             alert.dismiss(animated: true, completion: nil)
-        }))
+        })
         present(alert, animated: true)
+    }
+    
+    private func dismissViewAndRemoveUser() {
+        AuthenticationManager.shared.logOut { success in
+            self.delegate?.deleteListener()
+            self.navigationController?.popViewController(animated: true)
+        }
     }
     
     

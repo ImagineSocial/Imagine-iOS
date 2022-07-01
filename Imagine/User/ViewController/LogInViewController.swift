@@ -401,8 +401,6 @@ class LogInViewController: UIViewController {
                 
             }
         } else {    // Wenn es Log-In ist
-            print("else")
-            
             if let input = answerTextfield.text {
 
                 let answer = input.trimmingCharacters(in: .whitespaces)
@@ -524,7 +522,7 @@ class LogInViewController: UIViewController {
     //MARK: -Try to log in
     
     func tryToLogIn() {
-        print(" Hier zum einloggen")
+        view.activityStartAnimating()
 
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
             
@@ -549,14 +547,14 @@ class LogInViewController: UIViewController {
                     if !result.user.isEmailVerified {
                         print("Not yet verified")
                         self.tryToLogOut()
+                        self.view.activityStopAnimating()
                         
                         let emailText = NSLocalizedString("login_verify_email", comment: "verify email first, should send again?")
                         
                         
                         let alertVC = UIAlertController(title: "Error", message: String.localizedStringWithFormat(emailText, self.email), preferredStyle: .alert)
-                        let alertActionOkay = UIAlertAction(title: "Okay", style: .default) {
-                            (_) in
-                            result.user.sendEmailVerification { (err) in
+                        let alertActionOkay = UIAlertAction(title: "Okay", style: .default) { _ in
+                            result.user.sendEmailVerification { err in
                                                                 
                                 if let error = err {
                                     print("We have an error: \(error.localizedDescription)")
@@ -566,7 +564,7 @@ class LogInViewController: UIViewController {
                                 }
                             }
                         }
-                        let alertActionCancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel) { (_) in
+                        let alertActionCancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel) { _ in
                             self.dismiss(animated: true, completion: nil)
                         }
 
@@ -576,8 +574,11 @@ class LogInViewController: UIViewController {
                     } else {
                         print("User wurde erfolgreich eingeloggt.")
                     
-                        self.delegate?.loadUser()
-                        self.dismiss(animated: true, completion: nil)
+                        AuthenticationManager.shared.logIn { _ in
+                            self.delegate?.loadUser()
+                            self.view.activityStopAnimating()
+                            self.dismiss(animated: true, completion: nil)
+                        }
                     }
                 }
             }

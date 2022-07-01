@@ -79,13 +79,12 @@ extension FirestoreManager {
             var topicCount = 0
                         
             topicIDs.forEach { topicID in
-                
-                var reference = FirestoreReference.collectionRef(.topicPosts)
+                var reference = FirestoreReference.collectionRef(.topicPosts, queries: FirestoreQuery(field: "communityID", equalTo: topicID), FirestoreQuery(field: "createdAt"))
                 
                 if let startSnapshot = startSnapshot {
-                    reference = reference.start(afterDocument: startSnapshot)
+                    reference = reference.start(after: [startSnapshot.timestamp()])
                 }
-                reference = reference.end(beforeDocument: endSnapshot)
+                reference = reference.end(before: [endSnapshot.timestamp()])
                 
                 self.decode(query: reference) { (result: Result<[Post], Error>) in
                     topicCount += 1
@@ -238,7 +237,6 @@ extension FirestoreManager {
     }
     
     func decodeSingle<T: Decodable>(reference: DocumentReference, completion: @escaping (Result<T, Error>) -> Void) {
-        print("What")
         reference.getDocument(as: T.self) { (result: Result<T, Error>) in
             switch result {
             case .success(let object):

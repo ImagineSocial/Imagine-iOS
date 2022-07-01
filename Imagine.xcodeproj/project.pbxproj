@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		021256162756912000991E70 /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021256152756912000991E70 /* BaseView.swift */; };
 		0212561827569F4000991E70 /* BaseStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0212561727569F4000991E70 /* BaseStackView.swift */; };
+		0220E379286F837100B43247 /* Firestore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0220E378286F837100B43247 /* Firestore.swift */; };
 		022981C326FB49D400B07BC8 /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022981C226FB49D400B07BC8 /* FirestoreManager.swift */; };
 		022C3DB127B85ABD00908F54 /* NewPostBaseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022C3DB027B85ABD00908F54 /* NewPostBaseCell.swift */; };
 		022C3DB327B97AB300908F54 /* MultiImageCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022C3DB227B97AB300908F54 /* MultiImageCollectionCell.swift */; };
@@ -318,6 +319,7 @@
 /* Begin PBXFileReference section */
 		021256152756912000991E70 /* BaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
 		0212561727569F4000991E70 /* BaseStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseStackView.swift; sourceTree = "<group>"; };
+		0220E378286F837100B43247 /* Firestore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Firestore.swift; sourceTree = "<group>"; };
 		022981C226FB49D400B07BC8 /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		022C3DB027B85ABD00908F54 /* NewPostBaseCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostBaseCell.swift; sourceTree = "<group>"; };
 		022C3DB227B97AB300908F54 /* MultiImageCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiImageCollectionCell.swift; sourceTree = "<group>"; };
@@ -1150,6 +1152,7 @@
 				022D94222752C0F800562058 /* UIFont.swift */,
 				024F64F7275AD236002DFC06 /* UIApplication.swift */,
 				023C54E4275BFC7800A9E461 /* CALayer.swift */,
+				0220E378286F837100B43247 /* Firestore.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1927,6 +1930,7 @@
 				E9817B3D25EBE25100E56FC6 /* AddOnSetting.swift in Sources */,
 				E93F6F14253237FE0044EAA4 /* PopUpInfoView.swift in Sources */,
 				026F467A27690A3600C279D2 /* Icons.swift in Sources */,
+				0220E379286F837100B43247 /* Firestore.swift in Sources */,
 				E9FE46D525FB5DB500F4C973 /* ImagineDataRequest.swift in Sources */,
 				E9530C4E22DCBF20007D6A00 /* PinchToZoomViewController.swift in Sources */,
 				E9526C0B250F99550088004F /* RadialGradientLayer.swift in Sources */,

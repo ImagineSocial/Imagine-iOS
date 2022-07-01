@@ -24,24 +24,43 @@ class AuthenticationManager {
     }
     
     init() {
-        getUser()
+        loadCurrentUser { _ in }
     }
     
-    private func getUser() {
-        if let userID = Auth.auth().currentUser?.uid {
-            let userRef = FirestoreRequest.shared.db.collection("Users").document(userID)
+    func logIn(completion: @escaping (Bool) -> Void) {
+        loadCurrentUser(completion: completion)
+    }
+    
+    func logOut(completion: @escaping (Bool) -> Void) {
+        do {
+            try Auth.auth().signOut()
+            self.user = nil
             
-            userRef.getDocument(completion: { (document, err) in
-                if let error = err {
-                    print("We got an error with a user: \(error.localizedDescription)")
-                } else {
-                    if let document = document {
-                        self.generateUser(document: document) { user in
-                            self.user = user
-                        }
-                    }
+            completion(true)
+            print("Log Out successful")
+        } catch {
+            
+            completion(false)
+            print("Log Out not successfull")
+        }
+    }
+    
+    private func loadCurrentUser(completion: @escaping (Bool) -> Void) {
+        guard let userID = Auth.auth().currentUser?.uid else {
+            completion(false)
+            return
+        }
+        let userRef = FirestoreRequest.shared.db.collection("Users").document(userID)
+        
+        userRef.getDocument { (document, err) in
+            if let error = err {
+                print("We got an error with a user: \(error.localizedDescription)")
+            } else if let document = document {
+                self.generateUser(document: document) { user in
+                    self.user = user
+                    completion(true)
                 }
-            })
+            }
         }
     }
     

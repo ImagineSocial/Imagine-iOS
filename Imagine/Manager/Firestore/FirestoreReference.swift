@@ -95,17 +95,23 @@ class FirestoreReference {
     static let language = LanguageSelection.language
     static let db = Firestore.firestore()
     
-    static func collectionRef(_ type: CollectionType, collectionReference: FirestoreCollectionReference? = nil, query: FirestoreQuery? = nil, language: Language? = nil) -> Query {
+    static func collectionRef(_ type: CollectionType, collectionReference: FirestoreCollectionReference? = nil, queries: FirestoreQuery..., language: Language? = nil) -> Query {
         
         let reference = mainRef(type, collectionReference: collectionReference)
         var completeQuery: Query?
         
         // Check if we got a query or a default query
-        if let query = query ?? type.defaultQuery {
-            completeQuery = reference.order(by: query.field, descending: query.descending)
+        if !queries.isEmpty || type.defaultQuery != nil {
+            if let defaultQuery = type.defaultQuery {
+                completeQuery = reference.addQuery(defaultQuery)
+            }
             
-            if let limit = query.limit, let query = completeQuery {
-                completeQuery = query.limit(to: limit)
+            queries.forEach { query in
+                if let ququququery = completeQuery {
+                    completeQuery = ququququery.addFirestoreQuery(query)
+                } else {
+                    completeQuery = reference.addQuery(query)
+                }
             }
         }
         

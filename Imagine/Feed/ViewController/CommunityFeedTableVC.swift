@@ -116,16 +116,10 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
     
     //MARK: - ScrollViewDidScroll
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        super.scrollViewDidScroll(scrollView)
+        
         let offset = scrollView.contentOffset.y
         self.pageViewHeaderDelegate?.childScrollViewScrolled(offset: offset)
-        
-        let height = scrollView.frame.size.height
-        let distanceFromBottom = scrollView.contentSize.height - offset
-        
-        if distanceFromBottom < height, morePostsAvailable, fetchInProgress == false {
-            fetchInProgress = true
-            self.getPosts()
-        }
     }
     
     //MARK: - TableView

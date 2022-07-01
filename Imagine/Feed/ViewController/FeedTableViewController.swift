@@ -494,7 +494,6 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     //MARK: Side Menu User
     
     func checkForLoggedInUser() {
-        print("check")
         if AuthenticationManager.shared.isLoggedIn {
             //Still logged in
             self.loadBarButtonItem()
@@ -813,10 +812,13 @@ extension FeedTableViewController: DismissDelegate {
     
     /// Call to load User in SideMenu and set notifications after dismissal of the logInViewController
     func loadUser() {
-        self.setNotificationListener()
-        self.checkForLoggedInUser()
-        self.setNotifications()
+        setNotificationListener()
+        checkForLoggedInUser()
+        setNotifications()
         sideMenu.showUser()
+        
+        reloadFeed()
+        getPosts()
     }
 }
 
@@ -834,6 +836,7 @@ extension FeedTableViewController: LogOutDelegate {
         self.notifications.removeAll()
         
         sideMenu.removeUser()
+        checkForLoggedInUser()
     }
 }
 
