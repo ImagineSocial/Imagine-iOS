@@ -38,7 +38,9 @@ class SavedPostTableViewController: BaseFeedTableViewController {
             self.firestoreManager.getSavedPosts(userID: userID) { posts in
                 guard let posts = posts else {
                     print("No Posts")
-                    self.view.activityStopAnimating()
+                    DispatchQueue.main.async {
+                        self.view.activityStopAnimating()
+                    }
                     return
                 }
                 

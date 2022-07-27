@@ -69,7 +69,7 @@ enum CollectionType: String {
     
     var defaultQuery: FirestoreQuery? {
         switch self {
-        case .posts, .userFeed, .communityPosts:
+        case .posts, .communityPosts:
             return FirestoreQuery(field: "createdAt", limit: 15)
         default:
             return nil
@@ -97,18 +97,18 @@ class FirestoreReference {
     
     static func collectionRef(_ type: CollectionType, collectionReference: FirestoreCollectionReference? = nil, queries: FirestoreQuery..., language: Language? = nil) -> Query {
         
-        let reference = mainRef(type, collectionReference: collectionReference)
+        let reference = mainRef(type, collectionReference: collectionReference, language: language)
         var completeQuery: Query?
         
         // Check if we got a query or a default query
         if !queries.isEmpty || type.defaultQuery != nil {
-            if let defaultQuery = type.defaultQuery {
+             if let defaultQuery = type.defaultQuery {
                 completeQuery = reference.addQuery(defaultQuery)
             }
             
             queries.forEach { query in
-                if let ququququery = completeQuery {
-                    completeQuery = ququququery.addFirestoreQuery(query)
+                if let anotherQuery = completeQuery {
+                    completeQuery = anotherQuery.addFirestoreQuery(query)
                 } else {
                     completeQuery = reference.addQuery(query)
                 }
@@ -120,7 +120,7 @@ class FirestoreReference {
     
     static func documentRef(_ type: CollectionType, documentID: String?, collectionReference: FirestoreCollectionReference? = nil, language: Language? = nil) -> DocumentReference {
         
-        let reference = mainRef(type, collectionReference: collectionReference)
+        let reference = mainRef(type, collectionReference: collectionReference, language: language)
         
         guard let documentID = documentID else {
             return reference.document()
@@ -133,11 +133,9 @@ class FirestoreReference {
     
     static func mainRef(_ type: CollectionType, collectionReference: FirestoreCollectionReference? = nil, language: Language? = nil) -> CollectionReference {
         var reference: CollectionReference
-        
-        let setLanguage = language ?? self.language
-        
+                
         // The german language got no subfolder for the data because of the bad database structure.
-        switch setLanguage {
+        switch language ?? self.language {
         case .de:
             reference = db.collection(type.mainString)
         default:

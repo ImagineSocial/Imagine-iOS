@@ -83,9 +83,9 @@ class PostCell : BaseFeedCell {
                 setUser()
             }
             
-            if let fact = post.community {
-                if fact.title == "" {
-                    self.getCommunity(beingFollowed: fact.beingFollowed)
+            if let community = post.community {
+                if community.title == "" {
+                    self.getCommunity(beingFollowed: community.beingFollowed)
                 } else {
                     self.setCommunity(post: post)
                 }

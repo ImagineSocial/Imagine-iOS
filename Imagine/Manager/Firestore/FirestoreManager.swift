@@ -33,6 +33,8 @@ class FirestoreManager {
     var lastSnapshot: QueryDocumentSnapshot?
     var firstSnapshot: QueryDocumentSnapshot?
     
+    var initialDocumentID: String?
+    
     var noMorePosts = false
     
     static let shared = FirestoreManager()

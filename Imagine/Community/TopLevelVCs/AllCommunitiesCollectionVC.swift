@@ -41,67 +41,11 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
         
         if let type = type {
             getTopics(type: type)
-//            updateCommunitiesBecauseISaySo()
         } else {
             self.navigationController?.popViewController(animated: true)
         }
     }
-    
-//    func updateCommunitiesBecauseISaySo() {
-//        let ref = db.collection("Facts")
-//        ref.getDocuments { (snap, err) in
-//            if let error = err {
-//                print("Error: \(error.localizedDescription)")
-//            } else {
-//                if let snap = snap {
-//                    for document in snap.documents {
-//                        
-//                        let ref = self.db.collection("Facts").document(document.documentID).collection("posts")
-//                        ref.getDocuments { (snap, err) in
-//                            if let error = err {
-//                                print("We have an error: \(error.localizedDescription)")
-//                            } else {
-//                                if let snap = snap {
-//                                    let ref = self.db.collection("Facts").document(document.documentID)
-//                                    ref.updateData([
-//                                        "postCount": snap.documents.count
-//                                    ])
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    
-//    func updateUsersBecauseISaySo() {
-//        let ref = db.collection("Users")
-//        ref.getDocuments { (snap, err) in
-//            if let error = err {
-//                print("Error: \(error.localizedDescription)")
-//            } else {
-//                if let snap = snap {
-//                    for document in snap.documents {
-//                        
-//                        let ref = self.db.collection("Users").document(document.documentID).collection("posts")
-//                        ref.getDocuments { (snap, err) in
-//                            if let error = err {
-//                                print("We have an error: \(error.localizedDescription)")
-//                            } else {
-//                                if let snap = snap {
-//                                    let ref = self.db.collection("Users").document(document.documentID)
-//                                    ref.updateData([
-//                                        "postCount": snap.documents.count
-//                                    ])
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
+ 
     
     func getTopics(type: DisplayOption) {
         let sortByString = getDisplayOptionString(type: type)

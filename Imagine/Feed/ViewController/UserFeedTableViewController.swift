@@ -217,7 +217,9 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             firestoreManager.getUserPosts(userID: userID) { posts in
                 guard let posts = posts else {
                     print("No Posts")
-                    self.view.activityStopAnimating()
+                    DispatchQueue.main.async {
+                        self.view.activityStopAnimating()
+                    }
                     return
                 }
                 

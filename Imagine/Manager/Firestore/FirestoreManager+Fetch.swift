@@ -160,6 +160,7 @@ extension FirestoreManager {
         decodePostData(reference: userPostRef, completion: completion)
     }
     
+    /// We get PostData everytime we 0
     private func decodePostData(reference: Query, completion: @escaping ([Post]?) -> Void) {
         
         guard !noMorePosts else {
@@ -170,11 +171,11 @@ extension FirestoreManager {
         decode(query: reference) { (result: Result<[PostData], Error>) in
             switch result {
             case .success(let data):
-                if data.isEmpty {
+                guard !data.isEmpty else {
                     self.noMorePosts = true
                     
-                    let post = Post.nothingPosted
-                    completion([post])
+                    completion([Post.nothingPosted])
+                    return
                 }
                 
                 self.loadPostsFromData(data: data, completion: completion)
@@ -194,6 +195,17 @@ extension FirestoreManager {
                 
         var posts = [Post]()
         
+        if initialDocumentID == nil, let firstDocumentID = data.first?.id {
+            initialDocumentID = firstDocumentID
+        } else if let documentID = initialDocumentID {
+            if data.contains(where: { $0.id == documentID }) {
+                noMorePosts = true
+                completion(nil)
+            }
+        }
+        
+        var failureIndex = 0
+        
         data.enumerated().forEach { index, post in
             let reference = FirestoreReference.documentRef(post.isTopicPost ? .topicPosts : .posts, documentID: post.id, language: post.language)
                 
@@ -202,10 +214,11 @@ extension FirestoreManager {
                 case .success(let post):
                     posts.append(post)
                 case .failure(let error):
+                    failureIndex += 1
                     print("We have an error: \(error.localizedDescription)")
                 }
                 
-                if index + 1 == data.count {
+                if (posts.count - failureIndex) == data.count {
                     posts = posts.sorted { $0.createdAt > $1.createdAt }
                     completion(posts)
                 }

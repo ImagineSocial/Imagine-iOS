@@ -115,23 +115,26 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
     }
     
     func appendPosts(_ posts: [Post]) {
-        var indexes = [IndexPath]()
         
-        posts.forEach{ newPost in
-            let row = self.posts.count
-            
-            indexes.append(IndexPath(row: row, section: 0))
-            self.posts.append(newPost)
+        guard !posts.isEmpty else { return }
+        
+        if let firstPost = posts.first, firstPost.type == .nothingPostedYet, !self.posts.isEmpty, !placeholderAreShown {
+            // This means, we tried to fetch more posts, but got none. In this case the FirestoreManager returns a .nothingPostedYet Post which we catch here, if there is already more than one post, we dismiss this function. It just happens once, than the manager knows, that there are no post objects left.
+            return
+        }
+                
+        let indexes = posts.enumerated().map { index, _ in
+            IndexPath(row: self.posts.count + index, section: 0)
         }
         
         DispatchQueue.main.async {
             
-            self.tableView.performBatchUpdates({
-                self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                self.tableView.insertRows(at: indexes, with: .bottom)
-            }, completion: { _ in
-                self.fetchInProgress = false
-            })
+            self.tableView.beginUpdates()
+            self.posts.append(contentsOf: posts)
+            self.tableView.insertRows(at: indexes, with: .bottom)
+            self.tableView.endUpdates()
+            
+            self.fetchInProgress = false
             
             self.view.activityStopAnimating()
             print("Jetzt haben wir \(self.posts.count)")
@@ -362,12 +365,17 @@ extension BaseFeedTableViewController {
     // MARK: - ScrollViewDelegate
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        guard viewIfLoaded?.window != nil else {
+            print("Not there yet")
+            return
+        }
         let height = scrollView.frame.size.height
         let contentYoffset = scrollView.contentOffset.y
         let distanceFromBottom = scrollView.contentSize.height - contentYoffset
         
         if distanceFromBottom < height, !fetchInProgress && morePostsAvailable {
-            print("End reached!")            
+            print("End reached!")
             self.getPosts()
         }
     }

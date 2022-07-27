@@ -69,7 +69,9 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
             self.firestoreManager.getCommunityPosts(communityID: community.documentID) { posts in
                 guard let posts = posts else {
                     print("No Posts")
-                    self.view.activityStopAnimating()
+                    DispatchQueue.main.async {
+                        self.view.activityStopAnimating()
+                    }
                     return
                 }
                 
@@ -212,7 +214,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
             if let fact = sender as? Community, let navCon = segue.destination as? UINavigationController, let newPostVC = navCon.topViewController as? NewPostVC {
                 newPostVC.selectedFact(community: fact, isViewAlreadyLoaded: false)
                 newPostVC.comingFromPostsOfFact = true
-                newPostVC.postOnlyInTopic = true
+                newPostVC.isTopicPost = true
                 newPostVC.newInstanceDelegate = self
             }
         case "toSettingSegue" :

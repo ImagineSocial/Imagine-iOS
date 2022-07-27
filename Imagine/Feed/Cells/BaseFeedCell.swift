@@ -160,6 +160,16 @@ class BaseFeedCell : UITableViewCell {
         }
     }
     
+    func getCommunity() {
+        guard let post = post, let communityID = post.communityID else {
+            return
+        }
+
+        let reference = FirestoreReference.documentRef(.communities, documentID: communityID)
+        
+        
+    }
+    
     //MARK:- Set Community
     func setCommunity(post: Post) {
         feedUserView.setCommunity(post: post)

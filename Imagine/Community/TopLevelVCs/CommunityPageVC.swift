@@ -224,7 +224,7 @@ class CommunityPageVC: UIPageViewController {
             if let navCon = segue.destination as? UINavigationController, let newPostVC = navCon.topViewController as? NewPostVC {
                 newPostVC.selectedFact(community: community, isViewAlreadyLoaded: false)
                 newPostVC.comingFromPostsOfFact = true
-                newPostVC.postOnlyInTopic = true
+                newPostVC.isTopicPost = true
                 newPostVC.newInstanceDelegate = self
             }
         case  "shareTopicSegue":

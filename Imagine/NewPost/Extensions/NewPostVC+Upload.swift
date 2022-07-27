@@ -51,7 +51,7 @@ extension NewPostVC {
         
         post.location = location
         
-        let documentReference = FirestoreReference.documentRef(linkedCommunity == nil ? .posts : .topicPosts, documentID: nil)
+        let documentReference = FirestoreReference.documentRef(isTopicPost ? .topicPosts : .posts, documentID: nil)
         
         // Dann ein File FirestoreManager-Upload wo dieses Objekt zum hochladen bearbeitet wird
         
@@ -211,7 +211,7 @@ extension NewPostVC {
         let collectionReference = FirestoreCollectionReference(document: userID, collection: "posts")
         let reference = FirestoreReference.documentRef(.users, documentID: documentID, collectionReference: collectionReference)
         
-        let isTopicPost = comingFromAddOnVC || postOnlyInTopic || linkedCommunity != nil
+        let isTopicPost = comingFromAddOnVC || isTopicPost
         let data = PostData(createdAt: Date(), userID: userID, language: LanguageSelection.language, isTopicPost: isTopicPost)
         
         FirestoreManager.uploadObject(object: data, documentReference: reference) { error in
@@ -226,7 +226,7 @@ extension NewPostVC {
         let collectionReference = FirestoreCollectionReference(document: community.documentID, collection: "posts")
         let reference = FirestoreReference.documentRef(.communities, documentID: documentID, collectionReference: collectionReference)
         
-        let data = PostData(createdAt: Date(), userID: userID, language: LanguageSelection.language, isTopicPost: true)
+        let data = PostData(createdAt: Date(), userID: userID, language: LanguageSelection.language, isTopicPost: isTopicPost)
         
         FirestoreManager.uploadObject(object: data, documentReference: reference) { error in
             if let error = error {
