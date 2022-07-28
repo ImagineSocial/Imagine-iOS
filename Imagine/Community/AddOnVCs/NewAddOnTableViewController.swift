@@ -222,22 +222,27 @@ class NewAddOnTableViewController: UITableViewController {
             return
         }
         if style == .QandA {
-            createNewQandAAddOn(user: user, fact: community)
+            createNewQandAAddOn(user: user, community: community)
         } else {
             performSegue(withIdentifier: "toNewAddOnSegue", sender: style)
         }
     }
     
-    func createNewQandAAddOn(user: User, fact: Community) {
+    func createNewQandAAddOn(user: User, community: Community) {
+        
+        guard let userID = user.uid, let communityID = community.id else {
+            return
+        }
+        
         var collectionRef: CollectionReference!
-        if fact.language == .en {
+        if community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
         }
-        let ref = collectionRef.document(fact.documentID).collection("addOns").document()
+        let ref = collectionRef.document(communityID).collection("addOns").document()
         
-        let data: [String:Any] = ["OP": user.uid, "type": "QandA", "popularity": 0]
+        let data: [String:Any] = ["OP": userID, "type": "QandA", "popularity": 0]
         
         ref.setData(data) { (err) in
             if let error = err {

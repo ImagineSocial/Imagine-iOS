@@ -121,14 +121,14 @@ class FirestoreRequest {
     
     func getPostsForCommunity(getMore: Bool, community: Community, completion: @escaping ([Post]?) -> Void) {
         
-        guard !community.documentID.isEmpty, morePostsToFetch else {
+        guard let communityID = community.id, morePostsToFetch else {
             completion(nil)
             return
         }
         
         self.posts.removeAll()
         
-        var ref = FirestoreReference.collectionRef(.topicPosts, collectionReference: FirestoreCollectionReference(document: community.documentID, collection: "posts"))
+        var ref = FirestoreReference.collectionRef(.topicPosts, collectionReference: FirestoreCollectionReference(document: communityID, collection: "posts"))
         
         
         var documentIDsOfPosts = [Post]()
@@ -153,7 +153,7 @@ class FirestoreRequest {
             } else {
                 
                 //Prepare the next batch
-                self.checkTheDocumentCountFor(type: .topicPosts, documentID: community.documentID, newFetchCount: snap.documents.count)
+                self.checkTheDocumentCountFor(type: .topicPosts, documentID: communityID, newFetchCount: snap.documents.count)
                 
                 self.lastFeedPostSnap = snap.documents.last // For the next batch
                 
@@ -185,13 +185,13 @@ class FirestoreRequest {
     }
     
     func getPreviewPicturesForCommunity(community: Community, completion: @escaping ([Post]?) -> Void) {
-        guard community.documentID != "" else {
+        guard let communityID = community.id else {
             completion(nil)
             return
         }
         
         let query = FirestoreReference.collectionRef(.topicPosts)
-            .whereField("communityID", isEqualTo: community.documentID)
+            .whereField("communityID", isEqualTo: communityID)
             .whereField("type", isEqualTo: "picture")
             .limit(to: 6)
         

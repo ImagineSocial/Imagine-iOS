@@ -109,8 +109,8 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
     }
     
     func topicSelected(community: Community) {
-        let factVC = CommunityCollectionVC()
-        factVC.registerRecentFact(fact: community)
+        let communityVC = CommunityCollectionVC()
+        communityVC.registerRecentFact(community: community)
     }
     
     // MARK: -UICollectionViewDataSource

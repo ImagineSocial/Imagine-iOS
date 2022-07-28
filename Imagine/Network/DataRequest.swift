@@ -257,24 +257,25 @@ class DataRequest {
     }
     
     
-    func getDeepData(fact: Community, returnData: @escaping ([Any]) -> Void) {
+    func getDeepData(community: Community, completion: @escaping ([Any]) -> Void) {
         
         var argumentList = [Argument]()
         
-        if fact.documentID == "" {
+        guard let communityID = community.id else {
             print("We have an error fetching arguments")
-            returnData(argumentList)
+            completion(argumentList)
+            return
         }
         
         var collectionRef: CollectionReference!
 
-        if fact.language == .en {
+        if community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
         }
         
-        let ref = collectionRef.document(fact.documentID).collection("arguments").order(by: "upvotes", descending: true)
+        let ref = collectionRef.document(communityID).collection("arguments").order(by: "upvotes", descending: true)
         
         ref.getDocuments(completion: { (snap, err) in
             if let error = err {
@@ -320,17 +321,19 @@ class DataRequest {
             
             argumentList.append(conArgument)
             
-            returnData(argumentList)
+            completion(argumentList)
         })
     }
     
-    func getDeepestArgument(fact: Community, argumentID: String, deepDataType: DeepDataType , returnData: @escaping ([Any]) -> Void) {
+    func getDeepestArgument(community: Community, argumentID: String, deepDataType: DeepDataType , completion: @escaping ([Any]) -> Void) {
         
         var list = [Any]()
         
-        if fact.documentID == "" {
-            returnData(list)
+        guard let communityID = community.id else {
+            completion(list)
+            return
         }
+        
         switch deepDataType {
         case .sources:
             list = [Source]()
@@ -341,12 +344,12 @@ class DataRequest {
         }
         
         var collectionRef: CollectionReference!
-        if fact.language == .en {
+        if community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
         }
-        let argumentPath = collectionRef.document(fact.documentID).collection("arguments").document(argumentID).collection(dataPath)
+        let argumentPath = collectionRef.document(communityID).collection("arguments").document(argumentID).collection(dataPath)
         
         argumentPath.getDocuments(completion: { (snap, err) in
             
@@ -405,7 +408,7 @@ class DataRequest {
                     list.append(source)
                 }
             
-            returnData(list)
+            completion(list)
         })
     }
 }

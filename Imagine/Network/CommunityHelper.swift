@@ -23,95 +23,70 @@ class CommunityHelper {
     func getCommunity(documentID: String, data: [String: Any]) -> Community? {
         
         guard let name = data["name"] as? String,
-            let createTimestamp = data["createDate"] as? Timestamp,
+            let timestamp = data["createDate"] as? Timestamp,
             let OP = data["OP"] as? String
             else {
                 print("Der will nicht: \(documentID), mit den Daten: \(data)")
                 return nil
         }
         
-        let stringDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
         
         let community = Community()
-        community.documentID = documentID
+        community.id = documentID
         community.title = name
-        community.createDate = stringDate
-        community.moderators.append(OP)  //Later there will be more moderators, so it is an array
+        community.createdAt = timestamp.dateValue()
+        community.moderators = [OP]
+        community.postCount = data["postCount"] as? Int
+        community.imageURL = data["imageURL"] as? String
+        community.description = data["description"] as? String
         
-        if let postCount = data["postCount"] as? Int {
-            community.postCount = postCount
-        }
-        
-        if let follower = data["follower"] as? [String] {
-            community.followerCount = follower.count
-            if let user = AuthenticationManager.shared.user {
-                for userID in follower {
-                    if userID == user.uid {
-                        community.beingFollowed = true
-                    }
-                }
-            }
-        }
         
         if let language = data["language"] as? String {
             if language == "en" {
                 community.language = .en
             }
         }
-        
-        if let imageURL = data["imageURL"] as? String { // Not mandatory (in fact not selectable)
-            community.imageURL = imageURL
-        }
-        if let description = data["description"] as? String {   // Was introduced later on
-            community.description = description
-        }
+
         if let displayType = data["displayOption"] as? String { // Was introduced later on
             community.displayOption = self.getDisplayType(string: displayType)
         }
         
         if let displayNames = data["factDisplayNames"] as? String {
-            community.factDisplayNames = self.getDisplayNames(string: displayNames)
+            community.discussionTitles = self.getDisplayNames(string: displayNames)
         }
         
-        if let isAddOnFirstView = data["isAddOnFirstView"] as? Bool {
-            community.isAddOnFirstView = isAddOnFirstView
+        if let _ = data["isAddOnFirstView"] as? Bool {
+            community.initialView = .addOn
         }
         
-        community.fetchComplete = true
         return community
     }
     
-    func loadCommunity(fact: Community, loadedFact: @escaping (Community?) -> Void) {
+    func loadCommunity(_ community: Community, completion: @escaping (Community?) -> Void) {
         
-        
-        if fact.documentID == "" {
-            loadedFact(nil)
+        guard let id = community.id else {
+            completion(nil)
+            return
         }
         
         var collectionRef: CollectionReference!
-        if fact.language == .en {
+        if community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
         }
-        let ref = collectionRef.document(fact.documentID)
+        let ref = collectionRef.document(id)
         
         
         ref.getDocument { [weak self] (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
-                if let snap = snap {
-                    if let self = self {
-                        if let data = snap.data() {
-                            if let fact = self.getCommunity(documentID: snap.documentID, data: data) {
-                                loadedFact(fact)
-                            } else {
-                                loadedFact(nil)
-                            }
-                        }
-                    }
+                guard let snap = snap, let self = self, let data = snap.data(), let community = self.getCommunity(documentID: snap.documentID, data: data) else {
+                    completion(nil)
+                    return
                 }
+                completion(community)
             }
         }
     }
@@ -125,7 +100,7 @@ class CommunityHelper {
         }
     }
     
-    func getDisplayNames(string: String) -> FactDisplayName {
+    func getDisplayNames(string: String) -> DiscussionTitles {
         switch string {
         case "confirmDoubt":
             return .confirmDoubt

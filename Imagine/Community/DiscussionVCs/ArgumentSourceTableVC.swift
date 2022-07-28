@@ -13,7 +13,7 @@ import FirebaseAuth
 class ArgumentSourceTableVC: UITableViewController {
     
     var argument: Argument?
-    var fact :Community?
+    var community :Community?
     var sources = [Source]()
     
     let reuseIdentifier = "addCell"
@@ -30,8 +30,8 @@ class ArgumentSourceTableVC: UITableViewController {
     }
     
     func getSources() {
-        if let argument = argument, let fact = fact {
-            DataRequest().getDeepestArgument(fact: fact, argumentID: argument.documentID, deepDataType: .sources) { (deepestData) in
+        if let argument = argument, let community = community {
+            DataRequest().getDeepestArgument(community: community, argumentID: argument.documentID, deepDataType: .sources) { (deepestData) in
                 if let sources = deepestData as? [Source] {
                     self.sources = sources
                     self.tableView.reloadData()
@@ -102,7 +102,7 @@ class ArgumentSourceTableVC: UITableViewController {
         if segue.identifier == "toNewArgumentSegue" {
             if let nav = segue.destination as? UINavigationController {
                 if let vc = nav.topViewController as? NewCommunityItemTableVC {
-                    vc.community = self.fact
+                    vc.community = self.community
                     vc.argument = self.argument
                     vc.new = .source
                     vc.delegate = self

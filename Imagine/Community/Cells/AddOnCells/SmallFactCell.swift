@@ -38,38 +38,37 @@ class SmallFactCell: UICollectionViewCell {
         }
     }
     
-    var fact: Community? {
+    var community: Community? {
         didSet {
-            guard let fact = fact else { return }
+            guard let community = community else { return }
             
-            self.getArguments(fact: fact)
+            self.getArguments(community: community)
             
-            if let url = URL(string: fact.imageURL) {
+            if let imageURL = community.imageURL, let url = URL(string: imageURL) {
                 factImageView.sd_setImage(with: url, completed: nil)
-            } else {
-                factImageView.image = UIImage(named: "default-community")
             }
-            factHeaderTitle.text = fact.title
-            factHeaderDescriptionLabel.text = fact.description
-            self.factPostCountLabel.text = "Posts: \(fact.postCount)"
-            self.factFollowerCountLabel.text = "Follower: \(fact.followerCount)"
+            
+            factHeaderTitle.text = community.title
+            factHeaderDescriptionLabel.text = community.description
+            self.factPostCountLabel.text = "Posts: \(community.postCount ?? 0)"
+            self.factFollowerCountLabel.text = "Follower: \(community.followerCount ?? 0)"
         }
     }
     
     var unloadedFact: Community? {
         didSet {
-            if let unloadedFact = unloadedFact {
-                DispatchQueue.global(qos: .default).async {
-                    CommunityHelper.shared.loadCommunity(fact: unloadedFact) { (fact) in
-                        if let fact = fact {
-                            DispatchQueue.main.async {
-                                self.fact = fact
-                            }
-                        }
+            guard let unloadedFact = unloadedFact else {
+                return
+            }
+            DispatchQueue.global(qos: .default).async {
+                CommunityHelper.shared.loadCommunity(unloadedFact) { community in
+                    guard let community = community else {
+                        return
+                    }
+                    DispatchQueue.main.async {
+                        self.community = community
                     }
                 }
-            } else {
-                return
             }
         }
     }
@@ -147,16 +146,18 @@ class SmallFactCell: UICollectionViewCell {
         }
     }
     
-    func getArguments(fact: Community) {
-        if fact.documentID == "" { return }
+    func getArguments(community: Community) {
+        guard let communityID = community.id else {
+            return
+        }
         
         var collectionRef: CollectionReference!
-        if fact.language == .en {
+        if community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
         }
-        let ref = collectionRef.document(fact.documentID).collection("arguments")
+        let ref = collectionRef.document(communityID).collection("arguments")
         
         let proRef = ref.whereField("proOrContra", isEqualTo: "pro").order(by: "upvotes", descending: true).limit(to: 1)
         proRef.getDocuments { (snap, err) in

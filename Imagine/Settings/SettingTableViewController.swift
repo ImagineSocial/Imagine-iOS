@@ -100,14 +100,9 @@ class SettingTableViewController: UITableViewController {
         
         // Set the custom settings and fetch additional information if neccessarry
         
-        if let topic = topic {
-            var collectionRef: CollectionReference!
-            if topic.language == .en {
-                collectionRef = db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = db.collection("Facts")
-            }
-            let ref = collectionRef.document(topic.documentID)
+        if let community = topic, let communityID = community.id {
+            
+            let ref = FirestoreReference.documentRef(.communities, documentID: communityID, language: community.language)
             
             ref.getDocument { (snap, err) in
                 if let error = err {
@@ -200,7 +195,7 @@ class SettingTableViewController: UITableViewController {
                 }
             }
         } else if let addOn = addOn {
-            let addOnSetting = AddOnSetting(style: addOn.style, fact: addOn.fact, addOnDocumentID: addOn.documentID, description: addOn.description, items: addOn.items)
+            let addOnSetting = AddOnSetting(style: addOn.style, community: addOn.community, addOnDocumentID: addOn.documentID, description: addOn.description, items: addOn.items)
             
             addOnSetting.title = addOn.headerTitle
             addOnSetting.imageURL = addOn.imageURL
@@ -346,14 +341,14 @@ class SettingTableViewController: UITableViewController {
                         print("Aint nobody got a post!")
                     }
                 }
-            } else if let fact = item.item as? Community {
-                self.communityHelper.loadCommunity(fact: fact) { (fact) in
-                    if let fact = fact {
-                        let item = AddOnItem(documentID: fact.documentID, item: fact)
+            } else if let community = item.item as? Community {
+                self.communityHelper.loadCommunity(community) { community in
+                    if let community = community, let communityID = community.id {
+                        let item = AddOnItem(documentID: communityID, item: community)
                         self.itemList.append(item)
                         self.addNewList()
                     } else {
-                        print(" Aint nobody got a fact!")
+                        print(" Aint nobody got a community!")
                     }
                 }
             }
@@ -775,13 +770,13 @@ extension SettingTableViewController: UIImagePickerControllerDelegate, CropViewC
     }
     
     func savePicture(imageData: Data) {
-        if let topic = topic {
-            let imageName = "\(topic.documentID).png"
+        if let topic = topic, let id = topic.id {
+            let imageName = "\(id).png"
             let storageRef = storDB.child("factPictures").child(imageName)
             
             savePictureInStorage(storageReference: storageRef, imageData: imageData)
-        } else if let user = user {
-            let imageName = "\(user.uid).profilePicture.png"
+        } else if let user = user, let uid = user.uid {
+            let imageName = "\(uid).profilePicture.png"
             let storageRef = storDB.child("profilePictures").child(imageName)
             
             savePictureInStorage(storageReference: storageRef, imageData: imageData)
@@ -806,14 +801,14 @@ extension SettingTableViewController: UIImagePickerControllerDelegate, CropViewC
     }
     
     func deletePicture() {  // In Firebase Storage
-        if let topic = topic {
-            let imageName = "\(topic.documentID).png"
+        if let topic = topic, let topicID = topic.id {
+            let imageName = "\(topicID).png"
             let storageRef = storDB.child("factPictures").child(imageName)
             
             self.deletePictureInStorage(storageReference: storageRef)
         
-        } else if let user = user {
-            let imageName = "\(user.uid).profilePicture.png"
+        } else if let user = user, let uid = user.uid {
+            let imageName = "\(uid).profilePicture.png"
             let storageRef = storDB.child("profilePictures").child(imageName)
             
             self.deletePictureInStorage(storageReference: storageRef)
@@ -1105,14 +1100,9 @@ extension SettingTableViewController: SettingCellDelegate, UINavigationControlle
     }
     
     func changeDataInFirestore(data: [String: Any]) {
-        if let topic = topic {
-            var collectionRef: CollectionReference!
-            if topic.language == .en {
-                collectionRef = db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = db.collection("Facts")
-            }
-            let ref = collectionRef.document(topic.documentID)
+        if let topic = topic, let topicID = topic.id {
+            let ref = FirestoreReference.documentRef(.communities, documentID: topicID, language: topic.language)
+            
             ref.updateData(data) { (err) in
                 if let error = err {
                     print("We could not update the data: \(error.localizedDescription)")
@@ -1130,14 +1120,15 @@ extension SettingTableViewController: SettingCellDelegate, UINavigationControlle
                     self.view.activityStopAnimating()
                 }
             }
-        } else if let addOn = addOn {
+        } else if let addOn = addOn, let communityID = addOn.community.id {
             var collectionRef: CollectionReference!
-            if addOn.fact.language == .en {
+            if addOn.community.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topics")
             } else {
                 collectionRef = db.collection("Facts")
             }
-            let ref = collectionRef.document(addOn.fact.documentID).collection("addOns").document(addOn.documentID)
+            
+            let ref = collectionRef.document(communityID).collection("addOns").document(addOn.documentID)
             ref.updateData(data) { (err) in
                 if let error = err {
                     print("We could not update the data: \(error.localizedDescription)")

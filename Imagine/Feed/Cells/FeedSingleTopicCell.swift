@@ -64,12 +64,15 @@ class FeedSingleTopicCell: BaseFeedCell {
                 setUser()
             }
             
-            if let community = post.community {
-                if community.title != "" {
-                    self.loadSingleTopic(post: post, community: community)
+            if let communityID = post.communityID {
+                if post.community != nil {
+                    setCommunity(for: post)
                 } else {
-                    let communityRequest = CommunityRequest()
-                    communityRequest.getCommunity(language: post.language, community: community, beingFollowed: false) { (community) in
+                    CommunityRequest().getCommunity(language: post.language, communityID: communityID) { community in
+                        guard let community = community else {
+                            return
+                        }
+
                         self.loadSingleTopic(post: post, community: community)
                     }
                 }

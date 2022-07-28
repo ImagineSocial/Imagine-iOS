@@ -44,8 +44,7 @@ class Post: Codable {
     var repostDocumentID: String?
     var commentCount = 0
     var anonym = false
-    var user: User?
-    var userID: String?
+    var userID: String? // This is set in the database
     var votes = Votes()
     var newUpvotes: Votes?
     var repost: Post?
@@ -59,8 +58,8 @@ class Post: Codable {
     var notificationRecipients: [String]?
     
     var survey: Survey?
-    
     var community: Community?
+    var user: User?     // This is the loaded user
     
     static var standard: Post {
         Post(type: .picture, title: "", createdAt: Date())

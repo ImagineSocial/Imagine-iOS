@@ -112,7 +112,7 @@ class ArgumentViewController: UIViewController, ReachabilityObserverDelegate {
         descriptionLabel.text = argument.description
     }
     
-    func getDisplayString(displayNames: FactDisplayName, proOrContra: String) -> String {
+    func getDisplayString(displayNames: DiscussionTitles, proOrContra: String) -> String {
         switch displayNames {
         case .advantageDisadvantage:
             if proOrContra == "pro" {
@@ -150,40 +150,37 @@ class ArgumentViewController: UIViewController, ReachabilityObserverDelegate {
     
     
     func voted(kindOfVote: vote) {
-        if isConnected() {
-            if let argument = argument, let community = community {
-                var collectionRef: CollectionReference!
-                if community.language == .en {
-                    collectionRef = db.collection("Data").document("en").collection("topics")
-                } else {
-                    collectionRef = db.collection("Facts")
-                }
-                let ref = collectionRef.document(community.documentID).collection("arguments").document(argument.documentID)
-                
-                var voteString = ""
-                var voteCount = 0
-                
-                switch kindOfVote {
-                case .downvote:
-                    voteString = "downvotes"
-                    voteCount = argument.downvotes+1
-                    argument.downvotes = voteCount
-                case .upvote:
-                    voteString = "upvotes"
-                    voteCount = argument.upvotes+1
-                    argument.upvotes = voteCount
-                }
-                
-                ref.updateData([voteString: voteCount]) { (err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        self.ready()
-                    }
-                }
+        
+        guard isConnected(), let argument = argument, let community = community, let communityID = community.id else {
+            if !isConnected() {
+                self.alert(message: "You need an active internet connection to vote!")
             }
-        } else {
-            self.alert(message: "Du brauchst eine aktive Internet Verbindung um wählen zu können!")
+            return
+        }
+        
+        let collectionReference = FirestoreCollectionReference(document: communityID, collection: "arguments")
+        let ref = FirestoreReference.documentRef(.communities, documentID: argument.documentID, collectionReference: collectionReference, language: community.language)
+        
+        var voteString = ""
+        var voteCount = 0
+        
+        switch kindOfVote {
+        case .downvote:
+            voteString = "downvotes"
+            voteCount = argument.downvotes+1
+            argument.downvotes = voteCount
+        case .upvote:
+            voteString = "upvotes"
+            voteCount = argument.upvotes+1
+            argument.upvotes = voteCount
+        }
+        
+        ref.updateData([voteString: voteCount]) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                self.ready()
+            }
         }
     }
 
@@ -201,7 +198,7 @@ class ArgumentViewController: UIViewController, ReachabilityObserverDelegate {
         if segue.identifier == "toSourceTableView" {
             if let vc = segue.destination as? ArgumentSourceTableVC {
                 vc.argument = self.argument
-                vc.fact = self.community
+                vc.community = self.community
             }
         }
         if segue.identifier == "toArgumentTableView" {

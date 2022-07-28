@@ -62,7 +62,7 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
                 self.communities.removeLast()
             }
             
-            self.communities = self.communities.filter{ $0.documentID != factStrings[0] }
+            self.communities = self.communities.filter { $0.id != factStrings[0] }
             
             loadCommunity(with: factStrings[0], language: language)
         }
@@ -121,16 +121,9 @@ extension RecentTopicsCollectionCell: UICollectionViewDataSource, UICollectionVi
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if communities.count != 0 {
-            let fact = communities[indexPath.item]
+            let community = communities[indexPath.item]
             
-            fact.getFollowStatus { (isFollowed) in
-                if isFollowed {
-                    fact.beingFollowed = true
-                    self.delegate?.topicTapped(fact: fact)
-                } else {
-                    self.delegate?.topicTapped(fact: fact)
-                }
-            }
+            delegate?.topicTapped(fact: community)
         }
     }
     

@@ -77,15 +77,18 @@ class AddOnQAndACollectionViewCell: BaseAddOnCollectionViewCell {
     }
     
     func getQuestions(info: AddOn) {
+        guard let communtiyID = info.community.id else {
+            return
+        }
         
         var collectionRef: CollectionReference!
-        if info.fact.language == .en {
+        if info.community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
         }
         
-        let ref = collectionRef.document(info.fact.documentID).collection("addOns").document(info.documentID).collection("questions")
+        let ref = collectionRef.document(communtiyID).collection("addOns").document(info.documentID).collection("questions")
         ref.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
@@ -362,18 +365,18 @@ class AddOnQAndATextfieldCell: UITableViewCell {
         }
 
         var collectionRef: CollectionReference!
-        if info.fact.language == .en {
+        if info.community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
         }
         
         if type == .question {
-            if info.fact.documentID != "" {
+            if let communityID = info.community.id, let userID = user.uid {
                 
-                let ref = collectionRef.document(info.fact.documentID).collection("addOns").document(info.documentID).collection("questions").document()
+                let ref = collectionRef.document(communityID).collection("addOns").document(info.documentID).collection("questions").document()
                 
-                let data: [String: Any] = ["question": text, "OP": user.uid]
+                let data: [String: Any] = ["question": text, "OP": userID]
                 
                 ref.setData(data) { (err) in
                     if let error = err {
@@ -387,8 +390,8 @@ class AddOnQAndATextfieldCell: UITableViewCell {
             }
         } else {
             if let id = questionID {
-                if info.fact.documentID != "" {
-                    let ref = collectionRef.document(info.fact.documentID).collection("addOns").document(info.documentID).collection("questions").document(id)
+                if let communityID = info.community.id {
+                    let ref = collectionRef.document(communityID).collection("addOns").document(info.documentID).collection("questions").document(id)
                     
                     ref.updateData([
                         "answers" : FieldValue.arrayUnion([text])

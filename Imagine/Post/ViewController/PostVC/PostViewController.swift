@@ -191,17 +191,20 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         createDateLabel.text = post.createdAt.formatForFeed()
         feedLikeView.commentCountLabel.text = String(post.commentCount)
         
-        if let fact = post.community {   // Isnt attached if you come from search
-            //Need boolean wether already fetched or not
-            if fact.fetchComplete {
+        if let communityID = post.communityID {
+            if let community = post.community {
                 addLinkedCommunityView()
                 setCommunity()
             } else {
-                let communityRequest = CommunityRequest()
-                communityRequest.getCommunity(language: post.language, community: fact, beingFollowed: false) { (fact) in
-                    post.community = fact
+                CommunityRequest().getCommunity(language: post.language, communityID: communityID) { community in
+                    guard let community = community else {
+                        return
+                    }
+                    
+                    self.post?.community = community
                     self.addLinkedCommunityView()
                     self.setCommunity()
+                    
                     if let view = self.floatingCommentView {
                         //Otherwise the linkedFactView would be over the keyboard of the commentField
                         self.contentView.bringSubviewToFront(view)

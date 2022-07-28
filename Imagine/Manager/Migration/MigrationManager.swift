@@ -409,7 +409,7 @@ extension MigrationManager {
     
     func addCommunity(communityID: String) -> Community {
         let community = Community()
-        community.documentID = communityID
+        community.id = communityID
         
         return community
     }
@@ -546,13 +546,13 @@ extension MigrationManager {
             }
 
             communities.forEach { community in
-                self.getCommunityPosts(for: community.documentID, language: language) { postData in
-                    guard let postData = postData else {
+                self.getCommunityPosts(for: community.id, language: language) { postData in
+                    guard let postData = postData, let communityID = community.id else {
                         return
                     }
                     
                     postData.forEach { postDate in
-                        let reference = FirestoreCollectionReference(document: community.documentID, collection: "posts")
+                        let reference = FirestoreCollectionReference(document: communityID, collection: "posts")
                         let documentRef = FirestoreReference.documentRef(.communityPosts, documentID: postDate.id, collectionReference: reference, language: language)
                         
                         FirestoreManager.uploadObject(object: postData, documentReference: documentRef) { error in
@@ -585,8 +585,13 @@ extension MigrationManager {
         }
     }
     
-    func getCommunityPosts(for communityID: String, language: Language, completion: @escaping ([PostData]?) -> Void) {
+    func getCommunityPosts(for communityID: String?, language: Language, completion: @escaping ([PostData]?) -> Void) {
         
+        guard let communityID = communityID else {
+            completion(nil)
+            return
+        }
+
         var postData = [PostData]()
         
         let reference = FirestoreCollectionReference(document: communityID, collection: "posts")

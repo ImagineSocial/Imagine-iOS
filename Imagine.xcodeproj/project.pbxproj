@@ -45,6 +45,7 @@
 		026F467A27690A3600C279D2 /* Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026F467927690A3600C279D2 /* Icons.swift */; };
 		027BA8C527CBCEC600A8919F /* SmallTopicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027BA8C427CBCEC600A8919F /* SmallTopicCell.swift */; };
 		027BA8C727CBD49100A8919F /* WebVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027BA8C627CBD49100A8919F /* WebVC.swift */; };
+		027BD0362892BDD8009E985E /* FirestoreManager+Delete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027BD0352892BDD8009E985E /* FirestoreManager+Delete.swift */; };
 		027F9B1A2863A0FD0034FDC9 /* UINavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027F9B192863A0FD0034FDC9 /* UINavigationController.swift */; };
 		027F9B1D2869B2ED0034FDC9 /* MigrationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027F9B1C2869B2ED0034FDC9 /* MigrationManager.swift */; };
 		0289957326FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */; };
@@ -355,6 +356,7 @@
 		026F467927690A3600C279D2 /* Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Icons.swift; sourceTree = "<group>"; };
 		027BA8C427CBCEC600A8919F /* SmallTopicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallTopicCell.swift; sourceTree = "<group>"; };
 		027BA8C627CBD49100A8919F /* WebVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebVC.swift; sourceTree = "<group>"; };
+		027BD0352892BDD8009E985E /* FirestoreManager+Delete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FirestoreManager+Delete.swift"; sourceTree = "<group>"; };
 		027F9B192863A0FD0034FDC9 /* UINavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINavigationController.swift; sourceTree = "<group>"; };
 		027F9B1C2869B2ED0034FDC9 /* MigrationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationManager.swift; sourceTree = "<group>"; };
 		0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommunityCollectionVC+CollectionView.swift"; sourceTree = "<group>"; };
@@ -1129,6 +1131,7 @@
 				022981C226FB49D400B07BC8 /* FirestoreManager.swift */,
 				02BF874528562B1900DE1361 /* FirestoreManager+Fetch.swift */,
 				0247C01F2854C71E002876AB /* FirestoreManager+Upload.swift */,
+				027BD0352892BDD8009E985E /* FirestoreManager+Delete.swift */,
 				02FB9C0728452F3C00124EAC /* FirestoreReference.swift */,
 				0289958626FF422B007CAFB7 /* Extensions */,
 			);
@@ -2071,6 +2074,7 @@
 				E9A9FAE122A50ED90088BD37 /* CobraViewController.swift in Sources */,
 				0247C0202854C71E002876AB /* FirestoreManager+Upload.swift in Sources */,
 				E9817B5725EC03BE00E56FC6 /* SettingSwitchCell.swift in Sources */,
+				027BD0362892BDD8009E985E /* FirestoreManager+Delete.swift in Sources */,
 				E95A6FC8232E80E8008B32CC /* Reachability.swift in Sources */,
 				E9B79CDF224EC68500166EED /* PostCell.swift in Sources */,
 				E9879A2324BDB57A004B497F /* MusicCell.swift in Sources */,

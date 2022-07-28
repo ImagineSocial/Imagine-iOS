@@ -81,6 +81,10 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     
     func getData(community: Community) {
         
+        guard let communityID = community.id else {
+            return
+        }
+        
         var collectionRef: CollectionReference!
         if community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
@@ -88,7 +92,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
             collectionRef = db.collection("Facts")
         }
         
-        let ref = collectionRef.document(community.documentID).collection("addOns").order(by: "popularity", descending: true)
+        let ref = collectionRef.document(communityID).collection("addOns").order(by: "popularity", descending: true)
         
         ref.getDocuments { (snap, err) in
             if let error = err {
@@ -176,7 +180,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                             if let headerTitle = data["headerTitle"] as? String, let description = data["description"] as? String,  let OP = data["OP"] as? String {
                                 
                                 let singleTopic = Community()
-                                singleTopic.documentID = documentID
+                                singleTopic.id = documentID
                                 
                                 let addOn = AddOn(style: .singleTopic, OP: OP, documentID: document.documentID, fact: community, headerTitle: headerTitle, description: description, singleTopic: singleTopic)
                                 
@@ -223,78 +227,54 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     //MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "toAddOnFeedVCSegue" {
-            if let navVC = segue.destination as? UINavigationController {
-                if let feedVC = navVC.topViewController as? AddOnFeedTableViewController {
-                    if let addOn = sender as? AddOn {
-                        feedVC.addOn = addOn
-                    }
-                }
-            }
-        }
-        if segue.identifier == "toSettingSegue" {
-            if let vc = segue.destination as? SettingTableViewController {
-                if let addOn = sender as? AddOn {
-                    vc.addOn = addOn
-                    vc.settingFor = .addOn
-                }
-            }
-        }
-        if segue.identifier == "toAddAPostItemSegue" {
-            if let vc = segue.destination as? AddPostTableViewController {
-                if let addOn = sender as? AddOn {
-                    vc.addItemDelegate = self
-                    vc.addOn = addOn
-                    if addOn.style == .playlist {
-                        vc.playlistTracksOnly = true
-                    }
-                }
-            }
-        }
         
-        if segue.identifier == "newPostSegue" {
-            if let navCon = segue.destination as? UINavigationController {
-                if let newPostVC = navCon.topViewController as? NewPostVC {
-                    if let addOn = sender as? AddOn {
-                        newPostVC.comingFromAddOnVC = true
-                        newPostVC.selectedFact(community: addOn.fact, isViewAlreadyLoaded: false)
-                        newPostVC.addItemDelegate = self
-                        newPostVC.addOn = addOn
-                    }
+        switch segue.identifier {
+        case "toAddOnFeedVCSegue":
+            if let navVC = segue.destination as? UINavigationController, let feedVC = navVC.topViewController as? AddOnFeedTableViewController, let addOn = sender as? AddOn {
+                feedVC.addOn = addOn
+            }
+        case "toSettingSegue":
+            if let vc = segue.destination as? SettingTableViewController, let addOn = sender as? AddOn {
+                vc.addOn = addOn
+                vc.settingFor = .addOn
+            }
+        case "toAddAPostItemSegue":
+            if let vc = segue.destination as? AddPostTableViewController, let addOn = sender as? AddOn {
+                vc.addItemDelegate = self
+                vc.addOn = addOn
+                if addOn.style == .playlist {
+                    vc.playlistTracksOnly = true
                 }
             }
-        }
-        if segue.identifier == "toPostSegue" {
-            if let vc = segue.destination as? PostViewController {
-                if let post = sender as? Post {
-                    vc.post = post
-                }
+        case "newPostSegue":
+            if let navCon = segue.destination as? UINavigationController, let newPostVC = navCon.topViewController as? NewPostVC, let addOn = sender as? AddOn {
+                newPostVC.comingFromAddOnVC = true
+                newPostVC.selectedFact(community: addOn.community, isViewAlreadyLoaded: false)
+                newPostVC.addItemDelegate = self
+                newPostVC.addOn = addOn
             }
-        }
-        if segue.identifier == "toTopicsSegue" {
-            if let vc = segue.destination as? CommunityCollectionVC {
-                if let addOn = sender as? AddOn {
-                    vc.addOn = addOn
-                    vc.addFactToPost = .optInfo
-                    vc.navigationItem.hidesSearchBarWhenScrolling = false
-                    vc.addItemDelegate = self
-                }
+        case "toPostSegue":
+            if let vc = segue.destination as? PostViewController, let post = sender as? Post {
+                vc.post = post
             }
-        }
-        if segue.identifier == "toNewAddOnSegue" {
-            if let vc = segue.destination as? NewAddOnTableViewController {
-                if let community = sender as? Community {
-                    vc.community = community
-                    vc.delegate = self
-                }
+        case "toTopicsSegue":
+            if let vc = segue.destination as? CommunityCollectionVC, let addOn = sender as? AddOn {
+                vc.addOn = addOn
+                vc.addFactToPost = .optInfo
+                vc.navigationItem.hidesSearchBarWhenScrolling = false
+                vc.addItemDelegate = self
             }
-        }
-        if segue.identifier == "toFactSegue" {
-            if let vc = segue.destination as? CommunityPageVC {
-                if let community = sender as? Community {
-                    vc.community = community
-                }
+        case "toNewAddOnSegue":
+            if let vc = segue.destination as? NewAddOnTableViewController, let community = sender as? Community {
+                vc.community = community
+                vc.delegate = self
             }
+        case "toFactSegue":
+            if let vc = segue.destination as? CommunityPageVC, let community = sender as? Community {
+                vc.community = community
+            }
+        default:
+            break
         }
     }
     
@@ -494,14 +474,14 @@ extension AddOnCollectionViewController: AddOnCellDelegate, AddOnFooterViewDeleg
             self.notLoggedInAlert()
             return
         }
-        if let fact = community, info.documentID != "" {
+        if let community = community, let communityID = community.id, info.documentID != "" {
             var collectionRef: CollectionReference!
-            if fact.language == .en {
+            if community.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topics")
             } else {
                 collectionRef = db.collection("Facts")
             }
-            let ref = collectionRef.document(fact.documentID).collection("addOns").document(info.documentID)
+            let ref = collectionRef.document(communityID).collection("addOns").document(info.documentID)
             
             var thanksCount = 1
             if let count = info.thanksCount {

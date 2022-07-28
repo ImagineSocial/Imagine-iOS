@@ -33,7 +33,7 @@ class SettingPickOrderCell: UITableViewCell {
             if let community = community {
                 self.pickOrderLabel.text = community.title
                 
-                if community.imageURL != "", let url = URL(string: community.imageURL) {
+                if let imageURL = community.imageURL, let url = URL(string: imageURL) {
                     self.pickOrderImageView.sd_setImage(with: url, completed: nil)
                 }
             }

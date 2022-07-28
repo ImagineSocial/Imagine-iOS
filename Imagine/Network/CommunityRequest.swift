@@ -14,31 +14,20 @@ class CommunityRequest {
     private let db = FirestoreRequest.shared.db
     private let communityHelper = CommunityHelper.shared
     
-    //MARK:- Get Community
-    ///Load the fact and return it asynchroniously
-    func getCommunity(language: Language, community: Community, beingFollowed: Bool, completion: @escaping (Community) -> Void) {
+    //MARK: - Get Community
+    /// Load the fact and return it asynchroniously
+    func getCommunity(language: Language, communityID: String, completion: @escaping (Community?) -> Void) {
         
-        if community.documentID != "" {
-            
-            var collectionRef: CollectionReference!
-            if language == .en {
-                collectionRef = db.collection("Data").document("en").collection("topics")
+        let ref = FirestoreReference.documentRef(.communities, documentID: communityID, language: language)
+        
+        ref.getDocument { (doc, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
             } else {
-                collectionRef = db.collection("Facts")
-            }
-            let ref = collectionRef.document(community.documentID)
-            ref.getDocument { (doc, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
+                if let document = doc, let data = document.data(), let community = self.communityHelper.getCommunity(documentID: document.documentID, data: data) {
+                    completion(community)
                 } else {
-                    if let document = doc, let data = document.data() {
-                        
-                        if let community = self.communityHelper.getCommunity(documentID: document.documentID, data: data) {
-                            completion(community)
-                        } else {
-                            print("Error: COuldnt get a community")
-                        }
-                    }
+                    print("Error: COuldnt get a community")
                 }
             }
         }

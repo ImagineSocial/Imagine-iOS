@@ -10,7 +10,7 @@ import Foundation
 
 class AddOnSetting {
     var style: AddOnStyle
-    var fact: Community
+    var community: Community
     var addOnDocumentID: String
     var description: String
     var items: [AddOnItem]
@@ -18,9 +18,9 @@ class AddOnSetting {
     var title: String?
     var itemOrder: [String]?
     
-    init(style: AddOnStyle, fact: Community, addOnDocumentID: String, description: String, items: [AddOnItem]) {
+    init(style: AddOnStyle, community: Community, addOnDocumentID: String, description: String, items: [AddOnItem]) {
         self.style = style
-        self.fact = fact
+        self.community = community
         self.addOnDocumentID = addOnDocumentID
         self.description = description
         self.items = items

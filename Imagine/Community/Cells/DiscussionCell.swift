@@ -47,7 +47,7 @@ class DiscussionCell: BaseCollectionViewCell {
             
             self.getArguments(community: community)
             
-            if let url = URL(string: community.imageURL) {
+            if let imageURL = community.imageURL, let url = URL(string: imageURL) {
                 topicImageView.sd_setImage(with: url, completed: nil)
             } else {
                 topicImageView.image = UIImage(named: "default-community")
@@ -66,7 +66,7 @@ class DiscussionCell: BaseCollectionViewCell {
     }
     
     func getArguments(community: Community) {
-        if community.documentID == "" { return }
+        guard let communityID = community.id else { return }
         
         var collectionRef: CollectionReference!
         
@@ -76,7 +76,7 @@ class DiscussionCell: BaseCollectionViewCell {
             collectionRef = db.collection("Facts")
         }
         
-        let ref = collectionRef.document(community.documentID).collection("arguments")
+        let ref = collectionRef.document(communityID).collection("arguments")
         
         let proRef = ref.whereField("proOrContra", isEqualTo: "pro").order(by: "upvotes", descending: true).limit(to: 1)
         proRef.getDocuments { (snap, err) in

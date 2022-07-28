@@ -266,12 +266,8 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     
     //MARK:- Register Recent Community
     func notifyFactCollectionViewController(community: Community) {
-        if let viewControllers = self.tabBarController?.viewControllers {
-            if let navVC = viewControllers[3] as? UINavigationController {
-                if let factVC = navVC.topViewController as? CommunityCollectionVC {
-                    factVC.registerRecentFact(fact: community)
-                }
-            }
+        if let viewControllers = self.tabBarController?.viewControllers, let navVC = viewControllers[3] as? UINavigationController, let communityVC = navVC.topViewController as? CommunityCollectionVC {
+            communityVC.registerRecentFact(community: community)
         }
     }
     

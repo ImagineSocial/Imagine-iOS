@@ -96,7 +96,7 @@ class TopicCell: UITableViewCell {
                         }
                         if let factIDs = data["linkedFactIDs"] as? [String] {
                             self.loadFacts(language: language, factIDs: factIDs) { (facts) in
-                                self.showFacts(facts: facts)
+                                self.showCommunities(facts)
                             }
                         }
                     }
@@ -105,28 +105,28 @@ class TopicCell: UITableViewCell {
         }
     }
     
-    func showFacts(facts: [Community]) {
+    func showCommunities(_ communities: [Community]) {
         
         var index = 0
         
-        for fact in facts {
+        for community in communities {
             
             switch index {
             case 0:
-                if let url = URL(string: fact.imageURL) {
+                if let imageURL = community.imageURL, let url = URL(string: imageURL) {
                     topLevelFactImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
                 }
-                topLevelFactLabel.text = fact.title
+                topLevelFactLabel.text = community.title
             case 1:
-                if let url = URL(string: fact.imageURL) {
+                if let imageURL = community.imageURL, let url = URL(string: imageURL) {
                     midLevelFactImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
                 }
-                midLevelFactLabel.text = fact.title
+                midLevelFactLabel.text = community.title
             default:
-                if let url = URL(string: fact.imageURL) {
+                if let imageURL = community.imageURL, let url = URL(string: imageURL) {
                     lowerLevelFactImage.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
                 }
-                lowerLevelFactLabel.text = fact.title
+                lowerLevelFactLabel.text = community.title
             }
             
             index+=1
@@ -152,31 +152,31 @@ class TopicCell: UITableViewCell {
                             guard let name = data["name"] as? String else {
                                 return
                             }
-                            let fact = Community()
+                            let community = Community()
                             
                             if let displayString = data["displayOption"] as? String {
                                 if displayString == "topic" {
-                                    fact.displayOption = .topic
+                                    community.displayOption = .topic
                                 } else {
-                                    fact.displayOption = .discussion
+                                    community.displayOption = .discussion
                                 }
                             }
-                            fact.title = name
-                            fact.documentID = document.documentID
+                            community.title = name
+                            community.id = document.documentID
+                            
                             if let url = data["imageURL"] as? String {
-                                fact.imageURL = url
+                                community.imageURL = url
                             }
                             if let description = data["description"] as? String {
-                                fact.description = description
+                                community.description = description
                             }
                             if let language = data["language"] as? String {
                                 if language == "en" {
-                                    fact.language = .en
+                                    community.language = .en
                                 }
                             }
-                            fact.fetchComplete = true
                             
-                            self.facts.append(fact)
+                            self.facts.append(community)
 
                             if self.facts.count == factIDs.count {
                                 completion(self.facts)
@@ -224,13 +224,6 @@ class TopicCell: UITableViewCell {
     }
     
     func topicTapped(topic: Community) {
-        topic.getFollowStatus { (isFollowed) in
-            if isFollowed {
-                topic.beingFollowed = true
-                self.delegate?.factOfTheWeekTapped(fact: topic)
-            } else {
-                self.delegate?.factOfTheWeekTapped(fact: topic)
-            }
-        }
+        self.delegate?.factOfTheWeekTapped(fact: topic)
     }
 }

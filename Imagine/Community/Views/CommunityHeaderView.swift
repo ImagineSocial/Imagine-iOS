@@ -34,6 +34,8 @@ class CommunityHeaderView: UIView {
         }
     }
     
+    var communityIsFollowed = false
+    
     // MARK: - Elements
     
     let imageView = BaseImageView(image: nil, contentMode: .scaleAspectFill)
@@ -110,112 +112,64 @@ class CommunityHeaderView: UIView {
     }
     
     private func setCommunity(_ community: Community) {
-        if let url = URL(string: community.imageURL) {
-            imageView.sd_setImage(with: url, completed: nil)
-        } else {
-            imageView.image = UIImage(named: "default-community")
+        
+        community.getFollowStatus { isFollowed in
+            self.setFollowButton(isFollowed: isFollowed)
         }
         
-        if community.beingFollowed {
-            followButton.setTitle("Unfollow", for: .normal)
+        if let imageURL = community.imageURL, let url = URL(string: imageURL) {
+            imageView.sd_setImage(with: url, completed: nil)
         }
         
         descriptionLabel.text = community.description
         titleLabel.text = community.title
         
-        self.followerCountLabel.text = "Follower: \(community.followerCount)"
-        self.postCountLabel.text = "Posts: \(community.postCount)"
+        self.followerCountLabel.text = "Follower: \(community.followerCount ?? 0)"
+        self.postCountLabel.text = "Posts: \(community.postCount ?? 0)"
     }
     
     @objc func followButtonTapped() {
-        guard let community = community else { return }
         
-        if let _ = Auth.auth().currentUser {
-            self.followButton.isEnabled = false
-            if community.beingFollowed {
-                unfollowTopic(community: community)
-            } else {
-                followTopic(community: community)
-            }
-        } else {
+        guard AuthenticationManager.shared.isLoggedIn else {
             delegate?.notLoggedIn()
+            return
         }
+        
+        self.followButton.isEnabled = false
+        communityIsFollowed ? unfollowTopic() : followTopic()
     }
     
     @objc func newPostButtonTapped() {
         delegate?.newPostTapped()
     }
     
-    func followTopic(community: Community) {
-        if let user = Auth.auth().currentUser {
-            let topicRef = db.collection("Users").document(user.uid).collection("topics").document(community.documentID)
-            
-            var data: [String: Any] = ["createDate": Timestamp(date: Date())]
-            
-            if community.language == .en {
-                data["language"] = "en"
-            }
-            topicRef.setData(data) { (err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    print("Succesfully subscribed to topic")
-                    
-                    if let _ = self.community {
-                        // followTopic is called from other instances, where there ist no view instantiated, just the class
-                        self.followButton.setTitle("Unfollow", for: .normal)
-                    }
-                    community.beingFollowed = true
-                    self.updateFollowCount(fact: community, follow: true)
-                }
+    private func followTopic() {
+        guard let community = community else {
+            return
+        }
+
+        community.followTopic { success in
+            if success {
+                self.setFollowButton(isFollowed: true)
             }
         }
     }
     
-    func unfollowTopic(community: Community) {
-        if let user = Auth.auth().currentUser {
-            let topicRef = db.collection("Users").document(user.uid).collection("topics").document(community.documentID)
-            
-            topicRef.delete { (err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    community.beingFollowed = false
-                    print("Successfully unfollowed")
-                    
-                    if let _ = self.community {
-                        // followTopic is called from other instances, where there ist no view instantiated, just the class
-                        self.followButton.setTitle("Follow", for: .normal)
-                    }
-                    self.updateFollowCount(fact: community, follow: false)
-                }
+    private func unfollowTopic() {
+        guard let community = community else {
+            return
+        }
+
+        community.unfollowTopic { success in
+            if success {
+                self.setFollowButton(isFollowed: false)
             }
         }
     }
     
-    func updateFollowCount(fact: Community, follow: Bool) {
-        followButton.isEnabled = true   // updateFollowCount is called from other instances, where there ist no view instantiated, just the class
-        
-        if let user = Auth.auth().currentUser {
-            
-            var collectionRef: CollectionReference!
-            if fact.language == .en {
-                collectionRef = db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = db.collection("Facts")
-            }
-            let ref = collectionRef.document(fact.documentID)
-            
-            if follow {
-                ref.updateData([
-                    "follower" : FieldValue.arrayUnion([user.uid])
-                ])
-            } else { //unfollowed
-                ref.updateData([
-                    "follower": FieldValue.arrayRemove([user.uid])
-                ])
-            }
-        }
+    private func setFollowButton(isFollowed: Bool) {
+        communityIsFollowed = isFollowed
+        followButton.setTitle(isFollowed ? "Unfollow" : "Follow", for: .normal)
     }
 }
 

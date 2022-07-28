@@ -39,7 +39,7 @@ extension NewPostVC {
         }
         
         if let community = linkedCommunity { // If there is a fact that should be linked to this post, and append its ID to the array
-            post.communityID = community.documentID
+            post.communityID = community.id
             post.isTopicPost = true
         }
        
@@ -222,8 +222,8 @@ extension NewPostVC {
     }
     
     private func uploadCommunityData(documentID: String) {
-        guard let userID = AuthenticationManager.shared.user?.uid, let community = linkedCommunity else { return }
-        let collectionReference = FirestoreCollectionReference(document: community.documentID, collection: "posts")
+        guard let userID = AuthenticationManager.shared.user?.uid, let community = linkedCommunity, let communityID = community.id else { return }
+        let collectionReference = FirestoreCollectionReference(document: communityID, collection: "posts")
         let reference = FirestoreReference.documentRef(.communities, documentID: documentID, collectionReference: collectionReference)
         
         let data = PostData(createdAt: Date(), userID: userID, language: LanguageSelection.language, isTopicPost: isTopicPost)

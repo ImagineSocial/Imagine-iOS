@@ -45,19 +45,19 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
                     }
                     self.topicTitleLabel.text = community.title
                     self.topicDescriptionLabel.text = community.description
-                    if let url = URL(string: community.imageURL) {
+                    if let imageURL = community.imageURL, let url = URL(string: imageURL) {
                         topicImageView.sd_setImage(with: url, completed: nil)
                     }
                     
-                    self.topicPostCountLabel.text = "Posts: \(community.postCount)"
-                    self.topicFollowerLabel.text = "Follower: \(community.followerCount)"
+                    self.topicPostCountLabel.text = "Posts: \(community.postCount ?? 0)"
+                    self.topicFollowerLabel.text = "Follower: \(community.followerCount ?? 0)"
                 }
             }
         }
     }
     
     func getPreviewPictures(community: Community) {
-        if community.documentID != "", previewPosts == nil {
+        if community.id != nil, previewPosts == nil {
             self.postHelper.getPreviewPicturesForCommunity(community: community) { [weak self] posts in
                 DispatchQueue.main.async {
                     if let posts = posts, posts.count != 0, let self = self {

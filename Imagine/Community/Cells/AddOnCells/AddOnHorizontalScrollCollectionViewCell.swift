@@ -208,24 +208,24 @@ extension AddOnHorizontalScrollCollectionViewCell: UICollectionViewDelegate, UIC
                         
                         return cell
                     }
-                } else if let fact = item.item as? Community {
+                } else if let community = item.item as? Community {
                     
                     if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: smallFactIdentifier, for: indexPath) as? SmallFactCell {
                         
-                        if fact.title != "" {
-                            cell.fact = fact
+                        if community.title != "" {
+                            cell.community = community
                         } else {    // Not loaded yet
-                            cell.unloadedFact = fact
+                            cell.unloadedFact = community
                         }
                         
-                        if let title = fact.addOnTitle {
-                            cell.postTitle = title
-                        } else {
-                            cell.postTitle = "gotcha"
-                        }
+//                        if let title = community.addOnTitle {
+//                            cell.postTitle = title
+//                        } else {
+//                            cell.postTitle = "gotcha"
+//                        }
                         
                         
-                        cell.setUI(displayOption: fact.displayOption)
+                        cell.setUI(displayOption: community.displayOption)
                         
                         return cell
                     }
@@ -249,8 +249,8 @@ extension AddOnHorizontalScrollCollectionViewCell: UICollectionViewDelegate, UIC
                 let currentCell = collectionView.cellForItem(at: indexPath)
                 
                 if let guiltyCell = currentCell as? SmallFactCell {
-                    if let fact = guiltyCell.fact {
-                        delegate?.itemTapped(item: fact)
+                    if let community = guiltyCell.community {
+                        delegate?.itemTapped(item: community)
                     }
                 } else if let diyCell = currentCell as? SmallPostCell {
                     if let post = diyCell.post {

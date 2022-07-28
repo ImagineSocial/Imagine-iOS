@@ -477,7 +477,7 @@ class LogInViewController: UIViewController {
                     }
                 
                     let userRef = self.db.collection("Users").document(user.uid)
-                    let data: [String:Any] = ["badges": ["first500"], "name": self.name, "surname": self.surname, "full_name": fullName, "createDate": Timestamp(date: Date())] //"username": self.displayName,
+                    let data: [String:Any] = ["badges": ["first500"], "name": self.name, "surname": self.surname, "full_name": fullName, "createdAt": Timestamp(date: Date())] //"username": self.displayName,
                     
                     userRef.setData(data, completion: { (error) in
                         if let error = error {

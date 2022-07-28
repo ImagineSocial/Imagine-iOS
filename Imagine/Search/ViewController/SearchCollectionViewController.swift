@@ -438,45 +438,28 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
         
         func addTopic(document: DocumentSnapshot) {
             
-            let topicIsAlreadyFetched = topicResults.contains { $0.documentID == document.documentID }
-            if topicIsAlreadyFetched {   // Check if we got the user in on of the other queries
+            if topicResults.contains(where: { $0.id == document.documentID }) {
                 return
             }
             
-            if let documentData = document.data() {
-                let documentID = document.documentID
-                
-                guard let name = documentData["name"] as? String,
-                      let createTimestamp = documentData["createDate"] as? Timestamp
-                else {
-                    return
-                }
-                
-                let date = createTimestamp.dateValue()
-                let stringDate = date.formatRelativeString()
-                
-                let fact = Community()
-                fact.title = name
-                fact.createDate = stringDate
-                fact.documentID = documentID
-                
-                if let displayOption = documentData["displayOption"] as? String {
-                    if displayOption == "topic" {
-                        fact.displayOption = .topic
-                    } else {
-                        fact.displayOption = .discussion
-                    }
-                }
-                
-                if let imageURL = documentData["imageURL"] as? String {
-                    fact.imageURL = imageURL
-                }
-                if let description = documentData["description"] as? String {
-                    fact.description = description
-                }
-                
-                topicResults.append(fact)
+            guard let documentData = document.data(), let name = documentData["name"] as? String,
+                  let timestamp = documentData["createdAt"] as? Timestamp
+            else {
+                return
             }
+                        
+            let community = Community()
+            community.title = name
+            community.createdAt = timestamp.dateValue()
+            community.id = document.documentID
+            community.imageURL = documentData["imageURL"] as? String
+            community.description = documentData["description"] as? String
+            
+            if let displayOption = documentData["displayOption"] as? String {
+                community.displayOption = displayOption == "topic" ? .topic : .discussion
+            }
+            
+            topicResults.append(community)
         }
     }
     

@@ -86,16 +86,11 @@ class GifCell: BaseFeedCell {
         feedLikeView.setPost(post: post)
         
         
-        if let fact = post.community {
-            
-            if fact.title == "" {
-                if fact.beingFollowed {
-                    self.getCommunity(beingFollowed: true)
-                } else {
-                    self.getCommunity(beingFollowed: false)
-                }
+        if let communityID = post.communityID {
+            if post.community != nil {
+                setCommunity(for: post)
             } else {
-                self.setCommunity(post: post)
+                getCommunity(with: communityID)
             }
         }
         

@@ -147,31 +147,22 @@ class BaseFeedCell : UITableViewCell {
     
     //MARK: - Get Community
     ///Load the fact and return it asynchroniously
-    func getCommunity(beingFollowed: Bool) {
-        if let post = post, let community = post.community {
-            if community.documentID != "" {
-                communityRequest.getCommunity(language: post.language, community: community, beingFollowed: beingFollowed) { (community) in
-                    
-                    post.community = community
-                    
-                    self.setCommunity(post: post)
-                }
-            }
-        }
-    }
-    
-    func getCommunity() {
-        guard let post = post, let communityID = post.communityID else {
+    func getCommunity(with communityID: String) {
+        guard let post = post else {
             return
         }
-
-        let reference = FirestoreReference.documentRef(.communities, documentID: communityID)
         
-        
+        communityRequest.getCommunity(language: post.language, communityID: communityID) { (community) in
+            
+            post.community = community
+            
+            self.setCommunity(for: post)
+        }
     }
     
+    
     //MARK:- Set Community
-    func setCommunity(post: Post) {
+    func setCommunity(for post: Post) {
         feedUserView.setCommunity(post: post)
     }
 }

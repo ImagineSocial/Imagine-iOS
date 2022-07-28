@@ -202,12 +202,11 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
         dataHelper.getFollowedTopicDocuments(userUID: userID) { documents in
             var topicCount = documents.count
             for document in documents {
-                self.addFact(document: document) { fact in
-                    if let fact = fact {
-                        fact.beingFollowed = true
-                        self.followedCommunities.append(fact)
+                self.addCommunity(document: document) { community in
+                    if let community = community {
+                        self.followedCommunities.append(community)
                         self.followedCommunities.sort {
-                            $0.title.localizedCompare($1.title) == .orderedAscending //Not case sensitive
+                            $0.title?.localizedCompare($1.title ?? "") == .orderedAscending
                         }
                     } else {
                         topicCount -= 1
@@ -220,7 +219,7 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
         }
     }
     
-    func addFact(document: QueryDocumentSnapshot, returnedFact: @escaping (Community?) -> Void) {
+    func addCommunity(document: QueryDocumentSnapshot, completion: @escaping (Community?) -> Void) {
         let data = document.data()
         
         var collectionRef: CollectionReference = self.db.collection("Facts")
@@ -236,18 +235,18 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
         ref.getDocument { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
-                returnedFact(nil)
+                completion(nil)
             } else {
                 if let snap = snap {
                     if let data = snap.data() {
                         if let fact = CommunityHelper.shared.getCommunity(documentID: snap.documentID, data: data) {
-                            returnedFact(fact)
+                            completion(fact)
                         }
                     } else {
-                        returnedFact(nil)
+                        completion(nil)
                     }
                 } else {
-                    returnedFact(nil)
+                    completion(nil)
                 }
             }
         }
@@ -276,14 +275,19 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
     
     func topicSelected(community: Community) {
         print("TopicSelected")
-        registerRecentFact(fact: community)
+        registerRecentFact(community: community)
     }
     
-    func registerRecentFact(fact: Community) {
+    func registerRecentFact(community: Community) {
         // Safe the selected topic to display it later in the "currentTopic" CollectionView
+        
+        guard let communityID = community.id else {
+            return
+        }
+        
         let defaults = UserDefaults.standard
         let key:String!
-        switch fact.language {
+        switch community.language {
         case .en:
             key = "recentTopics-en"
         case .de:
@@ -292,8 +296,8 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
         
         var factStrings = defaults.stringArray(forKey: key) ?? [String]()
         
-        factStrings = factStrings.filter{ $0 != fact.documentID }
-        factStrings.insert(fact.documentID, at: 0)
+        factStrings = factStrings.filter { $0 != communityID }
+        factStrings.insert(communityID, at: 0)
         
         if factStrings.count >= 10 {
             factStrings.removeLast()
@@ -384,7 +388,10 @@ extension CommunityCollectionVC: AddOnDelegate {
     }
     
     func showAddItemAlert(for community: Community) {
-        let factString = community.title.quoted
+        guard let title = community.title else {
+            return
+        }
+        let factString = title.quoted
         
         let string = NSLocalizedString("add_item_alert_message", comment: "you sure to add this?")
         
@@ -393,7 +400,7 @@ extension CommunityCollectionVC: AddOnDelegate {
             self.setFactForOptInfo(fact: community)
         }))
         alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .cancel, handler: { (_) in
-            alert.dismiss(animated: true, completion: nil)
+            alert.dismiss(animated: true)
         }))
         self.present(alert, animated: true)
     }

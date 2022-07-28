@@ -109,7 +109,7 @@ class FeedUserView: UIView, NibLoadable {
         
         self.linkedCommunityImageView.layer.borderColor = UIColor.secondaryLabel.cgColor
         
-        if let url = URL(string: post.community!.imageURL) {
+        if let imageURL = post.community?.imageURL, let url = URL(string: imageURL) {
             self.linkedCommunityImageView.sd_setImage(with: url, completed: nil)
         } else {
             self.linkedCommunityImageView.backgroundColor = .systemBackground

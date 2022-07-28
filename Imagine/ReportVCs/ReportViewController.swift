@@ -123,29 +123,25 @@ class ReportViewController: UIViewController {
         }
     }
     
-    func deleteTopicPost(fact: Community) {
-        guard let post = post, let documentID = post.documentID else { return }
+    func deleteTopicPost(community: Community) {
+        guard let post = post, let documentID = post.documentID, let communityID = community.id else { return }
         
         var collectionRef: CollectionReference!
-        if fact.language == .en {
+        if community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
         }
-        let ref = collectionRef.document(fact.documentID).collection("posts").document(documentID)
+        let ref = collectionRef.document(communityID).collection("posts").document(documentID)
         
         ref.getDocument { (snap, err) in
             if let error = err {
                 print("Error: \(error.localizedDescription)")
             } else {
-                if let snap = snap {
-                    ref.delete()
-                    if let data = snap.data() {
-                        if let addOnIDs = data["addOnDocumentIDs"] as? [String] {
-                            for id in addOnIDs {
-                                self.deletePostInAddOn(addOnID: id)
-                            }
-                        }
+                if let snap = snap, let data = snap.data(), let addOnIDs = data["addOnDocumentIDs"] as? [String] {
+                    for id in addOnIDs {
+                        self.deletePostInAddOn(addOnID: id)
+                        ref.delete()
                     }
                 }
             }
@@ -153,23 +149,20 @@ class ReportViewController: UIViewController {
     }
     
     func deletePostInAddOn(addOnID: String) {
-        guard let post = post, let documentID = post.documentID else { return }
+        guard let post = post, let documentID = post.documentID, let community = post.community, let communityID = community.id else { return }
         
-        if let fact = post.community {
-            var collectionRef: CollectionReference!
-            if fact.language == .en {
-                collectionRef = db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = db.collection("Facts")
+        var collectionRef: CollectionReference!
+        if community.language == .en {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        let ref = collectionRef.document(communityID).collection("addOns").document(addOnID).collection("items").document(documentID)
+        
+        ref.delete { (err) in
+            if let error = err {
+                print("Error when deleting post in AddOn: \(error.localizedDescription)")
             }
-            let ref = collectionRef.document(fact.documentID).collection("addOns").document(addOnID).collection("items").document(documentID)
-            
-            ref.delete { (err) in
-                if let error = err {
-                    print("Error when deleting post in AddOn: \(error.localizedDescription)")
-                }
-            }
-            
         }
     }
     
@@ -198,8 +191,8 @@ class ReportViewController: UIViewController {
             deleteThumbnail(documentID: documentID)
         }
         
-        if let fact = post.community {
-            self.deleteTopicPost(fact: fact)
+        if let community = post.community {
+            self.deleteTopicPost(community: community)
         }
         if let postRef = postRef {
             postRef.delete { (err) in

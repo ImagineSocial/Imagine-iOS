@@ -148,7 +148,12 @@ extension FirestoreManager {
         decodePostData(reference: savedPostRef, completion: completion)
     }
     
-    func getCommunityPosts(communityID: String, completion: @escaping ([Post]?) -> Void) {
+    func getCommunityPosts(communityID: String?, completion: @escaping ([Post]?) -> Void) {
+        
+        guard let communityID = communityID else {
+            completion(nil)
+            return
+        }
         
         let reference = FirestoreCollectionReference(document: communityID, collection: "posts")
         var userPostRef = FirestoreReference.collectionRef(.communityPosts, collectionReference: reference)

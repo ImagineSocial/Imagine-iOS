@@ -22,7 +22,7 @@ protocol NewCommunityItemDelegate {
     func titleTextChanged(text: String)
     func descriptionTextChanged(text: String)
     func argumentTypeChanged(type: ArgumentType)
-    func presentationChanged(displayOption: DisplayOption, factDisplayName: FactDisplayName)
+    func presentationChanged(displayOption: DisplayOption, factDisplayName: DiscussionTitles)
     func sourceChanged(source: String)
 }
 
@@ -43,10 +43,8 @@ enum ArgumentType {
     case contra
 }
 
-enum FactDisplayName: String, Codable {
-    case proContra
-    case confirmDoubt
-    case advantageDisadvantage
+enum DiscussionTitles: String, Codable {
+    case proContra, confirmDoubt, advantageDisadvantage
 }
 
 enum DisplayOption: String, Codable {
@@ -100,10 +98,11 @@ class NewCommunityItemTableVC: UITableViewController {
     
     var cells = [NewCommunityCellType]()
     
-    //MARK:-Pickable Attributes:
+    //MARK: - Pickable Attributes
+    
     var selectedTopicIDForSingleTopicAddOn: String?
     var selectedImageFromPicker: UIImage?
-    var pickedFactDisplayNames: FactDisplayName = .proContra
+    var pickedDiscussionTitles: DiscussionTitles = .proContra
     var pickedDisplayOption: DisplayOption = .discussion
     var proOrContra: ArgumentType = .pro
     var sourceLink: String?
@@ -391,14 +390,7 @@ class NewCommunityItemTableVC: UITableViewController {
             createNewDeepArgument()
         case .community:
             
-            var collectionRef: CollectionReference!
-            if language == .en {
-                collectionRef = db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = db.collection("Facts")
-            }
-            
-            let ref = collectionRef.document()
+            let ref = FirestoreReference.documentRef(.communities, documentID: nil)
             
             if selectedImageFromPicker != nil {
                 if let userID = AuthenticationManager.shared.user?.uid {
@@ -410,56 +402,42 @@ class NewCommunityItemTableVC: UITableViewController {
         case .source:
             createNewSource()
         case .addOnPlaylist:
-            if let fact = community {
-                var collectionRef: CollectionReference!
-                if fact.language == .en {
-                    collectionRef = db.collection("Data").document("en").collection("topics")
-                } else {
-                    collectionRef = db.collection("Facts")
-                }
-                
-                let ref = collectionRef.document(fact.documentID).collection("addOns").document()
-                
-                createNewAddOnPlaylist(ref: ref)
-                
+            guard let community = community, let id = community.id else {
+                return
             }
+            let collectionReference = FirestoreCollectionReference(document: id, collection: "addOns")
+            let ref = FirestoreReference.documentRef(.communities, documentID: nil, collectionReference: collectionReference)
+            
+            createNewAddOnPlaylist(ref: ref)
         case .addOn:
-            if let fact = community {
-                var collectionRef: CollectionReference!
-                if fact.language == .en {
-                    collectionRef = db.collection("Data").document("en").collection("topics")
-                } else {
-                    collectionRef = db.collection("Facts")
+            guard let community = community, let id = community.id else {
+                return
+            }
+            
+            let collectionReference = FirestoreCollectionReference(document: id, collection: "addOns")
+            let ref = FirestoreReference.documentRef(.communities, documentID: nil, collectionReference: collectionReference)
+            
+            if selectedImageFromPicker != nil {
+                if let userID = AuthenticationManager.shared.user?.uid {
+                    self.savePicture(userID: userID, topicRef: ref, new: .addOn)
                 }
-                
-                let ref = collectionRef.document(fact.documentID).collection("addOns").document()
-                
-                if selectedImageFromPicker != nil {
-                    if let userID = AuthenticationManager.shared.user?.uid {
-                        self.savePicture(userID: userID, topicRef: ref, new: .addOn)
-                    }
-                } else {
-                    createNewAddOn(ref: ref, imageURL: nil, isYouTubePlaylistDesign: false)
-                }
+            } else {
+                createNewAddOn(ref: ref, imageURL: nil, isYouTubePlaylistDesign: false)
             }
         case .addOnYouTubePlaylistDesign:
-            if let fact = community {
-                var collectionRef: CollectionReference!
-                if fact.language == .en {
-                    collectionRef = db.collection("Data").document("en").collection("topics")
-                } else {
-                    collectionRef = db.collection("Facts")
+            guard let community = community, let id = community.id else {
+                return
+            }
+            
+            let collectionReference = FirestoreCollectionReference(document: id, collection: "addOns")
+            let ref = FirestoreReference.documentRef(.communities, documentID: nil, collectionReference: collectionReference)
+            
+            if selectedImageFromPicker != nil {
+                if let userID = AuthenticationManager.shared.user?.uid {
+                    self.savePicture(userID: userID, topicRef: ref, new: .addOnYouTubePlaylistDesign)
                 }
-                
-                let ref = collectionRef.document(fact.documentID).collection("addOns").document()
-                
-                if selectedImageFromPicker != nil {
-                    if let userID = AuthenticationManager.shared.user?.uid {
-                        self.savePicture(userID: userID, topicRef: ref, new: .addOnYouTubePlaylistDesign)
-                    }
-                } else {
-                    createNewAddOn(ref: ref, imageURL: nil, isYouTubePlaylistDesign: true)
-                }
+            } else {
+                createNewAddOn(ref: ref, imageURL: nil, isYouTubePlaylistDesign: true)
             }
         case .singleTopicAddOn:
             createNewSingleTopicAddOn()
@@ -474,67 +452,51 @@ class NewCommunityItemTableVC: UITableViewController {
     }
     
     func createSingleTopicPost() {
-        guard let community = community, let title = titleText, title != "", let userID = AuthenticationManager.shared.user?.uid else {
+        guard let community = community, let communityID = community.id, let title = titleText, title != "", let userID = AuthenticationManager.shared.user?.uid else {
             self.alert(message: NSLocalizedString("new_community_item_error_title", comment: "input missing"))
             return
         }
         
-        var collectionRef: CollectionReference!
-        if community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("posts")
-        } else {
-            collectionRef = db.collection("Posts")
-        }
-        let ref = collectionRef.document()
+        let ref = FirestoreReference.documentRef(.posts, documentID: nil)
         
-        var description = ""
-        if let descriptionText = descriptionText {
-            description = descriptionText
-        }
+        let post = Post(type: .singleTopic, title: title, createdAt: Date())
+        post.description = descriptionText
+        post.userID = userID
+        post.notificationRecipients = [userID]
+        post.communityID = communityID
+        post.language = community.language
         
-        let dataDictionary: [String: Any] = ["title": title, "description": description, "createTime": Timestamp(date: Date()), "originalPoster": userID, "thanksCount":0, "wowCount":0, "haCount":0, "niceCount":0, "type": "singleTopic", "report": "normal", "linkedFactID": community.documentID, "notificationRecipients": [userID]]
-        
-        ref.setData(dataDictionary) { (err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
+        FirestoreManager.uploadObject(object: post, documentReference: ref) { error in
+            if let error = error {
+                print("We have an error uploading a single topic post: \(error.localizedDescription)")
             } else {
-                let post = Post(type: .singleTopic, title: title, createdAt: Date())
-                post.documentID = ref.documentID
-                post.language = community.language
+                let postData = PostData(createdAt: Date(), userID: userID, language: community.language, isTopicPost: false)
                 
-                let userRef = self.db.collection("Users").document(userID).collection("posts").document(ref.documentID)
-                var data: [String: Any] = ["createTime": Timestamp(date: Date())]
+                let collectionReference = FirestoreCollectionReference(document: userID, collection: "posts")
+                let postRef = FirestoreReference.documentRef(.users, documentID: ref.documentID, collectionReference: collectionReference)
                 
-                if community.language == .en {
-                    data["language"] = "en"
-                }
-                userRef.setData(data) { (err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                        self.finished(item: post)   // finish anyway
-                    } else {
-                        self.finished(item: post)
+                FirestoreManager.uploadObject(object: postData, documentReference: postRef) { error in
+                    self.finished(item: post)
+                    
+                    guard let error = error else {
+                        return
                     }
+
+                    print("We have an error uploading the postData: \(error.localizedDescription)")
                 }
             }
         }
-        
     }
     
     func createNewSingleTopicAddOn() {
         
-        guard let community = community, let title = titleText, let description = descriptionText, let linkedFactID = self.selectedTopicIDForSingleTopicAddOn, let userID = AuthenticationManager.shared.user?.uid else {
+        guard let community = community, let communityID = community.id, let title = titleText, let description = descriptionText, let linkedFactID = self.selectedTopicIDForSingleTopicAddOn, let userID = AuthenticationManager.shared.user?.uid else {
             self.showTitleDescriptionAlert()
             return
         }
-        var collectionRef: CollectionReference!
-        if community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let ref = collectionRef.document(community.documentID).collection("addOns")
         
+        let collectionReference = FirestoreCollectionReference(document: communityID, collection: "addOns")
+        let ref = FirestoreReference.mainRef(.communities, collectionReference: collectionReference)
         
         let data: [String: Any] = ["OP": userID, "headerTitle": title, "description": description, "linkedFactID": linkedFactID, "popularity": 0, "type": "singleTopic"]
         
@@ -588,7 +550,7 @@ class NewCommunityItemTableVC: UITableViewController {
     }
     
     func createNewSource() {
-        guard let community = community, let argument = argument, let title = titleText, let description = descriptionText, let userID = AuthenticationManager.shared.user?.uid, let source = sourceLink, source.isValidURL else {
+        guard let community = community, let communityID = community.id, let argument = argument, let title = titleText, let description = descriptionText, let userID = AuthenticationManager.shared.user?.uid, let source = sourceLink, source.isValidURL else {
             showTitleDescriptionAlert()
             return
         }
@@ -600,7 +562,7 @@ class NewCommunityItemTableVC: UITableViewController {
             collectionRef = db.collection("Facts")
         }
         
-        let argumentRef = collectionRef.document(community.documentID).collection("arguments").document(argument.documentID).collection("sources").document()
+        let argumentRef = collectionRef.document(communityID).collection("arguments").document(argument.documentID).collection("sources").document()
         
         let data: [String:Any] = ["title" : title, "description": description, "source": source, "OP": userID]
         
@@ -620,7 +582,7 @@ class NewCommunityItemTableVC: UITableViewController {
     }
     
     func createNewDeepArgument() {
-        guard let community = community, let argument = argument, let title = titleText, let description = descriptionText, let userID = AuthenticationManager.shared.user?.uid else {
+        guard let community = community, let communityID = community.id, let argument = argument, let title = titleText, let description = descriptionText, let userID = AuthenticationManager.shared.user?.uid else {
             showTitleDescriptionAlert()
             return
         }
@@ -630,7 +592,7 @@ class NewCommunityItemTableVC: UITableViewController {
         } else {
             collectionRef = db.collection("Facts")
         }
-        let ref = collectionRef.document(community.documentID).collection("arguments").document(argument.documentID).collection("arguments").document()
+        let ref = collectionRef.document(communityID).collection("arguments").document(argument.documentID).collection("arguments").document()
         
         let data: [String:Any] = ["title" : title, "description": description, "OP": userID]
         
@@ -649,7 +611,7 @@ class NewCommunityItemTableVC: UITableViewController {
     }
     
     func createNewArgument() {
-        guard let community = community, let title = titleText, let description = descriptionText, let userID = AuthenticationManager.shared.user?.uid else {
+        guard let community = community, let communityID = community.id, let title = titleText, let description = descriptionText, let userID = AuthenticationManager.shared.user?.uid else {
             showTitleDescriptionAlert()
             return
         }
@@ -660,7 +622,7 @@ class NewCommunityItemTableVC: UITableViewController {
             collectionRef = db.collection("Facts")
         }
         
-        let ref = collectionRef.document(community.documentID).collection("arguments").document()
+        let ref = collectionRef.document(communityID).collection("arguments").document()
         
         let proOrContra = getProOrContraString()
         
@@ -688,69 +650,38 @@ class NewCommunityItemTableVC: UITableViewController {
             
             return
         }
+                
+        let community = Community()
+        community.id = ref.documentID
+        community.title = title
+        community.description = description
+        community.createdAt = Date()
+        community.createdBy = userID
+        community.moderators = [userID]
+        community.displayOption = pickedDisplayOption
+        community.discussionTitles = (pickedDisplayOption == .discussion) ? pickedDiscussionTitles : nil
+        community.language = language
+        community.imageURL = imageURL
         
-        let displayOption = self.getNewFactDisplayString(displayOption: self.pickedDisplayOption)
-        
-        var data = [String: Any]()
-        let name = title
-        let fact = Community()
-        
-        data = ["follower": [userID],"name": name, "description": description, "createDate": Timestamp(date: Date()), "OP": userID, "displayOption": displayOption.displayOption, "popularity": 0]
-        
-        if let factDisplayName = displayOption.factDisplayNames {
-            data["factDisplayNames"] = factDisplayName
+        FirestoreManager.uploadObject(object: community, documentReference: ref) { error in
+            guard let error = error else {
+                self.followCommunity(community: community)
+                self.finished(item: community)
+                return
+            }
+
+            print("We have an error uploading a community: \(error.localizedDescription)")
         }
-        
-        fact.title = name
-        fact.description = description
-        fact.beingFollowed = true
-        fact.documentID = ref.documentID
-        fact.displayOption = self.pickedDisplayOption
-        fact.moderators = [userID]
-        fact.language = language
-        
-        if let url = imageURL {
-            data["imageURL"] = url
-            fact.imageURL = url
-        }
-        if language == .en {
-            data["language"] = "en"
-        }
-        
-        self.setUserChanges(documentID: ref.documentID) //Follow Topic and set Mod Badge
-        
-        ref.setData(data) { (err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                self.finished(item: fact)    // Will reload the database in the delegate
+    }
+    
+    private func followCommunity(community: Community) {
+        community.followTopic { success in
+            if !success {
+                print("We couldnt follow the topic: \(community.title ?? "")")
             }
         }
     }
     
-    func setUserChanges(documentID: String) {
-        let header = CommunityHeaderView()
-        let community = Community()
-        community.documentID = documentID
-        community.language = language
-        
-        header.followTopic(community: community)
-        
-        guard let userID = AuthenticationManager.shared.user?.uid else {
-            return
-        }
-        
-        let ref = db.collection("Users").document(userID)
-        ref.updateData([
-            "badges" : FieldValue.arrayUnion(["mod"])
-        ]) { (err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                print("Succesfully added badge")
-            }
-        }
-    }
     
     func finished(item: Any?) {
         self.view.activityStopAnimating()
@@ -774,23 +705,6 @@ class NewCommunityItemTableVC: UITableViewController {
             return "pro"
         }
     }
-    
-    func getNewFactDisplayString(displayOption: DisplayOption) -> (displayOption: String, factDisplayNames: String?) {
-        switch displayOption {
-            case .discussion:
-                switch self.pickedFactDisplayNames {
-                case .proContra:
-                    return (displayOption: "fact", factDisplayNames: "proContra")
-                case .confirmDoubt:
-                    return (displayOption: "fact", factDisplayNames: "confirmDoubt")
-                case .advantageDisadvantage:
-                    return (displayOption: "fact", factDisplayNames: "advantage")
-                }
-            case .topic:
-                return (displayOption: "topic", factDisplayNames: nil)
-        }
-    }
-    
     
     //MARK:- PrepareForSegue
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -840,10 +754,10 @@ extension NewCommunityItemTableVC: NewCommunityItemDelegate, LinkFactWithPostDel
         self.proOrContra = type
     }
     
-    func presentationChanged(displayOption: DisplayOption, factDisplayName: FactDisplayName) {
+    func presentationChanged(displayOption: DisplayOption, factDisplayName: DiscussionTitles) {
         print("presentation changed: \(displayOption), \(factDisplayName)")
         self.pickedDisplayOption = displayOption
-        self.pickedFactDisplayNames = factDisplayName
+        self.pickedDiscussionTitles = factDisplayName
     }
     
     func sourceChanged(source: String) {
@@ -855,16 +769,19 @@ extension NewCommunityItemTableVC: NewCommunityItemDelegate, LinkFactWithPostDel
     }
     
     func selectedFact(community: Community, isViewAlreadyLoaded: Bool) {
-        if community.documentID != "" {
-            self.selectedTopicIDForSingleTopicAddOn = community.documentID
-            if let indexPath = self.indexPathOfChooseTopicCell {
-                if let cell = tableView.cellForRow(at: indexPath) as? NewCommunityLinkedCommunityCell {
-                    if let url = URL(string: community.imageURL) {
-                        cell.imageURL = url
-                        cell.choosenTopicLabel.text = community.title
-                    }
-                }
-            }
+        guard let communityID = community.id else {
+            return
+        }
+        
+        self.selectedTopicIDForSingleTopicAddOn = communityID
+        
+        if let indexPath = self.indexPathOfChooseTopicCell,
+            let cell = tableView.cellForRow(at: indexPath) as? NewCommunityLinkedCommunityCell,
+            let imageURL = community.imageURL,
+            let url = URL(string: imageURL) {
+            
+            cell.imageURL = url
+            cell.choosenTopicLabel.text = community.title
         }
     }
 }
@@ -1023,7 +940,7 @@ class NewCommunityPresentationCell: UITableViewCell, UIPickerViewDelegate, UIPic
     var delegate: NewCommunityItemDelegate?
     
     let pickerOptions = [NSLocalizedString("discussion_pro/contra", comment: "pro/Contra"), NSLocalizedString("discussion_doubt/proof", comment: "doubt/proof"), NSLocalizedString("discussion_advantage/disadvantage", comment: "advantage/disadvantage")]
-    var pickedFactDisplayNames: FactDisplayName = .proContra
+    var pickedFactDisplayNames: DiscussionTitles = .proContra
     
     var pickedDisplayOption: DisplayOption? {
         didSet {
@@ -1130,7 +1047,7 @@ class NewCommunityArgumentCell: UITableViewCell {
     var fact: Community? {
         didSet {
             if let fact = fact {
-                switch fact.factDisplayNames {
+                switch fact.discussionTitles {
                 case .advantageDisadvantage:
                     proContraSegmentedControl.setTitle(NSLocalizedString("discussion_advantage", comment: "advantage"), forSegmentAt: 0)
                     proContraSegmentedControl.setTitle(NSLocalizedString("discussion_disadvantage", comment: "disadvantage"), forSegmentAt: 1)

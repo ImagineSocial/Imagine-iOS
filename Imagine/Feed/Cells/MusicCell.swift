@@ -146,16 +146,11 @@ class MusicCell: BaseFeedCell, WKUIDelegate, WKNavigationDelegate {
         feedLikeView.setPost(post: post)
         
         
-        if let community = post.community {
-            
-            if community.title == "" {
-                if community.beingFollowed {
-                    self.getCommunity(beingFollowed: true)
-                } else {
-                    self.getCommunity(beingFollowed: false)
-                }
+        if let communityID = post.communityID {
+            if post.community != nil {
+                setCommunity(for: post)
             } else {
-                self.setCommunity(post: post)
+                getCommunity(with: communityID)
             }
         }
         

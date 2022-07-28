@@ -61,7 +61,7 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
         DispatchQueue.global(qos: .background).async {
             for item in info.items {
                 if let post = item.item as? Post {
-                    post.language = info.fact.language
+                    post.language = info.community.language
                     self.addOnPosts.append(post)
                 }
             }

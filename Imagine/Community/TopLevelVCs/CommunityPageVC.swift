@@ -126,26 +126,30 @@ class CommunityPageVC: UIPageViewController {
         
         // Set the VCs and declare the firstVC
         
-        if community.isAddOnFirstView {
-            self.presentedVC = 0
-            self.headerView.segmentedControlView.segmentedControlChanged()
+        switch community.initialView {
+        case .addOn:
+            presentedVC = 0
+            headerView.segmentedControlView.segmentedControlChanged()
             
             if let firstVC = argumentVCs[0] as? AddOnCollectionViewController {
                 setViewControllers([firstVC], direction: .forward, animated: true, completion: nil)
             }
-        } else {
-            self.presentedVC = 1
-            self.headerView.segmentedControlView.segmentedControl.selectedSegmentIndex = 1
-            self.headerView.segmentedControlView.segmentedControlChanged()
             
-            if community.displayOption == .discussion {
-                if let secondVC = argumentVCs[1] as? DiscussionParentVC {
-                    setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
-                }
-            } else {
-                if let secondVC = argumentVCs[1] as? CommunityFeedTableVC {
-                    setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
-                }
+        case .feed:
+            presentedVC = (community.displayOption == .discussion) ? 2 : 1
+            headerView.segmentedControlView.segmentedControl.selectedSegmentIndex = 1
+            headerView.segmentedControlView.segmentedControlChanged()
+            
+            if let feedVC = argumentVCs[presentedVC] as? CommunityFeedTableVC {
+                setViewControllers([feedVC], direction: .forward, animated: true, completion: nil)
+            }
+        case .discussion:
+            presentedVC = 1
+            headerView.segmentedControlView.segmentedControl.selectedSegmentIndex = 1
+            headerView.segmentedControlView.segmentedControlChanged()
+            
+            if let secondVC = argumentVCs[1] as? DiscussionParentVC {
+                setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
             }
         }
     }
@@ -166,8 +170,8 @@ class CommunityPageVC: UIPageViewController {
         let shareButton = getShareTopicButton()
         let shareBarButton = UIBarButtonItem(customView: shareButton)
         
-        if let user = AuthenticationManager.shared.user {
-            for mod in community.moderators {
+        if let user = AuthenticationManager.shared.user, let moderators = community.moderators {
+            for mod in moderators {
                 if mod == user.uid {
                     self.settingButton = getSettingButton()
                     let settingBarButton = UIBarButtonItem(customView: self.settingButton)

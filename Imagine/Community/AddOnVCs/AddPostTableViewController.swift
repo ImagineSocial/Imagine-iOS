@@ -365,34 +365,6 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     }
     
     
-    func checkIfFirstEntry(collectionReferenceString: String, fact: Community, gotCollection: @escaping (Bool) -> Void) {
-        var collectionRef: CollectionReference!
-        let language = LanguageSelection.language
-        if language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let ref = collectionRef.document(fact.documentID).collection(collectionReferenceString)
-        
-        ref.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    
-                    if snap.isEmpty {
-                        print("No document in snap")
-                        gotCollection(false)
-                    } else {
-                        print("Got Documents in snap")
-                        gotCollection(true)
-                    }
-                }
-            }
-        }
-    }
-    
     @IBAction func searchButtonTapped(_ sender: Any) {
         
         self.searchController.searchBar.becomeFirstResponder()

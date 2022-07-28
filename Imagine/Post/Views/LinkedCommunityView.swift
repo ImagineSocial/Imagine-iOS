@@ -14,9 +14,9 @@ class LinkedCommunityView: UIView {
     var community: Community? {
         didSet {
             if let community = community {
-                linkedFactLabel.text = "'\(community.title)'"
+                linkedFactLabel.text = "'\(community.title ?? "")'"
                 
-                if let url = URL(string: community.imageURL) {
+                if let imageURL = community.imageURL, let url = URL(string: imageURL) {
                     linkedFactImageView.sd_setImage(with: url, completed: nil)
                 } else {
                     linkedFactImageView.image = UIImage(named: "default-community")

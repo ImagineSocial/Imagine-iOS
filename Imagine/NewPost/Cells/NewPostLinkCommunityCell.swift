@@ -59,13 +59,13 @@ class NewPostLinkCommunityCell: NewPostBaseCell {
         addedFactImageView.isHidden = false
         linkedCommunityLabel.isHidden = false
         
-        if let url = URL(string: community.imageURL) {
+        if let imageURL = community.imageURL, let url = URL(string: imageURL) {
             addedFactImageView.sd_setImage(with: url, completed: nil)
         } else {
             addedFactImageView.image = UIImage(named: "default-community")
         }
          
-        linkedCommunityLabel.text = "'\(community.title)'"
+        linkedCommunityLabel.text = "'\(community.title ?? "")'"
     }
     
     func removeLinkedCommunity() {

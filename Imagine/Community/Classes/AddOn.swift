@@ -34,7 +34,7 @@ class AddOn {
     var headerTitle: String?
     var description: String
     var documentID: String  // DocumentID of the addOn
-    var fact: Community
+    var community: Community
     var imageURL: String?
     var OP: String
     var design: AddOnDesign = .normal
@@ -55,27 +55,23 @@ class AddOn {
     var items = [AddOnItem]()
     
     
-    //MARK:- Initialization
     init(style: AddOnStyle, OP: String, documentID: String, fact: Community, headerTitle: String, description: String, singleTopic: Community?) {    /// For the normal AddOn & singleTopic initialization
         self.description = description
         self.headerTitle = headerTitle
         self.documentID = documentID
-        self.fact = fact
+        self.community = fact
         self.style = style
         self.OP = OP
         
-        if style == .singleTopic {
-            if let singleTopic = singleTopic {
-                if singleTopic.documentID != "" {
-                    let communityRequest = CommunityRequest()
-
-                    communityRequest.getCommunity(language: fact.language, community: singleTopic, beingFollowed: false) { [weak self] (fact) in
-
-                        if let self = self {
-                            self.singleTopic = fact
-                        }
-                    }
+        if style == .singleTopic, let singleTopic = singleTopic, let singleTopicID = singleTopic.id {
+            let communityRequest = CommunityRequest()
+            
+            communityRequest.getCommunity(language: community.language, communityID: singleTopicID) { [weak self] community in
+                guard let self = self, let community = community else {
+                    return
                 }
+                
+                self.singleTopic = community
             }
         }
     }
@@ -83,24 +79,25 @@ class AddOn {
     init(style: AddOnStyle, OP: String, documentID: String, fact: Community, description: String) {
         self.description = description
         self.documentID = documentID
-        self.fact = fact
+        self.community = fact
         self.style = style
         self.OP = OP
     }
     
     
-    //MARK:- GetItems
+    //MARK: - GetItems
+    
     func getItems(postOnly: Bool) {
         
-        if fact.documentID != "" && documentID != "" {
+        if let communityID = community.id, documentID != "" {
             DispatchQueue.global(qos: .default).async {
                 var collectionRef: CollectionReference!
-                if self.fact.language == .en {
+                if self.community.language == .en {
                     collectionRef = self.db.collection("Data").document("en").collection("topics")
                 } else {
                     collectionRef = self.db.collection("Facts")
                 }
-                let ref = collectionRef.document(self.fact.documentID).collection("addOns").document(self.documentID).collection("items").order(by: "createDate", descending: true).limit(to: 10)
+                let ref = collectionRef.document(communityID).collection("addOns").document(self.documentID).collection("items").order(by: "createdAt", descending: true).limit(to: 10)
                 
                 ref.getDocuments { (snap, err) in
                     if let error = err {
@@ -118,26 +115,26 @@ class AddOn {
                                         continue
                                     }
                                     
-                                    let fact = Community()
-                                    fact.documentID = document.documentID
+                                    let community = Community()
+                                    community.id = document.documentID
                                     if let displayOption = data["displayOption"] as? String {
                                         if displayOption == "topic" {
-                                            fact.displayOption = .topic
+                                            community.displayOption = .topic
                                         } // else { .fact is default
                                     }
                                     if let title = data["title"] as? String {
-                                        fact.addOnTitle = title
+                                        // TODO: Create a new struct with a title and a community as variables
                                     }
-                                    fact.language = self.fact.language
+                                    community.language = self.community.language
                                     
-                                    let item = AddOnItem(documentID: document.documentID, item: fact)
+                                    let item = AddOnItem(documentID: document.documentID, item: community)
                                     
                                     self.items.append(item)
                                 } else if type == "topicPost" {
                                     let post = Post.standard
                                     post.documentID = document.documentID
                                     post.isTopicPost = true
-                                    post.language = self.fact.language
+                                    post.language = self.community.language
                                     
                                     if let music = self.addMusicObject(data: data) {
                                         var link = Link(url: music.songwhipURL)
@@ -151,7 +148,7 @@ class AddOn {
                                 } else {    // Post
                                     let post = Post.standard
                                     post.documentID = document.documentID
-                                    post.language = self.fact.language
+                                    post.language = self.community.language
                                     
                                     if let postDescription = data["title"] as? String {
                                         post.addOnTitle = postDescription
@@ -185,43 +182,40 @@ class AddOn {
     
     func saveItem(item: Any) {
         
-        let itemID: String!
+        let itemID: String
         
-        guard let userID = AuthenticationManager.shared.user?.uid else { return }
+        guard let userID = AuthenticationManager.shared.user?.uid, let communityID = community.id else { return }
         
-        if let fact = item as? Community {
-            itemID = fact.documentID
-        } else if let post = item as? Post {
-            itemID = post.documentID
+        if let community = item as? Community, let id = community.id {
+            itemID = id
+        } else if let post = item as? Post, let id = post.documentID {
+            itemID = id
         } else {
             print("Dont got an item ID")
             return
         }
         
         var collectionRef: CollectionReference!
-        if fact.language == .en {
+        if community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
         }
         
-        let ref = collectionRef.document(fact.documentID).collection("addOns").document(documentID).collection("items").document(itemID)
+        let ref = collectionRef.document(communityID).collection("addOns").document(documentID).collection("items").document(itemID)
         
-        var data: [String: Any] = ["OP": userID, "createDate": Timestamp(date: Date())]
+        var data: [String: Any] = ["OP": userID, "createdAt": Timestamp(date: Date())]
         
-        if let fact = item as? Community {
+        if let community = item as? Community {
             data["type"] = "fact"
-
-            let newFactVC = NewCommunityItemTableVC()
-            let displayOption = newFactVC.getNewFactDisplayString(displayOption: fact.displayOption).displayOption
-            data["displayOption"] = displayOption
+            data["displayOption"] = community.displayOption.rawValue
         } else if let post = item as? Post {
 
             if let title = post.addOnTitle {    // Description of the added post
                 data["title"] = title
             }
             if post.type == .youTubeVideo {
-                self.notifyMalteForYouTubePlaylist(fact: fact, addOn: documentID)
+                self.notifyMalteForYouTubePlaylist(fact: community, addOn: documentID)
             }
             if let songwhip = post.link?.songwhip {
                 var songwhipData = [String: Any]()
@@ -246,15 +240,15 @@ class AddOn {
             if let error = err {
                 self.delegate?.itemAdded(successfull: false)
                 print("We have an error: \(error.localizedDescription)")
-            } else {
-                var collectionRef: CollectionReference!
-                if self.fact.language == .en {
+            } else if let communityID = self.community.id {
+                var collectionRef: CollectionReference
+                if self.community.language == .en {
                     collectionRef = self.db.collection("Data").document("en").collection("topics")
                 } else {
                     collectionRef = self.db.collection("Facts")
                 }
                 
-                let docRef = collectionRef.document(self.fact.documentID).collection("addOns").document(self.documentID)
+                let docRef = collectionRef.document(communityID).collection("addOns").document(self.documentID)
                 self.checkIfOrderArrayExists(documentReference: docRef, documentIDOfItem: itemID)
             }
         }
@@ -298,15 +292,18 @@ class AddOn {
     //MARK:- Database Requests
     
     func updateTopicPostInFact(addOnID: String, postDocumentID: String) {       //Add the AddOnDocumentIDs to the fact, so we can delete every trace of the post if you choose to delete it later. Otherwise there would be empty post in an AddOn
+        guard let communityID = community.id else {
+            return
+        }
         
         var collectionRef: CollectionReference!
-        if fact.language == .en {
+        if community.language == .en {
             collectionRef = db.collection("Data").document("en").collection("topics")
         } else {
             collectionRef = db.collection("Facts")
         }
         
-        let ref = collectionRef.document(fact.documentID).collection("posts").document(postDocumentID)
+        let ref = collectionRef.document(communityID).collection("posts").document(postDocumentID)
         
         ref.updateData([
             "addOnDocumentIDs": FieldValue.arrayUnion([addOnID])

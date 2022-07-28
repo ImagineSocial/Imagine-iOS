@@ -66,7 +66,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
         
         DispatchQueue.global(qos: .background).async {
             
-            self.firestoreManager.getCommunityPosts(communityID: community.documentID) { posts in
+            self.firestoreManager.getCommunityPosts(communityID: community.id) { posts in
                 guard let posts = posts else {
                     print("No Posts")
                     DispatchQueue.main.async {
@@ -154,7 +154,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
             }
         }
         
-        let addOnData: [String: Any] = ["createDate": Timestamp(date: Date()), "type": "topicPost", "OP": "CZOcL3VIwMemWwEfutKXGAfdlLy1"]
+        let addOnData: [String: Any] = ["createdAt": Timestamp(date: Date()), "type": "topicPost", "OP": "CZOcL3VIwMemWwEfutKXGAfdlLy1"]
         let addOnRef = db.collection("Data").document("en").collection("topics").document(topicID).collection("addOns").document(addOnID).collection("items").document(topicPostRef.documentID)
         
         addOnRef.setData(addOnData) { (err) in
