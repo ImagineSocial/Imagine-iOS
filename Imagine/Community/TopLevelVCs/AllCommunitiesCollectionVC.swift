@@ -48,33 +48,13 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
  
     
     func getTopics(type: DisplayOption) {
-        let sortByString = getDisplayOptionString(type: type)
         
-        var collectionRef: CollectionReference!
-        let language = LanguageSelection.language
-        if language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let ref = collectionRef.whereField("displayOption", isEqualTo: sortByString)
-        
-        ref.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    var facts = [Community]()
-                    for document in snap.documents {
-                        let data = document.data()
-                        
-                        if let fact = CommunityHelper.shared.getCommunity(documentID: document.documentID, data: data) {
-                            facts.append(fact)
-                        }
-                    }
-                    self.showTopics(type: type, topics: facts)
-                }
+        CommunityHelper.getAllCommunities(for: type) { communities in
+            guard let communities = communities else {
+                return
             }
+
+            self.showTopics(type: type, topics: communities)
         }
     }
     

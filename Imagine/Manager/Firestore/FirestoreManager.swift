@@ -28,7 +28,7 @@ enum PostDataType: String, Codable {
 
 class FirestoreManager {
     
-    let db = Firestore.firestore()
+    static let db = Firestore.firestore()
     
     var lastSnapshot: QueryDocumentSnapshot?
     var firstSnapshot: QueryDocumentSnapshot?

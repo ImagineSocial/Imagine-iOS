@@ -20,6 +20,8 @@ import FirebaseFirestore
  // PostData
  - User - Posts
  - User - Saved
+ - User - Topics!!! // TODO: Topics bro
+ 
  - Community - Posts
  
  */
@@ -72,7 +74,7 @@ extension MigrationManager {
         }
     }
     
-    func getPosts(for language: Language, topicPosts: Bool, completion: @escaping ([Post]?) -> Void) {
+    private func getPosts(for language: Language, topicPosts: Bool, completion: @escaping ([Post]?) -> Void) {
         
         var posts = [Post]()
         
@@ -97,7 +99,7 @@ extension MigrationManager {
     }
     
     
-    func addThePost(document: DocumentSnapshot, isTopicPost: Bool, language: Language) -> Post? {
+    private func addThePost(document: DocumentSnapshot, isTopicPost: Bool, language: Language) -> Post? {
         
         let documentID = document.documentID
         if let documentData = document.data() {
@@ -326,7 +328,7 @@ extension MigrationManager {
     ///
     ///
     /// - Returns: A Post object WITHOUT the type!
-    func getDefaultPost(document: DocumentSnapshot) -> Post? {
+    private func getDefaultPost(document: DocumentSnapshot) -> Post? {
         
         guard let documentData = document.data(),
               let title = documentData["title"] as? String,
@@ -435,24 +437,23 @@ extension MigrationManager {
                         return
                     }
                     
-                    postData.forEach { postDate in
-                        let reference = FirestoreCollectionReference(document: uid, collection: type == .user ? "posts" : "saved" )
-                        let documentRef = FirestoreReference.documentRef(.users, documentID: postDate.id, collectionReference: reference)
-                        
-                        FirestoreManager.uploadObject(object: postDate, documentReference: documentRef) { error in
-                            guard let error = error else {
-                                return
-                            }
-
-                            print("We have an error migrating user data: \(error.localizedDescription)")
+                    let reference = FirestoreCollectionReference(document: uid, collection: type == .user ? "posts" : "saved" )
+                    let collectionReference = FirestoreReference.mainRef(.users, collectionReference: reference)
+                                        
+                    FirestoreManager.batchUploadPostData(postData, collectionReference: collectionReference) { error in
+                        guard let error = error else {
+                            print("Successfully upload topic postData")
+                            return
                         }
+
+                        print("We have an error: \(error.localizedDescription)")
                     }
                 }
             }
         }
     }
     
-    func getUsers(completion: @escaping ([User]?) -> Void) {
+    private func getUsers(completion: @escaping ([User]?) -> Void) {
         let query = FirestoreReference.collectionRef(.users)
         
         FirestoreManager.shared.decode(query: query) { (result: Result<[User], Error>) in
@@ -465,7 +466,7 @@ extension MigrationManager {
         }
     }
     
-    func getUserPosts(for postList: UserPostType, userUID: String, completion: @escaping ([PostData]?) -> Void) {
+    private func getUserPosts(for postList: UserPostType, userUID: String, completion: @escaping ([PostData]?) -> Void) {
         
         var postData = [PostData]()
         
@@ -551,22 +552,23 @@ extension MigrationManager {
                         return
                     }
                     
-                    postData.forEach { postDate in
-                        let reference = FirestoreCollectionReference(document: communityID, collection: "posts")
-                        let documentRef = FirestoreReference.documentRef(.communityPosts, documentID: postDate.id, collectionReference: reference, language: language)
-                        
-                        FirestoreManager.uploadObject(object: postData, documentReference: documentRef) { error in
-                            if let error = error {
-                                print("We have an error: \(error.localizedDescription)")
-                            }
+                    let reference = FirestoreCollectionReference(document: communityID, collection: "posts")
+                    let collectionReference = FirestoreReference.mainRef(.communityPosts, collectionReference: reference, language: language)
+
+                    FirestoreManager.batchUploadPostData(postData, collectionReference: collectionReference) { error in
+                        guard let error = error else {
+                            print("Successfully upload topic postData")
+                            return
                         }
+
+                        print("We have an error: \(error.localizedDescription)")
                     }
                 }
             }
         }
     }
     
-    func getCommunities(language: Language, completion: @escaping ([Community]?) -> Void) {
+    private func getCommunities(language: Language, completion: @escaping ([Community]?) -> Void) {
         let ref = FirestoreReference.collectionRef(.communities, language: language)
         
         ref.getDocuments { snap, error in
@@ -578,14 +580,14 @@ extension MigrationManager {
             
             
             let communities = snap.documents.compactMap { document in
-                CommunityHelper.shared.getCommunity(documentID: document.documentID, data: document.data())
+                self.getCommunity(documentID: document.documentID, data: document.data())
             }
             
             completion(communities)
         }
     }
     
-    func getCommunityPosts(for communityID: String?, language: Language, completion: @escaping ([PostData]?) -> Void) {
+    private func getCommunityPosts(for communityID: String?, language: Language, completion: @escaping ([PostData]?) -> Void) {
         
         guard let communityID = communityID else {
             completion(nil)
@@ -628,6 +630,185 @@ extension MigrationManager {
             }
             
             completion(postData)
+        }
+    }
+}
+
+// MARK: - Get Community
+extension MigrationManager {
+    
+
+    func migrateCommunities(language: Language) {
+        getCommunities(language: language) { communities in
+            guard let communities = communities else {
+                return
+            }
+
+            let reference = FirestoreReference.mainRef(.communities, language: language)
+            
+            FirestoreManager.batchUploadCommunities(communities, collectionReference: reference) { error in
+                guard let error = error else {
+                    print("Batch upload for communities were successfull")
+                    return
+                }
+
+                print("We have an error: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func getCommunity(documentID: String, data: [String: Any]) -> Community? {
+        
+        guard let name = data["name"] as? String,
+            let timestamp = data["createDate"] as? Timestamp,
+            let OP = data["OP"] as? String
+            else {
+                print("Der will nicht: \(documentID), mit den Daten: \(data)")
+                return nil
+        }
+        
+        
+        let community = Community()
+        community.id = documentID
+        community.title = name
+        community.createdAt = timestamp.dateValue()
+        community.moderators = [OP]
+        community.postCount = data["postCount"] as? Int
+        community.imageURL = data["imageURL"] as? String
+        community.description = data["description"] as? String
+        
+        
+        if let language = data["language"] as? String {
+            if language == "en" {
+                community.language = .en
+            }
+        }
+
+        if let displayType = data["displayOption"] as? String { // Was introduced later on
+            community.displayOption = self.getDisplayType(string: displayType)
+        }
+        
+        if let displayNames = data["factDisplayNames"] as? String {
+            community.discussionTitles = self.getDisplayNames(string: displayNames)
+        }
+        
+        if let _ = data["isAddOnFirstView"] as? Bool {
+            community.initialView = .addOn
+        }
+        
+        return community
+    }
+    
+    private func loadCommunity(_ community: Community, completion: @escaping (Community?) -> Void) {
+        
+        guard let id = community.id else {
+            completion(nil)
+            return
+        }
+        
+        var collectionRef: CollectionReference!
+        if community.language == .en {
+            collectionRef = db.collection("Data").document("en").collection("topics")
+        } else {
+            collectionRef = db.collection("Facts")
+        }
+        let ref = collectionRef.document(id)
+        
+        
+        ref.getDocument { [weak self] (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                guard let snap = snap, let self = self, let data = snap.data(), let community = self.getCommunity(documentID: snap.documentID, data: data) else {
+                    completion(nil)
+                    return
+                }
+                completion(community)
+            }
+        }
+    }
+    
+    private func getDisplayType(string: String) -> DisplayOption {
+        switch string {
+        case "topic":
+            return .topic
+        default:
+            return .discussion
+        }
+    }
+    
+    private func getDisplayNames(string: String) -> DiscussionTitles {
+        switch string {
+        case "confirmDoubt":
+            return .confirmDoubt
+        case "advantage":
+            return .advantageDisadvantage
+        default:
+            return .proContra
+        }
+    }
+}
+
+// MARK: - Migrate followed Topics
+extension MigrationManager {
+    
+    func migrateFollowedTopics() {
+        getUsers { users in
+            guard let users = users else {
+                return
+            }
+
+            users.forEach { user in
+                guard let userID = user.uid else {
+                    return
+                }
+                
+                self.getFollowedTopicDocuments(userUID: userID) { postData in
+                    let reference = FirestoreReference.mainRef(.users, collectionReference: FirestoreCollectionReference(document: userID, collection: "topics"))
+                    
+                    FirestoreManager.batchUploadPostData(postData, collectionReference: reference) { error in
+                        guard let error = error else {
+                            print("Successfully upload topic postData")
+                            return
+                        }
+
+                        print("We have an error: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+    
+    private func getFollowedTopicDocuments(userUID: String, completion: @escaping ([PostData]) -> Void) {
+        let topicRef = db.collection("Users").document(userUID).collection("topics")
+        
+        var postData = [PostData]()
+        
+        topicRef.getDocuments { (snap, err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                if let snap = snap {
+                    for document in snap.documents {
+                        
+                        let data = document.data()
+                        
+                        var language = Language.de
+                        if let fetchedLanguage = data["language"] as? String, fetchedLanguage == "en" {
+                            language = .en
+                        }
+                        
+                        let date = (data["createDate"] as? Timestamp)?.dateValue() ?? Date()
+                        
+                        let postDate = PostData(id: document.documentID, createdAt: date, language: language)
+                        postData.append(postDate)
+                        
+                        if postData.count == snap.documents.count {
+                            completion(postData)
+                        }
+                    }
+                }
+            }
         }
     }
 }

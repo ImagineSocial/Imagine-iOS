@@ -196,7 +196,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 addLinkedCommunityView()
                 setCommunity()
             } else {
-                CommunityRequest().getCommunity(language: post.language, communityID: communityID) { community in
+                CommunityHelper.getCommunity(withID: communityID, language: post.language) { community in
                     guard let community = community else {
                         return
                     }

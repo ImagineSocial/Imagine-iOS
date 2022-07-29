@@ -20,4 +20,30 @@ extension FirestoreManager {
             completion(error)
         }
     }
+    
+    static func batchUploadPostData(_ data: [PostData], collectionReference: CollectionReference, completion: @escaping (Error?) -> Void) {
+        let batch = db.batch()
+        data.forEach { element in
+            
+            if let encodedElement = try? Firestore.Encoder().encode(element), let id = element.id {
+                let documentReference = collectionReference.document(id)
+                batch.setData(encodedElement, forDocument: documentReference)
+            }
+        }
+        
+        batch.commit(completion: completion)
+    }
+    
+    static func batchUploadCommunities(_ communities: [Community], collectionReference: CollectionReference, completion: @escaping (Error?) -> Void) {
+        let batch = db.batch()
+        communities.forEach { community in
+            
+            if let encodedElement = try? Firestore.Encoder().encode(community), let id = community.id {
+                let documentReference = collectionReference.document(id)
+                batch.setData(encodedElement, forDocument: documentReference)
+            }
+        }
+        
+        batch.commit(completion: completion)
+    }
 }

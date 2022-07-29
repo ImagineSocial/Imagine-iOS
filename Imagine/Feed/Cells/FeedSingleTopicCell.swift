@@ -68,7 +68,7 @@ class FeedSingleTopicCell: BaseFeedCell {
                 if post.community != nil {
                     setCommunity(for: post)
                 } else {
-                    CommunityRequest().getCommunity(language: post.language, communityID: communityID) { community in
+                    CommunityHelper.getCommunity(withID: communityID, language: post.language) { community in
                         guard let community = community else {
                             return
                         }
@@ -86,7 +86,7 @@ class FeedSingleTopicCell: BaseFeedCell {
         }
     }
     
-    //MARK:- Load Single Topic
+    //MARK: - Load Single Topic
     func loadSingleTopic(post: Post, community: Community) {
         let info = AddOn(style: .singleTopic, OP: "", documentID: "", fact: Community(), headerTitle: post.title, description: post.description ?? "", singleTopic: community)
         

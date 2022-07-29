@@ -55,20 +55,14 @@ class SmallFactCell: UICollectionViewCell {
         }
     }
     
-    var unloadedFact: Community? {
+    var communityID: String? {
         didSet {
-            guard let unloadedFact = unloadedFact else {
+            guard let communityID = communityID else {
                 return
             }
-            DispatchQueue.global(qos: .default).async {
-                CommunityHelper.shared.loadCommunity(unloadedFact) { community in
-                    guard let community = community else {
-                        return
-                    }
-                    DispatchQueue.main.async {
-                        self.community = community
-                    }
-                }
+            
+            CommunityHelper.getCommunity(withID: communityID) { community in
+                self.community = community
             }
         }
     }

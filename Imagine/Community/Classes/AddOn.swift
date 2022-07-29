@@ -64,9 +64,8 @@ class AddOn {
         self.OP = OP
         
         if style == .singleTopic, let singleTopic = singleTopic, let singleTopicID = singleTopic.id {
-            let communityRequest = CommunityRequest()
             
-            communityRequest.getCommunity(language: community.language, communityID: singleTopicID) { [weak self] community in
+            CommunityHelper.getCommunity(withID: singleTopicID, language: community.language) { [weak self] community in
                 guard let self = self, let community = community else {
                     return
                 }

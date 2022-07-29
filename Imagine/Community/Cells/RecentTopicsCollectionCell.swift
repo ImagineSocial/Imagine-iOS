@@ -69,23 +69,14 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
     }
     
     func loadCommunity(with id: String, language: Language) {
-        var collectionRef: CollectionReference!
-        if language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let factRef = collectionRef.document(id)
         
-        factRef.getDocument { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snapshot = snap, let data = snapshot.data(), let community = CommunityHelper.shared.getCommunity(documentID: snapshot.documentID, data: data) {
-                    self.communities.insert(community, at: 0)
-                    self.collectionView.reloadData()
-                }
+        CommunityHelper.getCommunity(withID: id, language: language) { community in
+            guard let community = community else {
+                return
             }
+
+            self.communities.insert(community, at: 0)
+            self.collectionView.reloadData()
         }
     }
 }

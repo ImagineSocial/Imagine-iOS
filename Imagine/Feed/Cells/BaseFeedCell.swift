@@ -38,7 +38,6 @@ class BaseFeedCell : UITableViewCell {
     var distanceConstraint: NSLayoutConstraint?
     
     private let db = FirestoreRequest.shared.db
-    private let communityRequest = CommunityRequest()
     
     var cellStyle: CellType?
     var ownProfile: Bool = false
@@ -152,9 +151,8 @@ class BaseFeedCell : UITableViewCell {
             return
         }
         
-        communityRequest.getCommunity(language: post.language, communityID: communityID) { (community) in
-            
-            post.community = community
+        CommunityHelper.getCommunity(withID: communityID, language: post.language) { community in
+            self.post?.community = community
             
             self.setCommunity(for: post)
         }

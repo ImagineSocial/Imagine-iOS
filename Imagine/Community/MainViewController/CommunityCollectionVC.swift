@@ -126,59 +126,27 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
    
     func fetchCommunities() {
         DispatchQueue.global(qos: .background).async {
-            self.dataHelper.getData(get: .communities) { communities in    // gets the first 8 topic communities by popularity
-                
-                guard let communities = communities as? [Community] else {
-                    
-                    self.view.activityStopAnimating()
-                    print("Something went wrong")
+            
+            CommunityHelper.getMainCommunities(for: .topic) { topicCommunities in
+                guard let topicCommunities = topicCommunities else {
+                    self.loadingFinished()
                     return
                 }
-                
-                
+
                 DispatchQueue.main.async {
-                    self.topicCommunities = communities
-                    self.collectionView.reloadData()    //The user thinks it is loaded
+                    self.topicCommunities = topicCommunities
+                    self.collectionView.reloadData()    // The user should think it is loaded
                 }
                 
-                var collectionRef: CollectionReference!
-                let language = LanguageSelection.language
-                if language == .en {
-                    collectionRef = self.db.collection("Data").document("en").collection("topics")
-                } else {
-                    collectionRef = self.db.collection("Facts")
-                }
-                let ref = collectionRef.whereField("displayOption", isEqualTo: "fact").order(by: "popularity", descending: true).limit(to: 6)
-                
-                
-                ref.getDocuments { (snap, err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        if let snap = snap {
-                            var discussionCount = snap.documents.count
-                            
-                            if snap.documents.count == 0 {
-                                self.loadingFinished()
-                            }
-                            
-                            snap.documents.forEach { document in
-                                let data = document.data()
-                                
-                                if let community = CommunityHelper.shared.getCommunity(documentID: document.documentID, data: data) {
-                                    self.discussionCommunities.append(community)
-                                } else {
-                                    discussionCount -= 1
-                                }
-                                
-                                if self.discussionCommunities.count == discussionCount {
-                                    
-                                    self.loadingFinished()
-                                }
-                            }
-                        } else {
-                            self.loadingFinished()
-                        }
+                CommunityHelper.getMainCommunities(for: .discussion) { discussionCommunities in
+                    guard let discussionCommunities = discussionCommunities else {
+                        self.loadingFinished()
+                        return
+                    }
+
+                    DispatchQueue.main.async {
+                        self.discussionCommunities = discussionCommunities
+                        self.loadingFinished()
                     }
                 }
             }
@@ -199,58 +167,17 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
             return
         }
         
-        dataHelper.getFollowedTopicDocuments(userUID: userID) { documents in
-            var topicCount = documents.count
-            for document in documents {
-                self.addCommunity(document: document) { community in
-                    if let community = community {
-                        self.followedCommunities.append(community)
-                        self.followedCommunities.sort {
-                            $0.title?.localizedCompare($1.title ?? "") == .orderedAscending
-                        }
-                    } else {
-                        topicCount -= 1
-                    }
-                    if self.followedCommunities.count == topicCount {
-                        self.collectionView.reloadData()
-                    }
-                }
+        CommunityHelper.getFollowedCommunities(from: userID) { communities in
+            guard let communities = communities else {
+                return
             }
+
+            self.followedCommunities = communities
+            self.collectionView.reloadData()
         }
     }
     
-    func addCommunity(document: QueryDocumentSnapshot, completion: @escaping (Community?) -> Void) {
-        let data = document.data()
-        
-        var collectionRef: CollectionReference = self.db.collection("Facts")
-        
-        if let language = data["language"] as? String {
-            if language == "en" {
-                collectionRef = self.db.collection("Data").document("en").collection("topics")
-            }
-        }
-        
-        let ref = collectionRef.document(document.documentID)
-        
-        ref.getDocument { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-                completion(nil)
-            } else {
-                if let snap = snap {
-                    if let data = snap.data() {
-                        if let fact = CommunityHelper.shared.getCommunity(documentID: snap.documentID, data: data) {
-                            completion(fact)
-                        }
-                    } else {
-                        completion(nil)
-                    }
-                } else {
-                    completion(nil)
-                }
-            }
-        }
-    }
+    
 
     override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         

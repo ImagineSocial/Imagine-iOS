@@ -171,7 +171,7 @@ extension CollectionViewInTableViewCell: UICollectionViewDelegate, UICollectionV
                         if let _ = community.title {
                             cell.community = community
                         } else {    // Not loaded yet
-                            cell.unloadedFact = community
+                            cell.communityID = community.id
                         }
                         
 //                        if let title = community.addOnTitle {

@@ -72,17 +72,8 @@ class FactCell: BaseCollectionViewCell {
                 return
             }
             
-            let ref = FirestoreReference.documentRef(.communities, documentID: communityID)
-            
-            ref.getDocument { (snap, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    if let snap = snap, let data = snap.data(), let community = CommunityHelper.shared.getCommunity(documentID: snap.documentID, data: data) {
-                        
-                        self.community = community
-                    }
-                }
+            CommunityHelper.getCommunity(withID: communityID) { community in
+                self.community = community
             }
         }
     }

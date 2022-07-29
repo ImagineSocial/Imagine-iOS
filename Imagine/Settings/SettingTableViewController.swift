@@ -50,7 +50,6 @@ class SettingTableViewController: UITableViewController {
     let storDB = Storage.storage().reference()
     
     let postHelper = FirestoreRequest.shared
-    let communityHelper = CommunityHelper.shared
     let dataHelper = DataRequest()
     var imagePicker = UIImagePickerController()
     
@@ -341,15 +340,15 @@ class SettingTableViewController: UITableViewController {
                         print("Aint nobody got a post!")
                     }
                 }
-            } else if let community = item.item as? Community {
-                self.communityHelper.loadCommunity(community) { community in
-                    if let community = community, let communityID = community.id {
-                        let item = AddOnItem(documentID: communityID, item: community)
-                        self.itemList.append(item)
-                        self.addNewList()
-                    } else {
-                        print(" Aint nobody got a community!")
+            } else if let community = item.item as? Community, let documentID = community.id {
+                CommunityHelper.getCommunity(withID: documentID) { community in
+                    guard let community = community, let communityID = community.id else {
+                        return
                     }
+                    
+                    let item = AddOnItem(documentID: communityID, item: community)
+                    self.itemList.append(item)
+                    self.addNewList()
                 }
             }
         }

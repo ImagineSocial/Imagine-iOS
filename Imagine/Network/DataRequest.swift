@@ -11,7 +11,6 @@ import FirebaseFirestore
 
 enum DataType {
     case jobOffer
-    case communities
     case blogPosts
     case vote
 }
@@ -30,7 +29,6 @@ class DataRequest {
     var dataPath = ""
     let db = FirestoreRequest.shared.db
     let handyHelper = HandyHelper.shared
-    let communityHelper = CommunityHelper.shared
     
     //MARK:- Get Data 
     
@@ -64,16 +62,6 @@ class DataRequest {
             
             orderString = "endOfVoteDate"
             
-        case .communities:
-            list = [Community]()
-            dataPath = "Facts"
-            if language == .en {
-                dataPath = "topics"
-            }
-            
-            orderString = "popularity"
-            descending = true
-            
         case .jobOffer:
             list = [JobOffer]()
             dataPath = "JobOffers"
@@ -93,16 +81,6 @@ class DataRequest {
             collectionRef = db.collection(dataPath)
         }
         var ref = collectionRef.order(by: orderString, descending: descending)
-        
-        if get == .communities {
-            if language == .en {
-                collectionRef = db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = db.collection("Facts")
-            }
-            
-            ref = collectionRef.whereField("displayOption", isEqualTo: "topic").order(by: "popularity", descending: true).limit(to: 8)
-        }
         
         ref.getDocuments { (querySnapshot, err) in
             if let error = err {
@@ -200,10 +178,6 @@ class DataRequest {
                             
                             list.append(vote)
                             
-                        case .communities:
-                            if let community = self.communityHelper.getCommunity(documentID: documentID, data: documentData) {
-                                list.append(community)
-                            }
                         case .jobOffer:
                             guard let title = documentData["jobTitle"] as? String,
                                   let shortBody = documentData["jobShortBody"] as? String,
@@ -236,21 +210,6 @@ class DataRequest {
                     returnData(list)
                 } else {
                     returnData(list)
-                }
-            }
-        }
-    }
-    
-    
-    func getFollowedTopicDocuments(userUID: String, documents: @escaping ([QueryDocumentSnapshot]) -> Void) {
-        let topicRef = db.collection("Users").document(userUID).collection("topics")
-        
-        topicRef.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    documents(snap.documents)
                 }
             }
         }
