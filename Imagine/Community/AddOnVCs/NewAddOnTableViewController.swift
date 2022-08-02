@@ -234,13 +234,8 @@ class NewAddOnTableViewController: UITableViewController {
             return
         }
         
-        var collectionRef: CollectionReference!
-        if community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let ref = collectionRef.document(communityID).collection("addOns").document()
+        let addOnReference = FirestoreCollectionReference(document: communityID, collection: "addOns")
+        let reference = FirestoreReference.documentRef(.communities, documentID: nil, collectionReferences: addOnReference)
         
         let data: [String:Any] = ["OP": userID, "type": "QandA", "popularity": 0]
         

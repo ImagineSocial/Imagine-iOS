@@ -143,9 +143,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         
         let post = posts[indexPath.row]
         
-        if post.type == .topTopicCell {
-            tableView.deselectRow(at: indexPath, animated: false)
-        } else if post.type == .singleTopic {
+        if post.type == .singleTopic {
             if let fact = post.community {
                 performSegue(withIdentifier: "toFactSegue", sender: fact)
             }

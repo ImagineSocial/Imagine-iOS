@@ -104,7 +104,7 @@ class Post: Codable {
             return
         }
         
-        let ref = FirestoreReference.documentRef(.users, documentID: documentID, collectionReference: FirestoreCollectionReference(document: userID, collection: "saved"))
+        let ref = FirestoreReference.documentRef(.users, documentID: documentID, collectionReferences: FirestoreCollectionReference(document: userID, collection: "saved"))
         
         let data = PostData(createdAt: Date(), userID: userID, language: language, isTopicPost: isTopicPost)
         

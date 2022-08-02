@@ -226,17 +226,10 @@ class DataRequest {
             return
         }
         
-        var collectionRef: CollectionReference!
-
-        if community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
+        let argumentReference = FirestoreCollectionReference(document: communityID, collection: "arguments")
+        let reference = FirestoreReference.collectionRef(.communities, collectionReferences: argumentReference, queries: FirestoreQuery(field: "upvotes"))
         
-        let ref = collectionRef.document(communityID).collection("arguments").order(by: "upvotes", descending: true)
-        
-        ref.getDocuments(completion: { (snap, err) in
+        reference.getDocuments(completion: { (snap, err) in
             if let error = err {
                 print("We have an error: ", error.localizedDescription)
             } else {
@@ -302,15 +295,11 @@ class DataRequest {
             dataPath = "arguments"
         }
         
-        var collectionRef: CollectionReference!
-        if community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let argumentPath = collectionRef.document(communityID).collection("arguments").document(argumentID).collection(dataPath)
+        let argumentReference = FirestoreCollectionReference(document: communityID, collection: "arguments")
+        let pathReference = FirestoreCollectionReference(document: argumentID, collection: dataPath)
+        let reference = FirestoreReference.collectionRef(.communities, collectionReferences: argumentReference, pathReference, queries: FirestoreQuery(field: "upvotes"))
         
-        argumentPath.getDocuments(completion: { (snap, err) in
+        reference.getDocuments(completion: { (snap, err) in
             
             if let error = err {
                 print("Wir haben einen Error bei den tiefen Argumenten: ", error.localizedDescription)

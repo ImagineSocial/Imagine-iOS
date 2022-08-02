@@ -21,7 +21,6 @@ extension BaseFeedTableViewController {
         tableView.register(UINib(nibName: "YouTubeCell", bundle: nil), forCellReuseIdentifier: "NibYouTubeCell")
         tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: "NibBlankCell")
         tableView.register(UINib(nibName: "GifCell", bundle: nil), forCellReuseIdentifier: "GIFCell")
-        tableView.register(UINib(nibName: "TopicCell", bundle: nil), forCellReuseIdentifier: "TopicCell")
         tableView.register(UINib(nibName: "SurveyCell", bundle: nil), forCellReuseIdentifier: SurveyCell.identifier)
         tableView.register(UINib(nibName: "MusicCell", bundle: nil), forCellReuseIdentifier: MusicCell.identifier)
         tableView.register(UINib(nibName: "FeedSingleTopicCell", bundle: nil), forCellReuseIdentifier: FeedSingleTopicCell.identifier)
@@ -103,14 +102,6 @@ extension BaseFeedTableViewController {
                 let newHeight:CGFloat = 300
                 
                 cell.multiPictureCollectionViewHeightConstraint.constant = newHeight
-                
-                return cell
-            }
-        case .topTopicCell:
-            let identifier = "TopicCell"
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? TopicCell {
-                
-                cell.delegate = self
                 
                 return cell
             }
@@ -289,9 +280,6 @@ extension BaseFeedTableViewController {
         }
         
         switch postType {
-        case .topTopicCell:
-            return 190
-            
         case .nothingPostedYet:
             return self.view.frame.height-150
         default:

@@ -170,6 +170,7 @@ class CommunityHeaderView: UIView {
     private func setFollowButton(isFollowed: Bool) {
         communityIsFollowed = isFollowed
         followButton.setTitle(isFollowed ? "Unfollow" : "Follow", for: .normal)
+        followButton.isEnabled = true
     }
 }
 

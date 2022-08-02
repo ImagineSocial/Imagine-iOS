@@ -265,8 +265,6 @@
 		E9C6C23F2298441E003F0F16 /* ArgumentDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C6C23E2298441E003F0F16 /* ArgumentDetailVC.swift */; };
 		E9CF17C223CB27CE000E5149 /* CreativeSpaceIntroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CF17C123CB27CE000E5149 /* CreativeSpaceIntroViewController.swift */; };
 		E9CF17C423CB3F41000E5149 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CF17C323CB3F41000E5149 /* Campaign.swift */; };
-		E9CF237F233A279200D3B295 /* TopicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CF237E233A279200D3B295 /* TopicCell.swift */; };
-		E9CF2381233A27A500D3B295 /* TopicCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9CF2380233A27A500D3B295 /* TopicCell.xib */; };
 		E9D212DC25F7FACF00C68984 /* DataReportCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9D212DB25F7FACF00C68984 /* DataReportCell.xib */; };
 		E9D9561824F82791007E5D18 /* AddOnCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D9561724F82791007E5D18 /* AddOnCollectionViewController.swift */; };
 		E9E21C5025AF703C002D5699 /* MemeInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E21C4F25AF703C002D5699 /* MemeInputView.swift */; };
@@ -584,8 +582,6 @@
 		E9C6C23E2298441E003F0F16 /* ArgumentDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArgumentDetailVC.swift; sourceTree = "<group>"; };
 		E9CF17C123CB27CE000E5149 /* CreativeSpaceIntroViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreativeSpaceIntroViewController.swift; sourceTree = "<group>"; };
 		E9CF17C323CB3F41000E5149 /* Campaign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Campaign.swift; sourceTree = "<group>"; };
-		E9CF237E233A279200D3B295 /* TopicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicCell.swift; sourceTree = "<group>"; };
-		E9CF2380233A27A500D3B295 /* TopicCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TopicCell.xib; sourceTree = "<group>"; };
 		E9D212DB25F7FACF00C68984 /* DataReportCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DataReportCell.xib; sourceTree = "<group>"; };
 		E9D9561724F82791007E5D18 /* AddOnCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOnCollectionViewController.swift; sourceTree = "<group>"; };
 		E9E21C4F25AF703C002D5699 /* MemeInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemeInputView.swift; sourceTree = "<group>"; };
@@ -777,8 +773,6 @@
 				022C3DB227B97AB300908F54 /* MultiImageCollectionCell.swift */,
 				E9879A2024BDB4C0004B497F /* MusicCell.xib */,
 				E9879A2224BDB57A004B497F /* MusicCell.swift */,
-				E9CF2380233A27A500D3B295 /* TopicCell.xib */,
-				E9CF237E233A279200D3B295 /* TopicCell.swift */,
 				E94FB65C251D10D200E58707 /* FeedSingleTopicCell.xib */,
 				E94FB65F251D121F00E58707 /* FeedSingleTopicCell.swift */,
 				E997F760248CE90200BF7F88 /* SurveyCell.xib */,
@@ -1778,7 +1772,6 @@
 				E9F12C0624FE3630006BD9C3 /* AddOnCollectionViewFooter.xib in Resources */,
 				E9E6876724167AB600CB7AF8 /* CurrentProjectsCollectionCell.xib in Resources */,
 				E9925A9823D86F4C00E1A9D4 /* MultiPictureCell.xib in Resources */,
-				E9CF2381233A27A500D3B295 /* TopicCell.xib in Resources */,
 				E9A57A9D24535C8200665007 /* AdvertisingCell.xib in Resources */,
 				E9F12C0224FE2E8C006BD9C3 /* AddOnProposalCell.xib in Resources */,
 				E94FB65D251D10D300E58707 /* FeedSingleTopicCell.xib in Resources */,
@@ -2001,7 +1994,6 @@
 				027F9B1D2869B2ED0034FDC9 /* MigrationManager.swift in Sources */,
 				E9817B5D25EC043A00E56FC6 /* SettingLocationCell.swift in Sources */,
 				E94EDD9E2564328000B226C8 /* AddOnPlaylistCollectionViewCell.swift in Sources */,
-				E9CF237F233A279200D3B295 /* TopicCell.swift in Sources */,
 				0289957B26FB601D007CAFB7 /* PostVC+MultiPicCollectionView.swift in Sources */,
 				022D94272752C2C300562058 /* BaseButtonWithText.swift in Sources */,
 				E9EA7C9B22E5F47C0015C0EC /* VoteCell.swift in Sources */,

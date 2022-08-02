@@ -88,92 +88,90 @@ class AddOn {
     
     func getItems(postOnly: Bool) {
         
-        if let communityID = community.id, documentID != "" {
-            DispatchQueue.global(qos: .default).async {
-                var collectionRef: CollectionReference!
-                if self.community.language == .en {
-                    collectionRef = self.db.collection("Data").document("en").collection("topics")
+        guard let communityID = community.id, documentID != "" else {
+            return
+        }
+        DispatchQueue.global(qos: .default).async {
+            
+            let addOnReference = FirestoreCollectionReference(document: communityID, collection: "addOns")
+            let itemReference = FirestoreCollectionReference(document: self.documentID, collection: "items")
+            let reference = FirestoreReference.collectionRef(.communities, collectionReferences: addOnReference, itemReference, queries: FirestoreQuery(field: "createdAt", limit: 10))
+            
+            reference.getDocuments { (snap, err) in
+                if let error = err {
+                    print("We have an error: \(error.localizedDescription)")
                 } else {
-                    collectionRef = self.db.collection("Facts")
-                }
-                let ref = collectionRef.document(communityID).collection("addOns").document(self.documentID).collection("items").order(by: "createdAt", descending: true).limit(to: 10)
-                
-                ref.getDocuments { (snap, err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        if let snap = snap {
-                            for document in snap.documents {
-                                let data = document.data()
-                                guard let type = data["type"] as? String else {
-                                    return
-                                }
-                                if type == "fact" {
-                                    
-                                    if postOnly {
-                                        continue
-                                    }
-                                    
-                                    let community = Community()
-                                    community.id = document.documentID
-                                    if let displayOption = data["displayOption"] as? String {
-                                        if displayOption == "topic" {
-                                            community.displayOption = .topic
-                                        } // else { .fact is default
-                                    }
-                                    if let title = data["title"] as? String {
-                                        // TODO: Create a new struct with a title and a community as variables
-                                    }
-                                    community.language = self.community.language
-                                    
-                                    let item = AddOnItem(documentID: document.documentID, item: community)
-                                    
-                                    self.items.append(item)
-                                } else if type == "topicPost" {
-                                    let post = Post.standard
-                                    post.documentID = document.documentID
-                                    post.isTopicPost = true
-                                    post.language = self.community.language
-                                    
-                                    if let music = self.addMusicObject(data: data) {
-                                        var link = Link(url: music.songwhipURL)
-                                        
-                                        link.songwhip = music.getSongwhip()
-                                        post.link = link
-                                    }
-                                    
-                                    let item = AddOnItem(documentID: document.documentID, item: post)
-                                    self.items.append(item)
-                                } else {    // Post
-                                    let post = Post.standard
-                                    post.documentID = document.documentID
-                                    post.language = self.community.language
-                                    
-                                    if let postDescription = data["title"] as? String {
-                                        post.addOnTitle = postDescription
-                                    }
-                                    
-                                    if let music = self.addMusicObject(data: data) {
-                                        var link = Link(url: music.songwhipURL)
-                                        
-                                        link.songwhip = music.getSongwhip()
-                                        post.link = link
-                                    }
-                                    
-                                    let item = AddOnItem(documentID: document.documentID, item: post)
-                                    self.items.append(item)
-                                }
+                    if let snap = snap {
+                        for document in snap.documents {
+                            let data = document.data()
+                            
+                            guard let type = data["type"] as? String else {
+                                return
                             }
-                            DispatchQueue.main.async {
-                                self.delegate?.fetchCompleted()
+                            
+                            switch type {
+                            case "fact":
+                                if postOnly {
+                                    continue
+                                }
+                                
+                                let community = Community()
+                                community.id = document.documentID
+                                if let displayOption = data["displayOption"] as? String {
+                                    if displayOption == "topic" {
+                                        community.displayOption = .topic
+                                    } // else { .fact is default
+                                }
+                                if let title = data["title"] as? String {
+                                    // TODO: Create a new struct with a title and a community as variables
+                                }
+                                community.language = self.community.language
+                                
+                                let item = AddOnItem(documentID: document.documentID, item: community)
+                                
+                                self.items.append(item)
+                            case "topicPost":
+                                let post = Post.standard
+                                post.documentID = document.documentID
+                                post.isTopicPost = true
+                                post.language = self.community.language
+                                
+                                if let music = self.addMusicObject(data: data) {
+                                    var link = Link(url: music.songwhipURL)
+                                    
+                                    link.songwhip = music.getSongwhip()
+                                    post.link = link
+                                }
+                                
+                                let item = AddOnItem(documentID: document.documentID, item: post)
+                                self.items.append(item)
+                                
+                            default:
+                                let post = Post.standard
+                                post.documentID = document.documentID
+                                post.language = self.community.language
+                                
+                                if let postDescription = data["title"] as? String {
+                                    post.addOnTitle = postDescription
+                                }
+                                
+                                if let music = self.addMusicObject(data: data) {
+                                    var link = Link(url: music.songwhipURL)
+                                    
+                                    link.songwhip = music.getSongwhip()
+                                    post.link = link
+                                }
+                                
+                                let item = AddOnItem(documentID: document.documentID, item: post)
+                                self.items.append(item)
                             }
+                        }
+                        DispatchQueue.main.async {
+                            self.delegate?.fetchCompleted()
                         }
                     }
                 }
             }
-        } else {
-            print("Not enough info in OptionalInformation getItems")
-            return
         }
     }
     
@@ -194,14 +192,9 @@ class AddOn {
             return
         }
         
-        var collectionRef: CollectionReference!
-        if community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        
-        let ref = collectionRef.document(communityID).collection("addOns").document(documentID).collection("items").document(itemID)
+        let addOnReference = FirestoreCollectionReference(document: communityID, collection: "addOns")
+        let itemReference = FirestoreCollectionReference(document: self.documentID, collection: "items")
+        let reference = FirestoreReference.documentRef(.communities, documentID: itemID, collectionReferences: addOnReference, itemReference)
         
         var data: [String: Any] = ["OP": userID, "createdAt": Timestamp(date: Date())]
         
@@ -209,7 +202,7 @@ class AddOn {
             data["type"] = "fact"
             data["displayOption"] = community.displayOption.rawValue
         } else if let post = item as? Post {
-
+            
             if let title = post.addOnTitle {    // Description of the added post
                 data["title"] = title
             }
@@ -218,7 +211,7 @@ class AddOn {
             }
             if let songwhip = post.link?.songwhip {
                 var songwhipData = [String: Any]()
-
+                
                 songwhipData["musicImage"] = songwhip.musicImage
                 songwhipData["title"] = songwhip.title
                 songwhipData["artist"] = ["name": songwhip.artist.name, "image": songwhip.artist.image]
@@ -235,20 +228,16 @@ class AddOn {
             }
         }
         
-        ref.setData(data) { (err) in
+        reference.setData(data) { (err) in
             if let error = err {
                 self.delegate?.itemAdded(successfull: false)
                 print("We have an error: \(error.localizedDescription)")
             } else if let communityID = self.community.id {
-                var collectionRef: CollectionReference
-                if self.community.language == .en {
-                    collectionRef = self.db.collection("Data").document("en").collection("topics")
-                } else {
-                    collectionRef = self.db.collection("Facts")
-                }
+               
+                let addOnReference = FirestoreCollectionReference(document: communityID, collection: "addOns")
+                let reference = FirestoreReference.documentRef(.communities, documentID: self.documentID, collectionReferences: addOnReference)
                 
-                let docRef = collectionRef.document(communityID).collection("addOns").document(self.documentID)
-                self.checkIfOrderArrayExists(documentReference: docRef, documentIDOfItem: itemID)
+                self.checkIfOrderArrayExists(documentReference: reference, documentIDOfItem: itemID)
             }
         }
     }
@@ -295,16 +284,10 @@ class AddOn {
             return
         }
         
-        var collectionRef: CollectionReference!
-        if community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        
-        let ref = collectionRef.document(communityID).collection("posts").document(postDocumentID)
-        
-        ref.updateData([
+        let postReference = FirestoreCollectionReference(document: communityID, collection: "posts")
+        let reference = FirestoreReference.documentRef(.communities, documentID: postDocumentID, collectionReferences: postReference)
+                
+        reference.updateData([
             "addOnDocumentIDs": FieldValue.arrayUnion([addOnID])
         ])
     }

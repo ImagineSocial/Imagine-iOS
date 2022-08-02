@@ -46,4 +46,17 @@ extension FirestoreManager {
         
         batch.commit(completion: completion)
     }
+    
+    static func batchUploadPosts(_ posts: [Post], collectionReference: CollectionReference, completion: @escaping (Error?) -> Void) {
+        let batch = db.batch()
+        posts.forEach { post in
+            
+            if let encodedElement = try? Firestore.Encoder().encode(post), let id = post.documentID {
+                let documentReference = collectionReference.document(id)
+                batch.setData(encodedElement, forDocument: documentReference)
+            }
+        }
+        
+        batch.commit(completion: completion)
+    }
 }

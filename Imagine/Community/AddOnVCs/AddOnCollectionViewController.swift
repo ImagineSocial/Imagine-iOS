@@ -46,7 +46,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         didSet {
             guard let community = community else { return }
 
-            getData(community: community)
+            getAddOn(community: community)
         }
     }
     
@@ -79,22 +79,16 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
     }
     
-    func getData(community: Community) {
+    func getAddOn(community: Community) {
         
         guard let communityID = community.id else {
             return
         }
         
-        var collectionRef: CollectionReference!
-        if community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
+        let addOnReference = FirestoreCollectionReference(document: communityID, collection: "addOns")
+        let reference = FirestoreReference.collectionRef(.communities, collectionReferences: addOnReference, queries: FirestoreQuery(field: "popularity"))
         
-        let ref = collectionRef.document(communityID).collection("addOns").order(by: "popularity", descending: true)
-        
-        ref.getDocuments { (snap, err) in
+        reference.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
@@ -221,7 +215,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     func renewCollectionView() {
         self.optionalInformations.removeAll()
         self.collectionView.reloadData()
-        self.getData(community: self.community!)
+        self.getAddOn(community: self.community!)
     }
     
     //MARK: - Navigation
@@ -470,29 +464,25 @@ extension AddOnCollectionViewController: AddOnCellDelegate, AddOnFooterViewDeleg
     }
     
     func thanksTapped(info: AddOn) {
-        guard AuthenticationManager.shared.isLoggedIn else {
-            self.notLoggedInAlert()
+        guard AuthenticationManager.shared.isLoggedIn, let community = community, let communityID = community.id, info.documentID != "" else {
+            if AuthenticationManager.shared.isLoggedIn {
+                self.notLoggedInAlert()
+            }
+            
             return
         }
-        if let community = community, let communityID = community.id, info.documentID != "" {
-            var collectionRef: CollectionReference!
-            if community.language == .en {
-                collectionRef = db.collection("Data").document("en").collection("topics")
+        
+        let addOnReference = FirestoreCollectionReference(document: communityID, collection: "addOns")
+        let reference = FirestoreReference.documentRef(.communities, documentID: info.documentID, collectionReferences: addOnReference)
+        
+        
+        let thanksCount = info.thanksCount ?? 1
+        
+        reference.updateData(["thanksCount": thanksCount]) { (err) in
+            if let error = err {
+                print("We have an error liking this addOn: \(error.localizedDescription)")
             } else {
-                collectionRef = db.collection("Facts")
-            }
-            let ref = collectionRef.document(communityID).collection("addOns").document(info.documentID)
-            
-            var thanksCount = 1
-            if let count = info.thanksCount {
-                thanksCount = count
-            }
-            ref.updateData(["thanksCount": thanksCount]) { (err) in
-                if let error = err {
-                    print("We have an error liking this addOn: \(error.localizedDescription)")
-                } else {
-                    print("Successfully liked this addOn")
-                }
+                print("Successfully liked this addOn")
             }
         }
     }

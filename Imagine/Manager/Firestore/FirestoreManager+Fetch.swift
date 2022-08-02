@@ -110,7 +110,7 @@ extension FirestoreManager {
             return
         }
         
-        let topicRef = FirestoreReference.collectionRef(.users, collectionReference: FirestoreCollectionReference(document: userID, collection: "topics"))
+        let topicRef = FirestoreReference.collectionRef(.users, collectionReferences: FirestoreCollectionReference(document: userID, collection: "topics"))
         
         topicRef.getDocuments { snap, err in
             guard let snap = snap else {
@@ -127,7 +127,7 @@ extension FirestoreManager {
     func getUserPosts(userID: String, completion: @escaping ([Post]?) -> Void) {
         
         let reference = FirestoreCollectionReference(document: userID, collection: "posts")
-        var userPostRef = FirestoreReference.collectionRef(.userFeed, collectionReference: reference)
+        var userPostRef = FirestoreReference.collectionRef(.userFeed, collectionReferences: reference)
         
         if let lastSnapshot = lastSnapshot {
             userPostRef = userPostRef.start(afterDocument: lastSnapshot)
@@ -139,7 +139,7 @@ extension FirestoreManager {
     func getSavedPosts(userID: String, completion: @escaping ([Post]?) -> Void) {
     
         let reference = FirestoreCollectionReference(document: userID, collection: "saved")
-        var savedPostRef = FirestoreReference.collectionRef(.userFeed, collectionReference: reference)
+        var savedPostRef = FirestoreReference.collectionRef(.userFeed, collectionReferences: reference)
         
         if let lastSnapshot = lastSnapshot {
             savedPostRef = savedPostRef.start(afterDocument: lastSnapshot)
@@ -156,7 +156,7 @@ extension FirestoreManager {
         }
         
         let reference = FirestoreCollectionReference(document: communityID, collection: "posts")
-        var userPostRef = FirestoreReference.collectionRef(.communityPosts, collectionReference: reference)
+        var userPostRef = FirestoreReference.collectionRef(.communityPosts, collectionReferences: reference)
         
         if let lastSnapshot = lastSnapshot {
             userPostRef = userPostRef.start(afterDocument: lastSnapshot)
@@ -200,6 +200,7 @@ extension FirestoreManager {
                 
         var posts = [Post]()
         
+        // Check if the object was already fetched or set it if none were set
         if initialDocumentID == nil, let firstDocumentID = data.first?.id {
             initialDocumentID = firstDocumentID
         } else if let documentID = initialDocumentID {
@@ -211,8 +212,8 @@ extension FirestoreManager {
         
         var failureIndex = 0
         
-        data.enumerated().forEach { index, post in
-            let reference = FirestoreReference.documentRef(post.isTopicPost ? .topicPosts : .posts, documentID: post.id, language: post.language)
+        data.enumerated().forEach { index, postData in
+            let reference = FirestoreReference.documentRef(postData.isTopicPost ? .topicPosts : .posts, documentID: postData.id, language: postData.language)
                 
             decodeSingle(reference: reference) { (result: Result<Post, Error>) in
                 switch result {
@@ -223,7 +224,7 @@ extension FirestoreManager {
                     print("We have an error: \(error.localizedDescription)")
                 }
                 
-                if (posts.count - failureIndex) == data.count {
+                if (posts.count + failureIndex) == data.count {
                     posts = posts.sorted { $0.createdAt > $1.createdAt }
                     completion(posts)
                 }

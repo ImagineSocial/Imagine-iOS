@@ -1120,24 +1120,17 @@ extension SettingTableViewController: SettingCellDelegate, UINavigationControlle
                 }
             }
         } else if let addOn = addOn, let communityID = addOn.community.id {
-            var collectionRef: CollectionReference!
-            if addOn.community.language == .en {
-                collectionRef = db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = db.collection("Facts")
-            }
             
-            let ref = collectionRef.document(communityID).collection("addOns").document(addOn.documentID)
-            ref.updateData(data) { (err) in
+            let argumentReference = FirestoreCollectionReference(document: communityID, collection: "addOns")
+            let reference = FirestoreReference.documentRef(.communities, documentID: addOn.documentID, collectionReferences: argumentReference)
+            
+            reference.updateData(data) { (err) in
                 if let error = err {
                     print("We could not update the data: \(error.localizedDescription)")
                 } else {
                     self.view.activityStopAnimating()
                 }
             }
-        }
-        else {
-            print("We got no mfn topic nor user")
         }
     }
 }

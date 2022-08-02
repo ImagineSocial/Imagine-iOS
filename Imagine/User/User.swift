@@ -38,11 +38,11 @@ class User: Codable {
     
     //location
     var locationName: String?
-    var locationIsPublic = false
+    var locationIsPublic: Bool? = false
     
     enum CodingKeys: String, CodingKey {
         case imageURL = "profilePictureURL"
-        case name, statusText, blocked, instagramLink, instagramDescription, patreonLink, patreonDescription, youTubeLink, youTubeDescription, twitterLink, twitterDescription, songwhipLink, songwhipDescription, locationName, locationIsPublic, postCount
+        case name, statusText, blocked, instagramLink, instagramDescription, patreonLink, patreonDescription, youTubeLink, youTubeDescription, twitterLink, twitterDescription, songwhipLink, songwhipDescription, locationName, locationIsPublic, postCount, uid
     }
     
     

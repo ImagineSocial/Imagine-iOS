@@ -81,15 +81,12 @@ class AddOnQAndACollectionViewCell: BaseAddOnCollectionViewCell {
             return
         }
         
-        var collectionRef: CollectionReference!
-        if info.community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
+        let addOnReference = FirestoreCollectionReference(document: communtiyID, collection: "addOns")
+        let questionReference = FirestoreCollectionReference(document: info.documentID, collection: "questions")
+        let proReference = FirestoreReference.collectionRef(.communities, collectionReferences: addOnReference, questionReference)
         
-        let ref = collectionRef.document(communtiyID).collection("addOns").document(info.documentID).collection("questions")
-        ref.getDocuments { (snap, err) in
+        
+        proReference.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
@@ -364,12 +361,7 @@ class AddOnQAndATextfieldCell: UITableViewCell {
             return
         }
 
-        var collectionRef: CollectionReference!
-        if info.community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
+        let collectionRef = FirestoreReference.mainRef(.communities)
         
         if type == .question {
             if let communityID = info.community.id, let userID = user.uid {

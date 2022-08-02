@@ -278,16 +278,6 @@ extension BaseFeedTableViewController: SurveyCellDelegate {
     }
 }
 
-extension BaseFeedTableViewController: TopTopicCellDelegate {
-    func owenTapped() {
-        performSegue(withIdentifier: "toCreativeSpace", sender: nil)
-    }
-    
-    func factOfTheWeekTapped(fact:Community) {
-        performSegue(withIdentifier: "toFactSegue", sender: fact)
-    }
-}
-
 extension BaseFeedTableViewController: PostCellDelegate {
     
     func collectionViewTapped(post: Post) {

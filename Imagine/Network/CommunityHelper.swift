@@ -14,7 +14,22 @@ class CommunityHelper {
     
     /// Fetches the first eight communities of their display option
     static func getMainCommunities(for displayOption: DisplayOption, language: Language? = nil, completion: @escaping ([Community]?) -> Void) {
-        let query = FirestoreReference.collectionRef(.communities, queries: FirestoreQuery(field: "displayOption", equalTo: displayOption.rawValue), FirestoreQuery(field: "popularity", descending: true, limit: 8), language: language)
+        let query = FirestoreReference.collectionRef(.communities, queries: FirestoreQuery(field: "displayOption", equalTo: displayOption.rawValue), FirestoreQuery(field: "popularity", limit: 8), language: language)
+        
+        FirestoreManager.shared.decode(query: query) { (result: Result<[Community], Error>) in
+            switch result {
+            case .success(var communities):
+                communities = communities.sorted(by: { $0.popularity ?? 0 > $1.popularity ?? 0 })
+                completion(communities)
+            case .failure(let error):
+                print("We have an error fetching the main communities: \(error.localizedDescription)")
+                completion(nil)
+            }
+        }
+    }
+    
+    static func getAllCommunities(for displayOption: DisplayOption, language: Language? = nil, completion: @escaping ([Community]?) -> Void) {
+        let query = FirestoreReference.collectionRef(.communities, queries: FirestoreQuery(field: "displayOption", equalTo: displayOption.rawValue), language: language)
         
         FirestoreManager.shared.decode(query: query) { (result: Result<[Community], Error>) in
             switch result {
@@ -27,8 +42,8 @@ class CommunityHelper {
         }
     }
     
-    static func getAllCommunities(for displayOption: DisplayOption, language: Language? = nil, completion: @escaping ([Community]?) -> Void) {
-        let query = FirestoreReference.collectionRef(.communities, queries: FirestoreQuery(field: "displayOption", equalTo: displayOption.rawValue), language: language)
+    static func getAllCommunities(language: Language? = nil, completion: @escaping ([Community]?) -> Void) {
+        let query = FirestoreReference.collectionRef(.communities, language: language)
         
         FirestoreManager.shared.decode(query: query) { (result: Result<[Community], Error>) in
             switch result {
@@ -79,7 +94,7 @@ extension CommunityHelper {
     }
     
     static private func getFollowedTopicData(from userID: String, completion: @escaping ([PostData]?) -> Void) {
-        let topicRef = FirestoreReference.collectionRef(.users, collectionReference: FirestoreCollectionReference(document: userID, collection: "topics"))
+        let topicRef = FirestoreReference.collectionRef(.users, collectionReferences: FirestoreCollectionReference(document: userID, collection: "topics"))
         
         FirestoreManager.shared.decode(query: topicRef) { (result: Result<[PostData], Error>) in
             switch result {
@@ -116,8 +131,8 @@ extension CommunityHelper {
         }
         
         func checkIfDone() {
-            if (communities.count - failureIndex) == postData.count {
-                communities = communities.sorted { $0.title ?? "" > $1.title ?? "" }
+            if (communities.count + failureIndex) == postData.count {
+                communities = communities.sorted { $0.title ?? "" < $1.title ?? "" }
                 completion(communities)
             }
         }

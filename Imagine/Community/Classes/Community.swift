@@ -34,7 +34,9 @@ class Community: Codable {
     var moderators: [String]?
     var initialView: InitialCommunityView = .feed
     var postCount: Int?
+    var popularity: Int?
     var followerCount: Int?
+    var follower: [String]?
     var language: Language = .en
         
     
@@ -46,7 +48,7 @@ class Community: Codable {
         }
         
         let collectionReference = FirestoreCollectionReference(document: userID, collection: "topics")
-        let ref = FirestoreReference.documentRef(.users, documentID: id, collectionReference: collectionReference, language: language)
+        let ref = FirestoreReference.documentRef(.users, documentID: id, collectionReferences: collectionReference, language: language)
         
         ref.getDocument { document, _ in
             if let document = document {
@@ -68,7 +70,7 @@ extension Community {
         let postData = PostData(createdAt: Date(), language: language)
         
         let collectionReference = FirestoreCollectionReference(document: userID, collection: "topics")
-        let documentReference = FirestoreReference.documentRef(.users, documentID: id, collectionReference: collectionReference)
+        let documentReference = FirestoreReference.documentRef(.users, documentID: id, collectionReferences: collectionReference)
         
         FirestoreManager.uploadObject(object: postData, documentReference: documentReference) { error in
             completion(error == nil)
@@ -87,7 +89,7 @@ extension Community {
             return
         }
         let collectionReference = FirestoreCollectionReference(document: userID, collection: "topics")
-        let documentReference = FirestoreReference.documentRef(.users, documentID: id, collectionReference: collectionReference)
+        let documentReference = FirestoreReference.documentRef(.users, documentID: id, collectionReferences: collectionReference)
         
         FirestoreManager.delete(documentReference) { error in
             completion(error == nil)

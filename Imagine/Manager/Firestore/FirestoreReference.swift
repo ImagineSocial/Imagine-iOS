@@ -95,9 +95,9 @@ class FirestoreReference {
     static let language = LanguageSelection.language
     static let db = Firestore.firestore()
     
-    static func collectionRef(_ type: CollectionType, collectionReference: FirestoreCollectionReference? = nil, queries: FirestoreQuery..., language: Language? = nil) -> Query {
+    static func collectionRef(_ type: CollectionType, collectionReferences: FirestoreCollectionReference..., queries: FirestoreQuery..., language: Language? = nil) -> Query {
         
-        let reference = mainRef(type, collectionReference: collectionReference, language: language)
+        let reference = mainRef(type, collectionReferences: collectionReferences.first, collectionReferences.last, language: language)
         var completeQuery: Query?
         
         // Check if we got a query or a default query
@@ -118,9 +118,9 @@ class FirestoreReference {
         return completeQuery ?? reference
     }
     
-    static func documentRef(_ type: CollectionType, documentID: String?, collectionReference: FirestoreCollectionReference? = nil, language: Language? = nil) -> DocumentReference {
-        
-        let reference = mainRef(type, collectionReference: collectionReference, language: language)
+    static func documentRef(_ type: CollectionType, documentID: String?, collectionReferences: FirestoreCollectionReference..., language: Language? = nil) -> DocumentReference {
+                
+        let reference = mainRef(type, collectionReferences: collectionReferences.first, collectionReferences.last, language: language)
         
         guard let documentID = documentID else {
             return reference.document()
@@ -131,23 +131,25 @@ class FirestoreReference {
     
     // MARK: - Main Ref
     
-    static func mainRef(_ type: CollectionType, collectionReference: FirestoreCollectionReference? = nil, language: Language? = nil) -> CollectionReference {
+    static func mainRef(_ type: CollectionType, collectionReferences: FirestoreCollectionReference?..., language: Language? = nil) -> CollectionReference {
         var reference: CollectionReference
-                
-        // The german language got no subfolder for the data because of the bad database structure.
-        switch language ?? self.language {
-        case .de:
+        
+        // glaube das reicht so
+        
+        let languageSymbol = language?.rawValue ?? self.language.rawValue
+        
+        if type.gotLanguageSubcollection, let languageString = type.languageString {
+            reference = db.collection("Data").document(languageSymbol).collection(languageString)
+        } else {
             reference = db.collection(type.mainString)
-        default:
-            if type.gotLanguageSubcollection, let languageString = type.languageString {
-                reference = db.collection("Data").document("en").collection(languageString)
-            } else {
-                reference = db.collection(type.mainString)
-            }
         }
         
         // Custom data for specific collections
-        if let collectionReference = collectionReference {
+        collectionReferences.forEach { collectionReference in
+            guard let collectionReference = collectionReference else {
+                return
+            }
+
             reference = reference.document(collectionReference.document).collection(collectionReference.collection)
         }
         

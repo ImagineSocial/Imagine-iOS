@@ -145,16 +145,10 @@ class SmallFactCell: UICollectionViewCell {
             return
         }
         
-        var collectionRef: CollectionReference!
-        if community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let ref = collectionRef.document(communityID).collection("arguments")
+        let argumentReference = FirestoreCollectionReference(document: communityID, collection: "arguments")
+        let proReference = FirestoreReference.collectionRef(.communities, collectionReferences: argumentReference, queries: FirestoreQuery(field: "proOrContra", equalTo: "pro"), FirestoreQuery(field: "upvotes", limit: 1))
         
-        let proRef = ref.whereField("proOrContra", isEqualTo: "pro").order(by: "upvotes", descending: true).limit(to: 1)
-        proRef.getDocuments { (snap, err) in
+        proReference.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
@@ -164,8 +158,9 @@ class SmallFactCell: UICollectionViewCell {
             }
         }
         
-        let contraRef = ref.whereField("proOrContra", isEqualTo: "contra").order(by: "upvotes", descending: true).limit(to: 1)
-        contraRef.getDocuments { (snap, err) in
+        let contraReference = FirestoreReference.collectionRef(.communities, collectionReferences: argumentReference, queries: FirestoreQuery(field: "proOrContra", equalTo: "contra"), FirestoreQuery(field: "upvotes", limit: 1))
+        
+        contraReference.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {

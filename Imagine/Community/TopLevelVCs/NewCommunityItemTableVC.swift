@@ -406,7 +406,7 @@ class NewCommunityItemTableVC: UITableViewController {
                 return
             }
             let collectionReference = FirestoreCollectionReference(document: id, collection: "addOns")
-            let ref = FirestoreReference.documentRef(.communities, documentID: nil, collectionReference: collectionReference)
+            let ref = FirestoreReference.documentRef(.communities, documentID: nil, collectionReferences: collectionReference)
             
             createNewAddOnPlaylist(ref: ref)
         case .addOn:
@@ -415,7 +415,7 @@ class NewCommunityItemTableVC: UITableViewController {
             }
             
             let collectionReference = FirestoreCollectionReference(document: id, collection: "addOns")
-            let ref = FirestoreReference.documentRef(.communities, documentID: nil, collectionReference: collectionReference)
+            let ref = FirestoreReference.documentRef(.communities, documentID: nil, collectionReferences: collectionReference)
             
             if selectedImageFromPicker != nil {
                 if let userID = AuthenticationManager.shared.user?.uid {
@@ -430,7 +430,7 @@ class NewCommunityItemTableVC: UITableViewController {
             }
             
             let collectionReference = FirestoreCollectionReference(document: id, collection: "addOns")
-            let ref = FirestoreReference.documentRef(.communities, documentID: nil, collectionReference: collectionReference)
+            let ref = FirestoreReference.documentRef(.communities, documentID: nil, collectionReferences: collectionReference)
             
             if selectedImageFromPicker != nil {
                 if let userID = AuthenticationManager.shared.user?.uid {
@@ -473,7 +473,7 @@ class NewCommunityItemTableVC: UITableViewController {
                 let postData = PostData(createdAt: Date(), userID: userID, language: community.language, isTopicPost: false)
                 
                 let collectionReference = FirestoreCollectionReference(document: userID, collection: "posts")
-                let postRef = FirestoreReference.documentRef(.users, documentID: ref.documentID, collectionReference: collectionReference)
+                let postRef = FirestoreReference.documentRef(.users, documentID: ref.documentID, collectionReferences: collectionReference)
                 
                 FirestoreManager.uploadObject(object: postData, documentReference: postRef) { error in
                     self.finished(item: post)
@@ -496,7 +496,7 @@ class NewCommunityItemTableVC: UITableViewController {
         }
         
         let collectionReference = FirestoreCollectionReference(document: communityID, collection: "addOns")
-        let ref = FirestoreReference.mainRef(.communities, collectionReference: collectionReference)
+        let ref = FirestoreReference.mainRef(.communities, collectionReferences: collectionReference)
         
         let data: [String: Any] = ["OP": userID, "headerTitle": title, "description": description, "linkedFactID": linkedFactID, "popularity": 0, "type": "singleTopic"]
         
@@ -555,18 +555,13 @@ class NewCommunityItemTableVC: UITableViewController {
             return
         }
         
-        var collectionRef: CollectionReference!
-        if community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        
-        let argumentRef = collectionRef.document(communityID).collection("arguments").document(argument.documentID).collection("sources").document()
+        let argumentReference = FirestoreCollectionReference(document: communityID, collection: "arguments")
+        let sourceReference = FirestoreCollectionReference(document: argument.documentID, collection: "sources")
+        let reference = FirestoreReference.documentRef(.communities, documentID: nil, collectionReferences: argumentReference, sourceReference)
         
         let data: [String:Any] = ["title" : title, "description": description, "source": source, "OP": userID]
         
-        argumentRef.setData(data, completion: { (err) in
+        reference.setData(data, completion: { (err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
@@ -574,7 +569,7 @@ class NewCommunityItemTableVC: UITableViewController {
                 newSource.title = title
                 newSource.description = description
                 newSource.source = source
-                newSource.documentID = argumentRef.documentID
+                newSource.documentID = reference.documentID
                 
                 self.finished(item: newSource)
             }
@@ -586,24 +581,21 @@ class NewCommunityItemTableVC: UITableViewController {
             showTitleDescriptionAlert()
             return
         }
-        var collectionRef: CollectionReference!
-        if community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let ref = collectionRef.document(communityID).collection("arguments").document(argument.documentID).collection("arguments").document()
+        
+        let argumentReference = FirestoreCollectionReference(document: communityID, collection: "arguments")
+        let deepArgumentReference = FirestoreCollectionReference(document: argument.documentID, collection: "arguments")
+        let reference = FirestoreReference.documentRef(.communities, documentID: nil, collectionReferences: argumentReference, deepArgumentReference)
         
         let data: [String:Any] = ["title" : title, "description": description, "OP": userID]
         
-        ref.setData(data) { (err) in
+        reference.setData(data) { (err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
                 let argument = Argument(addMoreDataCell: false)
                 argument.title  = title
                 argument.description = description
-                argument.documentID = ref.documentID
+                argument.documentID = reference.documentID
                 
                 self.finished(item: argument)
             }
@@ -615,20 +607,16 @@ class NewCommunityItemTableVC: UITableViewController {
             showTitleDescriptionAlert()
             return
         }
-        var collectionRef: CollectionReference!
-        if community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
         
-        let ref = collectionRef.document(communityID).collection("arguments").document()
+        let argumentReference = FirestoreCollectionReference(document: communityID, collection: "arguments")
+        let reference = FirestoreReference.documentRef(.communities, documentID: nil, collectionReferences: argumentReference)
+        
         
         let proOrContra = getProOrContraString()
         
         let data: [String:Any] = ["title" : title, "description": description, "proOrContra": proOrContra, "OP": userID, "upvotes": 0, "downvotes": 0]
         
-        ref.setData(data) { (err) in
+        reference.setData(data) { (err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
@@ -636,7 +624,7 @@ class NewCommunityItemTableVC: UITableViewController {
                 argument.title  = title
                 argument.description = description
                 argument.proOrContra = proOrContra
-                argument.documentID = ref.documentID
+                argument.documentID = reference.documentID
                 
                 self.finished(item: argument)
             }

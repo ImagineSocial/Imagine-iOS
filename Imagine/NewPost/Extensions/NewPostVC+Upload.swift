@@ -209,7 +209,7 @@ extension NewPostVC {
     private func uploadUserData(documentID: String) {
         guard let userID = AuthenticationManager.shared.user?.uid else { return }
         let collectionReference = FirestoreCollectionReference(document: userID, collection: "posts")
-        let reference = FirestoreReference.documentRef(.users, documentID: documentID, collectionReference: collectionReference)
+        let reference = FirestoreReference.documentRef(.users, documentID: documentID, collectionReferences: collectionReference)
         
         let isTopicPost = comingFromAddOnVC || isTopicPost
         let data = PostData(createdAt: Date(), userID: userID, language: LanguageSelection.language, isTopicPost: isTopicPost)
@@ -223,8 +223,9 @@ extension NewPostVC {
     
     private func uploadCommunityData(documentID: String) {
         guard let userID = AuthenticationManager.shared.user?.uid, let community = linkedCommunity, let communityID = community.id else { return }
+        
         let collectionReference = FirestoreCollectionReference(document: communityID, collection: "posts")
-        let reference = FirestoreReference.documentRef(.communities, documentID: documentID, collectionReference: collectionReference)
+        let reference = FirestoreReference.documentRef(.communities, documentID: documentID, collectionReferences: collectionReference)
         
         let data = PostData(createdAt: Date(), userID: userID, language: LanguageSelection.language, isTopicPost: isTopicPost)
         
@@ -303,67 +304,3 @@ extension NewPostVC {
         }
     }
 }
-
-// MARK: - Reupload
-//    private func uploadUserPostData(postDocumentID: String, userID: String, language: Language) {
-//
-//        var userRef: DocumentReference!
-//
-//        if postAnonymous {
-//            //Make a reference to the poster if there should be any violations
-//            userRef = db.collection("AnonymousPosts").document(postDocumentID)
-//        } else {
-//            userRef = db.collection("Users").document(userID).collection("posts").document(postDocumentID)
-//        }
-//
-//
-//        var data: [String: Any] = ["createTime": Timestamp(date: Date())]
-//
-//        if language == .en {
-//            data["language"] = "en"
-//        }
-//
-//        // To fetch in a different ref when loading the posts of the topic
-//        if self.comingFromAddOnVC || self.postOnlyInTopic {
-//            data["isTopicPost"] = true
-//        }
-//
-//        // Get reference to OP
-//        if postAnonymous {
-//            data["originalPoster"] = userID
-//        }
-//
-//        userRef.setData(data) { (err) in
-//            if let error = err {
-//                print("We have an error: \(error.localizedDescription)")
-//            } else {
-//                print("Successfully set UserData")
-//            }
-//        }
-//    }
-
-//private func uploadCommunityPostData(postDocumentID: String, communityID: String, language: Language) {
-//    var collectionRef: CollectionReference!
-//
-//    if language == .en {
-//        collectionRef = self.db.collection("Data").document("en").collection("topics")
-//    } else {
-//        collectionRef = self.db.collection("Facts")
-//    }
-//
-//    let topicRef = collectionRef.document(communityID).collection("posts").document(postDocumentID)
-//
-//    var data: [String: Any] = ["createTime": Timestamp(date: Date())]
-//
-//    if self.comingFromAddOnVC || postOnlyInTopic {
-//        data["type"] = "topicPost"  // To fetch in a different ref when loading the posts of the topic
-//    }
-//
-//    topicRef.setData(data) { (err) in
-//        if let error = err {
-//            print("We have an error: \(error.localizedDescription)")
-//        } else {
-//            print("FactReference successfully added")
-//        }
-//    }
-//}

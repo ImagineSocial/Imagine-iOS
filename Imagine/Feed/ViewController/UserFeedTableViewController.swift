@@ -259,89 +259,27 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         addAsFriendButton.isHidden = true
         profilePictureButton.isEnabled = true
         
-        if let user = Auth.auth().currentUser {
-            let currentUser = User(userID: user.uid)
-            
-            let ref = db.collection("Users").document(user.uid)
-            ref.getDocument { (doc, err) in
-                if let err = err {
-                    print("We have an error: \(err.localizedDescription)")
-                } else {
-                    if let doc = doc {
-                        if let docData = doc.data() {
-                            var medias = [SocialMediaObject]()
-                            
-                            if let instagramLink = docData["instagramLink"] as? String {
-                                let description = docData["instagramDescription"] as? String
-                                let media = SocialMediaObject(type: .instagram, link: instagramLink, description: description)
-                                medias.append(media)
-                            }
-                            if let patreonLink = docData["patreonLink"] as? String {
-                                let description = docData["patreonDescription"] as? String
-                                let media = SocialMediaObject(type: .patreon, link: patreonLink, description: description)
-                                medias.append(media)
-                            }
-                            if let youTubeLink = docData["youTubeLink"] as? String {
-                                let description = docData["youTubeDescription"] as? String
-                                let media = SocialMediaObject(type: .youTube, link: youTubeLink, description: description)
-                                medias.append(media)
-                            }
-                            if let twitterLink = docData["twitterLink"] as? String {
-                                let description = docData["twitterDescription"] as? String
-                                let media = SocialMediaObject(type: .twitter, link: twitterLink, description: description)
-                                medias.append(media)
-                            }
-                            if let songwhipLink = docData["songwhipLink"] as? String {
-                                let description = docData["songwhipDescription"] as? String
-                                let media = SocialMediaObject(type: .songwhip, link: songwhipLink, description: description)
-                                medias.append(media)
-                            }
-                            
-                            if medias.count != 0 {
-                                self.socialMediaObjects = medias
-                                self.setSocialMediaBar(socialMediaObjects: medias)
-                            }
-                            if let statusQuote = docData["statusText"] as? String {
-                                if statusQuote != "" {
-                                    self.statusLabel.text = statusQuote
-                                    currentUser.statusText = statusQuote
-                                } else {
-                                    self.statusLabel.text = self.defaultStatusText
-                                }
-                            } else {
-                                self.statusLabel.text = self.defaultStatusText
-                            }
-                            
-                            if let locationName = docData["locationName"] as? String, let locationIsPublic = docData["locationIsPublic"] as? Bool {
-                                if locationIsPublic {
-                                    self.locationLabel.text = locationName
-                                    self.locationImageView.isHidden = false
-                                    self.locationLabel.isHidden = false
-                                }
-                            }
-                        }
-                    }
-                    
-                }
+        guard let userID = AuthenticationManager.shared.userID else {
+            return
+        }
+        
+        let ref = db.collection("Users").document(userID)
+        
+        FirestoreManager.shared.decodeSingle(reference: ref) { (result: Result<User, Error>) in
+            switch result {
+            case .success(let user):
+                self.user = user
+            case .failure(let error):
+                print("We have an error: \(error.localizedDescription)")
             }
-            
-            self.updateTopViewUIOfOwnProfile()
-            
-            self.user = currentUser
-                                    
-            if user.uid == "CZOcL3VIwMemWwEfutKXGAfdlLy1" { // That means its me, Malte
-                blogPostButton.isHidden = false
-            }
-            
-            if let displayName = user.displayName {
-                nameLabel.text = displayName
-                currentUser.name = displayName
-            }
-            if let url = user.photoURL {
-                profilePictureImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-user"), options: [], completed: nil)
-                
-                currentUser.imageURL = url.absoluteString
-            }
+        }
+        
+        setUserProfile()
+        
+        updateTopViewUIOfOwnProfile()
+        
+        if userID == "CZOcL3VIwMemWwEfutKXGAfdlLy1" { // That means its me, Malte
+            blogPostButton.isHidden = false
         }
     }
     
@@ -391,7 +329,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         
         totalPostCountLabel.text = String(user.postCount ?? 0)
 
-        if user.locationIsPublic {
+        if user.locationIsPublic ?? false {
             if let location = user.locationName {
                 self.locationLabel.text = location
                 self.locationImageView.isHidden = false

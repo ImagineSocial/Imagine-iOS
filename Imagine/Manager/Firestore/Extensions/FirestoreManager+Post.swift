@@ -58,7 +58,7 @@ class FirestoreRequest {
             return
         }
         
-        let userRef = FirestoreReference.collectionRef(.users, collectionReference: FirestoreCollectionReference(document: userID, collection: "friends"))
+        let userRef = FirestoreReference.collectionRef(.users, collectionReferences: FirestoreCollectionReference(document: userID, collection: "friends"))
         
         userRef.getDocuments { snap, error in
             guard let snaps = snap, error == nil else {
@@ -100,7 +100,7 @@ class FirestoreRequest {
             return
         }
         
-        let topicRef = FirestoreReference.collectionRef(.users, collectionReference: FirestoreCollectionReference(document: userID, collection: "topics"))
+        let topicRef = FirestoreReference.collectionRef(.users, collectionReferences: FirestoreCollectionReference(document: userID, collection: "topics"))
         
         topicRef.getDocuments { (snap, err) in
             guard let snap = snap else {
@@ -128,7 +128,7 @@ class FirestoreRequest {
         
         self.posts.removeAll()
         
-        var ref = FirestoreReference.collectionRef(.topicPosts, collectionReference: FirestoreCollectionReference(document: communityID, collection: "posts"))
+        var ref = FirestoreReference.collectionRef(.topicPosts, collectionReferences: FirestoreCollectionReference(document: communityID, collection: "posts"))
         
         
         var documentIDsOfPosts = [Post]()
@@ -210,7 +210,7 @@ class FirestoreRequest {
         
         self.alreadyFetchedCount += newFetchCount
         
-        let ref = FirestoreReference.collectionRef(type, collectionReference: FirestoreCollectionReference(document: documentID, collection: collectionID))
+        let ref = FirestoreReference.collectionRef(type, collectionReferences: FirestoreCollectionReference(document: documentID, collection: collectionID))
         
         ref.getDocuments { querySnap, error in
             

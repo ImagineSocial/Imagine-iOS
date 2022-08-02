@@ -20,7 +20,7 @@ import FirebaseFirestore
  // PostData
  - User - Posts
  - User - Saved
- - User - Topics!!! // TODO: Topics bro
+ - User - Topics
  
  - Community - Posts
  
@@ -49,27 +49,14 @@ extension MigrationManager {
                 return
             }
             
-            let dispatchSemaphore = DispatchSemaphore(value: 0)
-
-            posts.forEach { post in
-                
-                guard let documentID = post.documentID else {
-                    print("No ID: \(post.title)")
+            let reference = FirestoreReference.mainRef(fetchTopicPosts ? .topicPosts : .posts, language: language)
+            FirestoreManager.batchUploadPosts(posts, collectionReference: reference) { error in
+                guard let error = error else {
+                    print("Succesfully uploaded posts")
                     return
                 }
-                let ref = FirestoreReference.documentRef(fetchTopicPosts ? .topicPosts : .posts, documentID: documentID, language: language)
-                
-                FirestoreManager.uploadObject(object: post, documentReference: ref) { error in
-                    guard let error = error else {
-                        return
-                    }
-                    
-                    dispatchSemaphore.signal()
 
-                    print("We have an error uploading posts: \(error.localizedDescription)")
-                }
-                
-                dispatchSemaphore.wait()
+                print("We have an error uploading posts: \(error.localizedDescription)")
             }
         }
     }
@@ -77,19 +64,25 @@ extension MigrationManager {
     private func getPosts(for language: Language, topicPosts: Bool, completion: @escaping ([Post]?) -> Void) {
         
         var posts = [Post]()
+        var ref: CollectionReference
         
-        let ref = db.collection("Data").document("en").collection(topicPosts ? "topicPosts" : "posts")
+        switch language {
+        case .de:
+            ref = db.collection(topicPosts ? "TopicPosts" : "Posts")
+        case .en:
+            ref = db.collection("Data").document("en").collection(topicPosts ? "topicPosts" : "posts")
+        }
         
-        ref.getDocuments { [weak self] snap, error in
+        ref.getDocuments { snap, error in
             
-            guard let snap = snap, let self = self else {
+            guard let snap = snap else {
                 completion(nil)
                 return
             }
             
             
             for document in snap.documents {
-                if let post = self.addThePost(document: document, isTopicPost: false, language: language) {
+                if let post = self.addThePost(document: document, isTopicPost: topicPosts, language: language) {
                     posts.append(post)
                 }
             }
@@ -177,7 +170,7 @@ extension MigrationManager {
                         return nil
                     }
                     
-                    let image = PostImage(url: imageURL, height: height, width: width)
+                    let image = PostImage(url: imageURL, height: height, width: width, thumbnailUrl: documentData["thumbnailImageURL"] as? String)
                     post.image = image
                     
                     let ratio = width / height
@@ -186,7 +179,6 @@ extension MigrationManager {
                     } else {
                         post.type = .picture
                     }
-                    
                     
                     return post
                     
@@ -351,7 +343,8 @@ extension MigrationManager {
         //Check if the poster is a friend of yours
         
         let post = Post(type: .picture, title: title, createdAt: createTimestamp.dateValue())
-        post.description = documentData["description"] as? String
+        let description = documentData["description"] as? String
+        post.description = description != "" ? description : nil
         post.documentID = document.documentID
         post.votes.thanks = thanksCount
         post.votes.wow = wowCount
@@ -370,31 +363,37 @@ extension MigrationManager {
         
         //Linked Community
         if let communityID = documentData[factJSONString] as? String {
-            post.community = self.addCommunity(communityID: communityID)
+            post.communityID = communityID
+        }
+        
+        //Design Options
+        if let designOptions = documentData["designOptions"] as? [String: Any], let hideProfile = designOptions["hideProfile"] as? Bool, hideProfile {
+            post.options = PostDesignOption(hideProfilePicture: true)
         }
         
         // User/Poster
         if originalPoster == "anonym" {
             post.anonym = true
             if let anonymousName = documentData["anonymousName"] as? String {
-                post.options?.anonymousName = anonymousName
+                if var options = post.options {
+                    options.anonymousName = anonymousName
+                    post.options = options
+                } else {
+                    post.options = PostDesignOption(hideProfilePicture: false, anonymousName: anonymousName)
+                }
             }
         } else {
-            let user = User(userID: originalPoster)
-            user.loadUser() { user in
-                post.user = user
-            }
+            post.userID = originalPoster
         }
+        
+        post.tags = documentData["tags"] as? [String]
         
         //Comment Count
         if let commentCount = documentData["commentCount"] as? Int {
             post.commentCount = commentCount
         } // else { it stays 0
         
-        //Design Options
-        if let designOptions = documentData["designOptions"] as? [String: Any], let hideProfile = designOptions["hideProfile"] as? Bool, hideProfile {
-            post.options = PostDesignOption(hideProfilePicture: true)
-        }
+        
         
         if let locationName = documentData["locationName"] as? String, let locationCoordinates = documentData["locationCoordinate"] as? GeoPoint {
             let location = Location(title: locationName, geoPoint: locationCoordinates)
@@ -438,7 +437,7 @@ extension MigrationManager {
                     }
                     
                     let reference = FirestoreCollectionReference(document: uid, collection: type == .user ? "posts" : "saved" )
-                    let collectionReference = FirestoreReference.mainRef(.users, collectionReference: reference)
+                    let collectionReference = FirestoreReference.mainRef(.users, collectionReferences: reference)
                                         
                     FirestoreManager.batchUploadPostData(postData, collectionReference: collectionReference) { error in
                         guard let error = error else {
@@ -471,7 +470,7 @@ extension MigrationManager {
         var postData = [PostData]()
         
         let reference = FirestoreCollectionReference(document: userUID, collection: postList == .user ? "posts" : "saved")
-        let userPostRef = FirestoreReference.collectionRef(.users, collectionReference: reference)
+        let userPostRef = FirestoreReference.collectionRef(.users, collectionReferences: reference)
         
         userPostRef.getDocuments { querySnapshot, error in
             
@@ -553,7 +552,7 @@ extension MigrationManager {
                     }
                     
                     let reference = FirestoreCollectionReference(document: communityID, collection: "posts")
-                    let collectionReference = FirestoreReference.mainRef(.communityPosts, collectionReference: reference, language: language)
+                    let collectionReference = FirestoreReference.mainRef(.communityPosts, collectionReferences: reference, language: language)
 
                     FirestoreManager.batchUploadPostData(postData, collectionReference: collectionReference) { error in
                         guard let error = error else {
@@ -569,21 +568,27 @@ extension MigrationManager {
     }
     
     private func getCommunities(language: Language, completion: @escaping ([Community]?) -> Void) {
-        let ref = FirestoreReference.collectionRef(.communities, language: language)
         
-        ref.getDocuments { snap, error in
-            guard let snap = snap, error == nil else {
-                print("We have an error: \(error?.localizedDescription ?? "")")
-                completion(nil)
-                return
+        switch language {
+        case .de:
+            let ref = db.collection("Facts") // : db.collection("Data").document("en").collection("topics")
+            
+            ref.getDocuments { snap, error in
+                guard let snap = snap, error == nil else {
+                    print("We have an error: \(error?.localizedDescription ?? "")")
+                    completion(nil)
+                    return
+                }
+                
+                
+                let communities = snap.documents.compactMap { document in
+                    self.getCommunity(language: language, documentID: document.documentID, data: document.data())
+                }
+                
+                completion(communities)
             }
-            
-            
-            let communities = snap.documents.compactMap { document in
-                self.getCommunity(documentID: document.documentID, data: document.data())
-            }
-            
-            completion(communities)
+        case .en:
+            CommunityHelper.getAllCommunities(language: .en, completion: completion)
         }
     }
     
@@ -596,8 +601,13 @@ extension MigrationManager {
 
         var postData = [PostData]()
         
-        let reference = FirestoreCollectionReference(document: communityID, collection: "posts")
-        let communityRef = FirestoreReference.collectionRef(.communityPosts, collectionReference: reference, language: language)
+        var communityRef: CollectionReference
+        
+        if language == .de {
+            communityRef = db.collection("Facts").document(communityID).collection("posts")
+        } else {
+            communityRef = db.collection("Data").document("en").collection("topics").document(communityID).collection("posts")
+        }
         
         communityRef.getDocuments { querySnapshot, error in
             
@@ -634,7 +644,7 @@ extension MigrationManager {
     }
 }
 
-// MARK: - Get Community
+// MARK: - Migrate Community
 extension MigrationManager {
     
 
@@ -657,7 +667,7 @@ extension MigrationManager {
         }
     }
     
-    private func getCommunity(documentID: String, data: [String: Any]) -> Community? {
+    private func getCommunity(language: Language, documentID: String, data: [String: Any]) -> Community? {
         
         guard let name = data["name"] as? String,
             let timestamp = data["createDate"] as? Timestamp,
@@ -673,9 +683,13 @@ extension MigrationManager {
         community.title = name
         community.createdAt = timestamp.dateValue()
         community.moderators = [OP]
+        community.createdBy = OP
         community.postCount = data["postCount"] as? Int
         community.imageURL = data["imageURL"] as? String
         community.description = data["description"] as? String
+        community.language = language
+        community.follower = data["follower"] as? [String]
+        community.popularity = data["popularity"] as? Int
         
         
         if let language = data["language"] as? String {
@@ -699,7 +713,7 @@ extension MigrationManager {
         return community
     }
     
-    private func loadCommunity(_ community: Community, completion: @escaping (Community?) -> Void) {
+    private func loadCommunity(_ community: Community, language: Language, completion: @escaping (Community?) -> Void) {
         
         guard let id = community.id else {
             completion(nil)
@@ -715,11 +729,11 @@ extension MigrationManager {
         let ref = collectionRef.document(id)
         
         
-        ref.getDocument { [weak self] (snap, err) in
+        ref.getDocument { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
-                guard let snap = snap, let self = self, let data = snap.data(), let community = self.getCommunity(documentID: snap.documentID, data: data) else {
+                guard let snap = snap, let data = snap.data(), let community = self.getCommunity(language: language, documentID: snap.documentID, data: data) else {
                     completion(nil)
                     return
                 }
@@ -764,7 +778,7 @@ extension MigrationManager {
                 }
                 
                 self.getFollowedTopicDocuments(userUID: userID) { postData in
-                    let reference = FirestoreReference.mainRef(.users, collectionReference: FirestoreCollectionReference(document: userID, collection: "topics"))
+                    let reference = FirestoreReference.mainRef(.users, collectionReferences: FirestoreCollectionReference(document: userID, collection: "topics"))
                     
                     FirestoreManager.batchUploadPostData(postData, collectionReference: reference) { error in
                         guard let error = error else {

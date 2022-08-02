@@ -21,6 +21,5 @@ enum PostType: String, Codable {
     case panorama
     case music
     case singleTopic
-    case topTopicCell
     case nothingPostedYet
 }

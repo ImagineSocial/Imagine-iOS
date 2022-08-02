@@ -80,21 +80,6 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
         }
     }
     
-    func hintTheOtherView() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-            
-            UIView.animate(withDuration: 0.4, animations: {
-                self.view.frame.origin.x += 50
-            }) { (_) in
-                UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
-                    self.view.frame.origin.x -= 50
-                }) { (_) in
-                    // Do something when it is finished
-                }
-            }
-        }
-    }
-    
     override func viewWillDisappear(_ animated: Bool) {
         if let tipView = tipView {
             tipView.dismiss()

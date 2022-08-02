@@ -159,7 +159,7 @@ class ArgumentViewController: UIViewController, ReachabilityObserverDelegate {
         }
         
         let collectionReference = FirestoreCollectionReference(document: communityID, collection: "arguments")
-        let ref = FirestoreReference.documentRef(.communities, documentID: argument.documentID, collectionReference: collectionReference, language: community.language)
+        let ref = FirestoreReference.documentRef(.communities, documentID: argument.documentID, collectionReferences: collectionReference, language: community.language)
         
         var voteString = ""
         var voteCount = 0
