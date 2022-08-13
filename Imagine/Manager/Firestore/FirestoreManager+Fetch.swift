@@ -133,6 +133,8 @@ extension FirestoreManager {
             userPostRef = userPostRef.start(afterDocument: lastSnapshot)
         }
         
+        //var userPostRef = Firestore.firestore().collection("Users").document(userID).collection("posts")
+        
         decodePostData(reference: userPostRef, completion: completion)
     }
     

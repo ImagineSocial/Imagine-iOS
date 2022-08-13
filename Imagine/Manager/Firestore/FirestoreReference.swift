@@ -95,9 +95,17 @@ class FirestoreReference {
     static let language = LanguageSelection.language
     static let db = Firestore.firestore()
     
+    static func isMigrated(type: CollectionType) -> Bool {
+        guard language == .de && type == .campaigns else {
+            return true
+        }
+        
+        return false
+    }
+    
     static func collectionRef(_ type: CollectionType, collectionReferences: FirestoreCollectionReference..., queries: FirestoreQuery..., language: Language? = nil) -> Query {
         
-        let reference = mainRef(type, collectionReferences: collectionReferences.first, collectionReferences.last, language: language)
+        let reference = mainRef(type, collectionReferences: collectionReferences.first, (collectionReferences.count > 1) ? collectionReferences.last : nil, language: language)
         var completeQuery: Query?
         
         // Check if we got a query or a default query
@@ -120,7 +128,7 @@ class FirestoreReference {
     
     static func documentRef(_ type: CollectionType, documentID: String?, collectionReferences: FirestoreCollectionReference..., language: Language? = nil) -> DocumentReference {
                 
-        let reference = mainRef(type, collectionReferences: collectionReferences.first, collectionReferences.last, language: language)
+        let reference = mainRef(type, collectionReferences: collectionReferences.first, (collectionReferences.count > 1) ? collectionReferences.last : nil, language: language)
         
         guard let documentID = documentID else {
             return reference.document()
@@ -133,12 +141,10 @@ class FirestoreReference {
     
     static func mainRef(_ type: CollectionType, collectionReferences: FirestoreCollectionReference?..., language: Language? = nil) -> CollectionReference {
         var reference: CollectionReference
-        
-        // glaube das reicht so
-        
+                
         let languageSymbol = language?.rawValue ?? self.language.rawValue
         
-        if type.gotLanguageSubcollection, let languageString = type.languageString {
+        if type.gotLanguageSubcollection, let languageString = type.languageString, isMigrated(type: type) {
             reference = db.collection("Data").document(languageSymbol).collection(languageString)
         } else {
             reference = db.collection(type.mainString)

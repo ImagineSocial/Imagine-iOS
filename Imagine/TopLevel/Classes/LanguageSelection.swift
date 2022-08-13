@@ -15,7 +15,6 @@ enum Language: String, Codable {
 
 class LanguageSelection {
     static let defaults = UserDefaults.standard
-    static let pre = Locale.preferredLanguages[0]
     
     static var language: Language {
         if let language = defaults.string(forKey: "languageSelection") {

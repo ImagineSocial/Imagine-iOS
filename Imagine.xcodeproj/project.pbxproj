@@ -46,6 +46,7 @@
 		027BA8C527CBCEC600A8919F /* SmallTopicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027BA8C427CBCEC600A8919F /* SmallTopicCell.swift */; };
 		027BA8C727CBD49100A8919F /* WebVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027BA8C627CBD49100A8919F /* WebVC.swift */; };
 		027BD0362892BDD8009E985E /* FirestoreManager+Delete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027BD0352892BDD8009E985E /* FirestoreManager+Delete.swift */; };
+		027BD039289ACBF9009E985E /* SocialMediaObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027BD038289ACBF9009E985E /* SocialMediaObject.swift */; };
 		027F9B1A2863A0FD0034FDC9 /* UINavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027F9B192863A0FD0034FDC9 /* UINavigationController.swift */; };
 		027F9B1D2869B2ED0034FDC9 /* MigrationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027F9B1C2869B2ED0034FDC9 /* MigrationManager.swift */; };
 		0289957326FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */; };
@@ -274,8 +275,6 @@
 		E9E521BD245996D4002585A2 /* AddOnHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E521BC245996D4002585A2 /* AddOnHeaderView.swift */; };
 		E9E521C6245AE6EE002585A2 /* TrippyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E521C5245AE6EE002585A2 /* TrippyViewController.swift */; };
 		E9E531FE229EA242004D0654 /* ChatModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E531FD229EA242004D0654 /* ChatModels.swift */; };
-		E9E6876724167AB600CB7AF8 /* CurrentProjectsCollectionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9E6876624167AB600CB7AF8 /* CurrentProjectsCollectionCell.xib */; };
-		E9E6876924167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E6876824167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift */; };
 		E9E6BD0625F566E40012A870 /* ImagineCommunityNavigationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E6BD0525F566E40012A870 /* ImagineCommunityNavigationCell.swift */; };
 		E9E6BD0B25F77FC00012A870 /* ImagineCommunityProposalHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9E6BD0A25F77FC00012A870 /* ImagineCommunityProposalHeader.xib */; };
 		E9E6BD0E25F7842C0012A870 /* ImagineCommunityProposalHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E6BD0D25F7842C0012A870 /* ImagineCommunityProposalHeader.swift */; };
@@ -354,6 +353,7 @@
 		027BA8C427CBCEC600A8919F /* SmallTopicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallTopicCell.swift; sourceTree = "<group>"; };
 		027BA8C627CBD49100A8919F /* WebVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebVC.swift; sourceTree = "<group>"; };
 		027BD0352892BDD8009E985E /* FirestoreManager+Delete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FirestoreManager+Delete.swift"; sourceTree = "<group>"; };
+		027BD038289ACBF9009E985E /* SocialMediaObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialMediaObject.swift; sourceTree = "<group>"; };
 		027F9B192863A0FD0034FDC9 /* UINavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINavigationController.swift; sourceTree = "<group>"; };
 		027F9B1C2869B2ED0034FDC9 /* MigrationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationManager.swift; sourceTree = "<group>"; };
 		0289957226FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommunityCollectionVC+CollectionView.swift"; sourceTree = "<group>"; };
@@ -591,8 +591,6 @@
 		E9E521BC245996D4002585A2 /* AddOnHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOnHeaderView.swift; sourceTree = "<group>"; };
 		E9E521C5245AE6EE002585A2 /* TrippyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrippyViewController.swift; sourceTree = "<group>"; };
 		E9E531FD229EA242004D0654 /* ChatModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModels.swift; sourceTree = "<group>"; };
-		E9E6876624167AB600CB7AF8 /* CurrentProjectsCollectionCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CurrentProjectsCollectionCell.xib; sourceTree = "<group>"; };
-		E9E6876824167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentProjectsCollectionCell.swift; sourceTree = "<group>"; };
 		E9E6BD0525F566E40012A870 /* ImagineCommunityNavigationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagineCommunityNavigationCell.swift; sourceTree = "<group>"; };
 		E9E6BD0A25F77FC00012A870 /* ImagineCommunityProposalHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImagineCommunityProposalHeader.xib; sourceTree = "<group>"; };
 		E9E6BD0D25F7842C0012A870 /* ImagineCommunityProposalHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagineCommunityProposalHeader.swift; sourceTree = "<group>"; };
@@ -720,6 +718,15 @@
 				0247C02428550A35002876AB /* LinkManager.swift */,
 			);
 			path = Link;
+			sourceTree = "<group>";
+		};
+		027BD037289ACBE0009E985E /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				E95E907E25EAB60000E7B9DB /* User.swift */,
+				027BD038289ACBF9009E985E /* SocialMediaObject.swift */,
+			);
+			path = Classes;
 			sourceTree = "<group>";
 		};
 		027F9B1B2869B1F30034FDC9 /* Migration */ = {
@@ -891,7 +898,7 @@
 			isa = PBXGroup;
 			children = (
 				028624192752A3E50031AD5E /* ViewController */,
-				E95E907E25EAB60000E7B9DB /* User.swift */,
+				027BD037289ACBE0009E985E /* Classes */,
 			);
 			path = User;
 			sourceTree = "<group>";
@@ -1012,8 +1019,6 @@
 				E97D714B242255A50018E27C /* VoteCell.xib */,
 				E9EA7C9A22E5F47C0015C0EC /* VoteCell.swift */,
 				E9EE0E3422D234DA0039F32C /* VisionPitchCell.swift */,
-				E9E6876624167AB600CB7AF8 /* CurrentProjectsCollectionCell.xib */,
-				E9E6876824167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift */,
 				E97D714924223A930018E27C /* JobOfferCell.xib */,
 				E9B79CE2224EC72000166EED /* JobOfferCell.swift */,
 				E9E6BD0525F566E40012A870 /* ImagineCommunityNavigationCell.swift */,
@@ -1770,7 +1775,6 @@
 				E97D714A24223A930018E27C /* JobOfferCell.xib in Resources */,
 				E9F1F227247A9F42004E1E90 /* SettingFooterView.xib in Resources */,
 				E9F12C0624FE3630006BD9C3 /* AddOnCollectionViewFooter.xib in Resources */,
-				E9E6876724167AB600CB7AF8 /* CurrentProjectsCollectionCell.xib in Resources */,
 				E9925A9823D86F4C00E1A9D4 /* MultiPictureCell.xib in Resources */,
 				E9A57A9D24535C8200665007 /* AdvertisingCell.xib in Resources */,
 				E9F12C0224FE2E8C006BD9C3 /* AddOnProposalCell.xib in Resources */,
@@ -1926,6 +1930,7 @@
 				0220E379286F837100B43247 /* Firestore.swift in Sources */,
 				E9FE46D525FB5DB500F4C973 /* ImagineDataRequest.swift in Sources */,
 				E9530C4E22DCBF20007D6A00 /* PinchToZoomViewController.swift in Sources */,
+				027BD039289ACBF9009E985E /* SocialMediaObject.swift in Sources */,
 				E9526C0B250F99550088004F /* RadialGradientLayer.swift in Sources */,
 				E9817B5025EC02A200E56FC6 /* SettingTextCell.swift in Sources */,
 				E9EE0E3522D234DA0039F32C /* VisionPitchCell.swift in Sources */,
@@ -2088,7 +2093,6 @@
 				E9C6C23B22980FD8003F0F16 /* ArgumentSourceTableVC.swift in Sources */,
 				E9B85D542412D2C300960942 /* SmallPostCell.swift in Sources */,
 				E95E907F25EAB60000E7B9DB /* User.swift in Sources */,
-				E9E6876924167C1600CB7AF8 /* CurrentProjectsCollectionCell.swift in Sources */,
 				E9F9B68B223D584600100F51 /* PageViewController.swift in Sources */,
 				E93665882513CCA2008CC8A9 /* BaseAddOnCollectionViewCell.swift in Sources */,
 				E919EFE724A6787500ED7D4F /* LeanWebViewViewController.swift in Sources */,

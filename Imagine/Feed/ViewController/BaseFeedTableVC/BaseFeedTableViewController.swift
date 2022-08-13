@@ -25,7 +25,6 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
     
     var posts = [Post]()
     let handyHelper = HandyHelper.shared
-    var firestoreRequest = FirestoreRequest()
     var firestoreManager = FirestoreManager()
     let db = FirestoreRequest.shared.db
     

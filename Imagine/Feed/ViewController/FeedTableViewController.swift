@@ -171,17 +171,6 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             if let chosenPost = sender as? Post, let reportVC = segue.destination as? ReportViewController {
                 reportVC.post = chosenPost
             }
-            /*
-        case "goToLink":
-            if let webVC = segue.destination as? WebViewController {
-                if let chosenPost = sender as? Post {
-                    
-                    webVC.post = chosenPost
-                    
-                } else if let chosenLink = sender as? String {
-                    webVC.link = chosenLink
-                }
-            }*/
         case "toUserSegue":
             if let userVC = segue.destination as? UserFeedTableViewController {
                 if let chosenUser = sender as? User {   // Another User
@@ -189,7 +178,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                     userVC.currentState = .otherUser
                 } else { // The CurrentUser
                     userVC.delegate = self
-                    userVC.currentState = .ownProfileWithEditing
+                    userVC.currentState = .ownProfile
                 }
             }
         case "toBlogPost":

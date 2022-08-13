@@ -19,6 +19,7 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
     
     var addOn: AddOn?
     var addOnPosts = [Post]()
+    var firestoreRequest = FirestoreRequest()
     
     var Headerview : UIView!
     var NewHeaderLayer : CAShapeLayer!

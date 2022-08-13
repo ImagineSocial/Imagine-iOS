@@ -16,31 +16,10 @@ import WebKit
 
 // This enum represents the different states, when accessing the UserFeedTableVC
 enum AccessState{
-    case ownProfileWithEditing
     case ownProfile
     case otherUser
-    case friendOfCurrentUser
-    case blockedToInteract
-}
-
-enum SocialMediaType {
-    case patreon
-    case youTube
-    case instagram
-    case twitter
-    case songwhip
-}
-
-class SocialMediaObject {
-    var type: SocialMediaType
-    var link: String
-    var description: String?
-    
-    init(type: SocialMediaType, link: String, description: String?) {
-        self.type = type
-        self.link = link
-        self.description = description
-    }
+    case friend
+    case blocked
 }
 
 
@@ -94,18 +73,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        let layer = profilePictureImageView.layer
-        layer.masksToBounds = true
-        layer.cornerRadius = 8
-        layer.borderWidth = 1
-        layer.borderColor = UIColor.secondarySystemBackground.cgColor
-        
-        chatWithUserButton.layer.borderColor = UIColor.tertiaryLabel.cgColor
-        addAsFriendButton.layer.borderColor = UIColor.tertiaryLabel.cgColor
-        chatWithUserButton.layer.borderWidth = 0.75
-        addAsFriendButton.layer.borderWidth = 0.75
-        
+        setUserButtons()
         setPlaceholders()
         setCurrentState()   // check if blocked or own profile
         setBarButtonItem()
@@ -117,6 +85,19 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         if !profileInfoShown {
             showInfoView()
         }
+    }
+    
+    private func setUserButtons() {
+        let layer = profilePictureImageView.layer
+        layer.masksToBounds = true
+        layer.cornerRadius = 8
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.secondarySystemBackground.cgColor
+        
+        chatWithUserButton.layer.borderColor = UIColor.tertiaryLabel.cgColor
+        addAsFriendButton.layer.borderColor = UIColor.tertiaryLabel.cgColor
+        chatWithUserButton.layer.borderWidth = 0.75
+        addAsFriendButton.layer.borderWidth = 0.75
     }
     
     func showInfoView() {
@@ -152,7 +133,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         
         blocked.forEach { id in
             if id == user.uid {
-                currentState = .blockedToInteract
+                currentState = .blocked
                 view.activityStopAnimating()
 
                 return
@@ -171,26 +152,21 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         
         switch state {
         case .ownProfile:
-            setOwnProfile()
-            getPosts()
-            noPostsType = .userProfile
-        case .ownProfileWithEditing:
             isOwnProfile = true
             settingButton.isHidden = false
             noPostsType = .ownProfile
             setOwnProfile()
-            getPosts()
         case .otherUser:
             checkIfAlreadyFriends()
             setUserProfile()
             getPosts()
             noPostsType = .userProfile
-        case .friendOfCurrentUser:
+        case .friend:
             addAsFriendButton.setTitle(NSLocalizedString("remove_as_friend_label", comment: "remove as friend"), for: .normal)
             setUserProfile()
             getPosts()
             noPostsType = .userProfile
-        case .blockedToInteract:
+        case .blocked:
             profilePictureImageView.image = UIImage(named: "default-user")
             if let currentUser = user {
                 nameLabel.text = currentUser.name  //Blocked means not befriended, so it shows the username
@@ -200,15 +176,16 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     override func getPosts() {
         
-        guard let currentState = currentState else { return }
+        guard isConnected(), let currentState = currentState else {
+            fetchRequested = !isConnected()
+            return
+        }
         
         switch currentState {
-        case .blockedToInteract:
+        case .blocked:
             self.refreshControl?.endRefreshing()
-            return
         default:
-            guard isConnected(), let userID = user?.uid else {
-                fetchRequested = !isConnected()
+            guard let userID = user?.uid else {
                 return
             }
             
@@ -236,7 +213,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         guard let state = currentState else { return }
         
         switch state {
-        case .ownProfileWithEditing:
+        case .ownProfile:
             
             let LogOutButton = DesignableButton(title: "Log-Out", font: UIFont(name: "IBMPlexSans-Medium", size: 16))
             LogOutButton.setTitleColor(UIColor(red:0.33, green:0.47, blue:0.65, alpha:1.0), for: .normal)
@@ -245,8 +222,6 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             
             let rightBarButton = UIBarButtonItem(customView: LogOutButton)
             self.navigationItem.rightBarButtonItem = rightBarButton
-        case .ownProfile:
-            break
         // You can block someone who blocked you for now
         default:
             self.moreButton.isHidden = false
@@ -263,18 +238,18 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             return
         }
         
-        let ref = db.collection("Users").document(userID)
+        let ref = FirestoreReference.documentRef(.users, documentID: userID)
         
         FirestoreManager.shared.decodeSingle(reference: ref) { (result: Result<User, Error>) in
             switch result {
             case .success(let user):
                 self.user = user
+                self.setUserProfile()
+                self.getPosts()
             case .failure(let error):
                 print("We have an error: \(error.localizedDescription)")
             }
         }
-        
-        setUserProfile()
         
         updateTopViewUIOfOwnProfile()
         
@@ -556,12 +531,12 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     }
     
     func updateTopViewUIOfOwnProfile() {
-        self.tableView.beginUpdates()
+        tableView.beginUpdates()
         interactionBarHeightConstraint.constant = 0
         UIView.animate(withDuration: 0.2) {
             self.view.layoutIfNeeded()
         }
-        self.tableView.endUpdates()
+        tableView.endUpdates()
     }
     
     func checkIfAlreadyFriends() {
@@ -581,7 +556,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                     } else {
                         if let document = document, let docData = document.data(), let accepted = docData["accepted"] as? Bool {
                             if accepted {
-                                self.currentState = .friendOfCurrentUser
+                                self.currentState = .friend
                                 self.addAsFriendButton.setTitle(NSLocalizedString("remove_as_friend_label", comment: "remove as friend"), for: .normal)
                             } else {
                                 self.addAsFriendButton.setTitle(NSLocalizedString("friend_request_pending", comment: "is pending"), for: .normal)
@@ -772,7 +747,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         guard let state = currentState else { return }
         
         switch state {
-        case .ownProfileWithEditing:
+        case .ownProfile:
             settingsForPicture.showSettings(for: nil)
 
         default:
@@ -822,7 +797,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         
         if AuthenticationManager.shared.isLoggedIn {
             switch state {
-            case .friendOfCurrentUser:
+            case .friend:
                 // Unfollow this person
                 
                 let alert = UIAlertController(title: NSLocalizedString("delete_friend_alert_title", comment: "delete friend?"), message: NSLocalizedString("delete_friend_alert_message", comment: "delete as friend?"), preferredStyle: .alert)
@@ -839,7 +814,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
                 // Follow/Befriend this person
                 self.sendInvitation()
                 
-            case .blockedToInteract:
+            case .blocked:
                 print("not allowed to send invitation because blocked")
             default:
                 print("nothing should happen here")
@@ -919,7 +894,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
         
         if let _ = Auth.auth().currentUser {
             switch state {
-            case .blockedToInteract:
+            case .blocked:
                 print("Not allowed to send message because blocked")
             default:
                 self.checkIfThereIsAlreadyAChat()

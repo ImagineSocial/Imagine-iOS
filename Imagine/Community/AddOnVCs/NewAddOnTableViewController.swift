@@ -239,7 +239,7 @@ class NewAddOnTableViewController: UITableViewController {
         
         let data: [String:Any] = ["OP": userID, "type": "QandA", "popularity": 0]
         
-        ref.setData(data) { (err) in
+        reference.setData(data) { (err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
