@@ -107,8 +107,8 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             return
         }
         
-        self.view.activityStartAnimating()
-        self.fetchInProgress = true
+        view.activityStartAnimating()
+        fetchInProgress = true
         
         DispatchQueue.global(qos: .background).async {
             

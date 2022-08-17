@@ -22,6 +22,10 @@ extension UIView {
     }
     
     func activityStartAnimating() {
+        guard isUserInteractionEnabled else {
+            return
+        }
+        
         let backgroundView = UIView()
         backgroundView.frame = CGRect.init(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height)
         backgroundView.backgroundColor = UIColor(red:1.00, green:1.00, blue:1.00, alpha:0)
@@ -42,13 +46,13 @@ extension UIView {
         activityIndicator.style = .large
         activityIndicator.color = .white
         activityIndicator.startAnimating()
-        self.isUserInteractionEnabled = false
         
         loadingView.addSubview(activityIndicator)
         backgroundView.addSubview(loadingView)
         
         self.addSubview(backgroundView)
         activityIndicator.startAnimating()
+        isUserInteractionEnabled = false
     }
     
     func activityStopAnimating() {

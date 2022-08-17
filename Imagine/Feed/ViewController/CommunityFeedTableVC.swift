@@ -63,6 +63,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
         }
         
         view.activityStartAnimating()
+        fetchInProgress = true
         
         DispatchQueue.global(qos: .background).async {
             

@@ -83,7 +83,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
             
             let collectionRef = FirestoreReference.collectionRef(.topicPosts)
             
-            let query = collectionRef.whereField("type", in: ["picture", "multiPicture", "GIF"]).order(by: "createTime", descending: true).limit(to: 30)
+            let query = collectionRef.whereField("type", in: ["picture", "multiPicture", "GIF"]).order(by: "createdAt", descending: true).limit(to: 30)
 
             FirestoreManager.shared.decode(query: query) { (result: Result<[Post], Error>) in
                 switch result {

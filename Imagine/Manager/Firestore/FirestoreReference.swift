@@ -69,7 +69,7 @@ enum CollectionType: String {
     
     var defaultQuery: FirestoreQuery? {
         switch self {
-        case .posts, .communityPosts:
+        case .posts, .communityPosts, .userFeed:
             return FirestoreQuery(field: "createdAt", limit: 15)
         default:
             return nil

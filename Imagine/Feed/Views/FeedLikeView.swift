@@ -49,17 +49,17 @@ class FeedLikeView: UIView, NibLoadable {
     }
     
     func prepareForReuse(ownProfile: Bool) {
-        if ownProfile {
-            thanksButton.setImage(nil, for: .normal)
-            wowButton.setImage(nil, for: .normal)
-            haButton.setImage(nil, for: .normal)
-            niceButton.setImage(nil, for: .normal)
-        } else {
+//        if ownProfile {
+//            thanksButton.setImage(nil, for: .normal)
+//            wowButton.setImage(nil, for: .normal)
+//            haButton.setImage(nil, for: .normal)
+//            niceButton.setImage(nil, for: .normal)
+//        } else {
             thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
             wowButton.setImage(UIImage(named: "wowButton"), for: .normal)
             haButton.setImage(UIImage(named: "haButton"), for: .normal)
             niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
-        }
+//        }
     }
     
     func resetValues() {

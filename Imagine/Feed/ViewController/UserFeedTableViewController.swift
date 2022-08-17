@@ -190,6 +190,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
             }
             
             view.activityStartAnimating()
+            fetchInProgress = true
             
             firestoreManager.getUserPosts(userID: userID) { posts in
                 guard let posts = posts else {

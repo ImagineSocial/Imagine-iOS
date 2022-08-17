@@ -119,6 +119,7 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
         
         if let firstPost = posts.first, firstPost.type == .nothingPostedYet, !self.posts.isEmpty, !placeholderAreShown {
             // This means, we tried to fetch more posts, but got none. In this case the FirestoreManager returns a .nothingPostedYet Post which we catch here, if there is already more than one post, we dismiss this function. It just happens once, than the manager knows, that there are no post objects left.
+            view.activityStopAnimating()
             return
         }
                 
@@ -365,7 +366,7 @@ extension BaseFeedTableViewController {
         
         if distanceFromBottom < height, !fetchInProgress && morePostsAvailable {
             print("End reached!")
-            self.getPosts()
+            getPosts()
         }
     }
 }
