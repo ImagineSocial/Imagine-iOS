@@ -339,7 +339,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: horizontalScrollCellIdentifier, for: indexPath) as? AddOnHorizontalScrollCollectionViewCell {
                     
                     cell.delegate = self
-                    cell.info = info
+                    cell.addOn = info
                     cell.itemRow = indexPath.item
                     
                     return cell

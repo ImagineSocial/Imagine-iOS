@@ -474,7 +474,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if post.user == nil && !post.anonym {
 
             let votes = post.newUpvotes
-            FirestoreRequest.shared.getPostsFromDocumentIDs(posts: [post]) { posts in
+            FirestoreManager.getPostsFromIDs(posts: [post]) { posts in
                 guard let posts = posts, let post = posts.first else {
                     return
                 }

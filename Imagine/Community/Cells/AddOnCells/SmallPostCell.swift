@@ -56,11 +56,13 @@ class SmallPostCell: UICollectionViewCell {
         DispatchQueue.global(qos: .default).async {
             
             //needs documentID, isTopicPost and language
-            self.postHelper.loadPost(post: post) { (post) in
-                if let post = post {
-                    DispatchQueue.main.async {
-                        self.post = post
-                    }
+            FirestoreManager.getSinglePostFromID(post: post) { post in
+                guard let post = post else {
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    self.post = post
                 }
             }
         }

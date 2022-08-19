@@ -119,71 +119,6 @@ class FirestoreRequest {
     
     //MARK: - Communities
     
-    func getPostsForCommunity(getMore: Bool, community: Community, completion: @escaping ([Post]?) -> Void) {
-        
-        guard let communityID = community.id, morePostsToFetch else {
-            completion(nil)
-            return
-        }
-        
-        self.posts.removeAll()
-        
-        var ref = FirestoreReference.collectionRef(.topicPosts, collectionReferences: FirestoreCollectionReference(document: communityID, collection: "posts"))
-        
-        
-        var documentIDsOfPosts = [Post]()
-        
-        // Check if the Feed has been refreshed or the next batch is ordered
-        if getMore, let lastSnap = lastFeedPostSnap {
-            // For the next loading batch of 20, that will start after this snapshot if it is there
-            // I think I have an issue with createDate + .start(afterDocument:) because there are some without date
-            ref = ref.start(afterDocument: lastSnap)
-        }
-        
-        ref.getDocuments { [weak self] snap, error in
-            guard let self = self, let snap = snap, error == nil else {
-                
-                print("We have an error: \(String(describing: error?.localizedDescription))")
-                return
-            }
-            
-            if snap.documents.count == 0 {    // Hasnt posted or saved anything yet
-                let post = Post.nothingPosted
-                completion([post])
-            } else {
-                
-                //Prepare the next batch
-                self.checkTheDocumentCountFor(type: .topicPosts, documentID: communityID, newFetchCount: snap.documents.count)
-                
-                self.lastFeedPostSnap = snap.documents.last // For the next batch
-                
-                // Get right post objects for next fetch
-                for document in snap.documents {
-                    let documentID = document.documentID
-                    let data = document.data()
-                    
-                    let post = Post.standard
-                    post.documentID = documentID
-                    post.language = community.language
-                    
-                    if let _ = data["type"] as? String {    // Sort between normal and "JustTopic" Posts
-                        post.isTopicPost = true
-                    }
-                    
-                    documentIDsOfPosts.append(post)
-                }
-                
-                self.getPostsFromDocumentIDs(posts: documentIDsOfPosts) { [weak self] _ in    // First fetch the normal Posts, then the "JustTopic" Posts
-                    guard let self = self else { return }
-                    self.posts.sort(by: { $0.createdAt.compare($1.createdAt) == .orderedDescending })
-                    
-                    completion(self.posts)
-                }
-                
-            }
-        }
-    }
-    
     func getPreviewPicturesForCommunity(community: Community, completion: @escaping ([Post]?) -> Void) {
         guard let communityID = community.id else {
             completion(nil)
@@ -225,55 +160,6 @@ class FirestoreRequest {
             
             if wholeCollectionDocumentCount <= self.alreadyFetchedCount {
                 self.morePostsToFetch = false
-            }
-        }
-    }
-    
-    // MARK: - Get Posts from DocumentIDs
-    func getPostsFromDocumentIDs(posts: [Post], completion: @escaping ([Post]?) -> Void) {
-        
-        var errorCount = 0
-        
-        if posts.count == 0 {
-            completion(self.posts)
-        } else {
-            posts.enumerated().forEach { index, post in
-                let documentReference = FirestoreReference.documentRef(post.isTopicPost ? .topicPosts : .posts, documentID: post.documentID)
-                
-                FirestoreManager.shared.decodeSingle(reference: documentReference) { (result: Result<Post, Error>) in
-                    switch result {
-                    case .success(let post):
-                        self.posts.append(post)
-                    case .failure(let error):
-                        print("We have an error: \(error.localizedDescription)")
-                        errorCount += 1
-                    }
-                    
-                    if index == self.posts.count + errorCount {
-                        completion(self.posts)
-                    }
-                }
-            }
-        }
-    }
-    
-    //MARK:- Stuff
-    
-    func loadPost(post: Post, completion: @escaping (Post?) -> Void) {
-    
-        if post.documentID == nil {   // NewAddOnTableVC
-            completion(nil)
-        }
-        
-        let ref = FirestoreReference.documentRef(post.isTopicPost ? .topicPosts : .posts, documentID: post.documentID)
-        
-        FirestoreManager.shared.decodeSingle(reference: ref) { (result: Result<Post, Error>) in
-            switch result {
-            case .success(let post):
-                completion(post)
-            case .failure(let error):
-                print("We have an error: \(error.localizedDescription)")
-                completion(nil)
             }
         }
     }

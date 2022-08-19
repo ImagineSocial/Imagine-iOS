@@ -67,7 +67,7 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
                 }
             }
             
-            self.firestoreRequest.getPostsFromDocumentIDs(posts: self.addOnPosts) { posts in
+            FirestoreManager.getPostsFromIDs(posts: self.addOnPosts) { posts in
                 if let posts = posts {
                     if let orderList = info.itemOrder { // If an itemOrder exists (set in addOn-settings), order according to it
                         

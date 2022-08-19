@@ -95,7 +95,7 @@ class AddOn {
             
             let addOnReference = FirestoreCollectionReference(document: communityID, collection: "addOns")
             let itemReference = FirestoreCollectionReference(document: self.documentID, collection: "items")
-            let reference = FirestoreReference.collectionRef(.communities, collectionReferences: addOnReference, itemReference, queries: FirestoreQuery(field: "createdAt", limit: 10))
+            let reference = FirestoreReference.collectionRef(.communities, collectionReferences: addOnReference, itemReference, queries: FirestoreQuery(field: "createDate", limit: 10))
             
             reference.getDocuments { (snap, err) in
                 if let error = err {
@@ -117,18 +117,15 @@ class AddOn {
                                 
                                 let community = Community()
                                 community.id = document.documentID
-                                if let displayOption = data["displayOption"] as? String {
-                                    if displayOption == "topic" {
-                                        community.displayOption = .topic
-                                    } // else { .fact is default
+                                if let displayOption = data["displayOption"] as? String, displayOption == "topic" {
+                                    community.displayOption = .topic
                                 }
-                                if let title = data["title"] as? String {
+                                if data["title"] as? String != nil {
                                     // TODO: Create a new struct with a title and a community as variables
                                 }
                                 community.language = self.community.language
                                 
                                 let item = AddOnItem(documentID: document.documentID, item: community)
-                                
                                 self.items.append(item)
                             case "topicPost":
                                 let post = Post.standard
@@ -145,7 +142,6 @@ class AddOn {
                                 
                                 let item = AddOnItem(documentID: document.documentID, item: post)
                                 self.items.append(item)
-                                
                             default:
                                 let post = Post.standard
                                 post.documentID = document.documentID

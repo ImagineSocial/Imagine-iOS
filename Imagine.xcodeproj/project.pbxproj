@@ -63,6 +63,7 @@
 		029F7B46273053C00029254A /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029F7B45273053C00029254A /* UIViewController.swift */; };
 		029F7B48273053D10029254A /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029F7B47273053D10029254A /* UIImage.swift */; };
 		029F7B4A273053E30029254A /* UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 029F7B49273053E30029254A /* UIKit.swift */; };
+		02A1E8C228AFC294003AAD0C /* FirestoreManager+Decode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02A1E8C128AFC294003AAD0C /* FirestoreManager+Decode.swift */; };
 		02B7C30827920E5F003384FA /* NewPostVC+MemeMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B7C30727920E5F003384FA /* NewPostVC+MemeMode.swift */; };
 		02B7C30A27920F2C003384FA /* NewPostVC+Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B7C30927920F2C003384FA /* NewPostVC+Upload.swift */; };
 		02B7C30D2792135D003384FA /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B7C30C2792135D003384FA /* AuthenticationManager.swift */; };
@@ -370,6 +371,7 @@
 		029F7B45273053C00029254A /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		029F7B47273053D10029254A /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
 		029F7B49273053E30029254A /* UIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIKit.swift; sourceTree = "<group>"; };
+		02A1E8C128AFC294003AAD0C /* FirestoreManager+Decode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FirestoreManager+Decode.swift"; sourceTree = "<group>"; };
 		02B7C30727920E5F003384FA /* NewPostVC+MemeMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewPostVC+MemeMode.swift"; sourceTree = "<group>"; };
 		02B7C30927920F2C003384FA /* NewPostVC+Upload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewPostVC+Upload.swift"; sourceTree = "<group>"; };
 		02B7C30C2792135D003384FA /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
@@ -1127,6 +1129,7 @@
 			children = (
 				022981C226FB49D400B07BC8 /* FirestoreManager.swift */,
 				02BF874528562B1900DE1361 /* FirestoreManager+Fetch.swift */,
+				02A1E8C128AFC294003AAD0C /* FirestoreManager+Decode.swift */,
 				0247C01F2854C71E002876AB /* FirestoreManager+Upload.swift */,
 				027BD0352892BDD8009E985E /* FirestoreManager+Delete.swift */,
 				02FB9C0728452F3C00124EAC /* FirestoreReference.swift */,
@@ -2017,6 +2020,7 @@
 				E9526C0D250F99790088004F /* RunderProgress.swift in Sources */,
 				E97E7263243603AC0012F105 /* AddOn.swift in Sources */,
 				E9817B4425EBE2BD00E56FC6 /* TableViewSettingCell.swift in Sources */,
+				02A1E8C228AFC294003AAD0C /* FirestoreManager+Decode.swift in Sources */,
 				E9B85D5E2413C28B00960942 /* TableViewInCollectionViewCell.swift in Sources */,
 				E9A02AA7232D3181000DAB69 /* AddFactTableViewCell.swift in Sources */,
 				E91824E124F42553009D7638 /* NewCommunityItemTableVC.swift in Sources */,

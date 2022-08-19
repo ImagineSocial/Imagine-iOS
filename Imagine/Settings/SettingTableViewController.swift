@@ -331,7 +331,7 @@ class SettingTableViewController: UITableViewController {
         
         for item in items {
             if let post = item.item as? Post, let documentID = post.documentID {
-                self.postHelper.loadPost(post: post) { (post) in
+                FirestoreManager.getSinglePostFromID(post: post) { (post) in
                     if let post = post {
                         let item = AddOnItem(documentID: documentID, item: post)
                         self.itemList.append(item)

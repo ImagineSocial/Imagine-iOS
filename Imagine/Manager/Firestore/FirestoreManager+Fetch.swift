@@ -12,9 +12,11 @@ import FirebaseFirestoreSwift
 
 extension FirestoreManager {
     
+    // MARK: Main Feed
+    
     func getPostsForMainFeed(completion: @escaping ([Post]?) -> Void) {
         
-        getPosts(for: .main) { posts in
+        getMainPosts() { posts in
             guard let lastSnapshot = self.endBeforeSnapshot else {
                 completion(nil)
                 return
@@ -47,7 +49,7 @@ extension FirestoreManager {
         }
     }
     
-    func getPosts(for type: FeedType, completion: @escaping ([Post]?) -> Void) {
+    func getMainPosts(completion: @escaping ([Post]?) -> Void) {
         var postQuery = FirestoreReference.collectionRef(.posts)
         
         if let lastSnapshot = endBeforeSnapshot {
@@ -128,6 +130,7 @@ extension FirestoreManager {
         }
     }
     
+    // MARK: User Feed
     func getUserPosts(userID: String, completion: @escaping ([Post]?) -> Void) {
         
         let reference = FirestoreCollectionReference(document: userID, collection: "posts")
@@ -152,6 +155,8 @@ extension FirestoreManager {
         decodePostData(reference: savedPostRef, completion: completion)
     }
     
+    
+    // MARK: Community Feed
     func getCommunityPosts(communityID: String?, completion: @escaping ([Post]?) -> Void) {
         
         guard let communityID = communityID else {
@@ -169,7 +174,9 @@ extension FirestoreManager {
         decodePostData(reference: userPostRef, completion: completion)
     }
     
-    /// We get PostData everytime we 0
+
+    // MARK: Fetch Posts from PostData
+    
     private func decodePostData(reference: Query, completion: @escaping ([Post]?) -> Void) {
         
         guard !noMorePosts else {
@@ -236,43 +243,54 @@ extension FirestoreManager {
         }
     }
     
-    func decode<T: Decodable>(query: Query, saveSnapshots: Bool = true, completion: @escaping (Result<[T], Error>) -> Void) {
+    
+    // MARK: Fetch Posts from DocumentIDs
+    
+    static func getPostsFromIDs(posts: [Post], completion: @escaping ([Post]?) -> Void) {
         
-        query.getDocuments { querySnapshot, error in
-            guard let documents = querySnapshot?.documents else {
-                completion(.failure(error ?? FirestoreError.brokenAppleCredential))
-                return
-            }
-
-            let objects = documents.compactMap { queryDocumentSnapshot -> T? in
-                try? queryDocumentSnapshot.data(as: T.self)
-            }
-                        
-            if saveSnapshots, !documents.isEmpty {
-                self.startAfterSnapshot = self.endBeforeSnapshot  // If there is already an endBeforeSnapshot, then we want this date as the starting point for the next query
-                self.endBeforeSnapshot = documents.last // The topic posts shall be fetched up until this date -> Fetch
-            }
+        guard !posts.isEmpty else {
+            completion(nil)
+            return
+        }
+        
+        var errorCount = 0
+        var fetchedPosts = [Post]()
+        
+        posts.forEach { post in
+            let documentReference = FirestoreReference.documentRef(post.isTopicPost ? .topicPosts : .posts, documentID: post.documentID)
             
-            self.activateSubcollections(for: objects)
-            completion(.success(objects))
-        }
-    }
-    
-    func decodeSingle<T: Decodable>(reference: DocumentReference, completion: @escaping (Result<T, Error>) -> Void) {
-        reference.getDocument(as: T.self) { (result: Result<T, Error>) in
-            switch result {
-            case .success(let object):
-                self.activateSubcollections(for: [object])
-                completion(.success(object))
-            case .failure(let error):
-                completion(.failure(error))
+            FirestoreManager.shared.decodeSingle(reference: documentReference) { (result: Result<Post, Error>) in
+                switch result {
+                case .success(let post):
+                    fetchedPosts.append(post)
+                case .failure(let error):
+                    print("We have an error: \(error.localizedDescription)")
+                    errorCount += 1
+                }
+                
+                if fetchedPosts.count == posts.count + errorCount {
+                    completion(fetchedPosts)
+                }
             }
         }
     }
+        
+    static func getSinglePostFromID(post: Post, completion: @escaping (Post?) -> Void) {
     
-    private func activateSubcollections(for objects: [Any]) {
-        if let posts = objects as? [Post] {
-            posts.forEach { $0.loadUser() }
+        if post.documentID == nil {   // NewAddOnTableVC
+            completion(nil)
+        }
+        
+        let ref = FirestoreReference.documentRef(post.isTopicPost ? .topicPosts : .posts, documentID: post.documentID)
+        
+        FirestoreManager.shared.decodeSingle(reference: ref) { (result: Result<Post, Error>) in
+            switch result {
+            case .success(let post):
+                completion(post)
+            case .failure(let error):
+                print("We have an error: \(error.localizedDescription)")
+                completion(nil)
+            }
         }
     }
 }
