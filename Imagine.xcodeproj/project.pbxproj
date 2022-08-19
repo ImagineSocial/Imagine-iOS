@@ -243,8 +243,6 @@
 		E9B79CE7224F88CD00166EED /* RepostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B79CE6224F88CD00166EED /* RepostViewController.swift */; };
 		E9B79CE922510F1900166EED /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B79CE822510F1900166EED /* TabBarViewController.swift */; };
 		E9B85D4224112DCA00960942 /* CommunityPageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D4124112DCA00960942 /* CommunityPageVC.swift */; };
-		E9B85D482412483500960942 /* CollectionViewInTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B85D472412483500960942 /* CollectionViewInTableViewCell.xib */; };
-		E9B85D4C24124BB500960942 /* CollectionViewInTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D4B24124BB500960942 /* CollectionViewInTableViewCell.swift */; };
 		E9B85D522412D29A00960942 /* SmallPostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B85D512412D29A00960942 /* SmallPostCell.xib */; };
 		E9B85D542412D2C300960942 /* SmallPostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B85D532412D2C300960942 /* SmallPostCell.swift */; };
 		E9B85D562412D5D000960942 /* SmallFactCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9B85D552412D5D000960942 /* SmallFactCell.xib */; };
@@ -273,7 +271,7 @@
 		E9E21C5525AF7470002D5699 /* MemeInputView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9E21C5425AF7470002D5699 /* MemeInputView.xib */; };
 		E9E49D2D2349E8AB002E371E /* NotificationCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9E49D2C2349E8AB002E371E /* NotificationCell.xib */; };
 		E9E521BA2458477F002585A2 /* NewAddOnTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E521B92458477F002585A2 /* NewAddOnTableViewController.swift */; };
-		E9E521BD245996D4002585A2 /* AddOnHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E521BC245996D4002585A2 /* AddOnHeaderView.swift */; };
+		E9E521BD245996D4002585A2 /* AddOnStoreHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E521BC245996D4002585A2 /* AddOnStoreHeaderView.swift */; };
 		E9E521C6245AE6EE002585A2 /* TrippyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E521C5245AE6EE002585A2 /* TrippyViewController.swift */; };
 		E9E531FE229EA242004D0654 /* ChatModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E531FD229EA242004D0654 /* ChatModels.swift */; };
 		E9E6BD0625F566E40012A870 /* ImagineCommunityNavigationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E6BD0525F566E40012A870 /* ImagineCommunityNavigationCell.swift */; };
@@ -560,8 +558,6 @@
 		E9B79CE6224F88CD00166EED /* RepostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepostViewController.swift; sourceTree = "<group>"; };
 		E9B79CE822510F1900166EED /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		E9B85D4124112DCA00960942 /* CommunityPageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityPageVC.swift; sourceTree = "<group>"; };
-		E9B85D472412483500960942 /* CollectionViewInTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CollectionViewInTableViewCell.xib; sourceTree = "<group>"; };
-		E9B85D4B24124BB500960942 /* CollectionViewInTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewInTableViewCell.swift; sourceTree = "<group>"; };
 		E9B85D512412D29A00960942 /* SmallPostCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SmallPostCell.xib; sourceTree = "<group>"; };
 		E9B85D532412D2C300960942 /* SmallPostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallPostCell.swift; sourceTree = "<group>"; };
 		E9B85D552412D5D000960942 /* SmallFactCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SmallFactCell.xib; sourceTree = "<group>"; };
@@ -590,7 +586,7 @@
 		E9E21C5425AF7470002D5699 /* MemeInputView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MemeInputView.xib; sourceTree = "<group>"; };
 		E9E49D2C2349E8AB002E371E /* NotificationCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NotificationCell.xib; sourceTree = "<group>"; };
 		E9E521B92458477F002585A2 /* NewAddOnTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewAddOnTableViewController.swift; sourceTree = "<group>"; };
-		E9E521BC245996D4002585A2 /* AddOnHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOnHeaderView.swift; sourceTree = "<group>"; };
+		E9E521BC245996D4002585A2 /* AddOnStoreHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOnStoreHeaderView.swift; sourceTree = "<group>"; };
 		E9E521C5245AE6EE002585A2 /* TrippyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrippyViewController.swift; sourceTree = "<group>"; };
 		E9E531FD229EA242004D0654 /* ChatModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModels.swift; sourceTree = "<group>"; };
 		E9E6BD0525F566E40012A870 /* ImagineCommunityNavigationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagineCommunityNavigationCell.swift; sourceTree = "<group>"; };
@@ -975,7 +971,7 @@
 			isa = PBXGroup;
 			children = (
 				E91A2B5D2473B9DC00B42353 /* AddOnHeaderView.xib */,
-				E9E521BC245996D4002585A2 /* AddOnHeaderView.swift */,
+				E9E521BC245996D4002585A2 /* AddOnStoreHeaderView.swift */,
 				E9F31DCA23F6D2A3001D5D25 /* FactCollectionHeader.xib */,
 				E97FDFBB246A9E970049E1E4 /* TopicCollectionHeader.xib */,
 				E97FDFC5246C00890049E1E4 /* TopicCollectionFooter.xib */,
@@ -1498,8 +1494,6 @@
 			isa = PBXGroup;
 			children = (
 				E93665872513CCA2008CC8A9 /* BaseAddOnCollectionViewCell.swift */,
-				E9B85D472412483500960942 /* CollectionViewInTableViewCell.xib */,
-				E9B85D4B24124BB500960942 /* CollectionViewInTableViewCell.swift */,
 				E9B85D512412D29A00960942 /* SmallPostCell.xib */,
 				E9B85D532412D2C300960942 /* SmallPostCell.swift */,
 				E9B85D552412D5D000960942 /* SmallFactCell.xib */,
@@ -1751,7 +1745,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E90AC38324FA52C4002A36F0 /* IBMPlexSans-Thin.ttf in Resources */,
-				E9B85D482412483500960942 /* CollectionViewInTableViewCell.xib in Resources */,
 				E997F761248CE90300BF7F88 /* SurveyCell.xib in Resources */,
 				E90E1A3725FBA0AA00855FE1 /* FinishedWorkCollectionViewCell.xib in Resources */,
 				E94EDD9B2564307700B226C8 /* AddOnPlaylistTrackTableViewCell.xib in Resources */,
@@ -1941,10 +1934,9 @@
 				E98FAEA423FAB9C10064A614 /* CommentCell.swift in Sources */,
 				E9EE9D852316922E0033748E /* VoteViewController.swift in Sources */,
 				E9C6C23F2298441E003F0F16 /* ArgumentDetailVC.swift in Sources */,
-				E9E521BD245996D4002585A2 /* AddOnHeaderView.swift in Sources */,
+				E9E521BD245996D4002585A2 /* AddOnStoreHeaderView.swift in Sources */,
 				E9C6969E2524E38200F02D94 /* LanguageSelection.swift in Sources */,
 				E9E6BD0625F566E40012A870 /* ImagineCommunityNavigationCell.swift in Sources */,
-				E9B85D4C24124BB500960942 /* CollectionViewInTableViewCell.swift in Sources */,
 				E9B79CE3224EC72000166EED /* JobOfferCell.swift in Sources */,
 				0289957726FB5E46007CAFB7 /* BaseFeedTableVC+TableView.swift in Sources */,
 				E929516A23328D4B006C37E3 /* Constants.swift in Sources */,

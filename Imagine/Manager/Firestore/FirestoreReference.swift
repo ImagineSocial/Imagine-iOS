@@ -78,6 +78,10 @@ enum CollectionType: String {
     
 }
 
+/** Use this struct to add a query to a CollectionReference or an existing query.
+ 
+ Note that the limit cant be set without a field, otherwise it would probably crash.
+ */
 struct FirestoreQuery {
     var field: String
     var equalTo: String? = nil

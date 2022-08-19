@@ -86,10 +86,8 @@ extension FirestoreManager {
                 
                 if let firstSnapshot = self.startAfterSnapshot {
                     query = query.start(after: [firstSnapshot.timestamp()])
-                    print("## QueryDebug Start after: \(firstSnapshot.timestamp().dateValue())")
                 }
                 query = query.end(before: [endSnapshot.timestamp()])
-                print("## QueryDebug End before: \(endSnapshot.timestamp().dateValue())")
                 
                 self.decode(query: query, saveSnapshots: false) { (result: Result<[Post], Error>) in
                     topicCount += 1

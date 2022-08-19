@@ -19,10 +19,7 @@ class NewAddOnTableViewController: UITableViewController {
     var optionalInformations = [AddOn]()
     var community: Community?
     var selectedAddOnStyle: AddOnStyle?
-    
-    let addOnStoreCellIdentifier = "AddOnStoreImageTableViewCell"
-    let addOnHeaderIdentifier = "AddOnHeaderView"
-    
+        
     var tipView: EasyTipView?
     let db = FirestoreRequest.shared.db
     
@@ -37,8 +34,8 @@ class NewAddOnTableViewController: UITableViewController {
             return
         }
 
-        tableView.register(UINib(nibName: "AddOnStoreImageTableViewCell", bundle: nil), forCellReuseIdentifier: addOnStoreCellIdentifier)
-        tableView.register(UINib(nibName: "AddOnHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: addOnHeaderIdentifier)
+        tableView.register(UINib(nibName: "AddOnStoreImageTableViewCell", bundle: nil), forCellReuseIdentifier: AddOnStoreImageTableViewCell.identifier)
+        tableView.register(UINib(nibName: "AddOnHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: AddOnStoreHeaderView.identifier)
         tableView.separatorColor = .clear
         
         
@@ -84,7 +81,7 @@ class NewAddOnTableViewController: UITableViewController {
             
             let info = optionalInformations[indexPath.section]
             
-            if let cell = tableView.dequeueReusableCell(withIdentifier: addOnStoreCellIdentifier, for: indexPath) as? AddOnStoreImageTableViewCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: AddOnStoreImageTableViewCell.identifier, for: indexPath) as? AddOnStoreImageTableViewCell {
                 
                 
                 switch info.style {
@@ -135,7 +132,7 @@ class NewAddOnTableViewController: UITableViewController {
             
             let info = optionalInformations[section]
             
-            if let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: addOnHeaderIdentifier) as? AddOnHeaderView {
+            if let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: AddOnStoreHeaderView.identifier) as? AddOnStoreHeaderView {
                 
                 headerView.info = info
                 headerView.delegate = self
@@ -282,6 +279,8 @@ extension NewAddOnTableViewController: NewFactDelegate, AddOnHeaderDelegate {
 }
 
 class AddOnStoreImageTableViewCell: UITableViewCell {
+    
+    static let identifier = "AddOnStoreCell"
     
     @IBOutlet weak var exampleImageView: UIImageView!
     

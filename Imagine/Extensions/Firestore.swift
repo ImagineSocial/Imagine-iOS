@@ -31,7 +31,7 @@ extension Query {
         }
         
         if let limit = firestoreQuery.limit {
-            query = self.limit(to: limit)
+            query = query.limit(to: limit)
         }
         
         return query

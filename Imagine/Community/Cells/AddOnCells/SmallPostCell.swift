@@ -21,6 +21,7 @@ class SmallPostCell: UICollectionViewCell {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var postTitleLabel: UILabel!
     @IBOutlet weak var postImageViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var containerView: DesignablePopUp!
     
     @IBOutlet weak var optionalTitleGradientViewHeightConstraint: NSLayoutConstraint!
     
@@ -32,6 +33,41 @@ class SmallPostCell: UICollectionViewCell {
     let postHelper = FirestoreRequest.shared
     
     var gradient: CAGradientLayer?
+    
+    // MARK: - Cell Lifecycle
+    
+    override func awakeFromNib() {
+        
+        cellImageView.layer.cornerRadius = 4
+        backgroundColor = .clear
+    }
+    
+    override func prepareForReuse() {
+        smallCellImageView.isHidden = false
+        
+        postImageViewHeightConstraint.constant = 170
+        optionalTitleGradientViewHeightConstraint.constant = 0
+        
+        postTitle = nil
+        cellImageView.image = nil
+        
+        showOptionalTitleButton.setImage(UIImage(named: "up"), for: .normal)
+        
+        self.linkView.removeFromSuperview()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+                
+        contentView.clipsToBounds = false
+        clipsToBounds = false
+        
+        let layer = containerView.layer
+        layer.createStandardShadow(with: CGSize(width: contentView.frame.width - 10, height: contentView.frame.height - 10), cornerRadius: 5, small: true)
+    }
+    
+    
+    // MARK: - Show Content
     
     var postTitle: String? {
         didSet {
@@ -206,29 +242,6 @@ class SmallPostCell: UICollectionViewCell {
             optionalTitleGradientView.layer.mask = gradient
             optionalTitleGradientView.layer.cornerRadius = 4
         }
-    }
-    
-    
-    override func awakeFromNib() {
-        
-        contentView.backgroundColor = .secondarySystemBackground
-        contentView.layer.cornerRadius = 6
-        cellImageView.layer.cornerRadius = 4
-        backgroundColor = .clear
-    }
-    
-    override func prepareForReuse() {
-        smallCellImageView.isHidden = false
-        
-        postImageViewHeightConstraint.constant = 170
-        optionalTitleGradientViewHeightConstraint.constant = 0
-        
-        postTitle = nil
-        cellImageView.image = nil
-        
-        showOptionalTitleButton.setImage(UIImage(named: "up"), for: .normal)
-        
-        self.linkView.removeFromSuperview()
     }
     
     @IBAction func showOptionalTitleButtonTapped(_ sender: Any) {

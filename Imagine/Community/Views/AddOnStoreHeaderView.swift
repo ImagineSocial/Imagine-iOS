@@ -1,5 +1,5 @@
 //
-//  AddOnHeaderView.swift
+//  AddOnStoreHeaderView.swift
 //  Imagine
 //
 //  Created by Malte Schoppe on 29.04.20.
@@ -16,7 +16,9 @@ protocol AddOnHeaderDelegate {
     func settingsTapped(section: Int)
 }
 
-class AddOnHeaderView: UITableViewHeaderFooterView {
+class AddOnStoreHeaderView: UITableViewHeaderFooterView {
+    
+    static let identifier = "NewAddOnHeaderView"
     
     @IBOutlet weak var headerImageView: DesignableImage!
     @IBOutlet weak var headerTitleLabel: UILabel!

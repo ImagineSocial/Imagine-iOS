@@ -146,22 +146,23 @@ extension AddOnHorizontalScrollCollectionViewCell: UICollectionViewDelegate, UIC
             return CGSize(width: 300, height: collectionView.frame.height)
         }
         
-        if indexPath.item != addOn.items.count {
-            let item = addOn.items[indexPath.item]
-            if let fact = item.item as? Community {      // Fact
-                if fact.displayOption == .topic {
-                    return CGSize(width: 250, height: collectionView.frame.height)
-                } else {
-                    return CGSize(width: 300, height: collectionView.frame.height)
-                }
-            } else {        // Post
-                return CGSize(width: itemCellWidth, height: collectionView.frame.height)
-            }
-        } else {        // AddItemCell
-            return CGSize(width: 50, height: 50)
+        guard indexPath.item != addOn.items.count else {
+            return CGSize(width: 50, height: 50)    // Add Item Cell
         }
+        
+        let item = addOn.items[indexPath.item]
+        if let fact = item.item as? Community {
+            if fact.displayOption == .topic {
+                return CGSize(width: 250, height: collectionView.frame.height)
+            } else {
+                return CGSize(width: 300, height: collectionView.frame.height)
+            }
+        } else {        // Post
+            return CGSize(width: itemCellWidth, height: collectionView.frame.height)
+        }
+        
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let info = addOn else { return 0 }
         
