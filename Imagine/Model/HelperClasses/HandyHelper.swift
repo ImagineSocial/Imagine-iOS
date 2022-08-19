@@ -290,35 +290,6 @@ class HandyHelper {
         }
     }
     
-    func checkIfAlreadySaved(post: Post?, completion: @escaping(Bool) -> Void ) {
-        guard let post = post else {
-            completion(false)
-            return
-        }
-        
-        var saved = false
-        
-        guard let userID = AuthenticationManager.shared.user?.uid, let documentID = post.documentID else {
-            return
-        }
-        let savedRef = db.collection("Users").document(userID).collection("saved").whereField("documentID", isEqualTo: documentID)
-        savedRef.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    if snap.documents.count != 0 {
-                        // Already saved
-                        saved = true
-                    }
-                    completion(saved)
-                } else {
-                    completion(saved)
-                }
-            }
-        }
-    }
-    
     func getLocaleCurrencyString(number: Double) -> String {
         let currencyFormatter = NumberFormatter()
         currencyFormatter.usesGroupingSeparator = true
@@ -336,7 +307,7 @@ class HandyHelper {
         if let userID = AuthenticationManager.shared.user?.uid {
             let userRef = db.collection("Users").document(userID)
             
-            userRef.setData(["fcmToken":token], mergeFields: ["fcmToken"])
+            userRef.setData(["fcmToken": token], mergeFields: ["fcmToken"])
             
             UserDefaults.standard.setValue(token, forKey: "fcmToken")
         }

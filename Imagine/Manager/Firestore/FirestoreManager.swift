@@ -30,8 +30,17 @@ class FirestoreManager {
     
     static let db = Firestore.firestore()
     
-    var lastSnapshot: QueryDocumentSnapshot?
-    var firstSnapshot: QueryDocumentSnapshot?
+    /** When we fetch posts, we paginate them with these snapshots.
+     
+     When we retrive posts for the main feed, we use the date of the last post as a limit for the topicPosts to fetch.
+     That means we look for relevant topicPosts in this timeframe.
+     In the first page of posts, there is only an endBefore timestamp. Every time after this, there is also a startAfter timestamp to fetch only the relevant topicPosts.
+     
+     */
+    var endBeforeSnapshot: QueryDocumentSnapshot?
+    var startAfterSnapshot: QueryDocumentSnapshot?
+    
+    var testSnapshot: QueryDocumentSnapshot?
     
     var initialDocumentID: String?
     
@@ -40,7 +49,7 @@ class FirestoreManager {
     static let shared = FirestoreManager()
     
     func reset() {
-        lastSnapshot = nil
-        firstSnapshot = nil
+        endBeforeSnapshot = nil
+        startAfterSnapshot = nil
     }
 }

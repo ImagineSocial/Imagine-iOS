@@ -165,8 +165,12 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     func setUpUI() {
         feedLikeView.setDefaultButtonImages()
-                        
-        handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
+             
+        guard let post = post else {
+            return
+        }
+
+        post.checkIfSaved { alreadySaved in
             self.savePostButton.tintColor = alreadySaved ? Constants.green : .label
         }
     }

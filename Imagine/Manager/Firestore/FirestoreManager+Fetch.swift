@@ -15,12 +15,13 @@ extension FirestoreManager {
     func getPostsForMainFeed(completion: @escaping ([Post]?) -> Void) {
         
         getPosts(for: .main) { posts in
-            guard let lastSnapshot = self.lastSnapshot else {
+            guard let lastSnapshot = self.endBeforeSnapshot else {
                 completion(nil)
                 return
             }
 
-            self.getFollowedTopicPosts(from: self.firstSnapshot, to: lastSnapshot) { topicPosts in
+            // Some explanation how this works is next to the endBeforeSnapshot object in the FirestoreManager main file.
+            self.getFollowedTopicPosts(to: lastSnapshot) { topicPosts in
                 guard let topicPosts = topicPosts else {
                     returnSortedPosts(posts: posts, completion: completion)
                     return
@@ -31,10 +32,10 @@ extension FirestoreManager {
                     return
                 }
                 
-                let combinedPosts = topicPosts + posts
-                returnSortedPosts(posts: combinedPosts, completion: completion)
+                returnSortedPosts(posts: topicPosts + posts, completion: completion)
             }
             
+
             func returnSortedPosts(posts: [Post]?, completion: @escaping ([Post]?) -> Void) {
                 guard let posts = posts else {
                     completion(nil)
@@ -47,10 +48,10 @@ extension FirestoreManager {
     }
     
     func getPosts(for type: FeedType, completion: @escaping ([Post]?) -> Void) {
-        let postQuery = FirestoreReference.collectionRef(.posts)
+        var postQuery = FirestoreReference.collectionRef(.posts)
         
-        if let lastSnap = lastSnapshot {
-            postQuery.start(atDocument: lastSnap)
+        if let lastSnapshot = endBeforeSnapshot {
+            postQuery = postQuery.start(afterDocument: lastSnapshot)
         }
         
         decode(query: postQuery) { (result: Result<[Post], Error>) in
@@ -64,7 +65,7 @@ extension FirestoreManager {
         }
     }
     
-    func getFollowedTopicPosts(from startSnapshot: QueryDocumentSnapshot?, to endSnapshot: QueryDocumentSnapshot, completion: @escaping ([Post]?) -> Void) {
+    func getFollowedTopicPosts(to endSnapshot: QueryDocumentSnapshot, completion: @escaping ([Post]?) -> Void) {
         
         var topicPosts = [Post]()
                 
@@ -79,14 +80,16 @@ extension FirestoreManager {
             var topicCount = 0
                         
             topicIDs.forEach { topicID in
-                var reference = FirestoreReference.collectionRef(.topicPosts, queries: FirestoreQuery(field: "communityID", equalTo: topicID), FirestoreQuery(field: "createdAt"))
+                var query = FirestoreReference.collectionRef(.topicPosts, queries: FirestoreQuery(field: "communityID", equalTo: topicID), FirestoreQuery(field: "createdAt"))
                 
-                if let startSnapshot = startSnapshot {
-                    reference = reference.start(after: [startSnapshot.timestamp()])
+                if let firstSnapshot = self.startAfterSnapshot {
+                    query = query.start(after: [firstSnapshot.timestamp()])
+                    print("## QueryDebug Start after: \(firstSnapshot.timestamp().dateValue())")
                 }
-                reference = reference.end(before: [endSnapshot.timestamp()])
+                query = query.end(before: [endSnapshot.timestamp()])
+                print("## QueryDebug End before: \(endSnapshot.timestamp().dateValue())")
                 
-                self.decode(query: reference) { (result: Result<[Post], Error>) in
+                self.decode(query: query, saveSnapshots: false) { (result: Result<[Post], Error>) in
                     topicCount += 1
                     
                     switch result {
@@ -97,6 +100,7 @@ extension FirestoreManager {
                     }
                     
                     if topicCount == topicTotalCount {
+                        self.startAfterSnapshot = self.testSnapshot
                         completion(topicPosts.isEmpty ? nil : topicPosts)
                     }
                 }
@@ -129,7 +133,7 @@ extension FirestoreManager {
         let reference = FirestoreCollectionReference(document: userID, collection: "posts")
         var userPostRef = FirestoreReference.collectionRef(.userFeed, collectionReferences: reference)
         
-        if let lastSnapshot = lastSnapshot {
+        if let lastSnapshot = endBeforeSnapshot {
             userPostRef = userPostRef.start(afterDocument: lastSnapshot)
         }
                 
@@ -141,7 +145,7 @@ extension FirestoreManager {
         let reference = FirestoreCollectionReference(document: userID, collection: "saved")
         var savedPostRef = FirestoreReference.collectionRef(.userFeed, collectionReferences: reference)
         
-        if let lastSnapshot = lastSnapshot {
+        if let lastSnapshot = endBeforeSnapshot {
             savedPostRef = savedPostRef.start(afterDocument: lastSnapshot)
         }
         
@@ -158,7 +162,7 @@ extension FirestoreManager {
         let reference = FirestoreCollectionReference(document: communityID, collection: "posts")
         var userPostRef = FirestoreReference.collectionRef(.communityPosts, collectionReferences: reference)
         
-        if let lastSnapshot = lastSnapshot {
+        if let lastSnapshot = endBeforeSnapshot {
             userPostRef = userPostRef.start(afterDocument: lastSnapshot)
         }
         
@@ -232,22 +236,21 @@ extension FirestoreManager {
         }
     }
     
-    func decode<T: Decodable>(query: Query, completion: @escaping (Result<[T], Error>) -> Void) {
+    func decode<T: Decodable>(query: Query, saveSnapshots: Bool = true, completion: @escaping (Result<[T], Error>) -> Void) {
         
         query.getDocuments { querySnapshot, error in
             guard let documents = querySnapshot?.documents else {
                 completion(.failure(error ?? FirestoreError.brokenAppleCredential))
                 return
             }
-            
+
             let objects = documents.compactMap { queryDocumentSnapshot -> T? in
                 try? queryDocumentSnapshot.data(as: T.self)
             }
-            
-            self.lastSnapshot = documents.last
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                // We need it when we fethc the followedTopics but at the first fetch, it could be, that a topicPost is newer than the firstSnapshot here and then we wouldnt fetch it
-                self.firstSnapshot = documents.first
+                        
+            if saveSnapshots, !documents.isEmpty {
+                self.startAfterSnapshot = self.endBeforeSnapshot  // If there is already an endBeforeSnapshot, then we want this date as the starting point for the next query
+                self.endBeforeSnapshot = documents.last // The topic posts shall be fetched up until this date -> Fetch
             }
             
             self.activateSubcollections(for: objects)

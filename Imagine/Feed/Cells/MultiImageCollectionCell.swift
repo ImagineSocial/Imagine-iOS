@@ -12,7 +12,7 @@ class MultiImageCollectionCell: UICollectionViewCell {
     
     static let identifier = "MultiImageCollectionCell"
     
-    let imageView = BaseImageView(image: nil)
+    let imageView = BaseImageView(image: nil, contentMode: .scaleAspectFill)
     
     override init(frame: CGRect) {
         super.init(frame: .zero)

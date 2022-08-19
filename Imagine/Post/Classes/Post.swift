@@ -98,6 +98,25 @@ class Post: Codable {
         }
     }
     
+    func checkIfSaved(completion: @escaping (Bool) -> Void ) {
+        guard let documentID = documentID, let userID = AuthenticationManager.shared.userID else {
+            completion(false)
+            return
+        }
+        
+        let savedReference = FirestoreCollectionReference(document: userID, collection: "saved")
+        let ref = FirestoreReference.documentRef(.users, documentID: documentID, collectionReferences: savedReference)
+        
+        ref.getDocument { document, error in
+            guard let document = document, document.exists else {
+                completion(false)
+                return
+            }
+
+            completion(true)
+        }
+    }
+    
     func savePost(completion: @escaping (Bool) -> Void) {
         guard let userID = AuthenticationManager.shared.user?.uid, let documentID = self.documentID else {
             completion(false)

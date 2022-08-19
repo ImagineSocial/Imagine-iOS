@@ -5456,7 +5456,7 @@
                                 </connections>
                             </button>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1v2-Tt-mer" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="5" y="-92" width="177.5" height="190"/>
+                                <rect key="frame" x="5" y="0.0" width="177.5" height="190"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="65y-Cc-Fsj" userLabel="Oberer StackView">
                                         <rect key="frame" x="0.0" y="60" width="177.5" height="130"/>
@@ -5598,7 +5598,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="177.5" height="59"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Melden" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JTr-hU-IYS">
-                                                <rect key="frame" x="55.5" y="17.5" width="66.5" height="23.5"/>
+                                                <rect key="frame" x="55.5" y="18" width="66.5" height="23.5"/>
                                                 <fontDescription key="fontDescription" name="IBMPlexSans-Medium" family="IBM Plex Sans" pointSize="20"/>
                                                 <nil key="highlightedColor"/>
                                                 <userDefinedRuntimeAttributes>
@@ -5651,10 +5651,10 @@
                                 </connections>
                             </button>
                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gbZ-UH-RLv" customClass="DesignablePopUp" customModule="Imagine" customModuleProvider="target">
-                                <rect key="frame" x="5" y="103" width="177.5" height="137"/>
+                                <rect key="frame" x="5" y="195" width="177.5" height="45"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="xgk-4t-eOM" userLabel="Unterer Stack View">
-                                        <rect key="frame" x="0.0" y="0.0" width="177.5" height="137"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="177.5" height="45"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hTX-Mg-E4a">
                                                 <rect key="frame" x="0.0" y="0.0" width="177.5" height="45"/>
@@ -5698,93 +5698,8 @@
                                                     <constraint firstItem="gB0-Tm-ja4" firstAttribute="leading" secondItem="hTX-Mg-E4a" secondAttribute="leading" constant="8" id="yLx-lw-bBW"/>
                                                 </constraints>
                                             </view>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eXJ-VA-Ibs">
-                                                <rect key="frame" x="0.0" y="46" width="177.5" height="45"/>
-                                                <subviews>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oAB-8L-Zwz" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                                        <rect key="frame" x="43" y="0.0" width="134.5" height="45"/>
-                                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="45" id="m5W-SC-GF9"/>
-                                                        </constraints>
-                                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
-                                                        <state key="normal" title="Repost">
-                                                            <color key="titleColor" systemColor="labelColor"/>
-                                                        </state>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                                                <real key="value" value="0.0"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="xibLocKey" value="report_repost_label"/>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="repostPressed:" destination="CAi-hu-Dpl" eventType="touchUpInside" id="1sb-3j-PRF"/>
-                                                        </connections>
-                                                    </button>
-                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="repost" translatesAutoresizingMaskIntoConstraints="NO" id="w5s-yp-R7a">
-                                                        <rect key="frame" x="8" y="6.5" width="20" height="32"/>
-                                                        <color key="tintColor" systemColor="labelColor"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="20" id="LTj-hH-ZHP"/>
-                                                            <constraint firstAttribute="height" constant="32" id="SwG-f6-JOk"/>
-                                                        </constraints>
-                                                    </imageView>
-                                                </subviews>
-                                                <viewLayoutGuide key="safeArea" id="xf9-4f-bMf"/>
-                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                                <constraints>
-                                                    <constraint firstItem="oAB-8L-Zwz" firstAttribute="top" secondItem="eXJ-VA-Ibs" secondAttribute="top" id="3vD-FB-8a0"/>
-                                                    <constraint firstItem="w5s-yp-R7a" firstAttribute="centerY" secondItem="eXJ-VA-Ibs" secondAttribute="centerY" id="QnL-mh-Pfj"/>
-                                                    <constraint firstItem="oAB-8L-Zwz" firstAttribute="leading" secondItem="w5s-yp-R7a" secondAttribute="trailing" constant="15" id="Yr3-8b-514"/>
-                                                    <constraint firstItem="w5s-yp-R7a" firstAttribute="leading" secondItem="eXJ-VA-Ibs" secondAttribute="leading" constant="8" id="dQB-Wr-nNl"/>
-                                                    <constraint firstItem="xf9-4f-bMf" firstAttribute="trailing" secondItem="oAB-8L-Zwz" secondAttribute="trailing" id="lMW-n3-GBZ"/>
-                                                    <constraint firstItem="xf9-4f-bMf" firstAttribute="bottom" secondItem="oAB-8L-Zwz" secondAttribute="bottom" id="rj1-fC-12s"/>
-                                                </constraints>
-                                            </view>
-                                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rZB-vB-DLO">
-                                                <rect key="frame" x="0.0" y="92" width="177.5" height="45"/>
-                                                <subviews>
-                                                    <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IDL-0y-HBN" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
-                                                        <rect key="frame" x="43" y="0.0" width="134.5" height="45"/>
-                                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="45" id="n8G-a5-3Xx"/>
-                                                        </constraints>
-                                                        <fontDescription key="fontDescription" name="IBMPlexSans" family="IBM Plex Sans" pointSize="15"/>
-                                                        <state key="normal" title="Übersetzen">
-                                                            <color key="titleColor" systemColor="labelColor"/>
-                                                        </state>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                                                <real key="value" value="0.0"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                            <userDefinedRuntimeAttribute type="string" keyPath="xibLocKey" value="report_translate_label"/>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="translatePressed:" destination="CAi-hu-Dpl" eventType="touchUpInside" id="LSD-0S-dBT"/>
-                                                        </connections>
-                                                    </button>
-                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="translate" translatesAutoresizingMaskIntoConstraints="NO" id="wXw-V6-RGJ">
-                                                        <rect key="frame" x="8" y="-276.5" width="20" height="598"/>
-                                                        <color key="tintColor" systemColor="labelColor"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="20" id="QPX-ea-JKY"/>
-                                                        </constraints>
-                                                    </imageView>
-                                                </subviews>
-                                                <viewLayoutGuide key="safeArea" id="yKa-mu-UHR"/>
-                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                                <constraints>
-                                                    <constraint firstItem="wXw-V6-RGJ" firstAttribute="leading" secondItem="rZB-vB-DLO" secondAttribute="leading" constant="8" id="49L-bq-yjZ"/>
-                                                    <constraint firstItem="wXw-V6-RGJ" firstAttribute="centerY" secondItem="rZB-vB-DLO" secondAttribute="centerY" id="MIj-q2-EXB"/>
-                                                    <constraint firstItem="IDL-0y-HBN" firstAttribute="top" secondItem="rZB-vB-DLO" secondAttribute="top" id="auX-ie-TKs"/>
-                                                    <constraint firstItem="IDL-0y-HBN" firstAttribute="leading" secondItem="wXw-V6-RGJ" secondAttribute="trailing" constant="15" id="cel-pQ-IoP"/>
-                                                    <constraint firstItem="yKa-mu-UHR" firstAttribute="trailing" secondItem="IDL-0y-HBN" secondAttribute="trailing" id="f3d-mT-z79"/>
-                                                    <constraint firstItem="yKa-mu-UHR" firstAttribute="bottom" secondItem="IDL-0y-HBN" secondAttribute="bottom" id="qSg-2K-USu"/>
-                                                </constraints>
-                                            </view>
                                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q5b-Yx-b4t">
-                                                <rect key="frame" x="0.0" y="137" width="177.5" height="0.0"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="177.5" height="0.0"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tLp-Q3-IlY" customClass="DesignableButton" customModule="Imagine" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="177.5" height="0.0"/>
@@ -5864,10 +5779,8 @@
                     <connections>
                         <outlet property="backgroundView" destination="rDJ-m9-71o" id="3jd-j9-2Tb"/>
                         <outlet property="lowerStackView" destination="xgk-4t-eOM" id="qQR-GZ-78O"/>
-                        <outlet property="repostPostView" destination="eXJ-VA-Ibs" id="75y-YD-F96"/>
                         <outlet property="savePostButtonIcon" destination="gB0-Tm-ja4" id="Key-ij-MJ8"/>
                         <outlet property="savePostView" destination="hTX-Mg-E4a" id="CJV-tz-hBC"/>
-                        <outlet property="translatePostView" destination="rZB-vB-DLO" id="BvC-5U-UwR"/>
                         <segue destination="azn-e4-bRR" kind="presentation" identifier="reportOptionSegue" modalPresentationStyle="overCurrentContext" modalTransitionStyle="coverVertical" id="Cjz-AB-1iL"/>
                         <segue destination="Pa4-QS-dr3" kind="presentation" identifier="toRepostSegue" id="Jas-Va-kxy"/>
                     </connections>
@@ -7736,7 +7649,7 @@
         <segue reference="oN4-jG-mYq"/>
         <segue reference="30t-Si-6VB"/>
         <segue reference="9QY-S4-xl7"/>
-        <segue reference="ilO-fQ-UNL"/>
+        <segue reference="Jas-Va-kxy"/>
         <segue reference="tr6-dT-hHg"/>
         <segue reference="qj1-wx-hi6"/>
         <segue reference="W1P-Tf-4HL"/>
@@ -7777,12 +7690,10 @@
         <image name="more" width="100" height="100"/>
         <image name="newPostTab" width="30" height="30"/>
         <image name="openLinkButton" width="31" height="31"/>
-        <image name="repost" width="102" height="102"/>
         <image name="save" width="20" height="20"/>
         <image name="settings" width="21.333333969116211" height="21.333333969116211"/>
         <image name="share" width="512" height="512"/>
         <image name="thanksButton" width="79" height="80"/>
-        <image name="translate" width="700" height="598"/>
         <image name="upvote" width="179" height="116"/>
         <image name="wow" width="200" height="100"/>
         <systemColor name="labelColor">

@@ -14,14 +14,14 @@ import AVKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
-
+    
     var window: UIWindow?
     
 
     // Only portrait mode
-    var myOrientation: UIInterfaceOrientationMask = .portrait
+    var myOrientation = UIInterfaceOrientationMask.portrait
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        return myOrientation
+        myOrientation
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -30,6 +30,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         FirebaseApp.configure()
         Messaging.messaging().delegate = self
         
+        // Set FirebaseCloudMessaging for Apple Notification Center
+        UNUserNotificationCenter.current().delegate = self
         
         // To have the textViews and textFields always above the keyboard
         IQKeyboardManager.shared.enable = true
@@ -47,11 +49,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         self.window?.rootViewController = initialViewController
         self.window?.makeKeyAndVisible()
         
-        do{ // If i want to play full screen: https://stackoverflow.com/questions/31828654/turn-off-audio-playback-of-avplayer
-          try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: [AVAudioSession.CategoryOptions.mixWithOthers])
-          try AVAudioSession.sharedInstance().setActive(true)
-        }catch{//some meaningful exception handling
-            
+        do { // If i want to play full screen: https://stackoverflow.com/questions/31828654/turn-off-audio-playback-of-avplayer
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, options: [AVAudioSession.CategoryOptions.mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Cant get to the AVAudioSettings: \(error.localizedDescription)")
         }
         
         deleteApplicationBadgeNumber(application: application)
@@ -59,31 +61,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         return true
     }
     
-    func registerForPushNoticications(application: UIApplication) {
-        
-        // Set FirebaseCloudMessaging for Apple Notification Center
-        UNUserNotificationCenter.current().delegate = self
-        
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(
-            options: authOptions,
-            completionHandler: {granted, _ in
-                let defaults = UserDefaults.standard
-                if granted {
-                    defaults.set(true, forKey: "allowNotifications")
-                } else {
-                    defaults.set(false, forKey: "allowNotifications")
-                }
-            })
-        
-        application.registerForRemoteNotifications()
-    }
-    
-    
-    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        print("Error, failed to register to remote Notifications: ", error.localizedDescription)
-    }
-
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
         deleteApplicationBadgeNumber(application: application)
@@ -94,31 +71,45 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             application.applicationIconBadgeNumber = 0
         }
     }
-
-
-    func application(_ application: UIApplication,
-                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-      Messaging.messaging().apnsToken = deviceToken
-    }
-
 }
 
-extension AppDelegate : MessagingDelegate {
+// MARK: - Push Notifications
+extension AppDelegate: MessagingDelegate {
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+    }
+    
+    func registerForPushNoticications(application: UIApplication) {
+        
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { granted, _ in
+            UserDefaults.standard.set(granted, forKey: "allowNotifications")
+        }
+        
+        application.registerForRemoteNotifications()
+    }
+    
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Error, failed to register to remote Notifications: ", error.localizedDescription)
+    }
     
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-
         // Called on every App start and whenever a new token is generated
-        if let token = fcmToken {
-            if let currentToken = UserDefaults.standard.value(forKey: "fcmToken") as? String {
-                if currentToken != token {
-                    //save Token in Database
-                    HandyHelper.shared.saveFCMToken(token: token)
-                }
-            } else {    // No token set in userdefaults yet
-                HandyHelper.shared.saveFCMToken(token: token)
+        
+        guard let fcmToken = fcmToken else {
+            print("Couldnt retrieve fcmToken")
+            return
+        }
+        
+        if let currentToken = UserDefaults.standard.value(forKey: "fcmToken") as? String {
+            if currentToken != fcmToken {
+                //save Token in Database
+                HandyHelper.shared.saveFCMToken(token: fcmToken)
             }
-        } else {
-            print("Couldnt get the fcmToken")
+        } else {    // No token set in userdefaults yet
+            HandyHelper.shared.saveFCMToken(token: fcmToken)
         }
     }
 }

@@ -503,7 +503,9 @@
 //SettingTableViewController
 "setting_tableView_changePicture_button" = "Bild ändern";
 
-//MeldeViewController
+// MARK: Report VC
+
+"postDeletionSuccessfull" = "Der Post wurde erfolgreich gelöscht. Aktualisiere den Feed um es nicht mehr zu sehen";
 "report_main_header" = "Melden";
 "report_markVisually_header" = "Optisch Markieren";
 "report_violationOfRules_header" = "Regelverstoß";

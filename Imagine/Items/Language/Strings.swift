@@ -81,6 +81,10 @@ struct Strings {
     static let newPostLinkCommunity = NSLocalizedString("distribution_button_text", comment: "link community")
     static let newPostDestinationLabel = NSLocalizedString("distribution_label_text", comment: "destination:")
     
+    // MARK: - Report
+    
+    static let postDeletionSuccessfull = NSLocalizedString("postDeletionSuccessfull", comment: "Its gone now")
+    
     
     // MARK: - Side Menu
     

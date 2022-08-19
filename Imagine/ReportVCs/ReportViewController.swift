@@ -23,8 +23,6 @@ class ReportViewController: UIViewController {
     @IBOutlet weak var savePostButtonIcon: UIImageView!
     @IBOutlet weak var lowerStackView: UIStackView!
     @IBOutlet weak var savePostView: UIView!
-    @IBOutlet weak var repostPostView: UIView!
-    @IBOutlet weak var translatePostView: UIView!
     @IBOutlet weak var backgroundView: UIView!
     
     var post: Post?
@@ -40,23 +38,11 @@ class ReportViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if reportComment {
-            savePostView.isHidden = true
-            repostPostView.isHidden = true
-            translatePostView.isHidden = true
-        }
+        savePostView.isHidden = reportComment   // Cant save your favorite comment yet
         
         checkIfItsYourPost()
         
-        if let post = post {
-            handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
-                if alreadySaved {
-                    self.savePostButtonIcon.tintColor = Constants.green
-                } else {
-                    self.savePostButtonIcon.tintColor = .label
-                }
-            }
-        }
+        checkIfSaved()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             UIView.animate(withDuration: 0.5) {
@@ -71,54 +57,116 @@ class ReportViewController: UIViewController {
         }
     }
     
-    let deleteView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .systemBackground
-        
-        return view
-    }()
-    
-    let trashImage: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "trash"))
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .label
-        
-        return imageView
-    }()
-    
-    let trashButton:DesignableButton = {
-        let button = DesignableButton(title: NSLocalizedString("delete_post_label", comment: "delete post"), font: UIFont(name: "IBMPlexSans", size: 15))
-
-        button.titleLabel?.textAlignment = .left
-        button.addTarget(self, action: #selector(showAlertForDeleteOption), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    func insertDeleteView() {
-        
-        deleteView.addSubview(trashImage)
-        trashImage.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        trashImage.leadingAnchor.constraint(equalTo: deleteView.leadingAnchor, constant: 8).isActive = true
-        trashImage.centerYAnchor.constraint(equalTo: deleteView.centerYAnchor).isActive = true
-        
-        deleteView.addSubview(trashButton)
-        trashButton.topAnchor.constraint(equalTo: deleteView.topAnchor).isActive = true
-        trashButton.bottomAnchor.constraint(equalTo: deleteView.bottomAnchor).isActive = true
-        trashButton.leadingAnchor.constraint(equalTo: trashImage.trailingAnchor, constant: 15).isActive = true
-        trashButton.trailingAnchor.constraint(equalTo: deleteView.trailingAnchor).isActive = true
-        trashButton.heightAnchor.constraint(equalToConstant: 45).isActive = true
-        
-        self.lowerStackView.insertArrangedSubview(deleteView, at: 0)
-        self.lowerStackView.layoutIfNeeded()
+    private func checkIfItsYourPost() {
+        if let currentUser = AuthenticationManager.shared.user, let post = post, let user = post.user, currentUser.uid == Constants.userIDs.uidMalte || user.uid == currentUser.uid {
+            insertDeleteView()
+        }
     }
     
-    func checkIfItsYourPost() {
-        if let currentUser = AuthenticationManager.shared.user, let post = post, let user = post.user {
-            if currentUser.uid == Constants.userIDs.uidMalte || user.uid == currentUser.uid {
-                insertDeleteView()
+    private func checkIfSaved() {
+        guard let post = post else {
+            return
+        }
+
+        post.checkIfSaved { isSaved in
+            self.savePostButtonIcon.tintColor = isSaved ? Constants.green : .label
+        }
+    }
+    
+    private func deletePost() {
+        guard let post = post, let userID = post.user?.uid, let documentID = post.documentID else { return }
+        
+        let ref = FirestoreReference.documentRef(post.isTopicPost ? .topicPosts : .posts, documentID: documentID, language: post.language)
+        
+        if post.image?.thumbnailUrl != nil {
+            deleteThumbnail(documentID: documentID)
+        }
+        
+        if let community = post.community {
+            self.deleteTopicPost(community: community)
+        }
+        
+        deleteUserData(userID: userID, documentID: documentID)
+        
+        deleteImages()
+        
+        ref.delete { (err) in
+            if let error = err {
+                print("We have an error deleting the post: \(error.localizedDescription)")
+            } else {
+                print("Successfully deleted the post")
+                self.showMessage()
+            }
+        }
+    }
+    
+    private func showMessage() {
+        let alertController = UIAlertController(title: Strings.done, message: Strings.postDeletionSuccessfull, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            self.dismiss(animated: true)
+        }))
+        
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    private func deleteImages() {
+        guard let post = post, let documentID = post.documentID else {
+            return
+        }
+        
+        switch post.type {
+        case .multiPicture:
+            var index = 0
+            guard let images = post.images else {
+                return
+            }
+            for _ in images {
+                let storageRef = Storage.storage().reference().child("postPictures").child("\(documentID)-\(index).png")
+                
+                index += 1
+                storageRef.delete { (err) in
+                    if let err = err {
+                        print("We have an error deleting the old picture in storage: \(err.localizedDescription)")
+                    } else {
+                        print("Picture Deleted")
+                    }
+                }
+            }
+        case .picture, .panorama:
+            let storageRef = Storage.storage().reference().child("postPictures").child("\(documentID).png")
+            
+            storageRef.delete { (err) in
+                if let err = err {
+                    print("We have an error deleting the old profile Picture: \(err.localizedDescription)")
+                } else {
+                    print("Picture Deleted")
+                }
+            }
+        default:
+            break
+        }
+    }
+    
+    private func deleteThumbnail(documentID: String) {
+
+        let storageRef = Storage.storage().reference().child("postPictures").child("\(documentID)-thumbnail.png")
+        
+        storageRef.delete { (err) in
+            if let err = err {
+                print("We have an error deleting the old thumbnail Picture: \(err.localizedDescription)")
+            } else {
+                print("Thumbnail Deleted")
+            }
+        }
+    }
+    
+    private func deleteUserData(userID: String, documentID: String) {
+        let postReference = FirestoreCollectionReference(document: userID, collection: "posts")
+        let ref = FirestoreReference.documentRef(.users, documentID: documentID, collectionReferences: postReference)
+        
+        ref.delete { error in
+            if let error = error {
+                print("We have an error deleting the user data: \(error.localizedDescription)")
             }
         }
     }
@@ -126,13 +174,8 @@ class ReportViewController: UIViewController {
     func deleteTopicPost(community: Community) {
         guard let post = post, let documentID = post.documentID, let communityID = community.id else { return }
         
-        var collectionRef: CollectionReference!
-        if community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let ref = collectionRef.document(communityID).collection("posts").document(documentID)
+        let collectionReference = FirestoreCollectionReference(document: communityID, collection: "posts")
+        let ref = FirestoreReference.documentRef(.communities, documentID: documentID, collectionReferences: collectionReference)
         
         ref.getDocument { (snap, err) in
             if let error = err {
@@ -151,135 +194,14 @@ class ReportViewController: UIViewController {
     func deletePostInAddOn(addOnID: String) {
         guard let post = post, let documentID = post.documentID, let community = post.community, let communityID = community.id else { return }
         
-        var collectionRef: CollectionReference!
-        if community.language == .en {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let ref = collectionRef.document(communityID).collection("addOns").document(addOnID).collection("items").document(documentID)
+        let addOnReference = FirestoreCollectionReference(document: communityID, collection: "addOns")
+        let itemsReference = FirestoreCollectionReference(document: addOnID, collection: "items")
+        
+        let ref = FirestoreReference.documentRef(.communities, documentID: documentID, collectionReferences: addOnReference, itemsReference)
         
         ref.delete { (err) in
             if let error = err {
                 print("Error when deleting post in AddOn: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    func deletePost() {
-        guard let post = post, let userID = post.user?.uid, let documentID = post.documentID else { return }
-        
-        let postRef: DocumentReference?
-        var collectionRef: CollectionReference!
-        if post.isTopicPost {
-            if post.language == .en {
-                collectionRef = db.collection("Data").document("en").collection("topicPosts")
-            } else {
-                collectionRef = db.collection("TopicPosts")
-            }
-            postRef = collectionRef.document(documentID)
-        } else {
-            if post.language == .en {
-                collectionRef = db.collection("Data").document("en").collection("posts")
-            } else {
-                collectionRef = db.collection("Posts")
-            }
-            postRef = collectionRef.document(documentID)
-        }
-        
-        if let _ = post.image?.thumbnailUrl {
-            deleteThumbnail(documentID: documentID)
-        }
-        
-        if let community = post.community {
-            self.deleteTopicPost(community: community)
-        }
-        if let postRef = postRef {
-            postRef.delete { (err) in
-                if let error = err {
-                    print("We have an error deleting the post: \(error.localizedDescription)")
-                } else {
-                    print("Successfully deleted the post")
-                }
-            }
-        }
-        
-        switch post.type {
-        case .multiPicture:
-            var index = 0
-            guard let images = post.images else {
-                return
-            }
-            for _ in images {
-                let storageRef = Storage.storage().reference().child("postPictures").child("\(documentID)-\(index).png")
-                
-                index+=1
-                storageRef.delete { (err) in
-                    if let err = err {
-                        print("We have an error deleting the old picture in storage: \(err.localizedDescription)")
-                    } else {
-                        print("Picture Deleted")
-                        
-                        let userPostRef = self.db.collection("Users").document(userID).collection("posts").document(documentID)
-                        
-                        userPostRef.delete { (err) in
-                            if let error = err {
-                                print("We have an error: \(error.localizedDescription)")
-                            } else {
-                                if index == images.count {
-                                    self.dismiss(animated: true, completion: nil)
-                                    self.alert(message: "Fertig", title: "Das Bild wurde erfolgreich gelöscht. Aktualisiere den Feed und es ist weg")
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        case .picture, .panorama:
-            let storageRef = Storage.storage().reference().child("postPictures").child("\(documentID).png")
-            
-            storageRef.delete { (err) in
-                if let err = err {
-                    print("We have an error deleting the old profile Picture: \(err.localizedDescription)")
-                } else {
-                    print("Picture Deleted")
-                    
-                    let userPostRef = self.db.collection("Users").document(userID).collection("posts").document(documentID)
-                    
-                    userPostRef.delete { (err) in
-                        if let error = err {
-                            print("We have an error: \(error.localizedDescription)")
-                        } else {
-                            self.dismiss(animated: true, completion: nil)
-                            self.alert(message: "Fertig", title: "Das Bild wurde erfolgreich gelöscht. Aktualisiere den Feed und es ist weg")
-                        }
-                    }
-                }
-            }
-        default:
-            let userPostRef = db.collection("Users").document(userID).collection("posts").document(documentID)
-            
-            userPostRef.delete { (err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    self.dismiss(animated: true, completion: nil)
-                    self.alert(message: "Fertig", title: "Der Post wurde erfolgreich gelöscht. Aktualisiere den Feed und er ist weg")
-                }
-            }
-            print("No picture to delete")
-        }
-    }
-    
-    private func deleteThumbnail(documentID: String) {
-
-        let storageRef = Storage.storage().reference().child("postPictures").child("\(documentID)-thumbnail.png")
-        
-        storageRef.delete { (err) in
-            if let err = err {
-                print("We have an error deleting the old thumbnail Picture: \(err.localizedDescription)")
-            } else {
-                print("Thumbnail Deleted")
             }
         }
     }
@@ -320,35 +242,6 @@ class ReportViewController: UIViewController {
             }
         } else {
             self.notLoggedInAlert()
-        }
-    }
-    
-    @IBAction func repostPressed(_ sender: Any) {
-        if AuthenticationManager.shared.isLoggedIn {
-            if let post = post {
-                if post.type == .picture {
-                    performSegue(withIdentifier: "toRepostSegue", sender: post)
-                } else {
-                    self.alert(message: "Im Moment kann man leider nur Bild-Beiträge reposten. Reiche gerne einen Vorschlag für dieses Feature ein, damit wir wissen, dass die Nachfrage da ist. Vielen Dank für dein Verständnis!")
-                }
-            }
-        } else {
-            self.notLoggedInAlert()
-        }
-    }
-    
-    @IBAction func translatePressed(_ sender: Any) {
-        if AuthenticationManager.shared.isLoggedIn {
-            self.repost = .translation
-            if let post = post {
-                if post.type == .picture {
-                    performSegue(withIdentifier: "toRepostSegue", sender: post)
-                } else {
-                    self.alert(message: "Im Moment kann man leider nur Bild-Beiträge übersetzen. Reiche gerne einen Vorschlag für dieses Feature ein, damit wir wissen, dass die Nachfrage da ist. Vielen Dank für dein Verständnis!")
-                }
-            }
-        } else {
-            notLoggedInAlert()
         }
     }
     
@@ -409,5 +302,52 @@ class ReportViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    // MARK: - Insert Delete View
+    
+    let deleteView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemBackground
+        
+        return view
+    }()
+    
+    let trashImage: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "trash"))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .label
+        
+        return imageView
+    }()
+    
+    let trashButton:DesignableButton = {
+        let button = DesignableButton(title: NSLocalizedString("delete_post_label", comment: "delete post"), font: UIFont(name: "IBMPlexSans", size: 15))
+
+        button.titleLabel?.textAlignment = .left
+        button.addTarget(self, action: #selector(showAlertForDeleteOption), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    func insertDeleteView() {
+        
+        deleteView.addSubview(trashImage)
+        trashImage.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        trashImage.leadingAnchor.constraint(equalTo: deleteView.leadingAnchor, constant: 8).isActive = true
+        trashImage.centerYAnchor.constraint(equalTo: deleteView.centerYAnchor).isActive = true
+        
+        deleteView.addSubview(trashButton)
+        trashButton.topAnchor.constraint(equalTo: deleteView.topAnchor).isActive = true
+        trashButton.bottomAnchor.constraint(equalTo: deleteView.bottomAnchor).isActive = true
+        trashButton.leadingAnchor.constraint(equalTo: trashImage.trailingAnchor, constant: 15).isActive = true
+        trashButton.trailingAnchor.constraint(equalTo: deleteView.trailingAnchor).isActive = true
+        trashButton.heightAnchor.constraint(equalToConstant: 45).isActive = true
+        trashButton.contentHorizontalAlignment = .left
+        
+        self.lowerStackView.insertArrangedSubview(deleteView, at: 0)
+        self.lowerStackView.layoutIfNeeded()
     }
 }

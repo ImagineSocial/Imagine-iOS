@@ -775,7 +775,9 @@ Offer a detailed insight, a different point of view or an easy start. There are 
  
  
 
-//MeldeViewController
+// MARK: Report VC
+
+"postDeletionSuccessfull" = "The post was successfully deleted. Refresh the feed to no longer see it";
 
 "report_main_header" = "Report";
 

@@ -92,6 +92,10 @@ class NewCampaignViewController: UIViewController {
     }
     
     @IBAction func shareButtonTapped(_ sender: Any) {
+        guard let userID = AuthenticationManager.shared.userID else {
+            notLoggedInAlert()
+            return
+        }
         
         if let title = titleTextField.text, let summary = shortBodyTextField.text {
             var collectionRef: CollectionReference!
@@ -103,7 +107,7 @@ class NewCampaignViewController: UIViewController {
             }
             let campaignRef = collectionRef.document()
             
-            let dataDictionary: [String: Any] = ["title": title, "summary": summary, "type" : "normal", "category" : getCategoryString(), "description": longBodyTextField.text, "createTime": Timestamp(date: Date()), "supporter": 0, "opposition": 0, "voters": [""]]
+            let dataDictionary: [String: Any] = ["title": title, "summary": summary, "type" : "normal", "category" : getCategoryString(), "description": longBodyTextField.text, "createTime": Timestamp(date: Date()), "supporter": 0, "opposition": 0, "voters": [""], "userID" : userID]
             
             campaignRef.setData(dataDictionary) { (err) in
                 if let error = err {
@@ -114,9 +118,8 @@ class NewCampaignViewController: UIViewController {
             }
             
             let alert = UIAlertController(title: NSLocalizedString("done", comment: "done"), message: NSLocalizedString("submit_successfull_alert_message", comment: "thanks"), preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
-                
-            }))
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            
             present(alert, animated: true) {
                 self.titleTextField.text?.removeAll()
                 self.shortBodyTextField.text?.removeAll()
