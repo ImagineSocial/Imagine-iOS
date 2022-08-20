@@ -13,10 +13,12 @@ import YoutubePlayer_in_WKWebView
 
 class YouTubeCell: BaseFeedCell {
     
-    //MARK:- IBOutlets
+    static let identifier = "YouTubeCell"
+    
+    // MARK: - IBOutlets
     @IBOutlet weak var playerView: WKYTPlayerView!
         
-    //MARK:- Cell Lifecycle
+    // MARK: - Cell Lifecycle
     override func awakeFromNib() {
         selectionStyle = .none
         
@@ -36,7 +38,7 @@ class YouTubeCell: BaseFeedCell {
         resetValues()
     }
     
-    //MARK:- Set Cell
+    // MARK: - Set Cell
     override func setCell() {
         super.setCell()
         

@@ -8,9 +8,12 @@
 
 import UIKit
 
-class ThoughtCell : BaseFeedCell {
+class ThoughtCell: BaseFeedCell {
     
-    //MARK:- Cell Lifecycle
+    static let identifier = "ThoughtCell"
+    
+    // MARK: - Cell Lifecycle
+    
     override func awakeFromNib() {
         selectionStyle = .none
         
@@ -25,7 +28,7 @@ class ThoughtCell : BaseFeedCell {
         resetValues()
     }
     
-    //MARK:- Set Cell
+    // MARK: - Set Cell
     override func setCell() {
         super.setCell()
         

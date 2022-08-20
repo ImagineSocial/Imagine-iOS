@@ -1,5 +1,5 @@
 //
-//  PostCell.swift
+//  PictureCell.swift
 //  Imagine
 //
 //  Created by Malte Schoppe on 29.03.19.
@@ -21,14 +21,18 @@ protocol PostCellDelegate: class {
     func collectionViewTapped(post: Post)
 }
 
-class PostCell : BaseFeedCell {
+class PictureCell: BaseFeedCell {
     
-    //MARK:- IBOutlets
+    static let identifier = "PictureCell"
+    
+    // MARK: - IBOutlets
+    
     @IBOutlet weak var cellImageView: UIImageView!
     @IBOutlet weak var cellImageViewHeightConstraint: NSLayoutConstraint!
 
     
-    //MARK:- Cell Lifecycle
+    // MARK: - Cell Lifecycle
+    
     override func awakeFromNib() {
         selectionStyle = .none
         
@@ -55,7 +59,7 @@ class PostCell : BaseFeedCell {
         resetValues()
     }
     
-    //MARK:- Set Cell
+    // MARK: - Set Cell
     override func setCell() {
         super.setCell()
         

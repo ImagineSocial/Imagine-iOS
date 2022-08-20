@@ -20,10 +20,12 @@ enum BlankCellType {
 
 class BlankContentCell: UITableViewCell {
     
+    static let identifier = "BlankContentCell"
+    
     @IBOutlet weak var pictureView: UIImageView!
     @IBOutlet weak var descriptionLabel: UILabel!
     
-    var type:BlankCellType? {
+    var type: BlankCellType? {
         didSet {
             guard let type = type else { return }
             

@@ -236,7 +236,7 @@
 		E9A9934F226C7ACD00448932 /* LinkCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A9934E226C7ACD00448932 /* LinkCell.swift */; };
 		E9A9FAE122A50ED90088BD37 /* CobraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A9FAE022A50ED90088BD37 /* CobraViewController.swift */; };
 		E9B1872A222E981000923037 /* ReportConfirmViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B18729222E981000923037 /* ReportConfirmViewController.swift */; };
-		E9B79CDF224EC68500166EED /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B79CDE224EC68500166EED /* PostCell.swift */; };
+		E9B79CDF224EC68500166EED /* PictureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B79CDE224EC68500166EED /* PictureCell.swift */; };
 		E9B79CE1224EC6D200166EED /* RepostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B79CE0224EC6D200166EED /* RepostCell.swift */; };
 		E9B79CE3224EC72000166EED /* JobOfferCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B79CE2224EC72000166EED /* JobOfferCell.swift */; };
 		E9B79CE5224EC78900166EED /* CampaignCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B79CE4224EC78900166EED /* CampaignCell.swift */; };
@@ -551,7 +551,7 @@
 		E9A9934E226C7ACD00448932 /* LinkCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkCell.swift; sourceTree = "<group>"; };
 		E9A9FAE022A50ED90088BD37 /* CobraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CobraViewController.swift; sourceTree = "<group>"; };
 		E9B18729222E981000923037 /* ReportConfirmViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportConfirmViewController.swift; sourceTree = "<group>"; };
-		E9B79CDE224EC68500166EED /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
+		E9B79CDE224EC68500166EED /* PictureCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureCell.swift; sourceTree = "<group>"; };
 		E9B79CE0224EC6D200166EED /* RepostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepostCell.swift; sourceTree = "<group>"; };
 		E9B79CE2224EC72000166EED /* JobOfferCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobOfferCell.swift; sourceTree = "<group>"; };
 		E9B79CE4224EC78900166EED /* CampaignCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignCell.swift; sourceTree = "<group>"; };
@@ -762,7 +762,7 @@
 			children = (
 				E9A46754231F1C84009AC8DA /* BaseFeedCell.swift */,
 				E9B9446A2259E5EC000145E2 /* PostTableViewCell.xib */,
-				E9B79CDE224EC68500166EED /* PostCell.swift */,
+				E9B79CDE224EC68500166EED /* PictureCell.swift */,
 				E9B944662258B674000145E2 /* RePostTableViewCell.xib */,
 				E9B79CE0224EC6D200166EED /* RepostCell.swift */,
 				E9A9934C226C7A8200448932 /* LinkCell.xib */,
@@ -2065,7 +2065,7 @@
 				E9817B5725EC03BE00E56FC6 /* SettingSwitchCell.swift in Sources */,
 				027BD0362892BDD8009E985E /* FirestoreManager+Delete.swift in Sources */,
 				E95A6FC8232E80E8008B32CC /* Reachability.swift in Sources */,
-				E9B79CDF224EC68500166EED /* PostCell.swift in Sources */,
+				E9B79CDF224EC68500166EED /* PictureCell.swift in Sources */,
 				E9879A2324BDB57A004B497F /* MusicCell.swift in Sources */,
 				E9A57A9F245360D100665007 /* AdvertisingCell.swift in Sources */,
 				E90E1A3425FB973E00855FE1 /* CampaignCollectionHeaderView.swift in Sources */,

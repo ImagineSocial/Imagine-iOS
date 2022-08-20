@@ -10,7 +10,10 @@ import UIKit
 
 class RePostCell : BaseFeedCell {
     
-    //MARK:- IBOutlets
+    static let identifier = "RepostCell"
+    
+    //MARK: - IBOutlets
+    
     @IBOutlet weak var translatedTitleLabel: UILabel!
     @IBOutlet weak var OGPostView: DesignablePopUp!
     @IBOutlet weak var originalCreateDateLabel: UILabel!
@@ -20,7 +23,8 @@ class RePostCell : BaseFeedCell {
     @IBOutlet weak var ogProfilePictureImageView: UIImageView!
     
         
-    //MARK:- View Lifecycle
+    //MARK: - Cell Lifecycle
+    
     override func awakeFromNib() {
         selectionStyle = .none
         
@@ -47,7 +51,8 @@ class RePostCell : BaseFeedCell {
         resetValues()
     }
     
-    //MARK:- Set Cell
+    //MARK: - Set Cell
+    
     override func setCell(){
         super.setCell()
         

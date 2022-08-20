@@ -13,14 +13,14 @@ import AVFoundation
 extension BaseFeedTableViewController {
     
     func setupTableView() {
-        tableView.register(UINib(nibName: "MultiPictureCell", bundle: nil), forCellReuseIdentifier: "MultiPictureCell")
-        tableView.register(UINib(nibName: "RePostTableViewCell", bundle: nil), forCellReuseIdentifier: "NibRepostCell")
-        tableView.register(UINib(nibName: "PostTableViewCell", bundle: nil), forCellReuseIdentifier: "NibPostCell")
-        tableView.register(UINib(nibName: "LinkCell", bundle: nil), forCellReuseIdentifier: "NibLinkCell")
-        tableView.register(UINib(nibName: "ThoughtPostCell", bundle: nil), forCellReuseIdentifier: "NibThoughtCell")
-        tableView.register(UINib(nibName: "YouTubeCell", bundle: nil), forCellReuseIdentifier: "NibYouTubeCell")
-        tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: "NibBlankCell")
-        tableView.register(UINib(nibName: "GifCell", bundle: nil), forCellReuseIdentifier: "GIFCell")
+        tableView.register(UINib(nibName: "MultiPictureCell", bundle: nil), forCellReuseIdentifier: MultiPictureCell.identifier)
+        tableView.register(UINib(nibName: "RePostTableViewCell", bundle: nil), forCellReuseIdentifier: RePostCell.identifier)
+        tableView.register(UINib(nibName: "PostTableViewCell", bundle: nil), forCellReuseIdentifier: PictureCell.identifier)
+        tableView.register(UINib(nibName: "LinkCell", bundle: nil), forCellReuseIdentifier: LinkCell.identifier)
+        tableView.register(UINib(nibName: "ThoughtPostCell", bundle: nil), forCellReuseIdentifier: ThoughtCell.identifier)
+        tableView.register(UINib(nibName: "YouTubeCell", bundle: nil), forCellReuseIdentifier: YouTubeCell.identifier)
+        tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: BlankContentCell.identifier)
+        tableView.register(UINib(nibName: "GifCell", bundle: nil), forCellReuseIdentifier: GifCell.identifier)
         tableView.register(UINib(nibName: "SurveyCell", bundle: nil), forCellReuseIdentifier: SurveyCell.identifier)
         tableView.register(UINib(nibName: "MusicCell", bundle: nil), forCellReuseIdentifier: MusicCell.identifier)
         tableView.register(UINib(nibName: "FeedSingleTopicCell", bundle: nil), forCellReuseIdentifier: FeedSingleTopicCell.identifier)
@@ -29,8 +29,7 @@ extension BaseFeedTableViewController {
     // MARK: - Table view data source
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        return posts.count
+        posts.count
     }
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -61,10 +60,49 @@ extension BaseFeedTableViewController {
         }
         
         switch post.type {
-        case .multiPicture:
-            let identifier = "MultiPictureCell"
-            
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? MultiPictureCell, let image = post.images?.first {
+        case .multiPicture, .panorama:
+            if let cell = tableView.dequeueReusableCell(withIdentifier: MultiPictureCell.identifier, for: indexPath) as? MultiPictureCell {
+                
+                cell.ownProfile = isOwnProfile
+                cell.delegate = self
+                cell.post = post
+                
+                if post.type == .multiPicture, let image = post.images?.first {
+                    let imageHeight = image.height
+                    let imageWidth = image.width
+                    
+                    let ratio = imageWidth / imageHeight
+                    let width = self.view.frame.width - 20  // 5+5 from contentView and 5+5 from inset
+                    var newHeight = width / ratio
+                    
+                    if newHeight >= 500 {
+                        newHeight = 500
+                    }
+                    
+                    if imageHeight == 0 {
+                        newHeight = 300
+                    }
+                    
+                    cell.multiPictureCollectionViewHeightConstraint.constant = newHeight
+                } else {    // Panorama
+                    let newHeight: CGFloat = 300
+                    
+                    cell.multiPictureCollectionViewHeightConstraint.constant = newHeight
+                }
+                
+                return cell
+            }
+        case .repost, .translation:
+            if let repostCell = tableView.dequeueReusableCell(withIdentifier: RePostCell.identifier, for: indexPath) as? RePostCell {
+                
+                repostCell.ownProfile = isOwnProfile
+                repostCell.delegate = self
+                repostCell.post = post
+                
+                return repostCell
+            }
+        case .picture:            
+            if let cell = tableView.dequeueReusableCell(withIdentifier: PictureCell.identifier, for: indexPath) as? PictureCell, let image = post.image {
                 
                 cell.ownProfile = isOwnProfile
                 cell.delegate = self
@@ -75,72 +113,6 @@ extension BaseFeedTableViewController {
                 
                 let ratio = imageWidth / imageHeight
                 let width = self.view.frame.width - 20  // 5+5 from contentView and 5+5 from inset
-                var newHeight = width / ratio
-                
-                if newHeight >= 500 {
-                    newHeight = 500
-                }
-                
-                if imageHeight == 0 {
-                    newHeight = 300
-                }
-                
-                cell.multiPictureCollectionViewHeightConstraint.constant = newHeight
-                
-                return cell
-            }
-        case .panorama:
-            let identifier = "MultiPictureCell"
-            
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? MultiPictureCell {
-                
-                cell.ownProfile = isOwnProfile
-                cell.delegate = self
-                cell.post = post
-                
-                //TODO: Custom height or 300 if too big
-                let newHeight:CGFloat = 300
-                
-                cell.multiPictureCollectionViewHeightConstraint.constant = newHeight
-                
-                return cell
-            }
-        case .repost:
-            let identifier = "NibRepostCell"
-            
-            if let repostCell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? RePostCell {
-                
-                repostCell.ownProfile = isOwnProfile
-                repostCell.delegate = self
-                repostCell.post = post
-                
-                return repostCell
-            }
-        case .translation:
-            let identifier = "NibRepostCell"
-            
-            if let repostCell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? RePostCell {
-                
-                repostCell.ownProfile = isOwnProfile
-                repostCell.delegate = self
-                repostCell.post = post
-                
-                return repostCell
-            }
-        case .picture:
-            let identifier = "NibPostCell"
-            
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? PostCell, let image = post.image {
-                
-                cell.ownProfile = isOwnProfile
-                cell.delegate = self
-                cell.post = post
-                
-                let imageHeight = image.height
-                let imageWidth = image.width
-                
-                let ratio = imageWidth / imageHeight
-                let width = self.view.frame.width-20  // 5+5 from contentView and 5+5 from inset
                 var newHeight = width / ratio
                 
                 if imageHeight == 0 {
@@ -157,9 +129,7 @@ extension BaseFeedTableViewController {
                 return cell
             }
         case .thought:
-            let identifier = "NibThoughtCell"
-            
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? ThoughtCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: ThoughtCell.identifier, for: indexPath) as? ThoughtCell {
                 
                 cell.ownProfile = isOwnProfile
                 cell.delegate = self
@@ -168,9 +138,7 @@ extension BaseFeedTableViewController {
                 return cell
             }
         case .GIF:
-            let identifier = "GIFCell"
-            
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? GifCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: GifCell.identifier, for: indexPath) as? GifCell {
                 
                 cell.ownProfile = isOwnProfile
                 cell.post = post
@@ -194,9 +162,7 @@ extension BaseFeedTableViewController {
                 return cell
             }
         case .link:
-            let identifier = "NibLinkCell"
-            
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? LinkCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: LinkCell.identifier, for: indexPath) as? LinkCell {
                 
                 cell.ownProfile = isOwnProfile
                 cell.delegate = self
@@ -205,9 +171,7 @@ extension BaseFeedTableViewController {
                 return cell
             }
         case .youTubeVideo:
-            let identifier = "NibYouTubeCell"
-            
-            if let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath) as? YouTubeCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: YouTubeCell.identifier, for: indexPath) as? YouTubeCell {
                 
                 cell.ownProfile = isOwnProfile
                 cell.delegate = self
@@ -217,7 +181,7 @@ extension BaseFeedTableViewController {
             }
         case .nothingPostedYet:
             
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "NibBlankCell", for: indexPath) as? BlankContentCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: BlankContentCell.identifier, for: indexPath) as? BlankContentCell {
                 
                 cell.type = noPostsType
                 cell.contentView.backgroundColor = self.tableView.backgroundColor

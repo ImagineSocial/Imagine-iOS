@@ -12,16 +12,19 @@ import AVKit
 
 class GifCell: BaseFeedCell {
     
-    //MARK:- IBOutlets
+    static let identifier = "GIFCell"
+    
+    // MARK: - IBOutlets
     @IBOutlet weak var gifView: UIView!
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     @IBOutlet weak var gifViewHeightConstraint: NSLayoutConstraint!
     
-    //MARK:- Variables
+    // MARK: - Variables
     private var avPlayer: AVPlayer?
     private var avPlayerLayer: AVPlayerLayer?
         
-    //MARK:- Cell Lifecycle
+    // MARK: - Cell Lifecycle
+    
     override func awakeFromNib() {
         selectionStyle = .none
         
@@ -53,7 +56,7 @@ class GifCell: BaseFeedCell {
         print("playlay: \(playerLayer.frame), gifview: \(gifView.frame)")
     }
     
-    //MARK:- Set Cell
+    // MARK: - Set Cell
     override func setCell() {
         super.setCell()
         

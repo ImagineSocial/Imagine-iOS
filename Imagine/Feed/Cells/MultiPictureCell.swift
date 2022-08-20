@@ -10,6 +10,8 @@ import UIKit
 
 class MultiPictureCell: BaseFeedCell {
     
+    static let identifier = "MultiPictureCell"
+    
     //MARK: - IBOutlets
     
     @IBOutlet weak var collectionView: UICollectionView!

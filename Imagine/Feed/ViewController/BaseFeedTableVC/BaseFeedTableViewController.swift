@@ -88,6 +88,7 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
             post.options = PostDesignOption(hideProfilePicture: true)
             if index == 1 {
                 post.type = .picture
+                post.image = PostImage(url: "", height: 150, width: 200)
             } else {
                 post.type = .thought
             }

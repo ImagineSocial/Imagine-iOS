@@ -11,18 +11,19 @@ import SwiftLinkPreview
 
 class LinkCell : BaseFeedCell {
     
-    //MARK:- IBOutlets
+    static let identifier = "LinkCell"
+    
+    // MARK: - IBOutlets
     @IBOutlet weak var linkThumbNailImageView: UIImageView!
     @IBOutlet weak var urlLabel: UILabel!
     @IBOutlet weak var linkPreviewTitleLabel: UILabel!
     @IBOutlet weak var linkPreviewDescriptionLabel: UILabel!
     
-    //MARK:- Variables
+    // MARK: - Variables
     private let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: InMemoryCache())
-    
     private var preview: Cancellable?
     
-    //MARK:- Cell Lifecycle
+    // MARK: - Cell Lifecycle
     override func awakeFromNib() {
         selectionStyle = .none
         
@@ -50,7 +51,7 @@ class LinkCell : BaseFeedCell {
         resetValues()
     }
     
-    //MARK:- Set Cell
+    // MARK: - Set Cell
     override func setCell() {
         super.setCell()
         
