@@ -26,7 +26,7 @@ class SavedPostTableViewController: BaseFeedTableViewController {
     }
     
     override func getPosts() {
-        guard isConnected(), !fetchInProgress, let userID = AuthenticationManager.shared.user?.uid else {
+        guard isConnected(), !fetchInProgress, let userID = AuthenticationManager.shared.userID else {
             fetchRequested = !isConnected()
             return
         }

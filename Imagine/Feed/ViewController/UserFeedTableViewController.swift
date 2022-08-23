@@ -605,7 +605,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     }
     
     func blockUserTapped() {
-        if let userID = AuthenticationManager.shared.user?.uid {
+        if let userID = AuthenticationManager.shared.userID {
             if let userOfProfileID = user {
                 let alert = UIAlertController(title: NSLocalizedString("block_user_alert_title", comment: "block user?"), message: NSLocalizedString("block_user_alert_message", comment: "delete from friends and cant contact you again?"), preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: "yes"), style: .destructive){ _ in
@@ -644,7 +644,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     //MARK: - ImagePickerStuff
     func deletePicture() {  // In Firebase Storage
-        if let userID = AuthenticationManager.shared.user?.uid {
+        if let userID = AuthenticationManager.shared.userID {
             let imageName = "\(userID).profilePicture"
             let storageRef = Storage.storage().reference().child("profilePictures").child("\(imageName).png")
             
@@ -661,7 +661,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     
     
     func savePicture() {
-        guard let userID = AuthenticationManager.shared.user?.uid else { return }
+        guard let userID = AuthenticationManager.shared.userID else { return }
         
         let imageName = "\(userID).profilePicture"
         let storageRef = Storage.storage().reference().child("profilePictures").child("\(imageName).png")
@@ -867,7 +867,7 @@ class UserFeedTableViewController: BaseFeedTableViewController, UIImagePickerCon
     }
     
     func deleteAsFriend() {
-        if let userID = AuthenticationManager.shared.user?.uid, let currentProfileID = user?.uid {
+        if let userID = AuthenticationManager.shared.userID, let currentProfileID = user?.uid {
             
             let friendsRefOfCurrentProfile = db.collection("Users").document(currentProfileID).collection("friends").document(userID)
             friendsRefOfCurrentProfile.delete()

@@ -18,7 +18,7 @@ class AuthenticationManager {
     
     var user: User?
     var userID: String? {
-        user?.uid
+        Auth.auth().currentUser?.uid
     }
     
     var isLoggedIn: Bool {

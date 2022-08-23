@@ -448,9 +448,6 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                 post.documentID = comment.sectionItemID
                 post.isTopicPost = comment.isTopicPost
                 post.language = comment.sectionItemLanguage
-                if let userID = AuthenticationManager.shared.user?.uid {
-                    post.user = User(userID: userID)
-                }
                 
                 performSegue(withIdentifier: "showPost", sender: post)
             }
@@ -496,7 +493,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             return
         } else {
             print("Set listener")
-            if let userID = AuthenticationManager.shared.user?.uid {
+            if let userID = AuthenticationManager.shared.userID {
                 let notRef = db.collection("Users").document(userID).collection("notifications")
                 
                 notificationListener = notRef.addSnapshotListener { (snap, err) in
@@ -763,7 +760,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
 }
 
 
-//MARK:- DismissDelegate
+// MARK: - DismissDelegate
 
 extension FeedTableViewController: DismissDelegate {
     
@@ -779,7 +776,7 @@ extension FeedTableViewController: DismissDelegate {
     }
 }
 
-//MARK:- LogOutDelegate
+// MARK: - LogOutDelegate
 extension FeedTableViewController: LogOutDelegate {
 
     func deleteListener() {     
@@ -797,7 +794,7 @@ extension FeedTableViewController: LogOutDelegate {
     }
 }
 
-//MARK:- JustPostedDelegate
+// MARK: - JustPostedDelegate
 
 extension FeedTableViewController: JustPostedDelegate {
     func posted() {

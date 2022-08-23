@@ -79,7 +79,6 @@ class CommentTableView: UITableView {
         delegate = self
         dataSource = self
         
-//        isScrollEnabled = false
         register(UINib(nibName: "CommentCell", bundle: nil), forCellReuseIdentifier: commentIdentifier)
         estimatedRowHeight = 100
         rowHeight = UITableView.automaticDimension
@@ -87,15 +86,8 @@ class CommentTableView: UITableView {
         
         self.headerView = CommentTableViewHeader(frame: CGRect(x: 0, y: 0, width: 276, height: 30))
         self.headerView!.delegate = self
-        if let user = AuthenticationManager.shared.user, let recipients = notificationRecipients {
-            for recipient in recipients {
-                if user.uid == recipient {
-                    // self.headerView!.showNotificationButton()    -> Maybe later when the ui isnt as intrusive
-                }
-            }
-        }
-        self.tableHeaderView = self.headerView
         
+        self.tableHeaderView = self.headerView
     }
     
     func getcomments() {
@@ -239,7 +231,7 @@ class CommentTableView: UITableView {
     }
     
     func checkIfTheCurrentUserIsBlocked(post: Post) {
-        if let userID = post.user?.uid, let currentUserID = AuthenticationManager.shared.user?.uid {
+        if let userID = post.user?.uid, let currentUserID = AuthenticationManager.shared.userID {
             db.collection("Users").document(userID).getDocument { (document, err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
@@ -257,7 +249,7 @@ class CommentTableView: UITableView {
     }
     
     func setCurrentUser() {
-        if let userID = AuthenticationManager.shared.user?.uid {
+        if let userID = AuthenticationManager.shared.userID {
             let user = User(userID: userID)
             user.loadUser() { user in
                 if let user = user {
@@ -273,7 +265,7 @@ class CommentTableView: UITableView {
         
         var sectionItemID: String!
         
-        if let currentUserID = AuthenticationManager.shared.user?.uid {
+        if let currentUserID = AuthenticationManager.shared.userID {
             
             if allowedToComment {
                 guard let currentUser = currentUser else {
@@ -423,51 +415,27 @@ class CommentTableView: UITableView {
     func getNotificationRecipients(post: Post, bodyString: String, displayName: String, commenterUID: String) {
         
         guard let documentID = post.documentID else { return }
-        let ref: DocumentReference
-        var collectionRef: CollectionReference
         
-        if post.isTopicPost {
-            if post.language == .en {
-                collectionRef = db.collection("Data").document("en").collection("topicPosts")
-            } else {
-                collectionRef = db.collection("TopicPosts")
-            }
-            ref = collectionRef.document(documentID)
-        } else {
-            if post.language == .en {
-                collectionRef = db.collection("Data").document("en").collection("posts")
-            } else {
-                collectionRef = db.collection("Posts")
-            }
-            ref = collectionRef.document(documentID)
-        }
+        let ref = FirestoreReference.documentRef(post.isTopicPost ? .topicPosts : .posts, documentID: documentID, language: post.language)
         
-        ref.getDocument { (snap, err) in
+        ref.getDocument { snap, err in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
-                if let snap = snap {
-                    if let data = snap.data() {
-                        if let recipients = data["notificationRecipients"] as? [String] {
-                            
-                            self.checkIfUserNeedsToBeAdded(post: post, recipients: recipients, commenterUID: commenterUID)
-                            
-                            for recipient in recipients {
-                                if recipient == commenterUID {
-                                    continue // No notification for your own comment
-                                } else {
-                                    if let user = post.user, recipient == user.uid {
-                                        self.setNotification(post: post, userID: recipient, bodyString: bodyString, displayName: displayName, forOP: true)
-                                    } else {
-                                        self.setNotification(post: post, userID: recipient, bodyString: bodyString, displayName: displayName, forOP: false)
-                                    }
-                                }
-                            }
-                        } else {
-                            if commenterUID != "anonym" {
-                                self.addUserAsNotificationRecipient(post: post, userUID: commenterUID)
+                if let snap = snap, let data = snap.data() {
+                    if let recipients = data["notificationRecipients"] as? [String] {
+                        
+                        self.checkIfUserNeedsToBeAdded(post: post, recipients: recipients, commenterUID: commenterUID)
+                        
+                        for recipient in recipients {
+                            if recipient == commenterUID {
+                                continue // No notification for your own comment
+                            } else {
+                                self.setNotification(post: post, userID: recipient, bodyString: bodyString, displayName: displayName, forOP: post.user?.uid == recipient)
                             }
                         }
+                    } else {
+                        self.addUserAsNotificationRecipient(post: post, userUID: commenterUID)
                     }
                 }
             }
@@ -482,28 +450,15 @@ class CommentTableView: UITableView {
                     return
                 }
             }
-            self.addUserAsNotificationRecipient(post: post, userUID: commenterUID)
+            addUserAsNotificationRecipient(post: post, userUID: commenterUID)
         }
     }
     
     func addUserAsNotificationRecipient(post: Post, userUID: String) {
-        guard let documentID = post.documentID else { return }
-        var collectionRef: CollectionReference
-        if post.isTopicPost {
-            if post.language == .en {
-                collectionRef = db.collection("Data").document("en").collection("topicPosts")
-            } else {
-                collectionRef = db.collection("TopicPosts")
-            }
-        } else {
-            if post.language == .en {
-                collectionRef = db.collection("Data").document("en").collection("posts")
-            } else {
-                collectionRef = db.collection("Posts")
-            }
-        }
+        guard let documentID = post.documentID, userUID != "anonym" else { return }
         
-        let ref = collectionRef.document(documentID)
+        let ref = FirestoreReference.documentRef(post.isTopicPost ? .topicPosts : .posts, documentID: documentID, language: post.language)
+        
         ref.updateData([
             "notificationRecipients" : FieldValue.arrayUnion([userUID])
         ])
@@ -518,22 +473,8 @@ class CommentTableView: UITableView {
     
     func removeUserAsNotificationRecipient(post: Post, userUID: String) {
         guard let documentID = post.documentID else { return }
-        var collectionRef: CollectionReference
-        if post.isTopicPost {
-            if post.language == .en {
-                collectionRef = db.collection("Data").document("en").collection("topicPosts")
-            } else {
-                collectionRef = db.collection("TopicPosts")
-            }
-        } else {
-            if post.language == .en {
-                collectionRef = db.collection("Data").document("en").collection("posts")
-            } else {
-                collectionRef = db.collection("Posts")
-            }
-        }
+        let ref = FirestoreReference.documentRef(post.isTopicPost ? .topicPosts : .posts, documentID: documentID, language: post.language)
         
-        let ref = collectionRef.document(documentID)
         ref.updateData([
             "notificationRecipients" : FieldValue.arrayRemove([userUID])
         ])
@@ -544,15 +485,12 @@ class CommentTableView: UITableView {
     
     func setNotification(post: Post, userID: String, bodyString: String, displayName: String, forOP: Bool) {
         guard let documentID = post.documentID else { return }
-        let notificationRef = db.collection("Users").document(userID).collection("notifications").document()
         
-        var notificationData: [String: Any] = ["type": "comment", "comment": bodyString, "name": displayName, "postID": documentID, "isTopicPost": post.isTopicPost, "forOP": forOP]   //"forOP" changes the message in the notification: "You got a comment: " vs "X-Post got a comment"
+        let notificationRef = FirestoreReference.documentRef(.users, documentID: nil, collectionReferences: FirestoreCollectionReference(document: userID, collection: "notifications"))
         
-        if post.language == .en {
-            notificationData["language"] = "en"
-        }
-        
-        notificationRef.setData(notificationData) { (err) in
+        var notificationData: [String: Any] = ["type": "comment", "comment": bodyString, "name": displayName, "postID": documentID, "isTopicPost": post.isTopicPost, "forOP": forOP, "language": post.language.rawValue]   //"forOP" changes the message in the notification: "You got a comment: " vs "X-Post got a comment"
+                
+        notificationRef.setData(notificationData) { err in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
@@ -678,7 +616,7 @@ extension CommentTableView: CommentTableViewHeaderDelegate, CommentCellDelegate 
     
     
     func switchChanged(isOn: Bool) {
-        if let userID = AuthenticationManager.shared.user?.uid, let post = post {
+        if let userID = AuthenticationManager.shared.userID, let post = post {
             if isOn {
                 self.addUserAsNotificationRecipient(post: post, userUID: userID)
             } else {

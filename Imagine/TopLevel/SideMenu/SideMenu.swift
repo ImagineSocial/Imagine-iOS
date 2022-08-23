@@ -224,7 +224,7 @@ class SideMenu: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
     
     @objc func deleteAllTapped() {
-        if let userID = AuthenticationManager.shared.user?.uid {
+        if let userID = AuthenticationManager.shared.userID {
             let ref = db.collection("Users").document(userID).collection("notifications").whereField("type", isEqualTo: "upvote")
             
             ref.getDocuments { (snap, err) in

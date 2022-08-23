@@ -53,7 +53,7 @@ class FirestoreRequest {
             return
         }
         
-        guard let userID = AuthenticationManager.shared.user?.uid else {
+        guard let userID = AuthenticationManager.shared.userID else {
             completion(nil)
             return
         }
@@ -95,7 +95,7 @@ class FirestoreRequest {
     
     func getFollowedTopicIDs(completion: @escaping ([String]?) -> Void) {
         var topicIDs = [String]()
-        guard let userID = AuthenticationManager.shared.user?.uid else {
+        guard let userID = AuthenticationManager.shared.userID else {
             completion(nil)
             return
         }

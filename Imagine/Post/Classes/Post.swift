@@ -118,7 +118,7 @@ class Post: Codable {
     }
     
     func savePost(completion: @escaping (Bool) -> Void) {
-        guard let userID = AuthenticationManager.shared.user?.uid, let documentID = self.documentID else {
+        guard let userID = AuthenticationManager.shared.userID, let documentID = self.documentID else {
             completion(false)
             return
         }

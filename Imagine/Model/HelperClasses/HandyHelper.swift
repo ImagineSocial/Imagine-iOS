@@ -304,7 +304,7 @@ class HandyHelper {
     }
     
     func saveFCMToken(token:String) {
-        if let userID = AuthenticationManager.shared.user?.uid {
+        if let userID = AuthenticationManager.shared.userID {
             let userRef = db.collection("Users").document(userID)
             
             userRef.setData(["fcmToken": token], mergeFields: ["fcmToken"])
@@ -318,7 +318,7 @@ class HandyHelper {
             return
         }
         
-        if let userID = AuthenticationManager.shared.user?.uid {
+        if let userID = AuthenticationManager.shared.userID {
             
             switch type {
             case .message:
@@ -405,7 +405,7 @@ class HandyHelper {
     }
     
     func setLikeOnComment(comment: Comment, answerToComment: Comment?) {
-        if let userID = AuthenticationManager.shared.user?.uid{
+        if let userID = AuthenticationManager.shared.userID {
             let ref = getCommentRef(comment: comment, answerToComment: answerToComment)
             
             ref.updateData([
