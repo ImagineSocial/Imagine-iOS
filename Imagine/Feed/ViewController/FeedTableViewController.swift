@@ -442,21 +442,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             performSegue(withIdentifier: "toSavedPosts", sender: nil)
         case .toEULA:
             performSegue(withIdentifier: "toEULASegue", sender: nil)
-        case .toPost:
-            if let comment = comment{
-                let post = Post(type: .picture, title: "", createdAt: Date())
-                post.documentID = comment.sectionItemID
-                post.isTopicPost = comment.isTopicPost
-                post.language = comment.sectionItemLanguage
-                post.newUpvotes = comment.upvotes
-
-                if let userID = AuthenticationManager.shared.user?.uid {     //Only works if you get notifications for your own posts
-                    post.user = User(userID: userID)
-                }
-                
-                performSegue(withIdentifier: "showPost", sender: post)
-            }
-        case .toComment:
+        case .toPost, .toComment:
             if let comment = comment {
                 let post = Post(type: .picture, title: "", createdAt: Date())
                 post.documentID = comment.sectionItemID
@@ -469,7 +455,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                 performSegue(withIdentifier: "showPost", sender: post)
             }
         default:
-            print("nothing happens")
+            break
         }
         
     }
@@ -774,18 +760,6 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         
         EasyTipView.globalPreferences = preferences
     }
-    
-//    func changePostLocation(post: Post) {
-//        let dataDictionary: [String: Any] = ["title": post.title, "description": post.description, "createTime": Timestamp(date: Date()), "originalPoster": post.user.userUID, "thanksCount":post.votes.thanks, "wowCount":post.votes.thanks, "haCount":post.votes.thanks, "niceCount":post.votes.thanks, "type": "picture", "report": "normal", "imageURL": post.imageURL, "imageHeight": post.mediaHeight, "imageWidth": post.mediaWidth]
-//
-//        let ref = db.collection("Posts").document()
-//
-//        ref.setData(dataDictionary) { (err) in
-//            if let error = err {
-//                print("error:", error.localizedDescription)
-//            }
-//        }
-//    }
 }
 
 

@@ -35,6 +35,7 @@
 "discussion" = "Diskussion";
 "discussions" = "Diskussionen";
 "yesterday" = "Gestern";
+"weAreSorry" = "Tut uns Leid";
 
 
 
@@ -121,7 +122,10 @@
 "password_placeholder" = "Passwort";
 "repeat_password_placeholder" = "Passwort wiederholen";
 
-//Login
+// MARK: - Login
+
+"cancelSignUpConfirmation" = "Anmeldung abbrechen";
+"noSignUpsAlert" = "Es gibt mehr Sign-Up Anfragen, als wir bearbeiten können. Um die App und unsere Datenbank zu schützen, pausieren wir das Sign-Up/Log-In für den Moment. Bitte versuchen Sie es später noch einmal. Vielen Dank für Ihre Unterstützung!";
 "login_password" = "Nun noch dein Kennwort und wir können loslegen!";
 "login_error_email" = "Deine eingegebene Email-Adresse ist nicht korrekt";
 "login_error_password" = "Dein Passwort ist nicht korrekt, versuche es erneut:";

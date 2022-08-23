@@ -49,6 +49,9 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var leadingNameLabelToSuperviewConstraint: NSLayoutConstraint!
     @IBOutlet weak var leadingNameLabelToProfilePictureConstraint: NSLayoutConstraint!
     
+    // CommentTableView Constraints
+    @IBOutlet weak var commentTableViewTopToDescriptionBottomConstraint: NSLayoutConstraint!
+    
     
     
     // MARK: - Variables
@@ -196,7 +199,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         feedLikeView.commentCountLabel.text = String(post.commentCount)
         
         if let communityID = post.communityID {
-            if let community = post.community {
+            if post.community != nil {
                 addLinkedCommunityView()
                 setCommunity()
             } else {
@@ -474,8 +477,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         if post.user == nil && !post.anonym {
 
             let votes = post.newUpvotes
-            FirestoreManager.getPostsFromIDs(posts: [post]) { posts in
-                guard let posts = posts, let post = posts.first else {
+            FirestoreManager.getSinglePostFromID(post: post) { post in
+                guard let post = post else {
                     return
                 }
                 
@@ -485,7 +488,6 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
                 if post.user == nil && !post.anonym {
                     self.loadUser(post: post)
                 }
-                
             }
         } else {
             self.loadPost()
@@ -513,12 +515,15 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         let linkedCommunityViewWidth = voteButtonWidth*3+30
         
         let buttonHeight: CGFloat = 35
+        let padding: CGFloat = 15
         
         contentView.addSubview(linkedCommunityView)
-        linkedCommunityView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
-        linkedCommunityView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 15).isActive = true
+        linkedCommunityView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -padding).isActive = true
+        linkedCommunityView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: padding).isActive = true
         linkedCommunityView.widthAnchor.constraint(equalToConstant: linkedCommunityViewWidth).isActive = true
         linkedCommunityView.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
+        
+        commentTableViewTopToDescriptionBottomConstraint.constant = buttonHeight + padding
     }
     
     func linkedCommunityTapped() {

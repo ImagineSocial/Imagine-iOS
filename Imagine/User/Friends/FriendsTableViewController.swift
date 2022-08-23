@@ -31,7 +31,7 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
         
-        tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: "NibBlankCell")
+        tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: BlankContentCell.identifier)
         
         getFriends()
         self.view.activityStartAnimating()
@@ -143,7 +143,7 @@ class FriendsTableViewController: UITableViewController, RequestDelegate {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 1 && sections[1].friends.count == 0 {   // No friends yet
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "NibBlankCell", for: indexPath) as? BlankContentCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: BlankContentCell.identifier, for: indexPath) as? BlankContentCell {
                 
                 cell.type = BlankCellType.friends
                 

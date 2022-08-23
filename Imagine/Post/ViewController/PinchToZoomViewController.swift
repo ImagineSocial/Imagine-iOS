@@ -37,8 +37,8 @@ class PinchToZoomViewController: UIViewController, UIScrollViewDelegate {
         
         imageView.contentMode = .scaleAspectFit
         
-        showPicture()
         setUpScrollViewToZoom()
+        showPicture()
     }
     
     func setUpScrollViewToZoom() {

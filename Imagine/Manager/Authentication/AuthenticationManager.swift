@@ -17,10 +17,12 @@ class AuthenticationManager {
     var userFetchCompleted = false
     
     var user: User?
-    var userID = Auth.auth().currentUser?.uid
+    var userID: String? {
+        user?.uid
+    }
     
     var isLoggedIn: Bool {
-        user != nil
+        Auth.auth().currentUser != nil
     }
     
     init() {
@@ -50,7 +52,7 @@ class AuthenticationManager {
             completion(false)
             return
         }
-        let userRef = FirestoreRequest.shared.db.collection("Users").document(userID)
+        let userRef = FirestoreReference.documentRef(.users, documentID: userID)
         
         userRef.getDocument { (document, err) in
             if let error = err {

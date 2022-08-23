@@ -36,6 +36,7 @@
 "discussion" = "Discussion";
 "discussions" = "Discussions";
 "yesterday" = "Yesterday";
+"weAreSorry" = "We're Sorry";
 
  
  
@@ -143,8 +144,10 @@
  
  
 
-//Login
+// MARK: - LoginVC
 
+"cancelSignUpConfirmation" = "Cancel registration";
+"noSignUpsAlert" = "There are more Sign-Up requests, than we can handle. In order to protect the app and our database, we pause the Sign-Up/Log-In for now. Please try later again. Thanks for your support!";
 "login_password" = "Now just enter your password and we’re ready to go!";
 "login_error_email" = "The email address you entered doesn’t seem to be correct";
 "login_error_password" = "Wrong password, please try again:";

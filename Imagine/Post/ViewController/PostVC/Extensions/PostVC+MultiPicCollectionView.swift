@@ -64,12 +64,13 @@ extension PostViewController: UICollectionViewDelegate, UICollectionViewDataSour
         return 0
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let image = imageURLs[indexPath.item]
-        
-        let pinchVC = PinchToZoomViewController()
-        pinchVC.imageURL = image
-        pinchVC.hidesBottomBarWhenPushed = true
-        self.navigationController?.pushViewController(pinchVC, animated: true)
-    }
+    // TODO: The ZoomVC has to be fixed first
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        let image = imageURLs[indexPath.item]
+//
+//        let pinchVC = PinchToZoomViewController()
+//        pinchVC.imageURL = image
+//        pinchVC.hidesBottomBarWhenPushed = true
+//        self.navigationController?.pushViewController(pinchVC, animated: true)
+//    }
 }

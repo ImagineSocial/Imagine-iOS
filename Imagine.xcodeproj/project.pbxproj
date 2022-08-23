@@ -69,6 +69,8 @@
 		02B7C30D2792135D003384FA /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B7C30C2792135D003384FA /* AuthenticationManager.swift */; };
 		02B7C30F2792286C003384FA /* NewPostVC+Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B7C30E2792286C003384FA /* NewPostVC+Delegate.swift */; };
 		02BF874628562B1900DE1361 /* FirestoreManager+Fetch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02BF874528562B1900DE1361 /* FirestoreManager+Fetch.swift */; };
+		02D5FCD828B3D1D400A6ACCC /* LogInFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D5FCD728B3D1D400A6ACCC /* LogInFrame.swift */; };
+		02D5FCDA28B3D1EB00A6ACCC /* SignUpFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D5FCD928B3D1EB00A6ACCC /* SignUpFrame.swift */; };
 		02EBEFE22635B40F00373C45 /* FeedLikeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02EBEFE12635B40F00373C45 /* FeedLikeView.swift */; };
 		02EBEFE52635B41D00373C45 /* FeedLikeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 02EBEFE42635B41D00373C45 /* FeedLikeView.xib */; };
 		02FB9C0828452F3C00124EAC /* FirestoreReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FB9C0728452F3C00124EAC /* FirestoreReference.swift */; };
@@ -222,7 +224,7 @@
 		E997F761248CE90300BF7F88 /* SurveyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E997F760248CE90200BF7F88 /* SurveyCell.xib */; };
 		E997F763248CF21B00BF7F88 /* UserTableViewHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = E997F762248CF21B00BF7F88 /* UserTableViewHeader.xib */; };
 		E9A02AA32326580B000DAB69 /* BlankContentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E9A02AA22326580B000DAB69 /* BlankContentCell.xib */; };
-		E9A02AA523265822000DAB69 /* BlankContentFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A02AA423265822000DAB69 /* BlankContentFile.swift */; };
+		E9A02AA523265822000DAB69 /* BlankContentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A02AA423265822000DAB69 /* BlankContentCell.swift */; };
 		E9A02AA7232D3181000DAB69 /* AddFactTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A02AA6232D3181000DAB69 /* AddFactTableViewCell.swift */; };
 		E9A02AA9232D3640000DAB69 /* Argument.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A02AA8232D3640000DAB69 /* Argument.swift */; };
 		E9A02AAB232D3B02000DAB69 /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A02AAA232D3B02000DAB69 /* Community.swift */; };
@@ -375,6 +377,8 @@
 		02B7C30C2792135D003384FA /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
 		02B7C30E2792286C003384FA /* NewPostVC+Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewPostVC+Delegate.swift"; sourceTree = "<group>"; };
 		02BF874528562B1900DE1361 /* FirestoreManager+Fetch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FirestoreManager+Fetch.swift"; sourceTree = "<group>"; };
+		02D5FCD728B3D1D400A6ACCC /* LogInFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInFrame.swift; sourceTree = "<group>"; };
+		02D5FCD928B3D1EB00A6ACCC /* SignUpFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpFrame.swift; sourceTree = "<group>"; };
 		02EBEFE12635B40F00373C45 /* FeedLikeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLikeView.swift; sourceTree = "<group>"; };
 		02EBEFE42635B41D00373C45 /* FeedLikeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FeedLikeView.xib; sourceTree = "<group>"; };
 		02FB9C0728452F3C00124EAC /* FirestoreReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreReference.swift; sourceTree = "<group>"; };
@@ -537,7 +541,7 @@
 		E997F760248CE90200BF7F88 /* SurveyCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SurveyCell.xib; sourceTree = "<group>"; };
 		E997F762248CF21B00BF7F88 /* UserTableViewHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UserTableViewHeader.xib; sourceTree = "<group>"; };
 		E9A02AA22326580B000DAB69 /* BlankContentCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BlankContentCell.xib; sourceTree = "<group>"; };
-		E9A02AA423265822000DAB69 /* BlankContentFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlankContentFile.swift; sourceTree = "<group>"; };
+		E9A02AA423265822000DAB69 /* BlankContentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlankContentCell.swift; sourceTree = "<group>"; };
 		E9A02AA6232D3181000DAB69 /* AddFactTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFactTableViewCell.swift; sourceTree = "<group>"; };
 		E9A02AA8232D3640000DAB69 /* Argument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Argument.swift; sourceTree = "<group>"; };
 		E9A02AAA232D3B02000DAB69 /* Community.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
@@ -895,19 +899,19 @@
 		028624182752A3D20031AD5E /* User */ = {
 			isa = PBXGroup;
 			children = (
-				028624192752A3E50031AD5E /* ViewController */,
+				02D5FCD628B3D1A500A6ACCC /* Login */,
+				028624192752A3E50031AD5E /* Friends */,
 				027BD037289ACBE0009E985E /* Classes */,
 			);
 			path = User;
 			sourceTree = "<group>";
 		};
-		028624192752A3E50031AD5E /* ViewController */ = {
+		028624192752A3E50031AD5E /* Friends */ = {
 			isa = PBXGroup;
 			children = (
-				E971B8DB2247A48C001BBC1E /* LogInViewController.swift */,
 				E98B22F522CB5F26000F965F /* FriendsTableViewController.swift */,
 			);
-			path = ViewController;
+			path = Friends;
 			sourceTree = "<group>";
 		};
 		0286241B2752A4680031AD5E /* Community */ = {
@@ -1162,6 +1166,24 @@
 				02B7C30C2792135D003384FA /* AuthenticationManager.swift */,
 			);
 			path = Authentication;
+			sourceTree = "<group>";
+		};
+		02D5FCD628B3D1A500A6ACCC /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				E971B8DB2247A48C001BBC1E /* LogInViewController.swift */,
+				02D5FCDB28B3D20100A6ACCC /* Enums */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		02D5FCDB28B3D20100A6ACCC /* Enums */ = {
+			isa = PBXGroup;
+			children = (
+				02D5FCD728B3D1D400A6ACCC /* LogInFrame.swift */,
+				02D5FCD928B3D1EB00A6ACCC /* SignUpFrame.swift */,
+			);
+			path = Enums;
 			sourceTree = "<group>";
 		};
 		02FB9C062843941100124EAC /* Extensions */ = {
@@ -1625,7 +1647,7 @@
 			isa = PBXGroup;
 			children = (
 				E9A02AA22326580B000DAB69 /* BlankContentCell.xib */,
-				E9A02AA423265822000DAB69 /* BlankContentFile.swift */,
+				E9A02AA423265822000DAB69 /* BlankContentCell.swift */,
 				E940D8D3249676AA00018EF3 /* PlaceHolderCell.xib */,
 			);
 			path = PlaceHolderCells;
@@ -1947,8 +1969,10 @@
 				E9C6C23D22981C0B003F0F16 /* ArgumentTableVC.swift in Sources */,
 				029F7B3E273053680029254A /* UITextView.swift in Sources */,
 				E96CE89022941A1F00BACD3B /* ProArgumentTableVC.swift in Sources */,
+				02D5FCD828B3D1D400A6ACCC /* LogInFrame.swift in Sources */,
 				E911EEF022DB157500EDD056 /* SettingsLauncher.swift in Sources */,
 				023797332789DDCB004DFAB9 /* NewPostLinkCell.swift in Sources */,
+				02D5FCDA28B3D1EB00A6ACCC /* SignUpFrame.swift in Sources */,
 				E96CE8982295A13B00BACD3B /* ArgumentCell.swift in Sources */,
 				E97C834823D0883000CE3D3C /* MaltesZentraleTableViewController.swift in Sources */,
 				0289957326FB4EEC007CAFB7 /* CommunityCollectionVC+CollectionView.swift in Sources */,
@@ -2048,7 +2072,7 @@
 				E9879A2524C2276B004B497F /* Comment.swift in Sources */,
 				E9F31DCD23F6D6D2001D5D25 /* FactCell.swift in Sources */,
 				E95E907C25EAB5DC00E7B9DB /* Link.swift in Sources */,
-				E9A02AA523265822000DAB69 /* BlankContentFile.swift in Sources */,
+				E9A02AA523265822000DAB69 /* BlankContentCell.swift in Sources */,
 				E97E902822464B4700BA0295 /* JobOfferingViewController.swift in Sources */,
 				E97FDFCA246C1A770049E1E4 /* FollowedTopicCell.swift in Sources */,
 				0212561827569F4000991E70 /* BaseStackView.swift in Sources */,

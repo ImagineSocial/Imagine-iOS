@@ -22,16 +22,14 @@ class SearchTableViewController: UITableViewController, UISearchControllerDelega
     var userResults: [User]?
     
     var searchController = UISearchController(searchResultsController: nil)
-    
-    let blankCellReuseIdentifier = "NibBlankCell"
-    
+        
     var customDelegate: CustomSearchViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tableView.register(SearchPostCell.self, forCellReuseIdentifier: "SearchPostCell")
-        tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: blankCellReuseIdentifier)
+        tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: BlankContentCell.identifier)
                 
 //        setUpSearchController()
     }
@@ -95,7 +93,7 @@ class SearchTableViewController: UITableViewController, UISearchControllerDelega
 //                return cell
 //            }
         } else {
-            if let cell = tableView.dequeueReusableCell(withIdentifier: blankCellReuseIdentifier, for: indexPath) as? BlankContentCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: BlankContentCell.identifier, for: indexPath) as? BlankContentCell {
                 
                 cell.type = .search
                 cell.contentView.backgroundColor = self.tableView.backgroundColor

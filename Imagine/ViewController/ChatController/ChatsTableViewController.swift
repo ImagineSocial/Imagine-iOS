@@ -27,7 +27,7 @@ class ChatsTableViewController: UITableViewController {
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.view.backgroundColor = .systemBackground
         
-        tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: "NibBlankCell")
+        tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: BlankContentCell.identifier)
         
         getChats()
     }
@@ -267,7 +267,7 @@ class ChatsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if chatsList.count == 0 {
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "NibBlankCell", for: indexPath) as? BlankContentCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: BlankContentCell.identifier, for: indexPath) as? BlankContentCell {
                 
                 cell.type = BlankCellType.chat
                 cell.contentView.backgroundColor = self.tableView.backgroundColor
