@@ -7,133 +7,134 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 class CommunityHelper {
     
-    static let shared = CommunityHelper()
     
-    //MARK: - Variables
-    
-    let db = FirestoreRequest.shared.db
-    let handyHelper = HandyHelper.shared
-    let user = Auth.auth().currentUser
-    
-    //MARK:- Get Community
-    
-    func getCommunity(currentUser: Firebase.User?, documentID: String, data: [String: Any]) -> Community? {
+    /// Fetches the first eight communities of their display option
+    static func getMainCommunities(for displayOption: DisplayOption, language: Language? = nil, completion: @escaping ([Community]?) -> Void) {
+        let query = FirestoreReference.collectionRef(.communities, queries: FirestoreQuery(field: "displayOption", equalTo: displayOption.rawValue), FirestoreQuery(field: "popularity", limit: 8), language: language)
         
-        guard let name = data["name"] as? String,
-            let createTimestamp = data["createDate"] as? Timestamp,
-            let OP = data["OP"] as? String
-            else {
-                print("Der will nicht: \(documentID), mit den Daten: \(data)")
-                return nil
-        }
-        
-        let stringDate = self.handyHelper.getStringDate(timestamp: createTimestamp)
-        
-        let community = Community()
-        community.documentID = documentID
-        community.title = name
-        community.createDate = stringDate
-        community.moderators.append(OP)  //Later there will be more moderators, so it is an array
-        
-        if let postCount = data["postCount"] as? Int {
-            community.postCount = postCount
-        }
-        
-        if let follower = data["follower"] as? [String] {
-            community.followerCount = follower.count
-            if let user = currentUser {
-                for userID in follower {
-                    if userID == user.uid {
-                        community.beingFollowed = true
-                    }
-                }
+        FirestoreManager.shared.decode(query: query) { (result: Result<[Community], Error>) in
+            switch result {
+            case .success(var communities):
+                communities = communities.sorted(by: { $0.popularity ?? 0 > $1.popularity ?? 0 })
+                completion(communities)
+            case .failure(let error):
+                print("We have an error fetching the main communities: \(error.localizedDescription)")
+                completion(nil)
             }
         }
-        
-        if let language = data["language"] as? String {
-            if language == "en" {
-                community.language = .english
-            }
-        }
-        
-        if let imageURL = data["imageURL"] as? String { // Not mandatory (in fact not selectable)
-            community.imageURL = imageURL
-        }
-        if let description = data["description"] as? String {   // Was introduced later on
-            community.description = description
-        }
-        if let displayType = data["displayOption"] as? String { // Was introduced later on
-            community.displayOption = self.getDisplayType(string: displayType)
-        }
-        
-        if let displayNames = data["factDisplayNames"] as? String {
-            community.factDisplayNames = self.getDisplayNames(string: displayNames)
-        }
-        
-        if let isAddOnFirstView = data["isAddOnFirstView"] as? Bool {
-            community.isAddOnFirstView = isAddOnFirstView
-        }
-        
-        community.fetchComplete = true
-        return community
     }
     
-    func loadCommunity(fact: Community, loadedFact: @escaping (Community?) -> Void) {
+    static func getAllCommunities(for displayOption: DisplayOption, language: Language? = nil, completion: @escaping ([Community]?) -> Void) {
+        let query = FirestoreReference.collectionRef(.communities, queries: FirestoreQuery(field: "displayOption", equalTo: displayOption.rawValue), language: language)
         
-        if fact.documentID == "" {
-            loadedFact(nil)
+        FirestoreManager.shared.decode(query: query) { (result: Result<[Community], Error>) in
+            switch result {
+            case .success(let communities):
+                completion(communities)
+            case .failure(let error):
+                print("We have an error fetching the main communities: \(error.localizedDescription)")
+                completion(nil)
+            }
         }
+    }
+    
+    static func getAllCommunities(language: Language? = nil, completion: @escaping ([Community]?) -> Void) {
+        let query = FirestoreReference.collectionRef(.communities, language: language)
         
-        var collectionRef: CollectionReference!
-        if fact.language == .english {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
+        FirestoreManager.shared.decode(query: query) { (result: Result<[Community], Error>) in
+            switch result {
+            case .success(let communities):
+                completion(communities)
+            case .failure(let error):
+                print("We have an error fetching the main communities: \(error.localizedDescription)")
+                completion(nil)
+            }
         }
-        let ref = collectionRef.document(fact.documentID)
+    }
+    
+    
+    static func getCommunity(withID id: String, language: Language? = nil, completion: @escaping (Community?) -> Void) {
+        let reference = FirestoreReference.documentRef(.communities, documentID: id, language: language)
         
-        
-        ref.getDocument { [weak self] (snap, err) in
-            if let error = err {
+        FirestoreManager.shared.decodeSingle(reference: reference) { (result: Result<Community, Error>) in
+            switch result {
+            case .success(let community):
+                completion(community)
+            case .failure(let error):
                 print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    if let self = self {
-                        if let data = snap.data() {
-                            if let fact = self.getCommunity(currentUser: self.user, documentID: snap.documentID, data: data) {
-                                loadedFact(fact)
-                            } else {
-                                loadedFact(nil)
-                            }
-                        }
-                    }
-                }
+                completion(nil)
             }
         }
     }
     
-    func getDisplayType(string: String) -> DisplayOption {
-        switch string {
-        case "topic":
-            return .topic
-        default:
-            return .discussion
+    
+}
+
+// MARK: - FollowedCommunities
+extension CommunityHelper {
+    
+    static func getFollowedCommunities(from userID: String, completion: @escaping ([Community]?) -> Void) {
+        guard let userID = AuthenticationManager.shared.userID else {
+            completion(nil)
+            return
+        }
+        
+        getFollowedTopicData(from: userID) { postData in
+            guard let postData = postData, !postData.isEmpty else {
+                completion(nil)
+                return
+            }
+            
+            loadFollowedTopics(postData: postData, completion: completion)
         }
     }
     
-    func getDisplayNames(string: String) -> FactDisplayName {
-        switch string {
-        case "confirmDoubt":
-            return .confirmDoubt
-        case "advantage":
-            return .advantageDisadvantage
-        default:
-            return .proContra
+    static private func getFollowedTopicData(from userID: String, completion: @escaping ([PostData]?) -> Void) {
+        let topicRef = FirestoreReference.collectionRef(.users, collectionReferences: FirestoreCollectionReference(document: userID, collection: "topics"))
+        
+        FirestoreManager.shared.decode(query: topicRef) { (result: Result<[PostData], Error>) in
+            switch result {
+            case .success(let postData):
+                completion(postData)
+            case .failure(let error):
+                print("We have an error fetching the post data for the followed topics: \(error.localizedDescription)")
+                completion(nil)
+            }
         }
     }
     
+    static private func loadFollowedTopics(postData: [PostData], completion: @escaping ([Community]?) -> Void) {
+        var failureIndex = 0
+        var communities = [Community]()
+        
+        postData.enumerated().forEach { index, postDate in
+            guard let id = postDate.id else {
+                failureIndex += 1
+                checkIfDone()
+                return
+            }
+            
+            getCommunity(withID: id, language: postDate.language) { community in
+                guard let community = community else {
+                    failureIndex += 1
+                    checkIfDone()
+                    return
+                }
+
+                communities.append(community)
+                checkIfDone()
+            }
+        }
+        
+        func checkIfDone() {
+            if (communities.count + failureIndex) == postData.count {
+                communities = communities.sorted { $0.title ?? "" < $1.title ?? "" }
+                completion(communities)
+            }
+        }
+    }
 }

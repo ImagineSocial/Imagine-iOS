@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAnalytics
 
 protocol PageViewHeaderDelegate: class {
     func childScrollViewScrolled(offset: CGFloat)
@@ -128,26 +126,30 @@ class CommunityPageVC: UIPageViewController {
         
         // Set the VCs and declare the firstVC
         
-        if community.isAddOnFirstView {
-            self.presentedVC = 0
-            self.headerView.segmentedControlView.segmentedControlChanged()
+        switch community.initialView {
+        case .addOn:
+            presentedVC = 0
+            headerView.segmentedControlView.segmentedControlChanged()
             
             if let firstVC = argumentVCs[0] as? AddOnCollectionViewController {
                 setViewControllers([firstVC], direction: .forward, animated: true, completion: nil)
             }
-        } else {
-            self.presentedVC = 1
-            self.headerView.segmentedControlView.segmentedControl.selectedSegmentIndex = 1
-            self.headerView.segmentedControlView.segmentedControlChanged()
             
-            if community.displayOption == .discussion {
-                if let secondVC = argumentVCs[1] as? DiscussionParentVC {
-                    setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
-                }
-            } else {
-                if let secondVC = argumentVCs[1] as? CommunityFeedTableVC {
-                    setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
-                }
+        case .feed:
+            presentedVC = (community.displayOption == .discussion) ? 2 : 1
+            headerView.segmentedControlView.segmentedControl.selectedSegmentIndex = 1
+            headerView.segmentedControlView.segmentedControlChanged()
+            
+            if let feedVC = argumentVCs[presentedVC] as? CommunityFeedTableVC {
+                setViewControllers([feedVC], direction: .forward, animated: true, completion: nil)
+            }
+        case .discussion:
+            presentedVC = 1
+            headerView.segmentedControlView.segmentedControl.selectedSegmentIndex = 1
+            headerView.segmentedControlView.segmentedControlChanged()
+            
+            if let secondVC = argumentVCs[1] as? DiscussionParentVC {
+                setViewControllers([secondVC], direction: .forward, animated: true, completion: nil)
             }
         }
     }
@@ -168,8 +170,8 @@ class CommunityPageVC: UIPageViewController {
         let shareButton = getShareTopicButton()
         let shareBarButton = UIBarButtonItem(customView: shareButton)
         
-        if let user = Auth.auth().currentUser {
-            for mod in community.moderators {
+        if let user = AuthenticationManager.shared.user, let moderators = community.moderators {
+            for mod in moderators {
                 if mod == user.uid {
                     self.settingButton = getSettingButton()
                     let settingBarButton = UIBarButtonItem(customView: self.settingButton)
@@ -226,12 +228,12 @@ class CommunityPageVC: UIPageViewController {
             if let navCon = segue.destination as? UINavigationController, let newPostVC = navCon.topViewController as? NewPostVC {
                 newPostVC.selectedFact(community: community, isViewAlreadyLoaded: false)
                 newPostVC.comingFromPostsOfFact = true
-                newPostVC.postOnlyInTopic = true
+                newPostVC.isTopicPost = true
                 newPostVC.newInstanceDelegate = self
             }
         case  "shareTopicSegue":
             if let navVC = segue.destination as? UINavigationController, let vc = navVC.topViewController as? NewCommunityItemTableVC {
-                vc.fact = community
+                vc.community = community
                 vc.delegate = self
                 vc.new = .shareTopic
             }
@@ -318,11 +320,11 @@ extension CommunityPageVC: PageViewHeaderDelegate, CommunityHeaderDelegate, NewF
             if let vc = self.argumentVCs[1] as? CommunityFeedTableVC {
                 vc.posts.removeAll()
                 vc.tableView.reloadData()
-                vc.getPosts(getMore: false)
+                vc.getPosts()
             } else if let vc = self.argumentVCs[2] as? CommunityFeedTableVC {
                 vc.posts.removeAll()
                 vc.tableView.reloadData()
-                vc.getPosts(getMore: false)
+                vc.getPosts()
             }
         }
     }

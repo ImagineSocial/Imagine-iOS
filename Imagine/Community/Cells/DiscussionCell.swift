@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 class DiscussionCell: BaseCollectionViewCell {
     
@@ -47,7 +47,7 @@ class DiscussionCell: BaseCollectionViewCell {
             
             self.getArguments(community: community)
             
-            if let url = URL(string: community.imageURL) {
+            if let imageURL = community.imageURL, let url = URL(string: imageURL) {
                 topicImageView.sd_setImage(with: url, completed: nil)
             } else {
                 topicImageView.image = UIImage(named: "default-community")
@@ -66,20 +66,12 @@ class DiscussionCell: BaseCollectionViewCell {
     }
     
     func getArguments(community: Community) {
-        if community.documentID == "" { return }
+        guard let communityID = community.id else { return }
         
-        var collectionRef: CollectionReference!
+        let argumentReference = FirestoreCollectionReference(document: communityID, collection: "arguments")
+        let proReference = FirestoreReference.collectionRef(.communities, collectionReferences: argumentReference, queries: FirestoreQuery(field: "proOrContra", equalTo: "pro"), FirestoreQuery(field: "upvotes", limit: 1))
         
-        if community.language == .english {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        
-        let ref = collectionRef.document(community.documentID).collection("arguments")
-        
-        let proRef = ref.whereField("proOrContra", isEqualTo: "pro").order(by: "upvotes", descending: true).limit(to: 1)
-        proRef.getDocuments { (snap, err) in
+        proReference.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
@@ -89,8 +81,9 @@ class DiscussionCell: BaseCollectionViewCell {
             }
         }
         
-        let contraRef = ref.whereField("proOrContra", isEqualTo: "contra").order(by: "upvotes", descending: true).limit(to: 1)
-        contraRef.getDocuments { (snap, err) in
+        let contraReference = FirestoreReference.collectionRef(.communities, collectionReferences: argumentReference, queries: FirestoreQuery(field: "proOrContra", equalTo: "pro"), FirestoreQuery(field: "upvotes", limit: 1))
+        
+        contraReference.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
@@ -99,7 +92,6 @@ class DiscussionCell: BaseCollectionViewCell {
                 }
             }
         }
-        
     }
     
     func addArgumentFromSnap(snapshot: QuerySnapshot) {

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 class VisionExample {
     var description = ""
@@ -49,8 +49,8 @@ class CreativeSpaceIntroViewController: UIViewController {
     
     func getData() {
         var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
-        if language == .english {
+        let language = LanguageSelection.language
+        if language == .en {
             collectionRef = db.collection("Data").document("en").collection("topTopicData")
         } else {
             collectionRef = db.collection("TopTopicData")

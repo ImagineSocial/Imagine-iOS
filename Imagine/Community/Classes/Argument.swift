@@ -9,7 +9,7 @@
 import UIKit
 
 
-class Argument {
+class Argument: Codable {
     var source:[String] = []
     var proOrContra = ""    // should be enum
     var title = ""

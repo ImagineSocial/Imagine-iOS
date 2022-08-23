@@ -7,10 +7,7 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
-import FirebaseAuth
-import FirebaseAnalytics
 import SDWebImage
 import AVKit
 
@@ -28,26 +25,27 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
     
     var posts = [Post]()
     let handyHelper = HandyHelper.shared
-    var firestoreRequest = FirestoreRequest()
+    var firestoreManager = FirestoreManager()
     let db = FirestoreRequest.shared.db
     
-    var sortOptionsShown = false
-    var sortBy: PostSortOptions = .dateDecreasing
+    var morePostsAvailable = true
     
-    let imageCache = NSCache<NSString, UIImage>()
-    
-    var fetchesPosts = true
+    var fetchInProgress = false
     var noPostsType: BlankCellType = .savedPicture
     
     var fetchRequested = false
-    
-    let surveyCellIdentifier = "SurveyCell"
-    let musicCellIdentifier = "MusicCell"
-    let singleTopicCellIdentifier = "FeedSingleTopicCell"
-    
+        
     var isOwnProfile = false    //to change the button like count visibility
     
     var isFactSegueEnabled = true
+    
+    var placeholderAreShown: Bool {
+        if let firstPost = posts.first, firstPost.documentID == nil {
+            return true
+        }
+        
+        return false
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,17 +62,94 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
         tableView.separatorStyle = .none
         tableView.refreshControl = refreshControl
         
-        refreshControl.addTarget(self, action: #selector(getPosts(getMore:)), for: .valueChanged)   // getMore is false in this instance
+        refreshControl.addTarget(self, action: #selector(reloadFeed), for: .valueChanged)   // getMore is false in this instance
         refreshControl.attributedTitle = NSAttributedString(string: NSLocalizedString("one_moment_placeholder", comment: "one moment..."))
         
         self.tableView.addSubview(refreshControl)
     }
     
     
-    @objc func getPosts(getMore:Bool) {
-        
+    @objc func getPosts() {
     }
     
+    @objc func reloadFeed() {
+        posts.removeAll()
+        firestoreManager.reset()
+        setPlaceholders()
+        getPosts()
+    }
+    
+    
+    /// Show empty cells while fetching the posts
+    func setPlaceholders() {
+        var index = 0
+        
+        while index <= 4 {
+            let post = Post.standard
+            post.options = PostDesignOption(hideProfilePicture: true)
+            if index == 1 {
+                post.type = .picture
+                post.image = PostImage(url: "", height: 150, width: 200)
+            } else {
+                post.type = .thought
+            }
+            self.posts.append(post)
+            index += 1
+        }
+        
+        self.tableView.reloadData()
+    }
+    
+    func setPosts(_ posts: [Post]) {
+        self.posts.removeAll()  //to get the placeholder out
+        self.posts = posts
+        fetchInProgress = false
+        
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+                        
+            // remove ActivityIndicator incl. backgroundView
+            self.view.activityStopAnimating()
+
+            self.refreshControl?.endRefreshing()
+        }
+    }
+    
+    func appendPosts(_ posts: [Post]) {
+        
+        guard !posts.isEmpty else { return }
+        
+        if let firstPost = posts.first, firstPost.type == .nothingPostedYet, !self.posts.isEmpty, !placeholderAreShown {
+            // This means, we tried to fetch more posts, but got none. In this case the FirestoreManager returns a .nothingPostedYet Post which we catch here, if there is already more than one post, we dismiss this function. It just happens once, than the manager knows, that there are no post objects left.
+            view.activityStopAnimating()
+            return
+        }
+                
+        let indexes = posts.enumerated().map { index, _ in
+            IndexPath(row: self.posts.count + index, section: 0)
+        }
+        
+        DispatchQueue.main.async {
+            
+            self.tableView.beginUpdates()
+            self.posts.append(contentsOf: posts)
+            self.tableView.insertRows(at: indexes, with: .bottom)
+            self.tableView.endUpdates()
+            
+            self.fetchInProgress = false
+            
+            self.view.activityStopAnimating()
+            print("Jetzt haben wir \(self.posts.count)")
+        }
+    }
+    
+    func returnedPostsAreEmpty() {
+        if placeholderAreShown {
+            // Hide loading placeholder and show empty placeholder
+        } else {
+            morePostsAvailable = false
+        }
+    }
     
     //InfoView
     
@@ -114,151 +189,16 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
         
         if isReachable {
             if fetchRequested { // To automatically redo the requested task
-                self.getPosts(getMore: true)
+                self.getPosts()
             }
         } else {
             // Just in the FeedTableVC
         }
     }
     
-    //MARK: - TOP Sorting View
-    
-    let sortingStackView: UIStackView = {
-
-        return UIStackView() // FML
-    }()
     
     // Not in the extension because i could not override it and dont want performSegue in Usertableview
     func userTapped(post: Post) {
-    }
-    
-    let dismissSortButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(decreaseTopView), for: .touchUpInside)
-        
-        return button
-    }()
-    
-    @objc func sortDateDec() {
-        if sortBy == .dateDecreasing {
-            decreaseTopView()
-        } else {
-            sortBy = .dateDecreasing
-            getPosts(getMore: false)
-            decreaseTopView()
-        }
-    }
-    
-    @objc func sortDateAsc() {
-        if sortBy == .dateIncreasing {
-            decreaseTopView()
-        } else {
-            sortBy = .dateIncreasing
-            getPosts(getMore: false)
-            decreaseTopView()
-        }
-    }
-    
-    @objc func sortThanks() {
-        
-        if sortBy == .thanksCount {
-            decreaseTopView()
-        } else {
-            sortBy = .thanksCount
-            getPosts(getMore: false)
-            decreaseTopView()
-        }
-    }
-    
-    @objc func sortWow() {
-        if sortBy == .wowCount {
-            decreaseTopView()
-        } else {
-            sortBy = .wowCount
-            getPosts(getMore: false)
-            decreaseTopView()
-        }
-    }
-    
-    @objc func sortHa() {
-        if sortBy == .haCount {
-            decreaseTopView()
-        } else {
-            sortBy = .haCount
-            getPosts(getMore: false)
-            decreaseTopView()
-        }
-    }
-    
-    @objc func sortNice() {
-        if sortBy == .niceCount {
-            decreaseTopView()
-        } else {
-            sortBy = .niceCount
-            getPosts(getMore: false)
-            decreaseTopView()
-        }
-    }
-    
-    @objc func decreaseTopView() {
-        guard let headerView = tableView.tableHeaderView else {
-          return
-        }
-        
-        let size = CGSize(width: self.view.frame.width, height: 50)
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.sortingStackView.alpha = 0
-        }) { (_) in
-            self.sortingStackView.isHidden = true
-        }
-        
-        if headerView.frame.size.height != size.height {
-            headerView.frame.size.height = size.height
-        }
-        
-        self.tableView.tableHeaderView = headerView
-        
-        UIView.animate(withDuration: 0.7) {
-            self.view.layoutIfNeeded()
-        }
-    }
-    
-    func increaseTopView() {    // For sorting purpose
-        
-        guard let headerView = tableView.tableHeaderView else {
-          return
-        }
-        
-        headerView.addSubview(sortingStackView)
-        sortingStackView.topAnchor.constraint(equalTo: headerView.topAnchor, constant: 10).isActive = true
-        sortingStackView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 10).isActive = true
-        sortingStackView.widthAnchor.constraint(equalToConstant: 65).isActive = true
-        sortingStackView.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -10).isActive = true
-        sortingStackView.isHidden = false
-        
-        headerView.addSubview(dismissSortButton)
-        dismissSortButton.leadingAnchor.constraint(equalTo: sortingStackView.trailingAnchor).isActive = true
-        dismissSortButton.topAnchor.constraint(equalTo: headerView.topAnchor).isActive = true
-        dismissSortButton.bottomAnchor.constraint(equalTo: headerView.bottomAnchor).isActive = true
-        dismissSortButton.trailingAnchor.constraint(equalTo: headerView.trailingAnchor).isActive = true
-        
-        let size = CGSize(width: self.view.frame.width, height: 150)
-        
-        if headerView.frame.size.height != size.height {
-            headerView.frame.size.height = size.height
-        }
-        self.tableView.tableHeaderView = headerView
-        
-        UIView.animate(withDuration: 0.3, animations: {
-            self.view.layoutIfNeeded()
-        }) { (_) in
-            
-            UIView.animate(withDuration: 0.3) {
-                self.sortingStackView.alpha = 1
-            }
-        }
     }
 }
 
@@ -340,16 +280,6 @@ extension BaseFeedTableViewController: SurveyCellDelegate {
     }
 }
 
-extension BaseFeedTableViewController: TopTopicCellDelegate {
-    func owenTapped() {
-        performSegue(withIdentifier: "toCreativeSpace", sender: nil)
-    }
-    
-    func factOfTheWeekTapped(fact:Community) {
-        performSegue(withIdentifier: "toFactSegue", sender: fact)
-    }
-}
-
 extension BaseFeedTableViewController: PostCellDelegate {
     
     func collectionViewTapped(post: Post) {
@@ -363,7 +293,7 @@ extension BaseFeedTableViewController: PostCellDelegate {
     }
     
     func thanksTapped(post: Post) {
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
             handyHelper.updatePost(button: .thanks, post: post)
         } else {
             self.notLoggedInAlert()
@@ -371,7 +301,7 @@ extension BaseFeedTableViewController: PostCellDelegate {
     }
     
     func wowTapped(post: Post) {
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
         handyHelper.updatePost(button: .wow, post: post)
         } else {
             self.notLoggedInAlert()
@@ -379,7 +309,7 @@ extension BaseFeedTableViewController: PostCellDelegate {
     }
     
     func haTapped(post: Post) {
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
         handyHelper.updatePost(button: .ha, post: post)
         } else {
             self.notLoggedInAlert()
@@ -387,7 +317,7 @@ extension BaseFeedTableViewController: PostCellDelegate {
     }
     
     func niceTapped(post: Post) {
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
             handyHelper.updatePost(button: .nice, post: post)
         } else {
             self.notLoggedInAlert()
@@ -427,20 +357,18 @@ extension BaseFeedTableViewController {
     // MARK: - ScrollViewDelegate
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        guard viewIfLoaded?.window != nil else {
+            print("Not there yet")
+            return
+        }
         let height = scrollView.frame.size.height
         let contentYoffset = scrollView.contentOffset.y
         let distanceFromBottom = scrollView.contentSize.height - contentYoffset
         
-        if distanceFromBottom < height {
-            
-            if fetchesPosts == false {
-                print("Ende erreicht!")
-                
-                fetchesPosts = true
-                self.getPosts(getMore: true)
-            }
-            
-            // If I am at the total end of posts to fetch i got no solution for the feedtableview yet
+        if distanceFromBottom < height, !fetchInProgress && morePostsAvailable {
+            print("End reached!")
+            getPosts()
         }
     }
 }

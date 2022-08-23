@@ -49,7 +49,7 @@ extension NewPostVC: LinkFactWithPostDelegate {
     }
     
     func changeCommunityDestination(communityOnly: Bool) {
-        self.postOnlyInTopic = communityOnly
+        self.isTopicPost = communityOnly
         
         if let cell = getCell(for: .linkCommunity) as? NewPostLinkCommunityCell {
             cell.changeCommunityDestination(communityOnly: communityOnly)
@@ -81,6 +81,7 @@ extension NewPostVC: LinkFactWithPostDelegate {
 
 }
 
+// MARK: - Location
 extension NewPostVC: ChoosenLocationDelegate {
     func gotLocation(location: Location) {
         self.location = location
@@ -122,7 +123,7 @@ extension NewPostVC: NewPostCollectionDelegate {
         case .description:
             self.descriptionText = text
         case .link:
-            self.link = text
+            self.url = text
         }
     }
     

@@ -13,10 +13,12 @@ import YoutubePlayer_in_WKWebView
 
 class YouTubeCell: BaseFeedCell {
     
-    //MARK:- IBOutlets
+    static let identifier = "YouTubeCell"
+    
+    // MARK: - IBOutlets
     @IBOutlet weak var playerView: WKYTPlayerView!
         
-    //MARK:- Cell Lifecycle
+    // MARK: - Cell Lifecycle
     override func awakeFromNib() {
         selectionStyle = .none
         
@@ -36,7 +38,7 @@ class YouTubeCell: BaseFeedCell {
         resetValues()
     }
     
-    //MARK:- Set Cell
+    // MARK: - Set Cell
     override func setCell() {
         super.setCell()
         
@@ -53,7 +55,7 @@ class YouTubeCell: BaseFeedCell {
                 setDefaultButtonImages()
             }
             
-            if let youtubeID = post.linkURL.youtubeID {
+            if let linkURL = post.link?.url, let youtubeID = linkURL.youtubeID {
                 // Not an actual solution because we cant cache the loading process, needs time everytime you see a youtubecell
                 playerView.load(withVideoId: youtubeID, playerVars: ["playsinline":1])  // Plays in tableview, no auto fullscreen
             }
@@ -68,16 +70,11 @@ class YouTubeCell: BaseFeedCell {
                 setUser()
             }
             
-            if let fact = post.community {
-                                
-                if fact.title == "" {
-                    if fact.beingFollowed {
-                        self.getCommunity(beingFollowed: true)
-                    } else {
-                        self.getCommunity(beingFollowed: false)
-                    }
+            if let communityID = post.communityID {
+                if post.community != nil {
+                    setCommunity(for: post)
                 } else {
-                    self.setCommunity(post: post)
+                    getCommunity(with: communityID)
                 }
             }
             

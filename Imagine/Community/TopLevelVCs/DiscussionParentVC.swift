@@ -8,8 +8,6 @@
 
 import UIKit
 import EasyTipView
-import Firebase
-import FirebaseAnalytics
 
 protocol RecentTopicDelegate: class {
     func topicSelected(community: Community)
@@ -80,7 +78,7 @@ class DiscussionParentVC: UIViewController {
     
     func getArguments(for community: Community) {
         
-        DataRequest().getDeepData(fact: community) { (deepData) in // Fetch all Arguments for this fact
+        DataRequest().getDeepData(community: community) { (deepData) in // Fetch all Arguments for this fact
             if let arguments = deepData as? [Argument] {
                 for argument in arguments {
                     if argument.proOrContra == "pro" {      // Sort the Arguments
@@ -101,7 +99,7 @@ class DiscussionParentVC: UIViewController {
         let nmbOfPro = proArgumentList.count-1
         let nmbOfCon = contraArgumentList.count-1
         
-        if let community = community, let names = community.factDisplayNames {
+        if let community = community, let names = community.discussionTitles {
             switch names{
             case .proContra:
                 proArgumentLabel.text = NSLocalizedString("discussion_pro", comment: "pro")

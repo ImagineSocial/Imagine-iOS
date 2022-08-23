@@ -9,7 +9,7 @@
 import Foundation
 
 /// An enum that declares how a post was highlighted or reported
-enum ReportType {
+enum ReportType: String, Codable {
     case normal
     case spoiler
     case satire

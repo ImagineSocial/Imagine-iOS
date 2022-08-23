@@ -8,18 +8,25 @@
 
 import UIKit
 import MapKit
+import FirebaseFirestore
 
 protocol HandleMapSearch {
     func dropPinZoomIn(placemark:MKPlacemark)
 }
 
-class Location {
+class Location: Codable {
     var title: String
-    var coordinate: CLLocationCoordinate2D
+    var coordinate: GeoPoint
     
-    init(title: String, coordinate: CLLocationCoordinate2D) {
+    var clCoordinate: CLLocationCoordinate2D {
+        get {
+            CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        }
+    }
+    
+    init(title: String, geoPoint: GeoPoint) {
         self.title = title
-        self.coordinate = coordinate
+        self.coordinate = geoPoint
     }
 }
 
@@ -39,11 +46,11 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate {
             chosenLocationLabel.text = location.title
             
             let span = MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-            let region = MKCoordinateRegion(center: location.coordinate, span: span)
+            let region = MKCoordinateRegion(center: location.clCoordinate, span: span)
             mapView.setRegion(region, animated: true)
             
             let annotation = MKPointAnnotation()
-            annotation.coordinate = location.coordinate
+            annotation.coordinate = location.clCoordinate
             annotation.title = location.title
             mapView.addAnnotation(annotation)
         }
@@ -141,7 +148,7 @@ class MapViewController: UIViewController, UIGestureRecognizerDelegate {
         if let title = annotation.title {
             if let title = title {
                 self.chosenLocationLabel.text = title
-                let location = Location(title: title, coordinate: annotation.coordinate)
+                let location = Location(title: title, geoPoint: GeoPoint(latitude: annotation.coordinate.latitude, longitude: annotation.coordinate.longitude))
                 self.location = location
                 self.mapView.addAnnotation(annotation)
             }

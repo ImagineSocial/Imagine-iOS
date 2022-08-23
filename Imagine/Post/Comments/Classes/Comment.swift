@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 protocol CommentDelegate {
     func childrenLoaded()
@@ -47,7 +47,7 @@ class Comment {
     var createTime = Date()
     var author = ""
     var sectionItemID: String
-    var sectionItemLanguage: Language = .german
+    var sectionItemLanguage = Language.de
     var isTopicPost = false
     var upvotes: Votes?
     var likes = 0
@@ -119,7 +119,7 @@ class Comment {
         }
         
         let user = User(userID: userUID)
-        user.getUser(isAFriend: false) { user in
+        user.loadUser() { user in
             let comment = Comment(commentSection: self.section, sectionItemID: sectionItemID, commentID: commentID)
             if let likes = data["likes"] as? [String] {
                 comment.likes = likes.count

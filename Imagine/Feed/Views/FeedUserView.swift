@@ -68,11 +68,9 @@ class FeedUserView: UIView, NibLoadable {
     func setUser(post: Post) {
         
         //check options
-        if let options = post.designOptions {
-            if options.hideProfilePicture {
-                self.isProfilePictureHidden = true
-                hideProfilePicture()
-            }
+        if let options = post.options, options.hideProfilePicture {
+            self.isProfilePictureHidden = true
+            hideProfilePicture()
         }
         
         //check location
@@ -80,16 +78,16 @@ class FeedUserView: UIView, NibLoadable {
             locationLabel.text = "in \(location.title)"
         }
         
-        createDateLabel.text = post.createTime
+        createDateLabel.text = post.createdAt.formatForFeed()
         if post.anonym {
-            if let anonymousName = post.anonymousName {
+            if let anonymousName = post.options?.anonymousName {
                 nameLabel.text = anonymousName
             } else {
                 nameLabel.text = Constants.strings.anonymPosterName
             }
             profilePictureImageView.image = UIImage(named: "anonym-user")
         } else if let user = post.user {
-            nameLabel.text = user.displayName
+            nameLabel.text = user.name
             
             // Profile Picture
             if let urlString = user.imageURL, let url = URL(string: urlString) {
@@ -111,7 +109,7 @@ class FeedUserView: UIView, NibLoadable {
         
         self.linkedCommunityImageView.layer.borderColor = UIColor.secondaryLabel.cgColor
         
-        if let url = URL(string: post.community!.imageURL) {
+        if let imageURL = post.community?.imageURL, let url = URL(string: imageURL) {
             self.linkedCommunityImageView.sd_setImage(with: url, completed: nil)
         } else {
             self.linkedCommunityImageView.backgroundColor = .systemBackground

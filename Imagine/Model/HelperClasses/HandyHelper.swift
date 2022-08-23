@@ -7,9 +7,7 @@
 //
 
 import Foundation
-import Firebase
 import FirebaseFirestore
-import FirebaseAuth
 import DateToolsSwift
 import AVKit
 
@@ -46,8 +44,8 @@ class HandyHelper {
         // Timestamp umwandeln
         let formatter = DateFormatter()
         let date:Date = timestamp.dateValue()
-        let language = LanguageSelection().getLanguage()
-        if language == .german {
+        let language = LanguageSelection.language
+        if language == .de {
             formatter.dateFormat = "dd.MM.yyyy HH:mm"
         } else {
             formatter.dateFormat = "MM/dd/yyyy HH:mm"
@@ -126,23 +124,27 @@ class HandyHelper {
     
     
     func updatePost(button: VoteButton, post: Post) {
+        
+        guard let documentID = post.documentID else {
+            return
+        }
         var ref: DocumentReference?
         var collectionRef: CollectionReference!
         
         if post.isTopicPost {
-            if post.language == .english {
+            if post.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("topicPosts")
             } else {
                 collectionRef = db.collection("TopicPosts")
             }
-            ref = collectionRef.document(post.documentID)
+            ref = collectionRef.document(documentID)
         } else {
-            if post.language == .english {
+            if post.language == .en {
                 collectionRef = db.collection("Data").document("en").collection("posts")
             } else {
                 collectionRef = db.collection("Posts")
             }
-            ref = collectionRef.document(post.documentID)
+            ref = collectionRef.document(documentID)
         }
             
         var keyForFirestore: String?
@@ -170,22 +172,14 @@ class HandyHelper {
             notifyUserForUpvote(button: button, post: post)
         }
     }
-
-
-    func getWidthAndHeightFromVideo(url: URL) -> CGSize? {
-        guard let track = AVURLAsset(url: url).tracks(withMediaType: AVMediaType.video).first else { return nil }
-       let size = track.naturalSize.applying(track.preferredTransform)
-        
-        return CGSize(width: abs(size.width), height: abs(size.height))
-    }
     
     func notifyUserForUpvote(button: VoteButton, post: Post) {
         
-        guard let currentUser = Auth.auth().currentUser, let user = post.user else {
+        guard let currentUser = AuthenticationManager.shared.user, let userID = post.user?.uid else {
             return
         }
         
-        if currentUser.uid == user.userID {
+        if currentUser.uid == userID {
             //No notifications if you like your own posts for whatever reason
             return
         }
@@ -203,25 +197,26 @@ class HandyHelper {
             buttonString = "nice"
         }
         
-        if let button = buttonString {
-            
-            var data: [String: Any] = ["type": "upvote", "button": button, "postID": post.documentID, "title": post.title]
-            
-            if post.isTopicPost {
-                data["isTopicPost"] = true
-            }
-            if post.language == .english {
-                data["language"] = "en"
-            }
-            
-            let ref = db.collection("Users").document(user.userID).collection("notifications").document()
-            
-            ref.setData(data) { (err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    print("notification set")
-                }
+        guard let button = buttonString, let documentID = post.documentID else {
+            return
+        }
+        
+        var data: [String: Any] = ["type": "upvote", "button": button, "postID": documentID, "title": post.title]
+        
+        if post.isTopicPost {
+            data["isTopicPost"] = true
+        }
+        if post.language == .en {
+            data["language"] = "en"
+        }
+        
+        let ref = db.collection("Users").document(userID).collection("notifications").document()
+        
+        ref.setData(data) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+            } else {
+                print("notification set")
             }
         }
     }
@@ -295,29 +290,6 @@ class HandyHelper {
         }
     }
     
-    func checkIfAlreadySaved(post: Post, alreadySaved: @escaping(Bool) -> Void ) {
-        var saved = false
-        
-        if let user = Auth.auth().currentUser {
-            let savedRef = db.collection("Users").document(user.uid).collection("saved").whereField("documentID", isEqualTo: post.documentID)
-            savedRef.getDocuments { (snap, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    if let snap = snap {
-                        if snap.documents.count != 0 {
-                            // Already saved
-                            saved = true
-                        }
-                        alreadySaved(saved)
-                    } else {
-                        alreadySaved(saved)
-                    }
-                }
-            }
-        }
-    }
-    
     func getLocaleCurrencyString(number: Double) -> String {
         let currencyFormatter = NumberFormatter()
         currencyFormatter.usesGroupingSeparator = true
@@ -332,39 +304,41 @@ class HandyHelper {
     }
     
     func saveFCMToken(token:String) {
-        if let user = Auth.auth().currentUser {
-            let userRef = db.collection("Users").document(user.uid)
+        if let userID = AuthenticationManager.shared.userID {
+            let userRef = db.collection("Users").document(userID)
             
-            userRef.setData(["fcmToken":token], mergeFields: ["fcmToken"])
+            userRef.setData(["fcmToken": token], mergeFields: ["fcmToken"])
             
             UserDefaults.standard.setValue(token, forKey: "fcmToken")
         }
     }
     
-    func deleteNotifications(type: NotificationType, id: String) {
-        print("delete Notification")
+    func deleteNotifications(type: NotificationType, id: String?) {
+        guard let id = id else {
+            return
+        }
         
-        if let user = Auth.auth().currentUser {
+        if let userID = AuthenticationManager.shared.userID {
             
             switch type {
             case .message:
-                let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("chatID", isEqualTo: id)
+                let notRef = db.collection("Users").document(userID).collection("notifications").whereField("chatID", isEqualTo: id)
                 
                 self.deleteInFirebase(ref: notRef)
             case .comment:
-                let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("postID", isEqualTo: id)
+                let notRef = db.collection("Users").document(userID).collection("notifications").whereField("postID", isEqualTo: id)
                 
                 self.deleteInFirebase(ref: notRef)
             case .friend:
-                let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("userID", isEqualTo: id)
+                let notRef = db.collection("Users").document(userID).collection("notifications").whereField("userID", isEqualTo: id)
                 
                 self.deleteInFirebase(ref: notRef)
             case .blogPost:
-                let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("type", isEqualTo: "blogPost")
+                let notRef = db.collection("Users").document(userID).collection("notifications").whereField("type", isEqualTo: "blogPost")
                 
                 self.deleteInFirebase(ref: notRef)
             case .upvote:
-                let notRef = db.collection("Users").document(user.uid).collection("notifications").whereField("type", isEqualTo: "upvote").whereField("postID", isEqualTo: id)
+                let notRef = db.collection("Users").document(userID).collection("notifications").whereField("type", isEqualTo: "upvote").whereField("postID", isEqualTo: id)
                 
                 self.deleteInFirebase(ref: notRef)
                 
@@ -431,15 +405,12 @@ class HandyHelper {
     }
     
     func setLikeOnComment(comment: Comment, answerToComment: Comment?) {
-        if let user = Auth.auth().currentUser {
+        if let userID = AuthenticationManager.shared.userID {
             let ref = getCommentRef(comment: comment, answerToComment: answerToComment)
             
             ref.updateData([
-                "likes" : FieldValue.arrayUnion([user.uid])
+                "likes" : FieldValue.arrayUnion([userID])
             ])
-        } else {
-            return
         }
     }
-    
 }

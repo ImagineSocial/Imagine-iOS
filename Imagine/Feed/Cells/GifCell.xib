@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -131,12 +131,12 @@
                 </constraints>
             </tableViewCellContentView>
             <connections>
-                <outlet property="GIFViewHeightConstraint" destination="wFX-n0-UOC" id="jYD-p9-eYV"/>
                 <outlet property="activityIndicatorView" destination="V2M-wY-QrG" id="qtO-wt-tD9"/>
                 <outlet property="containerView" destination="naF-ts-12n" id="6vY-uI-7JK"/>
                 <outlet property="feedLikeView" destination="Nel-wO-jlj" id="vMZ-3u-KFw"/>
                 <outlet property="feedUserView" destination="1De-Cy-KVV" id="G11-Ig-nQ0"/>
                 <outlet property="gifView" destination="386-Uc-o5s" id="nrY-eg-ZEr"/>
+                <outlet property="gifViewHeightConstraint" destination="wFX-n0-UOC" id="qto-49-eOY"/>
                 <outlet property="reportView" destination="Pcc-bY-ai6" id="N4K-6t-d6T"/>
                 <outlet property="reportViewButtonInTop" destination="jAX-zt-dht" id="xc6-rU-gNn"/>
                 <outlet property="reportViewHeightConstraint" destination="smU-f9-tGA" id="Je9-xG-riw"/>

@@ -73,8 +73,8 @@ class WebVC: UIViewController {
     func setUpLink() {
         var linkURL = ""
         
-        if let post = post {
-            linkURL = post.linkURL
+        if let post = post, let url = post.link?.url {
+            linkURL = url
         } else if let link = link {
             linkURL = link
         }

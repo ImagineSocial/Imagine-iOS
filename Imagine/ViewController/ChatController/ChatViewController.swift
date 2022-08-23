@@ -8,9 +8,7 @@
 
 import UIKit
 import MessengerKit
-import Firebase
 import FirebaseFirestore
-import FirebaseAuth
 
 enum chatType {
     case normal
@@ -94,7 +92,7 @@ class ChatViewController: MSGMessengerViewController {
     
     func setNavUserButton() {
         if let participant = chat?.participant {
-            self.navigationItem.title = participant.displayName
+            self.navigationItem.title = participant.name
             
             let button = DesignableButton()
             button.frame = CGRect(x: 0, y: 0, width: 35, height: 35)
@@ -132,7 +130,7 @@ class ChatViewController: MSGMessengerViewController {
     }
     
     func setCurrentUser() {
-        if let uid = Auth.auth().currentUser?.uid {
+        if let uid = AuthenticationManager.shared.user?.uid {
             currentUserUid = uid
             
             self.firebaseListener()
@@ -210,7 +208,10 @@ class ChatViewController: MSGMessengerViewController {
         
         let sentDate:Date = sentAtTimestamp.dateValue()
         
-        FirestoreRequest.shared.getChatUser(uid: userUID, sender: sender, user: { (user) in
+        FirestoreRequest.shared.getChatUser(uid: userUID, sender: sender) { user in
+            guard let user = user else {
+                return
+            }
             
             let message = MSGMessage(id: id, body: .text(body), user: user, sentAt: sentDate)
             self.fetchedMessages.append(message)
@@ -225,7 +226,7 @@ class ChatViewController: MSGMessengerViewController {
                 self.fetchedMessages.removeAll()    // Alle Löschen, sind dann ja in messages
                 
             }
-        })
+        }
     }
     
     
@@ -248,15 +249,15 @@ class ChatViewController: MSGMessengerViewController {
     }
     
     func setNotification(chat: Chat, bodyString: String, messageID: String) {
-        if let currentUser = currentUser, let participant = chat.participant {
-            let notificationRef = db.collection("Users").document(participant.userID).collection("notifications").document()
+        if let currentUser = currentUser, let participantID = chat.participant?.uid {
+            let notificationRef = db.collection("Users").document(participantID).collection("notifications").document()
             let notificationData: [String: Any] = ["type": "message", "message": bodyString, "name": currentUser.displayName, "chatID": chat.documentID, "sentAt": Timestamp(date: Date()), "messageID": messageID]
             
             if let chat = self.chat {
-                if let user = Auth.auth().currentUser {
+                if let userID = AuthenticationManager.shared.user?.uid {
                     let message = chat.lastMessage
                     message.message = bodyString
-                    message.sender = user.uid
+                    message.sender = userID
                     message.sentAtDate = Date()
                     message.sentAt = Date().formatRelativeString()
                     message.uid = messageID
@@ -374,7 +375,7 @@ class ChatViewController: MSGMessengerViewController {
         if segue.identifier == "toUserSegue" {
             if let chosenUser = sender as? User {
                 if let userVC = segue.destination as? UserFeedTableViewController {
-                    userVC.userOfProfile = chosenUser
+                    userVC.user = chosenUser
                     userVC.currentState = .otherUser
                 }
             }
@@ -407,8 +408,8 @@ extension ChatViewController: MSGDataSource {
             
             // Datum vom Timestamp umwandeln
             let formatter = DateFormatter()
-            let language = LanguageSelection().getLanguage()
-            if language == .english {
+            let language = LanguageSelection.language
+            if language == .en {
                 formatter.dateFormat = "MM/dd/yyyy HH:mm"
             } else {
                 formatter.dateFormat = "dd.MM.yyyy HH:mm"

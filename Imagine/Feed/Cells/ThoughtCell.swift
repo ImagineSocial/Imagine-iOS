@@ -8,9 +8,12 @@
 
 import UIKit
 
-class ThoughtCell : BaseFeedCell {
+class ThoughtCell: BaseFeedCell {
     
-    //MARK:- Cell Lifecycle
+    static let identifier = "ThoughtCell"
+    
+    // MARK: - Cell Lifecycle
+    
     override func awakeFromNib() {
         selectionStyle = .none
         
@@ -25,7 +28,7 @@ class ThoughtCell : BaseFeedCell {
         resetValues()
     }
     
-    //MARK:- Set Cell
+    // MARK: - Set Cell
     override func setCell() {
         super.setCell()
         
@@ -55,16 +58,11 @@ class ThoughtCell : BaseFeedCell {
                 setUser()
             }
             
-            if let fact = post.community {
-                                
-                if fact.title == "" {
-                    if fact.beingFollowed {
-                        self.getCommunity(beingFollowed: true)
-                    } else {
-                        self.getCommunity(beingFollowed: false)
-                    }
+            if let communityID = post.communityID {
+                if post.community != nil {
+                    setCommunity(for: post)
                 } else {
-                    self.setCommunity(post: post)
+                    getCommunity(with: communityID)
                 }
             }
             

@@ -7,9 +7,7 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseAuth
-import FirebaseAnalytics
 import EasyTipView
 
 enum SuggestionMode {

@@ -48,7 +48,8 @@ extension Date {
                 if date.hoursLater(than: self) == 0 {
                     feedString = Strings.momentsAgo
                 } else {
-                    feedString = String.localizedStringWithFormat(Strings.xHoursAgo, date.hoursLater(than: self))
+                    let hourString = date.hoursLater(than: self) > 1 ? Strings.xHoursAgo : Strings.xHourAgo
+                    feedString = String.localizedStringWithFormat(hourString, date.hoursLater(than: self))
                 }
             } else if calendar.isDateInYesterday(self){
                 feedString = Strings.yesterday
@@ -68,5 +69,14 @@ extension Date {
         }
         
         return feedString
+    }
+    
+    
+    func year() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy"
+        let stringDate = dateFormatter.string(from: self)
+        
+        return stringDate
     }
 }

@@ -24,7 +24,7 @@ class SmallTopicCell: UICollectionViewCell {
         didSet {
             guard let community = community else { return }
             
-            if let url = URL(string: community.imageURL) {
+            if let imageURL = community.imageURL, let url = URL(string: imageURL) {
                 cellImageView.sd_setImage(with: url, placeholderImage: Icons.defaultCommunity, options: [], completed: nil)
             } else {
                 cellImageView.image = Icons.defaultCommunity

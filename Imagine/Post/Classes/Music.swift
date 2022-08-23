@@ -8,12 +8,12 @@
 
 import Foundation
 
-enum MusicType {
+enum MusicType: String, Codable {
     case track
     case album
 }
 
-class Music {
+class Music: Codable {
     var type: MusicType
     var name: String
     var artist: String
@@ -39,5 +39,9 @@ class Music {
         self.artistImageURL = artistImageURL
         self.musicImageURL = musicImageURL
         self.songwhipURL = songwhipURL
+    }
+    
+    func getSongwhip() -> Songwhip {
+        Songwhip(title: name, musicType: type.rawValue, releaseDate: releaseDate ?? Date(), artist: SongwhipArtist(name: name, image: artistImageURL ?? ""), musicImage: musicImageURL)
     }
 }

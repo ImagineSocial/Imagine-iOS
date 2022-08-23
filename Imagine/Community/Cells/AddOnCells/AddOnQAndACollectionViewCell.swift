@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
 
 class QandAQuestion {
@@ -78,16 +77,16 @@ class AddOnQAndACollectionViewCell: BaseAddOnCollectionViewCell {
     }
     
     func getQuestions(info: AddOn) {
-        
-        var collectionRef: CollectionReference!
-        if info.fact.language == .english {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
+        guard let communtiyID = info.community.id else {
+            return
         }
         
-        let ref = collectionRef.document(info.fact.documentID).collection("addOns").document(info.documentID).collection("questions")
-        ref.getDocuments { (snap, err) in
+        let addOnReference = FirestoreCollectionReference(document: communtiyID, collection: "addOns")
+        let questionReference = FirestoreCollectionReference(document: info.documentID, collection: "questions")
+        let proReference = FirestoreReference.collectionRef(.communities, collectionReferences: addOnReference, questionReference)
+        
+        
+        proReference.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
@@ -354,26 +353,22 @@ class AddOnQAndATextfieldCell: UITableViewCell {
     @IBAction func sendButtonTapped(_ sender: Any) {
         guard let type = type, let info = info, let text = answerTextField.text, text != "" else { return }
         
-        if let user = Auth.auth().currentUser {
-            storeInFirebase(info: info, type: type, text: text, user: user)
-        }
+        storeInFirebase(info: info, type: type, text: text)
     }
     
-    func storeInFirebase(info: AddOn, type: QandAAnswerType, text: String, user: Firebase.User) {
-        
-        var collectionRef: CollectionReference!
-        if info.fact.language == .english {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
+    func storeInFirebase(info: AddOn, type: QandAAnswerType, text: String) {
+        guard let user = AuthenticationManager.shared.user else {
+            return
         }
+
+        let collectionRef = FirestoreReference.mainRef(.communities)
         
         if type == .question {
-            if info.fact.documentID != "" {
+            if let communityID = info.community.id, let userID = user.uid {
                 
-                let ref = collectionRef.document(info.fact.documentID).collection("addOns").document(info.documentID).collection("questions").document()
+                let ref = collectionRef.document(communityID).collection("addOns").document(info.documentID).collection("questions").document()
                 
-                let data: [String: Any] = ["question": text, "OP": user.uid]
+                let data: [String: Any] = ["question": text, "OP": userID]
                 
                 ref.setData(data) { (err) in
                     if let error = err {
@@ -387,8 +382,8 @@ class AddOnQAndATextfieldCell: UITableViewCell {
             }
         } else {
             if let id = questionID {
-                if info.fact.documentID != "" {
-                    let ref = collectionRef.document(info.fact.documentID).collection("addOns").document(info.documentID).collection("questions").document(id)
+                if let communityID = info.community.id {
+                    let ref = collectionRef.document(communityID).collection("addOns").document(info.documentID).collection("questions").document(id)
                     
                     ref.updateData([
                         "answers" : FieldValue.arrayUnion([text])

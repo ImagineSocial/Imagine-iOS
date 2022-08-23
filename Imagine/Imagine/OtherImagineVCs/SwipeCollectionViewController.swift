@@ -7,8 +7,7 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAnalytics
+import FirebaseFirestore
 
 enum SwipeCollectionDiashow {
     case vision
@@ -132,8 +131,8 @@ class SwipeCollectionViewController: UICollectionViewController, UICollectionVie
                     let alert = UIAlertController(title: NSLocalizedString("cookie_alert_header", comment: "we have cookies"), message: NSLocalizedString("cookie_alert_description", comment: "what and how to change"), preferredStyle: .alert)
                     
                     alert.addAction(UIAlertAction(title: NSLocalizedString("cookie_alert_toEULA", comment: "to privacy policy"), style: .default, handler: { (_) in
-                        let language = LanguageSelection().getLanguage()
-                        if language == .german {
+                        let language = LanguageSelection.language
+                        if language == .de {
                             if let url = URL(string: "https://www.imagine.social/datenschutzerklaerung-app") {
                                 UIApplication.shared.open(url)
                             }
@@ -148,7 +147,6 @@ class SwipeCollectionViewController: UICollectionViewController, UICollectionVie
                         
                         defaults.set(true, forKey: "acceptedCookies")
                         defaults.set(true, forKey: "askedAboutCookies")
-                        Analytics.setAnalyticsCollectionEnabled(true)
                         self.dismiss(animated: true, completion: nil)
                     }))
                     
@@ -178,8 +176,7 @@ class SwipeCollectionViewController: UICollectionViewController, UICollectionVie
     }
     
     func signUpTapped() {
-        let user = Auth.auth().currentUser
-        if user == nil {
+        if !AuthenticationManager.shared.isLoggedIn {
             performSegue(withIdentifier: "toLoginSegue", sender: nil)
         }
     }

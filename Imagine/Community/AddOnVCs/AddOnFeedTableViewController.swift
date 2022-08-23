@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 class AddOnFeedTableViewController: BaseFeedTableViewController {
     
@@ -19,6 +19,7 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
     
     var addOn: AddOn?
     var addOnPosts = [Post]()
+    var firestoreRequest = FirestoreRequest()
     
     var Headerview : UIView!
     var NewHeaderLayer : CAShapeLayer!
@@ -38,8 +39,6 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
         setBarButtons()
         
         UpdateView()
-        self.refreshControl?.attributedTitle = NSAttributedString(string: "")
-        self.refreshControl?.removeTarget(self, action: #selector(getPosts(getMore:)), for: .touchUpInside)
         
         edgesForExtendedLayout = .top
         self.isFactSegueEnabled = false //DOnt go to the topic in said same topic
@@ -63,18 +62,18 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
         DispatchQueue.global(qos: .background).async {
             for item in info.items {
                 if let post = item.item as? Post {
-                    post.language = info.fact.language
+                    post.language = info.community.language
                     self.addOnPosts.append(post)
                 }
             }
             
-            self.firestoreRequest.getPostsFromDocumentIDs(posts: self.addOnPosts) { posts in
+            FirestoreManager.getPostsFromIDs(posts: self.addOnPosts) { posts in
                 if let posts = posts {
                     if let orderList = info.itemOrder { // If an itemOrder exists (set in addOn-settings), order according to it
                         
                         DispatchQueue.global(qos: .default).async {
                             let sorted = posts.compactMap { object in
-                                orderList.index(of: object.documentID).map { index in (object, index) }
+                                orderList.index(of: object.documentID!).map { index in (object, index) }
                             }.sorted(by: { $0.1 < $1.1 } ).map { $0.0 }
                             
                             self.posts = sorted
@@ -85,7 +84,7 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
                         }
                     } else {
                         
-                        let sortedPosts = posts.sorted(by: { $0.createDate ?? Date() > $1.createDate ?? Date() })
+                        let sortedPosts = posts.sorted(by: { $0.createdAt > $1.createdAt })
                         self.posts = sortedPosts
                         
                         DispatchQueue.main.async {
@@ -140,17 +139,15 @@ class AddOnFeedTableViewController: BaseFeedTableViewController {
         let dismissBarButton = UIBarButtonItem(customView: dismissButton)
         self.dismissBarButton = dismissBarButton
         
-        if let user = Auth.auth().currentUser {
-            if user.uid == addOn.OP {
-                let settingButton = DesignableButton(image: Icons.settings)
-                settingButton.addTarget(self, action: #selector(self.settingButtonTapped), for: .touchUpInside)
-                settingButton.constrain(width: 30, height: 30)
-                
-                let settingBarButton = UIBarButtonItem(customView: settingButton)
-                self.navigationItem.rightBarButtonItems = [dismissBarButton, settingBarButton]
-                
-                return
-            }
+        if let user = AuthenticationManager.shared.user, user.uid == addOn.OP {
+            let settingButton = DesignableButton(image: Icons.settings)
+            settingButton.addTarget(self, action: #selector(self.settingButtonTapped), for: .touchUpInside)
+            settingButton.constrain(width: 30, height: 30)
+            
+            let settingBarButton = UIBarButtonItem(customView: settingButton)
+            self.navigationItem.rightBarButtonItems = [dismissBarButton, settingBarButton]
+            
+            return
         }
         
         self.navigationItem.rightBarButtonItem = dismissBarButton

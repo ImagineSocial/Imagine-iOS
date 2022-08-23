@@ -35,6 +35,7 @@
 "discussion" = "Diskussion";
 "discussions" = "Diskussionen";
 "yesterday" = "Gestern";
+"weAreSorry" = "Tut uns Leid";
 
 
 
@@ -80,6 +81,7 @@
 "oneMonthAgo" = "Vor einem Monat";
 "oneYearAgo" = "Vor einem Jahr";
 "%d days ago" = "Vor %d Tagen";
+"%d hour ago" = "Vor %d Stunde";
 "%d hours ago" = "Vor %d Stunden";
 "%d months ago" = "Vor %d Monaten";
 "%d years ago" = "Vor %d Jahren";
@@ -120,7 +122,10 @@
 "password_placeholder" = "Passwort";
 "repeat_password_placeholder" = "Passwort wiederholen";
 
-//Login
+// MARK: - Login
+
+"cancelSignUpConfirmation" = "Anmeldung abbrechen";
+"noSignUpsAlert" = "Es gibt mehr Sign-Up Anfragen, als wir bearbeiten können. Um die App und unsere Datenbank zu schützen, pausieren wir das Sign-Up/Log-In für den Moment. Bitte versuchen Sie es später noch einmal. Vielen Dank für Ihre Unterstützung!";
 "login_password" = "Nun noch dein Kennwort und wir können loslegen!";
 "login_error_email" = "Deine eingegebene Email-Adresse ist nicht korrekt";
 "login_error_password" = "Dein Passwort ist nicht korrekt, versuche es erneut:";
@@ -178,7 +183,7 @@
 "error_choosing_multiple_pictures_message" = "Wähle bitte weitere Bilder aus oder wähle die Option \"Nur ein Bild\"";
 "error_choosing_picture" = "Du hast kein Bild hochgeladen. Möchtest du kein Bild hochladen, wähle bitte eine andere Post-Option aus";
 "error_link_not_valid" = "Unser Programm sagt uns, dass die URL nicht korrekt ist. Bitte überprüfe den Link";
-"error_no_link" = "Du hast kein Link angegeben. Möchtest du kein Link posten, wähle bitte eine andere Post-Option aus";
+"error_no_link" = "Du hast keinen Link angegeben. Möchtest du kein Link posten, wähle bitte eine andere Post-Option aus";
 "error_no_picture" = "Du hast kein Bild hochgeladen. Möchtest du kein Bild hochladen, wähle bitte eine andere Post-Option aus";
 "error_gif_wrong_ending" = "Im Moment sind nur Links mit Endung '.mp4' möglich. Die Endung .GIF ist veraltet, wird aus Speichergründen nicht mehr benutzt. Sag uns aber gerne bescheid, wie du deine GIFs verbreiten möchtest!";
 "message_after_done_posting" = "Danke für deine Weisheiten!";
@@ -502,7 +507,9 @@
 //SettingTableViewController
 "setting_tableView_changePicture_button" = "Bild ändern";
 
-//MeldeViewController
+// MARK: Report VC
+
+"postDeletionSuccessfull" = "Der Post wurde erfolgreich gelöscht. Aktualisiere den Feed um es nicht mehr zu sehen";
 "report_main_header" = "Melden";
 "report_markVisually_header" = "Optisch Markieren";
 "report_violationOfRules_header" = "Regelverstoß";

@@ -8,22 +8,21 @@
 
 import Foundation
 
-enum Language {
-    case german
-    case english
+enum Language: String, Codable {
+    case de
+    case en
 }
 
 class LanguageSelection {
-    let defaults = UserDefaults.standard
-    let pre = Locale.preferredLanguages[0]
+    static let defaults = UserDefaults.standard
     
-    func getLanguage() -> Language {
+    static var language: Language {
         if let language = defaults.string(forKey: "languageSelection") {
             
-            return language == "de" ? .german : .english
+            return language == "de" ? .de : .en
         }
         
         // Return english as default
-        return .english
+        return .en
     }
 }

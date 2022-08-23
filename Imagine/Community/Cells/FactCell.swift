@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 class FactCell: BaseCollectionViewCell {
     
@@ -57,7 +57,7 @@ class FactCell: BaseCollectionViewCell {
                 factCellLabel.text = community.title
                 factDescriptionLabel.text = community.description
                 
-                if let url = URL(string: community.imageURL) {
+                if let imageURL = community.imageURL, let url = URL(string: imageURL) {
                     factCellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default-community"), options: [], completed: nil)
                 } else {
                     factCellImageView.image = UIImage(named: "default-community")
@@ -66,29 +66,14 @@ class FactCell: BaseCollectionViewCell {
         }
     }
     
-    var unloadedFact: Community? {
+    var communityID: String? {
         didSet {
-            if let unloadedFact = unloadedFact, unloadedFact.documentID != "" {
-                var collectionRef: CollectionReference!
-                let language = LanguageSelection().getLanguage()
-                if language == .english {
-                    collectionRef = db.collection("Data").document("en").collection("topics")
-                } else {
-                    collectionRef = db.collection("Facts")
-                }
-                let ref = collectionRef.document(unloadedFact.documentID)
-                
-                let user = Auth.auth().currentUser
-                ref.getDocument { (snap, err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        if let snap = snap, let data = snap.data(), let community = CommunityHelper.shared.getCommunity(currentUser: user,documentID: snap.documentID, data: data) {
-                            
-                            self.community = community
-                        }
-                    }
-                }
+            guard let communityID = communityID else {
+                return
+            }
+            
+            CommunityHelper.getCommunity(withID: communityID) { community in
+                self.community = community
             }
         }
     }

@@ -10,6 +10,8 @@ import UIKit
 
 class MultiPictureCell: BaseFeedCell {
     
+    static let identifier = "MultiPictureCell"
+    
     //MARK: - IBOutlets
     
     @IBOutlet weak var collectionView: UICollectionView!
@@ -28,16 +30,16 @@ class MultiPictureCell: BaseFeedCell {
                 setCell()
                 
                 if post.type == .multiPicture {
-                    if let images = post.imageURLs {
+                    if let images = post.images {
                         
-                        self.images = images
+                        self.images = images.map({ $0.url })
                         self.pictureCountLabel.text = "1/\(images.count)"
                         
                         collectionView.isPagingEnabled = true
                         collectionView.reloadData()
                     }
-                } else if post.type == .panorama {
-                    self.images = [post.imageURL]
+                } else if post.type == .panorama, let imageURL = post.image?.url {
+                    self.images = [imageURL]
                     self.pictureCountLabel.text = "< - >"
                     
                     collectionView.isPagingEnabled = false
@@ -102,16 +104,11 @@ class MultiPictureCell: BaseFeedCell {
                 setUser()
             }
             
-            if let fact = post.community {
-                                
-                if fact.title == "" {
-                    if fact.beingFollowed {
-                        self.getCommunity(beingFollowed: true)
-                    } else {
-                        self.getCommunity(beingFollowed: false)
-                    }
+            if let communityID = post.communityID {
+                if post.community != nil {
+                    setCommunity(for: post)
                 } else {
-                    self.setCommunity(post: post)
+                    getCommunity(with: communityID)
                 }
             }
             
@@ -154,20 +151,19 @@ extension MultiPictureCell: UICollectionViewDelegate, UICollectionViewDataSource
     // MARK: UICollectionViewDelegate
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        if let post = post {
-            if post.type == .panorama {
-                let ratio = post.mediaWidth/post.mediaHeight
-                let collectionViewHeight = Constants.Numbers.panoramaCollectionViewHeight
-                
-                let newWidth = collectionViewHeight * ratio
-                
-                collectionView.setContentOffset(CGPoint(x: newWidth/2, y: 0), animated: false)
-                
-                return CGSize(width: newWidth, height: collectionViewHeight)
-            }
+        guard let post = post, let image = post.image, post.type == .panorama else {
+            
+            return .init(width: collectionView.frame.width, height: collectionView.frame.height)
         }
-        let size = CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
-        return size
+        
+        let ratio = image.width / image.height
+        let collectionViewHeight = Constants.Numbers.panoramaCollectionViewHeight
+        
+        let newWidth = collectionViewHeight * ratio
+        
+        collectionView.setContentOffset(CGPoint(x: newWidth / 2, y: 0), animated: false)
+        
+        return CGSize(width: newWidth, height: collectionViewHeight)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -175,7 +171,7 @@ extension MultiPictureCell: UICollectionViewDelegate, UICollectionViewDataSource
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        guard let post = post, post.type != .panorama, let indexPath = collectionView.indexPathsForVisibleItems.first, let images = post.imageURLs else {
+        guard let post = post, post.type != .panorama, let indexPath = collectionView.indexPathsForVisibleItems.first, let images = post.images else {
             //no need for the display in a panorama picture
             return
         }

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 class SmallFactCell: UICollectionViewCell {
     
@@ -38,38 +38,31 @@ class SmallFactCell: UICollectionViewCell {
         }
     }
     
-    var fact: Community? {
+    var community: Community? {
         didSet {
-            guard let fact = fact else { return }
+            guard let community = community else { return }
             
-            self.getArguments(fact: fact)
+            self.getArguments(community: community)
             
-            if let url = URL(string: fact.imageURL) {
+            if let imageURL = community.imageURL, let url = URL(string: imageURL) {
                 factImageView.sd_setImage(with: url, completed: nil)
-            } else {
-                factImageView.image = UIImage(named: "default-community")
             }
-            factHeaderTitle.text = fact.title
-            factHeaderDescriptionLabel.text = fact.description
-            self.factPostCountLabel.text = "Posts: \(fact.postCount)"
-            self.factFollowerCountLabel.text = "Follower: \(fact.followerCount)"
+            
+            factHeaderTitle.text = community.title
+            factHeaderDescriptionLabel.text = community.description
+            self.factPostCountLabel.text = "Posts: \(community.postCount ?? 0)"
+            self.factFollowerCountLabel.text = "Follower: \(community.followerCount ?? 0)"
         }
     }
     
-    var unloadedFact: Community? {
+    var communityID: String? {
         didSet {
-            if let unloadedFact = unloadedFact {
-                DispatchQueue.global(qos: .default).async {
-                    CommunityHelper.shared.loadCommunity(fact: unloadedFact) { (fact) in
-                        if let fact = fact {
-                            DispatchQueue.main.async {
-                                self.fact = fact
-                            }
-                        }
-                    }
-                }
-            } else {
+            guard let communityID = communityID else {
                 return
+            }
+            
+            CommunityHelper.getCommunity(withID: communityID) { community in
+                self.community = community
             }
         }
     }
@@ -147,19 +140,15 @@ class SmallFactCell: UICollectionViewCell {
         }
     }
     
-    func getArguments(fact: Community) {
-        if fact.documentID == "" { return }
-        
-        var collectionRef: CollectionReference!
-        if fact.language == .english {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
+    func getArguments(community: Community) {
+        guard let communityID = community.id else {
+            return
         }
-        let ref = collectionRef.document(fact.documentID).collection("arguments")
         
-        let proRef = ref.whereField("proOrContra", isEqualTo: "pro").order(by: "upvotes", descending: true).limit(to: 1)
-        proRef.getDocuments { (snap, err) in
+        let argumentReference = FirestoreCollectionReference(document: communityID, collection: "arguments")
+        let proReference = FirestoreReference.collectionRef(.communities, collectionReferences: argumentReference, queries: FirestoreQuery(field: "proOrContra", equalTo: "pro"), FirestoreQuery(field: "upvotes", limit: 1))
+        
+        proReference.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
@@ -169,8 +158,9 @@ class SmallFactCell: UICollectionViewCell {
             }
         }
         
-        let contraRef = ref.whereField("proOrContra", isEqualTo: "contra").order(by: "upvotes", descending: true).limit(to: 1)
-        contraRef.getDocuments { (snap, err) in
+        let contraReference = FirestoreReference.collectionRef(.communities, collectionReferences: argumentReference, queries: FirestoreQuery(field: "proOrContra", equalTo: "contra"), FirestoreQuery(field: "upvotes", limit: 1))
+        
+        contraReference.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {

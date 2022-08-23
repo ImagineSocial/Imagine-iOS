@@ -22,19 +22,17 @@ class SearchCollectionViewPostCell: UICollectionViewCell {
             if let post = post {
                 if post.type == .picture {
                     
-                    if let thumbnailURL = post.thumbnailImageURL, let url = URL(string: thumbnailURL) {
+                    if let thumbnailURL = post.image?.thumbnailUrl, let url = URL(string: thumbnailURL) {
                         searchCellImageView.sd_setImage(with: url, completed: nil)
-                    } else if let url = URL(string: post.imageURL) {
+                    } else if let link = post.image?.url, let url = URL(string: link) {
                         searchCellImageView.sd_setImage(with: url, completed: nil)
                     }
                 } else if post.type == .GIF {
                     avPlayerLayer?.removeFromSuperlayer()
-                    GIFLink = post.linkURL
+                    gifLink = post.link?.url
                 } else if post.type == .multiPicture {
-                    if let images = post.imageURLs {
-                        if let url = URL(string: images[0]) {
-                            searchCellImageView.sd_setImage(with: url, completed: nil)
-                        }
+                    if let image = post.images?.first, let url = URL(string: image.url) {
+                        searchCellImageView.sd_setImage(with: url, completed: nil)
                     }
                     SearchCellMultiPictureIcon.isHidden = false
                 }
@@ -64,7 +62,7 @@ class SearchCollectionViewPostCell: UICollectionViewCell {
         }
     }
     
-    var GIFLink: String? {
+    var gifLink: String? {
         didSet {
             print("SetGiFLink")
             
@@ -82,7 +80,7 @@ class SearchCollectionViewPostCell: UICollectionViewCell {
                                                    name: .AVPlayerItemDidPlayToEndTime,
                                                    object: avPlayer?.currentItem)
             
-            if let url = URL(string: GIFLink!) {
+            if let gifLink = gifLink, let url = URL(string: gifLink) {
                 if self.videoPlayerItem == nil {
                     self.videoPlayerItem = AVPlayerItem.init(url: url)
                     self.startPlayback()

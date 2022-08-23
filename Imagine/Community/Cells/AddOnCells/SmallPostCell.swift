@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 import AVFoundation
 import SwiftLinkPreview
 
@@ -22,6 +21,7 @@ class SmallPostCell: UICollectionViewCell {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var postTitleLabel: UILabel!
     @IBOutlet weak var postImageViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var containerView: DesignablePopUp!
     
     @IBOutlet weak var optionalTitleGradientViewHeightConstraint: NSLayoutConstraint!
     
@@ -33,6 +33,41 @@ class SmallPostCell: UICollectionViewCell {
     let postHelper = FirestoreRequest.shared
     
     var gradient: CAGradientLayer?
+    
+    // MARK: - Cell Lifecycle
+    
+    override func awakeFromNib() {
+        
+        cellImageView.layer.cornerRadius = 4
+        backgroundColor = .clear
+    }
+    
+    override func prepareForReuse() {
+        smallCellImageView.isHidden = false
+        
+        postImageViewHeightConstraint.constant = 170
+        optionalTitleGradientViewHeightConstraint.constant = 0
+        
+        postTitle = nil
+        cellImageView.image = nil
+        
+        showOptionalTitleButton.setImage(UIImage(named: "up"), for: .normal)
+        
+        self.linkView.removeFromSuperview()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+                
+        contentView.clipsToBounds = false
+        clipsToBounds = false
+        
+        let layer = containerView.layer
+        layer.createStandardShadow(with: CGSize(width: contentView.frame.width - 10, height: contentView.frame.height - 10), cornerRadius: 5, small: true)
+    }
+    
+    
+    // MARK: - Show Content
     
     var postTitle: String? {
         didSet {
@@ -57,11 +92,13 @@ class SmallPostCell: UICollectionViewCell {
         DispatchQueue.global(qos: .default).async {
             
             //needs documentID, isTopicPost and language
-            self.postHelper.loadPost(post: post) { (post) in
-                if let post = post {
-                    DispatchQueue.main.async {
-                        self.post = post
-                    }
+            FirestoreManager.getSinglePostFromID(post: post) { post in
+                guard let post = post else {
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    self.post = post
                 }
             }
         }
@@ -80,31 +117,32 @@ class SmallPostCell: UICollectionViewCell {
                 }
             }
             
-            if post.type == .picture {
+            switch post.type {
+            case .picture:
                 smallCellImageView.isHidden = true
                 
-                if let thumbnailURL = post.thumbnailImageURL, let url = URL(string: thumbnailURL) {
+                if let thumbnailURL = post.image?.thumbnailUrl, let url = URL(string: thumbnailURL) {
                     cellImageView.sd_setImage(with: url, completed: nil)
-                } else if let url = URL(string: post.imageURL) {
+                } else if let imageURL = post.image?.url, let url = URL(string: imageURL) {
                     cellImageView.sd_setImage(with: url, completed: nil)
                 } else {
                     cellImageView.image = Constants.defaultImage
                 }
-            } else if post.type == .multiPicture {
+            case .multiPicture:
                 smallCellImageView.isHidden = true
                 
-                if let images = post.imageURLs {
-                    if let url = URL(string: images[0]) {
+                if let image = post.images?.first {
+                    if let url = URL(string: image.url) {
                         cellImageView.sd_setImage(with: url, completed: nil)
                     } else {
                         cellImageView.image = UIImage(named: "default")
                     }
                 }
-            } else if post.type == .GIF {
+            case .GIF:
                 smallCellImageView.image = UIImage(named: "GIFIcon")
                 smallCellImageView.contentMode = .center
                 
-                if let url = URL(string: post.linkURL) {
+                if let linkURL = post.link?.url, let url = URL(string: linkURL) {
                     DispatchQueue.global(qos: .default).async {  // Quite some work to do apparently
                         let image = self.generateThumbnail(url: url)
                         DispatchQueue.main.async {
@@ -116,7 +154,7 @@ class SmallPostCell: UICollectionViewCell {
                         }
                     }
                 }
-            } else if post.type == .link {
+            case .link:
                 smallCellImageView.image = UIImage(named: "translate")
                 cellImageView.image = UIImage(named: "link-default")
                 
@@ -146,12 +184,10 @@ class SmallPostCell: UICollectionViewCell {
                 } else {
                     print("#Error: got no link in link cell")
                 }
-                
-            } else if post.type == .youTubeVideo {
-                
+            case .youTubeVideo:
                 postImageViewHeightConstraint.constant = cellImageView.frame.width*(9/16)   // Frame is 16/9 Format
                 
-                if let youtubeID = post.linkURL.youtubeID {
+                if let linkURL = post.link?.url, let youtubeID = linkURL.youtubeID {
                     let thumbnailURL = "https://img.youtube.com/vi/\(youtubeID)/sddefault.jpg"
                     
                     if let url = URL(string: thumbnailURL) {
@@ -162,7 +198,7 @@ class SmallPostCell: UICollectionViewCell {
                 }
                 
                 smallCellImageView.image = UIImage(named: "youtubeIcon")
-            } else {
+            default:
                 // THought
                 postImageViewHeightConstraint.constant = 0
                 smallCellImageView.isHidden = true
@@ -171,23 +207,6 @@ class SmallPostCell: UICollectionViewCell {
             postTitleLabel.text = post.title
         }
     }
-    
-//    func showLinkPreview(result: Response) {
-//        //https://github.com/LeonardoCardoso/SwiftLinkPreview
-//
-//        if let imageURL = result.image {
-//            if imageURL.isValidURL {
-//                self.cellImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
-//            } else {
-//
-//                self.cellImageView.image = UIImage(named: "link-default")
-//            }
-//        }
-//
-//        if let linkSource = result.canonicalUrl {
-//            self.linkLabel.text = linkSource
-//        }
-//    }
     
     func generateThumbnail(url: URL) -> UIImage? {
         do {
@@ -223,29 +242,6 @@ class SmallPostCell: UICollectionViewCell {
             optionalTitleGradientView.layer.mask = gradient
             optionalTitleGradientView.layer.cornerRadius = 4
         }
-    }
-    
-    
-    override func awakeFromNib() {
-        
-        contentView.backgroundColor = .secondarySystemBackground
-        contentView.layer.cornerRadius = 6
-        cellImageView.layer.cornerRadius = 4
-        backgroundColor = .clear
-    }
-    
-    override func prepareForReuse() {
-        smallCellImageView.isHidden = false
-        
-        postImageViewHeightConstraint.constant = 170
-        optionalTitleGradientViewHeightConstraint.constant = 0
-        
-        postTitle = nil
-        cellImageView.image = nil
-        
-        showOptionalTitleButton.setImage(UIImage(named: "up"), for: .normal)
-        
-        self.linkView.removeFromSuperview()
     }
     
     @IBAction func showOptionalTitleButtonTapped(_ sender: Any) {

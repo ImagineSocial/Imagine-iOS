@@ -33,14 +33,12 @@ class AddOnPlaylistTrackTableViewCell: UITableViewCell {
     
     var track: Post? {
         didSet {
-            if let track = track {
-                if let music = track.music {
-                    if let url = URL(string: music.musicImageURL) {
-                        albumCoverImageView.sd_setImage(with: url, completed: nil)
-                    }
-                    trackTitleLabel.text = music.name
-                    artistNameLabel.text = music.artist
-                } 
+            if let track = track, let songwhip = track.link?.songwhip {
+                if let url = URL(string: songwhip.musicImage) {
+                    albumCoverImageView.sd_setImage(with: url, completed: nil)
+                }
+                trackTitleLabel.text = songwhip.title
+                artistNameLabel.text = songwhip.artist.name
             }
         }
     }
@@ -67,11 +65,10 @@ class AddOnPlaylistTrackTableViewCell: UITableViewCell {
             UIView.animate(withDuration: 0.6) {
                 self.albumCoverHeightConstraint.constant = 40
             }
-            if let music = track.music {
-                if let url = URL(string: music.songwhipURL) {
-                    let request = URLRequest(url: url)
-                    webView.load(request)
-                }
+            
+            if let link = track.link, let url = URL(string: link.url) {
+                let request = URLRequest(url: url)
+                webView.load(request)
             }
         }
     }

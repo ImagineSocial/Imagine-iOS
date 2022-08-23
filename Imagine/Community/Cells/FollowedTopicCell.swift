@@ -18,7 +18,7 @@ class FollowedTopicCell: UICollectionViewCell {
             if let community = community {
                 topicNameLabel.text = community.title
                 
-                if let url = URL(string: community.imageURL) {
+                if let imageURL = community.imageURL, let url = URL(string: imageURL) {
                     topicImageView.sd_setImage(with: url, completed: nil)
                 } else {
                     topicImageView.image = UIImage(named: "default-community")

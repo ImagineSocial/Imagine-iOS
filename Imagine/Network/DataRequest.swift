@@ -7,12 +7,10 @@
 //
 
 import Foundation
-import Firebase
 import FirebaseFirestore
 
 enum DataType {
     case jobOffer
-    case communities
     case blogPosts
     case vote
 }
@@ -31,8 +29,6 @@ class DataRequest {
     var dataPath = ""
     let db = FirestoreRequest.shared.db
     let handyHelper = HandyHelper.shared
-    let user = Auth.auth().currentUser
-    let communityHelper = CommunityHelper.shared
     
     //MARK:- Get Data 
     
@@ -45,13 +41,13 @@ class DataRequest {
         var descending = false
         
         var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         
         switch get {
         case .blogPosts:
             list = [BlogPost]()
             dataPath = "BlogPosts"
-            if language == .english {
+            if language == .en {
                 dataPath = "blogPosts"
             }
             
@@ -60,26 +56,16 @@ class DataRequest {
         case .vote:
             list = [Vote]()
             dataPath = "Votes"
-            if language == .english {
+            if language == .en {
                 dataPath = "votes"
             }
             
             orderString = "endOfVoteDate"
             
-        case .communities:
-            list = [Community]()
-            dataPath = "Facts"
-            if language == .english {
-                dataPath = "topics"
-            }
-            
-            orderString = "popularity"
-            descending = true
-            
         case .jobOffer:
             list = [JobOffer]()
             dataPath = "JobOffers"
-            if language == .english {
+            if language == .en {
                 dataPath = "jobOffers"
             }
             
@@ -89,22 +75,12 @@ class DataRequest {
             
         }
         
-        if language == .english {
+        if language == .en {
             collectionRef = db.collection("Data").document("en").collection(dataPath)
         } else {
             collectionRef = db.collection(dataPath)
         }
         var ref = collectionRef.order(by: orderString, descending: descending)
-        
-        if get == .communities {
-            if language == .english {
-                collectionRef = db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = db.collection("Facts")
-            }
-            
-            ref = collectionRef.whereField("displayOption", isEqualTo: "topic").order(by: "popularity", descending: true).limit(to: 8)
-        }
         
         ref.getDocuments { (querySnapshot, err) in
             if let error = err {
@@ -202,10 +178,6 @@ class DataRequest {
                             
                             list.append(vote)
                             
-                        case .communities:
-                            if let community = self.communityHelper.getCommunity(currentUser: self.user, documentID: documentID, data: documentData) {
-                                list.append(community)
-                            }
                         case .jobOffer:
                             guard let title = documentData["jobTitle"] as? String,
                                   let shortBody = documentData["jobShortBody"] as? String,
@@ -244,41 +216,20 @@ class DataRequest {
     }
     
     
-    func getFollowedTopicDocuments(userUID: String, documents: @escaping ([QueryDocumentSnapshot]) -> Void) {
-        let topicRef = db.collection("Users").document(userUID).collection("topics")
-        
-        topicRef.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    documents(snap.documents)
-                }
-            }
-        }
-    }
-    
-    
-    func getDeepData(fact: Community, returnData: @escaping ([Any]) -> Void) {
+    func getDeepData(community: Community, completion: @escaping ([Any]) -> Void) {
         
         var argumentList = [Argument]()
         
-        if fact.documentID == "" {
+        guard let communityID = community.id else {
             print("We have an error fetching arguments")
-            returnData(argumentList)
+            completion(argumentList)
+            return
         }
         
-        var collectionRef: CollectionReference!
-
-        if fact.language == .english {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
+        let argumentReference = FirestoreCollectionReference(document: communityID, collection: "arguments")
+        let reference = FirestoreReference.collectionRef(.communities, collectionReferences: argumentReference, queries: FirestoreQuery(field: "upvotes"))
         
-        let ref = collectionRef.document(fact.documentID).collection("arguments").order(by: "upvotes", descending: true)
-        
-        ref.getDocuments(completion: { (snap, err) in
+        reference.getDocuments(completion: { (snap, err) in
             if let error = err {
                 print("We have an error: ", error.localizedDescription)
             } else {
@@ -322,17 +273,19 @@ class DataRequest {
             
             argumentList.append(conArgument)
             
-            returnData(argumentList)
+            completion(argumentList)
         })
     }
     
-    func getDeepestArgument(fact: Community, argumentID: String, deepDataType: DeepDataType , returnData: @escaping ([Any]) -> Void) {
+    func getDeepestArgument(community: Community, argumentID: String, deepDataType: DeepDataType , completion: @escaping ([Any]) -> Void) {
         
         var list = [Any]()
         
-        if fact.documentID == "" {
-            returnData(list)
+        guard let communityID = community.id else {
+            completion(list)
+            return
         }
+        
         switch deepDataType {
         case .sources:
             list = [Source]()
@@ -342,15 +295,11 @@ class DataRequest {
             dataPath = "arguments"
         }
         
-        var collectionRef: CollectionReference!
-        if fact.language == .english {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let argumentPath = collectionRef.document(fact.documentID).collection("arguments").document(argumentID).collection(dataPath)
+        let argumentReference = FirestoreCollectionReference(document: communityID, collection: "arguments")
+        let pathReference = FirestoreCollectionReference(document: argumentID, collection: dataPath)
+        let reference = FirestoreReference.collectionRef(.communities, collectionReferences: argumentReference, pathReference, queries: FirestoreQuery(field: "upvotes"))
         
-        argumentPath.getDocuments(completion: { (snap, err) in
+        reference.getDocuments(completion: { (snap, err) in
             
             if let error = err {
                 print("Wir haben einen Error bei den tiefen Argumenten: ", error.localizedDescription)
@@ -407,7 +356,7 @@ class DataRequest {
                     list.append(source)
                 }
             
-            returnData(list)
+            completion(list)
         })
     }
 }

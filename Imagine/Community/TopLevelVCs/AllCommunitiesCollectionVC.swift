@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
 
 class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, RecentTopicDelegate {
@@ -42,97 +41,20 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
         
         if let type = type {
             getTopics(type: type)
-//            updateCommunitiesBecauseISaySo()
         } else {
             self.navigationController?.popViewController(animated: true)
         }
     }
-    
-//    func updateCommunitiesBecauseISaySo() {
-//        let ref = db.collection("Facts")
-//        ref.getDocuments { (snap, err) in
-//            if let error = err {
-//                print("Error: \(error.localizedDescription)")
-//            } else {
-//                if let snap = snap {
-//                    for document in snap.documents {
-//                        
-//                        let ref = self.db.collection("Facts").document(document.documentID).collection("posts")
-//                        ref.getDocuments { (snap, err) in
-//                            if let error = err {
-//                                print("We have an error: \(error.localizedDescription)")
-//                            } else {
-//                                if let snap = snap {
-//                                    let ref = self.db.collection("Facts").document(document.documentID)
-//                                    ref.updateData([
-//                                        "postCount": snap.documents.count
-//                                    ])
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    
-//    func updateUsersBecauseISaySo() {
-//        let ref = db.collection("Users")
-//        ref.getDocuments { (snap, err) in
-//            if let error = err {
-//                print("Error: \(error.localizedDescription)")
-//            } else {
-//                if let snap = snap {
-//                    for document in snap.documents {
-//                        
-//                        let ref = self.db.collection("Users").document(document.documentID).collection("posts")
-//                        ref.getDocuments { (snap, err) in
-//                            if let error = err {
-//                                print("We have an error: \(error.localizedDescription)")
-//                            } else {
-//                                if let snap = snap {
-//                                    let ref = self.db.collection("Users").document(document.documentID)
-//                                    ref.updateData([
-//                                        "postCount": snap.documents.count
-//                                    ])
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
+ 
     
     func getTopics(type: DisplayOption) {
-        let sortByString = getDisplayOptionString(type: type)
         
-        var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
-        if language == .english {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let ref = collectionRef.whereField("displayOption", isEqualTo: sortByString)
-        
-        let user = Auth.auth().currentUser
-        ref.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    var facts = [Community]()
-                    for document in snap.documents {
-                        let data = document.data()
-                        
-                        if let fact = CommunityHelper.shared.getCommunity(currentUser: user, documentID: document.documentID, data: data) {
-                            facts.append(fact)
-                        }
-                    }
-                    self.showTopics(type: type, topics: facts)
-                }
+        CommunityHelper.getAllCommunities(for: type) { communities in
+            guard let communities = communities else {
+                return
             }
+
+            self.showTopics(type: type, topics: communities)
         }
     }
     
@@ -167,8 +89,8 @@ class AllCommunitiesCollectionVC: UICollectionViewController, UICollectionViewDe
     }
     
     func topicSelected(community: Community) {
-        let factVC = CommunityCollectionVC()
-        factVC.registerRecentFact(fact: community)
+        let communityVC = CommunityCollectionVC()
+        communityVC.registerRecentFact(community: community)
     }
     
     // MARK: -UICollectionViewDataSource

@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
 import FirebaseAuth
 import EasyTipView
@@ -204,9 +203,9 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
             return
         }
         
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         
-        let collectionRef = (language == .english) ? db.collection("Data").document("en").collection("campaigns") : db.collection("Campaigns")
+        let collectionRef = (language == .en) ? db.collection("Data").document("en").collection("campaigns") : db.collection("Campaigns")
         
         let postRef = collectionRef.document(campaign.documentID)
         
@@ -244,8 +243,8 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         }
         
         var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
-        if language == .english {
+        let language = LanguageSelection.language
+        if language == .en {
             collectionRef = db.collection("Data").document("en").collection("campaigns")
         } else {
             collectionRef = db.collection("Campaigns")
@@ -279,8 +278,8 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         if isConnected() {
             if let user = Auth.auth().currentUser {
                 var collectionRef: CollectionReference!
-                let language = LanguageSelection().getLanguage()
-                if language == .english {
+                let language = LanguageSelection.language
+                if language == .en {
                     collectionRef = db.collection("Data").document("en").collection("campaigns")
                 } else {
                     collectionRef = db.collection("Campaigns")
@@ -332,7 +331,7 @@ class CampaignViewController: UIViewController, ReachabilityObserverDelegate {
         if segue.identifier == "toUserSegue" {
             if let chosenUser = sender as? User {
                 if let userVC = segue.destination as? UserFeedTableViewController {
-                    userVC.userOfProfile = chosenUser
+                    userVC.user = chosenUser
                     userVC.currentState = .otherUser
                 }
             }

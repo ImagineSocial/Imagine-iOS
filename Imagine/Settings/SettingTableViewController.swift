@@ -7,12 +7,12 @@
 //
 
 import UIKit
-import Firebase
 import MapKit
 import CropViewController
 import Photos
+import FirebaseAuth
+import FirebaseStorage
 import FirebaseFirestore
-import FirebaseAnalytics
 
 protocol SettingCellDelegate {
     func gotChanged(type: SettingChangeType, value: Any)
@@ -50,7 +50,6 @@ class SettingTableViewController: UITableViewController {
     let storDB = Storage.storage().reference()
     
     let postHelper = FirestoreRequest.shared
-    let communityHelper = CommunityHelper.shared
     let dataHelper = DataRequest()
     var imagePicker = UIImagePickerController()
     
@@ -100,14 +99,9 @@ class SettingTableViewController: UITableViewController {
         
         // Set the custom settings and fetch additional information if neccessarry
         
-        if let topic = topic {
-            var collectionRef: CollectionReference!
-            if topic.language == .english {
-                collectionRef = db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = db.collection("Facts")
-            }
-            let ref = collectionRef.document(topic.documentID)
+        if let community = topic, let communityID = community.id {
+            
+            let ref = FirestoreReference.documentRef(.communities, documentID: communityID, language: community.language)
             
             ref.getDocument { (snap, err) in
                 if let error = err {
@@ -133,10 +127,10 @@ class SettingTableViewController: UITableViewController {
                     }
                 }
             }
-        } else if let user = user {
-            let userSetting = UserSetting(name: user.displayName ?? "", OP: user.userID)
+        } else if let user = user, let userID = user.uid {
+            let userSetting = UserSetting(name: user.name ?? "", OP: userID)
             
-            let ref = db.collection("Users").document(user.userID)
+            let ref = db.collection("Users").document(userID)
             ref.getDocument { (snap, err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
@@ -182,10 +176,8 @@ class SettingTableViewController: UITableViewController {
                             
                             if let locationName = data["locationName"] as? String, let locationCoordinate = data["locationCoordinate"] as? GeoPoint {
                                 
-                                let latitude = CLLocationDegrees(locationCoordinate.latitude)
-                                let longitude = CLLocationDegrees(locationCoordinate.longitude)
-                                let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                                let location = Location(title: locationName, coordinate: coordinate)
+                                let geoPoint = GeoPoint(latitude: locationCoordinate.latitude, longitude: locationCoordinate.longitude)
+                                let location = Location(title: locationName, geoPoint: geoPoint)
                                 
                                 userSetting.location = location
                             }
@@ -194,7 +186,7 @@ class SettingTableViewController: UITableViewController {
                             }
                             
                             userSetting.imageURL = user.imageURL
-                            userSetting.statusText = user.statusQuote
+                            userSetting.statusText = user.statusText
                             self.userSetting = userSetting
                             self.setUpViewController()
                         }
@@ -202,7 +194,7 @@ class SettingTableViewController: UITableViewController {
                 }
             }
         } else if let addOn = addOn {
-            let addOnSetting = AddOnSetting(style: addOn.style, fact: addOn.fact, addOnDocumentID: addOn.documentID, description: addOn.description, items: addOn.items)
+            let addOnSetting = AddOnSetting(style: addOn.style, community: addOn.community, addOnDocumentID: addOn.documentID, description: addOn.description, items: addOn.items)
             
             addOnSetting.title = addOn.headerTitle
             addOnSetting.imageURL = addOn.imageURL
@@ -338,25 +330,25 @@ class SettingTableViewController: UITableViewController {
         self.listCount = items.count
         
         for item in items {
-            if let post = item.item as? Post {
-                self.postHelper.loadPost(post: post) { (post) in
+            if let post = item.item as? Post, let documentID = post.documentID {
+                FirestoreManager.getSinglePostFromID(post: post) { (post) in
                     if let post = post {
-                        let item = AddOnItem(documentID: post.documentID, item: post)
+                        let item = AddOnItem(documentID: documentID, item: post)
                         self.itemList.append(item)
                         self.addNewList()
                     } else {
                         print("Aint nobody got a post!")
                     }
                 }
-            } else if let fact = item.item as? Community {
-                self.communityHelper.loadCommunity(fact: fact) { (fact) in
-                    if let fact = fact {
-                        let item = AddOnItem(documentID: fact.documentID, item: fact)
-                        self.itemList.append(item)
-                        self.addNewList()
-                    } else {
-                        print(" Aint nobody got a fact!")
+            } else if let community = item.item as? Community, let documentID = community.id {
+                CommunityHelper.getCommunity(withID: documentID) { community in
+                    guard let community = community, let communityID = community.id else {
+                        return
                     }
+                    
+                    let item = AddOnItem(documentID: communityID, item: community)
+                    self.itemList.append(item)
+                    self.addNewList()
                 }
             }
         }
@@ -468,7 +460,7 @@ class SettingTableViewController: UITableViewController {
                 if let post = item.item as? Post {
                     cell.post = post
                 } else if let fact = item.item as? Community {
-                    cell.fact = fact
+                    cell.community = fact
                 }
                 
                 return cell
@@ -731,21 +723,21 @@ extension SettingTableViewController: UIImagePickerControllerDelegate, CropViewC
     //MARK: Change User URL
     
     func savePictureURLInUserAuth(imageURL: String) {
-        let user = Auth.auth().currentUser
-        if let user = user {
-            let changeRequest = user.createProfileChangeRequest()
-            
-            if let url = URL(string: imageURL) {
-                changeRequest.photoURL = url
-            }
-            changeRequest.commitChanges { error in
-                if error != nil {
-                    // An error happened.
-                    print("Wir haben einen error beim changeRequest: \(String(describing: error?.localizedDescription))")
-                } else {
-                    // Profile updated.
-                    print("changeRequest hat geklappt")
-                }
+        
+        guard let user = Auth.auth().currentUser, let url = URL(string: imageURL) else {
+            return
+        }
+        let changeRequest = user.createProfileChangeRequest()
+        
+        changeRequest.photoURL = url
+
+        changeRequest.commitChanges { error in
+            if error != nil {
+                // An error happened.
+                print("Wir haben einen error beim changeRequest: \(String(describing: error?.localizedDescription))")
+            } else {
+                // Profile updated.
+                print("changeRequest hat geklappt")
             }
         }
     }
@@ -777,13 +769,13 @@ extension SettingTableViewController: UIImagePickerControllerDelegate, CropViewC
     }
     
     func savePicture(imageData: Data) {
-        if let topic = topic {
-            let imageName = "\(topic.documentID).png"
+        if let topic = topic, let id = topic.id {
+            let imageName = "\(id).png"
             let storageRef = storDB.child("factPictures").child(imageName)
             
             savePictureInStorage(storageReference: storageRef, imageData: imageData)
-        } else if let user = user {
-            let imageName = "\(user.userID).profilePicture.png"
+        } else if let user = user, let uid = user.uid {
+            let imageName = "\(uid).profilePicture.png"
             let storageRef = storDB.child("profilePictures").child(imageName)
             
             savePictureInStorage(storageReference: storageRef, imageData: imageData)
@@ -808,14 +800,14 @@ extension SettingTableViewController: UIImagePickerControllerDelegate, CropViewC
     }
     
     func deletePicture() {  // In Firebase Storage
-        if let topic = topic {
-            let imageName = "\(topic.documentID).png"
+        if let topic = topic, let topicID = topic.id {
+            let imageName = "\(topicID).png"
             let storageRef = storDB.child("factPictures").child(imageName)
-        
+            
             self.deletePictureInStorage(storageReference: storageRef)
         
-        } else if let user = user {
-            let imageName = "\(user.userID).profilePicture.png"
+        } else if let user = user, let uid = user.uid {
+            let imageName = "\(uid).profilePicture.png"
             let storageRef = storDB.child("profilePictures").child(imageName)
             
             self.deletePictureInStorage(storageReference: storageRef)
@@ -968,7 +960,7 @@ extension SettingTableViewController: SettingCellDelegate, UINavigationControlle
                 firestoreValue = location.title
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.gotChanged(type: .changeUserLocation, value: location.coordinate)
+                    self.gotChanged(type: .changeUserLocation, value: location.clCoordinate)
                 }
             } else if let coordinate = value as? CLLocationCoordinate2D {
                 firestoreKey = "locationCoordinate"
@@ -1107,14 +1099,9 @@ extension SettingTableViewController: SettingCellDelegate, UINavigationControlle
     }
     
     func changeDataInFirestore(data: [String: Any]) {
-        if let topic = topic {
-            var collectionRef: CollectionReference!
-            if topic.language == .english {
-                collectionRef = db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = db.collection("Facts")
-            }
-            let ref = collectionRef.document(topic.documentID)
+        if let topic = topic, let topicID = topic.id {
+            let ref = FirestoreReference.documentRef(.communities, documentID: topicID, language: topic.language)
+            
             ref.updateData(data) { (err) in
                 if let error = err {
                     print("We could not update the data: \(error.localizedDescription)")
@@ -1122,8 +1109,9 @@ extension SettingTableViewController: SettingCellDelegate, UINavigationControlle
                     self.view.activityStopAnimating()
                 }
             }
-        } else if let user = user {
-            let ref = db.collection("Users").document(user.userID)
+        } else if let userID = user?.uid {
+            let ref = db.collection("Users").document(userID)
+            
             ref.updateData(data) { (err) in
                 if let error = err {
                     print("We could not update the data: \(error.localizedDescription)")
@@ -1131,24 +1119,18 @@ extension SettingTableViewController: SettingCellDelegate, UINavigationControlle
                     self.view.activityStopAnimating()
                 }
             }
-        } else if let addOn = addOn {
-            var collectionRef: CollectionReference!
-            if addOn.fact.language == .english {
-                collectionRef = db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = db.collection("Facts")
-            }
-            let ref = collectionRef.document(addOn.fact.documentID).collection("addOns").document(addOn.documentID)
-            ref.updateData(data) { (err) in
+        } else if let addOn = addOn, let communityID = addOn.community.id {
+            
+            let argumentReference = FirestoreCollectionReference(document: communityID, collection: "addOns")
+            let reference = FirestoreReference.documentRef(.communities, documentID: addOn.documentID, collectionReferences: argumentReference)
+            
+            reference.updateData(data) { (err) in
                 if let error = err {
                     print("We could not update the data: \(error.localizedDescription)")
                 } else {
                     self.view.activityStopAnimating()
                 }
             }
-        }
-        else {
-            print("We got no mfn topic nor user")
         }
     }
 }

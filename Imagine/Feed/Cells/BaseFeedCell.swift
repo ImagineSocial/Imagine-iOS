@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 enum CellType {
     case ownCell
@@ -38,14 +38,13 @@ class BaseFeedCell : UITableViewCell {
     var distanceConstraint: NSLayoutConstraint?
     
     private let db = FirestoreRequest.shared.db
-    private let communityRequest = CommunityRequest()
     
     var cellStyle: CellType?
     var ownProfile: Bool = false
     weak var delegate: PostCellDelegate?
     
     /// Set this post in the TableViewDataSource to fill the cell with life
-    var post:Post? {
+    var post: Post? {
         didSet {
             setCell()
         }
@@ -147,57 +146,23 @@ class BaseFeedCell : UITableViewCell {
     
     //MARK: - Get Community
     ///Load the fact and return it asynchroniously
-    func getCommunity(beingFollowed: Bool) {
-        if let post = post, let community = post.community {
-            if community.documentID != "" {
-                communityRequest.getCommunity(language: post.language, community: community, beingFollowed: beingFollowed) { (community) in
-                    
-                    post.community = community
-                    
-                    self.setCommunity(post: post)
-                }
-            }
+    func getCommunity(with communityID: String) {
+        guard let post = post else {
+            return
+        }
+        
+        CommunityHelper.getCommunity(withID: communityID, language: post.language) { community in
+            self.post?.community = community
+            
+            self.setCommunity(for: post)
         }
     }
+    
     
     //MARK:- Set Community
-    func setCommunity(post: Post) {
+    func setCommunity(for post: Post) {
         feedUserView.setCommunity(post: post)
     }
-    
-    //MARK:- Set Vote Button Title
-    func registerVote(post: Post, button: DesignableButton) {
-        
-        var title: String!
-        switch button {
-        case feedLikeView.thanksButton:
-            delegate?.thanksTapped(post: post)
-            post.votes.thanks = post.votes.thanks+1
-            title = String(post.votes.thanks)
-        case feedLikeView.wowButton:
-            delegate?.wowTapped(post: post)
-            post.votes.wow = post.votes.wow+1
-            title = String(post.votes.wow)
-        case feedLikeView.haButton:
-            delegate?.haTapped(post: post)
-            post.votes.ha = post.votes.ha+1
-            title = String(post.votes.ha)
-        case feedLikeView.niceButton:
-            delegate?.niceTapped(post: post)
-            post.votes.nice = post.votes.nice+1
-            title = String(post.votes.nice)
-        default:
-            title = String(post.votes.thanks)
-        }
-        
-        button.isEnabled = false
-        button.setImage(nil, for: .normal)
-        button.setTitle(title, for: .normal)
-        
-        let generator = UIImpactFeedbackGenerator(style: .light)
-        generator.impactOccurred()
-    }
-    
 }
 
 //MARK:- FeedUserView Delegate
@@ -227,9 +192,9 @@ extension BaseFeedCell: FeedUserViewDelegate {
 //MARK:- FeedLikeView Delegate
 
 extension BaseFeedCell: FeedLikeViewDelegate {
-    func registerVote(button: DesignableButton) {
-        if let post = post {
-            registerVote(post: post, button: button)
-        }
+    
+    func registerVote(for type: VoteType) {
+        post?.registerVote(for: type)
+        feedLikeView.showButtonInteraction(type: type, post: post)
     }
 }

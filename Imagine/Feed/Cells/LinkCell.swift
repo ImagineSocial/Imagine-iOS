@@ -8,22 +8,22 @@
 
 import UIKit
 import SwiftLinkPreview
-import Firebase
 
 class LinkCell : BaseFeedCell {
     
-    //MARK:- IBOutlets
+    static let identifier = "LinkCell"
+    
+    // MARK: - IBOutlets
     @IBOutlet weak var linkThumbNailImageView: UIImageView!
     @IBOutlet weak var urlLabel: UILabel!
     @IBOutlet weak var linkPreviewTitleLabel: UILabel!
     @IBOutlet weak var linkPreviewDescriptionLabel: UILabel!
     
-    //MARK:- Variables
+    // MARK: - Variables
     private let slp = SwiftLinkPreview(session: URLSession.shared, workQueue: SwiftLinkPreview.defaultWorkQueue, responseQueue: DispatchQueue.main, cache: InMemoryCache())
-    
     private var preview: Cancellable?
     
-    //MARK:- Cell Lifecycle
+    // MARK: - Cell Lifecycle
     override func awakeFromNib() {
         selectionStyle = .none
         
@@ -51,7 +51,7 @@ class LinkCell : BaseFeedCell {
         resetValues()
     }
     
-    //MARK:- Set Cell
+    // MARK: - Set Cell
     override func setCell() {
         super.setCell()
         
@@ -80,16 +80,11 @@ class LinkCell : BaseFeedCell {
                 setUser()
             }
             
-            if let fact = post.community {
-                                
-                if fact.title == "" {
-                    if fact.beingFollowed {
-                        self.getCommunity(beingFollowed: true)
-                    } else {
-                        self.getCommunity(beingFollowed: false)
-                    }
+            if let communityID = post.communityID {
+                if post.community != nil {
+                    setCommunity(for: post)
                 } else {
-                    self.setCommunity(post: post)
+                    getCommunity(with: communityID)
                 }
             }
             
@@ -98,7 +93,7 @@ class LinkCell : BaseFeedCell {
             // Show Preview of Link
             if let link = post.link {
                 linkPreviewTitleLabel.text = link.linkTitle
-                linkPreviewDescriptionLabel.text = link.linkDescription
+                linkPreviewDescriptionLabel.text = link.description
                 urlLabel.text = link.shortURL
                 
                 if let imageURL = link.imageURL {
@@ -106,8 +101,8 @@ class LinkCell : BaseFeedCell {
                         self.linkThumbNailImageView.sd_setImage(with: URL(string: imageURL), placeholderImage: UIImage(named: "link-default"), options: [], completed: nil)
                     }
                 }
-            } else {
-                slp.preview(post.linkURL) { (response) in
+            } else if let link = post.link?.url {
+                slp.preview(link) { (response) in
                     self.showLinkPreview(result: response)
                 } onError: { (err) in
                     print("We have an error: \(err.localizedDescription)")
@@ -161,23 +156,22 @@ class LinkCell : BaseFeedCell {
     }
     
     func setLinkStuffInFirebase(data: [String: Any]) {
-        if let post = post {
-            if post.language == .english {
-                return 
-            }
-            let db = FirestoreRequest.shared.db
-            var string = "Posts"
-            if post.isTopicPost {
-                string = "TopicPosts"
-            }
-            let ref = db.collection(string).document(post.documentID)
-
-            ref.updateData(data) { (err) in
-                if let error = err {
-                    print("###Wir haben einene Erororo: \(error.localizedDescription)")
-                } else {
-                    print("###Link DIngs erfolgreich")
-                }
+        guard let post = post, let documentID = post.documentID, post.language != .en else {
+            return
+        }
+        
+        let db = FirestoreRequest.shared.db
+        var string = "Posts"
+        if post.isTopicPost {
+            string = "TopicPosts"
+        }
+        let ref = db.collection(string).document(documentID)
+        
+        ref.updateData(data) { (err) in
+            if let error = err {
+                print("###Wir haben einene Erororo: \(error.localizedDescription)")
+            } else {
+                print("###Link DIngs erfolgreich")
             }
         }
     }

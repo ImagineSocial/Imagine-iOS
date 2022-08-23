@@ -8,9 +8,13 @@
 
 import Foundation
 
-class Votes {
+struct Votes: Codable {
     var thanks = 0
     var wow = 0
     var ha = 0
     var nice = 0
+}
+
+enum VoteType: String {
+    case thanks, wow, ha, nice
 }

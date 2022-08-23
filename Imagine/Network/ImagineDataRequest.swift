@@ -6,7 +6,7 @@
 //  Copyright © 2021 Malte Schoppe. All rights reserved.
 //
 
-import Firebase
+import FirebaseFirestore
 import UIKit
 
 class ImagineDataRequest {
@@ -17,7 +17,7 @@ class ImagineDataRequest {
     public func getReportData(returnData: @escaping (ReportData?) -> Void) {
         
         let dataRef = db.collection("TopTopicData").document("TopTopicData")
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         
         dataRef.getDocument { (snap, err) in
             if let error = err {
@@ -37,7 +37,7 @@ class ImagineDataRequest {
                         }
                         
                         var userCount:Int!
-                        if language == .german {
+                        if language == .de {
                             userCount = userCountDE
                         } else {
                             userCount = userCountEN

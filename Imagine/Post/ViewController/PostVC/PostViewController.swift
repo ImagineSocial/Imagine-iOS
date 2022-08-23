@@ -9,10 +9,8 @@
 import UIKit
 import SDWebImage
 import SwiftLinkPreview
-import Firebase
 import YoutubePlayer_in_WKWebView
 import AVKit
-import FirebaseAuth
 import FirebaseFirestore
 
 
@@ -51,10 +49,13 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var leadingNameLabelToSuperviewConstraint: NSLayoutConstraint!
     @IBOutlet weak var leadingNameLabelToProfilePictureConstraint: NSLayoutConstraint!
     
+    // CommentTableView Constraints
+    @IBOutlet weak var commentTableViewTopToDescriptionBottomConstraint: NSLayoutConstraint!
+    
     
     
     // MARK: - Variables
-    var post = Post()
+    var post: Post?
     
     let db = FirestoreRequest.shared.db
     let handyHelper = HandyHelper.shared
@@ -120,8 +121,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         setupViewController()
         
         //Notifications
-        handyHelper.deleteNotifications(type: .comment, id: post.documentID)
-        handyHelper.deleteNotifications(type: .upvote, id: post.documentID)
+        handyHelper.deleteNotifications(type: .comment, id: post?.documentID)
+        handyHelper.deleteNotifications(type: .upvote, id: post?.documentID)
         
     }
     
@@ -143,82 +144,14 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        let imageWidth = post.mediaWidth
-        let imageHeight = post.mediaHeight
-        switch post.type {
-        case .multiPicture:
-            
-            // No Post yet
-            if imageWidth == 0 || imageHeight == 0 {
-                return
-            }
-            
-            let ratio = imageWidth / imageHeight
-            let contentWidth = self.contentView.frame.width
-            let newHeight = contentWidth / ratio
-            
-       
-            imageCollectionViewHeightConstraint.constant = newHeight
-            imageCollectionView.reloadData()
-            
-        case .panorama:
-            
-            // No Post yet
-            if imageWidth == 0 || imageHeight == 0 {
-                return
-            }
-            var height = imageHeight
-            if height > panoramaHeightMaximum {
-                height = panoramaHeightMaximum
-            }
-            imageCollectionViewHeightConstraint.constant = height
-            imageCollectionView.reloadData()
-            
-        case .picture:
-            
-            // No Post yet
-            if imageWidth == 0 || imageHeight == 0 {
-                return
-            }
-            
-            let ratio = imageWidth / imageHeight
-            let contentWidth = self.contentView.frame.width
-            let newHeight = contentWidth / ratio
-            
-            imageCollectionViewHeightConstraint.constant = newHeight
-            imageCollectionView.reloadData()
-            
-        case .GIF:
-            
-            if imageWidth == 0 || imageHeight == 0 {
-                return
-            }
-            
-            let ratio = imageWidth / imageHeight
-            let contentWidth = self.contentView.frame.width
-            let newHeight = contentWidth / ratio
-              
-            imageCollectionViewHeightConstraint.constant = newHeight
-            let frame = CGSize(width: contentWidth, height: newHeight)
-            if let playLay = avPlayerLayer {
-                playLay.frame.size = frame
-            }
-        default:
-            print("No important stuff for these buggeroos")
-        }
-        
-        if let view = floatingCommentView {
-            if view.answerTextField.isFirstResponder { //If the answerview is open
-                self.scrollViewDidScroll(scrollView)
-            }
-        }
+        updatePost()
     }
     
     //MARK: - Set Up UI
     
     private func setupCollectionViews() {
         //Comment Table View
-        commentTableView.initializeCommentTableView(section: .post, notificationRecipients: self.post.notificationRecipients)
+        commentTableView.initializeCommentTableView(section: .post, notificationRecipients: post?.notificationRecipients)
         commentTableView.commentDelegate = self
         commentTableView.post = self.post   // Absichern, wenn der Post keine Kommentare hat, brauch man auch nicht danach suchen und sich die Kosten sparen
         
@@ -234,48 +167,51 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func setUpUI() {
-        
         feedLikeView.setDefaultButtonImages()
-                
-        savePostButton.tintColor = .label
-        
-        handyHelper.checkIfAlreadySaved(post: post) { (alreadySaved) in
-            if alreadySaved {
-                self.savePostButton.tintColor = Constants.green
-            }
+             
+        guard let post = post else {
+            return
+        }
+
+        post.checkIfSaved { alreadySaved in
+            self.savePostButton.tintColor = alreadySaved ? Constants.green : .label
         }
     }
     
     //MARK: - Show Post
     
     func showPost() {
+        guard let post = post else {
+            return
+        }
+
         
-        if let user = Auth.auth().currentUser, let OP = post.user, user.uid == OP.userID { // Your own Post -> Different UI for a different Feeling. Shows like counts
+        if let user = AuthenticationManager.shared.user, let OP = post.user, user.uid == OP.uid { // Your own Post -> Different UI for a different Feeling. Shows like counts
             self.ownPost = true
             self.feedLikeView.setOwnCell(post: post)
         }
         
         self.view.activityStopAnimating()
         
-        let newLineString = "\n"    // Need to hardcode this and replace the \n of the fetched text
-        let descriptionText = post.description.replacingOccurrences(of: "\\n", with: newLineString)
-        
         
         titleLabel.text = post.title
-        createDateLabel.text = post.createTime
+        createDateLabel.text = post.createdAt.formatForFeed()
         feedLikeView.commentCountLabel.text = String(post.commentCount)
         
-        if let fact = post.community {   // Isnt attached if you come from search
-            //Need boolean wether already fetched or not
-            if fact.fetchComplete {
+        if let communityID = post.communityID {
+            if post.community != nil {
                 addLinkedCommunityView()
                 setCommunity()
             } else {
-                let communityRequest = CommunityRequest()
-                communityRequest.getCommunity(language: post.language, community: fact, beingFollowed: false) { (fact) in
-                    self.post.community = fact
+                CommunityHelper.getCommunity(withID: communityID, language: post.language) { community in
+                    guard let community = community else {
+                        return
+                    }
+                    
+                    self.post?.community = community
                     self.addLinkedCommunityView()
                     self.setCommunity()
+                    
                     if let view = self.floatingCommentView {
                         //Otherwise the linkedFactView would be over the keyboard of the commentField
                         self.contentView.bringSubviewToFront(view)
@@ -286,10 +222,12 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         
         self.setUser()
         
-        if descriptionText == "" {
-            self.descriptionView.heightAnchor.constraint(equalToConstant: 0).isActive = true
-        } else {
+        if let description = post.description {
+            let descriptionText = description.replacingOccurrences(of: "\\n", with: "\n")
+            
             descriptionLabel.text = descriptionText
+        } else {
+            self.descriptionView.heightAnchor.constraint(equalToConstant: 0).isActive = true
         }
         
         if post.report == .normal {
@@ -302,26 +240,28 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             collectionViewPageControl.isHidden = false
             collectionViewPageControl.currentPage = 0
             
-            guard let imageURLs = post.imageURLs else {
+            guard let images = post.images else {
                 return
             }
-                collectionViewPageControl.numberOfPages = imageURLs.count
-                if self.imageURLs.count != imageURLs.count {    // Append just once
-                    self.collectionViewPageControl.numberOfPages = imageURLs.count
-                    for imageURL in imageURLs {
-                        
-                        self.imageURLs.append(imageURL)
-                        self.imageCollectionView.reloadData()
-                    }
+            collectionViewPageControl.numberOfPages = images.count
+            
+            if self.imageURLs.count != images.count {    // Append just once
+                self.collectionViewPageControl.numberOfPages = imageURLs.count
+                for image in images {
+                    
+                    self.imageURLs.append(image.url)
+                    self.imageCollectionView.reloadData()
                 }
+            }
         case .panorama:
-            self.imageURLs.append(post.imageURL)
+            guard let imageURL = post.image?.url else { return }
+            self.imageURLs.append(imageURL)
             
             self.imageCollectionView.isPagingEnabled = false
             self.imageCollectionView.reloadData()
         case .picture:
-            if self.imageURLs.count == 0 && post.imageURL != "" {
-                self.imageURLs.append(post.imageURL)
+            if let imageURL = post.image?.url, self.imageURLs.count == 0 {
+                self.imageURLs.append(imageURL)
                 self.imageCollectionView.reloadData()
             } else {
                 return
@@ -329,18 +269,18 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         case .GIF:
             setupGIFPlayer()
             
-            if let url = URL(string: post.linkURL) {
+            if let link = post.link?.url, let url = URL(string: link) {
                 let item = AVPlayerItem(url: url)
                 self.videoPlayerItem = item
             }
-        case .link:
+        case .link, .music:
             if let link = post.link {
                 setUpLinkButton()
                 imageCollectionViewHeightConstraint.constant = 200
                 linkPreviewView.isHidden = false
                 self.urlLabel.text = link.shortURL
                 self.linkPreviewTitle.text = link.linkTitle
-                self.linkPreviewDescription.text = link.linkDescription
+                self.linkPreviewDescription.text = link.description
                 self.imageCollectionView.backgroundColor = .secondarySystemBackground
                 
                 if let imageURL = link.imageURL {
@@ -355,7 +295,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             }
         case .youTubeVideo:
             setUpYouTubeVideoUI()
-            if let youTubeID = post.linkURL.youtubeID {
+            if let link = post.link?.url, let youTubeID = link.youtubeID {
                 youTubeView.load(withVideoId: youTubeID)
             }
         case .repost:
@@ -379,10 +319,95 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             }
         }
         
-        if post.toComments {    // Comes from the SideMenu NotifactionCenter with comment
-            self.scrollToBottom()
-        }
         imageCollectionView.reloadData()    // To load the image, when the data has to be fetched in "setUpViewController"
+    }
+    
+    private func updatePost() {
+        
+        guard let post = post else {
+            return
+        }
+        
+        switch post.type {
+        case .multiPicture:
+            guard let firstImage = post.images?.first else { return }
+            
+            let imageWidth = firstImage.width
+            let imageHeight = firstImage.height
+            
+            // No Post yet
+            if imageWidth == 0 || imageHeight == 0 {
+                return
+            }
+            
+            let ratio = imageWidth / imageHeight
+            let contentWidth = self.contentView.frame.width
+            let newHeight = contentWidth / ratio
+            
+       
+            imageCollectionViewHeightConstraint.constant = newHeight
+            imageCollectionView.reloadData()
+            
+        case .panorama:
+            guard let image = post.image else { return }
+            
+            let imageWidth = image.width
+            let imageHeight = image.height
+            
+            // No Post yet
+            if imageWidth == 0 || imageHeight == 0 {
+                return
+            }
+            var height = imageHeight
+            if height > panoramaHeightMaximum {
+                height = panoramaHeightMaximum
+            }
+            imageCollectionViewHeightConstraint.constant = height
+            imageCollectionView.reloadData()
+            
+        case .picture:
+            guard let image = post.image else { return }
+            
+            let imageWidth = image.width
+            let imageHeight = image.height
+            
+            // No Post yet
+            if imageWidth == 0 || imageHeight == 0 {
+                return
+            }
+            
+            let ratio = imageWidth / imageHeight
+            let contentWidth = self.contentView.frame.width
+            let newHeight = contentWidth / ratio
+            
+            imageCollectionViewHeightConstraint.constant = newHeight
+            imageCollectionView.reloadData()
+            
+        case .GIF:
+            guard let link = post.link, let imageWidth = link.mediaWidth, let imageHeight = link.mediaHeight else { return }
+                        
+            if imageWidth == 0 || imageHeight == 0 {
+                return
+            }
+            
+            let ratio = imageWidth / imageHeight
+            let contentWidth = self.contentView.frame.width
+            let newHeight = contentWidth / ratio
+              
+            imageCollectionViewHeightConstraint.constant = newHeight
+            
+            if let playLay = avPlayerLayer {
+                playLay.frame.size = .init(width: contentWidth, height: newHeight)
+            }
+        default:
+            print("No important stuff for these buggeroos")
+        }
+        
+        if let view = floatingCommentView {
+            if view.answerTextField.isFirstResponder { //If the answerview is open
+                self.scrollViewDidScroll(scrollView)
+            }
+        }
     }
     
     //MARK: - Show User
@@ -402,72 +427,66 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func setUser() {
+        guard let post = post else {
+            return
+        }
+        
         profilePictureImageView.layer.cornerRadius = profilePictureImageView.frame.width / 2
         repostView.repostProfilePictureImageView.layer.cornerRadius = repostView.repostProfilePictureImageView.frame.width / 2
         
-        if self.post.anonym {
+        if post.anonym {
             profilePictureImageView.image = UIImage(named: "anonym-user")
-            if let anonymousName = post.anonymousName {
+            if let anonymousName = post.options?.anonymousName {
                 nameLabel.text = anonymousName
             } else {
                 nameLabel.text = Constants.strings.anonymPosterName
             }
-        } else {
-            if let user = post.user {
-                nameLabel.text = user.displayName
-                
-                if let imageURL = user.imageURL, let url = URL(string: imageURL) {
-                    profilePictureImageView.sd_setImage(with: url, completed: nil)
-                }
+        } else if let user = post.user {
+            nameLabel.text = user.name
+            
+            if let imageURL = user.imageURL, let url = URL(string: imageURL) {
+                profilePictureImageView.sd_setImage(with: url, completed: nil)
             }
         }
         
-        if let designOptions = self.post.designOptions {
-            if designOptions.hideProfilePicture {
-                leadingNameLabelToProfilePictureConstraint.isActive = false
-                leadingNameLabelToSuperviewConstraint.isActive = true
-                profilePictureImageView.isHidden = true
-                nameLabel.font = UIFont(name: "IBMPlexSans-Medium", size: 13)
-            }
+        if let designOptions = post.options, designOptions.hideProfilePicture {
+            leadingNameLabelToProfilePictureConstraint.isActive = false
+            leadingNameLabelToSuperviewConstraint.isActive = true
+            profilePictureImageView.isHidden = true
+            nameLabel.font = UIFont(name: "IBMPlexSans-Medium", size: 13)
         }
     }
     
     @IBAction func userButtonTapped(_ sender: Any) {
-        if let user = post.user {
-            if !post.anonym {
-                performSegue(withIdentifier: "toUserSegue", sender: user)
-            }
-        } else {
+        guard let post = post, let user = post.user, !post.anonym else {
             print("Kein User zu finden!")
+            return
         }
+        
+        performSegue(withIdentifier: "toUserSegue", sender: user)
     }
     
     
     //MARK: - Set Up View Controller
     func setupViewController() {
         
+        guard let post = post else {
+            return
+        }
+        
         if post.user == nil && !post.anonym {
 
-            //No post data yet
-            let toComments = post.toComments
             let votes = post.newUpvotes
-            FirestoreRequest.shared.getPostsFromDocumentIDs(posts: [post]) { (posts) in
-                if let posts = posts {
-                    if posts.count != 0 {
-                        let post = posts[0]
-                        
-                        self.post = post
-                        self.post.toComments = toComments
-                        self.post.newUpvotes = votes
-                        self.loadPost()
-                        if post.user == nil && !post.anonym {
-                            self.loadUser(post: post)
-                        }
-                    } else {
-                        print("Kein Post bekommen")
-                    }
-                } else {
-                    print("No Posts")
+            FirestoreManager.getSinglePostFromID(post: post) { post in
+                guard let post = post else {
+                    return
+                }
+                
+                post.newUpvotes = votes
+                self.post = post
+                self.loadPost()
+                if post.user == nil && !post.anonym {
+                    self.loadUser(post: post)
                 }
             }
         } else {
@@ -480,27 +499,10 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         createFloatingCommentView()
     }
     
-    func checkIfAlreadySaved() {
-        if let user = Auth.auth().currentUser {
-            let savedRef = db.collection("Users").document(user.uid).collection("saved").whereField("documentID", isEqualTo: post.documentID)
-            
-            savedRef.getDocuments { (snap, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    if snap!.documents.count != 0 {
-                        // Already saved
-                        self.savePostButton.tintColor = Constants.green
-                    }
-                }
-            }
-        }
-    }
-    
     // MARK: - Linked Community View
     
     func setCommunity() {
-        if let community = post.community {
+        if let post = post, let community = post.community {
             linkedCommunityView.community = community
         }
     }
@@ -513,19 +515,24 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
         let linkedCommunityViewWidth = voteButtonWidth*3+30
         
         let buttonHeight: CGFloat = 35
+        let padding: CGFloat = 15
         
         contentView.addSubview(linkedCommunityView)
-        linkedCommunityView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
-        linkedCommunityView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 15).isActive = true
+        linkedCommunityView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -padding).isActive = true
+        linkedCommunityView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: padding).isActive = true
         linkedCommunityView.widthAnchor.constraint(equalToConstant: linkedCommunityViewWidth).isActive = true
         linkedCommunityView.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
+        
+        commentTableViewTopToDescriptionBottomConstraint.constant = buttonHeight + padding
     }
     
     func linkedCommunityTapped() {
         
-        if let fact = post.community {
-            performSegue(withIdentifier: "toFactSegue", sender: fact)
+        guard let post = post, let community = post.community else {
+            return
         }
+        
+        performSegue(withIdentifier: "toFactSegue", sender: community)
     }
     
     //MARK: - RepostView
@@ -539,42 +546,40 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func showRepost() {
-        if let repost = post.repost {
-            
-            //Calculate and set the height of the repost image
-            let ratio = repost.mediaWidth / repost.mediaHeight
-            let contentWidth = self.contentView.frame.width-40
-            let newHeight = contentWidth / ratio
-            
-            repostView.repostImageView.heightAnchor.constraint(equalToConstant: newHeight).isActive = true
-            
-            //Set the imageCOllectionViewHeight as this is the layout boundary for the repostView
-            imageCollectionViewHeightConstraint.constant = newHeight+135
-            
-            //set title, user etc. in the repostView
-            repostView.repost = repost
+        guard let post = post, let repost = post.repost, let image = repost.image else {
+            return
         }
+        
+        //Calculate and set the height of the repost image
+        let ratio = image.width / image.height
+        let contentWidth = self.contentView.frame.width-40
+        let newHeight = contentWidth / ratio
+        
+        repostView.repostImageView.heightAnchor.constraint(equalToConstant: newHeight).isActive = true
+        
+        //Set the imageCOllectionViewHeight as this is the layout boundary for the repostView
+        imageCollectionViewHeightConstraint.constant = newHeight+135
+        
+        //set title, user etc. in the repostView
+        repostView.repost = repost
     }
     
     // Repost functions
     func repostViewTapped() {
-        if let repost = post.repost {
-            let postVC = self.storyboard?.instantiateViewController(withIdentifier: "PostVC") as! PostViewController
-            postVC.post = repost
-            self.navigationController?.pushViewController(postVC, animated: true)
+        guard let post = post, let repost = post.repost else {
+            return
         }
+        let postVC = self.storyboard?.instantiateViewController(withIdentifier: "PostVC") as! PostViewController
+        postVC.post = repost
+        self.navigationController?.pushViewController(postVC, animated: true)
     }
     
     func repostUserTapped() {
-        if let repost = post.repost {
-            if let repostUser = repost.user {
-                if !repost.anonym {
-                    self.toUserTapped(user: repostUser)
-                }
-            } else {
-                print("no user to find")
-            }
+        guard let post = post, let repost = post.repost, let repostUser = repost.user, !repost.anonym else {
+            return
         }
+        
+        self.toUserTapped(user: repostUser)
     }
     
     //MARK: - Link Post
@@ -608,7 +613,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     //MARK: - YouTube Post
     
     func setUpYouTubeVideoUI() {
-        imageCollectionViewHeightConstraint.constant = 200
+        imageCollectionViewHeightConstraint.constant = 250
         contentView.addSubview(youTubeView)
         youTubeView.leadingAnchor.constraint(equalTo: imageCollectionView.leadingAnchor).isActive = true
         youTubeView.trailingAnchor.constraint(equalTo: imageCollectionView.trailingAnchor).isActive = true
@@ -627,7 +632,11 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     //MARK: - Like Buttons
     
     func updateLikeCount(button: DesignableButton) {
-        if let _ = Auth.auth().currentUser {
+        guard let post = post else {
+            return
+        }
+
+        if AuthenticationManager.shared.isLoggedIn {
             var voteButton: VoteButton
             switch button {
             case feedLikeView.thanksButton:
@@ -797,39 +806,27 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     
     //MARK: - Button Responder
     @objc func postImageTapped() {
-        let pinchVC = PinchToZoomViewController()
-        
-        switch post.type {
-        case .repost:
-            pinchVC.post = self.post.repost
-        default:
-            pinchVC.post = self.post
+        guard let post = post else {
+            return
         }
+
+        let pinchVC = PinchToZoomViewController()
+        pinchVC.post = (post.type == .repost) ? post.repost : post
         
         self.navigationController?.pushViewController(pinchVC, animated: true)
     }
     
     
     @IBAction func savePostTapped(_ sender: Any) {
-        if let user = Auth.auth().currentUser {
-            let ref = db.collection("Users").document(user.uid).collection("saved").document(post.documentID)
-            
-            var data: [String:Any] = ["createTime": Timestamp(date: Date())]
-            
-            if post.isTopicPost {
-                data["isTopicPost"] = true
+        guard let post = post, AuthenticationManager.shared.user != nil else {
+            notLoggedInAlert()
+            return
+        }
+        
+        post.savePost { success in
+            if success {
+                self.savePostButton.tintColor = Constants.green
             }
-                    
-            ref.setData(data) { (err) in
-                if let error = err {
-                    print("We have an error saving this post: \(error.localizedDescription)")
-                } else {
-                    print("Successfully saved")
-                    self.savePostButton.tintColor = Constants.green
-                }
-            }
-        } else {
-            self.notLoggedInAlert()
         }
     }
     
@@ -853,6 +850,10 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
     }()
     
     @objc func translatePostTapped() {
+        guard let post = post else {
+            return
+        }
+
         if post.type == .picture {
             performSegue(withIdentifier: "toTranslateSegue", sender: post)
         } else {
@@ -876,7 +877,7 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
             }
         case "toUserSegue":
             if let chosenUser = sender as? User, let userVC = segue.destination as? UserFeedTableViewController {
-                userVC.userOfProfile = chosenUser
+                userVC.user = chosenUser
                 userVC.currentState = .otherUser
                 
             }
@@ -960,7 +961,8 @@ class PostViewController: UIViewController, UIScrollViewDelegate {
 }
 
 extension PostViewController: FeedLikeViewDelegate {
-    func registerVote(button: DesignableButton) {
-        self.updateLikeCount(button: button)
+    func registerVote(for type: VoteType) {
+        post?.registerVote(for: type)
+        feedLikeView.showButtonInteraction(type: type, post: post)
     }
 }

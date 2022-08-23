@@ -7,10 +7,8 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseAuth
 import FirebaseFirestore
-import FirebaseAnalytics
 import SDWebImage
 import Reachability
 import EasyTipView
@@ -51,7 +49,8 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         
         setNotificationListener()
         
-        setPlaceholderAndGetPosts()
+        setPlaceholders()
+        getPosts()
         
         // Show intro slides for different features in the app
         if !self.isAppAlreadyLaunchedOnce() {
@@ -100,93 +99,41 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     
     //MARK: - Get Data
     
-    @objc override func getPosts(getMore:Bool) {
+    @objc override func getPosts() {
         // If "getMore" is true, you want to get more Posts, or the initial batch of 20 Posts, if not you want to refresh the current feed
         
-        if isConnected() {
+        guard isConnected(), !fetchInProgress else {
+            fetchRequested = !isConnected()
+            return
+        }
+        
+        view.activityStartAnimating()
+        fetchInProgress = true
+        
+        DispatchQueue.global(qos: .background).async {
             
-            self.view.activityStartAnimating()
-            
-            DispatchQueue.global(qos: .background).async {
+            self.firestoreManager.getPostsForMainFeed { posts in
+                guard let posts = posts else {
+                    return
+                }
                 
-                self.firestoreRequest.getPostsForMainFeed(getMore: getMore, sort: self.sortBy) { (posts,initialFetch)  in
-                    
-                    print("\(posts.count) neue dazu")
-                    if initialFetch {   // Get the first batch of posts
-                        
-                        DispatchQueue.main.async {
-                            if !self.isAppAlreadyLaunchedOnce() {
+                if posts.isEmpty {
+                    self.returnedPostsAreEmpty()
+                    return
+                }
                                 
-                            } else if self.isItTheSecondTimeTheAppLaunches() {
-                                
-                                self.alert(message: NSLocalizedString("tap_blue_owen_title", comment: "go and tap it to see what this could be"), title: NSLocalizedString("tap_blue_owen_message", comment: ""))
-                            } else if !self.alreadyAcceptedPrivacyPolicy() {
-                                self.showGDPRAlert()
-                            }
-                        }
-                        self.posts.removeAll()  //to get the placeholder out
-                        self.posts = posts
-                        
-                        DispatchQueue.main.async {
-                            self.tableView.reloadData()
-                            
-                            self.fetchesPosts = false
-                            
-                            // remove ActivityIndicator incl. backgroundView
-                            self.view.activityStopAnimating()
-                            
-                            self.refreshControl?.endRefreshing()
-                        }
-                    } else {    // Append the next batch to the existing
-                        var indexes : [IndexPath] = [IndexPath]()
-                        
-                        for result in posts {
-                            let row = self.posts.count
-                            
-                            indexes.append(IndexPath(row: row, section: 0))
-                            self.posts.append(result)
-                        }
-                        
-                        DispatchQueue.main.async {
-                            
-                            self.tableView.performBatchUpdates({
-                                self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                                self.tableView.insertRows(at: indexes, with: .bottom)
-                            }, completion: { (_) in
-                                self.fetchesPosts = false
-                            })
-                            
-                            self.view.activityStopAnimating()
-                            print("Jetzt haben wir \(self.posts.count)")
-                        }
-                    }
+                self.placeholderAreShown ? self.setPosts(posts) : self.appendPosts(posts)
+            }
+            
+            return
+            
+            // Das hier noch irgendwie
+            DispatchQueue.main.async {
+                if !self.alreadyAcceptedPrivacyPolicy() {
+                    self.showGDPRAlert()
                 }
             }
-        } else {
-            fetchRequested = true
         }
-    }
-    
-    //MARK: Present Data
-    
-    /// Show empty cells while fetching the posts
-    func setPlaceholderAndGetPosts() {
-        var index = 0
-        
-        while index <= 3 {
-            let post2 = Post()
-            post2.designOptions = PostDesignOption(hideProfilePicture: true)
-            if index == 1 {
-                post2.type = .picture
-            } else {
-                post2.type = .thought
-            }
-            self.posts.append(post2)
-            index+=1
-        }
-        
-        self.tableView.reloadData()
-        getPosts(getMore: true)
     }
     
     
@@ -196,14 +143,11 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         
         let post = posts[indexPath.row]
         
-        if post.type == .topTopicCell {
-            tableView.deselectRow(at: indexPath, animated: false)
-        } else if post.type == .singleTopic {
+        if post.type == .singleTopic {
             if let fact = post.community {
                 performSegue(withIdentifier: "toFactSegue", sender: fact)
             }
         } else {
-//            changePostLocation(post: post)
             performSegue(withIdentifier: "showPost", sender: post)
         }
         
@@ -227,25 +171,14 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             if let chosenPost = sender as? Post, let reportVC = segue.destination as? ReportViewController {
                 reportVC.post = chosenPost
             }
-            /*
-        case "goToLink":
-            if let webVC = segue.destination as? WebViewController {
-                if let chosenPost = sender as? Post {
-                    
-                    webVC.post = chosenPost
-                    
-                } else if let chosenLink = sender as? String {
-                    webVC.link = chosenLink
-                }
-            }*/
         case "toUserSegue":
             if let userVC = segue.destination as? UserFeedTableViewController {
                 if let chosenUser = sender as? User {   // Another User
-                    userVC.userOfProfile = chosenUser
+                    userVC.user = chosenUser
                     userVC.currentState = .otherUser
                 } else { // The CurrentUser
                     userVC.delegate = self
-                    userVC.currentState = .ownProfileWithEditing
+                    userVC.currentState = .ownProfile
                 }
             }
         case "toBlogPost":
@@ -320,12 +253,8 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     
     //MARK:- Register Recent Community
     func notifyFactCollectionViewController(community: Community) {
-        if let viewControllers = self.tabBarController?.viewControllers {
-            if let navVC = viewControllers[3] as? UINavigationController {
-                if let factVC = navVC.topViewController as? CommunityCollectionVC {
-                    factVC.registerRecentFact(fact: community)
-                }
-            }
+        if let viewControllers = self.tabBarController?.viewControllers, let navVC = viewControllers[3] as? UINavigationController, let communityVC = navVC.topViewController as? CommunityCollectionVC {
+            communityVC.registerRecentFact(community: community)
         }
     }
     
@@ -347,7 +276,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                 self.setNotificationListener()
             } else {    // Already got barButtons
                 
-                if let _ = Auth.auth().currentUser {
+                if AuthenticationManager.shared.isLoggedIn {
                     if self.loggedIn == false { // Logged in but no profileButton
                         self.createBarButton()
                     }
@@ -478,7 +407,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         
         if isReachable {
             if fetchRequested { // To automatically redo the requested task
-                self.getPosts(getMore: true)
+                self.getPosts()
             }
             
             if self.navigationItem.leftBarButtonItem == nil {
@@ -513,35 +442,17 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             performSegue(withIdentifier: "toSavedPosts", sender: nil)
         case .toEULA:
             performSegue(withIdentifier: "toEULASegue", sender: nil)
-        case .toPost:
-            if let comment = comment{
-                let post = Post()
-                post.documentID = comment.sectionItemID
-                post.isTopicPost = comment.isTopicPost
-                post.language = comment.sectionItemLanguage
-                post.newUpvotes = comment.upvotes
-
-                if let user = Auth.auth().currentUser {     //Only works if you get notifications for your own posts
-                    post.user = User(userID: user.uid)
-                }
-                
-                performSegue(withIdentifier: "showPost", sender: post)
-            }
-        case .toComment:
+        case .toPost, .toComment:
             if let comment = comment {
-                let post = Post()
+                let post = Post(type: .picture, title: "", createdAt: Date())
                 post.documentID = comment.sectionItemID
                 post.isTopicPost = comment.isTopicPost
-                post.toComments = true
                 post.language = comment.sectionItemLanguage
-                if let user = Auth.auth().currentUser {
-                    post.user = User(userID: user.uid)
-                }
                 
                 performSegue(withIdentifier: "showPost", sender: post)
             }
         default:
-            print("nothing happens")
+            break
         }
         
     }
@@ -549,8 +460,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     //MARK: Side Menu User
     
     func checkForLoggedInUser() {
-        print("check")
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
             //Still logged in
             self.loadBarButtonItem()
             self.screenEdgeRecognizer.isEnabled = true
@@ -583,8 +493,8 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             return
         } else {
             print("Set listener")
-            if let user = Auth.auth().currentUser {
-                let notRef = db.collection("Users").document(user.uid).collection("notifications")
+            if let userID = AuthenticationManager.shared.userID {
+                let notRef = db.collection("Users").document(userID).collection("notifications")
                 
                 notificationListener = notRef.addSnapshotListener { (snap, err) in
                     if let error = err {
@@ -615,7 +525,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                                                 }
                                                 if let language = data["language"] as? String {
                                                     if language == "en" {
-                                                        comment.sectionItemLanguage = .english
+                                                        comment.sectionItemLanguage = .en
                                                     }
                                                 }
                                                 comment.author = author
@@ -644,7 +554,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
                                                     }
                                                     if let language = data["language"] as? String {
                                                         if language == "en" {
-                                                            comment.sectionItemLanguage = .english
+                                                            comment.sectionItemLanguage = .en
                                                         }
                                                     }
                                                     
@@ -704,7 +614,7 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
     }
     
     func addUpvote(comment: Comment, buttonType: String) {
-        if let votes = comment.upvotes {
+        if var votes = comment.upvotes {
 
             switch buttonType {
             case "thanks":
@@ -812,7 +722,6 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
             
             self.defaults.set(true, forKey: "acceptedCookies")
             self.defaults.set(true, forKey: "askedAboutCookies")
-            Analytics.setAnalyticsCollectionEnabled(true)
             self.dismiss(animated: true, completion: nil)
         }))
         
@@ -825,16 +734,6 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         }))
         
         self.present(alert, animated: true, completion: nil)
-    }
-    
-    func isItTheSecondTimeTheAppLaunches() -> Bool {
-        if let _ = defaults.string(forKey: "isItTheSecondTimeTheAppLaunches") {
-            return false
-        } else {
-            defaults.set(true, forKey: "isItTheSecondTimeTheAppLaunches")
-            print("App launched second time")
-            return true
-        }
     }
     
     // MARK: EasyTipViewPreferences
@@ -858,35 +757,26 @@ class FeedTableViewController: BaseFeedTableViewController, UNUserNotificationCe
         
         EasyTipView.globalPreferences = preferences
     }
-    
-//    func changePostLocation(post: Post) {
-//        let dataDictionary: [String: Any] = ["title": post.title, "description": post.description, "createTime": Timestamp(date: Date()), "originalPoster": post.user.userUID, "thanksCount":post.votes.thanks, "wowCount":post.votes.thanks, "haCount":post.votes.thanks, "niceCount":post.votes.thanks, "type": "picture", "report": "normal", "imageURL": post.imageURL, "imageHeight": post.mediaHeight, "imageWidth": post.mediaWidth]
-//
-//        let ref = db.collection("Posts").document()
-//
-//        ref.setData(dataDictionary) { (err) in
-//            if let error = err {
-//                print("error:", error.localizedDescription)
-//            }
-//        }
-//    }
 }
 
 
-//MARK:- DismissDelegate
+// MARK: - DismissDelegate
 
 extension FeedTableViewController: DismissDelegate {
     
     /// Call to load User in SideMenu and set notifications after dismissal of the logInViewController
     func loadUser() {
-        self.setNotificationListener()
-        self.checkForLoggedInUser()
-        self.setNotifications()
+        setNotificationListener()
+        checkForLoggedInUser()
+        setNotifications()
         sideMenu.showUser()
+        
+        reloadFeed()
+        getPosts()
     }
 }
 
-//MARK:- LogOutDelegate
+// MARK: - LogOutDelegate
 extension FeedTableViewController: LogOutDelegate {
 
     func deleteListener() {     
@@ -900,14 +790,15 @@ extension FeedTableViewController: LogOutDelegate {
         self.notifications.removeAll()
         
         sideMenu.removeUser()
+        checkForLoggedInUser()
     }
 }
 
-//MARK:- JustPostedDelegate
+// MARK: - JustPostedDelegate
 
 extension FeedTableViewController: JustPostedDelegate {
     func posted() {
-        self.getPosts(getMore: false)
+        self.getPosts()
     }
 }
 

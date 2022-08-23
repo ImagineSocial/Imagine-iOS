@@ -26,7 +26,8 @@ class NewPostLinkCell: NewPostBaseCell {
         
     override init(frame: CGRect) {
         super.init(frame: .zero)
-                
+        
+        linkTextField.delegate = self
         backgroundColor = .systemBackground
     }
     
@@ -89,29 +90,27 @@ class NewPostLinkCell: NewPostBaseCell {
 }
 
 extension NewPostLinkCell: UITextFieldDelegate {
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        guard let text = textField.text, text.isValidURL else {
+            return
+        }
         
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        delegate?.textChanged(for: .link, text: textField.text)
+        delegate?.textChanged(for: .link, text: text)
         
-        if let text = textField.text {
-            
-            internetImageView.alpha = 0.4
-            youTubeImageView.alpha = 0.4
-            songWhipImageView.alpha = 0.4
-            GIFImageView.alpha = 0.4
-            
-            if text.isValidURL {
-                if let _ = text.youtubeID {
-                    youTubeImageView.alpha = 1
-                } else if text.contains("songwhip.com") || text.contains("music.apple.com") || text.contains("open.spotify.com/") || text.contains("deezer.page.link") {
-                    songWhipImageView.alpha = 1
-                } else if text.contains(".mp4") {
-                    GIFImageView.alpha = 1
-                    print("Got mp4")
-                } else {
-                    internetImageView.alpha = 1
-                }
-            }
+        internetImageView.alpha = 0.4
+        youTubeImageView.alpha = 0.4
+        songWhipImageView.alpha = 0.4
+        GIFImageView.alpha = 0.4
+        
+        if let _ = text.youtubeID {
+            youTubeImageView.alpha = 1
+        } else if text.contains("songwhip.com") || text.contains("music.apple.com") || text.contains("open.spotify.com/") || text.contains("deezer.page.link") {
+            songWhipImageView.alpha = 1
+        } else if text.contains(".mp4") {
+            GIFImageView.alpha = 1
+        } else {
+            internetImageView.alpha = 1
         }
     }
 }

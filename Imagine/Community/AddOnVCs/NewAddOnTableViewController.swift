@@ -8,9 +8,7 @@
 
 import UIKit
 import EasyTipView
-import Firebase
 import FirebaseFirestore
-import FirebaseAnalytics
 
 class NewAddOnTableViewController: UITableViewController {
     
@@ -19,12 +17,9 @@ class NewAddOnTableViewController: UITableViewController {
     @IBOutlet weak var didSelectAddOnImageView: UIImageView!
     
     var optionalInformations = [AddOn]()
-    var fact: Community?
+    var community: Community?
     var selectedAddOnStyle: AddOnStyle?
-    
-    let addOnStoreCellIdentifier = "AddOnStoreImageTableViewCell"
-    let addOnHeaderIdentifier = "AddOnHeaderView"
-    
+        
     var tipView: EasyTipView?
     let db = FirestoreRequest.shared.db
     
@@ -33,14 +28,14 @@ class NewAddOnTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let _ = fact else {
+        guard let _ = community else {
             print("No Fact")
             navigationController?.popViewController(animated: false)
             return
         }
 
-        tableView.register(UINib(nibName: "AddOnStoreImageTableViewCell", bundle: nil), forCellReuseIdentifier: addOnStoreCellIdentifier)
-        tableView.register(UINib(nibName: "AddOnHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: addOnHeaderIdentifier)
+        tableView.register(UINib(nibName: "AddOnStoreImageTableViewCell", bundle: nil), forCellReuseIdentifier: AddOnStoreImageTableViewCell.identifier)
+        tableView.register(UINib(nibName: "AddOnHeaderView", bundle: nil), forHeaderFooterViewReuseIdentifier: AddOnStoreHeaderView.identifier)
         tableView.separatorColor = .clear
         
         
@@ -72,13 +67,11 @@ class NewAddOnTableViewController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return optionalInformations.count+1
+        optionalInformations.count + 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 1
+        1
     }
 
     
@@ -88,7 +81,7 @@ class NewAddOnTableViewController: UITableViewController {
             
             let info = optionalInformations[indexPath.section]
             
-            if let cell = tableView.dequeueReusableCell(withIdentifier: addOnStoreCellIdentifier, for: indexPath) as? AddOnStoreImageTableViewCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: AddOnStoreImageTableViewCell.identifier, for: indexPath) as? AddOnStoreImageTableViewCell {
                 
                 
                 switch info.style {
@@ -139,7 +132,7 @@ class NewAddOnTableViewController: UITableViewController {
             
             let info = optionalInformations[section]
             
-            if let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: addOnHeaderIdentifier) as? AddOnHeaderView {
+            if let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: AddOnStoreHeaderView.identifier) as? AddOnStoreHeaderView {
                 
                 headerView.info = info
                 headerView.delegate = self
@@ -202,7 +195,7 @@ class NewAddOnTableViewController: UITableViewController {
             if let navVC = segue.destination as? UINavigationController {
                 if let vc = navVC.topViewController as? NewCommunityItemTableVC {
                     if let style = sender as? AddOnStyle {
-                        if let fact = fact {
+                        if let community = community {
                             if style == .singleTopic {
                                 vc.new = .singleTopicAddOn
                             } else if style == .collectionWithYTPlaylist {
@@ -210,7 +203,7 @@ class NewAddOnTableViewController: UITableViewController {
                             } else {
                                 vc.new = .addOn
                             }
-                            vc.fact = fact
+                            vc.community = community
                             vc.delegate = self
                         }
                     }
@@ -220,29 +213,28 @@ class NewAddOnTableViewController: UITableViewController {
     }
     
     @IBAction func doneTapped(_ sender: Any) {
-        if let user = Auth.auth().currentUser, let fact = fact {
-            if let style = self.selectedAddOnStyle {
-                if style == .QandA {
-                    createNewQandAAddOn(user: user, fact: fact)
-                } else {
-                    performSegue(withIdentifier: "toNewAddOnSegue", sender: style)
-                }
-            }
+        guard let user = AuthenticationManager.shared.user, let community = community, let style = self.selectedAddOnStyle else {
+            return
+        }
+        if style == .QandA {
+            createNewQandAAddOn(user: user, community: community)
+        } else {
+            performSegue(withIdentifier: "toNewAddOnSegue", sender: style)
         }
     }
     
-    func createNewQandAAddOn(user: FirebaseAuth.User, fact: Community) {
-        var collectionRef: CollectionReference!
-        if fact.language == .english {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
+    func createNewQandAAddOn(user: User, community: Community) {
+        
+        guard let userID = user.uid, let communityID = community.id else {
+            return
         }
-        let ref = collectionRef.document(fact.documentID).collection("addOns").document()
         
-        let data: [String:Any] = ["OP": user.uid, "type": "QandA", "popularity": 0]
+        let addOnReference = FirestoreCollectionReference(document: communityID, collection: "addOns")
+        let reference = FirestoreReference.documentRef(.communities, documentID: nil, collectionReferences: addOnReference)
         
-        ref.setData(data) { (err) in
+        let data: [String:Any] = ["OP": userID, "type": "QandA", "popularity": 0]
+        
+        reference.setData(data) { (err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
@@ -287,6 +279,8 @@ extension NewAddOnTableViewController: NewFactDelegate, AddOnHeaderDelegate {
 }
 
 class AddOnStoreImageTableViewCell: UITableViewCell {
+    
+    static let identifier = "AddOnStoreCell"
     
     @IBOutlet weak var exampleImageView: UIImageView!
     

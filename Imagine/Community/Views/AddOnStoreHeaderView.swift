@@ -1,5 +1,5 @@
 //
-//  AddOnHeaderView.swift
+//  AddOnStoreHeaderView.swift
 //  Imagine
 //
 //  Created by Malte Schoppe on 29.04.20.
@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 
 protocol AddOnHeaderDelegate {
     func showDescription()
@@ -17,7 +16,9 @@ protocol AddOnHeaderDelegate {
     func settingsTapped(section: Int)
 }
 
-class AddOnHeaderView: UITableViewHeaderFooterView {
+class AddOnStoreHeaderView: UITableViewHeaderFooterView {
+    
+    static let identifier = "NewAddOnHeaderView"
     
     @IBOutlet weak var headerImageView: DesignableImage!
     @IBOutlet weak var headerTitleLabel: UILabel!
@@ -60,7 +61,7 @@ class AddOnHeaderView: UITableViewHeaderFooterView {
                     headerTitleLabel.text = NSLocalizedString("new_addOn_QandA_header", comment: "adde a qanda addon")
                 }
                 
-                if let user = Auth.auth().currentUser {
+                if let user = AuthenticationManager.shared.user {
                     if user.uid == info.OP {
                         self.settingButton.isHidden = false
                     }

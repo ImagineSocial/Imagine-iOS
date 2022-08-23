@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 protocol AddItemDelegate: class {
     func itemAdded()
@@ -35,7 +35,6 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
     var savedPosts = [Post]()
     
     let db = FirestoreRequest.shared.db
-    let postHelper = PostHelper.shared
     
     var addOn: AddOn? {
         didSet {
@@ -89,72 +88,28 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
 //        navigationItem.hidesSearchBarWhenScrolling = false
     }
     
-    func getPosts() {
+    func getPosts(forTopics: Bool = false) {
         
-        var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
-        if language == .english {
-            collectionRef = self.db.collection("Data").document("en").collection("posts")
-        } else {
-            collectionRef = self.db.collection("Posts")
-        }
-        let ref: Query!
+        var collectionRef = FirestoreReference.collectionRef(forTopics ? .topicPosts : .posts)
+        
         if playlistTracksOnly {
-            ref = collectionRef.whereField("musicType", isEqualTo: "track").order(by: "createTime", descending: true).limit(to: 15)
-        } else {
-            ref = collectionRef.order(by: "createTime", descending: true).limit(to: 15)
+            collectionRef = collectionRef.whereField("musicType", isEqualTo: "track")
         }
         
-        ref.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    for document in snap.documents {
-                                                
-                        if let post = self.postHelper.addThePost(document: document, isTopicPost: false, language: language) {
-                            self.posts.append(post)
-                        }
-                    }
+        FirestoreManager.shared.decode(query: collectionRef) { (result: Result<[Post], Error>) in
+            switch result {
+            case .success(let posts):
+                self.posts = posts
+                
+                DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
+            case .failure(let error):
+                print("We have an error: \(error.localizedDescription)")
             }
         }
     }
     
-    func getTopicPosts() {
-        
-        var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
-        if language == .english {
-            collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
-        } else {
-            collectionRef = self.db.collection("TopicPosts")
-        }
-        
-        let ref: Query!
-        if playlistTracksOnly {
-            ref = collectionRef.whereField("musicType", isEqualTo: "track").order(by: "createTime", descending: true).limit(to: 15)
-        } else {
-            ref = collectionRef.order(by: "createTime", descending: true).limit(to: 15)
-        }
-        
-        ref.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    for document in snap.documents {
-                                                
-                        if let post = self.postHelper.addThePost(document: document, isTopicPost: true, language: language) {
-                            self.topicPosts.append(post)
-                        }
-                    }
-                    self.tableView.reloadData()
-                }
-            }
-        }
-    }
     
     func setUpSearchController() {
         
@@ -240,36 +195,25 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
                 profileImageView.image = UIImage(named: "default-user")
             }
             
-            profileNameLabel.text = user.displayName
+            profileNameLabel.text = user.name
         } else {
             profileNameLabel.text = ""
             profileImageView.image = nil
         }
         
         headerView.layoutIfNeeded()
-        if post.type == .multiPicture {
-            if let url = URL(string: post.imageURLs![0]) {
+        
+        if post.type == .multiPicture, let imageURL = post.images?.first?.url, let url = URL(string: imageURL) {
                 headerImageView.sd_setImage(with: url, completed: nil)
-            }
-        } else if post.type == .picture {
-            if let url = URL(string: post.imageURL) {
-                headerImageView.sd_setImage(with: url, completed: nil)
-            }
+        } else if post.type == .picture, let link = post.image?.url, let url = URL(string: link) {
+            headerImageView.sd_setImage(with: url, completed: nil)
         } else if post.type == .GIF {
             headerImageView.image = UIImage(named: "GIFIcon")
         } else if post.type == .link {
-            if let music = post.music {
-                if let url = URL(string: music.musicImageURL) {
-                    headerImageView.sd_setImage(with: url, completed: nil)
-                }
-            } else {
-                if let link = post.link {
-                    if let imageURL = link.imageURL {
-                        if let url = URL(string: imageURL) {
-                            headerImageView.sd_setImage(with: url, completed: nil)
-                        }
-                    }
-                }
+            if let songwhip = post.link?.songwhip, let url = URL(string: songwhip.musicImage) {
+                headerImageView.sd_setImage(with: url, completed: nil)
+            } else if let link = post.link, let imageURL = link.imageURL, let url = URL(string: imageURL) {
+                headerImageView.sd_setImage(with: url, completed: nil)
             }
         } else {
             headerImageView.image = UIImage(named: "savePostImage")
@@ -389,7 +333,7 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
         case 1:
             selectedPostType = .topicPost
             if topicPosts.count == 0 {
-                self.getTopicPosts()
+                self.getPosts(forTopics: true)
             } else {
                 tableView.reloadData()
             }
@@ -420,34 +364,6 @@ class AddPostTableViewController: UITableViewController, UITextFieldDelegate {
         headerTextField.resignFirstResponder()
     }
     
-    
-    func checkIfFirstEntry(collectionReferenceString: String, fact: Community, gotCollection: @escaping (Bool) -> Void) {
-        var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
-        if language == .english {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let ref = collectionRef.document(fact.documentID).collection(collectionReferenceString)
-        
-        ref.getDocuments { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snap = snap {
-                    
-                    if snap.isEmpty {
-                        print("No document in snap")
-                        gotCollection(false)
-                    } else {
-                        print("Got Documents in snap")
-                        gotCollection(true)
-                    }
-                }
-            }
-        }
-    }
     
     @IBAction func searchButtonTapped(_ sender: Any) {
         

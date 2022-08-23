@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 protocol CustomSearchViewControllerDelegate {
     func didSelectItem(item: Any)
@@ -17,22 +17,19 @@ class SearchTableViewController: UITableViewController, UISearchControllerDelega
     
     let db = FirestoreRequest.shared.db
     let handyHelper = HandyHelper.shared
-    let postHelper = PostHelper.shared
     
     var postResults: [Post]?
     var userResults: [User]?
     
     var searchController = UISearchController(searchResultsController: nil)
-    
-    let blankCellReuseIdentifier = "NibBlankCell"
-    
+        
     var customDelegate: CustomSearchViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tableView.register(SearchPostCell.self, forCellReuseIdentifier: "SearchPostCell")
-        tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: blankCellReuseIdentifier)
+        tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: BlankContentCell.identifier)
                 
 //        setUpSearchController()
     }
@@ -96,7 +93,7 @@ class SearchTableViewController: UITableViewController, UISearchControllerDelega
 //                return cell
 //            }
         } else {
-            if let cell = tableView.dequeueReusableCell(withIdentifier: blankCellReuseIdentifier, for: indexPath) as? BlankContentCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: BlankContentCell.identifier, for: indexPath) as? BlankContentCell {
                 
                 cell.type = .search
                 cell.contentView.backgroundColor = self.tableView.backgroundColor
@@ -161,58 +158,27 @@ extension SearchTableViewController: UISearchResultsUpdating, UISearchBarDelegat
         var postResults = [Post]()
         var userResults = [User]()
         
-        var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         
         switch searchScope {
         case 0: // Search Posts
-            if language == .english {
-                collectionRef = self.db.collection("Data").document("en").collection("posts")
-            } else {
-                collectionRef = self.db.collection("Posts")
-            }
+            let postQuery = FirestoreReference.collectionRef(.posts)
             
-            let titleRef: Query!
+            var titleQuery = postQuery.whereField("title", isGreaterThan: searchText).whereField("title", isLessThan: "\(searchText)ü").limit(to: 10)
             if musicTrackOnly {
-                titleRef = collectionRef.whereField("musicType", isEqualTo: "track").whereField("title", isGreaterThan: searchText).whereField("title", isLessThan: "\(searchText)ü").limit(to: 10)
-            } else {
-                titleRef = collectionRef.whereField("title", isGreaterThan: searchText).whereField("title", isLessThan: "\(searchText)ü").limit(to: 10)
+                titleQuery = postQuery.whereField("musicType", isEqualTo: "track")
             }
             
-            titleRef.getDocuments { (querySnap, error) in
-                if let err = error {
-                    print("We have an error searching for titles: \(err.localizedDescription)")
-                } else {
-                    for document in querySnap!.documents {
-                        
-                        addPost(document: document, isTopicPost: false)
-                    }
-                    self.postResults = nil
+            FirestoreManager.shared.decode(query: titleQuery) { (result: Result<[Post], Error>) in
+                switch result {
+                case .success(let posts):
+                    postResults.append(contentsOf: posts)
+                    
                     self.postResults = postResults
                     self.userResults = nil
                     self.tableView.reloadData()
-                }
-            }
-            
-            
-            // You have to write the whole noun
-            let tagRef = collectionRef.whereField("tags", arrayContains: searchText).limit(to: 10)
-            
-            tagRef.getDocuments { (querySnap, error) in
-                if let err = error {
-                    print("We have an error searching for titles: \(err.localizedDescription)")
-                } else {
-                    for document in querySnap!.documents {
-                        
-                        addPost(document: document, isTopicPost: false)
-                    }
-                    
-                    self.postResults = nil
-                    self.postResults = postResults
-                    self.userResults = nil
-                    self.tableView.reloadData()
-                    
-                    
+                case .failure(let error):
+                    print("We have an error searching for titles: \(error.localizedDescription)")
                 }
             }
         case 1: // Search Users
@@ -263,53 +229,23 @@ extension SearchTableViewController: UISearchResultsUpdating, UISearchBarDelegat
                 }
             }
         case 2: // Search topicPosts
-            if language == .english {
-                collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
-            } else {
-                collectionRef = self.db.collection("topicPosts")
-            }
+            let topicPostQuery = FirestoreReference.collectionRef(.topicPosts)
             
-            let titleRef: Query!
+            var topicTitleQuery = topicPostQuery.whereField("title", isGreaterThan: searchText).whereField("title", isLessThan: "\(searchText)ü").limit(to: 10)
             if musicTrackOnly {
-                titleRef = collectionRef.whereField("musicType", isEqualTo: "track").whereField("title", isGreaterThan: searchText).whereField("title", isLessThan: "\(searchText)ü").limit(to: 10)
-            } else {
-                titleRef = collectionRef.whereField("title", isGreaterThan: searchText).whereField("title", isLessThan: "\(searchText)ü").limit(to: 10)
+                topicTitleQuery = topicPostQuery.whereField("musicType", isEqualTo: "track")
             }
             
-            titleRef.getDocuments { (querySnap, error) in
-                if let err = error {
-                    print("We have an error searching for titles: \(err.localizedDescription)")
-                } else {
-                    for document in querySnap!.documents {
-                        
-                        addPost(document: document, isTopicPost: true)
-                    }
-                    self.postResults = nil
+            FirestoreManager.shared.decode(query: topicTitleQuery) { (result: Result<[Post], Error>) in
+                switch result {
+                case .success(let posts):
+                    postResults.append(contentsOf: posts)
+                    
                     self.postResults = postResults
                     self.userResults = nil
                     self.tableView.reloadData()
-                }
-            }
-            
-            
-            // You have to write the whole noun
-            let tagRef = collectionRef.whereField("tags", arrayContains: searchText).limit(to: 10)
-            
-            tagRef.getDocuments { (querySnap, error) in
-                if let err = error {
-                    print("We have an error searching for titles: \(err.localizedDescription)")
-                } else {
-                    for document in querySnap!.documents {
-                        
-                        addPost(document: document, isTopicPost: true)
-                    }
-                    
-                    self.postResults = nil
-                    self.postResults = postResults
-                    self.userResults = nil
-                    self.tableView.reloadData()
-                    
-                    
+                case .failure(let error):
+                    print("We have an error searching for titles: \(error.localizedDescription)")
                 }
             }
         default:
@@ -319,7 +255,7 @@ extension SearchTableViewController: UISearchResultsUpdating, UISearchBarDelegat
         
         func addUser(document: DocumentSnapshot) {
             
-            if userResults.contains(where: { $0.userID == document.documentID }) {   // Check if we got the user in on of the other queries
+            if userResults.contains(where: { $0.uid == document.documentID }) {   // Check if we got the user in on of the other queries
                 return
             }
             
@@ -327,19 +263,6 @@ extension SearchTableViewController: UISearchResultsUpdating, UISearchBarDelegat
                 if let user = user {
                     userResults.append(user)
                 }
-            }
-        }
-        
-        func addPost(document: DocumentSnapshot, isTopicPost: Bool) {
-            
-            let postIsAlreadyFetched = postResults.contains { $0.documentID == document.documentID }
-            if postIsAlreadyFetched {   // Check if we got the user in on of the other queries
-                return
-            }
-            
-            if let post = postHelper.addThePost(document: document, isTopicPost: isTopicPost, language: language) {
-                
-                postResults.append(post)
             }
         }
     }

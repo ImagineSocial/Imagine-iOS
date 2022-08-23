@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 import AVKit
 import EasyTipView
 
@@ -51,100 +51,32 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
         tableView.contentInset = UIEdgeInsets(top: newHeight, left: 0, bottom: 0, right: 0)
         tableView.contentOffset = CGPoint(x: 0, y: -newHeight)
         
-        setPlaceholderAndGetPosts()
+        setPlaceholders()
+        getPosts()
     }
     
-    func setPlaceholderAndGetPosts() {
-        //setPlaceholder
-        var index = 0
-        
-        while index <= 2 {
-            let post = Post()
-            
-            post.type = (index == 1) ? .picture : .thought
-            
-            self.posts.append(post)
-            index+=1
-        }
-        
-        self.tableView.reloadData()
-        
-        getPosts(getMore: true)
-    }
-    
-    override func getPosts(getMore: Bool) {
-        
-        guard let community = community else { return }
-        
-        guard isConnected() else {
-            fetchRequested = true
+    override func getPosts() {
+                
+        guard let community = community, isConnected() else {
+            fetchRequested = isConnected()
             return
         }
         
-        self.view.activityStartAnimating()
+        view.activityStartAnimating()
+        fetchInProgress = true
         
         DispatchQueue.global(qos: .background).async {
-            self.firestoreRequest.getPostsForCommunity(getMore: getMore, community: community) { (posts, initialFetch) in
-                
+            
+            self.firestoreManager.getCommunityPosts(communityID: community.id) { posts in
                 guard let posts = posts else {
+                    print("No Posts")
                     DispatchQueue.main.async {
                         self.view.activityStopAnimating()
                     }
                     return
                 }
                 
-                if initialFetch {   // Get the first batch of posts
-                    
-                    self.posts.removeAll()  //to get the placeholder out
-                    self.posts = posts
-                    
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                        
-                        self.fetchesPosts = false
-                        
-                        // remove ActivityIndicator incl. backgroundView
-                        self.view.activityStopAnimating()
-                        
-                        self.refreshControl?.endRefreshing()
-                    }
-                } else {    // Append the next batch to the existing
-                    var indexes : [IndexPath] = [IndexPath]()
-                    
-                    for result in posts {
-                        let row = self.posts.count
-                        
-                        indexes.append(IndexPath(row: row, section: 0))
-                        self.posts.append(result)
-                    }
-                    
-                    DispatchQueue.main.async {
-                        
-                        self.tableView.performBatchUpdates({
-                            self.tableView.setContentOffset(self.tableView.contentOffset, animated: false)
-                            self.tableView.insertRows(at: indexes, with: .bottom)
-                        }, completion: { (_) in
-                            self.fetchesPosts = false
-                        })
-                        
-                        self.view.activityStopAnimating()
-                    }
-                }
-            }
-        }
-    }
-    
-    func hintTheOtherView() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-            
-            UIView.animate(withDuration: 0.4, animations: {
-                self.view.frame.origin.x += 50
-            }) { (_) in
-                UIView.animate(withDuration: 0.4, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseOut, animations: {
-                    self.view.frame.origin.x -= 50
-                }) { (_) in
-                    // Do something when it is finished
-                }
+                self.placeholderAreShown ? self.setPosts(posts) : self.appendPosts(posts)
             }
         }
     }
@@ -172,19 +104,10 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
     
     //MARK: - ScrollViewDidScroll
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        super.scrollViewDidScroll(scrollView)
+        
         let offset = scrollView.contentOffset.y
         self.pageViewHeaderDelegate?.childScrollViewScrolled(offset: offset)
-        
-        let height = scrollView.frame.size.height
-        let distanceFromBottom = scrollView.contentSize.height - offset
-        
-        if distanceFromBottom < height {
-            if fetchesPosts == false {
-                
-                fetchesPosts = true
-                self.getPosts(getMore: true)
-            }
-        }
     }
     
     //MARK: - TableView
@@ -205,7 +128,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
         let topicID = "UOlUbkeFexR147dYh9eB"
         let addOnID = "2o6GSAPeYCYP3ZytD51l"
         
-        let dataDictionary: [String: Any] = ["title": post.title, "description": post.description, "createTime": Timestamp(date: Date()), "originalPoster": post.user?.userID ?? "", "thanksCount":post.votes.thanks, "wowCount":post.votes.thanks, "haCount":post.votes.thanks, "niceCount":post.votes.thanks, "type": "thought", "report": "normal", "linkedFactID": topicID]
+        let dataDictionary: [String: Any] = ["title": post.title, "description": post.description, "createTime": Timestamp(date: Date()), "originalPoster": post.user?.uid ?? "", "thanksCount":post.votes.thanks, "wowCount":post.votes.thanks, "haCount":post.votes.thanks, "niceCount":post.votes.thanks, "type": "thought", "report": "normal", "linkedFactID": topicID]
         /*
          "imageHeight": post.mediaHeight, "imageWidth": post.mediaWidth,
          */
@@ -217,7 +140,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
             }
         }
         
-        let addOnData: [String: Any] = ["createDate": Timestamp(date: Date()), "type": "topicPost", "OP": "CZOcL3VIwMemWwEfutKXGAfdlLy1"]
+        let addOnData: [String: Any] = ["createdAt": Timestamp(date: Date()), "type": "topicPost", "OP": "CZOcL3VIwMemWwEfutKXGAfdlLy1"]
         let addOnRef = db.collection("Data").document("en").collection("topics").document(topicID).collection("addOns").document(addOnID).collection("items").document(topicPostRef.documentID)
         
         addOnRef.setData(addOnData) { (err) in
@@ -277,7 +200,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
             if let fact = sender as? Community, let navCon = segue.destination as? UINavigationController, let newPostVC = navCon.topViewController as? NewPostVC {
                 newPostVC.selectedFact(community: fact, isViewAlreadyLoaded: false)
                 newPostVC.comingFromPostsOfFact = true
-                newPostVC.postOnlyInTopic = true
+                newPostVC.isTopicPost = true
                 newPostVC.newInstanceDelegate = self
             }
         case "toSettingSegue" :
@@ -287,7 +210,7 @@ class CommunityFeedTableVC: BaseFeedTableViewController {
             }
         case "toUserSegue" :
             if let userVC = segue.destination as? UserFeedTableViewController, let chosenUser = sender as? User {   // Another User
-                userVC.userOfProfile = chosenUser
+                userVC.user = chosenUser
                 userVC.currentState = .otherUser
             }
         default:
@@ -305,6 +228,6 @@ extension CommunityFeedTableVC: NewFactDelegate {
     func finishedCreatingNewInstance(item: Any?) {
         self.posts.removeAll()
         self.tableView.reloadData()
-        self.getPosts(getMore: false)
+        self.getPosts()
     }
 }

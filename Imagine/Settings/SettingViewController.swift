@@ -7,8 +7,8 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAnalytics
+import FirebaseMessaging
+import FirebaseFirestore
 
 class SettingViewController: UIViewController {
 
@@ -40,67 +40,61 @@ class SettingViewController: UIViewController {
             notificationSwitch.isOn = false
         }
 
-        if let _ = Auth.auth().currentUser {
-            
-        } else {
+        if !AuthenticationManager.shared.isLoggedIn {
             notificationSwitch.isEnabled = false
             notificationLabel.alpha = 0.7
             deleteAccountButton.alpha = 0.7
             deleteAccountButton.isEnabled = false
         }
 
-        let language = LanguageSelection().getLanguage()
-        if language == .english {
+        if LanguageSelection.language == .en {
             languageSegmentedControl.selectedSegmentIndex = 1
         }
     }
     
     @IBAction func cookieSwitchChanged(_ sender: Any) {
         if cookieSwitch.isOn {
-            Analytics.setAnalyticsCollectionEnabled(true)
             defaults.set(true, forKey: "acceptedCookies")
             print("Allow Analytics")
         } else {
             defaults.set(false, forKey: "acceptedCookies")
-            Analytics.setAnalyticsCollectionEnabled(false)
         }
     }
     
     @IBAction func notificationSwitchChanged(_ sender: Any) {
         
-        if let user = Auth.auth().currentUser {
-            let application = UIApplication.shared
-            
-            if notificationSwitch.isOn {
-                
-                Messaging.messaging().token { token, error in
-                    if let error = error {
-                        print("Error fetching FCM registration token: \(error)")
-                    } else if let token = token {
-                        HandyHelper.shared.saveFCMToken(token: token)
-                        application.registerForRemoteNotifications()
-                        self.alert(message: "You can now receive notifications from Imagine.")
-                    }
-                }
-                
-            } else {
+        guard let userID = AuthenticationManager.shared.user?.uid else {
+            return
+        }
+        let application = UIApplication.shared
         
-                let userRef = db.collection("Users").document(user.uid)
-                
-                userRef.updateData([
-                    "fcmToken": FieldValue.delete(),
-                ]) { err in
-                    if let err = err {
-                        print("Error updating document: \(err.localizedDescription)")
-                    } else {
-                        self.defaults.set(false, forKey: "allowNotifications")
-                        application.unregisterForRemoteNotifications()
-                        self.alert(message: "You won't receive any notifications from Imagine anymore.")
-                    }
+        if notificationSwitch.isOn {
+            
+            Messaging.messaging().token { token, error in
+                if let error = error {
+                    print("Error fetching FCM registration token: \(error)")
+                } else if let token = token {
+                    HandyHelper.shared.saveFCMToken(token: token)
+                    application.registerForRemoteNotifications()
+                    self.alert(message: "You can now receive notifications from Imagine.")
                 }
             }
+            
         } else {
-            self.notLoggedInAlert()
+            
+            let userRef = db.collection("Users").document(userID)
+            
+            userRef.updateData([
+                "fcmToken": FieldValue.delete(),
+            ]) { err in
+                if let err = err {
+                    print("Error updating document: \(err.localizedDescription)")
+                } else {
+                    self.defaults.set(false, forKey: "allowNotifications")
+                    application.unregisterForRemoteNotifications()
+                    self.alert(message: "You won't receive any notifications from Imagine anymore.")
+                }
+            }
         }
     }
     
@@ -108,46 +102,35 @@ class SettingViewController: UIViewController {
         deleteAccountButton.isEnabled = false
         deleteAccountButton.alpha = 0.5
         
-        if let user = Auth.auth().currentUser {
-            let maltesUID = "CZOcL3VIwMemWwEfutKXGAfdlLy1"
-            let notificationRef = db.collection("Users").document(maltesUID).collection("notifications").document()
-            let notificationData: [String: Any] = ["type": "message", "message": "Jemand möchte seinen Account löschen", "name": "System", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "UserID": user.uid]
-            
-            notificationRef.setData(notificationData) { (err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                    self.deleteAccountButton.isEnabled = true
-                    self.deleteAccountButton.alpha =  1
-                } else {
-                    self.alert(message: NSLocalizedString("delete_account_alert_message", comment: "in the next 48h it will be deleted"))
-                    print("Successfully set notification")
-                }
+        guard let userID = AuthenticationManager.shared.user?.uid else {
+            return
+        }
+        
+        let maltesUID = "CZOcL3VIwMemWwEfutKXGAfdlLy1"
+        let notificationRef = db.collection("Users").document(maltesUID).collection("notifications").document()
+        let notificationData: [String: Any] = ["type": "message", "message": "Jemand möchte seinen Account löschen", "name": "System", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "UserID": userID]
+        
+        notificationRef.setData(notificationData) { (err) in
+            if let error = err {
+                print("We have an error: \(error.localizedDescription)")
+                self.deleteAccountButton.isEnabled = true
+                self.deleteAccountButton.alpha =  1
+            } else {
+                self.alert(message: NSLocalizedString("delete_account_alert_message", comment: "in the next 48h it will be deleted"))
+                print("Successfully set notification")
             }
         }
     }
     
     @IBAction func languageSegmentedControlChanged(_ sender: Any) {
-        let pre = Locale.preferredLanguages[0]
+        let language: String = languageSegmentedControl.selectedSegmentIndex == 0 ? "de" : "en"
         
-        if languageSegmentedControl.selectedSegmentIndex == 0 { //german
-            if pre == "de" {
-                defaults.removeObject(forKey: "languageSelection")
-            } else {
-                defaults.set("de", forKey: "languageSelection")
-            }
-        } else if languageSegmentedControl.selectedSegmentIndex == 1 {  //english
-            if pre == "en" {
-                defaults.removeObject(forKey: "languageSelection")
-            } else {
-                defaults.set("en", forKey: "languageSelection")
-            }
-        }
-//        if let language = defaults.string(forKey: "languageSelection"){ }
+        defaults.set(language, forKey: "languageSelection")
     }
     
     @IBAction func dataControlTapped(_ sender: Any) {
-        let language = LanguageSelection().getLanguage()
-        if language == .german {
+        let language = LanguageSelection.language
+        if language == .de {
             if let url = URL(string: "https://www.imagine.social/datenschutzerklaerung-app") {
                 UIApplication.shared.open(url)
             }
@@ -158,8 +141,8 @@ class SettingViewController: UIViewController {
         }
     }
     @IBAction func eulaTapped(_ sender: Any) {
-        let language = LanguageSelection().getLanguage()
-        if language == .german {
+        let language = LanguageSelection.language
+        if language == .de {
             if let url = URL(string: "https://www.imagine.social/eula") {
                 UIApplication.shared.open(url)
             }

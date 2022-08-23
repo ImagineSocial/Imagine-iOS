@@ -7,15 +7,13 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAnalytics
+import FirebaseFirestore
 import AVKit
 
 class SearchCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
     let db = FirestoreRequest.shared.db
     let handyHelper = HandyHelper.shared
-    let postHelper = PostHelper.shared
     
     let searchController = UISearchController(searchResultsController: nil)
     
@@ -83,33 +81,19 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
     func getCommunityPosts() {
         DispatchQueue.global(qos: .background).async {
             
-            var collectionRef: CollectionReference!
-            let language = LanguageSelection().getLanguage()
-            if language == .english {
-                collectionRef = self.db.collection("Data").document("en").collection("topicPosts")
-            } else {
-                collectionRef = self.db.collection("TopicPosts")
-            }
+            let collectionRef = FirestoreReference.collectionRef(.topicPosts)
             
-            let ref = collectionRef.whereField("type", in: ["picture", "multiPicture", "GIF"]).order(by: "createTime", descending: true).limit(to: 30)
-            //.whereField("type", isEqualTo: "picture").order(by: "createTime", descending: true).limit(to: 50)
-            ref.getDocuments { (snap, err) in
-                if let error = err {
-                    print("We have an error: \(error.localizedDescription)")
-                } else {
-                    if let snap = snap {
-                        var posts = [Post]()
-                        for document in snap.documents {
-                            if let post = self.postHelper.addThePost(document: document, isTopicPost: true, language: language) {
-                                posts.append(post)
-                            }
-                        }
-                        
-                        DispatchQueue.main.async {
-                            self.communityPosts = posts
-                            self.collectionView.reloadData()
-                        }
+            let query = collectionRef.whereField("type", in: ["picture", "multiPicture", "GIF"]).order(by: "createdAt", descending: true).limit(to: 30)
+
+            FirestoreManager.shared.decode(query: query) { (result: Result<[Post], Error>) in
+                switch result {
+                case .success(let posts):
+                    DispatchQueue.main.async {
+                        self.communityPosts = posts
+                        self.collectionView.reloadData()
                     }
+                case .failure(let error):
+                    print("We have an error: \(error.localizedDescription)")
                 }
             }
         }
@@ -242,7 +226,7 @@ class SearchCollectionViewController: UICollectionViewController, UICollectionVi
             }
         case "toUserSegue":
             if let userVC = segue.destination as? UserFeedTableViewController, let user = sender as? User {
-                userVC.userOfProfile = user
+                userVC.user = user
                 userVC.currentState = .otherUser
             }
         default:
@@ -304,79 +288,53 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
         var postResults = [Post]()
         var userResults = [User]()
         var topicResults = [Community]()
-        let language = LanguageSelection().getLanguage()
+        
         switch searchScope {
         case 0: // Search Posts
-            var collectionRef: CollectionReference!
-            if language == .english {
-                collectionRef = db.collection("Data").document("en").collection("posts")
-            } else {
-                collectionRef = db.collection("Posts")
-            }
-            let titleRef = collectionRef.whereField("title", isGreaterThan: searchText).whereField("title", isLessThan: "\(searchText)ü").limit(to: 10)
+            let collectionRef = FirestoreReference.collectionRef(.posts)
             
-            titleRef.getDocuments { (querySnap, error) in
-                if let err = error {
-                    print("We have an error searching for titles: \(err.localizedDescription)")
-                } else {
-                    for document in querySnap!.documents {
-                        
-                        addPost(document: document)
-                    }
+            let searchQuery = collectionRef.whereField("title", isGreaterThan: searchText).whereField("title", isLessThan: "\(searchText)ü").limit(to: 10)
+            
+            FirestoreManager.shared.decode(query: searchQuery) { (result: Result<[Post], Error>) in
+                switch result {
+                case .success(let posts):
+                    postResults.append(contentsOf: posts)
                     
                     self.stackCommunityPosts()
-                    
                     self.communityPosts = nil
-                    self.postResults = nil
                     self.postResults = postResults
                     self.userResults = nil
                     self.topicResults = nil
                     self.collectionView.reloadData()
-                    
-                    
+                case .failure(let error):
+                    print("We have an error searching for titles: \(error.localizedDescription)")
                 }
             }
             
-            // You have to write the whole noun
-            var tagCollectionRef: CollectionReference!
-            if language == .english {
-                tagCollectionRef = db.collection("Data").document("en").collection("posts")
-            } else {
-                tagCollectionRef = db.collection("Posts")
-            }
-            let tagRef = tagCollectionRef.whereField("tags", arrayContains: searchText).limit(to: 10)
+            let topicCollectionRef = FirestoreReference.collectionRef(.topicPosts)
             
-            tagRef.getDocuments { (querySnap, error) in
-                if let err = error {
-                    print("We have an error searching for titles: \(err.localizedDescription)")
-                } else {
-                    for document in querySnap!.documents {
-                        
-                        addPost(document: document)
-                    }
+            let topicSearchQuery = topicCollectionRef.whereField("title", isGreaterThan: searchText).whereField("title", isLessThan: "\(searchText)ü").limit(to: 10)
+            
+            FirestoreManager.shared.decode(query: topicSearchQuery) { (result: Result<[Post], Error>) in
+                switch result {
+                case .success(let posts):
+                    postResults.append(contentsOf: posts)
                     
                     self.stackCommunityPosts()
-                    
                     self.communityPosts = nil
-                    self.postResults = nil
                     self.postResults = postResults
                     self.userResults = nil
                     self.topicResults = nil
                     self.collectionView.reloadData()
-                    
-                    
+                case .failure(let error):
+                    print("We have an error searching for titles: \(error.localizedDescription)")
                 }
             }
-            
         case 1:
-            var collectionRef: CollectionReference!
-            if language == .english {
-                collectionRef = db.collection("Data").document("en").collection("topics")
-            } else {
-                collectionRef = db.collection("Facts")
-            }
-            let titleRef = collectionRef.whereField("name", isGreaterThan: searchText).whereField("name", isLessThan: "\(searchText)ü").limit(to: 10)
+            let collectionRef = FirestoreReference.collectionRef(.communities)
             
+            let titleRef = collectionRef.whereField("name", isGreaterThan: searchText).whereField("name", isLessThan: "\(searchText)ü").limit(to: 10)
+                        
             titleRef.getDocuments { (snap, err) in
                 if let error = err {
                     print("We have an error: \(error.localizedDescription)")
@@ -466,7 +424,7 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
         
         func addUser(document: DocumentSnapshot) {
             
-            if userResults.contains(where: { $0.userID == document.documentID }) {   // Check if we got the user in on of the other queries
+            if userResults.contains(where: { $0.uid == document.documentID }) {   // Check if we got the user in on of the other queries
                 return
             }
             
@@ -477,61 +435,31 @@ extension SearchCollectionViewController: UISearchControllerDelegate, UISearchRe
             }
         }
         
-        func addPost(document: DocumentSnapshot) {
-            
-            let postIsAlreadyFetched = postResults.contains { $0.documentID == document.documentID }
-            if postIsAlreadyFetched {   // Check if we got the user in on of the other queries
-                return
-            }
-            
-            if let post = postHelper.addThePost(document: document, isTopicPost: false, language: language) {
-                
-                postResults.append(post)
-            }
-            
-        }
         
         func addTopic(document: DocumentSnapshot) {
             
-            let topicIsAlreadyFetched = topicResults.contains { $0.documentID == document.documentID }
-            if topicIsAlreadyFetched {   // Check if we got the user in on of the other queries
+            if topicResults.contains(where: { $0.id == document.documentID }) {
                 return
             }
             
-            if let documentData = document.data() {
-                let documentID = document.documentID
-                
-                guard let name = documentData["name"] as? String,
-                      let createTimestamp = documentData["createDate"] as? Timestamp
-                else {
-                    return
-                }
-                
-                let date = createTimestamp.dateValue()
-                let stringDate = date.formatRelativeString()
-                
-                let fact = Community()
-                fact.title = name
-                fact.createDate = stringDate
-                fact.documentID = documentID
-                
-                if let displayOption = documentData["displayOption"] as? String {
-                    if displayOption == "topic" {
-                        fact.displayOption = .topic
-                    } else {
-                        fact.displayOption = .discussion
-                    }
-                }
-                
-                if let imageURL = documentData["imageURL"] as? String {
-                    fact.imageURL = imageURL
-                }
-                if let description = documentData["description"] as? String {
-                    fact.description = description
-                }
-                
-                topicResults.append(fact)
+            guard let documentData = document.data(), let name = documentData["name"] as? String,
+                  let timestamp = documentData["createdAt"] as? Timestamp
+            else {
+                return
             }
+                        
+            let community = Community()
+            community.title = name
+            community.createdAt = timestamp.dateValue()
+            community.id = document.documentID
+            community.imageURL = documentData["imageURL"] as? String
+            community.description = documentData["description"] as? String
+            
+            if let displayOption = documentData["displayOption"] as? String {
+                community.displayOption = displayOption == "topic" ? .topic : .discussion
+            }
+            
+            topicResults.append(community)
         }
     }
     

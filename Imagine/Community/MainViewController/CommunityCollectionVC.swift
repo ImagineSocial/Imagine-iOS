@@ -7,8 +7,7 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAnalytics
+import FirebaseFirestore
 import EasyTipView
 
 protocol LinkFactWithPostDelegate {
@@ -127,60 +126,27 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
    
     func fetchCommunities() {
         DispatchQueue.global(qos: .background).async {
-            self.dataHelper.getData(get: .communities) { communities in    // gets the first 8 topic communities by popularity
-                
-                guard let communities = communities as? [Community] else {
-                    
-                    self.view.activityStopAnimating()
-                    print("Something went wrong")
+            
+            CommunityHelper.getMainCommunities(for: .topic) { topicCommunities in
+                guard let topicCommunities = topicCommunities else {
+                    self.loadingFinished()
                     return
                 }
-                
-                
+
                 DispatchQueue.main.async {
-                    self.topicCommunities = communities
-                    self.collectionView.reloadData()    //The user thinks it is loaded
+                    self.topicCommunities = topicCommunities
+                    self.collectionView.reloadData()    // The user should think it is loaded
                 }
                 
-                var collectionRef: CollectionReference!
-                let language = LanguageSelection().getLanguage()
-                if language == .english {
-                    collectionRef = self.db.collection("Data").document("en").collection("topics")
-                } else {
-                    collectionRef = self.db.collection("Facts")
-                }
-                let ref = collectionRef.whereField("displayOption", isEqualTo: "fact").order(by: "popularity", descending: true).limit(to: 6)
-                
-                let user = Auth.auth().currentUser
-                
-                ref.getDocuments { (snap, err) in
-                    if let error = err {
-                        print("We have an error: \(error.localizedDescription)")
-                    } else {
-                        if let snap = snap {
-                            var discussionCount = snap.documents.count
-                            
-                            if snap.documents.count == 0 {
-                                self.loadingFinished()
-                            }
-                            
-                            snap.documents.forEach { document in
-                                let data = document.data()
-                                
-                                if let community = CommunityHelper.shared.getCommunity(currentUser: user, documentID: document.documentID, data: data) {
-                                    self.discussionCommunities.append(community)
-                                } else {
-                                    discussionCount -= 1
-                                }
-                                
-                                if self.discussionCommunities.count == discussionCount {
-                                    
-                                    self.loadingFinished()
-                                }
-                            }
-                        } else {
-                            self.loadingFinished()
-                        }
+                CommunityHelper.getMainCommunities(for: .discussion) { discussionCommunities in
+                    guard let discussionCommunities = discussionCommunities else {
+                        self.loadingFinished()
+                        return
+                    }
+
+                    DispatchQueue.main.async {
+                        self.discussionCommunities = discussionCommunities
+                        self.loadingFinished()
                     }
                 }
             }
@@ -197,61 +163,21 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
     }
     
     func getFollowedCommunities() {
-        if let user = Auth.auth().currentUser {
-            dataHelper.getFollowedTopicDocuments(userUID: user.uid) { documents in
-                var topicCount = documents.count
-                for document in documents {
-                    self.addFact(user: user, document: document) { fact in
-                        if let fact = fact {
-                            fact.beingFollowed = true
-                            self.followedCommunities.append(fact)
-                            self.followedCommunities.sort {
-                                $0.title.localizedCompare($1.title) == .orderedAscending //Not case sensitive
-                            }
-                        } else {
-                            topicCount -= 1
-                        }
-                        if self.followedCommunities.count == topicCount {
-                            self.collectionView.reloadData()
-                        }
-                    }
-                }
+        guard let userID = AuthenticationManager.shared.user?.uid else {
+            return
+        }
+        
+        CommunityHelper.getFollowedCommunities(from: userID) { communities in
+            guard let communities = communities else {
+                return
             }
+
+            self.followedCommunities = communities
+            self.collectionView.reloadData()
         }
     }
     
-    func addFact(user: Firebase.User?, document: QueryDocumentSnapshot, returnedFact: @escaping (Community?) -> Void) {
-        let data = document.data()
-        
-        var collectionRef: CollectionReference = self.db.collection("Facts")
-        
-        if let language = data["language"] as? String {
-            if language == "en" {
-                collectionRef = self.db.collection("Data").document("en").collection("topics")
-            }
-        }
-        
-        let ref = collectionRef.document(document.documentID)
-        
-        ref.getDocument { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-                returnedFact(nil)
-            } else {
-                if let snap = snap {
-                    if let data = snap.data() {
-                        if let fact = CommunityHelper.shared.getCommunity(currentUser: user, documentID: snap.documentID, data: data) {
-                            returnedFact(fact)
-                        }
-                    } else {
-                        returnedFact(nil)
-                    }
-                } else {
-                    returnedFact(nil)
-                }
-            }
-        }
-    }
+    
 
     override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         
@@ -276,24 +202,29 @@ class CommunityCollectionVC: UICollectionViewController, UICollectionViewDelegat
     
     func topicSelected(community: Community) {
         print("TopicSelected")
-        registerRecentFact(fact: community)
+        registerRecentFact(community: community)
     }
     
-    func registerRecentFact(fact: Community) {
+    func registerRecentFact(community: Community) {
         // Safe the selected topic to display it later in the "currentTopic" CollectionView
+        
+        guard let communityID = community.id else {
+            return
+        }
+        
         let defaults = UserDefaults.standard
         let key:String!
-        switch fact.language {
-        case .english:
+        switch community.language {
+        case .en:
             key = "recentTopics-en"
-        case .german:
+        case .de:
             key = "recentTopics"
         }
         
         var factStrings = defaults.stringArray(forKey: key) ?? [String]()
         
-        factStrings = factStrings.filter{ $0 != fact.documentID }
-        factStrings.insert(fact.documentID, at: 0)
+        factStrings = factStrings.filter { $0 != communityID }
+        factStrings.insert(communityID, at: 0)
         
         if factStrings.count >= 10 {
             factStrings.removeLast()
@@ -384,7 +315,10 @@ extension CommunityCollectionVC: AddOnDelegate {
     }
     
     func showAddItemAlert(for community: Community) {
-        let factString = community.title.quoted
+        guard let title = community.title else {
+            return
+        }
+        let factString = title.quoted
         
         let string = NSLocalizedString("add_item_alert_message", comment: "you sure to add this?")
         
@@ -393,7 +327,7 @@ extension CommunityCollectionVC: AddOnDelegate {
             self.setFactForOptInfo(fact: community)
         }))
         alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .cancel, handler: { (_) in
-            alert.dismiss(animated: true, completion: nil)
+            alert.dismiss(animated: true)
         }))
         self.present(alert, animated: true)
     }

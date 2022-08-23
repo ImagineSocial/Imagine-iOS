@@ -10,6 +10,8 @@ import UIKit
 
 class FeedSingleTopicCell: BaseFeedCell {
     
+    static var identifier = "FeedSingleTopicCell"
+    
     //MARK:- IBOutlets
     @IBOutlet weak var collectionView: UICollectionView!
     
@@ -62,12 +64,15 @@ class FeedSingleTopicCell: BaseFeedCell {
                 setUser()
             }
             
-            if let community = post.community {
-                if community.title != "" {
-                    self.loadSingleTopic(post: post, community: community)
+            if let communityID = post.communityID {
+                if post.community != nil {
+                    setCommunity(for: post)
                 } else {
-                    let communityRequest = CommunityRequest()
-                    communityRequest.getCommunity(language: post.language, community: community, beingFollowed: false) { (community) in
+                    CommunityHelper.getCommunity(withID: communityID, language: post.language) { community in
+                        guard let community = community else {
+                            return
+                        }
+
                         self.loadSingleTopic(post: post, community: community)
                     }
                 }
@@ -81,9 +86,9 @@ class FeedSingleTopicCell: BaseFeedCell {
         }
     }
     
-    //MARK:- Load Single Topic
+    //MARK: - Load Single Topic
     func loadSingleTopic(post: Post, community: Community) {
-        let info = AddOn(style: .singleTopic, OP: "", documentID: "", fact: Community(), headerTitle: post.title, description: post.description, singleTopic: community)
+        let info = AddOn(style: .singleTopic, OP: "", documentID: "", fact: Community(), headerTitle: post.title, description: post.description ?? "", singleTopic: community)
         
         self.addOnInfo = info
         post.community = community

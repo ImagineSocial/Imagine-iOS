@@ -37,8 +37,8 @@ class PinchToZoomViewController: UIViewController, UIScrollViewDelegate {
         
         imageView.contentMode = .scaleAspectFit
         
-        showPicture()
         setUpScrollViewToZoom()
+        showPicture()
     }
     
     func setUpScrollViewToZoom() {
@@ -58,19 +58,19 @@ class PinchToZoomViewController: UIViewController, UIScrollViewDelegate {
     
     func showPicture() {
         
-        if let post = post {
+        if let post = post, let image = post.image {
             
-            let imageWidth = post.mediaWidth
-            let imageHeight = post.mediaHeight
+            let imageWidth = image.width
+            let imageHeight = image.height
             
-            if let url = URL(string: post.imageURL) {
+            if let url = URL(string: image.url) {
                 imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
             }
             
             let ratio = imageWidth / imageHeight
             let contentWidth = self.view.frame.width
             let newHeight = contentWidth / ratio
-            let y = (self.view.frame.height-newHeight)/2
+            let y = (self.view.frame.height-newHeight) / 2
             imageView.frame = CGRect(x: 0, y: y, width: contentWidth, height: newHeight)
         } else if let imageURL = imageURL {
             

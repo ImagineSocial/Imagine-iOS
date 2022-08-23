@@ -57,7 +57,7 @@ class ReportTableViewController: UITableViewController {
     var reportCategory: reportCategory?
     var choosenOption: ReportOption?
     var optionArray = [ReportOption]()
-    var post = Post()
+    var post: Post?
     
     let opticOptionArray: [ReportOption] = [ReportOption(reportOption: .satire, text: "Satire"), ReportOption(reportOption: .spoiler, text: "Spoiler"), ReportOption(reportOption: .personalOpinion, text: NSLocalizedString("Opinion, not a fact", comment: "When it seems like the post is presenting a fact, but is just an opinion")), ReportOption(reportOption: .sensationalism, text: NSLocalizedString("Sensationalism", comment: "When the given facts are presented more important, than they are in reality")), ReportOption(reportOption: .editedContent, text: NSLocalizedString("Edited Content", comment: "If the person shares something that is corrected or changed with photoshop or whatever")), ReportOption(reportOption: .notListed, text: NSLocalizedString("Not listed", comment: "Something besides the given options"))]
         

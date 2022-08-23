@@ -101,7 +101,7 @@ class ArgumentDetailVC: UIViewController, UITextViewDelegate {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toUserSegue", let chosenUser = sender as? User, let userVC = segue.destination as? UserFeedTableViewController {
-            userVC.userOfProfile = chosenUser
+            userVC.user = chosenUser
             userVC.currentState = .otherUser
         }
     }

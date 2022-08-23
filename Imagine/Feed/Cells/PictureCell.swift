@@ -1,5 +1,5 @@
 //
-//  PostCell.swift
+//  PictureCell.swift
 //  Imagine
 //
 //  Created by Malte Schoppe on 29.03.19.
@@ -8,7 +8,6 @@
 
 import UIKit
 import SDWebImage
-import Firebase
 
 protocol PostCellDelegate: class {
     func userTapped(post: Post)
@@ -22,14 +21,18 @@ protocol PostCellDelegate: class {
     func collectionViewTapped(post: Post)
 }
 
-class PostCell : BaseFeedCell {
+class PictureCell: BaseFeedCell {
     
-    //MARK:- IBOutlets
+    static let identifier = "PictureCell"
+    
+    // MARK: - IBOutlets
+    
     @IBOutlet weak var cellImageView: UIImageView!
     @IBOutlet weak var cellImageViewHeightConstraint: NSLayoutConstraint!
 
     
-    //MARK:- Cell Lifecycle
+    // MARK: - Cell Lifecycle
+    
     override func awakeFromNib() {
         selectionStyle = .none
         
@@ -56,7 +59,7 @@ class PostCell : BaseFeedCell {
         resetValues()
     }
     
-    //MARK:- Set Cell
+    // MARK: - Set Cell
     override func setCell() {
         super.setCell()
         
@@ -84,23 +87,21 @@ class PostCell : BaseFeedCell {
                 setUser()
             }
             
-            if let fact = post.community {
-                if fact.title == "" {
-                    self.getCommunity(beingFollowed: fact.beingFollowed)
+            if let communityID = post.communityID {
+                if post.community != nil {
+                    setCommunity(for: post)
                 } else {
-                    self.setCommunity(post: post)
+                    getCommunity(with: communityID)
                 }
             }
             
             titleLabel.text = post.title
             feedLikeView.setPost(post: post)
             
-            if let url = URL(string: post.imageURL) {
-                if let cellImageView = cellImageView {
-                    cellImageView.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
-                    cellImageView.sd_imageIndicator?.startAnimatingIndicator()
-                    cellImageView.sd_setImage(with: url, placeholderImage: Constants.defaultImage, options: [], completed: nil)
-                }
+            if let imageURL = post.image?.url, let url = URL(string: imageURL), let cellImageView = cellImageView {
+                cellImageView.sd_imageIndicator = SDWebImageActivityIndicator.grayLarge
+                cellImageView.sd_imageIndicator?.startAnimatingIndicator()
+                cellImageView.sd_setImage(with: url, placeholderImage: Constants.defaultImage, options: [], completed: nil)
             }
             
             setReportView(post: post, reportView: reportView, reportLabel: reportViewLabel, reportButton: reportViewButtonInTop, reportViewHeightConstraint: reportViewHeightConstraint)

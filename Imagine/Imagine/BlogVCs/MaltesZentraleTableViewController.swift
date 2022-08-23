@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 class MaltesZentraleTableViewController: UITableViewController {
 

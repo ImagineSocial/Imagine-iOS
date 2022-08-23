@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import FirebaseFirestore
 
 class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
     
@@ -45,28 +45,26 @@ class AddOnSingleCommunityCollectionViewCell: BaseAddOnCollectionViewCell {
                     }
                     self.topicTitleLabel.text = community.title
                     self.topicDescriptionLabel.text = community.description
-                    if let url = URL(string: community.imageURL) {
+                    if let imageURL = community.imageURL, let url = URL(string: imageURL) {
                         topicImageView.sd_setImage(with: url, completed: nil)
                     }
                     
-                    self.topicPostCountLabel.text = "Posts: \(community.postCount)"
-                    self.topicFollowerLabel.text = "Follower: \(community.followerCount)"
+                    self.topicPostCountLabel.text = "Posts: \(community.postCount ?? 0)"
+                    self.topicFollowerLabel.text = "Follower: \(community.followerCount ?? 0)"
                 }
             }
         }
     }
     
     func getPreviewPictures(community: Community) {
-        if community.documentID != "" {
-            if self.previewPosts == nil {
-                self.postHelper.getPreviewPicturesForCommunity(community: community) { [weak self] (posts) in
-                    DispatchQueue.main.async {
-                        if let posts = posts, posts.count != 0, let self = self {
-
-                            self.previewPosts = posts
-                            self.topicPreviewCollectionView.reloadData()
-                            self.isFetchingPreviewPosts = false
-                        }
+        if community.id != nil, previewPosts == nil {
+            self.postHelper.getPreviewPicturesForCommunity(community: community) { [weak self] posts in
+                DispatchQueue.main.async {
+                    if let posts = posts, posts.count != 0, let self = self {
+                        
+                        self.previewPosts = posts
+                        self.topicPreviewCollectionView.reloadData()
+                        self.isFetchingPreviewPosts = false
                     }
                 }
             }
@@ -110,23 +108,17 @@ extension AddOnSingleCommunityCollectionViewCell: UICollectionViewDelegateFlowLa
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        if let posts = previewPosts {
+        if let posts = previewPosts, let cell = topicPreviewCollectionView.dequeueReusableCell(withReuseIdentifier: SmallTopicCell.identifier, for: indexPath) as? SmallTopicCell {
             let post = posts[indexPath.item]
             
-            if let cell = topicPreviewCollectionView.dequeueReusableCell(withReuseIdentifier: SmallTopicCell.identifier, for: indexPath) as? SmallTopicCell {
+            if let imageURL = post.image?.url, let url = URL(string: imageURL) {
+                cell.cellImageView.sd_setImage(with: url, completed: nil)
                 
-                if let url = URL(string: post.imageURL) {
-                    cell.cellImageView.sd_setImage(with: url, completed: nil)
-                    
-                } else {
-                    // Get the link image oder whatever
-                }
-                //                cell.setGradientView()
-                
-                return cell
             }
+            
+            return cell
         }
-        
+                
         return UICollectionViewCell()
     }
     

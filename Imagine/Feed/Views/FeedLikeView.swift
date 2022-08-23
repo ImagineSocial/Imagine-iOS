@@ -9,7 +9,7 @@
 import UIKit
 
 protocol FeedLikeViewDelegate: class {
-    func registerVote(button: DesignableButton)
+    func registerVote(for type: VoteType)
 }
 
 class FeedLikeView: UIView, NibLoadable {
@@ -49,17 +49,17 @@ class FeedLikeView: UIView, NibLoadable {
     }
     
     func prepareForReuse(ownProfile: Bool) {
-        if ownProfile {
-            thanksButton.setImage(nil, for: .normal)
-            wowButton.setImage(nil, for: .normal)
-            haButton.setImage(nil, for: .normal)
-            niceButton.setImage(nil, for: .normal)
-        } else {
+//        if ownProfile {
+//            thanksButton.setImage(nil, for: .normal)
+//            wowButton.setImage(nil, for: .normal)
+//            haButton.setImage(nil, for: .normal)
+//            niceButton.setImage(nil, for: .normal)
+//        } else {
             thanksButton.setImage(UIImage(named: "thanksButton"), for: .normal)
             wowButton.setImage(UIImage(named: "wowButton"), for: .normal)
             haButton.setImage(UIImage(named: "haButton"), for: .normal)
             niceButton.setImage(UIImage(named: "niceButton"), for: .normal)
-        }
+//        }
     }
     
     func resetValues() {
@@ -72,8 +72,11 @@ class FeedLikeView: UIView, NibLoadable {
     //MARK:- Layout
     
     /// If you look at your own Feed at UserFeedTableView
-    func setOwnCell(post: Post) {
-        
+    func setOwnCell(post: Post?) {
+        guard let post = post else {
+            return
+        }
+
         //Set vote count
         thanksButton.setTitle(String(post.votes.thanks), for: .normal)
         wowButton.setTitle(String(post.votes.wow), for: .normal)
@@ -109,15 +112,46 @@ class FeedLikeView: UIView, NibLoadable {
     //MARK:- IBActions
     
     @IBAction func thanksButtonTapped(_ sender: Any) {
-        delegate?.registerVote(button: thanksButton)
+        delegate?.registerVote(for: .thanks)
     }
     @IBAction func wowButtonTapped(_ sender: Any) {
-        delegate?.registerVote(button: wowButton)
+        delegate?.registerVote(for: .wow)
     }
     @IBAction func haButtonTapped(_ sender: Any) {
-        delegate?.registerVote(button: haButton)
+        delegate?.registerVote(for: .ha)
     }
     @IBAction func niceButtonTapped(_ sender: Any) {
-        delegate?.registerVote(button: niceButton)
+        delegate?.registerVote(for: .nice)
+    }
+    
+    func showButtonInteraction(type: VoteType, post: Post?) {
+        
+        guard let post = post else { return }
+
+        var title: String
+        var button: DesignableButton
+        
+        switch type {
+        case .thanks:
+            title = String(post.votes.thanks)
+            button = thanksButton
+        case .wow:
+            title = String(post.votes.wow)
+            button = wowButton
+        case .ha:
+            title = String(post.votes.ha)
+            button = haButton
+        case .nice:
+            title = String(post.votes.nice)
+            button = niceButton
+        }
+        
+        
+        button.isEnabled = false
+        button.setImage(nil, for: .normal)
+        button.setTitle(title, for: .normal)
+        
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
     }
 }

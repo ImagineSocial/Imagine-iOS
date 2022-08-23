@@ -8,8 +8,6 @@
 
 import UIKit
 import FirebaseFirestore
-import Firebase
-import FirebaseAuth
 
 class ReportConfirmViewController: UIViewController {
 
@@ -18,7 +16,7 @@ class ReportConfirmViewController: UIViewController {
     var post: Post?
     var comment: Comment?
     let db = FirestoreRequest.shared.db
-    let language = LanguageSelection().getLanguage()
+    let language = LanguageSelection.language
     
     @IBOutlet weak var MeldegrundLabel: UILabel!
     @IBOutlet weak var HinweisTextLabel: UILabel!
@@ -81,44 +79,43 @@ class ReportConfirmViewController: UIViewController {
             }
         }
         
-        if let post = post {
-            var collectionRef: CollectionReference!
-            if post.isTopicPost {
-                if self.language == .english {
-                    collectionRef = db.collection("Data").document("en").collection("topicPosts")
-                } else {
-                    collectionRef = db.collection("TopicPosts")
-                }
+        guard let post = post, let documentID = post.documentID else {
+            return
+        }
+        var collectionRef: CollectionReference!
+        if post.isTopicPost {
+            if self.language == .en {
+                collectionRef = db.collection("Data").document("en").collection("topicPosts")
             } else {
-                if self.language == .english {
-                    collectionRef = db.collection("Data").document("en").collection("posts")
-                } else {
-                    collectionRef = db.collection("Posts")
-                }
+                collectionRef = db.collection("TopicPosts")
             }
-            let postRef = collectionRef.document(post.documentID)
-            postRef.updateData(["report": reportOptionForDatabase]) { err in
-                if let err = err {
-                    print("Error updating document: \(err)")
-                } else {
-                    print("Document successfully updated")
-                    
-                }
+        } else {
+            if self.language == .en {
+                collectionRef = db.collection("Data").document("en").collection("posts")
+            } else {
+                collectionRef = db.collection("Posts")
             }
-        } else if let comment = comment {
-            //todo: Find Comment Ref and update Data
-            print("Find comment to update the report for comment: \(comment.commentID)")
+        }
+        
+        let postRef = collectionRef.document(documentID)
+        postRef.updateData(["report": reportOptionForDatabase]) { err in
+            if let err = err {
+                print("Error updating document: \(err)")
+            } else {
+                print("Document successfully updated")
+                
+            }
         }
     }
     
     func saveReport() {
         
-        if let user = Auth.auth().currentUser {
+        if let user = AuthenticationManager.shared.user {
             
             let notificationRef = db.collection("Users").document("CZOcL3VIwMemWwEfutKXGAfdlLy1").collection("notifications").document()
             var notificationData: [String: Any] = ["type": "message", "message": "Jemand hat eine Sache markiert oder gemeldet", "name": "Meldung", "chatID": "Egal", "sentAt": Timestamp(date: Date()), "messageID": user.uid]
             
-            if language == .english {
+            if language == .en {
                 notificationData["language"] = "en"
             }
             
@@ -130,11 +127,11 @@ class ReportConfirmViewController: UIViewController {
                 }
             }
             
-            if let post = post {
+            if let post = post, let documentID = post.documentID {
                 
-                var data: [String:Any] = ["time": Timestamp(date: Date()), "category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported post":post.documentID]
+                var data: [String:Any] = ["time": Timestamp(date: Date()), "category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported post":documentID]
                 
-                if language == .english {
+                if language == .en {
                     data["language"] = "en"
                 }
                 
@@ -143,7 +140,7 @@ class ReportConfirmViewController: UIViewController {
             } else if let comment = comment {
                 var data: [String:Any] = ["time": Timestamp(date: Date()), "category": getReportCategoryString(reportCategory: reportCategory!), "reason": choosenReportOption!.text, "reportingUser": user.uid, "reported comment": comment.commentID]
                 
-                if language == .english {
+                if language == .en {
                     data["language"] = "en"
                 }
                 

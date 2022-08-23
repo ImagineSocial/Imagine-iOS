@@ -12,57 +12,56 @@ class SearchPostCell: UITableViewCell {
     
     var post:Post? {
         didSet {
-            if let post = post {
-                titleLabel.text = post.title
-                if let user = post.user {
-                    nameLabel.text = "\(user.displayName)  -  \(post.createTime)"
+            guard let post = post else {
+                return
+            }
+            titleLabel.text = post.title
+            if let user = post.user, let name = user.name {
+                nameLabel.text = "\(name)  -  \(post.createdAt.formatForFeed())"
+            } else {
+                if post.anonym {
+                    nameLabel.text = "Anonym  -  \(post.createdAt.formatForFeed())"
                 } else {
-                    if post.anonym {
-                        nameLabel.text = "Anonym  -  \(post.createTime)"
-                    } else {
-                        nameLabel.text = "        -  \(post.createTime)"
-                        self.getName()
-                    }
+                    nameLabel.text = "        -  \(post.createdAt.formatForFeed())"
+                    self.getName()
                 }
+            }
+            
+            switch post.type {
+            case .youTubeVideo:
+                postImageView.image = UIImage(named: "youtubeIcon")
+            case .link:
+                postImageView.contentMode = .scaleAspectFit
                 
-                switch post.type {
-                case .youTubeVideo:
-                    postImageView.image = UIImage(named: "youtubeIcon")
-                case .link:
-                    postImageView.contentMode = .scaleAspectFit
-                    
-                    if let music = post.music {
-                        if let url = URL(string: music.musicImageURL) {
-                            postImageView.sd_setImage(with: url, completed: nil)
-                        }
-                    } else {
-                        postImageView.tintColor = .label
-                        postImageView.image = UIImage(named: "translate")
-                    }
-                case .thought:
-                    postImageView.image = UIImage(named: "savePostImage")
-                    postImageView.contentMode = .scaleAspectFit
-                case .picture:
-                    if let thumbnailURL = post.thumbnailImageURL, let url = URL(string: thumbnailURL) {
+                if let songwhip = post.link?.songwhip {
+                    if let url = URL(string: songwhip.musicImage) {
                         postImageView.sd_setImage(with: url, completed: nil)
-                    } else if let url = URL(string: post.imageURL) {
-                        postImageView.sd_setImage(with: url, completed: nil)
-                    } else {
-                        postImageView.image = UIImage(named: "default")
                     }
-                case .multiPicture:
-                    if let imageURLs = post.imageURLs {
-                        if let url = URL(string: imageURLs[0]) {
-                            postImageView.sd_setImage(with: url, completed: nil)
-                        } else {
-                            postImageView.image = UIImage(named: "default")
-                        }
-                    }
-                case .GIF:
-                    postImageView.image = UIImage(named: "GIFIcon")                    
-                default:
+                } else {
+                    postImageView.tintColor = .label
+                    postImageView.image = UIImage(named: "translate")
+                }
+            case .thought:
+                postImageView.image = UIImage(named: "savePostImage")
+                postImageView.contentMode = .scaleAspectFit
+            case .picture:
+                if let thumbnailURL = post.image?.thumbnailUrl, let url = URL(string: thumbnailURL) {
+                    postImageView.sd_setImage(with: url, completed: nil)
+                } else if let link = post.image?.url, let url = URL(string: link) {
+                    postImageView.sd_setImage(with: url, completed: nil)
+                } else {
                     postImageView.image = UIImage(named: "default")
                 }
+            case .multiPicture:
+                if let image = post.images?.first, let url = URL(string: image.url) {
+                    postImageView.sd_setImage(with: url, completed: nil)
+                } else {
+                    postImageView.image = UIImage(named: "default")
+                }
+            case .GIF:
+                postImageView.image = UIImage(named: "GIFIcon")
+            default:
+                postImageView.image = UIImage(named: "default")
             }
         }
     }
@@ -72,7 +71,7 @@ class SearchPostCell: UITableViewCell {
         if index < 20 {
             if let post = self.post {
                 if let user = post.user {
-                    self.nameLabel.text = "\(user.displayName)  -  \(post.createTime)"
+                    self.nameLabel.text = "\(user.name ?? "")  -  \(post.createdAt.formatForFeed())"
                 } else {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         self.getName()

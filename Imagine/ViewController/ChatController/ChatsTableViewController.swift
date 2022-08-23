@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseAuth
 import FirebaseFirestore
 
 //Get Last Message!
@@ -29,24 +27,10 @@ class ChatsTableViewController: UITableViewController {
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.view.backgroundColor = .systemBackground
         
-        tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: "NibBlankCell")
+        tableView.register(UINib(nibName: "BlankContentCell", bundle: nil), forCellReuseIdentifier: BlankContentCell.identifier)
         
         getChats()
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        // Does not get reloaded after you have logged In again!
-        // Wont disappear when not logged in anymore
-        
-        if Auth.auth().currentUser == nil && loggedIn == true {
-            self.chatsList.removeAll()
-            self.tableView.reloadData()
-        } else if Auth.auth().currentUser != nil && loggedIn == false {
-            self.getChats()
-        }
-//        tableView.reloadData()
-    }
-    
     
     
     /*
@@ -65,14 +49,14 @@ class ChatsTableViewController: UITableViewController {
     
     
     func getChats() {   // Get participant and every documentID of every chat that the user has
-        if let user = Auth.auth().currentUser {
+        if let userID = AuthenticationManager.shared.user?.uid {
             self.loggedIn = true
             if chatsList.count == 0 {
                 self.view.activityStartAnimating()
             }
-            currentUserUid = user.uid
+            currentUserUid = userID
             
-            let chatsRef = db.collection("Users").document(user.uid).collection("chats")
+            let chatsRef = db.collection("Users").document(userID).collection("chats")
             
             chatsRef.getDocuments { (snapshot, error) in
                 if let error = error {
@@ -114,8 +98,8 @@ class ChatsTableViewController: UITableViewController {
     
     
     func getUnreadMessages() {
-        if let user = Auth.auth().currentUser {
-            let notificationRef = db.collection("Users").document(user.uid).collection("notifications").whereField("type", isEqualTo: "message")
+        if let userID = AuthenticationManager.shared.user?.uid {
+            let notificationRef = db.collection("Users").document(userID).collection("notifications").whereField("type", isEqualTo: "message")
             
             notificationRef.addSnapshotListener { (snap, err) in    // Get messageNotifications
                 if let error = err {
@@ -217,7 +201,7 @@ class ChatsTableViewController: UITableViewController {
         let postHelper = FirestoreRequest.shared
         
         //Get Friends of the current User to check when they load the user of the chats
-        postHelper.getTheUsersFriend {friends in
+        postHelper.getTheUsersFriend { friends in
             self.loadUsers(friends: friends)
         }
         
@@ -245,14 +229,14 @@ class ChatsTableViewController: UITableViewController {
     }
     
     
-    func loadUsers(friends: [String]) {
+    func loadUsers(friends: [String]?) {
         
         for chat in chatsList {
             guard let participant = chat.participant else {
                 continue
             }
             
-            participant.getUser(isAFriend: friends.contains(participant.userID)) { user in
+            participant.loadUser() { user in
                 self.tableView.reloadData()
                 self.view.activityStopAnimating()
             }
@@ -283,7 +267,7 @@ class ChatsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if chatsList.count == 0 {
-            if let cell = tableView.dequeueReusableCell(withIdentifier: "NibBlankCell", for: indexPath) as? BlankContentCell {
+            if let cell = tableView.dequeueReusableCell(withIdentifier: BlankContentCell.identifier, for: indexPath) as? BlankContentCell {
                 
                 cell.type = BlankCellType.chat
                 cell.contentView.backgroundColor = self.tableView.backgroundColor
@@ -318,13 +302,13 @@ class ChatsTableViewController: UITableViewController {
                 
                 if let participant = chat.participant {
                     
-                    cell.nameLabel.text = participant.displayName
+                    cell.nameLabel.text = participant.name
                     
                     if let currentUserUid = currentUserUid {
                         if currentUserUid == chat.lastMessage.sender {  // If you are the sender of the last message
                             cell.lastMessage.text = "Du: \(chat.lastMessage.message)"
                         } else {
-                            cell.lastMessage.text = "\(participant.displayName): \(chat.lastMessage.message)"
+                            cell.lastMessage.text = "\(participant.name): \(chat.lastMessage.message)"
                         }
                     }
                     
@@ -365,7 +349,7 @@ class ChatsTableViewController: UITableViewController {
     
     
     @IBAction func newMessage(_ sender: Any) {
-        if let _ = Auth.auth().currentUser {
+        if AuthenticationManager.shared.isLoggedIn {
             performSegue(withIdentifier: "toFriendsSegue", sender: nil)
         } else {
             self.notLoggedInAlert()

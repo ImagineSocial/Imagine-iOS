@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
 
 class ProposalForOptionalInformation {
@@ -47,7 +46,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         didSet {
             guard let community = community else { return }
 
-            getData(community: community)
+            getAddOn(community: community)
         }
     }
     
@@ -80,18 +79,16 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
         }
     }
     
-    func getData(community: Community) {
+    func getAddOn(community: Community) {
         
-        var collectionRef: CollectionReference!
-        if community.language == .english {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
+        guard let communityID = community.id else {
+            return
         }
         
-        let ref = collectionRef.document(community.documentID).collection("addOns").order(by: "popularity", descending: true)
+        let addOnReference = FirestoreCollectionReference(document: communityID, collection: "addOns")
+        let reference = FirestoreReference.collectionRef(.communities, collectionReferences: addOnReference, queries: FirestoreQuery(field: "popularity"))
         
-        ref.getDocuments { (snap, err) in
+        reference.getDocuments { (snap, err) in
             if let error = err {
                 print("We have an error: \(error.localizedDescription)")
             } else {
@@ -177,7 +174,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                             if let headerTitle = data["headerTitle"] as? String, let description = data["description"] as? String,  let OP = data["OP"] as? String {
                                 
                                 let singleTopic = Community()
-                                singleTopic.documentID = documentID
+                                singleTopic.id = documentID
                                 
                                 let addOn = AddOn(style: .singleTopic, OP: OP, documentID: document.documentID, fact: community, headerTitle: headerTitle, description: description, singleTopic: singleTopic)
                                 
@@ -218,84 +215,60 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
     func renewCollectionView() {
         self.optionalInformations.removeAll()
         self.collectionView.reloadData()
-        self.getData(community: self.community!)
+        self.getAddOn(community: self.community!)
     }
     
     //MARK: - Navigation
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "toAddOnFeedVCSegue" {
-            if let navVC = segue.destination as? UINavigationController {
-                if let feedVC = navVC.topViewController as? AddOnFeedTableViewController {
-                    if let addOn = sender as? AddOn {
-                        feedVC.addOn = addOn
-                    }
-                }
-            }
-        }
-        if segue.identifier == "toSettingSegue" {
-            if let vc = segue.destination as? SettingTableViewController {
-                if let addOn = sender as? AddOn {
-                    vc.addOn = addOn
-                    vc.settingFor = .addOn
-                }
-            }
-        }
-        if segue.identifier == "toAddAPostItemSegue" {
-            if let vc = segue.destination as? AddPostTableViewController {
-                if let addOn = sender as? AddOn {
-                    vc.addItemDelegate = self
-                    vc.addOn = addOn
-                    if addOn.style == .playlist {
-                        vc.playlistTracksOnly = true
-                    }
-                }
-            }
-        }
         
-        if segue.identifier == "newPostSegue" {
-            if let navCon = segue.destination as? UINavigationController {
-                if let newPostVC = navCon.topViewController as? NewPostVC {
-                    if let addOn = sender as? AddOn {
-                        newPostVC.comingFromAddOnVC = true
-                        newPostVC.selectedFact(community: addOn.fact, isViewAlreadyLoaded: false)
-                        newPostVC.addItemDelegate = self
-                        newPostVC.addOn = addOn
-                    }
+        switch segue.identifier {
+        case "toAddOnFeedVCSegue":
+            if let navVC = segue.destination as? UINavigationController, let feedVC = navVC.topViewController as? AddOnFeedTableViewController, let addOn = sender as? AddOn {
+                feedVC.addOn = addOn
+            }
+        case "toSettingSegue":
+            if let vc = segue.destination as? SettingTableViewController, let addOn = sender as? AddOn {
+                vc.addOn = addOn
+                vc.settingFor = .addOn
+            }
+        case "toAddAPostItemSegue":
+            if let vc = segue.destination as? AddPostTableViewController, let addOn = sender as? AddOn {
+                vc.addItemDelegate = self
+                vc.addOn = addOn
+                if addOn.style == .playlist {
+                    vc.playlistTracksOnly = true
                 }
             }
-        }
-        if segue.identifier == "toPostSegue" {
-            if let vc = segue.destination as? PostViewController {
-                if let post = sender as? Post {
-                    vc.post = post
-                }
+        case "newPostSegue":
+            if let navCon = segue.destination as? UINavigationController, let newPostVC = navCon.topViewController as? NewPostVC, let addOn = sender as? AddOn {
+                newPostVC.comingFromAddOnVC = true
+                newPostVC.selectedFact(community: addOn.community, isViewAlreadyLoaded: false)
+                newPostVC.addItemDelegate = self
+                newPostVC.addOn = addOn
             }
-        }
-        if segue.identifier == "toTopicsSegue" {
-            if let vc = segue.destination as? CommunityCollectionVC {
-                if let addOn = sender as? AddOn {
-                    vc.addOn = addOn
-                    vc.addFactToPost = .optInfo
-                    vc.navigationItem.hidesSearchBarWhenScrolling = false
-                    vc.addItemDelegate = self
-                }
+        case "toPostSegue":
+            if let vc = segue.destination as? PostViewController, let post = sender as? Post {
+                vc.post = post
             }
-        }
-        if segue.identifier == "toNewAddOnSegue" {
-            if let vc = segue.destination as? NewAddOnTableViewController {
-                if let fact = sender as? Community {
-                    vc.fact = fact
-                    vc.delegate = self
-                }
+        case "toTopicsSegue":
+            if let vc = segue.destination as? CommunityCollectionVC, let addOn = sender as? AddOn {
+                vc.addOn = addOn
+                vc.addFactToPost = .optInfo
+                vc.navigationItem.hidesSearchBarWhenScrolling = false
+                vc.addItemDelegate = self
             }
-        }
-        if segue.identifier == "toFactSegue" {
-            if let vc = segue.destination as? CommunityPageVC {
-                if let community = sender as? Community {
-                    vc.community = community
-                }
+        case "toNewAddOnSegue":
+            if let vc = segue.destination as? NewAddOnTableViewController, let community = sender as? Community {
+                vc.community = community
+                vc.delegate = self
             }
+        case "toFactSegue":
+            if let vc = segue.destination as? CommunityPageVC, let community = sender as? Community {
+                vc.community = community
+            }
+        default:
+            break
         }
     }
     
@@ -366,7 +339,7 @@ class AddOnCollectionViewController: UICollectionViewController, UICollectionVie
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: horizontalScrollCellIdentifier, for: indexPath) as? AddOnHorizontalScrollCollectionViewCell {
                     
                     cell.delegate = self
-                    cell.info = info
+                    cell.addOn = info
                     cell.itemRow = indexPath.item
                     
                     return cell
@@ -491,30 +464,26 @@ extension AddOnCollectionViewController: AddOnCellDelegate, AddOnFooterViewDeleg
     }
     
     func thanksTapped(info: AddOn) {
-        if let _ = Auth.auth().currentUser {
-            if let fact = community, info.documentID != "" {
-                var collectionRef: CollectionReference!
-                if fact.language == .english {
-                    collectionRef = db.collection("Data").document("en").collection("topics")
-                } else {
-                    collectionRef = db.collection("Facts")
-                }
-                let ref = collectionRef.document(fact.documentID).collection("addOns").document(info.documentID)
-                
-                var thanksCount = 1
-                if let count = info.thanksCount {
-                    thanksCount = count
-                }
-                ref.updateData(["thanksCount": thanksCount]) { (err) in
-                    if let error = err {
-                        print("We have an error liking this addOn: \(error.localizedDescription)")
-                    } else {
-                        print("Successfully liked this addOn")
-                    }
-                }
+        guard AuthenticationManager.shared.isLoggedIn, let community = community, let communityID = community.id, info.documentID != "" else {
+            if AuthenticationManager.shared.isLoggedIn {
+                self.notLoggedInAlert()
             }
-        } else {
-            self.notLoggedInAlert()
+            
+            return
+        }
+        
+        let addOnReference = FirestoreCollectionReference(document: communityID, collection: "addOns")
+        let reference = FirestoreReference.documentRef(.communities, documentID: info.documentID, collectionReferences: addOnReference)
+        
+        
+        let thanksCount = info.thanksCount ?? 1
+        
+        reference.updateData(["thanksCount": thanksCount]) { (err) in
+            if let error = err {
+                print("We have an error liking this addOn: \(error.localizedDescription)")
+            } else {
+                print("Successfully liked this addOn")
+            }
         }
     }
     
@@ -529,42 +498,41 @@ extension AddOnCollectionViewController: AddOnCellDelegate, AddOnFooterViewDeleg
     }
     
     func newPostTapped(addOn: AddOn) {   //New Item tapped inside an addOn
-        if let _ = Auth.auth().currentUser {
-            
-            
-            let alert = UIAlertController(title: NSLocalizedString("addOn_newItem_alert_title", comment: "add an item"), message: NSLocalizedString("addOn_newItem_alert_message", comment: "what do you want to add?"), preferredStyle: .actionSheet)
-            
-            let addExistingPostAction = UIAlertAction(title: NSLocalizedString("addOn_newItem_alert_oldPost", comment: "already existent"), style: .default, handler: { (_) in  //choose existing post
-                self.performSegue(withIdentifier: "toAddAPostItemSegue", sender: addOn)
-            })
-            
-            let addNewTopicPostAction = UIAlertAction(title: NSLocalizedString("addOn_newItem_alert_newPost", comment: "new Post (community)"), style: .default, handler: { (_) in //create a new topicPost
-                self.performSegue(withIdentifier: "newPostSegue", sender: addOn)
-            })
-            
-            let addTopicAction = UIAlertAction(title: NSLocalizedString("addOn_newItem_alert_topic", comment: "community/discussion"), style: .default, handler: { (_) in    //add community or discussion
-                
-                self.performSegue(withIdentifier: "toTopicsSegue", sender: addOn)
-                
-            })
-            
-            switch addOn.style {
-            case .playlist:
-                alert.addAction(addExistingPostAction)
-            default:
-                alert.addAction(addExistingPostAction)
-                alert.addAction(addNewTopicPostAction)
-                alert.addAction(addTopicAction)
-            }
-            
-            alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .cancel, handler: { (_) in
-                alert.dismiss(animated: true, completion: nil)
-            }))
-            self.present(alert, animated: true, completion: nil)
-            
-        } else {
+        guard AuthenticationManager.shared.isLoggedIn else {
             self.notLoggedInAlert()
+            return
         }
+        
+        
+        let alert = UIAlertController(title: NSLocalizedString("addOn_newItem_alert_title", comment: "add an item"), message: NSLocalizedString("addOn_newItem_alert_message", comment: "what do you want to add?"), preferredStyle: .actionSheet)
+        
+        let addExistingPostAction = UIAlertAction(title: NSLocalizedString("addOn_newItem_alert_oldPost", comment: "already existent"), style: .default, handler: { (_) in  //choose existing post
+            self.performSegue(withIdentifier: "toAddAPostItemSegue", sender: addOn)
+        })
+        
+        let addNewTopicPostAction = UIAlertAction(title: NSLocalizedString("addOn_newItem_alert_newPost", comment: "new Post (community)"), style: .default, handler: { (_) in //create a new topicPost
+            self.performSegue(withIdentifier: "newPostSegue", sender: addOn)
+        })
+        
+        let addTopicAction = UIAlertAction(title: NSLocalizedString("addOn_newItem_alert_topic", comment: "community/discussion"), style: .default, handler: { (_) in    //add community or discussion
+            
+            self.performSegue(withIdentifier: "toTopicsSegue", sender: addOn)
+            
+        })
+        
+        switch addOn.style {
+        case .playlist:
+            alert.addAction(addExistingPostAction)
+        default:
+            alert.addAction(addExistingPostAction)
+            alert.addAction(addNewTopicPostAction)
+            alert.addAction(addTopicAction)
+        }
+        
+        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: "cancel"), style: .cancel, handler: { (_) in
+            alert.dismiss(animated: true, completion: nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
 }
 

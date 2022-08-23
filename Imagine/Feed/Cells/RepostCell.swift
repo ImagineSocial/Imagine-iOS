@@ -10,7 +10,10 @@ import UIKit
 
 class RePostCell : BaseFeedCell {
     
-    //MARK:- IBOutlets
+    static let identifier = "RepostCell"
+    
+    //MARK: - IBOutlets
+    
     @IBOutlet weak var translatedTitleLabel: UILabel!
     @IBOutlet weak var OGPostView: DesignablePopUp!
     @IBOutlet weak var originalCreateDateLabel: UILabel!
@@ -20,7 +23,8 @@ class RePostCell : BaseFeedCell {
     @IBOutlet weak var ogProfilePictureImageView: UIImageView!
     
         
-    //MARK:- View Lifecycle
+    //MARK: - Cell Lifecycle
+    
     override func awakeFromNib() {
         selectionStyle = .none
         
@@ -47,7 +51,8 @@ class RePostCell : BaseFeedCell {
         resetValues()
     }
     
-    //MARK:- Set Cell
+    //MARK: - Set Cell
+    
     override func setCell(){
         super.setCell()
         
@@ -83,7 +88,7 @@ class RePostCell : BaseFeedCell {
             // Repost Sachen einstellen
             if let repost = post.repost {
                 originalTitleLabel.text = repost.title
-                originalCreateDateLabel.text = repost.createTime
+                originalCreateDateLabel.text = repost.createdAt.formatForFeed()
                 
                 if repost.anonym {
                     ogProfilePictureImageView.image = UIImage(named: "anonym-user")
@@ -92,7 +97,7 @@ class RePostCell : BaseFeedCell {
                     titleLabel.text = post.title
                     
                     if let repostUser = repost.user {
-                        ogPosterNameLabel.text = repostUser.displayName
+                        ogPosterNameLabel.text = repostUser.name
                         
                         
                         // Profile Picture
@@ -103,7 +108,7 @@ class RePostCell : BaseFeedCell {
                 }
                 
                 
-                if let url = URL(string: repost.imageURL) {
+                if let link = repost.image?.url, let url = URL(string: link) {
                     cellImageView.isHidden = false      // Check ich nicht, aber geht!
                     cellImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "default"), options: [], completed: nil)
                 }

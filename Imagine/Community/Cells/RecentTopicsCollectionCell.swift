@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 import FirebaseFirestore
 
 protocol RecentTopicCellDelegate {
@@ -43,51 +42,41 @@ class RecentTopicsCollectionCell: UICollectionViewCell {
     func getFacts(initialFetch: Bool) {
         
         let defaults = UserDefaults.standard
-        let language = LanguageSelection().getLanguage()
+        let language = LanguageSelection.language
         var key: String!
         
         switch language {
-        case .english:
+        case .en:
             key = "recentTopics-en"
-        case .german:
+        case .de:
             key = "recentTopics"
         }
         let factStrings = defaults.stringArray(forKey: key) ?? [String]()
-        let user = Auth.auth().currentUser
         
         if initialFetch {
             for string in factStrings {
-                loadFact(user: user, factID: string, language: language)
+                loadCommunity(with: string, language: language)
             }
         } else {
             if self.communities.count >= 10 {
                 self.communities.removeLast()
             }
             
-            self.communities = self.communities.filter{ $0.documentID != factStrings[0] }
+            self.communities = self.communities.filter { $0.id != factStrings[0] }
             
-            loadFact(user: user, factID: factStrings[0], language: language)
+            loadCommunity(with: factStrings[0], language: language)
         }
     }
     
-    func loadFact(user: Firebase.User?, factID: String, language: Language) {
-        var collectionRef: CollectionReference!
-        if language == .english {
-            collectionRef = db.collection("Data").document("en").collection("topics")
-        } else {
-            collectionRef = db.collection("Facts")
-        }
-        let factRef = collectionRef.document(factID)
+    func loadCommunity(with id: String, language: Language) {
         
-        factRef.getDocument { (snap, err) in
-            if let error = err {
-                print("We have an error: \(error.localizedDescription)")
-            } else {
-                if let snapshot = snap, let data = snapshot.data(), let community = CommunityHelper.shared.getCommunity(currentUser: user, documentID: snapshot.documentID, data: data) {
-                    self.communities.insert(community, at: 0)
-                    self.collectionView.reloadData()
-                }
+        CommunityHelper.getCommunity(withID: id, language: language) { community in
+            guard let community = community else {
+                return
             }
+
+            self.communities.insert(community, at: 0)
+            self.collectionView.reloadData()
         }
     }
 }
@@ -123,16 +112,9 @@ extension RecentTopicsCollectionCell: UICollectionViewDataSource, UICollectionVi
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if communities.count != 0 {
-            let fact = communities[indexPath.item]
+            let community = communities[indexPath.item]
             
-            fact.getFollowStatus { (isFollowed) in
-                if isFollowed {
-                    fact.beingFollowed = true
-                    self.delegate?.topicTapped(fact: fact)
-                } else {
-                    self.delegate?.topicTapped(fact: fact)
-                }
-            }
+            delegate?.topicTapped(fact: community)
         }
     }
     

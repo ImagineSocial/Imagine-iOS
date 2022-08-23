@@ -8,7 +8,6 @@
 
 import UIKit
 import MessageUI
-import Firebase
 import FirebaseAuth
 import FirebaseFirestore
 
@@ -76,8 +75,8 @@ class JobSurveyViewController: UIViewController, MFMailComposeViewControllerDele
     
     func setFirebaseData() {
         var collectionRef: CollectionReference!
-        let language = LanguageSelection().getLanguage()
-        if language == .english {
+        let language = LanguageSelection.language
+        if language == .en {
             collectionRef = db.collection("Data").document("en").collection("jobOffers")
         } else {
             collectionRef = db.collection("JobOffers")
