@@ -100,7 +100,6 @@ extension FirestoreManager {
                     }
                     
                     if topicCount == topicTotalCount {
-                        self.startAfterSnapshot = self.testSnapshot
                         completion(topicPosts.isEmpty ? nil : topicPosts)
                     }
                 }

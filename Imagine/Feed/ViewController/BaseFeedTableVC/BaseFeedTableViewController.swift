@@ -76,6 +76,7 @@ class BaseFeedTableViewController: UITableViewController, ReachabilityObserverDe
         posts.removeAll()
         firestoreManager.reset()
         setPlaceholders()
+        getPosts()
     }
     
     

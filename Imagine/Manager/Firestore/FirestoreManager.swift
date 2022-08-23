@@ -39,9 +39,7 @@ class FirestoreManager {
      */
     var endBeforeSnapshot: QueryDocumentSnapshot?
     var startAfterSnapshot: QueryDocumentSnapshot?
-    
-    var testSnapshot: QueryDocumentSnapshot?
-    
+        
     var initialDocumentID: String?
     
     var noMorePosts = false
