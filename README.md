@@ -1,8 +1,11 @@
 # Imagine-iOS
 The iOS-App in all its glory!
 
-Currently, the iOS version is the prototype of the Imagine Network. We have all the basic network functionalities, like an endless feed, chat,comments & post interactions. The UI is modern and stylish and the performance is very stable. 
+Currently, the iOS version is the prototype of the Imagine Network. We have all the basic network functionalities, like an endless feed, extended communities, comments & post interactions. The UI is modern and stylish and the performance is very stable. 
 You can find the app in the AppStore: https://apps.apple.com/de/app/imagine/id1480679038 
+
+The code base needs project wide improvement. Most ViewControllers are created via Storyboard, which is very bad for collaboration and clarity. The first VCs are already programmatically created, but there is still a lot missing. 
+Also the code quality varies a lot. In the last commits, a lot has already been refactored, but due to the large scale, a lot can still be improved and simplified.
 
 # The Network:
 Imagine tries to be a social and entertaining place that encourages a change. A lot of open source and decentralized networks have tried it, so will we. We do not only focus on the serious parts, but try to find a responsible and fun way to get a new network.
